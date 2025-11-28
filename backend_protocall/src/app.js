@@ -1,12 +1,21 @@
 const express = require("express");
 const session = require("express-session");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const routes = require("./routes");
 require("dotenv").config();
 
 const app = express();
 
+// CORS configuration
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "http://localhost:8080",
+  credentials: true,
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.use(
   session({

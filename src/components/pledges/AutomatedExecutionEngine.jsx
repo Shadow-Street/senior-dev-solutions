@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { PledgeSession, Pledge, PledgeExecutionRecord } from '@/api/entities';
+import { PledgeSessionAPI, PledgeAPI, PledgeExecutionRecordAPI } from '@/lib/apiClient';
 
 export default function AutomatedExecutionEngine({ enabled, user, onExecutionComplete }) {
   const [isExecuting, setIsExecuting] = useState(false);
@@ -19,7 +19,7 @@ export default function AutomatedExecutionEngine({ enabled, user, onExecutionCom
       try {
         setIsExecuting(true);
         
-        const sessions = await PledgeSession.filter({ 
+        const sessions = await PledgeSessionAPI.filter({ 
           status: 'active',
           execution_rule: 'session_end'
         }).catch(error => {
@@ -100,7 +100,7 @@ export default function AutomatedExecutionEngine({ enabled, user, onExecutionCom
     }
 
     try {
-      const pledges = await Pledge.filter({ 
+      const pledges = await PledgeAPI.filter({ 
         session_id: session.id,
         status: 'paid'
       }).catch(error => {
@@ -123,7 +123,7 @@ export default function AutomatedExecutionEngine({ enabled, user, onExecutionCom
             continue;
           }
 
-          const executionRecord = await PledgeExecutionRecord.create({
+          const executionRecord = await PledgeExecutionRecordAPI.create({
             pledge_id: pledge.id,
             session_id: session.id,
             user_id: pledge.user_id,
@@ -149,7 +149,7 @@ export default function AutomatedExecutionEngine({ enabled, user, onExecutionCom
 
           if (!isMountedRef.current || !executionRecord) continue;
 
-          await Pledge.update(pledge.id, { status: 'executed' }).catch(error => {
+          await PledgeAPI.update(pledge.id, { status: 'executed' }).catch(error => {
             // ✅ Ignore aborted requests
             if (error.code === 'ERR_CANCELED' || error.message?.includes('aborted')) {
               console.log('⏹️ Pledge update cancelled');
@@ -171,7 +171,7 @@ export default function AutomatedExecutionEngine({ enabled, user, onExecutionCom
 
       if (!isMountedRef.current) return;
 
-      await PledgeSession.update(session.id, {
+      await PledgeSessionAPI.update(session.id, {
         status: 'completed',
         last_executed_at: new Date().toISOString()
       }).catch(error => {
