@@ -21,5 +21,12 @@ db.Sequelize = Sequelize;
 // Load models manually
 db.User = require("./User")(sequelize);
 db.OauthToken = require("./Auth/OauthToken")(sequelize);
+db.Stock = require("./Stock")(sequelize);
+db.Pledge = require("./Pledge")(sequelize);
+db.PledgeSession = require("./PledgeSession")(sequelize);
+db.PledgeExecutionRecord = require("./PledgeExecutionRecord")(sequelize);
+db.PledgeAccessRequest = require("./PledgeAccessRequest")(sequelize);
+db.FundTransaction = require("./FundTransaction")(sequelize);
+db.FeatureConfig = require("./FeatureConfig")(sequelize);
 
 module.exports = db;

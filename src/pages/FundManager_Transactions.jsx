@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FundManagerLayout from '../components/layouts/FundManagerLayout';
-import { FundTransaction } from '@/api/entities';
+import { FundTransactionAPI } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -15,7 +15,7 @@ function TransactionsContent() {
   useEffect(() => {
     const loadTransactions = async () => {
       try {
-        const txns = await FundTransaction.list('-transaction_date', 100);
+        const txns = await FundTransactionAPI.list('-transaction_date', 100);
         setTransactions(txns);
       } catch (error) {
         console.error('Error loading transactions:', error);
