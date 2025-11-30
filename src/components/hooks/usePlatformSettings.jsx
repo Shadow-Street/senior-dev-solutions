@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { PlatformSetting, User } from '@/api/entities';
+import { PlatformSetting, User } from '@/lib/apiClient';
 
 const defaultSettings = {
   commissionRate: 25,

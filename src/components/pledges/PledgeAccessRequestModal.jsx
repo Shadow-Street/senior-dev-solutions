@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PledgeAccessRequest } from '@/api/entities';
+import { PledgeAccessRequest } from '@/lib/apiClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';

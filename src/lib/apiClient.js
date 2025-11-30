@@ -179,10 +179,14 @@ export const PledgePayment = createEntityAPI('/pledges/payments');
 export const Notification = createEntityAPI('/notifications');
 export const NotificationSetting = createEntityAPI('/notifications/settings');
 
-// Platform Settings
-export const PlatformSetting = createEntityAPI('/platform/settings');
-export const AlertConfiguration = createEntityAPI('/platform/alert-configs');
-export const EntityConfig = createEntityAPI('/platform/entity-configs');
+// Missing entities - add to apiClient
+export const InfluencerPost = createEntityAPI('/influencers/posts');
+export const EventOrganizer = createEntityAPI('/events/organizers');
+export const SubscriptionPlan = createEntityAPI('/subscriptions/plans');
+export const AuditLog = createEntityAPI('/audit/logs');
+export const AdTransaction = createEntityAPI('/ads/transactions');
+export const ModuleApprovalRequest = createEntityAPI('/modules/approvals');
+export const Review = createEntityAPI('/reviews');
 
 // Feature Configuration
 export const FeatureConfig = {

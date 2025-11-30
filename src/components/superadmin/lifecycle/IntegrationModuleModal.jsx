@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FeatureConfig } from '@/api/entities';
+import { FeatureConfig } from '@/lib/apiClient';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

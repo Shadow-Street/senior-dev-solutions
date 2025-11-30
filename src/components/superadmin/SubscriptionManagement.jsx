@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { SubscriptionPlan, PromoCode } from '@/api/entities';
+import { SubscriptionPlan, PromoCode } from '@/lib/apiClient';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Gem, Ticket, BarChart3, PlusCircle, Users } from 'lucide-react';

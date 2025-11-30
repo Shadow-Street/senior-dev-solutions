@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FundPlan } from '@/api/entities';
+import { FundPlan } from '@/lib/apiClient';
 import { Plus, Users, TrendingUp, Calendar, DollarSign, Clock, Edit, Trash2, Loader2, CheckCircle, XCircle, FileText, Info } from 'lucide-react'; // Added Info icon
 import { toast } from 'sonner';
 import {
