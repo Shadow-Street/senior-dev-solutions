@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Feedback } from '@/api/entities';
+import { User, Feedback } from '@/lib/apiClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';

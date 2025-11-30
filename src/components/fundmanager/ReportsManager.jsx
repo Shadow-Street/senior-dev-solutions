@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { FundAllocation, Investor, FundPlan, FundTransaction } from '@/api/entities';
+import { FundAllocation, Investor, FundPlan, FundTransaction } from '@/lib/apiClient';
 import { toast } from 'sonner';
 import { Loader2, BarChart3, Download, TrendingUp, DollarSign, Users } from 'lucide-react';
 import {

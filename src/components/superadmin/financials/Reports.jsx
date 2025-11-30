@@ -21,7 +21,7 @@ import {
   EventCommissionTracking,
   AdTransaction,
   User
-} from '@/api/entities';
+} from '@/lib/apiClient';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 

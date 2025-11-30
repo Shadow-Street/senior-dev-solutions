@@ -20,7 +20,7 @@ import {
   CheckCircle,
   Info
 } from 'lucide-react';
-import { Event, EventTicket, RefundRequest, Notification } from '@/api/entities';
+import { Event, EventTicket, RefundRequest, Notification } from '@/lib/apiClient';
 import { toast } from 'sonner';
 
 export default function EventCancellationModal({ 

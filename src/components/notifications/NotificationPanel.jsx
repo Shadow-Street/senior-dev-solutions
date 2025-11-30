@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { User, Notification as NotificationEntity } from '@/api/entities'; // FIXED: Renamed to avoid conflict
+import { User, Notification as NotificationEntity } from '@/lib/apiClient'; // FIXED: Renamed to avoid conflict
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Bell, CheckCheck, Settings, Inbox, AlertTriangle, BellOff, ExternalLink } from 'lucide-react';

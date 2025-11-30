@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { FinInfluencer, InfluencerPost, User, Subscription } from "@/api/entities";
+import { FinInfluencer, InfluencerPost, User, Subscription } from "@/lib/apiClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
