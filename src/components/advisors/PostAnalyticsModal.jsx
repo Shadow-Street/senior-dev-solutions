@@ -16,7 +16,7 @@ import {
   XCircle,
   Calendar
 } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import apiClient from '@/lib/apiClient';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 

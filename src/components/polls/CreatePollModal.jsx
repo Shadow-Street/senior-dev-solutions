@@ -18,7 +18,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns";
 import { Calendar as CalendarIcon, Crown, Shield, Upload, X, Image as ImageIcon } from "lucide-react";
 import { toast } from 'sonner';
-import { base44 } from '@/api/base44Client';
+import apiClient from '@/lib/apiClient';
 
 export default function CreatePollModal({ open, onClose, room, user, onCreatePoll }) {
   const [formData, setFormData] = useState({

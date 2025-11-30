@@ -21,7 +21,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from '@/components/ui/badge';
 import { Video, Upload, Link as LinkIcon, FileText, Sparkles, X } from 'lucide-react';
 import { toast } from "sonner";
-import { base44 } from '@/api/base44Client';
+import apiClient from '@/lib/apiClient';
 
 export default function CreateContentModal({ open, onClose, onCreate }) {
   const [formData, setFormData] = useState({

@@ -21,8 +21,8 @@ import {
   Loader2
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
+import apiClient from '@/lib/apiClient';
 
 export default function EnrollmentModal({ open, onClose, course, influencer }) {
   const [isProcessing, setIsProcessing] = useState(false);

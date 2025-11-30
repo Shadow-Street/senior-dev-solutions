@@ -171,6 +171,10 @@ export const MessageReaction = createEntityAPI('/messages/reactions');
 export const ChatRoom = createEntityAPI('/chatrooms');
 export const ChatRoomParticipant = createEntityAPI('/chatrooms/participants');
 
+// News & Content
+export const News = createEntityAPI('/news');
+export const PledgePayment = createEntityAPI('/pledges/payments');
+
 // Notifications
 export const Notification = createEntityAPI('/notifications');
 export const NotificationSetting = createEntityAPI('/notifications/settings');

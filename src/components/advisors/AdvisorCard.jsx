@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Users, Star, CheckCircle, Shield, Lock, Crown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
+import apiClient from '@/lib/apiClient';
 import { useFeatureAccess } from '../hooks/useFeatureAccess';
 
 export default function AdvisorCard({ advisor, onSubscribe, userSubscriptions }) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { User, Advisor } from '@/api/entities';
-import { base44 } from '@/api/base44Client';
+import { User, Advisor } from '@/lib/apiClient';
+import apiClient from '@/lib/apiClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';

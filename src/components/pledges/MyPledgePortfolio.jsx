@@ -13,8 +13,8 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 
-import { base44 } from '@/api/base44Client';
-import { PledgeSession, Pledge, PledgePayment, PledgeExecutionRecord, PledgeAuditLog, PledgeAccessRequest, Stock, User } from '@/api/entities'; // Added Stock, User
+import apiClient from '@/lib/apiClient';
+import { PledgeSession, Pledge, PledgePayment, PledgeExecutionRecord, PledgeAuditLog, PledgeAccessRequest, Stock, User } from '@/lib/apiClient'; // Added Stock, User
 
 import { useRealTimePledgeUpdates, requestNotificationPermission } from '../hooks/useRealTimePledgeUpdates';
 
