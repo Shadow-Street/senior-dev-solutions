@@ -187,6 +187,8 @@ export const AuditLog = createEntityAPI('/audit/logs');
 export const AdTransaction = createEntityAPI('/ads/transactions');
 export const ModuleApprovalRequest = createEntityAPI('/modules/approvals');
 export const Review = createEntityAPI('/reviews');
+export const PlatformSetting = createEntityAPI('/settings');
+export const TypingIndicatorEntity = createEntityAPI('/chat/typing');
 
 // Feature Configuration
 export const FeatureConfig = {
