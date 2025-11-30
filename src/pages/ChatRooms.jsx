@@ -15,60 +15,79 @@ import {
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { ChatRoom } from "@/api/entities";
-import { useAuth } from "@/contexts/AuthContext";
 
 import ChatRoomCard from "../components/chat/ChatRoomCard";
 import CreateRoomModal from "../components/chat/CreateRoomModal";
 import ChatInterface from "../components/chat/ChatInterface";
+// import "./../components/chat/ChatRoomCard.css";
+
+// Sample data - NO DATABASE CALLS
+const sampleRooms = [
+  {
+    id: '1',
+    name: 'RELIANCE Traders Hub',
+    description: 'Discuss Reliance Industries stock movements, earnings, and trading strategies',
+    stock_symbol: 'RELIANCE',
+    room_type: 'stock_specific',
+    participant_count: 156
+  },
+  {
+    id: '2',
+    name: 'IT Sector Discussion',
+    description: 'Chat about TCS, Infosys, Wipro and other IT stocks',
+    room_type: 'sector',
+    participant_count: 89
+  },
+  {
+    id: '3',
+    name: 'Banking Stocks United',
+    description: 'HDFC Bank, ICICI Bank and other banking sector discussions',
+    room_type: 'sector',
+    participant_count: 134
+  },
+  {
+    id: '4',
+    name: 'General Trading Room',
+    description: 'Open discussion for all retail traders',
+    room_type: 'general',
+    participant_count: 267
+  },
+  {
+    id: '5',
+    name: 'TCS Earnings Call',
+    description: 'Live discussion during TCS quarterly results',
+    stock_symbol: 'TCS',
+    room_type: 'stock_specific',
+    is_meeting_active: true,
+    participant_count: 78
+  },
+  {
+    id: '6',
+    name: 'Admin Announcements',
+    description: 'Official updates and stock recommendations from admins',
+    room_type: 'admin',
+    participant_count: 1205,
+    admin_only_post: true
+  }
+];
 
 export default function ChatRooms() {
-  const [chatRooms, setChatRooms] = useState([]);
+  const [chatRooms, setChatRooms] = useState(sampleRooms);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
-  const { user } = useAuth();
+  const user = null; // Guest mode - no authentication
 
   useEffect(() => {
-    loadChatRooms();
+    // No API calls - just set loading to false
+    setIsLoading(false);
   }, []);
 
-  const loadChatRooms = async () => {
-    try {
-      setIsLoading(true);
-      const rooms = await ChatRoom.list();
-      setChatRooms(rooms);
-    } catch (error) {
-      console.error('Error loading chat rooms:', error);
-      toast.error('Failed to load chat rooms');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleCreateRoom = async (roomData) => {
-    try {
-      const newRoom = await ChatRoom.create(roomData);
-      setChatRooms([newRoom, ...chatRooms]);
-      setShowCreateModal(false);
-      toast.success('Chat room created successfully');
-    } catch (error) {
-      console.error('Error creating room:', error);
-      toast.error('Failed to create chat room');
-    }
-  };
-
-  const handleDeleteRoom = async (roomId) => {
-    try {
-      await ChatRoom.delete(roomId);
-      setChatRooms(chatRooms.filter(room => room.id !== roomId));
-      toast.success('Chat room deleted');
-    } catch (error) {
-      console.error('Error deleting room:', error);
-      toast.error('Failed to delete chat room');
-    }
+  const handleCreateRoom = (roomData) => {
+    toast.info("Feature demo - room creation requires login");
+    setShowCreateModal(false);
   };
 
   const filteredRooms = chatRooms.filter((room) => {
@@ -95,21 +114,6 @@ export default function ChatRooms() {
         onBack={() => setSelectedRoom(null)}
         onUpdateRoom={() => {}}
       />
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-6">
-        <div className="max-w-7xl mx-auto">
-          <Skeleton className="h-12 w-64 mb-8" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Skeleton key={i} className="h-48" />
-            ))}
-          </div>
-        </div>
-      </div>
     );
   }
 
@@ -177,7 +181,7 @@ export default function ChatRooms() {
               room={room}
               user={user}
               onRoomClick={setSelectedRoom}
-              onDelete={handleDeleteRoom}
+              onDelete={() => {}}
             />
           ))}
         </div>
