@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import apiClient from '@/lib/apiClient';
 import { Loader2, Lock } from 'lucide-react';
 import AdvisorLayout from '../components/layouts/AdvisorLayout';
 import PledgeManagementAccess from '../components/advisors/PledgeManagementAccess';

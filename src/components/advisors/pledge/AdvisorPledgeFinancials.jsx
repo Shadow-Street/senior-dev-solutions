@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import apiClient from '@/lib/apiClient';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { DollarSign, Wallet, TrendingUp, Clock, CheckCircle } from 'lucide-react';

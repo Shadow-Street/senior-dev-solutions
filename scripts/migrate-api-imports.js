@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Migration script to replace @/api/entities imports with @/lib/apiClient
+ * Migration script to replace old API imports with new @/lib/apiClient
  * This script updates all .js, .jsx, .ts, and .tsx files in the src directory
  */
 
@@ -30,7 +30,7 @@ function migrateFile(filePath) {
   let content = fs.readFileSync(filePath, 'utf8');
   const originalContent = content;
 
-  // Replace all variations of @/api/entities imports
+  // Replace @/api/entities imports
   content = content.replace(
     /from ['"]@\/api\/entities['"]/g,
     "from '@/lib/apiClient'"
@@ -40,6 +40,21 @@ function migrateFile(filePath) {
     /from ['"]src\/api\/entities['"]/g,
     "from '@/lib/apiClient'"
   );
+
+  // Replace base44Client imports
+  content = content.replace(
+    /import\s*{\s*base44\s*}\s*from\s*['"]@\/api\/base44Client['"]/g,
+    "import apiClient from '@/lib/apiClient'"
+  );
+
+  content = content.replace(
+    /import\s*{\s*base44\s*}\s*from\s*['"]src\/api\/base44Client['"]/g,
+    "import apiClient from '@/lib/apiClient'"
+  );
+
+  // Replace base44 usage with apiClient in code
+  content = content.replace(/\bbase44\./g, 'apiClient.');
+  content = content.replace(/\bbase44\(/g, 'apiClient(');
 
   // Only write if content changed
   if (content !== originalContent) {
@@ -66,6 +81,11 @@ function main() {
   });
   
   console.log(`\n✨ Migration complete! ${migratedCount} files updated.`);
+  console.log('\n📝 Next steps:');
+  console.log('1. Review the changes in your git diff');
+  console.log('2. Test the application thoroughly');
+  console.log('3. Start both backend (cd backend_protocall && npm run dev) and frontend (npm run dev)');
+  console.log('4. Check for any remaining API compatibility issues\n');
 }
 
 main();

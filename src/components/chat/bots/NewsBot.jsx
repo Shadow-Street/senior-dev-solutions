@@ -1,5 +1,5 @@
-import { base44 } from '@/api/base44Client';
-import { Message, News } from '@/api/entities';
+import apiClient from '@/lib/apiClient';
+import { Message, News } from '@/lib/apiClient';
 
 export class NewsBot {
   static async postRelevantNews(chatRoomId, stockSymbol) {
