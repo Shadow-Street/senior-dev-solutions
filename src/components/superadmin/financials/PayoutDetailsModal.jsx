@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { PayoutRequest, Notification, PlatformSetting } from '@/api/entities';
+import { PayoutRequest, Notification, PlatformSetting } from '@/lib/apiClient';
 import { CheckCircle, XCircle, DollarSign, Calendar, CreditCard, Building, AlertTriangle, Info, Zap, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 

@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { PledgeSession, Pledge, PledgeExecutionRecord } from '@/api/entities';
+import { PledgeSession, Pledge, PledgeExecutionRecord } from '@/lib/apiClient';
 
 /**
  * Custom hook for real-time pledge pool updates

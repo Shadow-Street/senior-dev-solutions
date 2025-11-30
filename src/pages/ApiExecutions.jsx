@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PledgeExecutionRecord } from '@/api/entities';
+import { PledgeExecutionRecord } from '@/lib/apiClient';
 import { Loader2, ServerCrash } from 'lucide-react';
 
 export default function ApiExecutions() {

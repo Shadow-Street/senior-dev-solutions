@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react';
-import { Event, EventTicket, EventAttendee, PayoutRequest, Notification, EventCommissionTracking, EventReview } from '@/api/entities';
+import { Event, EventTicket, EventAttendee, PayoutRequest, Notification, EventCommissionTracking, EventReview } from '@/lib/apiClient';
 import { toast } from 'sonner';
 
 /**

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { EventReview, Notification, Event } from '@/api/entities';
+import { EventReview, Notification, Event } from '@/lib/apiClient';
 import {
   Dialog,
   DialogContent,

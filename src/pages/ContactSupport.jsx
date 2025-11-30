@@ -18,7 +18,7 @@ import {
   HelpCircle,
   AlertCircle
 } from 'lucide-react';
-import { ContactInquiry } from '@/api/entities';
+import { ContactInquiry } from '@/lib/apiClient';
 import { toast } from 'sonner';
 import PageFooter from '../components/footer/PageFooter';
 import { usePlatformSettings } from '../components/hooks/usePlatformSettings';

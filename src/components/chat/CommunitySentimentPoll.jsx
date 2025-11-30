@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Poll, PollVote, Pledge } from '@/api/entities';
+import { Poll, PollVote, Pledge } from '@/lib/apiClient';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from 'sonner';
 import PollCard from '../polls/PollCard';

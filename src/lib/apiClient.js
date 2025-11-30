@@ -97,13 +97,86 @@ function createEntityAPI(endpoint) {
   };
 }
 
-// Entity APIs
-export const PledgeAPI = createEntityAPI('/pledges/pledges');
-export const PledgeSessionAPI = createEntityAPI('/pledges/sessions');
-export const PledgeExecutionRecordAPI = createEntityAPI('/pledges/executions');
-export const PledgeAccessRequestAPI = createEntityAPI('/pledges/access-requests');
-export const FundTransactionAPI = createEntityAPI('/funds/transactions');
-export const FeatureConfigAPI = {
+// Entity APIs - Comprehensive list
+// Pledge & Session Management
+export const Pledge = createEntityAPI('/pledges/pledges');
+export const PledgeSession = createEntityAPI('/pledges/sessions');
+export const PledgeExecutionRecord = createEntityAPI('/pledges/executions');
+export const PledgeAccessRequest = createEntityAPI('/pledges/access-requests');
+export const PledgeAuditLog = createEntityAPI('/pledges/audit-logs');
+export const AdvisorPledgeAccessRequest = createEntityAPI('/pledges/advisor-access-requests');
+
+// Fund Management
+export const FundTransaction = createEntityAPI('/funds/transactions');
+export const FundAllocation = createEntityAPI('/funds/allocations');
+export const FundPlan = createEntityAPI('/funds/plans');
+export const FundWallet = createEntityAPI('/funds/wallets');
+export const FundNotification = createEntityAPI('/funds/notifications');
+export const FundWithdrawalRequest = createEntityAPI('/funds/withdrawals');
+export const FundPayoutRequest = createEntityAPI('/funds/payouts');
+export const FundInvoice = createEntityAPI('/funds/invoices');
+
+// User & Profile Management
+export const User = createEntityAPI('/users');
+export const TrustScoreLog = createEntityAPI('/users/trust-score-logs');
+export const Advisor = createEntityAPI('/users/advisors');
+export const UserInvestment = createEntityAPI('/users/investments');
+
+// Investment & Investor Management
+export const Investor = createEntityAPI('/investments/investors');
+export const InvestmentRequest = createEntityAPI('/investments/requests');
+export const InvestorRequest = createEntityAPI('/investments/investor-requests');
+
+// Stock Management
+export const Stock = createEntityAPI('/stocks');
+
+// Events Management
+export const Event = createEntityAPI('/events');
+export const EventTicket = createEntityAPI('/events/tickets');
+export const EventAttendee = createEntityAPI('/events/attendees');
+export const EventReview = createEntityAPI('/events/reviews');
+export const EventCommissionTracking = createEntityAPI('/events/commissions');
+export const RefundRequest = createEntityAPI('/events/refunds');
+
+// FinInfluencer & Courses
+export const FinInfluencer = createEntityAPI('/finfluencers');
+export const Course = createEntityAPI('/courses');
+export const CourseEnrollment = createEntityAPI('/courses/enrollments');
+
+// Revenue & Payouts
+export const RevenueTransaction = createEntityAPI('/revenue/transactions');
+export const PayoutRequest = createEntityAPI('/revenue/payouts');
+
+// Moderation & Compliance
+export const ModerationLog = createEntityAPI('/moderation/logs');
+export const ContactInquiry = createEntityAPI('/moderation/inquiries');
+export const Feedback = createEntityAPI('/moderation/feedback');
+
+// Subscriptions & Payments
+export const PromoCode = createEntityAPI('/subscriptions/promo-codes');
+export const SubscriptionTransaction = createEntityAPI('/subscriptions/transactions');
+
+// Polls & Community
+export const Poll = createEntityAPI('/polls');
+export const PollVote = createEntityAPI('/polls/votes');
+
+// Chat & Messaging
+export const Message = createEntityAPI('/messages');
+export const MessageReaction = createEntityAPI('/messages/reactions');
+export const ChatRoom = createEntityAPI('/chatrooms');
+export const ChatRoomParticipant = createEntityAPI('/chatrooms/participants');
+
+// Notifications
+export const Notification = createEntityAPI('/notifications');
+export const NotificationSetting = createEntityAPI('/notifications/settings');
+
+// Platform Settings
+export const PlatformSetting = createEntityAPI('/platform/settings');
+export const AlertConfiguration = createEntityAPI('/platform/alert-configs');
+export const EntityConfig = createEntityAPI('/platform/entity-configs');
+
+// Feature Configuration
+export const FeatureConfig = {
   async list() {
     const response = await apiClient.get('/features');
     return response.data;
@@ -113,5 +186,13 @@ export const FeatureConfigAPI = {
     return response.data;
   },
 };
+
+// Legacy aliases for backward compatibility
+export const PledgeAPI = Pledge;
+export const PledgeSessionAPI = PledgeSession;
+export const PledgeExecutionRecordAPI = PledgeExecutionRecord;
+export const PledgeAccessRequestAPI = PledgeAccessRequest;
+export const FundTransactionAPI = FundTransaction;
+export const FeatureConfigAPI = FeatureConfig;
 
 export default apiClient;

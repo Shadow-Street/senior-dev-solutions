@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FinInfluencer, User, Course, CourseEnrollment, RevenueTransaction, PayoutRequest } from '@/api/entities';
+import { FinInfluencer, User, Course, CourseEnrollment, RevenueTransaction, PayoutRequest } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

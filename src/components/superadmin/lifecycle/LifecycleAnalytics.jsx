@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FeatureConfig } from '@/api/entities';
+import { FeatureConfig } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Activity, TrendingUp, TrendingDown, Clock, CheckCircle } from 'lucide-react';
 
