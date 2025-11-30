@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User } from '@/api/entities';
+import { User } from '@/lib/apiClient';
 import FinfluencerDashboard from './FinfluencerDashboard';
 import AdvisorDashboard from './AdvisorDashboard';
 import { Skeleton } from '@/components/ui/skeleton';
