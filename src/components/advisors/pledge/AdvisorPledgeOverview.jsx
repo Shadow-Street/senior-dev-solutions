@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/api/Client';
+import { PledgeSession, AdvisorPledgeCommission, PledgeExecutionRecord } from '@/api/entities';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, DollarSign, Target, BarChart3, Clock, CheckCircle, Activity } from 'lucide-react';
@@ -34,10 +34,10 @@ export default function AdvisorPledgeOverview({ user, advisorProfile, accessRequ
 
       try {
         const [sessions, commissions] = await Promise.all([
-          base44.entities.PledgeSession.filter({
+          PledgeSession.filter({
             created_by_advisor_id: advisorProfile.id
           }, '-created_date', 10).catch(() => []),
-          base44.entities.AdvisorPledgeCommission.filter({
+          AdvisorPledgeCommission.filter({
             advisor_id: advisorProfile.id
           }, '-created_date', 5).catch(() => [])
         ]);
@@ -48,7 +48,7 @@ export default function AdvisorPledgeOverview({ user, advisorProfile, accessRequ
         const totalPledges = sessions.reduce((sum, s) => sum + (s.total_pledges || 0), 0);
         const totalPledgeValue = sessions.reduce((sum, s) => sum + (s.total_pledge_value || 0), 0);
 
-        const allExecutions = await base44.entities.PledgeExecutionRecord.list().catch(() => []);
+        const allExecutions = await PledgeExecutionRecord.list().catch(() => []);
         if (!isMounted || abortController.signal.aborted) return;
 
         const sessionIds = sessions.map(s => s.id);
