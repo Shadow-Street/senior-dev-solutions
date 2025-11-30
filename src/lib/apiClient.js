@@ -189,8 +189,6 @@ export const ModuleApprovalRequest = createEntityAPI('/modules/approvals');
 export const Review = createEntityAPI('/reviews');
 
 // Feature Configuration
-export const PlatformSetting = createEntityAPI('/platform/settings');
-
 export const FeatureConfig = {
   async list() {
     const response = await apiClient.get('/features');
