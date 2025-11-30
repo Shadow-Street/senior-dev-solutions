@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { User, Referral, ReferralBadge, Subscription } from "@/api/entities";
+import { User, Referral, ReferralBadge, Subscription } from "@/lib/apiClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {

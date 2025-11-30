@@ -155,10 +155,15 @@ export const Feedback = createEntityAPI('/moderation/feedback');
 // Subscriptions & Payments
 export const PromoCode = createEntityAPI('/subscriptions/promo-codes');
 export const SubscriptionTransaction = createEntityAPI('/subscriptions/transactions');
+export const Subscription = createEntityAPI('/subscriptions');
 
 // Polls & Community
 export const Poll = createEntityAPI('/polls');
 export const PollVote = createEntityAPI('/polls/votes');
+
+// Referrals
+export const Referral = createEntityAPI('/referrals');
+export const ReferralBadge = createEntityAPI('/referrals/badges');
 
 // Chat & Messaging
 export const Message = createEntityAPI('/messages');
