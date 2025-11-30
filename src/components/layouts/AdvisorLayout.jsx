@@ -49,7 +49,7 @@ import {
   Activity,
   Target // Added Target icon for pledge sessions
 } from 'lucide-react';
-import { User, PlatformSetting, AdvisorPledgeAccessRequest, Advisor } from '@/api/entities'; // Added PlatformSetting
+import { User, PlatformSetting, AdvisorPledgeAccessRequest, Advisor } from '@/lib/apiClient'; // Added PlatformSetting
 
 export default function AdvisorLayout({ children, currentPageName }) { // Renamed activePage to currentPageName
   const location = useLocation();

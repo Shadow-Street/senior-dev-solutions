@@ -15,7 +15,7 @@ import {
   PlatformSetting,
   InvestmentRequest,
   FundInvoice
-} from '@/api/entities';
+} from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

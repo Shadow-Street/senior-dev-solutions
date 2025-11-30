@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, TrendingDown, ExternalLink, BarChart3, Sparkles } from 'lucide-react';
-import { Stock } from '@/api/entities';
+import { Stock } from '@/lib/apiClient';
 import { stockAPI } from '../stocks/LiveStockAPI';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Link } from 'react-router-dom';

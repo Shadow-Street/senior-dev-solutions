@@ -1,4 +1,4 @@
-import { PledgeAuditLog, User } from '@/api/entities';
+import { PledgeAuditLog, User } from '@/lib/apiClient';
 
 /**
  * Enhanced Audit Logger for Pledge Operations

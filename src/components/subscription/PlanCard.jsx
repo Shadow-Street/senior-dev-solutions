@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Check, Sparkles, Crown, Zap, Shield, UserCircle, Tag, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
-import { PromoCode, SubscriptionTransaction } from "@/api/entities";
+import { PromoCode, SubscriptionTransaction } from "@/lib/apiClient";
 
 // ✅ Feature name mapping
 const featureNameMap = {

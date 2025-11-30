@@ -1,4 +1,4 @@
-import { Message } from '@/api/entities';
+import { Message } from '@/lib/apiClient';
 
 export class ReminderBot {
   static TRADING_HOURS = {

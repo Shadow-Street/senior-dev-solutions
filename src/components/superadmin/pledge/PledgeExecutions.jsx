@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Loader2, TrendingUp, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { PledgeExecutionRecord, PledgeSession } from '@/api/entities';
+import { PledgeExecutionRecord, PledgeSession } from '@/lib/apiClient';
 import AwaitingSellExecutionCard from './AwaitingSellExecutionCard';
 import { Button } from '@/components/ui/button';
 

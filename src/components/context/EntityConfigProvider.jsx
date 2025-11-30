@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { EntityConfig } from '@/api/entities';
+import { EntityConfig } from '@/lib/apiClient';
 
 export const EntityConfigContext = createContext({
   configs: [],

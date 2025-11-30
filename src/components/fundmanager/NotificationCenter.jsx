@@ -3,7 +3,7 @@ import { Bell, X, Check, Settings, Filter, Loader2, CheckCheck, Trash2 } from 'l
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Notification, NotificationSetting } from '@/api/entities';
+import { Notification, NotificationSetting } from '@/lib/apiClient';
 import { toast } from 'sonner';
 
 export default function NotificationCenter({ user, onSettingsClick }) {

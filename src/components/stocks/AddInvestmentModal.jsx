@@ -16,7 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon, Plus, X, Search, Loader2 } from "lucide-react";
-import { Stock, User, UserInvestment } from "@/api/entities";
+import { Stock, User, UserInvestment } from "@/lib/apiClient";
 import { toast } from "sonner";
 import { debounce } from "lodash";
 

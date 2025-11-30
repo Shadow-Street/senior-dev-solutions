@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChatRoomParticipant, User } from '@/api/entities';
+import { ChatRoomParticipant, User } from '@/lib/apiClient';
 import {
   Dialog,
   DialogContent,

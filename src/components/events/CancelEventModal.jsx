@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Event, EventTicket, RefundRequest } from '@/api/entities';
+import { Event, EventTicket, RefundRequest } from '@/lib/apiClient';
 import {
   Dialog,
   DialogContent,

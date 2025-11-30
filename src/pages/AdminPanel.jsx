@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { User, TrustScoreLog, ModerationLog, ContactInquiry, Advisor, PlatformSetting, Feedback } from '@/api/entities';
+import { User, TrustScoreLog, ModerationLog, ContactInquiry, Advisor, PlatformSetting, Feedback } from '@/lib/apiClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';

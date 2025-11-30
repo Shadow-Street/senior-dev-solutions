@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { File, Download, Reply, Trash2 } from 'lucide-react';
-import { MessageReaction } from '@/api/entities';
+import { MessageReaction } from '@/lib/apiClient';
 import { toast } from 'sonner';
 import StockMention from './StockMention';
 import { motion, AnimatePresence } from 'framer-motion';

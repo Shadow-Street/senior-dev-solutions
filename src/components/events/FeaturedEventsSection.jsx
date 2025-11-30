@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { EventAttendee } from '@/api/entities';
+import { EventAttendee } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
