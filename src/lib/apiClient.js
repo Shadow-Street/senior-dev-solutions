@@ -170,6 +170,10 @@ export const Message = createEntityAPI('/messages');
 export const MessageReaction = createEntityAPI('/messages/reactions');
 export const ChatRoom = createEntityAPI('/chatrooms');
 export const ChatRoomParticipant = createEntityAPI('/chatrooms/participants');
+export const Meeting = createEntityAPI('/meetings');
+
+// Platform Settings
+export const PlatformSetting = createEntityAPI('/platform/settings');
 
 // News & Content
 export const News = createEntityAPI('/news');
