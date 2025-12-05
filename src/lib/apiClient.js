@@ -175,6 +175,7 @@ export const MessageReaction = createEntityAPI('/messages/reactions');
 export const ChatRoom = createEntityAPI('/chatrooms');
 export const ChatRoomParticipant = createEntityAPI('/chatrooms/participants');
 export const Meeting = createEntityAPI('/meetings');
+export const TypingIndicator = createEntityAPI('/typing-indicators');
 
 // Platform Settings
 export const PlatformSetting = createEntityAPI('/platform/settings');
@@ -208,6 +209,22 @@ export const CampaignBilling = createEntityAPI('/ads/billing');
 // Alerts & Configuration
 export const AlertConfiguration = createEntityAPI('/alerts/configurations');
 export const EntityConfig = createEntityAPI('/entity-configs');
+
+// User Roles
+export const Role = createEntityAPI('/roles');
+
+// Watchlist & Portfolios
+export const Watchlist = createEntityAPI('/watchlists');
+export const Portfolio = createEntityAPI('/portfolios');
+export const PortfolioHolding = createEntityAPI('/portfolios/holdings');
+
+// Chat Bots
+export const ChatBot = createEntityAPI('/chatbots');
+export const BotConversation = createEntityAPI('/chatbots/conversations');
+
+// Reports & Analytics
+export const Report = createEntityAPI('/reports');
+export const AnalyticsEvent = createEntityAPI('/analytics/events');
 
 // Feature Configuration
 export const FeatureConfig = {
