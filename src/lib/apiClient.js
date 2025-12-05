@@ -137,6 +137,10 @@ export const EventAttendee = createEntityAPI('/events/attendees');
 export const EventReview = createEntityAPI('/events/reviews');
 export const EventCommissionTracking = createEntityAPI('/events/commissions');
 export const RefundRequest = createEntityAPI('/events/refunds');
+export const EventCheckIn = createEntityAPI('/events/check-ins');
+export const EventPromoCode = createEntityAPI('/events/promo-codes');
+export const EventReminder = createEntityAPI('/events/reminders');
+export const EventFeedback = createEntityAPI('/events/feedback');
 
 // FinInfluencer & Courses
 export const FinInfluencer = createEntityAPI('/finfluencers');
@@ -183,7 +187,7 @@ export const PledgePayment = createEntityAPI('/pledges/payments');
 export const Notification = createEntityAPI('/notifications');
 export const NotificationSetting = createEntityAPI('/notifications/settings');
 
-// Missing entities - add to apiClient
+// Additional Entities
 export const InfluencerPost = createEntityAPI('/influencers/posts');
 export const EventOrganizer = createEntityAPI('/events/organizers');
 export const SubscriptionPlan = createEntityAPI('/subscriptions/plans');
@@ -191,6 +195,19 @@ export const AuditLog = createEntityAPI('/audit/logs');
 export const AdTransaction = createEntityAPI('/ads/transactions');
 export const ModuleApprovalRequest = createEntityAPI('/modules/approvals');
 export const Review = createEntityAPI('/reviews');
+
+// Advisor & Recommendations
+export const AdvisorRecommendation = createEntityAPI('/advisors/recommendations');
+export const AdvisorPledgeCommission = createEntityAPI('/advisors/pledge-commissions');
+
+// Ads & Campaigns
+export const AdCampaign = createEntityAPI('/ads/campaigns');
+export const Vendor = createEntityAPI('/vendors');
+export const CampaignBilling = createEntityAPI('/ads/billing');
+
+// Alerts & Configuration
+export const AlertConfiguration = createEntityAPI('/alerts/configurations');
+export const EntityConfig = createEntityAPI('/entity-configs');
 
 // Feature Configuration
 export const FeatureConfig = {
