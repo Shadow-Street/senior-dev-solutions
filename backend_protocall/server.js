@@ -1,5 +1,5 @@
 require("dotenv").config();
-const app = require("./src/app");
+const { server } = require("./src/app");
 const { sequelize } = require("./src/models");
 
 const PORT = process.env.PORT || 5000;
@@ -9,11 +9,12 @@ async function start() {
     await sequelize.authenticate();
     console.log("Database connection established");
 
-    await sequelize.sync(); // in prod you might want migrations instead
+    await sequelize.sync({ alter: true });
     console.log("Models synchronized");
 
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
+      console.log(`WebSocket server ready on ws://localhost:${PORT}`);
     });
   } catch (err) {
     console.error("Failed to start server:", err);

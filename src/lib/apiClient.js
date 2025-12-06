@@ -208,6 +208,7 @@ export const CampaignBilling = createEntityAPI('/ads/billing');
 
 // Alerts & Configuration
 export const AlertConfiguration = createEntityAPI('/alerts/configurations');
+export const AlertSetting = createEntityAPI('/alerts/settings');
 export const EntityConfig = createEntityAPI('/entity-configs');
 
 // User Roles
