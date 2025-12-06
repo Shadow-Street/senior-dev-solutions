@@ -6,15 +6,17 @@ const { authMiddleware } = require("../middleware/auth");
 
 // Alert Configurations
 const configRouter = express.Router();
-const configController = createCrudController(db.AlertConfiguration, {
-  defaultOrderBy: 'created_at',
-  defaultOrder: 'DESC'
-});
+const configController = createCrudController(db.AlertConfiguration);
+createCrudRoutes(configRouter, configController);
+router.use('/configurations', configRouter);
 
-// Get user's alert configurations
-configRouter.get('/my-alerts', authMiddleware, async (req, res) => {
+// Alert Settings CRUD
+const settingsRouter = express.Router();
+const settingsController = createCrudController(db.AlertSetting);
+
+settingsRouter.get('/my-alerts', authMiddleware, async (req, res) => {
   try {
-    const alerts = await db.AlertConfiguration.findAll({
+    const alerts = await db.AlertSetting.findAll({
       where: { user_id: req.user.id },
       order: [['created_at', 'DESC']]
     });
@@ -24,28 +26,18 @@ configRouter.get('/my-alerts', authMiddleware, async (req, res) => {
   }
 });
 
-// Toggle alert
-configRouter.put('/:id/toggle', authMiddleware, async (req, res) => {
+settingsRouter.get('/stock/:symbol', authMiddleware, async (req, res) => {
   try {
-    const { id } = req.params;
-    const alert = await db.AlertConfiguration.findByPk(id);
-    
-    if (!alert) {
-      return res.status(404).json({ error: 'Alert not found' });
-    }
-    
-    if (alert.user_id !== req.user.id) {
-      return res.status(403).json({ error: 'Not authorized' });
-    }
-    
-    await alert.update({ is_active: !alert.is_active });
-    res.json(alert);
+    const alerts = await db.AlertSetting.findAll({
+      where: { user_id: req.user.id, stock_symbol: req.params.symbol }
+    });
+    res.json(alerts);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-createCrudRoutes(configRouter, configController);
-router.use('/configurations', configRouter);
+createCrudRoutes(settingsRouter, settingsController);
+router.use('/settings', settingsRouter);
 
 module.exports = router;
