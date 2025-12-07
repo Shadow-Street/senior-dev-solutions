@@ -216,6 +216,10 @@ export const CommissionTracking = createEntityAPI('/commissions/tracking');
 
 // User Roles
 export const Role = createEntityAPI('/roles');
+export const RoleTemplate = createEntityAPI('/roles/templates');
+export const RoleTemplatePermission = createEntityAPI('/roles/template-permissions');
+export const RolePermission = createEntityAPI('/roles/permissions');
+export const Permission = createEntityAPI('/permissions');
 
 // Watchlist & Portfolios
 export const Watchlist = createEntityAPI('/watchlists');

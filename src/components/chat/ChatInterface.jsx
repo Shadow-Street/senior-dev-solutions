@@ -8,8 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowLeft, Users, Settings, Send, Bot, MessageSquare, Paperclip, File, X, Loader2, ArrowDown, Plus, Reply, Pin, BarChart3 } from "lucide-react";
-import { FileText, Download } from 'lucide-react'; // Added FileText and Download
+import { ArrowLeft, Users, Settings, Send, Bot, MessageSquare, Paperclip, File, X, Loader2, ArrowDown, Plus, Reply, Pin, BarChart3, Wifi, WifiOff } from "lucide-react";
+import { FileText, Download } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
@@ -21,7 +21,7 @@ import TrustScoreBadge from "../ui/TrustScoreBadge";
 import MessageContent from './MessageContent';
 import CreatePollModal from '../polls/CreatePollModal';
 import ChatSettingsModal from './ChatSettingsModal';
-import ParticipantManagementModal from './ParticipantManagementModal'; // Added import for ParticipantManagementModal
+import ParticipantManagementModal from './ParticipantManagementModal';
 
 import CommunitySentimentPoll from './CommunitySentimentPoll';
 import TomorrowsPick from './TomorrowsPick';
@@ -37,18 +37,8 @@ import DeleteMessageModal from './DeleteMessageModal';
 
 import { Pencil, Trash2 } from 'lucide-react';
 
-const sampleUsers = [
-  { id: 'user1', display_name: 'TraderJoe', profile_color: '#3B82F6', email: 'joe@example.com', trust_score: 85 },
-  { id: 'user2', display_name: 'CryptoKing', profile_color: '#8B5CF6', email: 'king@example.com', trust_score: 45 },
-  { id: 'user3', display_name: 'StockSensei', profile_color: '#10B981', email: 'sensei@example.com', trust_score: 15 }
-];
-
-const sampleMessages = [
-  { id: 'msg1', chat_room_id: '1', user_id: 'user1', created_by: 'joe@example.com', content: 'RELIANCE looks strong today!', created_date: new Date(Date.now() - 5 * 60 * 1000) },
-  { id: 'msg2', chat_room_id: '1', user_id: 'user2', created_by: 'king@example.com', content: 'Agreed, volume is picking up.', created_date: new Date(Date.now() - 4 * 60 * 1000) },
-  { id: 'msg3', chat_room_id: '1', is_bot: true, content: '🤖 RELIANCE is up 2.3% today with strong community sentiment at 65% Buy! Volume surge indicates institutional interest. 📈', created_date: new Date(Date.now() - 3 * 60 * 1000), message_type: 'bot_insight' },
-  { id: 'msg4', chat_room_id: '1', user_id: 'user3', created_by: 'sensei@example.com', content: 'Thanks bot! What are the target levels?', created_date: new Date(Date.now() - 2 * 60 * 1000) }
-];
+// Import WebSocket hooks
+import { useChatRoom } from '@/hooks/useChatRoom';
 
 const updateTrustScore = async (user, amount, reason, relatedEntityId = null) => {
   if (!user || !user.id) return;
@@ -65,11 +55,28 @@ const updateTrustScore = async (user, amount, reason, relatedEntityId = null) =>
 };
 
 export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscription }) {
-  const [messages, setMessages] = useState([]);
+  // Use WebSocket chat room hook for real-time messaging
+  const {
+    messages,
+    pinnedMessages,
+    users,
+    isLoading,
+    isConnected,
+    typingUsers,
+    connectionError,
+    sendMessage: wsSendMessage,
+    editMessage: wsEditMessage,
+    deleteMessage: wsDeleteMessage,
+    togglePinMessage,
+    addReaction,
+    startTyping,
+    stopTyping,
+    getUserForMessage,
+    refetch
+  } = useChatRoom(room?.id, user);
+
   const [filteredMessages, setFilteredMessages] = useState([]);
-  const [users, setUsers] = useState({});
   const [newMessage, setNewMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [priceData, setPriceData] = useState(null);
   const [showNewMessageBar, setShowNewMessageBar] = useState(false);
   const messagesEndRef = useRef(null);
@@ -83,13 +90,12 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
   const [moderationWarning, setModerationWarning] = useState(null);
   const [showCreatePollModal, setShowCreatePollModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
-  const [showParticipantModal, setShowParticipantModal] = useState(false); // NEW state
+  const [showParticipantModal, setShowParticipantModal] = useState(false);
 
   const [pollRefreshTrigger, setPollRefreshTrigger] = useState(0);
   const [latestPollStockSymbol, setLatestPollStockSymbol] = useState(room?.stock_symbol || "");
-  const [hasCommunityPoll, setHasCommunityPoll] = useState(false); // NEW: Track if poll exists
+  const [hasCommunityPoll, setHasCommunityPoll] = useState(false);
 
-  const [typingTimeoutRef, setTypingTimeoutRef] = useState(null);
   const [replyingToMessageId, setReplyingToMessageId] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -100,15 +106,11 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
     dateTo: null
   });
 
-  const [pinnedMessages, setPinnedMessages] = useState([]);
   const [showPinnedExpanded, setShowPinnedExpanded] = useState(true);
 
   const [editingMessage, setEditingMessage] = useState(null);
   const [deletingMessage, setDeletingMessage] = useState(null);
 
-  const lastTypingUpdateRef = useRef(0);
-  const initialLoadDoneRef = useRef(false);
-  const isLoadingRef = useRef(false);
   const shouldScrollToBottomRef = useRef(true);
 
   const isUserAtBottom = useCallback(() => {
@@ -126,89 +128,48 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
     }, 100);
   }, []);
 
-  const loadInitialData = useCallback(async () => {
-    if (!room?.id || !isMountedRef.current) return;
-    
-    // Prevent multiple simultaneous loads
-    if (isLoadingRef.current || initialLoadDoneRef.current) {
-      return;
-    }
+  // Initialize component
+  useEffect(() => {
+    isMountedRef.current = true;
+    shouldScrollToBottomRef.current = true;
 
-    isLoadingRef.current = true;
-    setIsLoading(true);
+    return () => {
+      isMountedRef.current = false;
+      shouldScrollToBottomRef.current = false;
+    };
+  }, []);
 
-    try {
-      // Add delay to prevent rate limiting
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      if (!isMountedRef.current) return;
-
-      // Load all data in parallel but batch state updates
-      const [fetchedMessages, pinnedMsgs, fetchedUsers] = await Promise.all([
-        Message.filter({ chat_room_id: room.id }, 'created_date').catch(() => []),
-        Message.filter({ chat_room_id: room.id, is_pinned: true }, '-pinned_at').catch(() => []),
-        User.list().catch(() => [])
-      ]);
-      
-      if (!isMountedRef.current) return;
-      
-      // Prepare all data before any state updates
-      const finalMessages = fetchedMessages.length > 0 ? fetchedMessages : sampleMessages.filter((m) => m.chat_room_id === room.id);
-      const finalPinned = pinnedMsgs || [];
-      
-      const userEmails = [...new Set(finalMessages.filter((m) => !m.is_bot && m.created_by).map((m) => m.created_by))];
-      finalPinned.forEach(msg => {
-        if (!msg.is_bot && msg.created_by && !userEmails.includes(msg.created_by)) {
-          userEmails.push(msg.created_by);
-        }
-      });
-      
-      const usersMap = (fetchedUsers.length > 0 ? fetchedUsers : sampleUsers).reduce((acc, u) => {
-        acc[u.email || u.id] = u;
-        return acc;
-      }, {});
-
-      // Single batch state update - prevents blinking
-      if (isMountedRef.current) {
-        setMessages(finalMessages);
-        setFilteredMessages(finalMessages);
-        setPinnedMessages(finalPinned);
-        setUsers(usersMap);
-        setIsLoading(false);
-        initialLoadDoneRef.current = true;
-        isLoadingRef.current = false;
+  // Auto-scroll on initial load
+  useEffect(() => {
+    if (!isLoading && messages.length > 0) {
+      setTimeout(() => {
+        scrollToBottom('auto');
         shouldScrollToBottomRef.current = true;
-      }
-
-    } catch (error) {
-      if (!isMountedRef.current) return;
-      console.error("Error loading initial data:", error);
-      
-      // Fallback data in single batch update
-      const fallbackMessages = sampleMessages.filter((m) => m.chat_room_id === room.id);
-      setMessages(fallbackMessages);
-      setFilteredMessages(fallbackMessages);
-      setPinnedMessages([]);
-      setIsLoading(false);
-      initialLoadDoneRef.current = true;
-      isLoadingRef.current = false;
-      shouldScrollToBottomRef.current = true;
+      }, 200);
     }
-  }, [room?.id]);
+  }, [isLoading, scrollToBottom]);
 
+  // Scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (isLoading) return;
+
+    const wasAtBottom = isUserAtBottom();
+
+    if (wasAtBottom || shouldScrollToBottomRef.current) {
+      setTimeout(() => {
+        scrollToBottom('auto');
+        shouldScrollToBottomRef.current = false;
+      }, 100);
+    } else {
+      if (messages.length > 0) {
+        setShowNewMessageBar(true);
+      }
+    }
+  }, [messages, isLoading, isUserAtBottom, scrollToBottom]);
+
+  // Post bot welcome message on init
   const postBotMessage = useCallback(async (content) => {
     if (!room?.id || !isMountedRef.current) return;
-
-    const botMessage = {
-      id: 'bot_' + Date.now(),
-      chat_room_id: room.id,
-      content,
-      is_bot: true,
-      message_type: 'bot_insight',
-      created_date: new Date()
-    };
-
-    setMessages((prev) => [...prev, botMessage]);
 
     try {
       await Message.create({
@@ -223,56 +184,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
   }, [room?.id]);
 
   useEffect(() => {
-    isMountedRef.current = true;
-    initialLoadDoneRef.current = false;
-    isLoadingRef.current = false;
-    shouldScrollToBottomRef.current = true;
-    loadInitialData();
-
-    return () => {
-      isMountedRef.current = false;
-      initialLoadDoneRef.current = false;
-      isLoadingRef.current = false;
-      shouldScrollToBottomRef.current = false;
-      if (typingTimeoutRef) {
-        clearTimeout(typingTimeoutRef);
-      }
-    };
-  }, [loadInitialData]);
-
-  // Auto-scroll to bottom on initial load AND whenever messages change
-  useEffect(() => {
-    if (!isLoading && initialLoadDoneRef.current) {
-      // Always scroll to bottom after initial load
-      setTimeout(() => {
-        scrollToBottom('auto');
-        shouldScrollToBottomRef.current = true;
-      }, 200);
-    }
-  }, [isLoading, scrollToBottom]);
-
-  // Aggressive scroll to bottom when messages change
-  useEffect(() => {
-    if (isLoading || !initialLoadDoneRef.current) return;
-
-    const wasAtBottom = isUserAtBottom();
-
-    if (wasAtBottom || shouldScrollToBottomRef.current) {
-      // User was at bottom or should be at bottom - keep them there
-      setTimeout(() => {
-        scrollToBottom('auto');
-        shouldScrollToBottomRef.current = false;
-      }, 100);
-    } else {
-      // User scrolled up - show new message indicator
-      if (messages.length > 0) {
-        setShowNewMessageBar(true);
-      }
-    }
-  }, [messages, isLoading, isUserAtBottom, scrollToBottom]);
-
-  useEffect(() => {
-    if (!isLoading && !chatInitializedRef.current && room?.id && initialLoadDoneRef.current) {
+    if (!isLoading && !chatInitializedRef.current && room?.id && messages.length > 0) {
       chatInitializedRef.current = true;
       setTimeout(() => {
         if (isMountedRef.current) {
@@ -280,9 +192,9 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
         }
       }, 1000);
     }
-  }, [isLoading, room?.id, postBotMessage]);
+  }, [isLoading, room?.id, messages.length, postBotMessage]);
 
-  // NEW: Check if community poll exists for this stock
+  // Check if community poll exists
   useEffect(() => {
     let mounted = true;
 
@@ -304,7 +216,6 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
         }
       } catch (error) {
         if (mounted && !error.message?.includes('aborted')) {
-          console.log("Could not check for existing poll:", error);
           setHasCommunityPoll(false);
         }
       }
@@ -315,7 +226,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
     return () => {
       mounted = false;
     };
-  }, [room?.stock_symbol, pollRefreshTrigger]); // Re-check when poll is created
+  }, [room?.stock_symbol, pollRefreshTrigger]);
 
   const handleScroll = () => {
     const atBottom = isUserAtBottom();
@@ -327,53 +238,23 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
     }
   };
 
-  const handleTyping = useCallback(async () => {
+  // Handle typing with WebSocket
+  const handleTyping = useCallback(() => {
     if (!user || !room?.id) return;
-
-    const now = Date.now();
-    if (now - lastTypingUpdateRef.current < 3000) {
-      return;
-    }
-    lastTypingUpdateRef.current = now;
-
-    try {
-      if (typingTimeoutRef) {
-        clearTimeout(typingTimeoutRef);
-      }
-
-      await TypingIndicatorEntity.create({
-        chat_room_id: room.id,
-        user_id: user.id,
-        user_name: user.display_name || 'User',
-        is_typing: true,
-        last_typed_at: new Date().toISOString()
-      });
-
-      const timeoutId = setTimeout(() => {
-        setTypingTimeoutRef(null);
-      }, 4000);
-
-      setTypingTimeoutRef(timeoutId);
-    } catch (error) {
-      // Silently ignore typing indicator errors
-    }
-  }, [user, room?.id, typingTimeoutRef]);
+    startTyping();
+  }, [user, room?.id, startTyping]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    
-    if (typingTimeoutRef) {
-      clearTimeout(typingTimeoutRef);
-      setTypingTimeoutRef(null);
-    }
+    stopTyping();
 
     if ((!newMessage.trim() && !file) || !user || isSending) return;
 
     setIsSending(true);
-    shouldScrollToBottomRef.current = true; // Force scroll after sending
+    shouldScrollToBottomRef.current = true;
 
     if (user.trust_score !== undefined && user.trust_score < 20) {
-      alert("Your trust score is too low. You are currently muted and cannot send messages.");
+      toast.error("Your trust score is too low. You are currently muted.");
       setIsSending(false);
       return;
     }
@@ -393,23 +274,9 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
       }
     }
 
+    // Handle file upload
     if (file) {
       setIsUploading(true);
-      const tempMessageId = Date.now().toString();
-      const optimisticMessage = {
-        id: tempMessageId,
-        chat_room_id: room.id,
-        content: content || file.name,
-        user_id: user.id,
-        message_type: 'file', // Always file for PDF
-        file_name: file.name,
-        file_url: URL.createObjectURL(file),
-        created_by: user.email,
-        created_date: new Date(),
-        isOptimistic: true,
-        ...(replyMetadata && replyMetadata)
-      };
-      setMessages((prev) => [...prev, optimisticMessage]);
       setNewMessage("");
       setFile(null);
       setReplyingToMessageId(null);
@@ -417,24 +284,17 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
       try {
         const { file_url } = await UploadFile({ file });
 
-        const fileMessageData = {
-          chat_room_id: room.id,
-          content: content || file.name,
-          user_id: user.id,
-          message_type: 'file', // Always file for PDF
+        await wsSendMessage(content || file.name, {
+          message_type: 'file',
           file_url,
           file_name: file.name,
-          created_by: user.email,
-          ...(replyMetadata && replyMetadata)
-        };
+          ...replyMetadata
+        });
 
-        const createdMessage = await Message.create(fileMessageData);
-        setMessages((prev) => prev.map((msg) => msg.id === tempMessageId ? createdMessage : msg));
-        await updateTrustScore(user, 0.2, "Shared a file in chat", createdMessage.id);
+        await updateTrustScore(user, 0.2, "Shared a file in chat");
       } catch (error) {
         console.error("File upload failed", error);
-        alert("Failed to upload file. Please try again.");
-        setMessages((prev) => prev.filter((msg) => msg.id !== tempMessageId));
+        toast.error("Failed to upload file. Please try again.");
       } finally {
         setIsUploading(false);
         setIsSending(false);
@@ -442,6 +302,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
       return;
     }
 
+    // Moderation check
     const moderationResult = MessageModerator.moderateMessage(content);
 
     if (moderationResult.isViolation) {
@@ -459,7 +320,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
         });
 
         const scoreDeduction = moderationResult.violations[0].severity === 'high' ? -10 : -5;
-        await updateTrustScore(user, scoreDeduction, `Message blocked: ${moderationResult.violations[0].reason}`, null);
+        await updateTrustScore(user, scoreDeduction, `Message blocked: ${moderationResult.violations[0].reason}`);
       } catch (error) {
         console.error("Failed to log moderation violation:", error);
       }
@@ -471,6 +332,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
       return;
     }
 
+    // Handle bot commands
     if (content.startsWith('/')) {
       const [command] = content.split(' ');
       switch (command) {
@@ -489,7 +351,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
           postBotMessage('🤖 Available commands:\n/ping - Check bot status\n/trend - Get current stock trend\n/rules - View community guidelines');
           break;
         case '/rules':
-          postBotMessage('📋 Community Guidelines:\n• Keep discussions respectful and professional\n•• No personal contact sharing (WhatsApp/Telegram)\n• No scam links or fraudulent content\n• Focus on legitimate trading strategies\n• Maintain a positive trading environment');
+          postBotMessage('📋 Community Guidelines:\n• Keep discussions respectful and professional\n• No personal contact sharing (WhatsApp/Telegram)\n• No scam links or fraudulent content\n• Focus on legitimate trading strategies');
           break;
         default:
           postBotMessage(`❓ Unknown command: ${command}. Try /help for available commands.`);
@@ -500,42 +362,25 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
       return;
     }
 
+    // Low trust score warning
     if (user.trust_score !== undefined && user.trust_score < 40) {
       setModerationWarning("⚠️ Your trust score is low. Messages may be reviewed by moderators.");
       setTimeout(() => setModerationWarning(null), 3000);
     }
 
-    const tempId = Date.now().toString();
-    const messageData = {
-      id: tempId,
-      chat_room_id: room.id,
-      content: content,
-      user_id: user.id,
-      message_type: 'text',
-      created_by: user.email,
-      created_date: new Date(),
-      ...(replyMetadata && replyMetadata)
-    };
-
-    setMessages((prev) => [...prev, messageData]);
-    setNewMessage("");
-    setReplyingToMessageId(null);
-
+    // Send message via WebSocket
     try {
-      const createdMessage = await Message.create({
-        chat_room_id: room.id,
-        content: content,
-        user_id: user.id,
+      await wsSendMessage(content, {
         message_type: 'text',
-        created_by: user.email,
-        ...(replyMetadata && replyMetadata)
+        ...replyMetadata
       });
 
-      setMessages((prev) => prev.map((msg) => msg.id === tempId ? createdMessage : msg));
-      await updateTrustScore(user, 0.1, "Sent a valid message in chat", createdMessage.id);
+      await updateTrustScore(user, 0.1, "Sent a valid message in chat");
     } catch (error) {
       console.error("Failed to send message", error);
     } finally {
+      setNewMessage("");
+      setReplyingToMessageId(null);
       setIsSending(false);
     }
   };
@@ -543,30 +388,21 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
   const handleFileSelect = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      // Only allow PDF files
       if (selectedFile.type !== 'application/pdf') {
-        alert("Only PDF files are supported. Please upload a PDF document.");
+        toast.error("Only PDF files are supported.");
         e.target.value = null;
         setFile(null);
         return;
       }
-      const maxSizeMB = 10; // Increased to 10MB for PDFs
+      const maxSizeMB = 10;
       if (selectedFile.size > maxSizeMB * 1024 * 1024) {
-        alert(`File size exceeds ${maxSizeMB}MB limit.`);
+        toast.error(`File size exceeds ${maxSizeMB}MB limit.`);
         e.target.value = null;
         setFile(null);
         return;
       }
       setFile(selectedFile);
     }
-  };
-
-  const getUserForMessage = (message) => {
-    if (message.is_bot) {
-      return { display_name: 'AI Assistant', profile_color: '#6B7280', isBot: true };
-    }
-    const msgUser = users[message.created_by] || { display_name: 'Unknown', profile_color: '#64748B' };
-    return msgUser;
   };
 
   const handleCreatePoll = async (pollData) => {
@@ -589,7 +425,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
       await new Promise(resolve => setTimeout(resolve, 500));
 
       setPollRefreshTrigger(prev => prev + 1);
-      setHasCommunityPoll(true); // Assuming successful poll creation results in a community poll
+      setHasCommunityPoll(true);
 
       if (onUpdateRoom) {
         onUpdateRoom();
@@ -616,31 +452,9 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
     }
 
     try {
-      const messageToPin = messages.find(m => m.id === messageId);
-      if (!messageToPin) {
-        toast.error('Message not found.');
-        return;
-      }
-
-      await Message.update(messageId, {
-        is_pinned: true,
-        pinned_by: user.id,
-        pinned_at: new Date().toISOString()
-      });
-
-      const updatedPinnedMessage = { ...messageToPin, is_pinned: true, pinned_by: user.id, pinned_at: new Date().toISOString() };
-      setPinnedMessages(prev => {
-        const newPinned = [...prev.filter(m => m.id !== messageId), updatedPinnedMessage];
-        return newPinned.sort((a, b) => new Date(b.pinned_at) - new Date(a.pinned_at));
-      });
-
-      setMessages(prev => prev.map(msg => msg.id === messageId ? { ...msg, is_pinned: true, pinned_by: user.id, pinned_at: new Date().toISOString() } : msg));
-      setFilteredMessages(prev => prev.map(msg => msg.id === messageId ? { ...msg, is_pinned: true, pinned_by: user.id, pinned_at: new Date().toISOString() } : msg));
-
-      toast.success('Message pinned successfully');
+      await togglePinMessage(messageId, false);
     } catch (error) {
       console.error('Error pinning message:', error);
-      toast.error('Failed to pin message');
     }
   };
 
@@ -651,44 +465,15 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
     }
 
     try {
-      await Message.update(messageId, {
-        is_pinned: false,
-        pinned_by: null,
-        pinned_at: null
-      });
-
-      setPinnedMessages(prev => prev.filter(m => m.id !== messageId));
-
-      setMessages(prev => prev.map(msg => msg.id === messageId ? { ...msg, is_pinned: false, pinned_by: null, pinned_at: null } : msg));
-      setFilteredMessages(prev => prev.map(msg => msg.id === messageId ? { ...msg, is_pinned: false, pinned_by: null, pinned_at: null } : msg));
-
-      toast.success('Message unpinned successfully');
+      await togglePinMessage(messageId, true);
     } catch (error) {
       console.error('Error unpinning message:', error);
-      toast.error('Failed to unpin message');
     }
   };
 
   const handleEditMessage = async (messageId, newContent) => {
     try {
-      await Message.update(messageId, {
-        content: newContent,
-        is_edited: true,
-        edited_at: new Date().toISOString()
-      });
-
-      setMessages(prev => prev.map(msg => 
-        msg.id === messageId 
-          ? { ...msg, content: newContent, is_edited: true, edited_at: new Date().toISOString() }
-          : msg
-      ));
-
-      setFilteredMessages(prev => prev.map(msg => 
-        msg.id === messageId 
-          ? { ...msg, content: newContent, is_edited: true, edited_at: new Date().toISOString() }
-          : msg
-      ));
-
+      await wsEditMessage(messageId, newContent);
       toast.success('Message updated successfully');
       setEditingMessage(null);
     } catch (error) {
@@ -700,24 +485,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
 
   const handleDeleteMessage = async (messageId) => {
     try {
-      await Message.update(messageId, {
-        is_deleted: true,
-        deleted_at: new Date().toISOString(),
-        deleted_by: user.id
-      });
-
-      setMessages(prev => prev.map(msg => 
-        msg.id === messageId 
-          ? { ...msg, is_deleted: true, deleted_at: new Date().toISOString(), deleted_by: user.id }
-          : msg
-      ));
-
-      setFilteredMessages(prev => prev.map(msg => 
-        msg.id === messageId 
-          ? { ...msg, is_deleted: true, deleted_at: new Date().toISOString(), deleted_by: user.id }
-          : msg
-      ));
-
+      await wsDeleteMessage(messageId);
       toast.success('Message deleted');
       setDeletingMessage(null);
     } catch (error) {
@@ -739,6 +507,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
            user.app_role === 'super_admin';
   };
 
+  // Filter messages
   useEffect(() => {
     let result = [...messages];
 
@@ -784,7 +553,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
   return (
     <div className="h-full bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 overflow-hidden flex flex-col">
       <div className="flex-1 flex flex-col max-w-7xl mx-auto w-full overflow-hidden">
-        {/* Header Section - Fixed at top */}
+        {/* Header Section */}
         <div className="flex-shrink-0 p-4 pb-2 space-y-2">
           <LiveStockTicker stockSymbol={latestPollStockSymbol || room.stock_symbol} onPriceUpdate={setPriceData} />
           <MeetingControls
@@ -795,11 +564,11 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
           />
         </div>
 
-        {/* Main Content Area - Takes remaining height, no scrolling */}
+        {/* Main Content Area */}
         <div className="flex-1 flex gap-4 px-4 pb-4 min-h-0 overflow-hidden">
-          {/* Chat Card - Left side, full height */}
+          {/* Chat Card */}
           <Card className="flex-1 flex flex-col shadow-lg border-0 bg-white overflow-hidden">
-            {/* Card Header - Fixed */}
+            {/* Card Header */}
             <CardHeader className="flex-shrink-0 border-b bg-white p-4">
               <div className="flex items-center gap-3">
                 <Button
@@ -816,7 +585,19 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                       {room.name}
                     </h1>
                     
-                    {/* NEW: Create Poll button - only shows if no community poll exists */}
+                    {/* Connection status indicator */}
+                    <Badge 
+                      variant={isConnected ? "default" : "destructive"} 
+                      className={`text-xs px-2 py-0.5 ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}
+                    >
+                      {isConnected ? (
+                        <><Wifi className="w-3 h-3 mr-1" /> Live</>
+                      ) : (
+                        <><WifiOff className="w-3 h-3 mr-1" /> Offline</>
+                      )}
+                    </Badge>
+                    
+                    {/* Create Poll button */}
                     {!hasCommunityPoll && user && (
                       <Button
                         size="sm"
@@ -840,7 +621,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                     <span className="text-xs">{room.participant_count || 0}</span>
                   </Badge>
                   
-                  {/* NEW: Participant Management Button (Admin/Moderator only) */}
+                  {/* Participant Management Button */}
                   {user && (['admin', 'super_admin'].includes(user.app_role) || room.moderator_ids?.includes(user.id)) && (
                     <Button
                       size="icon"
@@ -866,7 +647,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
               </div>
             </CardHeader>
 
-            {/* Search Bar - Fixed */}
+            {/* Search Bar */}
             <div className="flex-shrink-0 px-4 py-3 border-b bg-slate-50">
               <MessageSearchBar
                 onSearch={handleSearch}
@@ -875,19 +656,26 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
               />
             </div>
 
-            {/* Moderation Warning - Fixed */}
+            {/* Moderation Warning */}
             {moderationWarning && (
               <div className="flex-shrink-0 mx-4 mt-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
                 {moderationWarning}
               </div>
             )}
 
-            {/* Pinned Messages - Fixed */}
+            {/* Connection Error */}
+            {connectionError && (
+              <div className="flex-shrink-0 mx-4 mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm flex items-center gap-2">
+                <WifiOff className="w-4 h-4" />
+                Connection issue. Messages will sync when reconnected.
+              </div>
+            )}
+
+            {/* Pinned Messages */}
             <div className="flex-shrink-0">
               <PinnedMessagesSection
                 messages={pinnedMessages || []}
-                users={users || {}
-                }
+                users={users || {}}
                 onUnpin={handleUnpinMessage}
                 currentUser={user}
                 expanded={showPinnedExpanded}
@@ -895,7 +683,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
               />
             </div>
 
-            {/* Chat Messages Area - ONLY THIS SCROLLS */}
+            {/* Chat Messages Area */}
             <CardContent
               ref={chatFeedRef}
               onScroll={handleScroll}
@@ -994,7 +782,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                                     onReply={() => handleReply(msg.id)}
                                   />
                                   
-                                  {/* NEW: PDF File Display */}
+                                  {/* PDF File Display */}
                                   {msg.message_type === 'file' && msg.file_url && (
                                     <div className="mt-2 p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-center gap-3">
                                       <FileText className="w-8 h-8 text-red-600 flex-shrink-0" />
@@ -1021,7 +809,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                             </div>
 
                             <p className="text-xs mt-1 text-slate-400">
-                              {formatDistanceToNow(new Date(msg.created_date), { addSuffix: true })}
+                              {formatDistanceToNow(new Date(msg.created_date || msg.created_at), { addSuffix: true })}
                               {msg.is_edited && !msg.is_deleted && <span className="ml-1 text-xs text-slate-500">(edited)</span>}
                             </p>
                           </div>
@@ -1090,66 +878,62 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
 
                         {isReplying && user && (
                           <div className={`mt-2 ${isCurrentUser ? 'ml-auto' : 'ml-10'} bg-blue-50 rounded-lg p-3 border-l-4 border-blue-500 max-w-xs md:max-w-md`}>
-                              <div className="flex items-center gap-2 mb-2">
-                                <Reply className="w-4 h-4 text-blue-600" />
-                                <span className="text-xs font-semibold text-blue-800">
-                                  Replying to {msgUser.display_name}
-                                </span>
-                                <button
-                                  onClick={handleCancelReply}
-                                  className="ml-auto text-slate-500 hover:text-slate-700"
-                                >
-                                  <X className="w-4 h-4" />
-                                </button>
-                              </div>
-                              <div 
-                                className="text-sm text-slate-600 mb-3 max-h-12 overflow-hidden" 
-                                style={{ 
-                                  display: '-webkit-box',
-                                  WebkitLineClamp: 2,
-                                  WebkitBoxOrient: 'vertical',
-                                  wordBreak: 'break-word',
-                                  overflowWrap: 'anywhere',
-                                  whiteSpace: 'pre-wrap',
-                                  fontFamily: 'system-ui, -apple-system, "Segoe UI", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif'
-                                }}
+                            <div className="flex items-center gap-2 mb-2">
+                              <Reply className="w-4 h-4 text-blue-600" />
+                              <span className="text-xs font-semibold text-blue-800">
+                                Replying to {msgUser.display_name}
+                              </span>
+                              <button
+                                onClick={handleCancelReply}
+                                className="ml-auto text-slate-500 hover:text-slate-700"
                               >
-                                {msg.content || 'Original message'}
-                              </div>
-
-                              <form onSubmit={handleSendMessage} className="flex gap-2">
-                                <Input
-                                  placeholder="Type your reply..."
-                                  value={newMessage}
-                                  onChange={(e) => {
-                                    setNewMessage(e.target.value);
-                                    handleTyping();
-                                  }}
-                                  className="flex-1"
-                                  style={{
-                                    fontFamily: 'system-ui, -apple-system, "Segoe UI", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif'
-                                  }}
-                                  autoFocus
-                                  disabled={isSending}
-                                />
-                                <Button
-                                  type="submit"
-                                  size="sm"
-                                  disabled={!newMessage.trim() || isSending}
-                                  className="bg-blue-600 hover:bg-blue-700"
-                                >
-                                  {isSending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                                </Button>
-                              </form>
+                                <X className="w-4 h-4" />
+                              </button>
                             </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                    <div ref={messagesEndRef} className="h-1" />
-                  </>
-                )}
-              </CardContent>
+                            <div 
+                              className="text-sm text-slate-600 mb-3 max-h-12 overflow-hidden" 
+                              style={{ 
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                                wordBreak: 'break-word',
+                                overflowWrap: 'anywhere',
+                                whiteSpace: 'pre-wrap'
+                              }}
+                            >
+                              {msg.content || 'Original message'}
+                            </div>
+
+                            <form onSubmit={handleSendMessage} className="flex gap-2">
+                              <Input
+                                placeholder="Type your reply..."
+                                value={newMessage}
+                                onChange={(e) => {
+                                  setNewMessage(e.target.value);
+                                  handleTyping();
+                                }}
+                                className="flex-1"
+                                autoFocus
+                                disabled={isSending}
+                              />
+                              <Button
+                                type="submit"
+                                size="sm"
+                                disabled={!newMessage.trim() || isSending}
+                                className="bg-blue-600 hover:bg-blue-700"
+                              >
+                                {isSending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                              </Button>
+                            </form>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                  <div ref={messagesEndRef} className="h-1" />
+                </>
+              )}
+            </CardContent>
 
             {/* Scroll to bottom button */}
             {showNewMessageBar && (
@@ -1163,12 +947,20 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                 </Button>
               </div>
             )}
-            {/* Typing Indicator - Fixed */}
-            <div className="flex-shrink-0">
-              <TypingIndicator roomId={room.id} currentUserId={user?.id} />
+
+            {/* Typing Indicator - Now shows WebSocket typing users */}
+            <div className="flex-shrink-0 px-4 py-2">
+              {typingUsers.length > 0 && (
+                <div className="text-sm text-slate-500 italic animate-pulse">
+                  {typingUsers.length === 1 
+                    ? `${typingUsers[0]} is typing...`
+                    : `${typingUsers.slice(0, -1).join(', ')} and ${typingUsers[typingUsers.length - 1]} are typing...`
+                  }
+                </div>
+              )}
             </div>
 
-            {/* Message Input Footer - Fixed at bottom */}
+            {/* Message Input Footer */}
             {!replyingToMessageId && (
               <CardFooter className="flex-shrink-0 border-t p-4 bg-white flex flex-col">
                 {file && (
@@ -1241,7 +1033,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
             )}
           </Card>
 
-          {/* Right Sidebar - Fixed, scrollable independently (Desktop only) */}
+          {/* Right Sidebar */}
           <div className="hidden lg:block w-80 flex-shrink-0 h-full overflow-y-auto">
             <div className="flex flex-col space-y-4 pb-4">
               <CommunitySentimentPoll
@@ -1257,7 +1049,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
           </div>
         </div>
 
-        {/* Mobile Sidebar - Hidden on desktop, shows below chat on mobile */}
+        {/* Mobile Sidebar */}
         <div className="lg:hidden flex-shrink-0 border-t bg-white">
           <div className="p-4 space-y-4 max-h-96 overflow-y-auto">
             <CommunitySentimentPoll
@@ -1305,7 +1097,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
         />
       )}
 
-      {/* NEW: Participant Management Modal */}
+      {/* Participant Management Modal */}
       {user && (['admin', 'super_admin'].includes(user.app_role) || room.moderator_ids?.includes(user.id)) && (
         <ParticipantManagementModal
           open={showParticipantModal}

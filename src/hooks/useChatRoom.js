@@ -101,6 +101,13 @@ export function useChatRoom(roomId, user) {
     return messages.filter(m => m.is_pinned);
   }, [messages]);
 
+  // Get typing user names (convert from objects to string array)
+  const typingUsers = useMemo(() => {
+    return ws.typingUsers
+      .filter(t => t.userId !== user?.id)
+      .map(t => t.userName || 'Someone');
+  }, [ws.typingUsers, user?.id]);
+
   // Get user for a message
   const getUserForMessage = useCallback((message) => {
     if (message.is_bot) {
@@ -266,7 +273,7 @@ export function useChatRoom(roomId, user) {
     
     // WebSocket state
     isConnected: ws.isConnected,
-    typingUsers: ws.typingUsers,
+    typingUsers,
     participants: ws.participants,
     connectionError: ws.connectionError,
     
