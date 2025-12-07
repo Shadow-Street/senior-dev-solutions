@@ -211,6 +211,9 @@ export const AlertConfiguration = createEntityAPI('/alerts/configurations');
 export const AlertSetting = createEntityAPI('/alerts/settings');
 export const EntityConfig = createEntityAPI('/entity-configs');
 
+// Commission Tracking (for superadmin dashboard)
+export const CommissionTracking = createEntityAPI('/commissions/tracking');
+
 // User Roles
 export const Role = createEntityAPI('/roles');
 

@@ -34,10 +34,41 @@ postRouter.get('/feed', async (req, res) => {
       where: { status: 'published' },
       order: [['created_at', 'DESC']],
       limit: parseInt(limit),
-      offset: parseInt(offset),
-      include: [{ model: db.FinInfluencer, attributes: ['id', 'name', 'avatar_url'] }]
+      offset: parseInt(offset)
     });
     res.json(posts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get trending posts
+postRouter.get('/trending', async (req, res) => {
+  try {
+    const posts = await db.InfluencerPost.findAll({
+      where: { status: 'published' },
+      order: [
+        ['likes_count', 'DESC'],
+        ['comments_count', 'DESC']
+      ],
+      limit: 20
+    });
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Like a post
+postRouter.post('/:id/like', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const post = await db.InfluencerPost.findByPk(id);
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+    await post.increment('likes_count');
+    res.json({ success: true, likes_count: (post.likes_count || 0) + 1 });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
