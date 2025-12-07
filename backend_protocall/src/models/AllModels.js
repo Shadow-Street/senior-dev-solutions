@@ -786,4 +786,32 @@ module.exports = {
     role_id: DataTypes.UUID,
     permission_id: DataTypes.UUID
   }),
+
+  // Commission Tracking
+  CommissionTracking: createModel('commission_tracking', {
+    user_id: DataTypes.UUID,
+    advisor_id: DataTypes.UUID,
+    pledge_id: DataTypes.UUID,
+    event_id: DataTypes.UUID,
+    amount: DataTypes.DECIMAL(15, 2),
+    commission_type: DataTypes.STRING,
+    status: { type: DataTypes.STRING, defaultValue: 'pending' },
+    payout_method: DataTypes.STRING,
+    processed_at: DataTypes.DATE,
+    paid_at: DataTypes.DATE,
+    metadata: DataTypes.JSON
+  }),
+
+  // Refund Request
+  RefundRequest: createModel('refund_requests', {
+    payment_id: DataTypes.UUID,
+    user_id: DataTypes.UUID,
+    event_id: DataTypes.UUID,
+    ticket_id: DataTypes.UUID,
+    amount: DataTypes.DECIMAL(15, 2),
+    reason: DataTypes.TEXT,
+    status: { type: DataTypes.STRING, defaultValue: 'pending' },
+    processed_at: DataTypes.DATE,
+    processed_by: DataTypes.UUID
+  }),
 };

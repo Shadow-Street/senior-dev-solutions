@@ -104,4 +104,20 @@ router.use("/chatbots", chatbotRoutes);
 router.use("/files", fileRoutes);
 router.use("/emails", emailRoutes);
 
+// Commissions
+router.use("/commissions", require("./commission.routes"));
+
+// Static Pages & Localization
+router.use("/static-pages", require("./staticpage.routes"));
+router.use("/localization", require("./localization.routes"));
+
+// AI Integration
+router.use("/ai", require("./ai.routes"));
+
+// Payments
+router.use("/payments", require("./payment.routes"));
+
+// Exports
+router.use("/exports", require("./export.routes"));
+
 module.exports = router;
