@@ -241,6 +241,10 @@ export const BotConversation = createEntityAPI('/chatbots/conversations');
 export const Report = createEntityAPI('/reports');
 export const AnalyticsEvent = createEntityAPI('/analytics/events');
 
+// Expenses & Financials
+export const Expense = createEntityAPI('/expenses');
+export const Income = createEntityAPI('/income');
+
 // Feature Configuration
 export const FeatureConfig = {
   async list() {
