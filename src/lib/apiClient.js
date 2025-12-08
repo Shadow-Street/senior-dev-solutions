@@ -200,6 +200,9 @@ export const Review = createEntityAPI('/reviews');
 // Advisor & Recommendations
 export const AdvisorRecommendation = createEntityAPI('/advisors/recommendations');
 export const AdvisorPledgeCommission = createEntityAPI('/advisors/pledge-commissions');
+export const AdvisorSubscription = createEntityAPI('/advisors/subscriptions');
+export const AdvisorPost = createEntityAPI('/advisors/posts');
+export const AdvisorPlan = createEntityAPI('/advisors/plans');
 
 // Ads & Campaigns
 export const AdCampaign = createEntityAPI('/ads/campaigns');
