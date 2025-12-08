@@ -39,6 +39,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 
 // Import WebSocket hooks
 import { useChatRoom } from '@/hooks/useChatRoom';
+import ReadReceiptIndicator from './ReadReceiptIndicator';
 
 const updateTrustScore = async (user, amount, reason, relatedEntityId = null) => {
   if (!user || !user.id) return;
@@ -64,6 +65,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
     isConnected,
     typingUsers,
     connectionError,
+    readReceipts,
     sendMessage: wsSendMessage,
     editMessage: wsEditMessage,
     deleteMessage: wsDeleteMessage,
@@ -72,6 +74,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
     startTyping,
     stopTyping,
     getUserForMessage,
+    markAsRead,
     refetch
   } = useChatRoom(room?.id, user);
 
@@ -812,6 +815,16 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                               {formatDistanceToNow(new Date(msg.created_date || msg.created_at), { addSuffix: true })}
                               {msg.is_edited && !msg.is_deleted && <span className="ml-1 text-xs text-slate-500">(edited)</span>}
                             </p>
+                            
+                            {/* Read Receipts */}
+                            {isCurrentUser && !msg.is_deleted && (
+                              <ReadReceiptIndicator
+                                message={msg}
+                                currentUser={user}
+                                readReceipts={readReceipts}
+                                users={users}
+                              />
+                            )}
                           </div>
 
                           {!isBot && msg.id && !msg.id.startsWith('bot_') && !msg.is_deleted && (

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useWebSocket } from './useWebSocket';
-import { Message, ChatRoom, ChatRoomParticipant, User } from '@/api/entities';
+import { Message, ChatRoom, ChatRoomParticipant, User, MessageReadReceipt } from '@/api/entities';
 import { toast } from 'sonner';
 
 export function useChatRoom(roomId, user) {
@@ -9,6 +9,7 @@ export function useChatRoom(roomId, user) {
   const [users, setUsers] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [readReceipts, setReadReceipts] = useState([]);
   
   // WebSocket connection
   const ws = useWebSocket(roomId, user, {
@@ -35,6 +36,14 @@ export function useChatRoom(roomId, user) {
     },
     onError: (error) => {
       toast.error(error.message || 'Connection error');
+    },
+    onReadReceipt: (receipt) => {
+      setReadReceipts(prev => {
+        // Avoid duplicates
+        const exists = prev.find(r => r.user_id === receipt.userId && r.message_id === receipt.messageId);
+        if (exists) return prev;
+        return [...prev, { user_id: receipt.userId, message_id: receipt.messageId, read_at: receipt.readAt }];
+      });
     }
   });
 
@@ -46,10 +55,11 @@ export function useChatRoom(roomId, user) {
     setError(null);
     
     try {
-      const [roomData, messagesData, usersData] = await Promise.all([
+      const [roomData, messagesData, usersData, receiptsData] = await Promise.all([
         ChatRoom.get(roomId).catch(() => null),
         Message.filter({ chat_room_id: roomId }, 'created_date', 100).catch(() => []),
-        User.list().catch(() => [])
+        User.list().catch(() => []),
+        MessageReadReceipt.filter({ chat_room_id: roomId }).catch(() => [])
       ]);
       
       if (!roomData) {
@@ -59,6 +69,7 @@ export function useChatRoom(roomId, user) {
       
       setRoom(roomData);
       setAllMessages(messagesData);
+      setReadReceipts(receiptsData || []);
       
       // Create users lookup map
       const usersMap = usersData.reduce((acc, u) => {
@@ -257,10 +268,53 @@ export function useChatRoom(roomId, user) {
     }));
   }, [user, ws]);
 
+  // Mark messages as read
+  const markMessagesAsRead = useCallback(async () => {
+    if (!user || !roomId || messages.length === 0) return;
+    
+    const lastMessage = messages[messages.length - 1];
+    if (!lastMessage) return;
+    
+    // Check if already marked
+    const alreadyRead = readReceipts.find(
+      r => r.user_id === user.id && r.message_id === lastMessage.id
+    );
+    if (alreadyRead) return;
+    
+    try {
+      // Notify via WebSocket
+      if (ws.isConnected) {
+        ws.markAsRead(roomId);
+      }
+      
+      // Persist to API
+      await MessageReadReceipt.create({
+        chat_room_id: roomId,
+        message_id: lastMessage.id,
+        user_id: user.id,
+        read_at: new Date().toISOString()
+      }).catch(() => {});
+      
+      setReadReceipts(prev => [
+        ...prev, 
+        { user_id: user.id, message_id: lastMessage.id, read_at: new Date().toISOString() }
+      ]);
+    } catch (err) {
+      console.error('Failed to mark as read:', err);
+    }
+  }, [user, roomId, messages, readReceipts, ws]);
+
   // Load initial data
   useEffect(() => {
     loadRoomData();
   }, [loadRoomData]);
+
+  // Auto mark as read when messages load
+  useEffect(() => {
+    if (!isLoading && messages.length > 0) {
+      markMessagesAsRead();
+    }
+  }, [isLoading, messages.length, markMessagesAsRead]);
 
   return {
     // State
@@ -270,6 +324,7 @@ export function useChatRoom(roomId, user) {
     users,
     isLoading,
     error,
+    readReceipts,
     
     // WebSocket state
     isConnected: ws.isConnected,
@@ -285,7 +340,7 @@ export function useChatRoom(roomId, user) {
     addReaction,
     startTyping: ws.startTyping,
     stopTyping: ws.stopTyping,
-    markAsRead: ws.markAsRead,
+    markAsRead: markMessagesAsRead,
     
     // Utilities
     getUserForMessage,

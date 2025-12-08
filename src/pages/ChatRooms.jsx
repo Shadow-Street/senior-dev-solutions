@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,8 @@ import {
   TrendingUp,
   Building,
   Shield,
-  Crown
+  Crown,
+  RefreshCw
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
@@ -19,79 +20,84 @@ import { toast } from "sonner";
 import ChatRoomCard from "../components/chat/ChatRoomCard";
 import CreateRoomModal from "../components/chat/CreateRoomModal";
 import ChatInterface from "../components/chat/ChatInterface";
-// import "./../components/chat/ChatRoomCard.css";
-
-// Sample data - NO DATABASE CALLS
-const sampleRooms = [
-  {
-    id: '1',
-    name: 'RELIANCE Traders Hub',
-    description: 'Discuss Reliance Industries stock movements, earnings, and trading strategies',
-    stock_symbol: 'RELIANCE',
-    room_type: 'stock_specific',
-    participant_count: 156
-  },
-  {
-    id: '2',
-    name: 'IT Sector Discussion',
-    description: 'Chat about TCS, Infosys, Wipro and other IT stocks',
-    room_type: 'sector',
-    participant_count: 89
-  },
-  {
-    id: '3',
-    name: 'Banking Stocks United',
-    description: 'HDFC Bank, ICICI Bank and other banking sector discussions',
-    room_type: 'sector',
-    participant_count: 134
-  },
-  {
-    id: '4',
-    name: 'General Trading Room',
-    description: 'Open discussion for all retail traders',
-    room_type: 'general',
-    participant_count: 267
-  },
-  {
-    id: '5',
-    name: 'TCS Earnings Call',
-    description: 'Live discussion during TCS quarterly results',
-    stock_symbol: 'TCS',
-    room_type: 'stock_specific',
-    is_meeting_active: true,
-    participant_count: 78
-  },
-  {
-    id: '6',
-    name: 'Admin Announcements',
-    description: 'Official updates and stock recommendations from admins',
-    room_type: 'admin',
-    participant_count: 1205,
-    admin_only_post: true
-  }
-];
+import { ChatRoom } from "@/api/entities";
 
 export default function ChatRooms() {
-  const [chatRooms, setChatRooms] = useState(sampleRooms);
+  const [chatRooms, setChatRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
-  const user = null; // Guest mode - no authentication
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  // Get user from localStorage
+  const storedUser = localStorage.getItem('user');
+  const user = storedUser ? JSON.parse(storedUser) : null;
 
-  useEffect(() => {
-    // No API calls - just set loading to false
-    setIsLoading(false);
+  // Fetch chat rooms from API
+  const fetchChatRooms = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const rooms = await ChatRoom.list('created_at', 100);
+      setChatRooms(rooms || []);
+    } catch (error) {
+      console.error("Failed to fetch chat rooms:", error);
+      toast.error("Failed to load chat rooms");
+      setChatRooms([]);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  const handleCreateRoom = (roomData) => {
-    toast.info("Feature demo - room creation requires login");
-    setShowCreateModal(false);
+  // Refresh rooms
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchChatRooms();
+    setIsRefreshing(false);
+    toast.success("Rooms refreshed");
+  };
+
+  useEffect(() => {
+    fetchChatRooms();
+  }, [fetchChatRooms]);
+
+  const handleCreateRoom = async (roomData) => {
+    if (!user) {
+      toast.error("Please login to create a room");
+      setShowCreateModal(false);
+      return;
+    }
+
+    try {
+      const newRoom = await ChatRoom.create({
+        ...roomData,
+        created_by: user.email,
+        participant_count: 1
+      });
+      
+      setChatRooms(prev => [newRoom, ...prev]);
+      toast.success("Room created successfully!");
+      setShowCreateModal(false);
+    } catch (error) {
+      console.error("Failed to create room:", error);
+      toast.error("Failed to create room");
+    }
+  };
+
+  const handleDeleteRoom = async (roomId) => {
+    try {
+      await ChatRoom.delete(roomId);
+      setChatRooms(prev => prev.filter(r => r.id !== roomId));
+      toast.success("Room deleted");
+    } catch (error) {
+      console.error("Failed to delete room:", error);
+      toast.error("Failed to delete room");
+    }
   };
 
   const filteredRooms = chatRooms.filter((room) => {
-    const matchesSearch = room.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch = room.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       room.description?.toLowerCase().includes(searchTerm.toLowerCase());
     
     let matchesFilter = true;
@@ -106,13 +112,15 @@ export default function ChatRooms() {
     return matchesSearch && matchesFilter;
   });
 
+  const totalParticipants = chatRooms.reduce((sum, room) => sum + (room.participant_count || 0), 0);
+
   if (selectedRoom) {
     return (
       <ChatInterface
         room={selectedRoom}
         user={user}
         onBack={() => setSelectedRoom(null)}
-        onUpdateRoom={() => {}}
+        onUpdateRoom={fetchChatRooms}
       />
     );
   }
@@ -130,8 +138,17 @@ export default function ChatRooms() {
           <div className="flex items-center gap-3">
             <Badge variant="outline" className="bg-green-50 text-green-700">
               <Users className="w-3 h-3 mr-1" />
-              {chatRooms.reduce((sum, room) => sum + (room.participant_count || 0), 0)} Active
+              {totalParticipants} Active
             </Badge>
+            <Button 
+              variant="outline" 
+              size="icon"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="h-9 w-9"
+            >
+              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            </Button>
             <Button onClick={() => setShowCreateModal(true)} className="bg-violet-600 hover:bg-blue-700">
               <Plus className="w-4 h-4 mr-2" />
               Create Room
@@ -174,23 +191,53 @@ export default function ChatRooms() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredRooms.map((room) => (
-            <ChatRoomCard
-              key={room.id}
-              room={room}
-              user={user}
-              onRoomClick={setSelectedRoom}
-              onDelete={() => {}}
-            />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array(6).fill(0).map((_, i) => (
+              <Card key={i} className="overflow-hidden">
+                <CardHeader className="pb-2">
+                  <Skeleton className="h-6 w-3/4" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-4 w-full mb-2" />
+                  <Skeleton className="h-4 w-2/3" />
+                  <div className="flex gap-2 mt-4">
+                    <Skeleton className="h-6 w-16" />
+                    <Skeleton className="h-6 w-20" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredRooms.map((room) => (
+              <ChatRoomCard
+                key={room.id}
+                room={room}
+                user={user}
+                onRoomClick={setSelectedRoom}
+                onDelete={handleDeleteRoom}
+              />
+            ))}
+          </div>
+        )}
 
-        {filteredRooms.length === 0 && (
+        {!isLoading && filteredRooms.length === 0 && (
           <div className="text-center py-12">
             <MessageSquare className="w-16 h-16 text-slate-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-slate-700 mb-2">No chat rooms found</h3>
-            <p className="text-slate-500 mb-4">Try adjusting your search</p>
+            <p className="text-slate-500 mb-4">
+              {searchTerm || filter !== 'all' 
+                ? "Try adjusting your search or filters" 
+                : "Be the first to create a chat room!"}
+            </p>
+            {chatRooms.length === 0 && (
+              <Button onClick={() => setShowCreateModal(true)} className="bg-violet-600 hover:bg-blue-700">
+                <Plus className="w-4 h-4 mr-2" />
+                Create First Room
+              </Button>
+            )}
           </div>
         )}
 

@@ -213,6 +213,10 @@ export const EntityConfig = createEntityAPI('/entity-configs');
 
 // Commission Tracking (for superadmin dashboard)
 export const CommissionTracking = createEntityAPI('/commissions/tracking');
+export const CommissionSettings = createEntityAPI('/commissions/settings');
+
+// Read Receipts
+export const MessageReadReceipt = createEntityAPI('/messages/read-receipts');
 
 // User Roles
 export const Role = createEntityAPI('/roles');
