@@ -4,6 +4,12 @@ import Login from "./Login";
 
 import Register from "./Register";
 
+import ForgotPassword from "./ForgotPassword";
+
+import ResetPassword from "./ResetPassword";
+
+import Unauthorized from "./Unauthorized";
+
 import Dashboard from "./Dashboard";
 
 import ChatRooms from "./ChatRooms";
@@ -112,11 +118,21 @@ import PortfolioManagers from "./PortfolioManagers";
 
 import MyPMInvestments from "./MyPMInvestments";
 
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
 const PAGES = {
     
     Login: Login,
+    
+    Register: Register,
+    
+    ForgotPassword: ForgotPassword,
+    
+    ResetPassword: ResetPassword,
+    
+    Unauthorized: Unauthorized,
     
     Register: Register,
     
@@ -258,7 +274,13 @@ function PagesContent() {
                 
                 <Route path="/register" element={<Register />} />
                 
-                <Route path="/Dashboard" element={<Dashboard />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                
+                <Route path="/reset-password" element={<ResetPassword />} />
+                
+                <Route path="/unauthorized" element={<Unauthorized />} />
+                
+                <Route path="/Dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 
                 <Route path="/ChatRooms" element={<ChatRooms />} />
                 
