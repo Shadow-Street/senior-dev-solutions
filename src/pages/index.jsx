@@ -1,5 +1,9 @@
 import Layout from "./Layout.jsx";
 
+import Login from "./Login";
+
+import Register from "./Register";
+
 import Dashboard from "./Dashboard";
 
 import ChatRooms from "./ChatRooms";
@@ -111,6 +115,10 @@ import MyPMInvestments from "./MyPMInvestments";
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
 const PAGES = {
+    
+    Login: Login,
+    
+    Register: Register,
     
     Dashboard: Dashboard,
     
@@ -242,10 +250,13 @@ function PagesContent() {
     
     return (
         <Layout currentPageName={currentPage}>
-            <Routes>            
+        <Routes>            
                 
-                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/" element={<Login />} />
                 
+                <Route path="/login" element={<Login />} />
+                
+                <Route path="/register" element={<Register />} />
                 
                 <Route path="/Dashboard" element={<Dashboard />} />
                 

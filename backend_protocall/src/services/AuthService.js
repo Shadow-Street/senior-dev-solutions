@@ -12,6 +12,37 @@ class AuthService {
     return User.findOne({ where });
   }
 
+  static async register({ name, email, password, role, phone }) {
+    // Check if user already exists
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      throw new Error("User with this email already exists");
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role: role || 'user',
+      phone: phone || null,
+      verify_step: 0,
+      status: 'active',
+      created_at: new Date(),
+      updated_at: new Date()
+    });
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    };
+  }
+
   static async login(email, password, role) {
     const user = await this.getUser(email, role);
     if (!user) {
