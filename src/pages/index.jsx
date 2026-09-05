@@ -1,4 +1,6 @@
 import Layout from "./Layout.jsx";
+import Login from "./Login";
+import Register from "./Register";
 
 import Dashboard from "./Dashboard";
 
@@ -11,10 +13,12 @@ import Polls from "./Polls";
 import Events from "./Events";
 
 import AdminPanel from "./AdminPanel";
-
+import AdminLogin from "./admin/AdminLogin";
+import SuperAdminDashboard from "./admin/SuperAdminDashboard";
 import Profile from "./Profile";
-
 import contact from "./contact";
+// import SuperAdmin from "./SuperAdmin"; // Keeping separate for now
+
 
 import Finfluencers from "./Finfluencers";
 
@@ -108,118 +112,123 @@ import PortfolioManagers from "./PortfolioManagers";
 
 import MyPMInvestments from "./MyPMInvestments";
 
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import MySubscriptions from "./MySubscriptions";
+
+import { Route, Routes, useLocation } from 'react-router-dom';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 const PAGES = {
-    
+    Login: Login,
+    Register: Register,
     Dashboard: Dashboard,
-    
+
     ChatRooms: ChatRooms,
-    
+
     Subscription: Subscription,
-    
+
     Polls: Polls,
-    
+
     Events: Events,
-    
+
     AdminPanel: AdminPanel,
-    
+
     Profile: Profile,
-    
+
     contact: contact,
-    
+
     Finfluencers: Finfluencers,
-    
+
     InfluencerProfile: InfluencerProfile,
-    
+
     AdvisorRegistration: AdvisorRegistration,
-    
+
     Advisors: Advisors,
-    
+
     AdvisorProfile: AdvisorProfile,
-    
+
     News: News,
-    
+
     SamplePortfolio: SamplePortfolio,
-    
+
     Feedback: Feedback,
-    
+
     SuperAdmin: SuperAdmin,
-    
+
     Educators: Educators,
-    
+
     EntityDashboard: EntityDashboard,
-    
+
     FinfluencerDashboard: FinfluencerDashboard,
-    
+
     AdvisorDashboard: AdvisorDashboard,
-    
+
     EventsManagement: EventsManagement,
-    
+
     PledgePool: PledgePool,
-    
+
     ApiExecutions: ApiExecutions,
-    
+
     AdManagement: AdManagement,
-    
+
     VendorDashboard: VendorDashboard,
-    
+
     Invoice: Invoice,
-    
+
     FundManager: FundManager,
-    
+
     InvestorDashboard: InvestorDashboard,
-    
+
     FundManager_Plans: FundManager_Plans,
-    
+
     FundManager_Investors: FundManager_Investors,
-    
+
     FundManager_Transactions: FundManager_Transactions,
-    
+
     FundManager_Allocations: FundManager_Allocations,
-    
+
     FundManager_Reports: FundManager_Reports,
-    
+
     FeatureHub: FeatureHub,
-    
+
     MyPortfolio: MyPortfolio,
-    
+
     BecomeOrganizer: BecomeOrganizer,
-    
+
     OrganizerDashboard: OrganizerDashboard,
-    
+
     MyEvents: MyEvents,
-    
+
     FixSidebarOrder: FixSidebarOrder,
-    
+
     SubscriptionTest: SubscriptionTest,
-    
+
     Landing: Landing,
-    
+
     Blogs: Blogs,
-    
+
     BlogArticle: BlogArticle,
-    
+
     Terms: Terms,
-    
+
     Privacy: Privacy,
-    
+
     Cookies: Cookies,
-    
+
     RiskDisclosure: RiskDisclosure,
-    
+
     ContactSupport: ContactSupport,
-    
+
     AdvisorPledgeManagement: AdvisorPledgeManagement,
-    
+
     PortfolioManagerDashboard: PortfolioManagerDashboard,
-    
+
     PMRegistration: PMRegistration,
-    
+
     PortfolioManagers: PortfolioManagers,
-    
+
     MyPMInvestments: MyPMInvestments,
-    
+
+    MySubscriptions: MySubscriptions,
 }
 
 function _getCurrentPage(url) {
@@ -235,135 +244,85 @@ function _getCurrentPage(url) {
     return pageName || Object.keys(PAGES)[0];
 }
 
-// Create a wrapper component that uses useLocation inside the Router context
-function PagesContent() {
+// Pages component (Router removed, now in App.jsx)
+export default function Pages() {
     const location = useLocation();
     const currentPage = _getCurrentPage(location.pathname);
-    
-    return (
-        <Layout currentPageName={currentPage}>
-            <Routes>            
-                
-                    <Route path="/" element={<Dashboard />} />
-                
-                
-                <Route path="/Dashboard" element={<Dashboard />} />
-                
-                <Route path="/ChatRooms" element={<ChatRooms />} />
-                
-                <Route path="/Subscription" element={<Subscription />} />
-                
-                <Route path="/Polls" element={<Polls />} />
-                
-                <Route path="/Events" element={<Events />} />
-                
-                <Route path="/AdminPanel" element={<AdminPanel />} />
-                
-                <Route path="/Profile" element={<Profile />} />
-                
-                <Route path="/contact" element={<contact />} />
-                
-                <Route path="/Finfluencers" element={<Finfluencers />} />
-                
-                <Route path="/InfluencerProfile" element={<InfluencerProfile />} />
-                
-                <Route path="/AdvisorRegistration" element={<AdvisorRegistration />} />
-                
-                <Route path="/Advisors" element={<Advisors />} />
-                
-                <Route path="/AdvisorProfile" element={<AdvisorProfile />} />
-                
-                <Route path="/News" element={<News />} />
-                
-                <Route path="/SamplePortfolio" element={<SamplePortfolio />} />
-                
-                <Route path="/Feedback" element={<Feedback />} />
-                
-                <Route path="/SuperAdmin" element={<SuperAdmin />} />
-                
-                <Route path="/Educators" element={<Educators />} />
-                
-                <Route path="/EntityDashboard" element={<EntityDashboard />} />
-                
-                <Route path="/FinfluencerDashboard" element={<FinfluencerDashboard />} />
-                
-                <Route path="/AdvisorDashboard" element={<AdvisorDashboard />} />
-                
-                <Route path="/EventsManagement" element={<EventsManagement />} />
-                
-                <Route path="/PledgePool" element={<PledgePool />} />
-                
-                <Route path="/ApiExecutions" element={<ApiExecutions />} />
-                
-                <Route path="/AdManagement" element={<AdManagement />} />
-                
-                <Route path="/VendorDashboard" element={<VendorDashboard />} />
-                
-                <Route path="/Invoice" element={<Invoice />} />
-                
-                <Route path="/FundManager" element={<FundManager />} />
-                
-                <Route path="/InvestorDashboard" element={<InvestorDashboard />} />
-                
-                <Route path="/FundManager_Plans" element={<FundManager_Plans />} />
-                
-                <Route path="/FundManager_Investors" element={<FundManager_Investors />} />
-                
-                <Route path="/FundManager_Transactions" element={<FundManager_Transactions />} />
-                
-                <Route path="/FundManager_Allocations" element={<FundManager_Allocations />} />
-                
-                <Route path="/FundManager_Reports" element={<FundManager_Reports />} />
-                
-                <Route path="/FeatureHub" element={<FeatureHub />} />
-                
-                <Route path="/MyPortfolio" element={<MyPortfolio />} />
-                
-                <Route path="/BecomeOrganizer" element={<BecomeOrganizer />} />
-                
-                <Route path="/OrganizerDashboard" element={<OrganizerDashboard />} />
-                
-                <Route path="/MyEvents" element={<MyEvents />} />
-                
-                <Route path="/FixSidebarOrder" element={<FixSidebarOrder />} />
-                
-                <Route path="/SubscriptionTest" element={<SubscriptionTest />} />
-                
-                <Route path="/Landing" element={<Landing />} />
-                
-                <Route path="/Blogs" element={<Blogs />} />
-                
-                <Route path="/BlogArticle" element={<BlogArticle />} />
-                
-                <Route path="/Terms" element={<Terms />} />
-                
-                <Route path="/Privacy" element={<Privacy />} />
-                
-                <Route path="/Cookies" element={<Cookies />} />
-                
-                <Route path="/RiskDisclosure" element={<RiskDisclosure />} />
-                
-                <Route path="/ContactSupport" element={<ContactSupport />} />
-                
-                <Route path="/AdvisorPledgeManagement" element={<AdvisorPledgeManagement />} />
-                
-                <Route path="/PortfolioManagerDashboard" element={<PortfolioManagerDashboard />} />
-                
-                <Route path="/PMRegistration" element={<PMRegistration />} />
-                
-                <Route path="/PortfolioManagers" element={<PortfolioManagers />} />
-                
-                <Route path="/MyPMInvestments" element={<MyPMInvestments />} />
-                
-            </Routes>
-        </Layout>
-    );
-}
 
-export default function Pages() {
     return (
-        <Router>
-            <PagesContent />
-        </Router>
+        <Routes>
+            {/* Public Routes - No Authentication Required */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/landing" element={<Landing />} />
+            <Route path="/blogs" element={<Blogs />} />
+            <Route path="/blogArticle" element={<BlogArticle />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/cookies" element={<Cookies />} />
+            <Route path="/riskDisclosure" element={<RiskDisclosure />} />
+            <Route path="/contactSupport" element={<ContactSupport />} />
+
+            {/* Protected Routes - Authentication Required */}
+            <Route path="*" element={
+                <ProtectedRoute>
+                    <Layout currentPageName={currentPage}>
+                        <Routes>
+                            <Route path="/" element={<Dashboard />} />
+                            <Route path="/Dashboard" element={<Dashboard />} />
+                            <Route path="/ChatRooms" element={<ChatRooms />} />
+                            <Route path="/Subscription" element={<Subscription />} />
+                            <Route path="/Polls" element={<Polls />} />
+                            <Route path="/Events" element={<Events />} />
+                            <Route path="/AdminPanel" element={<AdminPanel />} />
+                            <Route path="/Profile" element={<Profile />} />
+                            <Route path="/contact" element={<contact />} />
+                            <Route path="/Finfluencers" element={<Finfluencers />} />
+                            <Route path="/InfluencerProfile" element={<InfluencerProfile />} />
+                            <Route path="/AdvisorRegistration" element={<AdvisorRegistration />} />
+                            <Route path="/Advisors" element={<Advisors />} />
+                            <Route path="/AdvisorProfile" element={<AdvisorProfile />} />
+                            <Route path="/News" element={<News />} />
+                            <Route path="/SamplePortfolio" element={<SamplePortfolio />} />
+                            <Route path="/Feedback" element={<Feedback />} />
+                            <Route path="/Feedback" element={<Feedback />} />
+                            <Route path="/SuperAdmin" element={<SuperAdmin />} />
+                            <Route path="/Educators" element={<Educators />} />
+                            <Route path="/Educators" element={<Educators />} />
+                            <Route path="/EntityDashboard" element={<EntityDashboard />} />
+                            <Route path="/FinfluencerDashboard" element={<FinfluencerDashboard />} />
+                            <Route path="/AdvisorDashboard" element={<AdvisorDashboard />} />
+                            <Route path="/EventsManagement" element={<EventsManagement />} />
+                            <Route path="/PledgePool" element={<PledgePool />} />
+                            <Route path="/ApiExecutions" element={<ApiExecutions />} />
+                            <Route path="/AdManagement" element={<AdManagement />} />
+                            <Route path="/VendorDashboard" element={<VendorDashboard />} />
+                            <Route path="/Invoice" element={<Invoice />} />
+                            <Route path="/FundManager" element={<FundManager />} />
+                            <Route path="/InvestorDashboard" element={<InvestorDashboard />} />
+                            <Route path="/FundManager_Plans" element={<FundManager_Plans />} />
+                            <Route path="/FundManager_Investors" element={<FundManager_Investors />} />
+                            <Route path="/FundManager_Transactions" element={<FundManager_Transactions />} />
+                            <Route path="/FundManager_Allocations" element={<FundManager_Allocations />} />
+                            <Route path="/FundManager_Reports" element={<FundManager_Reports />} />
+                            <Route path="/FeatureHub" element={<FeatureHub />} />
+                            <Route path="/MyPortfolio" element={<MyPortfolio />} />
+                            <Route path="/BecomeOrganizer" element={<BecomeOrganizer />} />
+                            <Route path="/OrganizerDashboard" element={<OrganizerDashboard />} />
+                            <Route path="/MyEvents" element={<MyEvents />} />
+                            <Route path="/FixSidebarOrder" element={<FixSidebarOrder />} />
+                            <Route path="/SubscriptionTest" element={<SubscriptionTest />} />
+                            <Route path="/AdvisorPledgeManagement" element={<AdvisorPledgeManagement />} />
+                            <Route path="/PortfolioManagerDashboard" element={<PortfolioManagerDashboard />} />
+                            <Route path="/PMRegistration" element={<PMRegistration />} />
+                            <Route path="/PortfolioManagers" element={<PortfolioManagers />} />
+                            <Route path="/MyPMInvestments" element={<MyPMInvestments />} />
+                            <Route path="/plans-access" element={<MySubscriptions />} />
+                        </Routes>
+                    </Layout>
+                </ProtectedRoute>
+            } />
+        </Routes>
     );
 }

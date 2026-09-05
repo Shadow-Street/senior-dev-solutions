@@ -4,13 +4,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Switch } from "@/components/ui/switch";
 import { CheckCircle, Star, Users, Lock, Shield, BarChart3, ArrowLeft, Crown, Sparkles, Calendar, AlertTriangle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+import apiClient from "@/lib/apiClient";
 
 export default function CurrentPlan({ subscription, onUpgrade, onReactivate, onCancelSubscription, isCancelling, isReactivating }) {
   const [daysRemaining, setDaysRemaining] = useState(0);
   const [totalDays, setTotalDays] = useState(0);
   const [progressPercentage, setProgressPercentage] = useState(0);
+  const [autopayEnabled, setAutopayEnabled] = useState(false);
+  const [isTogglingAutopay, setIsTogglingAutopay] = useState(false);
 
   useEffect(() => {
     if (subscription && subscription.start_date && subscription.end_date) {
@@ -25,8 +29,37 @@ export default function CurrentPlan({ subscription, onUpgrade, onReactivate, onC
       setTotalDays(total);
       setDaysRemaining(Math.max(0, remaining));
       setProgressPercentage(Math.min(100, Math.max(0, (elapsed / total) * 100)));
+
+      // Set initial autopay state
+      setAutopayEnabled(subscription.auto_renew || false);
     }
   }, [subscription]);
+
+  const handleToggleAutopay = async () => {
+    if (isTogglingAutopay) return;
+
+    setIsTogglingAutopay(true);
+    try {
+      if (autopayEnabled) {
+        // Disable autopay
+        await apiClient.post('/subscriptions/autopay/disable', {
+          reason: 'User disabled auto-renewal'
+        });
+        setAutopayEnabled(false);
+        toast.success('Auto-renewal disabled successfully');
+      } else {
+        // Enable autopay
+        await apiClient.post('/subscriptions/autopay/enable');
+        setAutopayEnabled(true);
+        toast.success('Auto-renewal enabled successfully');
+      }
+    } catch (error) {
+      console.error('Error toggling autopay:', error);
+      toast.error('Failed to update auto-renewal setting');
+    } finally {
+      setIsTogglingAutopay(false);
+    }
+  };
 
   if (!subscription) return null;
 
@@ -73,7 +106,7 @@ export default function CurrentPlan({ subscription, onUpgrade, onReactivate, onC
   return (
     <Card className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-blue-50 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-purple-200 to-blue-200 opacity-20 rounded-full transform translate-x-32 -translate-y-32"></div>
-      
+
       <CardHeader className="relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -88,7 +121,7 @@ export default function CurrentPlan({ subscription, onUpgrade, onReactivate, onC
                 {getStatusBadge()}
               </div>
               <p className="text-gray-600 mt-1">
-                {isCancelled 
+                {isCancelled
                   ? `Access until ${new Date(subscription.end_date).toLocaleDateString()}`
                   : `Renews on ${new Date(subscription.end_date).toLocaleDateString()}`
                 }
@@ -119,6 +152,26 @@ export default function CurrentPlan({ subscription, onUpgrade, onReactivate, onC
           <Progress value={progressPercentage} className="h-3" />
         </div>
 
+        {/* Autopay Toggle */}
+        <div className="bg-white/60 rounded-lg p-4 border-2 border-gray-200">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <h4 className="font-semibold text-gray-900 mb-1">Auto-Renewal</h4>
+              <p className="text-sm text-gray-600">
+                {autopayEnabled
+                  ? 'Your subscription will automatically renew'
+                  : 'Enable to automatically renew your subscription'}
+              </p>
+            </div>
+            <Switch
+              checked={autopayEnabled}
+              onCheckedChange={handleToggleAutopay}
+              disabled={isTogglingAutopay || isExpired}
+              className="data-[state=checked]:bg-green-600"
+            />
+          </div>
+        </div>
+
         {/* Cancellation Warning */}
         {isCancelled && !isExpired && (
           <div className="bg-amber-50 border-2 border-amber-200 rounded-lg p-4">
@@ -127,7 +180,7 @@ export default function CurrentPlan({ subscription, onUpgrade, onReactivate, onC
               <div className="flex-1">
                 <h4 className="font-semibold text-amber-900 mb-1">Subscription Cancelled</h4>
                 <p className="text-sm text-amber-800">
-                  Your subscription will end on {new Date(subscription.end_date).toLocaleDateString()}. 
+                  Your subscription will end on {new Date(subscription.end_date).toLocaleDateString()}.
                   You can still access all premium features until then.
                 </p>
                 {subscription.cancellation_reason && (
@@ -177,14 +230,14 @@ export default function CurrentPlan({ subscription, onUpgrade, onReactivate, onC
           {/* Active Subscription Actions */}
           {!isCancelled && !isExpired && (
             <>
-              <Button 
-                onClick={onUpgrade} 
+              <Button
+                onClick={onUpgrade}
                 className="flex-1 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white rounded-full shadow-lg"
               >
                 <ArrowLeft className="w-4 h-4 mr-2 rotate-180" />
                 Upgrade Plan
               </Button>
-              <Button 
+              <Button
                 onClick={onCancelSubscription}
                 variant="outline"
                 disabled={isCancelling}
@@ -194,11 +247,11 @@ export default function CurrentPlan({ subscription, onUpgrade, onReactivate, onC
               </Button>
             </>
           )}
-          
+
           {/* Cancelled (but not expired) - Show Reactivate Button */}
           {isCancelled && !isExpired && (
-            <Button 
-              onClick={onReactivate} 
+            <Button
+              onClick={onReactivate}
               disabled={isReactivating}
               className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-full shadow-lg"
             >
@@ -215,11 +268,11 @@ export default function CurrentPlan({ subscription, onUpgrade, onReactivate, onC
               )}
             </Button>
           )}
-          
+
           {/* Expired - Show Renew Button */}
           {isExpired && (
-            <Button 
-              onClick={onUpgrade} 
+            <Button
+              onClick={onUpgrade}
               className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-full shadow-lg"
             >
               <ArrowLeft className="w-4 h-4 mr-2 rotate-180" />

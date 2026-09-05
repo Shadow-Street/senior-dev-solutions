@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { AdvisorPledgeCommission, AdvisorPledgeAccessRequest } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { DollarSign, TrendingUp, Clock, CheckCircle } from 'lucide-react';
@@ -27,10 +26,10 @@ export default function AdvisorCommissionTracker({ user, advisorProfile }) {
 
       try {
         const [commissionsData, accessRequest] = await Promise.all([
-          base44.entities.AdvisorPledgeCommission.filter({ advisor_id: advisorProfile.id }, { signal: abortController.signal }).catch(() => []),
-          base44.entities.AdvisorPledgeAccessRequest.filter({ 
-            advisor_id: advisorProfile.id, 
-            status: 'approved' 
+          AdvisorPledgeCommission.filter({ advisor_id: advisorProfile.id }, { signal: abortController.signal }).catch(() => []),
+          AdvisorPledgeAccessRequest.filter({
+            advisor_id: advisorProfile.id,
+            status: 'approved'
           }, '-created_date', 1, { signal: abortController.signal }).catch(() => [])
         ]);
 

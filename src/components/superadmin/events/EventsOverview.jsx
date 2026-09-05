@@ -27,10 +27,10 @@ import EventCapacityManager from './EventCapacityManager';
 // The entity imports are no longer needed here as the data is passed as props
 // import { EventCheckIn, EventPromoCode, EventFeedback } from '@/api/entities'; 
 
-export default function EventsOverview({ 
-  events, 
-  tickets, 
-  commissionTracking, 
+export default function EventsOverview({
+  events,
+  tickets,
+  commissionTracking,
   attendees,
   onViewDetails,
   selectedEventIds,
@@ -81,7 +81,7 @@ export default function EventsOverview({
       // Search filter
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
-        const matchesSearch = 
+        const matchesSearch =
           event.title?.toLowerCase().includes(searchLower) ||
           event.organizer_name?.toLowerCase().includes(searchLower) ||
           event.location?.toLowerCase().includes(searchLower);
@@ -162,12 +162,12 @@ export default function EventsOverview({
     const totalPromoCodes = promoCodes.length;
     const activePromoCodes = promoCodes.filter(p => p.is_active).length;
     const totalFeedbacks = feedbacks.length;
-    const avgFeedbackRating = feedbacks.length > 0 
-      ? feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length 
+    const avgFeedbackRating = feedbacks.length > 0
+      ? feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length
       : 0;
     // Changed checkInRate calculation as per outline
     const checkInRate = tickets.length > 0 ? (totalCheckIns / tickets.length) * 100 : 0;
-    
+
     return {
       totalCheckIns,
       checkInRate,
@@ -252,7 +252,7 @@ export default function EventsOverview({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-purple-700">Total Revenue</p>
-                <p className="text-3xl font-bold text-purple-900">₹{(stats.totalRevenue/1000).toFixed(1)}k</p>
+                <p className="text-3xl font-bold text-purple-900">₹{(stats.totalRevenue / 1000).toFixed(1)}k</p>
               </div>
               <div className="p-3 bg-purple-200 rounded-xl">
                 <DollarSign className="w-6 h-6 text-purple-700" />
@@ -333,9 +333,9 @@ export default function EventsOverview({
               {upcomingEvents.map(event => {
                 const config = statusConfig[event.status];
                 const Icon = config?.icon || Calendar;
-                
+
                 return (
-                  <div 
+                  <div
                     key={event.id}
                     className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-300"
                   >
@@ -353,7 +353,9 @@ export default function EventsOverview({
                         <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
-                            {format(new Date(event.event_date), 'MMM dd, yyyy HH:mm')}
+                            {event.event_date && !isNaN(new Date(event.event_date).getTime())
+                              ? format(new Date(event.event_date), 'MMM dd, yyyy HH:mm')
+                              : 'TBD'}
                           </span>
                           <span className="flex items-center gap-1">
                             <MapPin className="w-3 h-3" />
@@ -447,9 +449,9 @@ export default function EventsOverview({
                     const config = statusConfig[event.status];
                     const Icon = config?.icon || Calendar;
                     const isSelected = selectedEventIds.includes(event.id);
-                    
+
                     return (
-                      <tr 
+                      <tr
                         key={event.id}
                         className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200 ${isSelected ? 'bg-blue-50' : ''}`}
                       >
@@ -469,7 +471,9 @@ export default function EventsOverview({
                         </td>
                         <td className="py-3 px-4 text-sm text-gray-600">{event.organizer_name}</td>
                         <td className="py-3 px-4 text-sm text-gray-600">
-                          {format(new Date(event.event_date), 'MMM dd, yyyy')}
+                          {event.event_date && !isNaN(new Date(event.event_date).getTime())
+                            ? format(new Date(event.event_date), 'MMM dd, yyyy')
+                            : 'TBD'}
                         </td>
                         <td className="py-3 px-4">
                           <Badge className={`${config.color} border-0 text-xs`}>
@@ -491,7 +495,7 @@ export default function EventsOverview({
                               <Eye className="w-4 h-4 mr-1" />
                               View
                             </Button>
-                            
+
                             {['approved', 'scheduled'].includes(event.status) && (
                               <Button
                                 variant="ghost"

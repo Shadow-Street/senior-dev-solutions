@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { PledgeSession, PledgeExecutionRecord } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -25,11 +24,11 @@ export default function AdvisorPledgeExecutionPanel({ user, advisorProfile, acce
 
       try {
         const [sessionData, executionData] = await Promise.all([
-          base44.entities.PledgeSession.filter({ 
+          PledgeSession.filter({
             created_by_advisor_id: advisorProfile.id,
             status: { '$in': ['approved', 'active', 'executing', 'awaiting_sell_execution', 'completed'] }
           }).catch(() => []), // Return empty array on error
-          base44.entities.PledgeExecutionRecord.filter({ 
+          PledgeExecutionRecord.filter({
             session_id: { '$exists': true }
           }).catch(() => []) // Return empty array on error
         ]);
@@ -87,7 +86,7 @@ export default function AdvisorPledgeExecutionPanel({ user, advisorProfile, acce
       <Alert className="bg-blue-50 border-blue-200">
         <AlertCircle className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-blue-800">
-          <strong>Execution Authority:</strong> Only SuperAdmin can execute trades. 
+          <strong>Execution Authority:</strong> Only SuperAdmin can execute trades.
           Once SuperAdmin approves and executes your sessions, you'll earn your commission automatically.
         </AlertDescription>
       </Alert>

@@ -16,7 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon, Plus, X, Search, Loader2 } from "lucide-react";
-import { Stock, User, UserInvestment } from "@/lib/apiClient";
+import apiClient from "@/lib/apiClient";
 import { toast } from "sonner";
 import { debounce } from "lodash";
 
@@ -29,28 +29,8 @@ export default function AddInvestmentModal({ open, onClose, onSave, existingInve
   // Stock search state
   const [searchTerm, setSearchTerm] = useState("");
   const [searchedStocks, setSearchedStocks] = useState([]);
-  const [allStocks, setAllStocks] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedStock, setSelectedStock] = useState(null);
-
-  // Load all stocks when modal opens
-  useEffect(() => {
-    if (open) {
-      const loadAllStocks = async () => {
-        setIsSearching(true);
-        try {
-          const stocks = await Stock.list('', 50);
-          setAllStocks(stocks);
-        } catch (error) {
-          console.error('Error loading stocks:', error);
-          setAllStocks([]);
-        } finally {
-          setIsSearching(false);
-        }
-      };
-      loadAllStocks();
-    }
-  }, [open]);
 
   useEffect(() => {
     if (existingInvestment) {
@@ -59,9 +39,9 @@ export default function AddInvestmentModal({ open, onClose, onSave, existingInve
         symbol: existingInvestment.stock_symbol,
         company_name: existingInvestment.stock_name,
       });
-      setTransactions([{ 
-        quantity: existingInvestment.quantity, 
-        price: existingInvestment.avg_buy_price 
+      setTransactions([{
+        quantity: existingInvestment.quantity,
+        price: existingInvestment.avg_buy_price
       }]);
       setPurchaseDate(new Date(existingInvestment.purchase_date || Date.now()));
       setNotes(existingInvestment.notes || "");
@@ -70,7 +50,7 @@ export default function AddInvestmentModal({ open, onClose, onSave, existingInve
       resetForm();
     }
   }, [existingInvestment, open]);
-  
+
   const resetForm = () => {
     setSelectedStock(null);
     setSearchTerm("");
@@ -81,20 +61,24 @@ export default function AddInvestmentModal({ open, onClose, onSave, existingInve
   };
 
   const debouncedSearch = useMemo(
-    () => debounce((term) => {
+    () => debounce(async (term) => {
       if (term.length < 2) {
         setSearchedStocks([]);
         return;
       }
 
-      const filteredStocks = allStocks.filter(stock => 
-        stock.symbol.toLowerCase().includes(term.toLowerCase()) ||
-        stock.company_name.toLowerCase().includes(term.toLowerCase())
-      );
-
-      setSearchedStocks(filteredStocks);
-    }, 300),
-    [allStocks]
+      setIsSearching(true);
+      try {
+        const response = await apiClient.get('/stocks/search-live', { params: { q: term } });
+        setSearchedStocks(response.data || []);
+      } catch (error) {
+        console.error('Error searching stocks:', error);
+        setSearchedStocks([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 400),
+    []
   );
 
   // Cleanup the debounced function on unmount
@@ -161,13 +145,13 @@ export default function AddInvestmentModal({ open, onClose, onSave, existingInve
       purchase_date: format(purchaseDate, 'yyyy-MM-dd'),
       notes: notes,
     };
-    
+
     if (existingInvestment) {
       await onSave(investmentData, existingInvestment);
     } else {
       await onSave(investmentData);
     }
-    
+
     setIsSaving(false);
     resetForm();
     onClose();
@@ -182,7 +166,7 @@ export default function AddInvestmentModal({ open, onClose, onSave, existingInve
             {existingInvestment ? `Editing your position in ${existingInvestment.stock_name}.` : 'Add a stock you own to your portfolio to track its performance.'}
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-4 py-4">
           {/* Stock Search Section */}
           {!selectedStock && (
@@ -202,7 +186,7 @@ export default function AddInvestmentModal({ open, onClose, onSave, existingInve
               {searchTerm.length >= 2 && searchedStocks.length > 0 && (
                 <div className="border rounded-md max-h-32 overflow-y-auto">
                   {searchedStocks.map(stock => (
-                    <div 
+                    <div
                       key={stock.id}
                       onClick={() => handleSelectStock(stock)}
                       className="p-2 hover:bg-gray-100 cursor-pointer text-sm"
@@ -228,9 +212,9 @@ export default function AddInvestmentModal({ open, onClose, onSave, existingInve
                 <p className="text-sm text-slate-600">{selectedStock.company_name}</p>
               </div>
               {!existingInvestment && (
-                 <Button variant="ghost" size="sm" onClick={() => setSelectedStock(null)}>
-                   Change
-                 </Button>
+                <Button variant="ghost" size="sm" onClick={() => setSelectedStock(null)}>
+                  Change
+                </Button>
               )}
             </div>
           )}
@@ -260,13 +244,13 @@ export default function AddInvestmentModal({ open, onClose, onSave, existingInve
               </div>
             ))}
             {!existingInvestment && (
-                <Button variant="outline" size="sm" onClick={addTransactionRow} className="w-full hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200">
+              <Button variant="outline" size="sm" onClick={addTransactionRow} className="w-full hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200">
                 <Plus className="h-4 w-4 mr-2" />
                 Add another buy transaction
-                </Button>
+              </Button>
             )}
           </div>
-          
+
           {/* Date and Notes */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">

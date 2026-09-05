@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, Advisor } from '@/lib/apiClient';
 import apiClient from '@/lib/apiClient';
+import { UploadFile } from '@/api/integrations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -36,7 +37,7 @@ export default function AdvisorRegistration() {
             setIsCheckingStatus(true);
             try {
                 const user = await User.me().catch(() => null);
-                
+
                 if (!isMounted) return;
 
                 if (!user) {
@@ -49,8 +50,8 @@ export default function AdvisorRegistration() {
                 setCurrentUser(user);
 
                 // ✅ Check if user already has ANY advisor profile (including rejected)
-                const advisors = await Advisor.filter({ 
-                    user_id: user.id 
+                const advisors = await Advisor.filter({
+                    user_id: user.id
                 }).catch(() => []);
 
                 if (!isMounted) return;
@@ -112,8 +113,8 @@ export default function AdvisorRegistration() {
         setIsSubmitting(true);
         try {
             // ✅ FINAL CHECK: Verify no advisor profile exists
-            const existingCheck = await Advisor.filter({ 
-                user_id: currentUser.id 
+            const existingCheck = await Advisor.filter({
+                user_id: currentUser.id
             }).catch(() => []);
 
             if (existingCheck && existingCheck.length > 0) {
@@ -126,7 +127,7 @@ export default function AdvisorRegistration() {
             }
 
             // Step 1: Upload the SEBI document
-            const { file_url } = await base44.integrations.Core.UploadFile({ file });
+            const { file_url } = await UploadFile({ file });
 
             // Step 2: Create the Advisor record with dynamic approval status
             const advisorData = {
@@ -137,13 +138,13 @@ export default function AdvisorRegistration() {
                 sebi_document_url: file_url,
                 status: settings.advisorApprovalRequired ? 'pending_approval' : 'approved',
             };
-            
+
             const newAdvisor = await Advisor.create(advisorData);
-            
+
             setExistingAdvisor(newAdvisor);
             setRegistrationSuccess(true);
             setApprovalStatus(newAdvisor.status);
-            
+
             if (settings.advisorApprovalRequired) {
                 toast.success("Registration submitted! Your application is under review.");
             } else {
@@ -298,7 +299,7 @@ export default function AdvisorRegistration() {
                 <CardHeader>
                     <CardTitle className="text-3xl font-bold text-center">Become a Stock Advisor</CardTitle>
                     <CardDescription className="text-center">Join our platform as a SEBI Registered Advisor and share your expertise.</CardDescription>
-                    
+
                     {/* Platform Settings Info */}
                     <div className="space-y-2 mt-4">
                         {settings.advisorApprovalRequired ? (
@@ -312,7 +313,7 @@ export default function AdvisorRegistration() {
                                 Auto-Approval Enabled
                             </Badge>
                         )}
-                        
+
                         <div className="text-sm text-slate-600 bg-blue-50 p-3 rounded-lg">
                             <p className="font-medium">Platform Commission: {settings.commissionRate}%</p>
                             <p>You'll receive {100 - settings.commissionRate}% of your advisor plan revenues.</p>
@@ -334,9 +335,9 @@ export default function AdvisorRegistration() {
                                 Email Address
                             </label>
                             <div className="relative">
-                                <Input 
-                                    type="email" 
-                                    value={currentUser?.email || ''} 
+                                <Input
+                                    type="email"
+                                    value={currentUser?.email || ''}
                                     readOnly
                                     disabled
                                     className="bg-slate-100 cursor-not-allowed"
@@ -353,24 +354,24 @@ export default function AdvisorRegistration() {
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Full Name <span className="text-red-500">*</span>
                                 </label>
-                                <Input 
-                                    name="fullName" 
-                                    placeholder="Your Full Name" 
-                                    value={formData.fullName} 
-                                    onChange={handleInputChange} 
-                                    required 
+                                <Input
+                                    name="fullName"
+                                    placeholder="Your Full Name"
+                                    value={formData.fullName}
+                                    onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     SEBI Registration Number <span className="text-red-500">*</span>
                                 </label>
-                                <Input 
-                                    name="sebiNumber" 
-                                    placeholder="e.g., INA000012346" 
-                                    value={formData.sebiNumber} 
-                                    onChange={handleInputChange} 
-                                    required 
+                                <Input
+                                    name="sebiNumber"
+                                    placeholder="e.g., INA000012346"
+                                    value={formData.sebiNumber}
+                                    onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                         </div>
@@ -379,15 +380,15 @@ export default function AdvisorRegistration() {
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Bio / Advisory Focus
                             </label>
-                            <Textarea 
-                                name="bio" 
-                                placeholder="Describe your expertise (e.g., Technical Analysis, F&O, Long-term Value Investing)" 
-                                value={formData.bio} 
+                            <Textarea
+                                name="bio"
+                                placeholder="Describe your expertise (e.g., Technical Analysis, F&O, Long-term Value Investing)"
+                                value={formData.bio}
                                 onChange={handleInputChange}
                                 rows={3}
                             />
                         </div>
-                        
+
                         {/* Enhanced File Upload */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -404,13 +405,13 @@ export default function AdvisorRegistration() {
                                             </div>
                                             <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500">
                                                 <span className="text-sm">Change file</span>
-                                                <input 
-                                                    id="file-upload" 
-                                                    name="file-upload" 
-                                                    type="file" 
-                                                    className="sr-only" 
-                                                    onChange={handleFileChange} 
-                                                    accept=".pdf,.jpg,.jpeg,.png" 
+                                                <input
+                                                    id="file-upload"
+                                                    name="file-upload"
+                                                    type="file"
+                                                    className="sr-only"
+                                                    onChange={handleFileChange}
+                                                    accept=".pdf,.jpg,.jpeg,.png"
                                                 />
                                             </label>
                                         </>
@@ -420,13 +421,13 @@ export default function AdvisorRegistration() {
                                             <div className="flex text-sm text-gray-600">
                                                 <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
                                                     <span>Upload a file</span>
-                                                    <input 
-                                                        id="file-upload" 
-                                                        name="file-upload" 
-                                                        type="file" 
-                                                        className="sr-only" 
-                                                        onChange={handleFileChange} 
-                                                        accept=".pdf,.jpg,.jpeg,.png" 
+                                                    <input
+                                                        id="file-upload"
+                                                        name="file-upload"
+                                                        type="file"
+                                                        className="sr-only"
+                                                        onChange={handleFileChange}
+                                                        accept=".pdf,.jpg,.jpeg,.png"
                                                     />
                                                 </label>
                                                 <p className="pl-1">or drag and drop</p>

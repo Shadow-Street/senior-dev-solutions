@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { PledgeSession, PledgeExecutionRecord } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, DollarSign, Target, BarChart3 } from 'lucide-react';
 
@@ -26,7 +25,7 @@ export default function AdvisorPledgeAnalytics({ user, advisorProfile }) {
       }
 
       try {
-        const sessions = await base44.entities.PledgeSession.filter({
+        const sessions = await PledgeSession.filter({
           created_by_advisor_id: advisorProfile.id
         }, { signal: abortController.signal }).catch((error) => {
           if (!error?.message?.includes('aborted') && error?.name !== 'AbortError') {
@@ -38,23 +37,23 @@ export default function AdvisorPledgeAnalytics({ user, advisorProfile }) {
         if (!isMounted || abortController.signal.aborted) return;
 
         const activeSessions = sessions.filter(s => ['active', 'approved', 'executing'].includes(s.status));
-        
+
         const totalPledges = sessions.reduce((sum, s) => sum + (s.total_pledges || 0), 0);
         const totalPledgeValue = sessions.reduce((sum, s) => sum + (s.total_pledge_value || 0), 0);
 
         // Get executions for advisor's sessions
         const sessionIds = sessions.map(s => s.id);
-        const allExecutions = await base44.entities.PledgeExecutionRecord.list({ signal: abortController.signal }).catch((error) => {
+        const allExecutions = await PledgeExecutionRecord.list({ signal: abortController.signal }).catch((error) => {
           if (!error?.message?.includes('aborted') && error?.name !== 'AbortError') {
             console.error('Error fetching executions:', error);
           }
           return []; // Return an empty array on error
         });
-        
+
         if (!isMounted || abortController.signal.aborted) return;
-        
+
         const executions = allExecutions.filter(e => sessionIds.includes(e.session_id));
-        
+
         const totalExecutionValue = executions.reduce((sum, e) => sum + (e.total_execution_value || 0), 0);
 
         if (isMounted && !abortController.signal.aborted) {
@@ -182,13 +181,13 @@ export default function AdvisorPledgeAnalytics({ user, advisorProfile }) {
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-gray-600">Session Completion Rate</span>
                 <span className="font-semibold">
-                  {stats.totalSessions > 0 
-                    ? Math.round(((stats.totalSessions - stats.activeSessions) / stats.totalSessions) * 100) 
+                  {stats.totalSessions > 0
+                    ? Math.round(((stats.totalSessions - stats.activeSessions) / stats.totalSessions) * 100)
                     : 0}%
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
+                <div
                   className="bg-green-600 h-2 rounded-full"
                   style={{ width: `${stats.totalSessions > 0 ? ((stats.totalSessions - stats.activeSessions) / stats.totalSessions) * 100 : 0}%` }}
                 />
@@ -199,13 +198,13 @@ export default function AdvisorPledgeAnalytics({ user, advisorProfile }) {
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-gray-600">Execution Rate</span>
                 <span className="font-semibold">
-                  {stats.totalPledges > 0 
-                    ? Math.round((stats.totalExecutions / stats.totalPledges) * 100) 
+                  {stats.totalPledges > 0
+                    ? Math.round((stats.totalExecutions / stats.totalPledges) * 100)
                     : 0}%
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
+                <div
                   className="bg-blue-600 h-2 rounded-full"
                   style={{ width: `${stats.totalPledges > 0 ? (stats.totalExecutions / stats.totalPledges) * 100 : 0}%` }}
                 />

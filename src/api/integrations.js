@@ -24,7 +24,11 @@ export async function UploadFile({ file, ...extra } = {}) {
     headers: { "Content-Type": "multipart/form-data" },
   });
 
-  return response.data;
+  // Map backend 'url' to frontend expected 'file_url'
+  return {
+    ...response.data,
+    file_url: response.data.url
+  };
 }
 
 /**

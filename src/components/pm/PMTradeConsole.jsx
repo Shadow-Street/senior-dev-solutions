@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { PMClient, PMTradeOrder } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -32,8 +32,8 @@ export default function PMTradeConsole({ pmProfile }) {
   const loadData = async () => {
     try {
       const [clientsData, ordersData] = await Promise.all([
-        base44.entities.PMClient.filter({ pm_id: pmProfile.id, status: 'active' }),
-        base44.entities.PMTradeOrder.filter({ pm_id: pmProfile.id }, '-created_date', 50)
+        PMClient.filter({ pm_id: pmProfile.id, status: 'active' }),
+        PMTradeOrder.filter({ pm_id: pmProfile.id }, '-created_date', 50)
       ]);
       setClients(clientsData);
       setOrders(ordersData);
@@ -65,9 +65,9 @@ export default function PMTradeConsole({ pmProfile }) {
         status: 'pending'
       };
 
-      await base44.entities.PMTradeOrder.create(orderData);
+      await PMTradeOrder.create(orderData);
       toast.success('Order placed successfully');
-      
+
       // Reset form
       setTradeForm({
         client_id: '',
@@ -78,7 +78,7 @@ export default function PMTradeConsole({ pmProfile }) {
         price: '',
         order_reason: ''
       });
-      
+
       loadData();
     } catch (error) {
       console.error('Error placing order:', error);
@@ -116,7 +116,7 @@ export default function PMTradeConsole({ pmProfile }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-gray-700 mb-2 block">Select Client</label>
-              <Select value={tradeForm.client_id} onValueChange={(value) => setTradeForm({...tradeForm, client_id: value})}>
+              <Select value={tradeForm.client_id} onValueChange={(value) => setTradeForm({ ...tradeForm, client_id: value })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Choose client" />
                 </SelectTrigger>
@@ -135,14 +135,14 @@ export default function PMTradeConsole({ pmProfile }) {
               <Input
                 placeholder="e.g., RELIANCE"
                 value={tradeForm.stock_symbol}
-                onChange={(e) => setTradeForm({...tradeForm, stock_symbol: e.target.value})}
+                onChange={(e) => setTradeForm({ ...tradeForm, stock_symbol: e.target.value })}
                 className="uppercase"
               />
             </div>
 
             <div>
               <label className="text-sm font-medium text-gray-700 mb-2 block">Transaction Type</label>
-              <Select value={tradeForm.transaction_type} onValueChange={(value) => setTradeForm({...tradeForm, transaction_type: value})}>
+              <Select value={tradeForm.transaction_type} onValueChange={(value) => setTradeForm({ ...tradeForm, transaction_type: value })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -155,7 +155,7 @@ export default function PMTradeConsole({ pmProfile }) {
 
             <div>
               <label className="text-sm font-medium text-gray-700 mb-2 block">Order Type</label>
-              <Select value={tradeForm.order_type} onValueChange={(value) => setTradeForm({...tradeForm, order_type: value})}>
+              <Select value={tradeForm.order_type} onValueChange={(value) => setTradeForm({ ...tradeForm, order_type: value })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -173,7 +173,7 @@ export default function PMTradeConsole({ pmProfile }) {
                 type="number"
                 placeholder="Number of shares"
                 value={tradeForm.quantity}
-                onChange={(e) => setTradeForm({...tradeForm, quantity: e.target.value})}
+                onChange={(e) => setTradeForm({ ...tradeForm, quantity: e.target.value })}
               />
             </div>
 
@@ -183,7 +183,7 @@ export default function PMTradeConsole({ pmProfile }) {
                 type="number"
                 placeholder="Price per share"
                 value={tradeForm.price}
-                onChange={(e) => setTradeForm({...tradeForm, price: e.target.value})}
+                onChange={(e) => setTradeForm({ ...tradeForm, price: e.target.value })}
               />
             </div>
           </div>
@@ -193,7 +193,7 @@ export default function PMTradeConsole({ pmProfile }) {
             <Input
               placeholder="Why are you placing this trade?"
               value={tradeForm.order_reason}
-              onChange={(e) => setTradeForm({...tradeForm, order_reason: e.target.value})}
+              onChange={(e) => setTradeForm({ ...tradeForm, order_reason: e.target.value })}
             />
           </div>
 
@@ -209,7 +209,7 @@ export default function PMTradeConsole({ pmProfile }) {
             })}>
               Clear
             </Button>
-            <Button 
+            <Button
               className="bg-blue-600 hover:bg-blue-700"
               onClick={handlePlaceOrder}
             >

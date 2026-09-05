@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import apiClient from '@/lib/apiClient';
+import { PledgeSession } from '@/lib/apiClient';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,9 +29,9 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!formData.stock_symbol || !formData.stock_name || !formData.session_start || 
-        !formData.session_end || !formData.convenience_fee_amount) {
+
+    if (!formData.stock_symbol || !formData.stock_name || !formData.session_start ||
+      !formData.session_end || !formData.convenience_fee_amount) {
       toast.error('Please fill all required fields');
       return;
     }
@@ -39,7 +39,7 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
     setIsSubmitting(true);
     try {
       // Create session with advisor information - status pending_approval
-      const newSession = await base44.entities.PledgeSession.create({
+      const newSession = await PledgeSession.create({
         created_by_advisor_id: advisorProfile.id,
         stock_symbol: formData.stock_symbol.toUpperCase(),
         stock_name: formData.stock_name,
@@ -90,7 +90,7 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
               <Input
                 id="stock_symbol"
                 value={formData.stock_symbol}
-                onChange={(e) => setFormData({...formData, stock_symbol: e.target.value.toUpperCase()})}
+                onChange={(e) => setFormData({ ...formData, stock_symbol: e.target.value.toUpperCase() })}
                 placeholder="e.g., RELIANCE"
                 required
               />
@@ -100,7 +100,7 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
               <Input
                 id="stock_name"
                 value={formData.stock_name}
-                onChange={(e) => setFormData({...formData, stock_name: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, stock_name: e.target.value })}
                 placeholder="e.g., Reliance Industries"
                 required
               />
@@ -112,7 +112,7 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
             <Textarea
               id="description"
               value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Brief description of this pledge session"
               rows={2}
             />
@@ -123,7 +123,7 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
             <Textarea
               id="execution_reason"
               value={formData.execution_reason}
-              onChange={(e) => setFormData({...formData, execution_reason: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, execution_reason: e.target.value })}
               placeholder="Why are you recommending this stock? Market conditions, technical analysis, fundamentals, etc."
               rows={3}
               required
@@ -137,7 +137,7 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
                 id="session_start"
                 type="datetime-local"
                 value={formData.session_start}
-                onChange={(e) => setFormData({...formData, session_start: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, session_start: e.target.value })}
                 required
               />
             </div>
@@ -147,7 +147,7 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
                 id="session_end"
                 type="datetime-local"
                 value={formData.session_end}
-                onChange={(e) => setFormData({...formData, session_end: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, session_end: e.target.value })}
                 required
               />
             </div>
@@ -157,7 +157,7 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
             <Label htmlFor="session_mode">Session Mode *</Label>
             <Select
               value={formData.session_mode}
-              onValueChange={(value) => setFormData({...formData, session_mode: value})}
+              onValueChange={(value) => setFormData({ ...formData, session_mode: value })}
             >
               <SelectTrigger>
                 <SelectValue />
@@ -175,7 +175,7 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
               <Label htmlFor="fee_type">Convenience Fee Type *</Label>
               <Select
                 value={formData.convenience_fee_type}
-                onValueChange={(value) => setFormData({...formData, convenience_fee_type: value})}
+                onValueChange={(value) => setFormData({ ...formData, convenience_fee_type: value })}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -195,7 +195,7 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
                 type="number"
                 step="0.01"
                 value={formData.convenience_fee_amount}
-                onChange={(e) => setFormData({...formData, convenience_fee_amount: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, convenience_fee_amount: e.target.value })}
                 placeholder={formData.convenience_fee_type === 'flat' ? '100' : '2'}
                 required
               />
@@ -210,7 +210,7 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
                 type="number"
                 min="1"
                 value={formData.min_qty}
-                onChange={(e) => setFormData({...formData, min_qty: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, min_qty: e.target.value })}
                 required
               />
             </div>
@@ -220,7 +220,7 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
                 id="max_qty"
                 type="number"
                 value={formData.max_qty}
-                onChange={(e) => setFormData({...formData, max_qty: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, max_qty: e.target.value })}
                 placeholder="Optional"
               />
             </div>
@@ -230,7 +230,7 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
                 id="capacity"
                 type="number"
                 value={formData.capacity}
-                onChange={(e) => setFormData({...formData, capacity: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
                 placeholder="Optional"
               />
             </div>
@@ -248,8 +248,8 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isSubmitting}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
             >

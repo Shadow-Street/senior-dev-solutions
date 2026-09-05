@@ -38,7 +38,7 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
   });
   const [isSaving, setIsSaving] = useState(false);
   const [showCreatePollModal, setShowCreatePollModal] = useState(false);
-  
+
   // Track if name was manually edited by admin
   const isNameManuallyEdited = useRef(false);
 
@@ -90,7 +90,7 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
 
   const handleNameChange = (e) => {
     const newName = e.target.value;
-    
+
     // Mark as manually edited if admin changes it to something different than auto-filled value
     if (!room && formData.room_type === "stock_specific" && newName !== formData.stock_symbol.toUpperCase()) {
       isNameManuallyEdited.current = true;
@@ -102,13 +102,13 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
       // to potentially allow auto-fill if they then pick a stock_specific type.
       isNameManuallyEdited.current = false;
     }
-    
-    setFormData({...formData, name: newName});
+
+    setFormData({ ...formData, name: newName });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.name.trim()) {
       toast.error('Room name is required');
       return;
@@ -164,8 +164,8 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
               {room ? 'Edit Chat Room' : 'Create New Chat Room'}
             </DialogTitle>
             <DialogDescription>
-              {room 
-                ? 'Update the chat room details and settings' 
+              {room
+                ? 'Update the chat room details and settings'
                 : 'Create a new chat room for your community'
               }
             </DialogDescription>
@@ -215,7 +215,7 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
                   required={formData.room_type === 'stock_specific'}
                 />
                 <p className="text-xs text-slate-500 mt-1">
-                  {formData.room_type === 'stock_specific' 
+                  {formData.room_type === 'stock_specific'
                     ? 'Required: Stock symbol for this room'
                     : 'Optional: Associate this room with a specific stock'
                   }
@@ -238,13 +238,13 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
                   </p>
                 )}
               </div>
-              
+
               <div>
                 <Label htmlFor="description">Description</Label>
                 <Textarea
                   id="description"
                   value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Brief description of the room purpose..."
                   className="mt-1 h-20"
                 />
@@ -327,7 +327,7 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
                     Create Poll
                   </Button>
                 </div>
-                
+
                 {!formData.stock_symbol && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                     <p className="text-xs text-yellow-800">
@@ -343,8 +343,8 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
                 <X className="w-4 h-4 mr-2" />
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isSaving}
                 className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700"
               >

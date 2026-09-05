@@ -78,6 +78,8 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
     refetch
   } = useChatRoom(room?.id, user);
 
+  console.log("messages123", messages);
+
   const [filteredMessages, setFilteredMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [priceData, setPriceData] = useState(null);
@@ -96,7 +98,18 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
   const [showParticipantModal, setShowParticipantModal] = useState(false);
 
   const [pollRefreshTrigger, setPollRefreshTrigger] = useState(0);
-  const [latestPollStockSymbol, setLatestPollStockSymbol] = useState(room?.stock_symbol || "");
+  const [latestPollStockSymbol, setLatestPollStockSymbol] = useState(() => {
+    if (room?.stock_symbol) return room.stock_symbol;
+
+    // Fallback: Check if room name contains a ticker (3-6 uppercase chars)
+    // Examples: "TCS Discussion" -> "TCS", "INFY Analysis" -> "INFY"
+    if (room?.name) {
+      const match = room.name.match(/\b[A-Z]{3,6}\b/);
+      if (match) return match[0];
+    }
+
+    return "";
+  });
   const [hasCommunityPoll, setHasCommunityPoll] = useState(false);
 
   const [replyingToMessageId, setReplyingToMessageId] = useState(null);
@@ -181,6 +194,8 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
         is_bot: true,
         message_type: 'bot_insight'
       });
+      // Force refresh to show bot message immediately if WS doesn't catch it
+      refetch();
     } catch (error) {
       console.error("Failed to save bot message:", error);
     }
@@ -267,10 +282,13 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
     let replyMetadata = null;
     if (replyingToMessageId) {
       const originalMessage = messages.find(m => m.id === replyingToMessageId);
+      console.log("originalMessage", originalMessage);
       if (originalMessage) {
         const originalMessageUser = getUserForMessage(originalMessage);
+        console.log("originalMessageUser", originalMessageUser);
         replyMetadata = {
-          reply_to_message_id: originalMessage.id,
+          reply_to_id: originalMessage.id, // Explicit backend field
+          replyToId: originalMessage.id, // Keep legacy just in case
           reply_to_user_name: originalMessageUser.display_name,
           reply_to_content: originalMessage.content?.substring(0, 100) || "Original message"
         };
@@ -356,8 +374,28 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
         case '/rules':
           postBotMessage('📋 Community Guidelines:\n• Keep discussions respectful and professional\n• No personal contact sharing (WhatsApp/Telegram)\n• No scam links or fraudulent content\n• Focus on legitimate trading strategies');
           break;
+        case '/ask':
+          const query = content.replace('/ask', '').trim();
+          if (!query) {
+            postBotMessage('❓ Please provide a question. Usage: /ask <question>');
+            break;
+          }
+
+          postBotMessage('🤖 Thinking...');
+          try {
+            // Using apiClient direct call or import from api/integrations if preferred, but apiClient is cleaner here
+            const apiClient = require("@/lib/apiClient").default;
+            const res = await apiClient.post('/ai/chat', {
+              messages: [{ role: 'user', content: query }]
+            });
+            postBotMessage(`🤖 ${res.data.content}`);
+          } catch (err) {
+            console.error(err);
+            postBotMessage('❌ AI Service Unavailable. Please check API Key configuration.');
+          }
+          break;
         default:
-          postBotMessage(`❓ Unknown command: ${command}. Try /help for available commands.`);
+          postBotMessage(`❓ Unknown command: ${command}. Try /help, /trend, or /ask.`);
       }
       setNewMessage("");
       setReplyingToMessageId(null);
@@ -505,9 +543,9 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
 
   const canDeleteMessage = (msg) => {
     if (!user || msg.is_bot || msg.is_deleted) return false;
-    return msg.created_by === user.email || 
-           user.app_role === 'admin' || 
-           user.app_role === 'super_admin';
+    return msg.created_by === user.email ||
+      user.app_role === 'admin' ||
+      user.app_role === 'super_admin';
   };
 
   // Filter messages
@@ -553,6 +591,135 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
     setActiveFilters(filters);
   };
 
+  // Settings State
+  const [settings, setSettings] = useState({
+    notificationsEnabled: true,
+    soundEnabled: true,
+    desktopNotifications: false,
+    showTypingIndicator: true,
+    showReadReceipts: true,
+    compactMode: false,
+    autoScroll: true,
+    enterToSend: true,
+    showTimestamps: true,
+  });
+
+  // Load settings
+  const loadSettings = useCallback(() => {
+    if (!room?.id) return;
+    const saved = localStorage.getItem(`chat_settings_${room.id}`);
+    if (saved) {
+      try {
+        setSettings(JSON.parse(saved));
+      } catch (e) {
+        console.error("Error parsing settings:", e);
+      }
+    }
+  }, [room?.id]);
+
+  useEffect(() => {
+    loadSettings();
+
+    // Listen for settings updates from modal
+    const handleSettingsUpdate = () => loadSettings();
+    window.addEventListener('chat-settings-updated', handleSettingsUpdate);
+    return () => window.removeEventListener('chat-settings-updated', handleSettingsUpdate);
+  }, [loadSettings]);
+
+  // Notifications
+  const playNotificationSound = useCallback(() => {
+    if (!settings.soundEnabled) return;
+    try {
+      const audio = new Audio('/assets/sounds/message.mp3'); // Assuming this exists, or use online url / generated
+      // Fallback usage of oscillator if no file
+      if (!audio) { // logic just for safety
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.setValueAtTime(440, ctx.currentTime);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.1);
+      } else {
+        // Simple beep using AudioContext for reliability without external assets
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(500, ctx.currentTime);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.5);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.5);
+      }
+    } catch (e) {
+      console.error("Audio play failed", e);
+    }
+  }, [settings.soundEnabled]);
+
+  const sendDesktopNotification = useCallback((msg) => {
+    if (!settings.desktopNotifications || !settings.notificationsEnabled) return;
+    if (!('Notification' in window)) return;
+    if (Notification.permission === 'granted') {
+      const sender = getUserForMessage(msg);
+      // Check if notification constructor throws (e.g. chrome android)
+      try {
+        new Notification(`New message from ${sender.display_name}`, {
+          body: msg.content,
+          icon: '/vite.svg'
+        });
+      } catch (e) {
+        console.error("Notification failed", e);
+      }
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission();
+    }
+  }, [settings.desktopNotifications, settings.notificationsEnabled, getUserForMessage]);
+
+  // Effect to trigger notifications on new messages
+  useEffect(() => {
+    if (!messages.length) return;
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg.user_id !== user?.id && lastMsg.created_by !== user?.email) {
+      // Check if this is a newly received message (compare timestamps or just simplicity of effect trigger on length change)
+      // For better accuracy we could track last notified ID, but length change is usually sufficient for 'new'
+      const isRecent = new Date(lastMsg.created_date || lastMsg.created_at).getTime() > Date.now() - 10000;
+      if (isRecent) {
+        playNotificationSound();
+        sendDesktopNotification(lastMsg);
+      }
+    }
+  }, [messages.length, user?.id, user?.email, playNotificationSound, sendDesktopNotification]); // omitting messages dependency to avoid re-running on internal updates, rely on length
+
+  // Prevent double notification by tracking last ID
+  const lastNotifiedMsgIdRef = useRef(null);
+
+  useEffect(() => {
+    if (!settings.notificationsEnabled) return;
+    if (messages.length === 0) return;
+
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg.id === lastNotifiedMsgIdRef.current) return;
+
+    const isMe = lastMsg.user_id === user?.id || lastMsg.created_by === user?.email;
+    if (!isMe) {
+      // Verify it's new (scrolled into view or just appended)
+      // Simple check: if it's "optimistic" don't notify? Optimistic is usually MY message.
+      // Just check if recent
+      const timeDiff = Date.now() - new Date(lastMsg.created_date || lastMsg.created_at).getTime();
+      if (timeDiff < 5000) { // Only notify for messages less than 5s old
+        playNotificationSound();
+        sendDesktopNotification(lastMsg);
+        lastNotifiedMsgIdRef.current = lastMsg.id;
+      }
+    }
+  }, [messages, settings.notificationsEnabled, playNotificationSound, sendDesktopNotification, user]);
+
+
   return (
     <div className="h-full bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 overflow-hidden flex flex-col">
       <div className="flex-1 flex flex-col max-w-7xl mx-auto w-full overflow-hidden">
@@ -571,13 +738,13 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
         <div className="flex-1 flex gap-4 px-4 pb-4 min-h-0 overflow-hidden">
           {/* Chat Card */}
           <Card className="flex-1 flex flex-col shadow-lg border-0 bg-white overflow-hidden">
-            {/* Card Header */}
-            <CardHeader className="flex-shrink-0 border-b bg-white p-4">
+            {/* Card Header - Glass Effect */}
+            <CardHeader className="flex-shrink-0 border-b bg-white/80 backdrop-blur-md p-4 z-10 sticky top-0">
               <div className="flex items-center gap-3">
                 <Button
                   size="icon"
                   onClick={onBack}
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 h-10 w-10 flex-shrink-0"
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 h-10 w-10 flex-shrink-0 rounded-xl shadow-md transition-all duration-300 hover:scale-105"
                 >
                   <ArrowLeft className="w-4 h-4" />
                 </Button>
@@ -587,10 +754,10 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                     <h1 className="text-lg md:text-xl font-bold text-slate-900 truncate">
                       {room.name}
                     </h1>
-                    
+
                     {/* Connection status indicator */}
-                    <Badge 
-                      variant={isConnected ? "default" : "destructive"} 
+                    <Badge
+                      variant={isConnected ? "default" : "destructive"}
                       className={`text-xs px-2 py-0.5 ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}
                     >
                       {isConnected ? (
@@ -599,7 +766,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                         <><WifiOff className="w-3 h-3 mr-1" /> Offline</>
                       )}
                     </Badge>
-                    
+
                     {/* Create Poll button */}
                     {!hasCommunityPoll && user && (
                       <Button
@@ -623,7 +790,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                     <Users className="w-3 h-3 mr-1" />
                     <span className="text-xs">{room.participant_count || 0}</span>
                   </Badge>
-                  
+
                   {/* Participant Management Button */}
                   {user && (['admin', 'super_admin'].includes(user.app_role) || room.moderator_ids?.includes(user.id)) && (
                     <Button
@@ -636,7 +803,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                       <Users className="w-4 h-4" />
                     </Button>
                   )}
-                  
+
                   <Button
                     size="icon"
                     variant="outline"
@@ -690,7 +857,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
             <CardContent
               ref={chatFeedRef}
               onScroll={handleScroll}
-              className="overflow-y-auto p-4 md:p-6 space-y-4 h-full"
+              className={settings.compactMode ? "overflow-y-auto p-4 md:p-6 space-y-2 h-full" : "overflow-y-auto p-4 md:p-6 space-y-4 h-full"}
             >
               {isLoading ? (
                 <div className="space-y-4">
@@ -722,30 +889,23 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                     </div>
                   )}
 
-                  {messages.length > 5 && messages.length % 10 === 0 && (
-                    <div className="flex justify-center my-4">
-                      <AdDisplay
-                        placement="chatrooms"
-                        userContext={{ stock_symbol: room.stock_symbol }}
-                        className="max-w-sm"
-                      />
-                    </div>
-                  )}
+
 
                   {filteredMessages.map((msg) => {
                     const msgUser = getUserForMessage(msg);
-                    const isCurrentUser = msg.created_by === user?.email && !msg.is_bot;
+                    console.log("msgUser", msgUser);
+                    const isCurrentUser = user && (msg.user_id === user.id || msg.created_by === user.email);
                     const isBot = msg.is_bot;
                     const isReplying = replyingToMessageId === msg.id;
 
                     return (
-                      <div key={msg.id}>
+                      <div key={msg.id} className={`${settings.compactMode ? 'mb-1' : 'mb-3'}`}>
                         <div className={`flex items-start gap-2 group ${isCurrentUser ? 'justify-end' : ''}`}>
                           {!isCurrentUser && (
-                            <Avatar className="h-8 w-8 flex-shrink-0">
+                            <Avatar className={`flex-shrink-0 ${settings.compactMode ? 'h-6 w-6' : 'h-8 w-8'} mt-1`}>
                               {isBot ? (
                                 <AvatarFallback className="bg-slate-600">
-                                  <Bot className="w-4 h-4 text-white" />
+                                  <Bot className={`${settings.compactMode ? 'w-3 h-3' : 'w-4 h-4'} text-white`} />
                                 </AvatarFallback>
                               ) : (
                                 <AvatarFallback style={{ backgroundColor: msgUser.profile_color, color: 'white' }}>
@@ -756,27 +916,29 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                           )}
 
                           <div className={`flex-1 max-w-xs md:max-w-md ${isCurrentUser ? 'flex flex-col items-end' : ''}`}>
-                            {!isCurrentUser && !isBot && (
+                            {!isCurrentUser && !isBot && !settings.compactMode && (
                               <div className="text-xs font-bold mb-1 flex items-center gap-1" style={{ color: msgUser.profile_color }}>
                                 <span>{msgUser.display_name}</span>
                                 <TrustScoreBadge score={msgUser.trust_score} showScore={false} size="xs" />
                               </div>
                             )}
-                            {isBot && (
+                            {isBot && !settings.compactMode && (
                               <div className="text-xs font-bold mb-1 text-blue-600 flex items-center gap-1">
                                 <span>AI Assistant</span>
                               </div>
                             )}
 
-                            <div className={`
-                              ${isCurrentUser ? 'bg-blue-600 text-white rounded-2xl rounded-br-none px-3 py-2 inline-block' :
-                                isBot ? 'bg-slate-100 text-slate-800 rounded-2xl rounded-bl-none border-l-4 border-blue-500 px-3 py-2 inline-block' :
-                                  'inline-block'
+                            <div className={`shadow-sm relative
+                              ${isCurrentUser
+                                ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-2xl rounded-tr-none px-4 py-2.5 inline-block'
+                                : isBot
+                                  ? 'bg-slate-50 text-slate-800 rounded-2xl rounded-tl-none border border-slate-200 px-4 py-2.5 inline-block'
+                                  : 'bg-white text-slate-900 rounded-2xl rounded-tl-none border border-slate-100 px-4 py-2.5 inline-block'
                               }
                               ${msg.is_deleted ? 'opacity-60 italic text-slate-500' : ''}
                             `}>
                               {msg.is_deleted ? (
-                                <span>Message deleted.</span>
+                                <span>This message was deleted</span>
                               ) : (
                                 <>
                                   <MessageContent
@@ -784,7 +946,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                                     user={user}
                                     onReply={() => handleReply(msg.id)}
                                   />
-                                  
+
                                   {/* PDF File Display */}
                                   {msg.message_type === 'file' && msg.file_url && (
                                     <div className="mt-2 p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-center gap-3">
@@ -795,9 +957,9 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                                         </p>
                                         <p className="text-xs text-slate-500">PDF Document</p>
                                       </div>
-                                      <a 
-                                        href={msg.file_url} 
-                                        target="_blank" 
+                                      <a
+                                        href={msg.file_url}
+                                        target="_blank"
                                         rel="noopener noreferrer"
                                         download
                                       >
@@ -811,13 +973,15 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                               )}
                             </div>
 
-                            <p className="text-xs mt-1 text-slate-400">
-                              {formatDistanceToNow(new Date(msg.created_date || msg.created_at), { addSuffix: true })}
-                              {msg.is_edited && !msg.is_deleted && <span className="ml-1 text-xs text-slate-500">(edited)</span>}
-                            </p>
-                            
+                            {settings.showTimestamps && (
+                              <p className="text-xs mt-1 text-slate-400">
+                                {formatDistanceToNow(new Date(msg.created_date || msg.created_at), { addSuffix: true })}
+                                {msg.is_edited && !msg.is_deleted && <span className="ml-1 text-xs text-slate-500">(edited)</span>}
+                              </p>
+                            )}
+
                             {/* Read Receipts */}
-                            {isCurrentUser && !msg.is_deleted && (
+                            {settings.showReadReceipts && isCurrentUser && !msg.is_deleted && (
                               <ReadReceiptIndicator
                                 message={msg}
                                 currentUser={user}
@@ -881,7 +1045,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                           )}
 
                           {isCurrentUser && (
-                            <Avatar className="h-8 w-8 flex-shrink-0">
+                            <Avatar className={`flex-shrink-0 ${settings.compactMode ? 'h-6 w-6' : 'h-8 w-8'} mt-1`}>
                               <AvatarFallback style={{ backgroundColor: msgUser.profile_color, color: 'white' }}>
                                 {msgUser.display_name?.charAt(0) || 'U'}
                               </AvatarFallback>
@@ -903,9 +1067,9 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                                 <X className="w-4 h-4" />
                               </button>
                             </div>
-                            <div 
-                              className="text-sm text-slate-600 mb-3 max-h-12 overflow-hidden" 
-                              style={{ 
+                            <div
+                              className="text-sm text-slate-600 mb-3 max-h-12 overflow-hidden"
+                              style={{
                                 display: '-webkit-box',
                                 WebkitLineClamp: 2,
                                 WebkitBoxOrient: 'vertical',
@@ -924,6 +1088,16 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                                 onChange={(e) => {
                                   setNewMessage(e.target.value);
                                   handleTyping();
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    if (settings.enterToSend && !e.shiftKey) {
+                                      e.preventDefault();
+                                      handleSendMessage(e);
+                                    }
+                                    // If !enterToSend or shiftKey, let default happen (newline)
+                                    // But here Input is likely one line? if textarea need to handle
+                                  }
                                 }}
                                 className="flex-1"
                                 autoFocus
@@ -961,11 +1135,11 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
               </div>
             )}
 
-            {/* Typing Indicator - Now shows WebSocket typing users */}
+            {/* Typing Indicator - With setting check */}
             <div className="flex-shrink-0 px-4 py-2">
-              {typingUsers.length > 0 && (
+              {settings.showTypingIndicator && typingUsers.length > 0 && (
                 <div className="text-sm text-slate-500 italic animate-pulse">
-                  {typingUsers.length === 1 
+                  {typingUsers.length === 1
                     ? `${typingUsers[0]} is typing...`
                     : `${typingUsers.slice(0, -1).join(', ')} and ${typingUsers[typingUsers.length - 1]} are typing...`
                   }
@@ -973,9 +1147,9 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
               )}
             </div>
 
-            {/* Message Input Footer */}
+            {/* Message Input Footer - Glass Effect */}
             {!replyingToMessageId && (
-              <CardFooter className="flex-shrink-0 border-t p-4 bg-white flex flex-col">
+              <CardFooter className="flex-shrink-0 border-t p-4 bg-white/90 backdrop-blur-sm flex flex-col shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
                 {file && (
                   <div className="flex items-center gap-2 p-2 mb-2 bg-slate-100 border border-slate-200 rounded-lg w-full">
                     <FileText className="w-5 h-5 text-red-600" />
@@ -1024,7 +1198,15 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                       setNewMessage(e.target.value);
                       handleTyping();
                     }}
-                    className="flex-1"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        if (settings.enterToSend && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSendMessage(e);
+                        }
+                      }
+                    }}
+                    className="flex-1 bg-slate-50 border-slate-200 focus-visible:ring-purple-500 focus-visible:border-purple-500 transition-all duration-300 rounded-xl"
                     disabled={!user || (user.trust_score !== undefined && user.trust_score < 20) || isUploading || isSending}
                   />
 
@@ -1058,6 +1240,12 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
               <TomorrowsPick />
 
               <AdvisorRecommendedStocks />
+
+              <AdDisplay
+                placement="chatrooms_sidebar"
+                userContext={{ stock_symbol: latestPollStockSymbol || room.stock_symbol }}
+                className="mt-4"
+              />
             </div>
           </div>
         </div>
@@ -1074,6 +1262,11 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
             <TomorrowsPick />
 
             <AdvisorRecommendedStocks />
+
+            <AdDisplay
+              placement="chatrooms_mobile"
+              userContext={{ stock_symbol: latestPollStockSymbol || room.stock_symbol }}
+            />
           </div>
         </div>
       </div>

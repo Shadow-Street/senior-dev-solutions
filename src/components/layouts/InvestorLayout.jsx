@@ -119,11 +119,10 @@ export default function InvestorLayout({ children, currentView }) { // Changed a
               <button // Changed Link to button
                 key={item.id}
                 onClick={() => navigate(createPageUrl(item.path))} // Use navigate for internal routing
-                className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl transition-all ${
-                  isActive
+                className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl transition-all ${isActive
                     ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105'
                     : 'text-slate-600 hover:bg-white/60 hover:shadow-md'
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <Icon className="w-5 h-5" />
@@ -148,12 +147,12 @@ export default function InvestorLayout({ children, currentView }) { // Changed a
             <Home className="w-4 h-4" />
             <span className="text-sm font-medium">Back to Main Dashboard</span>
           </button>
-          
-          <img
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68bb21f4e5ccdcab161121f6/1dc7cf9b7_FinancialNetworkingLogoProtocol.png"
-            alt="Protocol Logo"
-            className="w-full"
-          />
+
+          <div className="text-center p-4 bg-slate-50 rounded-lg">
+            <Shield className="w-8 h-8 mx-auto text-blue-600 mb-2" />
+            <h3 className="font-bold text-slate-800">Protocol</h3>
+            <p className="text-xs text-slate-500">Secure Investment Fund</p>
+          </div>
         </div>
       </aside>
 

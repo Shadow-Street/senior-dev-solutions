@@ -5,18 +5,18 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  Eye, 
-  Users, 
-  TrendingUp, 
-  Clock, 
+import {
+  Eye,
+  Users,
+  TrendingUp,
+  Clock,
   Download,
   Search,
   CheckCircle,
   XCircle,
   Calendar
 } from 'lucide-react';
-import apiClient from '@/lib/apiClient';
+import { AdvisorSubscription } from '@/lib/apiClient';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 
@@ -46,14 +46,14 @@ export default function PostAnalyticsModal({ open, onClose, post, advisorId }) {
     setIsLoading(true);
     try {
       // Get all subscribers
-      const allSubscribers = await base44.entities.AdvisorSubscription.filter({
+      const allSubscribers = await AdvisorSubscription.filter({
         advisor_id: advisorId
       });
       setSubscribers(allSubscribers);
 
       // Parse unique viewers from post
       const uniqueViewerIds = post.unique_viewers || [];
-      
+
       // Create viewer list with subscriber status
       const viewersList = uniqueViewerIds.map(userId => {
         const subscription = allSubscribers.find(sub => sub.user_id === userId);
@@ -71,14 +71,14 @@ export default function PostAnalyticsModal({ open, onClose, post, advisorId }) {
       // Calculate stats
       const subscriberViewCount = viewersList.filter(v => v.isSubscriber).length;
       const nonSubscriberViewCount = viewersList.filter(v => !v.isSubscriber).length;
-      
+
       setStats({
         totalViews: post.view_count || 0,
         uniqueViewers: uniqueViewerIds.length,
         subscriberViews: subscriberViewCount,
         nonSubscriberViews: nonSubscriberViewCount,
         avgViewDuration: '2m 34s', // Mock data - implement tracking if needed
-        engagement: uniqueViewerIds.length > 0 
+        engagement: uniqueViewerIds.length > 0
           ? Math.round((subscriberViewCount / uniqueViewerIds.length) * 100)
           : 0
       });
@@ -117,7 +117,7 @@ export default function PostAnalyticsModal({ open, onClose, post, advisorId }) {
 
   const filteredViewers = viewers.filter(viewer => {
     const matchesSearch = viewer.user_id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || 
+    const matchesStatus = statusFilter === 'all' ||
       (statusFilter === 'subscribed' && viewer.isSubscriber) ||
       (statusFilter === 'non_subscribed' && !viewer.isSubscriber);
     return matchesSearch && matchesStatus;
@@ -198,13 +198,13 @@ export default function PostAnalyticsModal({ open, onClose, post, advisorId }) {
         {/* Viewers List */}
         <div className="space-y-3">
           <h3 className="font-semibold text-slate-700">Viewers ({filteredViewers.length})</h3>
-          
+
           {isLoading ? (
             <div className="text-center py-8 text-slate-500">Loading analytics...</div>
           ) : filteredViewers.length === 0 ? (
             <div className="text-center py-8 text-slate-500">
-              {searchTerm || statusFilter !== 'all' 
-                ? 'No viewers match your filters' 
+              {searchTerm || statusFilter !== 'all'
+                ? 'No viewers match your filters'
                 : 'No views yet for this post'}
             </div>
           ) : (

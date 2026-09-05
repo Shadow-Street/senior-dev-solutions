@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/components/context/AuthContext';
 import { User } from '@/api/entities';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -50,19 +52,31 @@ import EnsureSuperAdminRoles from '../components/superadmin/users/EnsureSuperAdm
 import PMSManagement from '../components/superadmin/PMSManagement';
 
 export default function SuperAdmin() {
-  const [currentUser, setCurrentUser] = useState(null);
+  const { user: currentUser, loading: isAuthLoading } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [isLoading, setIsLoading] = useState(true);
-  // ---- MOCK SUPER ADMIN USER (NO API REQUIRED) ----
-const MOCK_SUPER_ADMIN = {
-  id: "admin_001",
-  display_name: "System Super Admin",
-  email: "superadmin@app.com",
-  profile_image_url: "https://avatar.vercel.sh/superadmin.png",
-  app_role: "super_admin",
-  created_at: new Date().toISOString(),
-};
+  const navigate = useNavigate();
 
+  // ✅ Helper function to check if user is super admin
+  const isSuperAdmin = (user) => {
+    if (!user) return false;
+    return user.app_role === 'super_admin' || user.role === 'super_admin';
+  };
+
+  // Redirect if not logged in or not super admin
+  useEffect(() => {
+    if (!isAuthLoading) {
+      if (!currentUser) {
+        navigate('/admin/login');
+      } else if (!isSuperAdmin(currentUser)) {
+        navigate('/'); // Redirect unauthorized users to home
+      }
+    }
+  }, [currentUser, isAuthLoading, navigate]);
+
+  const handleLogout = async () => {
+    // AuthContext's logout handles redirection
+    window.location.href = '/admin/login';
+  };
 
   const tabs = useMemo(() => [
     { value: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, description: 'Analytics & Overview', component: DashboardHome, color: 'text-blue-600' },
@@ -88,33 +102,7 @@ const MOCK_SUPER_ADMIN = {
     { value: 'settings', label: 'Platform Settings', icon: Settings, description: 'Platform Configuration', component: PlatformSettings, color: 'text-gray-600' },
   ], []);
 
-  useEffect(() => {
-    const loadCurrentUser = async () => {
-      try {
-        const user =MOCK_SUPER_ADMIN;
-        // await User.me();
-        setCurrentUser(user);
-
-        if (user.app_role !== 'super_admin') {
-          window.location.href = '/';
-        }
-      } catch (error) {
-        console.error('Error loading user:', error);
-        window.location.href = '/';
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadCurrentUser();
-  }, []);
-
-  const handleLogout = async () => {
-    await User.logout();
-    window.location.href = '/';
-  };
-
-  if (isLoading) {
+  if (isAuthLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -125,26 +113,33 @@ const MOCK_SUPER_ADMIN = {
     );
   }
 
-  // if (!currentUser || currentUser.app_role !== 'super_admin') {
-  //   return null;
-  // }
+  // ✅ Check both role and app_role
+  if (!currentUser || !isSuperAdmin(currentUser)) {
+    return null; // Will trigger redirect in useEffect
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex font-sans">
       <EnsureSuperAdminRoles />
-      
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex h-screen bg-gradient-to-br from-slate-100 to-slate-200 font-sans">
-        <aside className="w-72 flex-shrink-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-slate-200 flex flex-col shadow-2xl overflow-hidden">
-          <div className="h-20 flex items-center justify-center border-b border-slate-700 bg-gradient-to-r from-blue-600 to-purple-600 flex-shrink-0">
-            <div className="text-2xl font-bold text-white flex items-center gap-2">
-              <Shield className="w-8 h-8" />
-              Super Admin
-            </div>
+
+      {/* Sidebar */}
+      <aside className="w-72 bg-[#0F172A] text-white flex-shrink-0 flex flex-col shadow-2xl z-20">
+        {/* Sidebar Header */}
+        <div className="h-20 flex items-center px-6 bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg">
+          <div className="flex items-center gap-3">
+            <Shield className="w-8 h-8 text-white" />
+            <span className="text-xl font-bold tracking-wide">Super Admin</span>
           </div>
-          
-          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-            <div className="text-xs font-semibold text-slate-400 mb-4 uppercase tracking-wider px-2">Administration</div>
-            <TabsList className="w-full grid grid-cols-1 h-auto bg-transparent p-0 space-y-1">
+        </div>
+
+        {/* Navigation */}
+        <div className="flex-1 overflow-y-auto py-6 px-3 space-y-1 custom-scrollbar">
+          <div className="px-4 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            Administration
+          </div>
+
+          <Tabs value={activeTab} onValueChange={setActiveTab} orientation="vertical" className="w-full">
+            <TabsList className="flex flex-col h-auto bg-transparent p-0 w-full space-y-1">
               {tabs.map(tab => {
                 const isActive = activeTab === tab.value;
                 const Icon = tab.icon;
@@ -152,112 +147,89 @@ const MOCK_SUPER_ADMIN = {
                   <TabsTrigger
                     key={tab.value}
                     value={tab.value}
-                    className={`group flex items-center w-full justify-start px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:scale-105 min-h-[60px] ${
-                      isActive
-                        ? ''
-                        : 'hover:bg-slate-700/50 hover:scale-102 text-left text-slate-200'
-                    }`}
+                    className={`w-full justify-start px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 border-none ${isActive
+                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-900/20'
+                      : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                      }`}
                   >
-                    <div className="w-5 h-5 mr-3 flex items-center justify-center flex-shrink-0">
-                      {Icon && <Icon className={`w-5 h-5 ${isActive ? 'text-white' : tab.color}`} />}
+                    <Icon className={`w-5 h-5 mr-3 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                    <div className="flex flex-col items-start">
+                      <span className="font-semibold">{tab.label}</span>
+                      {/* Description hidden for compactness in sidebar, or can be kept if desired */}
+                      <span className={`text-[10px] ${isActive ? 'text-blue-100' : 'text-slate-600 hidden group-hover:block'}`}>{tab.description}</span>
                     </div>
-                    <div className="flex-1 text-left">
-                      <div className="font-semibold leading-tight">{tab.label}</div>
-                      <div className={`text-xs leading-tight mt-0.5 ${isActive ? 'text-blue-100' : 'text-slate-400'}`}>
-                        {tab.description}
-                      </div>
-                    </div>
-                    {isActive && (
-                      <div className="w-2 h-2 bg-white rounded-full animate-pulse flex-shrink-0"></div>
-                    )}
                   </TabsTrigger>
                 );
               })}
             </TabsList>
-          </nav>
-          
-          <div className="p-4 border-t border-slate-700 bg-slate-800/50 flex-shrink-0">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="relative">
-                <img
-                  src={currentUser.profile_image_url || `https://avatar.vercel.sh/${currentUser.email}.png`}
-                  alt="Admin"
-                  className="w-12 h-12 rounded-full ring-2 ring-blue-500"
-                />
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-900"></div>
-              </div>
-              <div className="flex-1">
-                <p className="font-semibold text-white">{currentUser.display_name}</p>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-xs bg-purple-500/20 text-purple-300 border-purple-500/50">
-                    {currentUser.app_role}
-                  </Badge>
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                </div>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
-            </button>
-          </div>
-        </aside>
+          </Tabs>
+        </div>
 
-        <main className="flex-1 flex flex-col overflow-hidden">
-          <header className="h-20 bg-white border-b border-slate-200 flex items-center px-8 justify-between shadow-sm flex-shrink-0">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3">
-                {(() => {
-                  const currentNavItem = tabs.find(item => item.value === activeTab);
-                  const IconComponent = currentNavItem?.icon;
-                  return IconComponent ? <IconComponent className={`w-8 h-8 ${currentNavItem.color}`} /> : null;
-                })()}
-                <div>
-                  <h1 className="text-2xl font-bold text-slate-800">{tabs.find(item => item.value === activeTab)?.label}</h1>
-                  <p className="text-sm text-slate-500">
-                    {tabs.find(item => item.value === activeTab)?.description}
-                  </p>
-                </div>
-              </div>
+        {/* User Profile Footer */}
+        <div className="p-4 border-t border-slate-800 bg-slate-900/50">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="relative">
+              <img
+                src={currentUser?.profile_image_url || `https://avatar.vercel.sh/${currentUser?.email || 'admin'}.png`}
+                alt="Admin"
+                className="w-10 h-10 rounded-full ring-2 ring-blue-500/50"
+              />
+              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-slate-900"></div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-sm text-slate-600">
-                <Activity className="w-4 h-4 text-green-500" />
-                <span>System Healthy</span>
-              </div>
-              <Badge variant="outline" className="bg-blue-50 text-blue-700">
-                {currentUser.app_role}
-              </Badge>
-            </div>
-          </header>
-
-          <div className="flex-1 p-8 bg-gradient-to-br from-slate-50 to-white overflow-y-auto">
-            <div className="max-w-7xl mx-auto">
-              <TabsContent value={activeTab} className="mt-0">
-                {(() => {
-                  const CurrentComponent = tabs.find(tab => tab.value === activeTab)?.component;
-                  if (CurrentComponent) {
-                    return <CurrentComponent user={currentUser} />;
-                  }
-                  return (
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Content Not Found</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p>No component configured for the tab: "{activeTab}".</p>
-                      </CardContent>
-                    </Card>
-                  );
-                })()}
-              </TabsContent>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-white truncate">{currentUser?.display_name || 'Admin'}</p>
+              <p className="text-xs text-slate-400 truncate">{currentUser?.email}</p>
             </div>
           </div>
-        </main>
-      </Tabs>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all duration-200 border border-red-500/20 hover:border-red-500"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Logout
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col bg-gray-50 h-screen overflow-hidden">
+        {/* Top Header */}
+        <header className="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-8 shadow-sm z-10">
+          <div className="flex items-center gap-4">
+            <div className="p-2 bg-blue-50 rounded-lg">
+              {(() => {
+                const currentTab = tabs.find(t => t.value === activeTab);
+                const Icon = currentTab?.icon || LayoutDashboard;
+                return <Icon className="w-6 h-6 text-blue-600" />;
+              })()}
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-800">{tabs.find(t => t.value === activeTab)?.label}</h1>
+              <p className="text-sm text-gray-500">{tabs.find(t => t.value === activeTab)?.description}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2 text-sm font-medium text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+              <Activity className="w-4 h-4" />
+              <span>System Healthy</span>
+            </div>
+            <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-100">
+              {currentUser?.app_role}
+            </Badge>
+          </div>
+        </header>
+
+        {/* Content Area */}
+        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+          <div className="max-w-7xl mx-auto pb-10">
+            {(() => {
+              const CurrentComponent = tabs.find(tab => tab.value === activeTab)?.component;
+              return CurrentComponent ? <CurrentComponent user={currentUser} setActiveTab={setActiveTab} /> : null;
+            })()}
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

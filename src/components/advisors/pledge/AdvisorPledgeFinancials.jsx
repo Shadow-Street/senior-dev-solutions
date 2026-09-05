@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { AdvisorPledgeCommission, PayoutRequest } from '@/lib/apiClient';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { DollarSign, Wallet, TrendingUp, Clock, CheckCircle } from 'lucide-react';
@@ -29,20 +29,20 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
 
   const loadFinancialData = async () => {
     if (!advisorProfile?.id) return;
-    
+
     try {
       setIsLoading(true);
-      const commissions = await base44.entities.AdvisorPledgeCommission.filter({
+      const commissions = await AdvisorPledgeCommission.filter({
         advisor_id: advisorProfile.id
       });
-      
-      const payouts = await base44.entities.PayoutRequest.filter({
+
+      const payouts = await PayoutRequest.filter({
         entity_id: advisorProfile.id,
         entity_type: 'advisor'
       });
-      
+
       setPayoutRequests(payouts);
-      
+
       const totalEarnings = commissions.reduce((sum, c) => sum + (c.total_execution_value || 0), 0);
       const platformCommission = commissions.reduce((sum, c) => sum + (c.platform_commission_amount || 0), 0);
       const netEarnings = commissions.reduce((sum, c) => sum + (c.advisor_commission_amount || 0), 0);
@@ -52,9 +52,9 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
       const pendingPayouts = payouts
         .filter(p => ['pending', 'approved'].includes(p.status))
         .reduce((sum, p) => sum + (p.requested_amount || 0), 0);
-      
+
       const balance = netEarnings - totalPaidOut - pendingPayouts;
-      
+
       setStats({
         totalEarnings,
         platformCommission,
@@ -63,7 +63,7 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
         pendingPayouts,
         availableBalance: Math.max(0, balance)
       });
-      
+
       setAvailableBalance(Math.max(0, balance));
     } catch (error) {
       console.error('Error loading financial data:', error);
@@ -74,7 +74,7 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
 
   const handlePayoutSubmit = async (payoutData) => {
     try {
-      await base44.entities.PayoutRequest.create({
+      await PayoutRequest.create({
         user_id: user.id,
         entity_type: 'advisor',
         entity_id: advisorProfile.id,
@@ -86,7 +86,7 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
         paypal_email: payoutData.paypal_email,
         status: 'pending'
       });
-      
+
       toast.success('Payout request submitted successfully!');
       setShowPayoutRequest(false);
       loadFinancialData();
@@ -121,33 +121,30 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
       <div className="flex gap-3 w-full">
         <Button
           onClick={() => setFinancialTab('overview')}
-          className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${
-            financialTab === 'overview' 
-              ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105' 
-              : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
-          }`}
+          className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'overview'
+            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
+            : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
+            }`}
         >
           <DollarSign className="w-5 h-5 mr-2 inline-block" />
           Financials
         </Button>
         <Button
           onClick={() => setFinancialTab('payouts')}
-          className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${
-            financialTab === 'payouts' 
-              ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105' 
-              : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
-          }`}
+          className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'payouts'
+            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
+            : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
+            }`}
         >
           <Wallet className="w-5 h-5 mr-2 inline-block" />
           Payout Requests
         </Button>
         <Button
           onClick={() => setFinancialTab('refunds')}
-          className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${
-            financialTab === 'refunds' 
-              ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105' 
-              : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
-          }`}
+          className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'refunds'
+            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
+            : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
+            }`}
         >
           <TrendingUp className="w-5 h-5 mr-2 inline-block" />
           Refund Management
@@ -168,7 +165,7 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
             </Button>
           </div>
 
-          <FinancialStatement 
+          <FinancialStatement
             entityType="advisor"
             entityId={advisorProfile?.id}
             entityName={advisorProfile?.display_name || 'Advisor'}
@@ -202,7 +199,7 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center">
@@ -214,7 +211,7 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center">

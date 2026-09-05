@@ -32,11 +32,11 @@ const featureNameMap = {
 
 const getFeatureName = (feature) => {
   if (typeof feature !== 'string') return 'Feature';
-  
+
   if (featureNameMap[feature]) {
     return featureNameMap[feature];
   }
-  
+
   return feature
     .split('_')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
@@ -55,7 +55,7 @@ const planTierHierarchy = {
 // ✅ Plan-specific light background colors
 const getPlanBackgroundColor = (planName) => {
   const normalized = planName.toLowerCase().trim();
-  
+
   if (normalized === 'basic' || normalized === 'free') {
     return 'bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-100';
   }
@@ -65,7 +65,7 @@ const getPlanBackgroundColor = (planName) => {
   if (normalized === 'vip' || normalized === 'elite') {
     return 'bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-100';
   }
-  
+
   return 'bg-white'; // Default fallback
 };
 
@@ -103,7 +103,7 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
   // Calculate final amount with promo
   const calculateFinalAmount = (cycle) => {
     const baseAmount = cycle === 'monthly' ? monthlyPrice : annualPrice;
-    
+
     if (!appliedPromo) return baseAmount;
 
     if (appliedPromo.discount_type === 'percentage') {
@@ -112,23 +112,23 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
       return Math.max(0, baseAmount - appliedPromo.discount_value);
     }
   };
-  
+
   const monthlyFinalPrice = calculateFinalAmount('monthly');
   const annualFinalPrice = calculateFinalAmount('annual');
-  
+
   const hasMonthlyDiscount = appliedPromo && monthlyFinalPrice < monthlyPrice;
   const hasAnnualDiscount = appliedPromo && annualFinalPrice < annualPrice;
 
   // Calculate annual savings percentage
-  const monthlySavings = monthlyPrice > 0 && annualPrice > 0 
-    ? Math.round(((monthlyPrice * 12 - annualPrice) / (monthlyPrice * 12)) * 100) 
+  const monthlySavings = monthlyPrice > 0 && annualPrice > 0
+    ? Math.round(((monthlyPrice * 12 - annualPrice) / (monthlyPrice * 12)) * 100)
     : 0;
 
   const isFree = monthlyPrice === 0 && annualPrice === 0;
 
   const currentTierInfo = planTierHierarchy[currentPlanTier?.toLowerCase()?.trim()] || { order: 0 };
   const thisTierInfo = planTierHierarchy[plan.name.toLowerCase().trim()] || { order: 0 };
-  
+
   const isIncluded = currentTierInfo.order > thisTierInfo.order;
   const isUpgrade = currentTierInfo.order > 0 && currentTierInfo.order < thisTierInfo.order;
 
@@ -167,7 +167,7 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
 
     try {
       const promoCodes = await PromoCode.filter({ code: promoCode.trim(), is_active: true });
-      
+
       if (promoCodes.length === 0) {
         toast.error('Invalid or expired promo code');
         setAppliedPromo(null);
@@ -188,11 +188,11 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
         return;
       }
 
-      const userTransactions = await SubscriptionTransaction.filter({ 
-        user_id: user.id, 
-        promo_code: promo.code 
+      const userTransactions = await SubscriptionTransaction.filter({
+        user_id: user.id,
+        promo_code: promo.code
       });
-      
+
       if (userTransactions && userTransactions.length > 0) {
         toast.error('You have already used this promo code');
         setAppliedPromo(null);
@@ -212,8 +212,8 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
 
   const handleSelectPlan = () => {
     // Pass promo data along with plan selection
-    const discountAmount = appliedPromo ? 
-      (selectedCycle === 'monthly' ? monthlyPrice : annualPrice) - 
+    const discountAmount = appliedPromo ?
+      (selectedCycle === 'monthly' ? monthlyPrice : annualPrice) -
       (selectedCycle === 'monthly' ? monthlyFinalPrice : annualFinalPrice) : 0;
 
     onSelect(plan, selectedCycle, appliedPromo, discountAmount);
@@ -358,20 +358,41 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
           )}
 
           {/* Features List */}
-          {plan.features && plan.features.length > 0 ? (
+          {plan.features && (
             <div className="space-y-2">
-              {plan.features.map((feature, index) => (
-                <div key={index} className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-gray-700">
-                    {getFeatureName(feature)}
-                  </span>
-                </div>
-              ))}
+              {(() => {
+                const safeParseFeatures = (features) => {
+                  if (Array.isArray(features)) return features;
+                  if (typeof features === 'string') {
+                    try {
+                      const parsed = JSON.parse(features);
+                      return Array.isArray(parsed) ? parsed : [];
+                    } catch (e) {
+                      return [];
+                    }
+                  }
+                  return [];
+                };
+
+                const featuresList = safeParseFeatures(plan.features);
+
+                if (featuresList.length === 0) {
+                  return parentPlanName ? (
+                    <p className="text-sm text-gray-500 italic">No additional unique features</p>
+                  ) : null;
+                }
+
+                return featuresList.map((feature, index) => (
+                  <div key={index} className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-gray-700">
+                      {getFeatureName(feature)}
+                    </span>
+                  </div>
+                ));
+              })()}
             </div>
-          ) : parentPlanName ? (
-            <p className="text-sm text-gray-500 italic">No additional unique features</p>
-          ) : null}
+          )}
         </div>
 
         {/* Action Button */}
@@ -379,15 +400,14 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
           onClick={handleSelectPlan}
           disabled={isCurrentPlan || isIncluded}
           variant="outline"
-          className={`w-full ${
-            buttonState === 'current'
+          className={`w-full ${buttonState === 'current'
               ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 cursor-not-allowed hover:from-green-500 hover:to-emerald-500'
               : buttonState === 'included'
-              ? 'bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0 cursor-not-allowed hover:from-gray-400 hover:to-gray-500'
-              : buttonState === 'upgrade'
-              ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0 hover:from-purple-600 hover:to-blue-600 shadow-lg'
-              : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white border-0 hover:from-blue-600 hover:to-purple-700 shadow-lg'
-          }`}
+                ? 'bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0 cursor-not-allowed hover:from-gray-400 hover:to-gray-500'
+                : buttonState === 'upgrade'
+                  ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0 hover:from-purple-600 hover:to-blue-600 shadow-lg'
+                  : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white border-0 hover:from-blue-600 hover:to-purple-700 shadow-lg'
+            }`}
         >
           {buttonState === 'current' ? (
             <>

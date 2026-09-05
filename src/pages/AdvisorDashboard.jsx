@@ -1,6 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import apiClient, {
+  authAPI,
+  Advisor,
+  AdvisorPost,
+  AdvisorPlan,
+  AdvisorSubscription,
+  CommissionTracking,
+  Review,
+  PayoutRequest
+} from '@/lib/apiClient';
+import { sendAdvisorPostNotifications } from '@/api/functions';
+import { UploadFile } from '@/api/integrations';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -89,20 +100,26 @@ export default function AdvisorDashboard() {
 
     const loadDashboard = async () => {
       setIsLoading(true);
-      
+
       try {
-        const currentUser = await base44.auth.me().catch(() => null);
+        const currentUser = await authAPI.me().catch(() => null);
         if (!isMounted || !currentUser) {
           setIsLoading(false);
           toast.error('Please log in to access this page');
           return;
         }
-        setUser(currentUser);
+        // Normalize user role from backend ('role') to frontend expected ('app_role')
+        const normalizedUser = {
+          ...currentUser,
+          app_role: currentUser.role, // Backend returns 'role'
+          display_name: currentUser.name // Backend returns 'name'
+        };
+        setUser(normalizedUser);
 
         let advisorProfile;
         try {
-          if (currentUser.app_role === 'super_admin' || currentUser.app_role === 'admin') {
-            const profiles = await base44.entities.Advisor.list('', 1).catch(() => []);
+          if (normalizedUser.app_role === 'super_admin' || normalizedUser.app_role === 'admin') {
+            const profiles = await Advisor.list('', 1).catch(() => []);
             advisorProfile = profiles[0];
             if (advisorProfile) {
               toast.info("Viewing as Admin: Displaying first available Advisor.", { duration: 3000 });
@@ -112,7 +129,7 @@ export default function AdvisorDashboard() {
               return;
             }
           } else {
-            const advisorProfiles = await base44.entities.Advisor.filter({ user_id: currentUser.id }).catch(() => []);
+            const advisorProfiles = await Advisor.filter({ user_id: normalizedUser.id }).catch(() => []);
             advisorProfile = advisorProfiles[0];
           }
         } catch (error) {
@@ -129,15 +146,15 @@ export default function AdvisorDashboard() {
           setIsLoading(false);
           return;
         }
-        
+
         setAdvisor(advisorProfile);
 
         // Only load other data if advisor is approved
         if (advisorProfile.status === 'approved') {
           try {
             const [postsData, plansData] = await Promise.all([
-              base44.entities.AdvisorPost.filter({ advisor_id: advisorProfile.id }).catch(() => []),
-              base44.entities.AdvisorPlan.filter({ advisor_id: advisorProfile.id }).catch(() => [])
+              AdvisorPost.filter({ advisor_id: advisorProfile.id }).catch(() => []),
+              AdvisorPlan.filter({ advisor_id: advisorProfile.id }).catch(() => [])
             ]);
 
             if (!isMounted) return;
@@ -148,18 +165,18 @@ export default function AdvisorDashboard() {
             setPosts([]);
             setPlans([]);
           }
-          
+
           setIsLoading(false);
 
           setTimeout(async () => {
             if (!isMounted) return;
-            
+
             try {
               const [subscriptionsData, commissionsData, reviewsData, payoutRequestsData] = await Promise.all([
-                base44.entities.AdvisorSubscription.filter({ advisor_id: advisorProfile.id }).catch(() => []),
-                base44.entities.CommissionTracking.filter({ advisor_id: advisorProfile.id }).catch(() => []),
-                base44.entities.AdvisorReview.filter({ advisor_id: advisorProfile.id }).catch(() => []),
-                base44.entities.PayoutRequest.filter({ entity_id: advisorProfile.id, entity_type: 'advisor' }).catch(() => [])
+                AdvisorSubscription.filter({ advisor_id: advisorProfile.id }).catch(() => []),
+                CommissionTracking.filter({ advisor_id: advisorProfile.id }).catch(() => []),
+                Review.filter({ entity_id: advisorProfile.id, entity_type: 'advisor' }).catch(() => []),
+                PayoutRequest.filter({ entity_id: advisorProfile.id, entity_type: 'advisor' }).catch(() => [])
               ]);
 
               if (!isMounted) return;
@@ -177,7 +194,7 @@ export default function AdvisorDashboard() {
                 .filter(p => p.status === 'pending' || p.status === 'approved')
                 .reduce((sum, p) => sum + (p.requested_amount || 0), 0);
               const availableBalance = totalEarnings - totalPaidOut - pendingPayouts;
-              
+
               const activeSubscribers = (subscriptionsData || []).filter(s => s.status === 'active').length;
               const ratingsSum = (reviewsData || []).reduce((sum, r) => sum + (r.rating || 0), 0);
               const avgRating = ratingsSum > 0 ? ratingsSum / reviewsData.length : 0;
@@ -225,7 +242,7 @@ export default function AdvisorDashboard() {
       }
 
       console.log('Creating post with data:', postData);
-      
+
       const enrichedPostData = {
         ...postData,
         advisor_id: advisor.id,
@@ -235,28 +252,32 @@ export default function AdvisorDashboard() {
         view_count: 0,
         unique_viewers: []
       };
-      
-      const newPost = await base44.entities.AdvisorPost.create(enrichedPostData);
-      
+
+      const newPost = await AdvisorPost.create(enrichedPostData);
+
       toast.success('Advisory published successfully!');
-      
+
       // Send notifications in the background - non-blocking
       setTimeout(async () => {
         try {
           console.log('Sending notifications for post:', newPost.id);
-          const notifResult = await base44.functions.invoke('sendAdvisorPostNotifications', {
+          const notifResult = await sendAdvisorPostNotifications({
             postId: newPost.id,
             advisorId: advisor.id,
             advisorName: advisor.display_name,
             postTitle: postData.title,
             requiredPlanId: postData.required_plan_id
           });
-          
+
           console.log('Notifications sent:', notifResult);
-          
-          if (notifResult?.data?.notifications_sent > 0) {
-            toast.success(`📧 Notified ${notifResult.data.notifications_sent} subscribers!`, {
-              description: `${notifResult.data.emails_queued || 0} emails sent, ${notifResult.data.sms_queued || 0} SMS queued`
+
+          if (notifResult?.data?.notifications_sent > 0 || notifResult?.notifications_sent > 0) {
+            const count = notifResult.data?.notifications_sent || notifResult.notifications_sent || 0;
+            const emails = notifResult.data?.emails_queued || notifResult.emails_queued || 0;
+            const sms = notifResult.data?.sms_queued || notifResult.sms_queued || 0;
+
+            toast.success(`📧 Notified ${count} subscribers!`, {
+              description: `${emails} emails sent, ${sms} SMS queued`
             });
           }
         } catch (notifError) {
@@ -264,11 +285,11 @@ export default function AdvisorDashboard() {
           // Don't show error toast - notifications are optional
         }
       }, 1000);
-      
+
       setShowCreatePost(false);
       setEditingPost(null);
-      
-      const postsData = await base44.entities.AdvisorPost.filter({ advisor_id: advisor.id }).catch(() => []);
+
+      const postsData = await AdvisorPost.filter({ advisor_id: advisor.id }).catch(() => []);
       setPosts(postsData || []);
     } catch (error) {
       console.error('Error saving post:', error);
@@ -283,7 +304,7 @@ export default function AdvisorDashboard() {
         return;
       }
 
-      await base44.entities.PayoutRequest.create({
+      await PayoutRequest.create({
         user_id: user.id,
         entity_type: 'advisor',
         entity_id: advisor.id,
@@ -295,11 +316,11 @@ export default function AdvisorDashboard() {
         paypal_email: payoutData.paypal_email,
         status: 'pending'
       });
-      
+
       toast.success('Payout request submitted successfully!');
       setShowPayoutRequest(false);
-      
-      const payoutRequestsData = await base44.entities.PayoutRequest.filter({ entity_id: advisor.id, entity_type: 'advisor' }).catch(() => []);
+
+      const payoutRequestsData = await PayoutRequest.filter({ entity_id: advisor.id, entity_type: 'advisor' }).catch(() => []);
       setPayoutRequests(payoutRequestsData || []);
     } catch (error) {
       console.error('Error submitting payout request:', error);
@@ -315,20 +336,20 @@ export default function AdvisorDashboard() {
       }
 
       if (planId) {
-        await base44.entities.AdvisorPlan.update(planId, planData);
+        await AdvisorPlan.update(planId, planData);
         toast.success('Subscription plan updated successfully!');
       } else {
-        await base44.entities.AdvisorPlan.create({
+        await AdvisorPlan.create({
           ...planData,
           advisor_id: advisor.id
         });
         toast.success('Subscription plan created successfully!');
       }
-      
+
       setShowCreatePlan(false);
       setEditingPlan(null);
-      
-      const plansData = await base44.entities.AdvisorPlan.filter({ advisor_id: advisor.id }).catch(() => []);
+
+      const plansData = await AdvisorPlan.filter({ advisor_id: advisor.id }).catch(() => []);
       setPlans(plansData || []);
     } catch (error) {
       console.error('Error saving plan:', error);
@@ -348,13 +369,13 @@ export default function AdvisorDashboard() {
 
   const handleTogglePlanStatus = async (plan) => {
     try {
-      await base44.entities.AdvisorPlan.update(plan.id, {
+      await AdvisorPlan.update(plan.id, {
         is_active: !plan.is_active
       });
-      
+
       toast.success(`Plan ${plan.is_active ? 'deactivated' : 'activated'} successfully!`);
-      
-      const plansData = await base44.entities.AdvisorPlan.filter({ advisor_id: advisor.id }).catch(() => []);
+
+      const plansData = await AdvisorPlan.filter({ advisor_id: advisor.id }).catch(() => []);
       setPlans(plansData || []);
     } catch (error) {
       console.error('Error updating plan:', error);
@@ -377,13 +398,13 @@ export default function AdvisorDashboard() {
         return;
       }
 
-      await base44.entities.AdvisorPlan.delete(deletingPlan.id);
-      
+      await AdvisorPlan.delete(deletingPlan.id);
+
       toast.success('Subscription plan deleted successfully!');
       setShowDeleteConfirm(false);
       setDeletingPlan(null);
-      
-      const plansData = await base44.entities.AdvisorPlan.filter({ advisor_id: advisor.id }).catch(() => []);
+
+      const plansData = await AdvisorPlan.filter({ advisor_id: advisor.id }).catch(() => []);
       setPlans(plansData || []);
     } catch (error) {
       console.error('Error deleting plan:', error);
@@ -399,25 +420,25 @@ export default function AdvisorDashboard() {
   const handleProfileImageUpload = async (file) => {
     try {
       if (!file) return;
-      
+
       if (!file.type.startsWith('image/')) {
         toast.error('Please upload an image file');
         return;
       }
-      
+
       if (file.size > 5 * 1024 * 1024) {
         toast.error('Image size must be less than 5MB');
         return;
       }
 
       toast.info('Uploading image...');
-      
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      
-      await base44.entities.Advisor.update(advisor.id, {
+
+      const { file_url } = await UploadFile({ file });
+
+      await Advisor.update(advisor.id, {
         profile_image_url: file_url
       });
-      
+
       setAdvisor(prev => ({ ...prev, profile_image_url: file_url }));
       setShowProfileImageModal(false);
       toast.success('Profile picture updated successfully!');
@@ -605,14 +626,14 @@ export default function AdvisorDashboard() {
               <TabsTrigger value="financials">Financials</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="overview" className="space-y-8 mt-0">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-4">
                   <div className="relative group cursor-pointer" onClick={() => setShowProfileImageModal(true)}>
                     {advisor.profile_image_url ? (
-                      <img 
-                        src={advisor.profile_image_url} 
+                      <img
+                        src={advisor.profile_image_url}
                         alt={advisor.display_name}
                         className="w-20 h-20 rounded-full object-cover border-4 border-purple-200 shadow-lg"
                       />
@@ -627,7 +648,7 @@ export default function AdvisorDashboard() {
                       Change
                     </button>
                   </div>
-                  
+
                   <div>
                     <h2 className="text-3xl font-bold text-slate-800">Welcome back, {advisor.display_name}!</h2>
                     <p className="text-slate-600 mt-1">Here's your advisory dashboard overview</p>
@@ -657,7 +678,7 @@ export default function AdvisorDashboard() {
                     </div>
                   </CardContent>
                 </Card>
-                
+
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
@@ -669,7 +690,7 @@ export default function AdvisorDashboard() {
                     </div>
                   </CardContent>
                 </Card>
-                
+
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
@@ -693,7 +714,7 @@ export default function AdvisorDashboard() {
                     </div>
                   </CardContent>
                 </Card>
-                
+
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
@@ -706,7 +727,7 @@ export default function AdvisorDashboard() {
                   </CardContent>
                 </Card>
               </div>
-              
+
               <PostLimitTracker posts={posts} plans={plans} />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -761,7 +782,7 @@ export default function AdvisorDashboard() {
                 </Card>
               </div>
             </TabsContent>
-            
+
             <TabsContent value="posts" className="space-y-4 mt-0">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-slate-800">My Posts</h2>
@@ -783,11 +804,10 @@ export default function AdvisorDashboard() {
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2">
                                 {post.recommendation_type && (
-                                  <Badge variant="outline" className={`font-semibold ${
-                                    post.recommendation_type === 'buy' ? 'text-green-600 border-green-600 bg-green-50' :
-                                    post.recommendation_type === 'sell' ? 'text-red-600 border-red-600 bg-red-50' : 
-                                    'text-yellow-600 border-yellow-600 bg-yellow-50'
-                                  }`}>
+                                  <Badge variant="outline" className={`font-semibold ${post.recommendation_type === 'buy' ? 'text-green-600 border-green-600 bg-green-50' :
+                                    post.recommendation_type === 'sell' ? 'text-red-600 border-red-600 bg-red-50' :
+                                      'text-yellow-600 border-yellow-600 bg-yellow-50'
+                                    }`}>
                                     {post.recommendation_type?.toUpperCase()}
                                   </Badge>
                                 )}
@@ -839,8 +859,8 @@ export default function AdvisorDashboard() {
 
                           {/* ACTION BUTTONS */}
                           <div className="grid grid-cols-2 gap-2 pt-3 border-t">
-                            <Button 
-                              size="sm" 
+                            <Button
+                              size="sm"
                               variant="outline"
                               onClick={() => {
                                 setViewingPost(post);
@@ -851,8 +871,8 @@ export default function AdvisorDashboard() {
                               <Eye className="w-3 h-3 mr-1" />
                               Preview
                             </Button>
-                            <Button 
-                              size="sm" 
+                            <Button
+                              size="sm"
                               variant="outline"
                               onClick={() => handleViewPostStats(post)}
                               className="h-8 border-blue-200 text-blue-600 hover:bg-blue-50"
@@ -907,18 +927,17 @@ export default function AdvisorDashboard() {
                   </div>
                 )}
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {plans.length > 0 ? (
                   plans.map(plan => {
                     const activeSubs = (subscriptions || []).filter(
                       s => s.plan_id === plan.id && s.status === 'active'
                     ).length;
-                    
+
                     return (
-                      <Card key={plan.id} className={`relative overflow-hidden hover:shadow-2xl transition-all duration-300 ${
-                        plan.is_active ? 'border-2 border-purple-200' : 'border-2 border-gray-200 opacity-75'
-                      }`}>
+                      <Card key={plan.id} className={`relative overflow-hidden hover:shadow-2xl transition-all duration-300 ${plan.is_active ? 'border-2 border-purple-200' : 'border-2 border-gray-200 opacity-75'
+                        }`}>
                         <div className={`p-6 text-center bg-gradient-to-br ${getPlanColor(plan.name)}`}>
                           <div className="flex justify-between items-start mb-3">
                             <Badge className={plan.is_active ? 'bg-white/90 text-green-600 border-0' : 'bg-white/90 text-gray-600 border-0'}>
@@ -930,15 +949,15 @@ export default function AdvisorDashboard() {
                               </Badge>
                             )}
                           </div>
-                          
+
                           <div className="text-4xl mb-2">
                             {getPlanIcon(plan.name)}
                           </div>
-                          
+
                           <h3 className="text-2xl font-bold text-white mb-3 tracking-wide">
                             {plan.name}
                           </h3>
-                          
+
                           <div className="flex items-baseline justify-center gap-1">
                             <span className="text-4xl font-bold text-white">₹{plan.price?.toLocaleString() || 0}</span>
                             <span className="text-white/90 text-sm font-medium">/ {plan.billing_interval}</span>
@@ -977,16 +996,16 @@ export default function AdvisorDashboard() {
 
                           <div className="space-y-2 pt-4 border-t">
                             <div className="grid grid-cols-2 gap-2">
-                              <Button 
-                                size="sm" 
+                              <Button
+                                size="sm"
                                 variant="outline"
                                 onClick={() => handleTogglePlanStatus(plan)}
                                 className="w-full"
                               >
                                 {plan.is_active ? 'Deactivate' : 'Activate'}
                               </Button>
-                              <Button 
-                                size="sm" 
+                              <Button
+                                size="sm"
                                 variant="outline"
                                 onClick={() => handleEditPlan(plan)}
                                 className="w-full"
@@ -995,8 +1014,8 @@ export default function AdvisorDashboard() {
                                 Edit
                               </Button>
                             </div>
-                            <Button 
-                              size="sm" 
+                            <Button
+                              size="sm"
                               variant="outline"
                               onClick={() => confirmDeletePlan(plan)}
                               className="w-full text-red-600 hover:text-red-700 hover:border-red-600"
@@ -1029,39 +1048,36 @@ export default function AdvisorDashboard() {
               <h2 className="text-2xl font-bold text-slate-800 mb-6">Subscribers</h2>
               <SubscriberAnalytics subscriptions={subscriptions || []} plans={plans || []} />
             </TabsContent>
-            
+
             <TabsContent value="financials" className="space-y-6 mt-0">
               {/* Sub-Navigation with Full Rounded Buttons */}
               <div className="flex gap-3 w-full">
                 <Button
                   onClick={() => setFinancialTab('overview')}
-                  className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${
-                    financialTab === 'overview' 
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105' 
-                      : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
-                  }`}
+                  className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'overview'
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
+                    : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
+                    }`}
                 >
                   <DollarSign className="w-5 h-5 mr-2 inline-block" />
                   Financials
                 </Button>
                 <Button
                   onClick={() => setFinancialTab('payouts')}
-                  className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${
-                    financialTab === 'payouts' 
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105' 
-                      : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
-                  }`}
+                  className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'payouts'
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
+                    : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
+                    }`}
                 >
                   <Wallet className="w-5 h-5 mr-2 inline-block" />
                   Payout Requests
                 </Button>
                 <Button
                   onClick={() => setFinancialTab('refunds')}
-                  className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${
-                    financialTab === 'refunds' 
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105' 
-                      : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
-                  }`}
+                  className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'refunds'
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
+                    : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
+                    }`}
                 >
                   <TrendingUp className="w-5 h-5 mr-2 inline-block" />
                   Refund Management
@@ -1072,8 +1088,8 @@ export default function AdvisorDashboard() {
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
                     <h2 className="text-2xl font-bold text-slate-800">Financial Overview</h2>
-                    <Button 
-                      onClick={() => setShowPayoutRequest(true)} 
+                    <Button
+                      onClick={() => setShowPayoutRequest(true)}
                       disabled={stats.availableBalance <= 0}
                       className="bg-green-600 hover:bg-green-700"
                     >
@@ -1082,7 +1098,7 @@ export default function AdvisorDashboard() {
                     </Button>
                   </div>
 
-                  <FinancialStatement 
+                  <FinancialStatement
                     entityType="advisor"
                     entityId={advisor?.id}
                     entityName={advisor?.display_name || 'Advisor'}
@@ -1094,8 +1110,8 @@ export default function AdvisorDashboard() {
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
                     <h2 className="text-2xl font-bold text-slate-800">Payout Requests</h2>
-                    <Button 
-                      onClick={() => setShowPayoutRequest(true)} 
+                    <Button
+                      onClick={() => setShowPayoutRequest(true)}
                       disabled={stats.availableBalance <= 0}
                       className="bg-green-600 hover:bg-green-700"
                     >
@@ -1116,7 +1132,7 @@ export default function AdvisorDashboard() {
                         </div>
                       </CardContent>
                     </Card>
-                    
+
                     <Card>
                       <CardContent className="p-6">
                         <div className="flex items-center">
@@ -1128,7 +1144,7 @@ export default function AdvisorDashboard() {
                         </div>
                       </CardContent>
                     </Card>
-                    
+
                     <Card>
                       <CardContent className="p-6">
                         <div className="flex items-center">
@@ -1185,10 +1201,10 @@ export default function AdvisorDashboard() {
                 </div>
               )}
             </TabsContent>
-            
+
             <TabsContent value="analytics" className="mt-0">
               <h2 className="text-2xl font-bold text-slate-800 mb-6">Advanced Analytics</h2>
-              
+
               {/* Enhanced Analytics Section */}
               <div className="space-y-6">
                 {/* Performance Overview */}
@@ -1274,8 +1290,8 @@ export default function AdvisorDashboard() {
                                   <p className="font-bold text-blue-600">{post.view_count || 0}</p>
                                   <p className="text-xs text-slate-500">views</p>
                                 </div>
-                                <Button 
-                                  size="sm" 
+                                <Button
+                                  size="sm"
                                   variant="outline"
                                   onClick={() => handleViewPostStats(post)}
                                   className="border-blue-200 text-blue-600 hover:bg-blue-50"
@@ -1390,12 +1406,12 @@ export default function AdvisorDashboard() {
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
               <div className="bg-white rounded-lg p-6 max-w-md w-full mx-auto shadow-xl">
                 <h3 className="text-xl font-bold text-slate-800 mb-4">Update Profile Picture</h3>
-                
+
                 <div className="space-y-4">
                   <div className="flex justify-center">
                     {advisor.profile_image_url ? (
-                      <img 
-                        src={advisor.profile_image_url} 
+                      <img
+                        src={advisor.profile_image_url}
                         alt="Current"
                         className="w-32 h-32 rounded-full object-cover border-4 border-purple-200"
                       />
@@ -1405,7 +1421,7 @@ export default function AdvisorDashboard() {
                       </div>
                     )}
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="profile-image">Choose New Image</Label>
                     <Input
@@ -1422,7 +1438,7 @@ export default function AdvisorDashboard() {
                       Recommended: Square image, at least 400x400px, max 5MB
                     </p>
                   </div>
-                  
+
                   <div className="flex gap-3 justify-end mt-6">
                     <Button
                       variant="outline"
@@ -1448,7 +1464,7 @@ export default function AdvisorDashboard() {
                     <p className="text-sm text-slate-600">This action cannot be undone</p>
                   </div>
                 </div>
-                
+
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
                   <p className="text-sm text-red-800 font-semibold mb-2">
                     You are about to delete: <span className="font-bold">{deletingPlan.name}</span>
@@ -1464,7 +1480,7 @@ export default function AdvisorDashboard() {
                   const activeSubs = (subscriptions || []).filter(
                     s => s.plan_id === deletingPlan.id && s.status === 'active'
                   ).length;
-                  
+
                   if (activeSubs > 0) {
                     return (
                       <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
@@ -1480,7 +1496,7 @@ export default function AdvisorDashboard() {
                   }
                   return null;
                 })()}
-                
+
                 <div className="flex gap-3">
                   <Button
                     variant="outline"

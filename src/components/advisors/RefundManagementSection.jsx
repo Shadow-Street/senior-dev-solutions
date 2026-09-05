@@ -1,16 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { RefundRequest } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { 
-  RefreshCw, 
-  Search, 
-  DollarSign, 
-  CheckCircle, 
-  Clock, 
+import {
+  RefreshCw,
+  Search,
+  DollarSign,
+  CheckCircle,
+  Clock,
   XCircle,
   AlertCircle,
   Filter
@@ -31,16 +31,16 @@ export default function RefundManagementSection({ advisorId }) {
   const loadRefunds = async () => {
     try {
       setIsLoading(true);
-      const allRefunds = await base44.entities.RefundRequest.filter({ 
-        transaction_type: 'advisor_subscription' 
+      const allRefunds = await RefundRequest.filter({
+        transaction_type: 'advisor_subscription'
       });
-      
+
       // Filter refunds related to this advisor's subscriptions
-      const advisorRefunds = allRefunds.filter(r => 
-        r.related_entity_name?.includes(advisorId) || 
+      const advisorRefunds = allRefunds.filter(r =>
+        r.related_entity_name?.includes(advisorId) ||
         r.user_id // Show all for now - ideally we'd link via subscription
       );
-      
+
       setRefunds(advisorRefunds);
     } catch (error) {
       console.error('Error loading refunds:', error);
@@ -69,7 +69,7 @@ export default function RefundManagementSection({ advisorId }) {
   };
 
   const filteredRefunds = refunds.filter(refund => {
-    const matchesSearch = 
+    const matchesSearch =
       refund.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       refund.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       refund.original_transaction_id?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -193,7 +193,7 @@ export default function RefundManagementSection({ advisorId }) {
                         {refund.refund_type === 'full' ? 'Full Refund' : 'Partial Refund'}
                       </Badge>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4 text-sm mb-3">
                       <div>
                         <p className="text-slate-500 text-xs">User Email</p>
@@ -218,7 +218,7 @@ export default function RefundManagementSection({ advisorId }) {
                         <p className="text-xs text-slate-500">Reason</p>
                         <p className="text-sm text-slate-700">{refund.request_reason}</p>
                       </div>
-                      
+
                       {refund.admin_notes && (
                         <div>
                           <p className="text-xs text-slate-500">Admin Notes</p>
@@ -244,7 +244,7 @@ export default function RefundManagementSection({ advisorId }) {
               <DollarSign className="w-16 h-16 text-slate-300 mx-auto mb-4" />
               <p className="text-slate-500 text-lg">No refund requests found</p>
               <p className="text-slate-400 text-sm">
-                {searchTerm || statusFilter !== 'all' 
+                {searchTerm || statusFilter !== 'all'
                   ? 'Try adjusting your search or filters'
                   : 'Refund requests will appear here'
                 }

@@ -360,10 +360,9 @@ function InvestorLandingPage({ onRegisterClick }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68bb21f4e5ccdcab161121f6/1dc7cf9b2_FinancialNetworkingLogoProtocol.png"
-                alt="Protocol Logo"
-                className="h-12" />
+              <div className="flex items-center gap-2">
+                <Shield className="w-10 h-10 text-blue-600" />
+              </div>
 
               <div>
                 <h1 className="text-2xl font-bold text-slate-900">Protocol Investment Fund</h1>
@@ -3858,10 +3857,9 @@ export default function InvestorDashboard() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <img
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68bb21f4e5ccdcab161121f6/1dc7cf9b2_FinancialNetworkingLogoProtocol.png"
-                  alt="Protocol Logo"
-                  className="h-12" />
+                <div className="flex items-center gap-2">
+                  <Shield className="w-10 h-10 text-blue-600" />
+                </div>
 
                 <div>
                   <h1 className="text-2xl font-bold text-slate-900">Investor Dashboard</h1>

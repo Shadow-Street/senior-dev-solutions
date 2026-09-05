@@ -9,58 +9,41 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, Plus, TrendingUp, TrendingDown, Loader2 } from "lucide-react";
-import { Stock } from "@/api/entities";
+import apiClient from "@/lib/apiClient";
 import { debounce } from "lodash";
 
 export default function AddStockModal({ open, onClose, watchlist, onAddStock }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchedStocks, setSearchedStocks] = useState([]);
-  const [allStocks, setAllStocks] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
 
-  // Load all stocks when modal opens
-  useEffect(() => {
-    if (open) {
-      const loadAllStocks = async () => {
-        setIsSearching(true);
-        try {
-          const stocks = await Stock.list('', 50);
-          setAllStocks(stocks);
-        } catch (error) {
-          console.error('Error loading stocks:', error);
-          setAllStocks([]);
-        } finally {
-          setIsSearching(false);
-        }
-      };
-      loadAllStocks();
-    }
-  }, [open]);
-
   const debouncedSearch = useMemo(
-    () => debounce((term) => {
+    () => debounce(async (term) => {
       if (term.length < 2) {
         setSearchedStocks([]);
         return;
       }
 
-      const watchlistSymbols = new Set((watchlist || []).map(w => w.stock_symbol));
-      
-      const filteredStocks = allStocks.filter(stock => {
-        const matchesSearch = 
-          stock.symbol.toLowerCase().includes(term.toLowerCase()) ||
-          stock.company_name.toLowerCase().includes(term.toLowerCase());
-        
-        const notInWatchlist = !watchlistSymbols.has(stock.symbol);
-        
-        return matchesSearch && notInWatchlist;
-      });
+      setIsSearching(true);
+      try {
+        const response = await apiClient.get('/stocks/search-live', { params: { q: term } });
+        const results = response.data || [];
 
-      setSearchedStocks(filteredStocks);
-    }, 300),
-    [allStocks, watchlist]
+        // Filter out stocks already in watchlist
+        const watchlistSymbols = new Set((watchlist || []).map(w => w.symbol || w.stock_symbol));
+        const filteredResults = results.filter(stock => !watchlistSymbols.has(stock.symbol));
+
+        setSearchedStocks(filteredResults);
+      } catch (error) {
+        console.error('Error searching stocks:', error);
+        setSearchedStocks([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 400),
+    [watchlist]
   );
-  
+
   useEffect(() => {
     // Clear search results when modal is closed
     if (!open) {
@@ -84,7 +67,7 @@ export default function AddStockModal({ open, onClose, watchlist, onAddStock }) 
         <DialogHeader>
           <DialogTitle>Add Stock to Watchlist</DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-4 flex-1 overflow-hidden flex flex-col">
           {/* Search */}
           <div className="relative">
@@ -103,7 +86,7 @@ export default function AddStockModal({ open, onClose, watchlist, onAddStock }) 
             {isSearching ? (
               <div className="text-center py-8">
                 <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
-                <p className="text-slate-500">Loading stocks...</p>
+                <p className="text-slate-500">Searching...</p>
               </div>
             ) : searchTerm.length === 0 ? (
               <div className="text-center py-8">
@@ -114,43 +97,28 @@ export default function AddStockModal({ open, onClose, watchlist, onAddStock }) 
                 <p className="text-slate-500">No stocks found matching your search</p>
               </div>
             ) : (
-              searchedStocks.map(stock => (
-                <div key={stock.id} className="flex items-center justify-between p-3 rounded-lg border hover:bg-slate-50">
+              searchedStocks.map((stock, index) => (
+                <div key={stock.symbol || index} className="flex items-center justify-between p-3 rounded-lg border hover:bg-slate-50">
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
                       <div>
                         <h4 className="font-semibold">{stock.symbol}</h4>
-                        <p className="text-sm text-slate-500">{stock.company_name}</p>
+                        <p className="text-sm text-slate-500">{stock.name}</p>
                       </div>
-                      {stock.sector && <Badge variant="outline" className="text-xs">
-                        {stock.sector}
+                      {stock.exchange && <Badge variant="outline" className="text-xs">
+                        {stock.exchange}
                       </Badge>}
                     </div>
                   </div>
-                  
-                  <div className="flex items-center gap-3">
-                    <div className="text-right">
-                      <p className="font-semibold">₹{stock.current_price?.toFixed(2)}</p>
-                      <div className="flex items-center justify-end gap-1">
-                        {stock.change_percent >= 0 ? 
-                          <TrendingUp className="w-3 h-3 text-green-500" /> : 
-                          <TrendingDown className="w-3 h-3 text-red-500" />
-                        }
-                        <span className={`text-xs ${stock.change_percent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          {stock.change_percent >= 0 ? '+' : ''}{stock.change_percent?.toFixed(2)}%
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <Button 
-                      size="sm" 
-                      onClick={() => onAddStock(stock)}
-                      className="bg-green-600 hover:bg-green-700"
-                    >
-                      <Plus className="w-4 h-4 mr-1" />
-                      Add
-                    </Button>
-                  </div>
+
+                  <Button
+                    size="sm"
+                    onClick={() => onAddStock(stock)}
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    <Plus className="w-4 h-4 mr-1" />
+                    Add
+                  </Button>
                 </div>
               ))
             )}

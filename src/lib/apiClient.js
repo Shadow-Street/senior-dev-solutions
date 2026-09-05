@@ -28,14 +28,19 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      // Only redirect if not already on login/register pages
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/login' && currentPath !== '/register') {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
 );
 
+// Auth API
 // Auth API
 export const authAPI = {
   async login(email, password, role = 'user') {
@@ -47,8 +52,26 @@ export const authAPI = {
     return response.data;
   },
 
+  async googleLogin(token, role = 'user') {
+    const response = await apiClient.post('/auth/google', { token, role });
+    if (response.data.accessToken) {
+      localStorage.setItem('accessToken', response.data.accessToken);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+    }
+    return response.data;
+  },
+
+  async register(email, password, name, role = 'user') {
+    const response = await apiClient.post('/auth/register', { email, password, name, role });
+    if (response.data.accessToken) {
+      localStorage.setItem('accessToken', response.data.accessToken);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+    }
+    return response.data;
+  },
+
   async me() {
-    const response = await apiClient.get('/users/me');
+    const response = await apiClient.get('/auth/me'); // Updated to /auth/me per backend routes
     return response.data;
   },
 
@@ -58,8 +81,26 @@ export const authAPI = {
   },
 };
 
+// Market Data API
+// Market Data API
+export const marketAPI = {
+  async getStocks(params) {
+    return apiClient.get('/stocks/search', { params });
+  },
+  async getMarketData() {
+    return apiClient.get('/stocks/market-data');
+  },
+  async getStockPrice(symbol) {
+    return apiClient.get(`/stocks/${symbol}/price`);
+  },
+  async getTrending() {
+    return apiClient.get('/stocks/trending');
+  },
+};
+
+
 // Generic Entity API creator
-function createEntityAPI(endpoint) {
+export const createEntityAPI = (endpoint) => {
   return {
     async list(orderBy = 'created_at', limit = 100, offset = 0) {
       const response = await apiClient.get(endpoint, {
@@ -121,6 +162,12 @@ export const User = createEntityAPI('/users');
 export const TrustScoreLog = createEntityAPI('/users/trust-score-logs');
 export const Advisor = createEntityAPI('/users/advisors');
 export const UserInvestment = createEntityAPI('/users/investments');
+export const PortfolioManager = createEntityAPI('/portfolio-managers');
+export const PMClient = createEntityAPI('/portfolio-managers/clients');
+export const PMHolding = createEntityAPI('/portfolio-managers/holdings');
+export const PMInvoice = createEntityAPI('/portfolio-managers/invoices');
+export const PMStrategy = createEntityAPI('/portfolio-managers/strategies');
+export const PMTradeOrder = createEntityAPI('/portfolio-managers/trade-orders');
 
 // Investment & Investor Management
 export const Investor = createEntityAPI('/investments/investors');
@@ -181,7 +228,15 @@ export const TypingIndicator = createEntityAPI('/typing-indicators');
 export const PlatformSetting = createEntityAPI('/platform/settings');
 
 // News & Content
-export const News = createEntityAPI('/news');
+export const News = {
+  ...createEntityAPI('/news'),
+  async getLatest(limit = 20, category) {
+    const params = { limit };
+    if (category) params.category = category;
+    const response = await apiClient.get('/news/latest', { params });
+    return response.data;
+  }
+};
 export const PledgePayment = createEntityAPI('/pledges/payments');
 
 // Notifications
@@ -230,6 +285,23 @@ export const Permission = createEntityAPI('/permissions');
 
 // Watchlist & Portfolios
 export const Watchlist = createEntityAPI('/watchlists');
+
+// Portfolio API with specialized methods
+export const portfolioAPI = {
+  async getPortfolio() {
+    const response = await apiClient.get('/portfolios');
+    return response.data;
+  },
+  async addStock(symbol, quantity, price) {
+    const response = await apiClient.post('/portfolios', { symbol, quantity, price });
+    return response.data;
+  },
+  async removeStock(symbol) {
+    const response = await apiClient.delete(`/portfolios/${symbol}`);
+    return response.data;
+  }
+};
+
 export const Portfolio = createEntityAPI('/portfolios');
 export const PortfolioHolding = createEntityAPI('/portfolios/holdings');
 
@@ -255,7 +327,29 @@ export const FeatureConfig = {
     const response = await apiClient.get(`/features/${key}`);
     return response.data;
   },
+  async create(data) {
+    const response = await apiClient.post('/features', data);
+    return response.data;
+  },
+  async update(id, data) {
+    const response = await apiClient.put(`/features/${id}`, data);
+    return response.data;
+  },
+  async delete(id) {
+    const response = await apiClient.delete(`/features/${id}`);
+    return response.data;
+  },
+  async filter(filters) {
+    const response = await apiClient.get('/features', { params: filters });
+    return response.data;
+  }
 };
+
+// Advanced Chat Management
+export const RoomAutomation = createEntityAPI('/chat-management/automations');
+export const ModerationRule = createEntityAPI('/chat-management/rules');
+export const ChatInvite = createEntityAPI('/chat-management/invites');
+export const VIPFeature = createEntityAPI('/chat-management/vip-features');
 
 // Legacy aliases for backward compatibility
 export const PledgeAPI = Pledge;

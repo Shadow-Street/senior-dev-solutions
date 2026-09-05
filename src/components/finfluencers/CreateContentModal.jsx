@@ -22,6 +22,7 @@ import { Badge } from '@/components/ui/badge';
 import { Video, Upload, Link as LinkIcon, FileText, Sparkles, X } from 'lucide-react';
 import { toast } from "sonner";
 import apiClient from '@/lib/apiClient';
+import { UploadFile } from '@/api/integrations';
 
 export default function CreateContentModal({ open, onClose, onCreate }) {
   const [formData, setFormData] = useState({
@@ -42,7 +43,7 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.title.trim() || !formData.content.trim()) {
       toast.error('Please fill in all required fields');
       return;
@@ -77,12 +78,12 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
 
   const handleThumbnailUpload = async (file) => {
     if (!file) return;
-    
+
     if (!file.type.startsWith('image/')) {
       toast.error('Please upload an image file');
       return;
     }
-    
+
     if (file.size > 5 * 1024 * 1024) {
       toast.error('Image size must be less than 5MB');
       return;
@@ -90,7 +91,7 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
 
     setIsUploadingThumbnail(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await UploadFile({ file });
       setFormData(prev => ({ ...prev, thumbnail_url: file_url }));
       toast.success('Thumbnail uploaded successfully!');
     } catch (error) {
@@ -152,7 +153,7 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
           {/* Content Type Selection */}
           <div>
             <Label>Content Type *</Label>
-            <Select value={formData.post_type} onValueChange={(value) => setFormData(prev => ({...prev, post_type: value}))}>
+            <Select value={formData.post_type} onValueChange={(value) => setFormData(prev => ({ ...prev, post_type: value }))}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -191,7 +192,7 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
             <Input
               id="title"
               value={formData.title}
-              onChange={(e) => setFormData(prev => ({...prev, title: e.target.value}))}
+              onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
               placeholder="Enter a catchy title for your content"
               required
             />
@@ -204,7 +205,7 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
               <Input
                 id="video_url"
                 value={formData.video_url}
-                onChange={(e) => setFormData(prev => ({...prev, video_url: e.target.value}))}
+                onChange={(e) => setFormData(prev => ({ ...prev, video_url: e.target.value }))}
                 placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
                 required
               />
@@ -221,7 +222,7 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
               <Input
                 id="duration"
                 value={formData.duration}
-                onChange={(e) => setFormData(prev => ({...prev, duration: e.target.value}))}
+                onChange={(e) => setFormData(prev => ({ ...prev, duration: e.target.value }))}
                 placeholder="e.g., 15:30 or 1h 25m"
               />
             </div>
@@ -233,7 +234,7 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
             <Textarea
               id="content"
               value={formData.content}
-              onChange={(e) => setFormData(prev => ({...prev, content: e.target.value}))}
+              onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
               placeholder="Describe your content, key takeaways, and what viewers will learn..."
               className="h-32"
               required
@@ -246,8 +247,8 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
             <div className="mt-2 space-y-3">
               {formData.thumbnail_url ? (
                 <div className="relative inline-block">
-                  <img 
-                    src={formData.thumbnail_url} 
+                  <img
+                    src={formData.thumbnail_url}
                     alt="Thumbnail preview"
                     className="w-full h-48 object-cover rounded-lg border-2 border-purple-200"
                   />
@@ -256,7 +257,7 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
                     variant="destructive"
                     size="sm"
                     className="absolute top-2 right-2"
-                    onClick={() => setFormData(prev => ({...prev, thumbnail_url: ''}))}
+                    onClick={() => setFormData(prev => ({ ...prev, thumbnail_url: '' }))}
                   >
                     <X className="w-4 h-4" />
                   </Button>
@@ -315,8 +316,8 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
                 {formData.stock_mentions.map((stock, idx) => (
                   <Badge key={idx} className="bg-blue-100 text-blue-800 border-blue-200 flex items-center gap-1">
                     {stock}
-                    <X 
-                      className="w-3 h-3 cursor-pointer hover:text-blue-900" 
+                    <X
+                      className="w-3 h-3 cursor-pointer hover:text-blue-900"
                       onClick={() => removeStock(stock)}
                     />
                   </Badge>
@@ -349,8 +350,8 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
                 {formData.tags.map((tag, idx) => (
                   <Badge key={idx} className="bg-purple-100 text-purple-800 border-purple-200 flex items-center gap-1">
                     {tag}
-                    <X 
-                      className="w-3 h-3 cursor-pointer hover:text-purple-900" 
+                    <X
+                      className="w-3 h-3 cursor-pointer hover:text-purple-900"
                       onClick={() => removeTag(tag)}
                     />
                   </Badge>
@@ -371,7 +372,7 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
             <Switch
               id="is_premium"
               checked={formData.is_premium}
-              onCheckedChange={(checked) => setFormData(prev => ({...prev, is_premium: checked}))}
+              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_premium: checked }))}
             />
           </div>
 
@@ -395,8 +396,8 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isSubmitting || isUploadingThumbnail}
               className="bg-purple-600 hover:bg-purple-700"
             >

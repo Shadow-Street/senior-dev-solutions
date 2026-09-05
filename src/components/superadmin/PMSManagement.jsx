@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { PortfolioManager } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -26,7 +26,7 @@ export default function PMSManagement({ user }) {
 
   const loadPortfolioManagers = async () => {
     try {
-      const pms = await base44.entities.PortfolioManager.list('-created_date');
+      const pms = await PortfolioManager.list('-created_date');
       setPortfolioManagers(pms);
     } catch (error) {
       console.error('Error loading PMs:', error);
@@ -38,7 +38,7 @@ export default function PMSManagement({ user }) {
 
   const handleApprove = async (pmId) => {
     try {
-      await base44.entities.PortfolioManager.update(pmId, {
+      await PortfolioManager.update(pmId, {
         status: 'approved',
         approved_by: user.id,
         approved_at: new Date().toISOString()
@@ -56,7 +56,7 @@ export default function PMSManagement({ user }) {
     if (!reason) return;
 
     try {
-      await base44.entities.PortfolioManager.update(pmId, {
+      await PortfolioManager.update(pmId, {
         status: 'rejected',
         rejection_reason: reason
       });
@@ -70,7 +70,7 @@ export default function PMSManagement({ user }) {
 
   const handleSuspend = async (pmId) => {
     try {
-      await base44.entities.PortfolioManager.update(pmId, { status: 'suspended' });
+      await PortfolioManager.update(pmId, { status: 'suspended' });
       toast.success('Portfolio Manager suspended');
       loadPortfolioManagers();
     } catch (error) {
@@ -185,9 +185,9 @@ export default function PMSManagement({ user }) {
 
         <TabsContent value="pending" className="space-y-4 mt-6">
           {pendingPMs.map(pm => (
-            <PMCard 
-              key={pm.id} 
-              pm={pm} 
+            <PMCard
+              key={pm.id}
+              pm={pm}
               onApprove={handleApprove}
               onReject={handleReject}
               onViewDetails={() => {
@@ -207,8 +207,8 @@ export default function PMSManagement({ user }) {
 
         <TabsContent value="approved" className="space-y-4 mt-6">
           {approvedPMs.map(pm => (
-            <PMCard 
-              key={pm.id} 
+            <PMCard
+              key={pm.id}
               pm={pm}
               onSuspend={handleSuspend}
               onViewDetails={() => {
@@ -221,8 +221,8 @@ export default function PMSManagement({ user }) {
 
         <TabsContent value="rejected" className="space-y-4 mt-6">
           {rejectedPMs.map(pm => (
-            <PMCard 
-              key={pm.id} 
+            <PMCard
+              key={pm.id}
               pm={pm}
               onViewDetails={() => {
                 setSelectedPM(pm);
@@ -265,8 +265,8 @@ export default function PMSManagement({ user }) {
               </div>
 
               {selectedPM.sebi_document_url && (
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => window.open(selectedPM.sebi_document_url, '_blank')}
                   className="w-full"
                 >

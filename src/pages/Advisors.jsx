@@ -101,91 +101,64 @@ export default function Advisors() {
         let loadingTimeout = null;
 
         const loadData = async () => {
+            // Wait slightly to simulate loading or ensure mounting if needed
             await new Promise(resolve => {
-                loadingTimeout = setTimeout(resolve, 500);
+                loadingTimeout = setTimeout(resolve, 100);
             });
 
             if (!isMounted) return;
 
             setIsLoading(true);
-            
+
             try {
                 let user = null;
                 try {
-                    user = await base44.auth.me().catch((error) => {
-                        if (error?.name === 'AbortError' || error?.message?.toLowerCase().includes('abort')) {
-                            return null;
-                        }
-                        throw error;
-                    });
+                    const res = await apiClient.auth.me();
+                    user = res.data;
                 } catch (error) {
-                    if (!error?.name?.includes('AbortError') && !error?.message?.toLowerCase().includes('abort')) {
-                        console.log('User not authenticated:', error.message);
-                    }
+                    // console.log('User not authenticated:', error.message);
                     user = null;
                 }
-                
+
                 if (!isMounted) return;
                 setCurrentUser(user);
 
-                await new Promise(resolve => setTimeout(resolve, 600));
-                if (!isMounted) return;
-
                 let loadedAdvisors = [];
                 try {
-                    loadedAdvisors = await base44.entities.Advisor.filter({ 
-                        status: 'approved' 
-                    }, '-follower_count', 50).catch((error) => {
-                        if (error?.name === 'AbortError' || error?.message?.toLowerCase().includes('abort')) {
-                            return [];
-                        }
-                        throw error;
+                    const res = await apiClient.advisors.list({
+                        status: 'approved',
+                        limit: 50,
+                        sort: '-follower_count'
                     });
+                    loadedAdvisors = res.data;
                 } catch (error) {
-                    if (!error?.name?.includes('AbortError') && !error?.message?.toLowerCase().includes('abort')) {
-                        console.log('Using sample advisors due to API error:', error.message);
-                    }
+                    console.log('Using sample advisors due to API error:', error.message);
                     loadedAdvisors = [];
                 }
 
                 if (!isMounted) return;
 
-                if (loadedAdvisors.length > 0) {
+                if (loadedAdvisors && loadedAdvisors.length > 0) {
                     setAdvisors(loadedAdvisors);
                 } else {
                     setAdvisors(sampleAdvisors);
                 }
 
                 if (user) {
-                    if (['admin', 'super_admin'].includes(user.app_role)) {
+                    if (['admin', 'super_admin'].includes(user.role)) { // normalized 'app_role' to 'role' based on User model
                         if (isMounted) {
                             setHasSubscription(true);
                         }
                     } else {
-                        await new Promise(resolve => setTimeout(resolve, 800));
-                        if (!isMounted) return;
-
+                        // Check subscription via API
                         try {
-                            const subs = await base44.entities.Subscription.filter({ 
-                                user_id: user.id, 
-                                status: 'active' 
-                            }).catch((error) => {
-                                if (error?.name === 'AbortError' || error?.message?.toLowerCase().includes('abort')) {
-                                    return [];
-                                }
-                                throw error;
-                            });
-                            
-                            if (isMounted) {
-                                setHasSubscription(subs.length > 0);
-                            }
+                            // This endpoint needs to be implemented in backend or use a robust way to check
+                            // For now, we assume false unless specific logic is added
+                            // const subs = await apiClient.subscriptions.list({ user_id: user.id, status: 'active' });
+                            // setHasSubscription(subs.data.length > 0);
+                            setHasSubscription(false);
                         } catch (error) {
-                            if (!error?.name?.includes('AbortError') && !error?.message?.toLowerCase().includes('abort')) {
-                                console.log("No active subscription for user or subscription check failed:", error.message);
-                            }
-                            if (isMounted) {
-                                setHasSubscription(false);
-                            }
+                            if (isMounted) setHasSubscription(false);
                         }
                     }
                 } else {
@@ -195,11 +168,8 @@ export default function Advisors() {
                 }
 
             } catch (error) {
-                if (isMounted && !error?.name?.includes('AbortError') && !error?.message?.toLowerCase().includes('abort')) {
-                    console.log("Error during data loading, falling back to guest mode with sample data:", error.message);
-                }
-                
                 if (isMounted) {
+                    console.log("Error during data loading, falling back to guest mode with sample data:", error.message);
                     setAdvisors(sampleAdvisors);
                     setCurrentUser(null);
                     setHasSubscription(false);
@@ -223,23 +193,23 @@ export default function Advisors() {
 
     const filteredAdvisors = advisors.filter(advisor => {
         const matchesSearch = advisor.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             advisor.bio?.toLowerCase().includes(searchTerm.toLowerCase());
-        
+            advisor.bio?.toLowerCase().includes(searchTerm.toLowerCase());
+
         const matchesSpecialization = specializationFilter === 'all' ||
-                                    advisor.specialization?.some(spec => 
-                                        spec.toLowerCase().includes(specializationFilter.toLowerCase())
-                                    );
-        
+            advisor.specialization?.some(spec =>
+                spec.toLowerCase().includes(specializationFilter.toLowerCase())
+            );
+
         return matchesSearch && matchesSpecialization;
     });
 
     const handleSubscribe = (advisor) => {
         // ✅ Check feature access before subscribing
         if (!hasFeatureAccess) {
-          toast.error('Upgrade to VIP to subscribe to advisors');
-          return;
+            toast.error('Upgrade to VIP to subscribe to advisors');
+            return;
         }
-        
+
         setSelectedAdvisor(advisor);
         setShowSubscribeModal(true);
     };
@@ -250,13 +220,13 @@ export default function Advisors() {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
                         <div className="flex items-center gap-3 mb-2">
-                           <BookUser className="w-8 h-8 text-blue-600" />
-                           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                            <BookUser className="w-8 h-8 text-blue-600" />
+                            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                                 SEBI Registered Advisors
-                           </h1>
+                            </h1>
                         </div>
                         <p className="text-lg text-slate-600">Subscribe to verified professionals for expert stock advice.</p>
-                        
+
                         <div className="flex items-center gap-4 mt-3 text-sm text-slate-500">
                             <span>✅ All advisors are SEBI verified</span>
                             <span>•</span>
@@ -312,8 +282,8 @@ export default function Advisors() {
                             <BookUser className="w-16 h-16 text-slate-400 mx-auto mb-4" />
                             <h3 className="text-xl font-semibold text-slate-700">No Advisors Found</h3>
                             <p className="text-slate-500 mt-2">
-                                {searchTerm || specializationFilter !== 'all' 
-                                    ? "Try adjusting your search or filter criteria." 
+                                {searchTerm || specializationFilter !== 'all'
+                                    ? "Try adjusting your search or filter criteria."
                                     : "Check back soon for a list of verified stock advisors."}
                             </p>
                         </CardContent>
@@ -321,11 +291,11 @@ export default function Advisors() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {filteredAdvisors.map(advisor => (
-                            <AdvisorCard 
-                                key={advisor.id} 
-                                advisor={advisor} 
-                                currentUser={currentUser} 
-                                hasSubscription={hasSubscription} 
+                            <AdvisorCard
+                                key={advisor.id}
+                                advisor={advisor}
+                                currentUser={currentUser}
+                                hasSubscription={hasSubscription}
                                 handleSubscribe={handleSubscribe} // Pass the new handler
                             />
                         ))}
@@ -341,8 +311,8 @@ export default function Advisors() {
                             <div>
                                 <h3 className="font-semibold text-blue-800 mb-2">Trust & Verification</h3>
                                 <p className="text-sm text-blue-700 leading-relaxed">
-                                    All advisors listed here are SEBI registered and verified by our admin team. 
-                                    However, investments are subject to market risks. Past performance does not guarantee future results. 
+                                    All advisors listed here are SEBI registered and verified by our admin team.
+                                    However, investments are subject to market risks. Past performance does not guarantee future results.
                                     Please consult with qualified financial advisors and make informed decisions based on your risk tolerance.
                                 </p>
                             </div>

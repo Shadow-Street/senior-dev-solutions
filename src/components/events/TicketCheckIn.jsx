@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { EventAttendee, EventTicket } from '@/lib/apiClient';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,7 +18,7 @@ export default function TicketCheckIn({ event, open, onClose, onUpdate }) {
   const [tickets, setTickets] = useState([]);
   const [checkedInList, setCheckedInList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     if (open) {
       loadCheckInData();
@@ -29,8 +29,8 @@ export default function TicketCheckIn({ event, open, onClose, onUpdate }) {
     try {
       setIsLoading(true);
       const [attendeesData, ticketsData] = await Promise.all([
-        base44.entities.EventAttendee.filter({ event_id: event.id }),
-        base44.entities.EventTicket.filter({ event_id: event.id, status: 'active' })
+        EventAttendee.filter({ event_id: event.id }),
+        EventTicket.filter({ event_id: event.id, status: 'active' })
       ]);
 
       setAttendees(attendeesData);
@@ -49,55 +49,55 @@ export default function TicketCheckIn({ event, open, onClose, onUpdate }) {
       toast.error('Please enter a ticket ID');
       return;
     }
-    
+
     setIsChecking(true);
-    
+
     try {
       // Find ticket by ID or last 8 characters
-      const ticket = tickets.find(t => 
+      const ticket = tickets.find(t =>
         t.id === ticketId || t.id.slice(-8).toUpperCase() === ticketId.toUpperCase()
       );
-      
+
       if (!ticket) {
         toast.error('Ticket not found');
         setTicketInfo({ error: 'Ticket not found' });
         return;
       }
-      
+
       if (ticket.status === 'used') {
         toast.warning('Ticket already checked in');
         setTicketInfo({ ...ticket, alreadyUsed: true });
         return;
       }
-      
+
       if (ticket.status !== 'active') {
         toast.error(`Ticket status: ${ticket.status}`);
         setTicketInfo({ ...ticket, invalidStatus: true });
         return;
       }
-      
+
       // Mark ticket as used
-      await base44.entities.EventTicket.update(ticket.id, { status: 'used' });
-      
+      await EventTicket.update(ticket.id, { status: 'used' });
+
       // Mark attendee as confirmed
       const attendee = attendees.find(a => a.user_id === ticket.user_id);
       if (attendee) {
-        await base44.entities.EventAttendee.update(attendee.id, { confirmed: true });
+        await EventAttendee.update(attendee.id, { confirmed: true });
       }
-      
+
       toast.success('Check-in successful!');
       setTicketInfo({ ...ticket, checkedIn: true });
-      
+
       // Reload data
       await loadCheckInData();
       if (onUpdate) onUpdate();
-      
+
       // Clear form after 2 seconds
       setTimeout(() => {
         setTicketId('');
         setTicketInfo(null);
       }, 2000);
-      
+
     } catch (error) {
       console.error('Error checking in:', error);
       toast.error('Failed to check in ticket');
@@ -136,7 +136,7 @@ export default function TicketCheckIn({ event, open, onClose, onUpdate }) {
     a.download = `${event.title.replace(/[^a-z0-9]/gi, '_')}_attendance.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
-    
+
     toast.success('Attendance report exported');
   };
 
@@ -227,8 +227,8 @@ export default function TicketCheckIn({ event, open, onClose, onUpdate }) {
                         className="uppercase text-lg font-mono"
                         autoFocus
                       />
-                      <Button 
-                        onClick={handleCheckIn} 
+                      <Button
+                        onClick={handleCheckIn}
                         disabled={isChecking}
                         className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                       >
@@ -241,12 +241,11 @@ export default function TicketCheckIn({ event, open, onClose, onUpdate }) {
 
                 {/* Ticket Information Display */}
                 {ticketInfo && (
-                  <Card className={`${
-                    ticketInfo.error ? 'bg-red-50 border-red-200' :
+                  <Card className={`${ticketInfo.error ? 'bg-red-50 border-red-200' :
                     ticketInfo.alreadyUsed ? 'bg-yellow-50 border-yellow-200' :
-                    ticketInfo.invalidStatus ? 'bg-orange-50 border-orange-200' :
-                    'bg-green-50 border-green-200'
-                  }`}>
+                      ticketInfo.invalidStatus ? 'bg-orange-50 border-orange-200' :
+                        'bg-green-50 border-green-200'
+                    }`}>
                     <CardContent className="p-6">
                       {ticketInfo.error ? (
                         <div className="flex items-center gap-2 text-red-700">

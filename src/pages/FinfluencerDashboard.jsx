@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import apiClient, { authAPI, FinInfluencer, Course, InfluencerPost, RevenueTransaction, PayoutRequest, CourseEnrollment } from '@/lib/apiClient';
+import { UploadFile } from '@/api/integrations';
 import { createPageUrl } from '@/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -77,9 +78,9 @@ export default function FinfluencerDashboard() {
 
     const loadDashboard = async () => {
       setIsLoading(true);
-      
+
       try {
-        const currentUser = await base44.auth.me().catch(() => null);
+        const currentUser = await authAPI.me().catch(() => null);
         if (!isMounted || !currentUser) {
           setIsLoading(false);
           toast.error('Please log in to access this page');
@@ -90,7 +91,7 @@ export default function FinfluencerDashboard() {
         let finfluencerProfile;
         try {
           if (currentUser.app_role === 'super_admin' || currentUser.app_role === 'admin') {
-            const profiles = await base44.entities.FinInfluencer.list('', 1).catch(() => []);
+            const profiles = await FinInfluencer.list('', 1).catch(() => []);
             finfluencerProfile = profiles[0];
             if (finfluencerProfile) {
               toast.info("Viewing as Admin: Displaying first available Finfluencer.", { duration: 3000 });
@@ -100,7 +101,7 @@ export default function FinfluencerDashboard() {
               return;
             }
           } else {
-            const finfluencerProfiles = await base44.entities.FinInfluencer.filter({ user_id: currentUser.id }).catch(() => []);
+            const finfluencerProfiles = await FinInfluencer.filter({ user_id: currentUser.id }).catch(() => []);
             finfluencerProfile = finfluencerProfiles[0];
           }
         } catch (error) {
@@ -117,19 +118,19 @@ export default function FinfluencerDashboard() {
           setIsLoading(false);
           return;
         }
-        
+
         setFinfluencer(finfluencerProfile);
 
         // Only load other data if finfluencer is 'approved'
         if (finfluencerProfile.status === 'approved') {
           try {
             const [coursesData, postsData] = await Promise.all([
-              base44.entities.Course.filter({ influencer_id: finfluencerProfile.id }).catch(() => []),
-              base44.entities.InfluencerPost.filter({ influencer_id: finfluencerProfile.id }).catch(() => [])
+              Course.filter({ influencer_id: finfluencerProfile.id }).catch(() => []),
+              InfluencerPost.filter({ influencer_id: finfluencerProfile.id }).catch(() => [])
             ]);
 
             if (!isMounted) return;
-            
+
             setCourses(coursesData || []);
             setPosts(postsData || []);
 
@@ -143,25 +144,25 @@ export default function FinfluencerDashboard() {
             setCourses([]);
             setPosts([]);
           }
-          
+
           setIsLoading(false);
 
           setTimeout(async () => {
             if (!isMounted) return;
-            
+
             try {
               const [enrollmentsData, revenueData, payoutRequestsData] = await Promise.all([
-                base44.entities.CourseEnrollment.list().catch(() => []),
-                base44.entities.RevenueTransaction.filter({ influencer_id: finfluencerProfile.id }).catch(() => []),
-                base44.entities.PayoutRequest.filter({ entity_id: finfluencerProfile.id, entity_type: 'finfluencer' }).catch(() => [])
+                CourseEnrollment.list().catch(() => []),
+                RevenueTransaction.filter({ influencer_id: finfluencerProfile.id }).catch(() => []),
+                PayoutRequest.filter({ entity_id: finfluencerProfile.id, entity_type: 'finfluencer' }).catch(() => [])
               ]);
 
               if (!isMounted) return;
 
-              const currentCourses = await base44.entities.Course.filter({ influencer_id: finfluencerProfile.id }).catch(() => []);
+              const currentCourses = await Course.filter({ influencer_id: finfluencerProfile.id }).catch(() => []);
               const courseIds = (currentCourses || []).map(c => c.id);
               const filteredEnrollments = (enrollmentsData || []).filter(e => courseIds.includes(e.course_id));
-              
+
               setEnrollments(filteredEnrollments || []);
               setRevenueTransactions(revenueData || []);
               setPayoutRequests(payoutRequestsData || []);
@@ -174,7 +175,7 @@ export default function FinfluencerDashboard() {
                 .filter(p => p.status === 'pending' || p.status === 'approved')
                 .reduce((sum, p) => sum + (p.requested_amount || 0), 0);
               const availableBalance = totalEarnings - totalPaidOut - pendingPayouts;
-              
+
               const activeEnrollments = (filteredEnrollments || []).filter(e => e.enrollment_status === 'active').length;
               const ratingsSum = (filteredEnrollments || []).reduce((sum, e) => sum + (e.rating || 0), 0);
               const ratedCount = (filteredEnrollments || []).filter(e => e.rating).length;
@@ -223,7 +224,7 @@ export default function FinfluencerDashboard() {
         return;
       }
 
-      await base44.entities.PayoutRequest.create({
+      await PayoutRequest.create({
         user_id: user.id,
         entity_type: 'finfluencer',
         entity_id: finfluencer.id,
@@ -235,11 +236,11 @@ export default function FinfluencerDashboard() {
         paypal_email: payoutData.paypal_email,
         status: 'pending'
       });
-      
+
       toast.success('Payout request submitted successfully!');
       setShowPayoutRequest(false);
-      
-      const payoutRequestsData = await base44.entities.PayoutRequest.filter({ entity_id: finfluencer.id, entity_type: 'finfluencer' }).catch(() => []);
+
+      const payoutRequestsData = await PayoutRequest.filter({ entity_id: finfluencer.id, entity_type: 'finfluencer' }).catch(() => []);
       setPayoutRequests(payoutRequestsData || []);
     } catch (error) {
       console.error('Error submitting payout request:', error);
@@ -256,24 +257,24 @@ export default function FinfluencerDashboard() {
 
       // Create or update course
       if (editingCourse) {
-        await base44.entities.Course.update(editingCourse.id, {
+        await Course.update(editingCourse.id, {
           ...courseData,
           influencer_id: finfluencer.id,
         });
         toast.success('Course updated successfully!');
       } else {
-        await base44.entities.Course.create({
+        await Course.create({
           ...courseData,
           influencer_id: finfluencer.id,
           status: 'approved'
         });
         toast.success('Course created successfully!');
       }
-      
+
       setShowCreateCourse(false);
       setEditingCourse(null); // Clear editing state
-      
-      const coursesData = await base44.entities.Course.filter({ influencer_id: finfluencer.id }).catch(() => []);
+
+      const coursesData = await Course.filter({ influencer_id: finfluencer.id }).catch(() => []);
       setCourses(coursesData || []);
       setStats(prevStats => ({
         ...prevStats,
@@ -291,10 +292,10 @@ export default function FinfluencerDashboard() {
     }
 
     try {
-      await base44.entities.Course.delete(courseId);
+      await Course.delete(courseId);
       toast.success('Course deleted successfully!');
-      
-      const coursesData = await base44.entities.Course.filter({ influencer_id: finfluencer.id }).catch(() => []);
+
+      const coursesData = await Course.filter({ influencer_id: finfluencer.id }).catch(() => []);
       setCourses(coursesData || []);
       setStats(prevStats => ({
         ...prevStats,
@@ -313,16 +314,16 @@ export default function FinfluencerDashboard() {
         return;
       }
 
-      await base44.entities.InfluencerPost.create({
+      await InfluencerPost.create({
         ...postData,
         influencer_id: finfluencer.id,
         status: 'pending'
       });
-      
+
       toast.success('Content published! Pending admin approval.');
       setShowCreatePost(false);
-      
-      const postsData = await base44.entities.InfluencerPost.filter({ influencer_id: finfluencer.id }).catch(() => []);
+
+      const postsData = await InfluencerPost.filter({ influencer_id: finfluencer.id }).catch(() => []);
       setPosts(postsData || []);
       setStats(prevStats => ({
         ...prevStats,
@@ -337,25 +338,25 @@ export default function FinfluencerDashboard() {
   const handleProfileImageUpload = async (file) => {
     try {
       if (!file) return;
-      
+
       if (!file.type.startsWith('image/')) {
         toast.error('Please upload an image file');
         return;
       }
-      
+
       if (file.size > 5 * 1024 * 1024) {
         toast.error('Image size must be less than 5MB');
         return;
       }
 
       toast.info('Uploading image...');
-      
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      
-      await base44.entities.FinInfluencer.update(finfluencer.id, {
+
+      const { file_url } = await UploadFile({ file });
+
+      await FinInfluencer.update(finfluencer.id, {
         profile_image_url: file_url
       });
-      
+
       setFinfluencer(prev => ({ ...prev, profile_image_url: file_url }));
       setShowProfileImageModal(false);
       toast.success('Profile picture updated successfully!');
@@ -505,14 +506,14 @@ export default function FinfluencerDashboard() {
               <TabsTrigger value="financials">Financials</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="overview" className="space-y-8 mt-0">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-4">
                   <div className="relative group cursor-pointer" onClick={() => setShowProfileImageModal(true)}>
                     {finfluencer.profile_image_url ? (
-                      <img 
-                        src={finfluencer.profile_image_url} 
+                      <img
+                        src={finfluencer.profile_image_url}
                         alt={finfluencer.display_name}
                         className="w-20 h-20 rounded-full object-cover border-4 border-purple-200 shadow-lg"
                       />
@@ -527,7 +528,7 @@ export default function FinfluencerDashboard() {
                       Change
                     </button>
                   </div>
-                  
+
                   <div>
                     <h2 className="text-3xl font-bold text-slate-800">Welcome back, {finfluencer.display_name}!</h2>
                     <p className="text-slate-600 mt-1">Here's your content creator dashboard overview</p>
@@ -556,7 +557,7 @@ export default function FinfluencerDashboard() {
                     </div>
                   </CardContent>
                 </Card>
-                
+
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
@@ -568,7 +569,7 @@ export default function FinfluencerDashboard() {
                     </div>
                   </CardContent>
                 </Card>
-                
+
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
@@ -592,7 +593,7 @@ export default function FinfluencerDashboard() {
                     </div>
                   </CardContent>
                 </Card>
-                
+
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
@@ -662,7 +663,7 @@ export default function FinfluencerDashboard() {
                 </Card>
               </div>
             </TabsContent>
-            
+
             <TabsContent value="courses" className="space-y-4 mt-0">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-slate-800">My Courses</h2>
@@ -677,7 +678,7 @@ export default function FinfluencerDashboard() {
                   courses.map(course => {
                     const courseEnrollments = enrollments.filter(e => e.course_id === course.id);
                     const courseRevenue = courseEnrollments.reduce((sum, e) => sum + (e.amount_paid || 0), 0);
-                    
+
                     return (
                       <Card key={course.id} className="hover:shadow-xl transition-all duration-300 border-2 hover:border-purple-200 bg-white overflow-hidden">
                         <CardContent className="p-5">
@@ -735,8 +736,8 @@ export default function FinfluencerDashboard() {
 
                           {/* Action Buttons */}
                           <div className="grid grid-cols-2 gap-2 mb-3">
-                            <Button 
-                              variant="outline" 
+                            <Button
+                              variant="outline"
                               className="w-full text-sm"
                               onClick={() => {
                                 // For preview, maybe navigate to course page or show a preview modal
@@ -746,8 +747,8 @@ export default function FinfluencerDashboard() {
                               <Eye className="w-4 h-4 mr-1" />
                               Preview
                             </Button>
-                            <Button 
-                              variant="outline" 
+                            <Button
+                              variant="outline"
                               className="w-full text-sm text-blue-600 border-blue-200 hover:bg-blue-50"
                               onClick={() => {
                                 // For stats, maybe open a modal or navigate to a dedicated stats page
@@ -761,7 +762,7 @@ export default function FinfluencerDashboard() {
 
                           {/* Edit & Delete Buttons */}
                           <div className="grid grid-cols-2 gap-2">
-                            <Button 
+                            <Button
                               className="w-full bg-purple-600 hover:bg-purple-700 text-white"
                               onClick={() => {
                                 setEditingCourse(course);
@@ -771,7 +772,7 @@ export default function FinfluencerDashboard() {
                               <Edit className="w-4 h-4 mr-2" />
                               Edit
                             </Button>
-                            <Button 
+                            <Button
                               variant="destructive"
                               className="w-full bg-red-600 hover:bg-red-700 text-white"
                               onClick={() => handleCourseDelete(course.id, course.title)}
@@ -821,13 +822,13 @@ export default function FinfluencerDashboard() {
                       <CardContent className="p-6">
                         <div className="space-y-4">
                           {post.thumbnail_url && (
-                            <img 
-                              src={post.thumbnail_url} 
+                            <img
+                              src={post.thumbnail_url}
                               alt={post.title}
                               className="w-full h-40 object-cover rounded-lg"
                             />
                           )}
-                          
+
                           <div>
                             <div className="flex items-center gap-2 mb-2">
                               {getStatusBadge(post.status)}
@@ -873,7 +874,7 @@ export default function FinfluencerDashboard() {
 
             <TabsContent value="students" className="space-y-4 mt-0">
               <h2 className="text-2xl font-bold text-slate-800 mb-6">Students</h2>
-              
+
               <div className="space-y-4">
                 {enrollments.length > 0 ? (
                   enrollments.map(enrollment => {
@@ -917,27 +918,25 @@ export default function FinfluencerDashboard() {
                 )}
               </div>
             </TabsContent>
-            
+
             <TabsContent value="financials" className="space-y-6 mt-0">
               <div className="flex gap-3 w-full">
                 <Button
                   onClick={() => setFinancialTab('overview')}
-                  className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${
-                    financialTab === 'overview' 
-                      ? 'bg-gradient-to-r from-purple-500 to-blue-600 text-white shadow-lg hover:shadow-xl hover:scale-105' 
-                      : 'bg-gradient-to-r from-purple-50 to-blue-50 text-slate-700 hover:from-purple-100 hover:to-blue-100 hover:shadow-md border border-purple-200'
-                  }`}
+                  className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'overview'
+                    ? 'bg-gradient-to-r from-purple-500 to-blue-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
+                    : 'bg-gradient-to-r from-purple-50 to-blue-50 text-slate-700 hover:from-purple-100 hover:to-blue-100 hover:shadow-md border border-purple-200'
+                    }`}
                 >
                   <DollarSign className="w-5 h-5 mr-2 inline-block" />
                   Financials
                 </Button>
                 <Button
                   onClick={() => setFinancialTab('payouts')}
-                  className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${
-                    financialTab === 'payouts' 
-                      ? 'bg-gradient-to-r from-purple-500 to-blue-600 text-white shadow-lg hover:shadow-xl hover:scale-105' 
-                      : 'bg-gradient-to-r from-purple-50 to-blue-50 text-slate-700 hover:from-purple-100 hover:to-blue-100 hover:shadow-md border border-purple-200'
-                  }`}
+                  className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'payouts'
+                    ? 'bg-gradient-to-r from-purple-500 to-blue-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
+                    : 'bg-gradient-to-r from-purple-50 to-blue-50 text-slate-700 hover:from-purple-100 hover:to-blue-100 hover:shadow-md border border-purple-200'
+                    }`}
                 >
                   <Wallet className="w-5 h-5 mr-2 inline-block" />
                   Payout Requests
@@ -948,8 +947,8 @@ export default function FinfluencerDashboard() {
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
                     <h2 className="text-2xl font-bold text-slate-800">Financial Overview</h2>
-                    <Button 
-                      onClick={() => setShowPayoutRequest(true)} 
+                    <Button
+                      onClick={() => setShowPayoutRequest(true)}
                       disabled={stats.availableBalance <= 0}
                       className="bg-green-600 hover:bg-green-700"
                     >
@@ -958,7 +957,7 @@ export default function FinfluencerDashboard() {
                     </Button>
                   </div>
 
-                  <FinancialStatement 
+                  <FinancialStatement
                     entityType="finfluencer"
                     entityId={finfluencer?.id}
                     entityName={finfluencer?.display_name || 'Finfluencer'}
@@ -970,8 +969,8 @@ export default function FinfluencerDashboard() {
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
                     <h2 className="text-2xl font-bold text-slate-800">Payout Requests</h2>
-                    <Button 
-                      onClick={() => setShowPayoutRequest(true)} 
+                    <Button
+                      onClick={() => setShowPayoutRequest(true)}
                       disabled={stats.availableBalance <= 0}
                       className="bg-green-600 hover:bg-green-700"
                     >
@@ -992,7 +991,7 @@ export default function FinfluencerDashboard() {
                         </div>
                       </CardContent>
                     </Card>
-                    
+
                     <Card>
                       <CardContent className="p-6">
                         <div className="flex items-center">
@@ -1004,7 +1003,7 @@ export default function FinfluencerDashboard() {
                         </div>
                       </CardContent>
                     </Card>
-                    
+
                     <Card>
                       <CardContent className="p-6">
                         <div className="flex items-center">
@@ -1054,10 +1053,10 @@ export default function FinfluencerDashboard() {
                 </div>
               )}
             </TabsContent>
-            
+
             <TabsContent value="analytics" className="mt-0">
               <h2 className="text-2xl font-bold text-slate-800 mb-6">Advanced Analytics</h2>
-              
+
               <div className="space-y-6">
                 <Card className="shadow-lg border-0">
                   <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-purple-50">
@@ -1184,12 +1183,12 @@ export default function FinfluencerDashboard() {
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
               <div className="bg-white rounded-lg p-6 max-w-md w-full mx-auto shadow-xl">
                 <h3 className="text-xl font-bold text-slate-800 mb-4">Update Profile Picture</h3>
-                
+
                 <div className="space-y-4">
                   <div className="flex justify-center">
                     {finfluencer.profile_image_url ? (
-                      <img 
-                        src={finfluencer.profile_image_url} 
+                      <img
+                        src={finfluencer.profile_image_url}
                         alt="Current"
                         className="w-32 h-32 rounded-full object-cover border-4 border-purple-200"
                       />
@@ -1199,7 +1198,7 @@ export default function FinfluencerDashboard() {
                       </div>
                     )}
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="profile-image">Choose New Image</Label>
                     <Input
@@ -1216,7 +1215,7 @@ export default function FinfluencerDashboard() {
                       Recommended: Square image, at least 400x400px, max 5MB
                     </p>
                   </div>
-                  
+
                   <div className="flex gap-3 justify-end mt-6">
                     <Button
                       variant="outline"

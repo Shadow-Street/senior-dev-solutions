@@ -1,25 +1,25 @@
-import apiClient from '@/lib/apiClient';
 import { Message, News } from '@/lib/apiClient';
+import { InvokeLLM } from '@/api/integrations';
 
 export class NewsBot {
   static async postRelevantNews(chatRoomId, stockSymbol) {
     try {
       // Fetch news related to the stock
-      const newsArticles = await News.filter({ 
+      const newsArticles = await News.filter({
         stock_impact: stockSymbol,
-        is_breaking: true 
+        is_breaking: true
       }, '-created_date', 3).catch(() => []);
 
       if (newsArticles.length === 0) {
         // Try general market news
-        const marketNews = await News.filter({ 
-          category: 'market' 
+        const marketNews = await News.filter({
+          category: 'market'
         }, '-created_date', 1).catch(() => []);
 
         if (marketNews.length > 0) {
           const article = marketNews[0];
-          const sentimentEmoji = article.sentiment === 'positive' ? '✅' : 
-                                article.sentiment === 'negative' ? '⚠️' : 'ℹ️';
+          const sentimentEmoji = article.sentiment === 'positive' ? '✅' :
+            article.sentiment === 'negative' ? '⚠️' : 'ℹ️';
 
           const message = `📰 **Market News Update**
 
@@ -42,8 +42,8 @@ ${article.external_url ? `🔗 [Read More](${article.external_url})` : ''}
       } else {
         // Post stock-specific news
         const article = newsArticles[0];
-        const sentimentEmoji = article.sentiment === 'positive' ? '✅' : 
-                              article.sentiment === 'negative' ? '⚠️' : 'ℹ️';
+        const sentimentEmoji = article.sentiment === 'positive' ? '✅' :
+          article.sentiment === 'negative' ? '⚠️' : 'ℹ️';
         const breakingBadge = article.is_breaking ? '🚨 BREAKING: ' : '';
 
         const message = `📰 **${breakingBadge}News Alert - ${stockSymbol}**
@@ -77,7 +77,7 @@ ${article.external_url ? `🔗 [Read Full Article](${article.external_url})` : '
   static async fetchAndPostNews(chatRoomId, stockSymbol) {
     try {
       // Use LLM to fetch latest news from internet
-      const newsData = await base44.integrations.Core.InvokeLLM({
+      const newsData = await InvokeLLM({
         prompt: `Find the latest news about ${stockSymbol} stock. Return recent news articles with title, summary, and sentiment.`,
         add_context_from_internet: true,
         response_json_schema: {
@@ -101,8 +101,8 @@ ${article.external_url ? `🔗 [Read Full Article](${article.external_url})` : '
 
       if (newsData && newsData.articles && newsData.articles.length > 0) {
         const article = newsData.articles[0];
-        const sentimentEmoji = article.sentiment === 'positive' ? '✅' : 
-                              article.sentiment === 'negative' ? '⚠️' : 'ℹ️';
+        const sentimentEmoji = article.sentiment === 'positive' ? '✅' :
+          article.sentiment === 'negative' ? '⚠️' : 'ℹ️';
 
         const message = `📰 **Latest News - ${stockSymbol}**
 
@@ -133,7 +133,7 @@ ${article.summary}
 
   static async scheduleNewsUpdates(chatRoomId, stockSymbol, intervalMinutes = 60) {
     const intervalMs = intervalMinutes * 60 * 1000;
-    
+
     // Post initial news
     await this.postRelevantNews(chatRoomId, stockSymbol);
 

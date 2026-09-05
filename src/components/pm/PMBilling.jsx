@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { PMInvoice } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,12 +22,12 @@ export default function PMBilling({ pmProfile }) {
 
   const loadInvoices = async () => {
     try {
-      const allInvoices = await base44.entities.PMInvoice.filter({ pm_id: pmProfile.id }, '-created_date');
+      const allInvoices = await PMInvoice.filter({ pm_id: pmProfile.id }, '-created_date');
       setInvoices(allInvoices);
 
       const totalRevenue = allInvoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.total_amount, 0);
       const pendingAmount = allInvoices.filter(i => i.status === 'sent' || i.status === 'generated').reduce((sum, i) => sum + i.total_amount, 0);
-      
+
       setStats({
         totalRevenue,
         pendingAmount,

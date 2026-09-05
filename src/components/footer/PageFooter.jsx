@@ -72,18 +72,16 @@ export default function PageFooter() {
     <footer className="bg-gradient-to-r from-blue-900 via-blue-800 to-purple-900 text-white">
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12 mb-8">
-          
+
           {/* Protocol Branding Section */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <img
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68bb21f4e5ccdcab161121f6/1dc7cf9b7_FinancialNetworkingLogoProtocol.png"
-                alt="Protocall Logo"
-                className="w-8 h-8 rounded-lg"
-              />
+              <div className="bg-white/10 p-2 rounded-lg">
+                <Shield className="w-8 h-8 text-white" />
+              </div>
               <span className="text-xl font-bold">{settings.site_name || 'Protocall'}</span>
             </div>
-            
+
             {/* Enhanced Brand Description */}
             <div className="mb-4 space-y-2">
               <p className="text-white leading-relaxed">
@@ -93,13 +91,13 @@ export default function PageFooter() {
                 Join thousands of traders and investors coming together to share insights, learn, and make smarter trading decisions. Empower your journey with real conversations, real strategies, and real growth.
               </p>
             </div>
-            
+
             {/* Social Media Icons - Embossed & Highlighted */}
             <div className="flex gap-3 mt-6">
               {socialLinks.map((social) => {
                 const Icon = social.icon;
                 const hasUrl = social.url && social.url !== '#';
-                
+
                 return (
                   <a
                     key={social.name}
@@ -137,7 +135,7 @@ export default function PageFooter() {
                       transition-all duration-300
                       ${hasUrl ? 'group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]' : ''}
                     `} />
-                    
+
                     {/* Pulse animation for active links */}
                     {hasUrl && (
                       <span className="absolute inset-0 rounded-xl bg-white/20 animate-ping opacity-0 group-hover:opacity-75"></span>
@@ -152,29 +150,29 @@ export default function PageFooter() {
           <div>
             <h3 className="text-lg font-semibold mb-4 text-white">Legal & Compliance</h3>
             <div className="space-y-3">
-              <Link 
-                to={createPageUrl("Terms")} 
+              <Link
+                to={createPageUrl("Terms")}
                 className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group text-sm"
               >
                 <FileText className="w-4 h-4" />
                 <span>Terms of Service</span>
               </Link>
-              <Link 
-                to={createPageUrl("Privacy")} 
+              <Link
+                to={createPageUrl("Privacy")}
                 className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group text-sm"
               >
                 <Lock className="w-4 h-4" />
                 <span>Privacy Policy</span>
               </Link>
-              <Link 
-                to={createPageUrl("Cookies")} 
+              <Link
+                to={createPageUrl("Cookies")}
                 className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group text-sm"
               >
                 <Cookie className="w-4 h-4" />
                 <span>Cookies Policy</span>
               </Link>
-              <Link 
-                to={createPageUrl("RiskDisclosure")} 
+              <Link
+                to={createPageUrl("RiskDisclosure")}
                 className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group text-sm"
               >
                 <AlertTriangle className="w-4 h-4" />
@@ -187,29 +185,29 @@ export default function PageFooter() {
           <div>
             <h3 className="text-lg font-semibold mb-4 text-white">Content & Resources</h3>
             <div className="space-y-3">
-              <Link 
-                to={createPageUrl("News")} 
+              <Link
+                to={createPageUrl("News")}
                 className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group text-sm"
               >
                 <FileText className="w-4 h-4" />
                 <span>Market News</span>
               </Link>
-              <Link 
-                to={createPageUrl("Blogs")} 
+              <Link
+                to={createPageUrl("Blogs")}
                 className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group text-sm"
               >
                 <FileText className="w-4 h-4" />
                 <span>Blogs & Articles</span>
               </Link>
-              <Link 
-                to={createPageUrl("Events")} 
+              <Link
+                to={createPageUrl("Events")}
                 className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group text-sm"
               >
                 <Calendar className="w-4 h-4" />
                 <span>Events & Webinars</span>
               </Link>
-              <Link 
-                to={createPageUrl("Finfluencers")} 
+              <Link
+                to={createPageUrl("Finfluencers")}
                 className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group text-sm"
               >
                 <FileText className="w-4 h-4" />
@@ -242,8 +240,8 @@ export default function PageFooter() {
             <h3 className="text-lg font-semibold mb-4 text-white">Contact & Support</h3>
             <div className="space-y-3">
               {settings.contact_email && (
-                <a 
-                  href={`mailto:${settings.contact_email}`} 
+                <a
+                  href={`mailto:${settings.contact_email}`}
                   className="flex items-start gap-2 text-white/70 hover:text-white transition-colors group text-sm"
                 >
                   <Mail className="w-4 h-4 mt-0.5 flex-shrink-0" />
@@ -253,10 +251,10 @@ export default function PageFooter() {
                   </div>
                 </a>
               )}
-              
+
               {settings.contact_phone && (
-                <a 
-                  href={`tel:${settings.contact_phone}`} 
+                <a
+                  href={`tel:${settings.contact_phone}`}
                   className="flex items-start gap-2 text-white/70 hover:text-white transition-colors group text-sm"
                 >
                   <Phone className="w-4 h-4 mt-0.5 flex-shrink-0" />
@@ -266,7 +264,7 @@ export default function PageFooter() {
                   </div>
                 </a>
               )}
-              
+
               <Link
                 to={createPageUrl("ContactSupport")}
                 className="flex items-start gap-2 text-white/70 hover:text-white transition-colors group text-sm"
@@ -298,14 +296,14 @@ export default function PageFooter() {
               © 2025 {settings.site_name || 'Protocall'}. All rights reserved. | India's Retail Investor Community
             </p>
             <div className="flex gap-6 text-white/60">
-              <Link 
-                to={createPageUrl("Sitemap")} 
+              <Link
+                to={createPageUrl("Sitemap")}
                 className="hover:text-white transition-colors"
               >
                 Sitemap
               </Link>
-              <Link 
-                to={createPageUrl("Accessibility")} 
+              <Link
+                to={createPageUrl("Accessibility")}
                 className="hover:text-white transition-colors"
               >
                 Accessibility

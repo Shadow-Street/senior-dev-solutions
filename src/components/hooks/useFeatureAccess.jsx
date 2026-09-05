@@ -6,13 +6,36 @@ import { useSubscription } from './useSubscription';
  * @returns {object} - { hasAccess: boolean, userPlan: string, requiredPlan: string, isLoading: boolean }
  */
 export const useFeatureAccess = (featureKey) => {
-  const { subscription, planFeatures, isLoading, user } = useSubscription();
+  const context = useSubscription();
+  const { subscription, planFeatures, isLoading, user } = context || {};
+
+  if (!context) {
+    // Fallback for when provider is missing (e.g. public pages)
+    return {
+      hasAccess: false,
+      userPlan: 'guest',
+      requiredPlan: 'premium',
+      isLoading: false,
+      isPremiumFeature: true
+    };
+  }
 
   // Admin and super_admin bypass all feature checks
   if (user && ['admin', 'super_admin'].includes(user.app_role)) {
     return {
       hasAccess: true,
       userPlan: user.app_role,
+      requiredPlan: null,
+      isLoading: false,
+      isPremiumFeature: false
+    };
+  }
+
+  // ✅ New: Premium users bypass premium feature checks
+  if (user?.is_premium) {
+    return {
+      hasAccess: true,
+      userPlan: 'premium_user',
       requiredPlan: null,
       isLoading: false,
       isPremiumFeature: false

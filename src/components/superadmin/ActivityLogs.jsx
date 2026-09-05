@@ -197,7 +197,7 @@ export default function ActivityLogs({ user }) {
 
   const filteredLogs = logs.filter(log => {
     // Search filter
-    const matchesSearch = searchTerm === '' || 
+    const matchesSearch = searchTerm === '' ||
       log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.admin_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.entity_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -296,8 +296,8 @@ export default function ActivityLogs({ user }) {
           <p className="text-slate-600">Complete audit trail of all administrative actions</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button 
-            onClick={handleRefresh} 
+          <Button
+            onClick={handleRefresh}
             variant="outline"
             disabled={isRefreshing}
             className="bg-white hover:bg-slate-50"
@@ -510,7 +510,7 @@ export default function ActivityLogs({ user }) {
                               </div>
                               <div>
                                 <div className="font-medium text-slate-900">{log.admin_name}</div>
-                                <div className="text-xs text-slate-500">Admin ID: {log.admin_id.slice(-6)}</div>
+                                <div className="text-xs text-slate-500">Admin ID: {log.admin_id ? log.admin_id.toString().slice(-6) : 'N/A'}</div>
                               </div>
                             </div>
                           </td>
@@ -605,7 +605,7 @@ export default function ActivityLogs({ user }) {
               Complete information about this administrative action
             </DialogDescription>
           </DialogHeader>
-          
+
           {selectedLog && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">

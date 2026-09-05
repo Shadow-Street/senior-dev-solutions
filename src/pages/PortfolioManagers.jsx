@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { authAPI, PortfolioManager } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -20,11 +20,11 @@ export default function PortfolioManagers() {
 
   const loadData = async () => {
     try {
-      const currentUser = await base44.auth.me();
+      const currentUser = await authAPI.me();
       setUser(currentUser);
 
       // Load all approved PMs
-      const approvedPMs = await base44.entities.PortfolioManager.filter({ status: 'approved' });
+      const approvedPMs = await PortfolioManager.filter({ status: 'approved' });
       setPMs(approvedPMs);
     } catch (error) {
       console.error('Error loading PMs:', error);
@@ -163,7 +163,7 @@ export default function PortfolioManagers() {
                     </div>
                   </div>
 
-                  <Button 
+                  <Button
                     className="w-full bg-blue-600 hover:bg-blue-700"
                     onClick={() => handleApplyAsClient(pm.id)}
                   >

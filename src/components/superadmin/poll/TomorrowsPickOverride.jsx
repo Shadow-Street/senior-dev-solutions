@@ -30,11 +30,11 @@ export default function TomorrowsPickOverride({ user }) {
   const loadOverrideSettings = async () => {
     try {
       const settings = await PlatformSetting.filter({
-        setting_key: 'tomorrows_pick_override'
+        key: 'tomorrows_pick_override'
       });
 
       if (settings.length > 0) {
-        const data = JSON.parse(settings[0].setting_value);
+        const data = JSON.parse(settings[0].value);
         setIsOverrideActive(data.active || false);
         if (data.active) {
           setOverrideData({
@@ -71,23 +71,23 @@ export default function TomorrowsPickOverride({ user }) {
 
       // Check if setting exists
       const existingSettings = await PlatformSetting.filter({
-        setting_key: 'tomorrows_pick_override'
+        key: 'tomorrows_pick_override'
       });
 
       if (existingSettings.length > 0) {
         await PlatformSetting.update(existingSettings[0].id, {
-          setting_value: JSON.stringify(settingValue)
+          value: JSON.stringify(settingValue)
         });
       } else {
         await PlatformSetting.create({
-          setting_key: 'tomorrows_pick_override',
-          setting_value: JSON.stringify(settingValue),
+          key: 'tomorrows_pick_override',
+          value: JSON.stringify(settingValue),
           description: "Override setting for Tomorrow's Pick feature"
         });
       }
 
-      toast.success(isOverrideActive ? 
-        "Tomorrow's Pick override activated!" : 
+      toast.success(isOverrideActive ?
+        "Tomorrow's Pick override activated!" :
         "Override disabled, auto-selection restored."
       );
     } catch (error) {
@@ -134,7 +134,7 @@ export default function TomorrowsPickOverride({ user }) {
         </CardTitle>
         <p className="text-sm text-slate-600">Manually control what appears as "Tomorrow's Pick" in chat sidebars</p>
       </CardHeader>
-      
+
       <CardContent className="p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -162,7 +162,7 @@ export default function TomorrowsPickOverride({ user }) {
                 <Input
                   placeholder="e.g., RELIANCE"
                   value={overrideData.stock_symbol}
-                  onChange={(e) => setOverrideData({...overrideData, stock_symbol: e.target.value.toUpperCase()})}
+                  onChange={(e) => setOverrideData({ ...overrideData, stock_symbol: e.target.value.toUpperCase() })}
                 />
               </div>
 
@@ -174,7 +174,7 @@ export default function TomorrowsPickOverride({ user }) {
                   type="number"
                   placeholder="e.g., 2500"
                   value={overrideData.target_price}
-                  onChange={(e) => setOverrideData({...overrideData, target_price: e.target.value})}
+                  onChange={(e) => setOverrideData({ ...overrideData, target_price: e.target.value })}
                 />
               </div>
 
@@ -184,7 +184,7 @@ export default function TomorrowsPickOverride({ user }) {
                 </label>
                 <Select
                   value={overrideData.recommendation_type}
-                  onValueChange={(value) => setOverrideData({...overrideData, recommendation_type: value})}
+                  onValueChange={(value) => setOverrideData({ ...overrideData, recommendation_type: value })}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -204,7 +204,7 @@ export default function TomorrowsPickOverride({ user }) {
                 </label>
                 <Select
                   value={overrideData.confidence}
-                  onValueChange={(value) => setOverrideData({...overrideData, confidence: value})}
+                  onValueChange={(value) => setOverrideData({ ...overrideData, confidence: value })}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -225,7 +225,7 @@ export default function TomorrowsPickOverride({ user }) {
               <Textarea
                 placeholder="Explain why this stock is tomorrow's pick..."
                 value={overrideData.reasoning}
-                onChange={(e) => setOverrideData({...overrideData, reasoning: e.target.value})}
+                onChange={(e) => setOverrideData({ ...overrideData, reasoning: e.target.value })}
                 rows={4}
               />
             </div>
@@ -241,7 +241,7 @@ export default function TomorrowsPickOverride({ user }) {
             <RotateCcw className="w-4 h-4" />
             Reset to Auto
           </Button>
-          
+
           <Button
             onClick={handleSave}
             disabled={isSaving}

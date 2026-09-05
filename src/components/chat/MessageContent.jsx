@@ -17,7 +17,7 @@ const reactionEmojis = [
 ];
 
 const STOCK_SYMBOLS = [
-  'RELIANCE', 'TCS', 'HDFCBANK', 'INFY', 'ICICIBANK', 'BHARTIARTL', 'ITC', 'SBIN', 
+  'RELIANCE', 'TCS', 'HDFCBANK', 'INFY', 'ICICIBANK', 'BHARTIARTL', 'ITC', 'SBIN',
   'HINDUNILVR', 'KOTAKBANK', 'LT', 'AXISBANK', 'ASIANPAINT', 'MARUTI', 'TITAN',
   'BAJFINANCE', 'WIPRO', 'ULTRACEMCO', 'NESTLEIND', 'TECHM', 'SUNPHARMA', 'ONGC',
   'TATASTEEL', 'HCLTECH', 'M&M', 'NTPC', 'POWERGRID', 'ADANIPORTS', 'COALINDIA',
@@ -26,27 +26,33 @@ const STOCK_SYMBOLS = [
 
 const detectStockSymbols = (text) => {
   if (!text) return [];
-  
+
   const symbols = new Set();
-  
-  const dollarMatches = text.match(/\$([A-Z&]+)/g);
+  const upperText = text.toUpperCase();
+
+  // 1. Check for $SYMBOL format
+  const dollarMatches = upperText.match(/\$([A-Z&]+)/g);
   if (dollarMatches) {
     dollarMatches.forEach(match => {
       const symbol = match.substring(1);
-      if (STOCK_SYMBOLS.includes(symbol)) {
-        symbols.add(symbol);
-      }
+      // Allow any symbol after $ to attempt a lookup, or validate against known list
+      symbols.add(symbol);
     });
   }
-  
-  const words = text.split(/\s+/);
-  words.forEach(word => {
-    const cleanWord = word.replace(/[^A-Z&]/g, '');
-    if (STOCK_SYMBOLS.includes(cleanWord)) {
-      symbols.add(cleanWord);
+
+  // 2. Check for exact matches from STOCK_SYMBOLS list (case-insensitive in input)
+  STOCK_SYMBOLS.forEach(stock => {
+    // Use regex with word boundaries to avoid partial matches inside other words
+    const regex = new RegExp(`\\b${stock}\\b`, 'i');
+    if (regex.test(text)) {
+      symbols.add(stock);
     }
   });
-  
+
+  // 3. Common nicknames/partial matches
+  if (/\btata\b/i.test(text)) symbols.add('TATAMOTORS'); // Defaulting 'tata' to Tata Motors or enable selection
+  if (/\bmonitor\b/i.test(text)) symbols.add('HP'); // Example nickname if needed
+
   return Array.from(symbols);
 };
 
@@ -71,13 +77,13 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
 
   useEffect(() => {
     // Only load reactions for non-bot, non-pinned-section messages, and only once
-    if (message.id && 
-        !message.id.startsWith('bot_') && 
-        !isInPinnedSection && 
-        !loadAttemptedRef.current) {
-      
+    if (message.id &&
+      !message.id.startsWith('bot_') &&
+      !isInPinnedSection &&
+      !loadAttemptedRef.current) {
+
       loadAttemptedRef.current = true;
-      
+
       // Add delay to prevent rate limiting
       const delay = Math.random() * 2000 + 1000; // 1-3 seconds random delay
       setTimeout(() => {
@@ -86,7 +92,7 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
         }
       }, delay);
     }
-    
+
     if (message.content && message.message_type === 'text') {
       const symbols = detectStockSymbols(message.content);
       setDetectedStocks(symbols);
@@ -95,7 +101,7 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
 
   const loadReactions = async () => {
     if (isLoadingReactions || !isMountedRef.current) return;
-    
+
     // Check cache first
     const cacheKey = `reactions_${message.id}`;
     const cached = reactionsCache.get(cacheKey);
@@ -106,12 +112,12 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
     }
 
     setIsLoadingReactions(true);
-    
+
     try {
       // Add exponential backoff retry
       let retries = 0;
       let allReactions = [];
-      
+
       while (retries < 3) {
         try {
           allReactions = await MessageReaction.filter({ message_id: message.id });
@@ -129,9 +135,9 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
           throw error; // Non-rate-limit error or max retries reached
         }
       }
-      
+
       if (!isMountedRef.current) return;
-      
+
       const grouped = allReactions.reduce((acc, r) => {
         if (!acc[r.reaction]) {
           acc[r.reaction] = { count: 0, users: [] };
@@ -140,13 +146,13 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
         acc[r.reaction].users.push(r.user_id);
         return acc;
       }, {});
-      
+
       setReactions(grouped);
-      
+
       if (user) {
         const myReaction = allReactions.find(r => r.user_id === user.id);
         setUserReaction(myReaction?.reaction || null);
-        
+
         // Cache the results
         reactionsCache.set(cacheKey, {
           reactions: grouped,
@@ -179,27 +185,27 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
 
     try {
       if (userReaction === emoji) {
-        const existingReactions = await MessageReaction.filter({ 
-          message_id: message.id, 
-          user_id: user.id 
+        const existingReactions = await MessageReaction.filter({
+          message_id: message.id,
+          user_id: user.id
         });
-        
+
         if (existingReactions.length > 0) {
           await MessageReaction.delete(existingReactions[0].id);
         }
         setUserReaction(null);
       } else {
         if (userReaction) {
-          const existingReactions = await MessageReaction.filter({ 
-            message_id: message.id, 
-            user_id: user.id 
+          const existingReactions = await MessageReaction.filter({
+            message_id: message.id,
+            user_id: user.id
           });
-          
+
           if (existingReactions.length > 0) {
             await MessageReaction.delete(existingReactions[0].id);
           }
         }
-        
+
         await MessageReaction.create({
           message_id: message.id,
           user_id: user.id,
@@ -207,17 +213,17 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
         });
         setUserReaction(emoji);
       }
-      
+
       // Clear cache and reload with delay
       const cacheKey = `reactions_${message.id}`;
       reactionsCache.delete(cacheKey);
-      
+
       setTimeout(() => {
         if (isMountedRef.current) {
           loadReactions();
         }
       }, 500);
-      
+
     } catch (error) {
       console.error('Error handling reaction:', error);
       if (!error.message?.includes('Rate limit')) {
@@ -240,9 +246,9 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
     switch (message.message_type) {
       case 'image':
         return (
-          <motion.a 
-            href={message.file_url} 
-            target="_blank" 
+          <motion.a
+            href={message.file_url}
+            target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.2 }}
@@ -274,7 +280,7 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
           <>
             {/* Reply Thread Preview */}
             {message.reply_to_message_id && (
-              <motion.div 
+              <motion.div
                 className="bg-slate-100 border-l-4 border-blue-500 pl-3 py-2 mb-2 rounded-r text-xs"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -284,9 +290,9 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
                   <Reply className="w-3 h-3" />
                   {message.reply_to_user_name}
                 </p>
-                <div 
+                <div
                   className="text-slate-600"
-                  style={{ 
+                  style={{
                     display: '-webkit-box',
                     WebkitLineClamp: 1,
                     WebkitBoxOrient: 'vertical',
@@ -301,11 +307,11 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
                 </div>
               </motion.div>
             )}
-            
-            <div 
-              className="text-sm leading-relaxed" 
-              style={{ 
-                wordBreak: 'break-word', 
+
+            <div
+              className="text-sm leading-relaxed"
+              style={{
+                wordBreak: 'break-word',
                 overflowWrap: 'anywhere',
                 whiteSpace: 'pre-wrap',
                 fontFamily: 'system-ui, -apple-system, "Segoe UI", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif'
@@ -313,18 +319,18 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
             >
               {message.content}
             </div>
-            
+
             {/* Edited Indicator */}
             {message.is_edited && !message.is_deleted && (
               <p className="text-xs text-slate-400 mt-1 italic">
                 (edited {formatDistanceToNow(new Date(message.edited_at), { addSuffix: true })})
               </p>
             )}
-            
+
             {/* Stock Mention Cards with animation */}
             <AnimatePresence>
               {detectedStocks.length > 0 && !message.is_deleted && (
-                <motion.div 
+                <motion.div
                   className="space-y-2 mt-2"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -345,10 +351,10 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
   return (
     <div>
       {renderMessageContent()}
-      
+
       {/* Reactions Display with smooth animations */}
       {!message.is_bot && message.id && !message.id.startsWith('bot_') && !isInPinnedSection && !message.is_deleted && Object.keys(reactions).length > 0 && (
-        <motion.div 
+        <motion.div
           className="flex items-center gap-2 mt-2 flex-wrap"
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
@@ -358,11 +364,10 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
             <motion.button
               key={emoji}
               onClick={() => handleReaction(emoji)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
-                userReaction === emoji
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${userReaction === emoji
                   ? 'bg-blue-500 text-white shadow-md scale-105'
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 hover:border-slate-300'
-              }`}
+                }`}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}

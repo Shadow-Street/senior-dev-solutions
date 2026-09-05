@@ -1,19 +1,19 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  User, 
-  Subscription, 
-  Advisor, 
-  FinInfluencer, 
-  Course, 
-  CourseEnrollment, 
+import {
+  User,
+  Subscription,
+  Advisor,
+  FinInfluencer,
+  Course,
+  CourseEnrollment,
   RevenueTransaction,
   Poll,
   ChatRoom,
   Event,
   Referral,
   ModerationLog,
-  CommissionTracking 
+  CommissionTracking
 } from '@/api/entities';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -31,7 +31,7 @@ import {
   ShieldCheck,
   Crown,
   AlertTriangle,
-  Shield 
+  Shield
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line, Area, AreaChart } from 'recharts';
 
@@ -49,10 +49,10 @@ export default function DashboardHome({ setActiveTab }) {
   const [stats, setStats] = useState({
     totalUsers: 0,
     premiumUsers: 0,
-    totalGrossRevenue: 0, 
-    totalNetRevenue: 0,   
-    monthlyGrossRevenue: 0, 
-    monthlyNetRevenue: 0, 
+    totalGrossRevenue: 0,
+    totalNetRevenue: 0,
+    monthlyGrossRevenue: 0,
+    monthlyNetRevenue: 0,
     advisors: 0,
     pendingAdvisors: 0,
     finfluencers: 0,
@@ -79,7 +79,7 @@ export default function DashboardHome({ setActiveTab }) {
     topAdvisors: [],
     topFinfluencers: []
   });
-  
+
   const [chartData, setChartData] = useState({
     userRoles: [],
     revenueByMonth: [],
@@ -90,14 +90,14 @@ export default function DashboardHome({ setActiveTab }) {
     pollParticipation: [],
     expenseBreakdown: []
   });
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const isMounted = useRef(true);
   const fetchAttempted = useRef(false);
 
   useEffect(() => {
     isMounted.current = true;
-    
+
     if (!fetchAttempted.current) {
       fetchAttempted.current = true;
       loadAdvancedDashboardData();
@@ -110,9 +110,9 @@ export default function DashboardHome({ setActiveTab }) {
 
   const loadAdvancedDashboardData = async () => {
     if (!isMounted.current) return;
-    
+
     setIsLoading(true);
-    
+
     try {
       // Check cache first
       const now = Date.now();
@@ -128,83 +128,83 @@ export default function DashboardHome({ setActiveTab }) {
 
       console.log('[DashboardHome] Fetching fresh data...');
 
-      const currentUser = await User.me().catch(() => null); 
+      const currentUser = await User.me().catch(() => null);
 
       // Batch 1: Critical user data
       const users = await User.list('-created_date').catch(() => []);
       if (!isMounted.current) return;
-      
+
       await delay(800); // Increased delay
-      
+
       // Batch 2: Subscription data only
       const subscriptions = await Subscription.list().catch(() => []);
       if (!isMounted.current) return;
-      
+
       await delay(800);
-      
+
       // Batch 3: Advisor data only
       const advisors = await Advisor.list().catch(() => []);
       if (!isMounted.current) return;
-      
+
       await delay(800);
-      
+
       // Batch 4: Finfluencer data only
       const finfluencers = await FinInfluencer.list().catch(() => []);
       if (!isMounted.current) return;
-      
+
       await delay(800);
-      
+
       // Batch 5: Poll data only
       const polls = await Poll.list().catch(() => []);
       if (!isMounted.current) return;
-      
+
       await delay(800);
-      
+
       // Batch 6: Revenue data
       const [courseRevenue, advisorRevenue] = await Promise.all([
         RevenueTransaction.list().catch(() => []),
         CommissionTracking.list().catch(() => [])
       ]);
       if (!isMounted.current) return;
-      
+
       await delay(800);
-      
+
       // Batch 7: Moderation logs
       const moderationLogs = await ModerationLog.filter({ admin_reviewed: false }).catch(() => []);
       if (!isMounted.current) return;
-      
+
       await delay(800);
-      
+
       // Batch 8: Course data
       const [courses, enrollments] = await Promise.all([
         Course.list().catch(() => []),
         CourseEnrollment.list().catch(() => [])
       ]);
       if (!isMounted.current) return;
-      
+
       await delay(800);
-      
+
       // Batch 9: Community data - load one at a time with delays
       let chatRooms = [];
       let eventsData = []; // Renamed to avoid conflict with `events` variable in outline
       let referrals = [];
-      
+
       try {
         chatRooms = await ChatRoom.list().catch(() => []);
         if (!isMounted.current) return;
         await delay(800); // Increased delay
-        
+
         eventsData = await Event.list().catch(() => []); // Using eventsData
         if (!isMounted.current) return;
         await delay(800); // Increased delay
-        
+
         referrals = await Referral.list().catch(() => []);
         if (!isMounted.current) return; // Added check for referrals
       } catch (error) {
         console.warn('[DashboardHome] Error loading community data:', error);
         // Continue with empty arrays if there's an issue with specific entity
       }
-      
+
       if (!isMounted.current) return;
 
       // Calculate time-based metrics
@@ -213,18 +213,18 @@ export default function DashboardHome({ setActiveTab }) {
       const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
       // New registrations
-      const newRegistrationsToday = users.filter(u => 
+      const newRegistrationsToday = users.filter(u =>
         new Date(u.created_date).toDateString() === today.toDateString()
       ).length;
-      
-      const newRegistrationsWeek = users.filter(u => 
+
+      const newRegistrationsWeek = users.filter(u =>
         new Date(u.created_date) >= weekAgo
       ).length;
 
       // Active users (simulate based on recent activity, or use concrete data if available)
       const dailyActiveUsers = Math.max(0, Math.floor(users.length * 0.15));
       const weeklyActiveUsers = Math.max(0, Math.floor(users.length * 0.45));
-      
+
       // Active users (from outline, based on last_activity_date)
       const activeUsers7Days = users.filter(u => {
         if (!u.last_activity_date) return false;
@@ -234,17 +234,17 @@ export default function DashboardHome({ setActiveTab }) {
       }).length;
 
       // Revenue calculations
-      const totalGrossRevenue = 
+      const totalGrossRevenue =
         (courseRevenue?.reduce((sum, tx) => sum + (tx.gross_amount || 0), 0) || 0) +
         (advisorRevenue?.reduce((sum, tx) => sum + (tx.gross_amount || 0), 0) || 0) +
         (subscriptions?.reduce((sum, s) => sum + (s.price || 0), 0) || 0);
-      
-      const totalNetRevenue = 
+
+      const totalNetRevenue =
         (courseRevenue?.reduce((sum, tx) => sum + (tx.platform_commission || 0), 0) || 0) +
         (advisorRevenue?.reduce((sum, tx) => sum + (tx.platform_fee || 0), 0) || 0) +
         (subscriptions?.reduce((sum, s) => sum + (s.price || 0), 0) || 0);
 
-      const monthlyGrossRevenue = 
+      const monthlyGrossRevenue =
         (courseRevenue?.filter(tx => new Date(tx.created_date) >= monthAgo)
           .reduce((sum, tx) => sum + (tx.gross_amount || 0), 0) || 0) +
         (advisorRevenue?.filter(tx => new Date(tx.transaction_date) >= monthAgo)
@@ -252,7 +252,7 @@ export default function DashboardHome({ setActiveTab }) {
         (subscriptions?.filter(s => new Date(s.created_date) >= monthAgo)
           .reduce((sum, s) => sum + (s.price || 0), 0) || 0);
 
-      const monthlyNetRevenue = 
+      const monthlyNetRevenue =
         (courseRevenue?.filter(tx => new Date(tx.created_date) >= monthAgo)
           .reduce((sum, tx) => sum + (tx.platform_commission || 0), 0) || 0) +
         (advisorRevenue?.filter(tx => new Date(tx.transaction_date) >= monthAgo)
@@ -263,7 +263,7 @@ export default function DashboardHome({ setActiveTab }) {
       // Poll metrics
       const activePolls = polls.filter(p => p.is_active);
       const premiumPolls = activePolls.filter(p => p.is_premium);
-      
+
       // User role analysis
       const activeSubscriptions = subscriptions.filter(s => s.status === 'active');
       const premiumUsers = activeSubscriptions.filter(s => ['premium', 'vip'].includes(s.plan_type)).length;
@@ -271,7 +271,7 @@ export default function DashboardHome({ setActiveTab }) {
       const approvedAdvisors = advisors.filter(a => a.status === 'approved').length;
       const approvedFinfluencers = finfluencers.filter(f => f.status === 'approved').length;
       const pendingFinfluencers = finfluencers.filter(f => f.status === 'pending').length; // Added from outline
-      
+
       // Trust score analysis
       const avgTrustScore = users.length > 0 ? users.reduce((sum, u) => sum + (u.trust_score || 50), 0) / users.length : 50;
       const suspendedUsers = users.filter(u => u.is_deactivated).length;
@@ -312,7 +312,7 @@ export default function DashboardHome({ setActiveTab }) {
         premiumPollsCount: premiumPolls.length,
         chatRooms: chatRooms.length,
         // Updated events count to include 'approved' status as per outline
-        events: eventsData.filter(e => e.status === 'scheduled' || e.status === 'approved').length, 
+        events: eventsData.filter(e => e.status === 'scheduled' || e.status === 'approved').length,
         referrals: referrals.filter(r => r.signup_completed).length,
         moderationFlags: moderationLogs.length,
         totalPledgeValue: 0, // Would be calculated from Pledge entity
@@ -360,10 +360,10 @@ export default function DashboardHome({ setActiveTab }) {
         const date = new Date();
         date.setMonth(date.getMonth() - i);
         const monthName = date.toLocaleDateString('en', { month: 'short' });
-        
+
         const baseRevenue = 45000 + (5 - i) * 8000 + Math.random() * 10000;
         const baseUsers = 120 + (5 - i) * 25 + Math.floor(Math.random() * 30);
-        
+
         monthlyData.push({
           month: monthName,
           grossRevenue: Math.round(baseRevenue),
@@ -387,7 +387,7 @@ export default function DashboardHome({ setActiveTab }) {
         const date = new Date();
         date.setDate(date.getDate() - i);
         const dayName = date.toLocaleDateString('en', { weekday: 'short' });
-        
+
         pollParticipation.push({
           day: dayName,
           general: Math.floor(Math.random() * 50) + 20,
@@ -418,14 +418,14 @@ export default function DashboardHome({ setActiveTab }) {
       if (isMounted.current) { // Only update state if component is still mounted
         setStats(calculatedStats);
         setChartData(calculatedChartData);
-        
+
         // Update cache
         dashboardCache.data = {
           stats: calculatedStats,
           chartData: calculatedChartData
         };
         dashboardCache.timestamp = Date.now();
-        
+
         console.log('[DashboardHome] Data loaded and cached successfully');
       }
     } catch (error) {
@@ -443,45 +443,40 @@ export default function DashboardHome({ setActiveTab }) {
     }
   };
 
-  const StatCard = ({ title, value, icon: Icon, change, status, gradient, subtitle }) => (
-    <Card className="shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300 overflow-hidden group">
-      <CardContent className="p-0">
-        <div className={`bg-gradient-to-r ${gradient} p-4 group-hover:from-opacity-90 transition-all duration-300`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-white/20 rounded-xl backdrop-blur-sm group-hover:bg-white/30 transition-all duration-300">
-                <Icon className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-white/90 text-sm font-medium">{title}</p>
-                <p className="text-white text-3xl font-bold">{value}</p>
-                {subtitle && (
-                  <p className="text-white/80 text-xs">{subtitle}</p>
-                )}
-              </div>
-            </div>
+  const StatCard = ({ title, value, icon: Icon, change, status, colorClass, subtitle }) => (
+    <Card className="border-0 shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300">
+      <div className={`${colorClass} p-6 text-white`}>
+        <div className="flex items-center justify-between mb-4">
+          <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+            <Icon className="w-6 h-6 text-white" />
           </div>
-        </div>
-        <div className="p-4 bg-white">
-          {change && (
-            <div className="flex items-center gap-2 text-sm">
-              <TrendingUp className="w-3 h-3 text-green-500" />
-              <span className="text-gray-600">{change}</span>
-            </div>
-          )}
           {status && (
-            <div className="mt-2">
-              <span className={`px-3 py-1 text-xs rounded-full font-medium ${
-                status === 'Excellent' ? 'bg-emerald-100 text-emerald-700' :
-                status === 'Good' ? 'bg-amber-100 text-amber-700' :
-                'bg-red-100 text-red-700'
-              }`}>
-                {status}
-              </span>
-            </div>
+            <span className="px-2 py-1 text-xs rounded bg-white/20 text-white font-medium backdrop-blur-sm">
+              {status}
+            </span>
           )}
         </div>
-      </CardContent>
+        <div className="space-y-1">
+          <p className="text-white/80 text-sm font-medium">{title}</p>
+          <h3 className="text-3xl font-bold">{value}</h3>
+          {subtitle && <p className="text-white/70 text-xs">{subtitle}</p>}
+        </div>
+      </div>
+
+      <div className="p-4 bg-white flex items-center gap-2">
+        {change && (
+          <>
+            <TrendingUp className="w-4 h-4 text-emerald-500" />
+            <span className="text-emerald-600 text-sm font-medium">{change}</span>
+          </>
+        )}
+        {!change && status && (
+          <span className="text-slate-500 text-sm">Status: {status}</span>
+        )}
+        {!change && !status && (
+          <span className="text-slate-400 text-sm">No recent changes</span>
+        )}
+      </div>
     </Card>
   );
 
@@ -500,15 +495,21 @@ export default function DashboardHome({ setActiveTab }) {
   return (
     <div className="space-y-8">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
-        <h1 className="text-3xl font-bold mb-2">Platform Analytics Dashboard</h1>
-        <p className="text-blue-100 text-lg">Real-time insights and comprehensive metrics for informed decision making</p>
-        <div className="flex items-center gap-6 mt-4">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-sm">Live Data</span>
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden">
+        {/* Decorative Circles */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-2xl"></div>
+
+        <div className="relative z-10">
+          <h1 className="text-3xl font-bold mb-3 tracking-tight">Platform Analytics Dashboard</h1>
+          <p className="text-blue-100 text-lg opacity-90">Real-time insights and comprehensive metrics for informed decision making</p>
+          <div className="flex items-center gap-6 mt-6">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></div>
+              <span className="text-sm font-medium text-white/90">Live Data</span>
+            </div>
+            <div className="text-sm text-blue-100/80">Last updated: {new Date().toLocaleTimeString()}</div>
           </div>
-          <div className="text-sm">Last updated: {new Date().toLocaleTimeString()}</div>
         </div>
       </div>
 
@@ -519,37 +520,37 @@ export default function DashboardHome({ setActiveTab }) {
           User & Community Metrics
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard 
-            title="Total Users" 
-            value={stats.totalUsers.toLocaleString()} 
+          <StatCard
+            title="Total Users"
+            value={stats.totalUsers.toLocaleString()}
             subtitle="All registered users"
-            icon={Users} 
+            icon={Users}
             change={`${stats.newRegistrationsWeek} new this week`}
-            gradient="from-blue-500 to-blue-600"
+            colorClass="bg-blue-500"
           />
-          <StatCard 
-            title="Daily Active Users" 
-            value={stats.dailyActiveUsers.toLocaleString()} 
-            subtitle={`${((stats.dailyActiveUsers/stats.totalUsers)*100).toFixed(1)}% of total`}
-            icon={Activity} 
+          <StatCard
+            title="Daily Active Users"
+            value={stats.dailyActiveUsers.toLocaleString()}
+            subtitle={`${((stats.dailyActiveUsers / stats.totalUsers) * 100).toFixed(1)}% of total`}
+            icon={Activity}
             change="Strong engagement"
-            gradient="from-green-500 to-green-600"
+            colorClass="bg-emerald-500"
           />
-          <StatCard 
-            title="Premium Members" 
-            value={stats.premiumUsers.toLocaleString()} 
-            subtitle={`${((stats.premiumUsers/stats.totalUsers)*100).toFixed(1)}% conversion`}
-            icon={Crown} 
+          <StatCard
+            title="Premium Members"
+            value={stats.premiumUsers.toLocaleString()}
+            subtitle={`${((stats.premiumUsers / stats.totalUsers) * 100).toFixed(1)}% conversion`}
+            icon={Crown}
             change="Growing subscription base"
-            gradient="from-purple-500 to-purple-600"
+            colorClass="bg-purple-500"
           />
-          <StatCard 
-            title="Active Communities" 
-            value={`${stats.chatRooms}`} 
+          <StatCard
+            title="Active Communities"
+            value={`${stats.chatRooms}`}
             subtitle={`${stats.activePollsCount} active polls`}
-            icon={MessageSquare} 
+            icon={MessageSquare}
             change="High participation"
-            gradient="from-cyan-500 to-cyan-600"
+            colorClass="bg-cyan-500"
           />
         </div>
       </div>
@@ -561,37 +562,37 @@ export default function DashboardHome({ setActiveTab }) {
           Financial Performance
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard 
-            title="Monthly Gross Revenue" 
-            value={`₹${(stats.monthlyGrossRevenue/1000).toFixed(1)}k`} 
+          <StatCard
+            title="Monthly Gross Revenue"
+            value={`₹${(stats.monthlyGrossRevenue / 1000).toFixed(1)}k`}
             subtitle="All income sources"
-            icon={DollarSign} 
+            icon={DollarSign}
             change="+18% vs last month"
-            gradient="from-emerald-500 to-green-600"
+            colorClass="bg-emerald-500"
           />
-          <StatCard 
-            title="Monthly Net Revenue" 
-            value={`₹${(stats.monthlyNetRevenue/1000).toFixed(1)}k`} 
+          <StatCard
+            title="Monthly Net Revenue"
+            value={`₹${(stats.monthlyNetRevenue / 1000).toFixed(1)}k`}
             subtitle="Platform earnings"
-            icon={TrendingUp} 
+            icon={TrendingUp}
             change="After commissions"
-            gradient="from-sky-500 to-cyan-600"
+            colorClass="bg-cyan-500"
           />
-          <StatCard 
-            title="Total Gross Revenue" 
-            value={`₹${(stats.totalGrossRevenue/1000).toFixed(1)}k`} 
+          <StatCard
+            title="Total Gross Revenue"
+            value={`₹${(stats.totalGrossRevenue / 1000).toFixed(1)}k`}
             subtitle="All-time revenue"
-            icon={BarChart3} 
+            icon={BarChart3}
             change="Lifetime performance"
-            gradient="from-indigo-500 to-purple-600"
+            colorClass="bg-purple-500"
           />
-          <StatCard 
-            title="Course Enrollments" 
-            value={stats.totalEnrollments.toLocaleString()} 
+          <StatCard
+            title="Course Enrollments"
+            value={stats.totalEnrollments.toLocaleString()}
             subtitle="Across all courses"
-            icon={Star} 
+            icon={Star}
             change="Growing education"
-            gradient="from-pink-500 to-rose-600"
+            colorClass="bg-pink-500"
           />
         </div>
       </div>
@@ -603,37 +604,37 @@ export default function DashboardHome({ setActiveTab }) {
           Advisors & Content Creators
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard 
-            title="Active Advisors" 
-            value={stats.advisors.toString()} 
+          <StatCard
+            title="Active Advisors"
+            value={stats.advisors.toString()}
             subtitle="SEBI registered"
-            icon={ShieldCheck} 
+            icon={ShieldCheck}
             change={`${stats.pendingAdvisors} pending approval`}
-            gradient="from-indigo-500 to-indigo-600"
+            colorClass="bg-indigo-500"
           />
-          <StatCard 
-            title="Active Finfluencers" 
-            value={stats.finfluencers.toString()} 
+          <StatCard
+            title="Active Finfluencers"
+            value={stats.finfluencers.toString()}
             subtitle="Content creators"
-            icon={Star} 
-            change={`${stats.pendingFinfluencers} pending applications`} // Updated change text
-            gradient="from-violet-500 to-purple-600"
+            icon={Star}
+            change={`${stats.pendingFinfluencers} pending applications`}
+            colorClass="bg-violet-500"
           />
-          <StatCard 
-            title="Platform Health" 
-            value={stats.moderationFlags.toString()} 
+          <StatCard
+            title="Platform Health"
+            value={stats.moderationFlags.toString()}
             subtitle="Flagged items"
-            icon={Shield} 
+            icon={Shield}
             status={stats.platformHealth}
-            gradient="from-orange-500 to-orange-600"
+            colorClass="bg-orange-500"
           />
-          <StatCard 
-            title="Trust Score Avg" 
-            value={stats.avgTrustScore.toString()} 
+          <StatCard
+            title="Trust Score Avg"
+            value={stats.avgTrustScore.toString()}
             subtitle="Community trust"
-            icon={Award} 
+            icon={Award}
             change="Out of 100"
-            gradient="from-teal-500 to-green-600"
+            colorClass="bg-teal-500"
           />
         </div>
       </div>
@@ -699,14 +700,14 @@ export default function DashboardHome({ setActiveTab }) {
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
-                <Pie 
-                  data={chartData.revenueBySource} 
-                  dataKey="value" 
-                  nameKey="name" 
-                  cx="50%" 
-                  cy="50%" 
+                <Pie
+                  data={chartData.revenueBySource}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
                   outerRadius={100}
-                  label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                 >
                   {chartData.revenueBySource.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
@@ -728,14 +729,14 @@ export default function DashboardHome({ setActiveTab }) {
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
-                <Pie 
-                  data={chartData.userRoles} 
-                  dataKey="value" 
-                  nameKey="name" 
-                  cx="50%" 
-                  cy="50%" 
+                <Pie
+                  data={chartData.userRoles}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
                   outerRadius={100}
-                  label={({name, value, percent}) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
+                  label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
                 >
                   {chartData.userRoles.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
@@ -782,14 +783,14 @@ export default function DashboardHome({ setActiveTab }) {
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
-                <Pie 
-                  data={chartData.trustScoreDistribution} 
-                  dataKey="value" 
-                  nameKey="name" 
-                  cx="50%" 
-                  cy="50%" 
+                <Pie
+                  data={chartData.trustScoreDistribution}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
                   outerRadius={100}
-                  label={({name, value}) => `${value} users`}
+                  label={({ name, value }) => `${value} users`}
                 >
                   {chartData.trustScoreDistribution.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
@@ -827,7 +828,7 @@ export default function DashboardHome({ setActiveTab }) {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-green-600">₹{(advisor.revenue/1000).toFixed(1)}k</p>
+                    <p className="font-bold text-green-600">₹{(advisor.revenue / 1000).toFixed(1)}k</p>
                     <p className="text-xs text-gray-500">Revenue</p>
                   </div>
                 </div>
@@ -858,7 +859,7 @@ export default function DashboardHome({ setActiveTab }) {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-green-600">₹{(finfluencer.revenue/1000).toFixed(1)}k</p>
+                    <p className="font-bold text-green-600">₹{(finfluencer.revenue / 1000).toFixed(1)}k</p>
                     <p className="text-xs text-gray-500">Revenue</p>
                   </div>
                 </div>
@@ -885,7 +886,7 @@ export default function DashboardHome({ setActiveTab }) {
                   <h4 className="font-semibold text-yellow-800">Pending Approvals</h4>
                 </div>
                 <p className="text-sm text-yellow-700 mb-2">{stats.pendingAdvisors} advisor applications need review</p>
-                <button 
+                <button
                   onClick={() => setActiveTab && setActiveTab('Advisor Management')}
                   className="text-xs bg-yellow-600 text-white px-3 py-1 rounded-full hover:bg-yellow-700 transition-colors"
                 >
@@ -893,7 +894,7 @@ export default function DashboardHome({ setActiveTab }) {
                 </button>
               </div>
             )}
-            
+
             {stats.moderationFlags > 0 && (
               <div className="bg-red-50 border border-red-200 rounded-xl p-5">
                 <div className="flex items-center gap-3 mb-3">
@@ -901,7 +902,7 @@ export default function DashboardHome({ setActiveTab }) {
                   <h4 className="font-semibold text-red-800">Content Moderation</h4>
                 </div>
                 <p className="text-sm text-red-700 mb-2">{stats.moderationFlags} flagged items need attention</p>
-                <button 
+                <button
                   onClick={() => setActiveTab && setActiveTab('Content Moderation')}
                   className="text-xs bg-red-600 text-white px-3 py-1 rounded-full hover:bg-red-700 transition-colors"
                 >
@@ -915,8 +916,8 @@ export default function DashboardHome({ setActiveTab }) {
                 <TrendingUp className="w-5 h-5 text-green-600" />
                 <h4 className="font-semibold text-green-800">Growth Performance</h4>
               </div>
-              <p className="text-sm text-green-700 mb-2">Platform is growing at +{((stats.newRegistrationsWeek/stats.totalUsers)*100).toFixed(1)}% weekly rate</p>
-              <button 
+              <p className="text-sm text-green-700 mb-2">Platform is growing at +{((stats.newRegistrationsWeek / stats.totalUsers) * 100).toFixed(1)}% weekly rate</p>
+              <button
                 onClick={() => setActiveTab && setActiveTab('User Management')}
                 className="text-xs bg-green-600 text-white px-3 py-1 rounded-full hover:bg-green-700 transition-colors"
               >
@@ -931,7 +932,7 @@ export default function DashboardHome({ setActiveTab }) {
                   <h4 className="font-semibold text-gray-800">Suspended Users</h4>
                 </div>
                 <p className="text-sm text-gray-700 mb-2">{stats.suspendedUsers} users currently suspended</p>
-                <button 
+                <button
                   onClick={() => setActiveTab && setActiveTab('User Management')}
                   className="text-xs bg-gray-600 text-white px-3 py-1 rounded-full hover:bg-gray-700 transition-colors"
                 >
@@ -945,8 +946,8 @@ export default function DashboardHome({ setActiveTab }) {
                 <Eye className="w-5 h-5 text-blue-600" />
                 <h4 className="font-semibold text-blue-800">Engagement Stats</h4>
               </div>
-              <p className="text-sm text-blue-700 mb-2">{((stats.dailyActiveUsers/stats.totalUsers)*100).toFixed(1)}% daily active users</p>
-              <button 
+              <p className="text-sm text-blue-700 mb-2">{((stats.dailyActiveUsers / stats.totalUsers) * 100).toFixed(1)}% daily active users</p>
+              <button
                 onClick={() => setActiveTab && setActiveTab('Poll Management')}
                 className="text-xs bg-blue-600 text-white px-3 py-1 rounded-full hover:bg-blue-700 transition-colors"
               >
@@ -959,11 +960,11 @@ export default function DashboardHome({ setActiveTab }) {
                 <BarChart3 className="w-5 h-5 text-purple-600" />
                 <h4 className="font-semibold text-purple-800">Revenue Health</h4>
               </div>
-              <p className="text-sm text-purple-700 mb-2">₹{(stats.monthlyNetRevenue/1000).toFixed(1)}k net revenue this month</p>
-              <button 
+              <p className="text-sm text-purple-700 mb-2">₹{(stats.monthlyNetRevenue / 1000).toFixed(1)}k net revenue this month</p>
+              <button
                 onClick={() => setActiveTab && setActiveTab('Financials')}
                 className="text-xs bg-purple-600 text-white px-3 py-1 rounded-full hover:bg-purple-700 transition-colors"
-                >
+              >
                 View Reports
               </button>
             </div>

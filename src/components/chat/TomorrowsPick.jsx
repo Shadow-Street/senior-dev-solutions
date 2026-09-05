@@ -13,7 +13,7 @@ export default function TomorrowsPick() {
   const [isLoading, setIsLoading] = useState(true);
   const [isOverride, setIsOverride] = useState(false);
   const { checkAccess } = useSubscription();
-  const hasAccess = checkAccess({ type: 'premium' });
+  const hasAccess = checkAccess('Market Insider Insights');
 
   useEffect(() => {
     let isMounted = true;
@@ -22,7 +22,7 @@ export default function TomorrowsPick() {
       try {
         // Check for manual override first
         const overrideSettings = await PlatformSetting.filter({
-          setting_key: 'tomorrows_pick_override'
+          key: 'tomorrows_pick_override'
         });
 
         if (overrideSettings.length > 0) {
@@ -117,7 +117,7 @@ export default function TomorrowsPick() {
           <Crown className="w-3 h-3 text-amber-600" />
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent className={`p-4 ${!hasAccess ? 'locked-poll-card' : ''}`}>
         <div className="space-y-3">
           <div className="flex items-start justify-between">

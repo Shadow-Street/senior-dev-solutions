@@ -18,12 +18,12 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
     notificationsEnabled: true,
     soundEnabled: true,
     desktopNotifications: false,
-    
+
     // Display Settings
     showTypingIndicator: true,
     showReadReceipts: true,
     compactMode: false,
-    
+
     // Behavior Settings
     autoScroll: true,
     enterToSend: true,
@@ -47,7 +47,13 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
     const newSettings = { ...settings, [key]: value };
     setSettings(newSettings);
     localStorage.setItem(`chat_settings_${roomId}`, JSON.stringify(newSettings));
-    
+    console.log('[ChatSettingsModal] Settings updated:', key, '=', value);
+    console.log('[ChatSettingsModal] All settings:', newSettings);
+
+    // Dispatch event to notify ChatInterface
+    window.dispatchEvent(new Event('chat-settings-updated'));
+    console.log('[ChatSettingsModal] Dispatched chat-settings-updated event');
+
     // Show feedback for important settings
     if (key === 'notificationsEnabled') {
       toast.success(value ? 'Notifications enabled' : 'Notifications disabled');

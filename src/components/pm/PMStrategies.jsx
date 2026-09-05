@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { PMStrategy } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,7 +16,7 @@ export default function PMStrategies({ pmProfile }) {
 
   const loadStrategies = async () => {
     try {
-      const allStrategies = await base44.entities.PMStrategy.filter({ pm_id: pmProfile.id });
+      const allStrategies = await PMStrategy.filter({ pm_id: pmProfile.id });
       setStrategies(allStrategies);
     } catch (error) {
       console.error('Error loading strategies:', error);

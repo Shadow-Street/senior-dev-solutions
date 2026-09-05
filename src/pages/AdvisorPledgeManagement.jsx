@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import apiClient, { authAPI, Advisor, AdvisorPledgeAccessRequest } from '@/lib/apiClient';
 import { Loader2, Lock } from 'lucide-react';
 import AdvisorLayout from '../components/layouts/AdvisorLayout';
 import PledgeManagementAccess from '../components/advisors/PledgeManagementAccess';
@@ -27,27 +27,27 @@ export default function AdvisorPledgeManagementPage() {
     const loadData = async () => {
       try {
         setIsLoading(true);
-        
-        const currentUser = await base44.auth.me();
+
+        const currentUser = await authAPI.me();
         if (!isMounted || abortController.signal.aborted) return;
-        
+
         setUser(currentUser);
         console.log('✅ User loaded:', currentUser.id);
 
         // Load advisor profiles with explicit error handling
         let advisorProfiles = [];
         try {
-          const profilesResult = await base44.entities.Advisor.filter({ 
-            user_id: currentUser.id 
+          const profilesResult = await Advisor.filter({
+            user_id: currentUser.id
           });
           advisorProfiles = Array.isArray(profilesResult) ? profilesResult : [];
         } catch (error) {
           console.error('Error loading advisor profiles:', error);
           advisorProfiles = [];
         }
-        
+
         if (!isMounted || abortController.signal.aborted) return;
-        
+
         if (advisorProfiles.length > 0) {
           setAdvisorProfile(advisorProfiles[0]);
           console.log('✅ Advisor profile loaded:', advisorProfiles[0].status);
@@ -55,10 +55,10 @@ export default function AdvisorPledgeManagementPage() {
           // Load access requests with explicit error handling and validation
           let requests = [];
           try {
-            const requestsResult = await base44.entities.AdvisorPledgeAccessRequest.filter({
+            const requestsResult = await AdvisorPledgeAccessRequest.filter({
               user_id: currentUser.id
             });
-            
+
             // Ensure we have a valid array
             if (requestsResult && Array.isArray(requestsResult)) {
               requests = requestsResult;
@@ -72,9 +72,9 @@ export default function AdvisorPledgeManagementPage() {
             console.error('Error loading access requests:', error);
             requests = [];
           }
-          
+
           if (!isMounted || abortController.signal.aborted) return;
-          
+
           // Find approved request - safely iterate through the array
           if (requests.length > 0) {
             const approvedRequest = requests.find(r => r && r.status === 'approved');
@@ -152,7 +152,7 @@ export default function AdvisorPledgeManagementPage() {
     switch (section) {
       case 'overview':
         return (
-          <AdvisorPledgeOverview 
+          <AdvisorPledgeOverview
             user={user}
             advisorProfile={advisorProfile}
             accessRequest={accessRequest}
@@ -160,7 +160,7 @@ export default function AdvisorPledgeManagementPage() {
         );
       case 'sessions':
         return (
-          <AdvisorPledgeSessionManager 
+          <AdvisorPledgeSessionManager
             user={user}
             advisorProfile={advisorProfile}
             accessRequest={accessRequest}
@@ -198,7 +198,7 @@ export default function AdvisorPledgeManagementPage() {
         );
       default:
         return (
-          <AdvisorPledgeOverview 
+          <AdvisorPledgeOverview
             user={user}
             advisorProfile={advisorProfile}
             accessRequest={accessRequest}

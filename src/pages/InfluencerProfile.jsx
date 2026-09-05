@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import apiClient from "@/lib/apiClient";
+import apiClient, { authAPI, FinInfluencer, InfluencerPost, Course } from "@/lib/apiClient";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -59,12 +59,14 @@ export default function InfluencerProfile() {
     }
 
     abortControllerRef.current = new AbortController();
-    
+
     if (!isMountedRef.current) return;
+
+
 
     try {
       // Load user
-      const currentUser = await base44.auth.me().catch((err) => {
+      const currentUser = await authAPI.me().catch((err) => {
         if (err?.name !== 'AbortError' && !err?.message?.includes('abort')) {
           console.warn('Auth error:', err);
         }
@@ -76,9 +78,9 @@ export default function InfluencerProfile() {
       setUser(currentUser);
 
       // Load influencer data
-      const [influencerData] = await base44.entities.FinInfluencer.filter(
-        { id: influencerId }, 
-        '', 
+      const [influencerData] = await FinInfluencer.filter(
+        { id: influencerId },
+        '',
         1
       ).catch((err) => {
         if (err?.name !== 'AbortError' && !err?.message?.includes('abort')) {
@@ -94,7 +96,7 @@ export default function InfluencerProfile() {
         setIsLoading(false);
         return;
       }
-      
+
       setInfluencer(influencerData);
 
       // ✅ Check if current user is the owner or admin
@@ -111,7 +113,7 @@ export default function InfluencerProfile() {
       });
 
       // ✅ Load videos - show approved for public, all for owner/admin
-      const videoFilter = canSeeAllContent 
+      const videoFilter = canSeeAllContent
         ? { influencer_id: influencerId }
         : { influencer_id: influencerId, status: 'approved' };
 
@@ -121,8 +123,8 @@ export default function InfluencerProfile() {
         : { influencer_id: influencerId };
 
       const [influencerVideos, allCourses] = await Promise.all([
-        base44.entities.InfluencerPost.filter(
-          videoFilter, 
+        InfluencerPost.filter(
+          videoFilter,
           '-created_date'
         ).catch((err) => {
           if (err?.name === 'AbortError' || err?.message?.includes('abort') || err?.message?.includes('aborted')) {
@@ -132,8 +134,8 @@ export default function InfluencerProfile() {
           console.warn('Error fetching videos:', err);
           return [];
         }),
-        base44.entities.Course.filter(
-          courseFilter, 
+        Course.filter(
+          courseFilter,
           '-created_date'
         ).catch((err) => {
           if (err?.name === 'AbortError' || err?.message?.includes('abort') || err?.message?.includes('aborted')) {
@@ -148,17 +150,17 @@ export default function InfluencerProfile() {
       if (!isMountedRef.current) return;
 
       // ✅ Filter courses - if not owner/admin, only show published/approved/live
-      const filteredCourses = canSeeAllContent 
+      const filteredCourses = canSeeAllContent
         ? allCourses
         : (allCourses || []).filter(c => ['approved', 'live', 'published'].includes(c.status));
 
       console.log('📚 Courses Loaded:', {
         totalCourses: allCourses?.length || 0,
         filteredCourses: filteredCourses.length,
-        courses: filteredCourses.map(c => ({ 
-          id: c.id, 
-          title: c.title, 
-          status: c.status 
+        courses: filteredCourses.map(c => ({
+          id: c.id,
+          title: c.title,
+          status: c.status
         }))
       });
 
@@ -167,12 +169,12 @@ export default function InfluencerProfile() {
 
     } catch (err) {
       if (!isMountedRef.current) return;
-      
+
       if (err?.name === 'AbortError' || err?.message?.includes('abort') || err?.message?.includes('aborted')) {
         console.log('Data loading aborted (component unmounted)');
         return;
       }
-      
+
       console.error("Error loading profile data:", err);
       setError("Failed to load profile data.");
     } finally {
@@ -198,12 +200,12 @@ export default function InfluencerProfile() {
   const canAccessPremium = React.useMemo(() => {
     // Check subscription-based access
     const hasSubscriptionAccess = hasPremiumAccess() || hasVipAccess();
-    
+
     // Check if user is admin/super_admin
     const isAdmin = user && ['admin', 'super_admin'].includes(user.app_role);
-    
+
     const hasAccess = hasSubscriptionAccess || isAdmin;
-    
+
     console.log('🔍 Access Check:', {
       user_role: user?.app_role,
       isAdmin,
@@ -212,7 +214,7 @@ export default function InfluencerProfile() {
       hasVip: hasVipAccess(),
       finalAccess: hasAccess
     });
-    
+
     return hasAccess;
   }, [user, hasPremiumAccess, hasVipAccess]);
 
@@ -260,10 +262,10 @@ export default function InfluencerProfile() {
         <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
           <CardContent className="p-6 flex flex-col md:flex-row items-center gap-6">
             <div className="relative flex-shrink-0">
-              <img 
-                src={influencer.profile_image_url} 
-                alt={influencer.display_name} 
-                className="w-32 h-32 rounded-full object-cover shadow-lg" 
+              <img
+                src={influencer.profile_image_url}
+                alt={influencer.display_name}
+                className="w-32 h-32 rounded-full object-cover shadow-lg"
               />
               {influencer.verified && (
                 <CheckCircle className="w-8 h-8 text-blue-500 absolute bottom-1 right-1 bg-white rounded-full p-1" />
@@ -304,11 +306,11 @@ export default function InfluencerProfile() {
                   if (!url) return null;
                   const Icon = socialIcons[platform];
                   return (
-                    <a 
-                      key={platform} 
-                      href={url} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
+                    <a
+                      key={platform}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center"
                     >
                       <Icon className="w-5 h-5 text-slate-600" />
@@ -316,13 +318,13 @@ export default function InfluencerProfile() {
                   );
                 })}
               </div>
-              
+
               {/* ✅ Show subscription status or upgrade button */}
               {canAccessPremium ? (
                 <Badge className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2">
                   <Star className="w-4 h-4 mr-2" />
-                  {user?.app_role === 'super_admin' || user?.app_role === 'admin' 
-                    ? 'Admin Access' 
+                  {user?.app_role === 'super_admin' || user?.app_role === 'admin'
+                    ? 'Admin Access'
                     : 'Premium Member'}
                 </Badge>
               ) : (
@@ -340,15 +342,15 @@ export default function InfluencerProfile() {
         {/* Content Tabs */}
         <Tabs defaultValue="videos" className="w-full">
           <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto bg-transparent gap-3">
-            <TabsTrigger 
-              value="videos" 
+            <TabsTrigger
+              value="videos"
               className="justify-center whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-12 rounded-xl font-semibold shadow-md flex items-center gap-2 px-4 py-3 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg"
             >
               <Play className="w-4 h-4" />
               Videos ({videos.length})
             </TabsTrigger>
-            <TabsTrigger 
-              value="courses" 
+            <TabsTrigger
+              value="courses"
               className="justify-center whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-12 rounded-xl font-semibold shadow-md flex items-center gap-2 px-4 py-3 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg"
             >
               <BookOpen className="w-4 h-4" />
@@ -360,11 +362,11 @@ export default function InfluencerProfile() {
             {videos.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {videos.map((video) => (
-                  <VideoCard 
-                    key={video.id} 
-                    video={video} 
-                    influencer={influencer} 
-                    canAccessPremium={canAccessPremium} 
+                  <VideoCard
+                    key={video.id}
+                    video={video}
+                    influencer={influencer}
+                    canAccessPremium={canAccessPremium}
                   />
                 ))}
               </div>
@@ -372,16 +374,16 @@ export default function InfluencerProfile() {
               <p className="text-center text-slate-500 py-12">This finfluencer hasn't posted any videos yet.</p>
             )}
           </TabsContent>
-          
+
           <TabsContent value="courses" className="mt-8">
             {courses.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {courses.map((course) => (
-                  <CourseCard 
-                    key={course.id} 
-                    course={course} 
-                    influencer={influencer} 
-                    canAccessPremium={canAccessPremium} 
+                  <CourseCard
+                    key={course.id}
+                    course={course}
+                    influencer={influencer}
+                    canAccessPremium={canAccessPremium}
                   />
                 ))}
               </div>

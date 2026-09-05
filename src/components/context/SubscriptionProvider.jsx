@@ -34,7 +34,7 @@ export function SubscriptionProvider({ children }) {
 
     try {
       setIsLoading(true);
-      
+
       if (abortController?.signal?.aborted) {
         return;
       }
@@ -51,16 +51,16 @@ export function SubscriptionProvider({ children }) {
 
       // ✅ Load user with better error handling
       const currentUser = await User.me({ signal: abortController?.signal }).catch((error) => {
-        if (error?.name === 'AbortError' || 
-            error?.message?.toLowerCase().includes('abort') ||
-            error?.message?.toLowerCase().includes('cancel')) {
+        if (error?.name === 'AbortError' ||
+          error?.message?.toLowerCase().includes('abort') ||
+          error?.message?.toLowerCase().includes('cancel')) {
           console.log('🚫 User.me() aborted');
           return null;
         }
         console.log('ℹ️ User not authenticated');
         return null;
       });
-      
+
       if (abortController?.signal?.aborted || !currentUser) {
         if (currentUser === null && !abortController?.signal?.aborted) {
           setUser(null);
@@ -73,7 +73,7 @@ export function SubscriptionProvider({ children }) {
         loadInProgress = false;
         return;
       }
-      
+
       setUser(currentUser);
 
       // ✅ Load plans with caching (only if not cached)
@@ -84,7 +84,7 @@ export function SubscriptionProvider({ children }) {
       } else {
         try {
           await new Promise(resolve => setTimeout(resolve, 500)); // Delay before plans call
-          
+
           if (abortController?.signal?.aborted) {
             loadInProgress = false;
             return;
@@ -92,36 +92,36 @@ export function SubscriptionProvider({ children }) {
 
           console.log('🔄 Fetching subscription plans...');
           plans = await SubscriptionPlan.list(null, null, null, { signal: abortController?.signal }).catch((err) => {
-            if (err?.name === 'AbortError' || 
-                err?.message?.toLowerCase().includes('abort') ||
-                err?.message?.toLowerCase().includes('cancel')) {
+            if (err?.name === 'AbortError' ||
+              err?.message?.toLowerCase().includes('abort') ||
+              err?.message?.toLowerCase().includes('cancel')) {
               console.log('🚫 SubscriptionPlan.list() aborted');
               return [];
             }
             console.warn('⚠️ Failed to load subscription plans:', err.message);
             return [];
           });
-          
+
           // Cache the plans
           if (plans.length > 0 && !abortController?.signal?.aborted) {
             plansCache = plans;
             plansCacheTimestamp = Date.now();
           }
         } catch (err) {
-          if (!abortController?.signal?.aborted && 
-              err?.name !== 'AbortError' && 
-              !err?.message?.toLowerCase().includes('abort')) {
+          if (!abortController?.signal?.aborted &&
+            err?.name !== 'AbortError' &&
+            !err?.message?.toLowerCase().includes('abort')) {
             console.warn('⚠️ Error loading plans:', err);
           }
           plans = [];
         }
       }
-      
+
       if (abortController?.signal?.aborted) {
         loadInProgress = false;
         return;
       }
-      
+
       setAllPlans(plans);
 
       // Admins and Super Admins bypass subscription checks
@@ -151,9 +151,9 @@ export function SubscriptionProvider({ children }) {
           null,
           { signal: abortController?.signal }
         ).catch((error) => {
-          if (error?.name === 'AbortError' || 
-              error?.message?.toLowerCase().includes('abort') ||
-              error?.message?.toLowerCase().includes('cancel')) {
+          if (error?.name === 'AbortError' ||
+            error?.message?.toLowerCase().includes('abort') ||
+            error?.message?.toLowerCase().includes('cancel')) {
             console.log('🚫 Subscription.filter() aborted');
             return [];
           }
@@ -161,9 +161,9 @@ export function SubscriptionProvider({ children }) {
           return [];
         });
       } catch (error) {
-        if (error?.name !== 'AbortError' && 
-            !error?.message?.toLowerCase().includes('abort') &&
-            !error?.message?.toLowerCase().includes('cancel')) {
+        if (error?.name !== 'AbortError' &&
+          !error?.message?.toLowerCase().includes('abort') &&
+          !error?.message?.toLowerCase().includes('cancel')) {
           console.warn('⚠️ Error loading subscriptions:', error);
         }
         userSubs = [];
@@ -176,15 +176,15 @@ export function SubscriptionProvider({ children }) {
 
       if (userSubs.length > 0) {
         const activeSub = userSubs[0];
-        
+
         console.log('✅ Active Subscription Found:', {
           plan_type: activeSub.plan_type,
           status: activeSub.status,
           end_date: activeSub.end_date
         });
-        
+
         setSubscription(activeSub);
-        
+
         // ✅ Update cache
         subscriptionCache = activeSub;
         cacheTimestamp = Date.now();
@@ -200,7 +200,7 @@ export function SubscriptionProvider({ children }) {
         if (plan) {
           console.log('✅ Subscription Plan Matched:', plan.name);
           setSubscriptionPlan(plan);
-          
+
           // ✅ Load plan features (including inherited)
           const allFeatures = await collectAllPlanFeatures(plan, plans);
           setPlanFeatures(allFeatures);
@@ -211,7 +211,7 @@ export function SubscriptionProvider({ children }) {
         }
       } else {
         console.log('ℹ️ No active subscription - using Free plan');
-        
+
         // Get Free plan features
         const freePlan = plans.find(p => p.name?.toLowerCase() === 'free' || p.name?.toLowerCase() === 'basic');
         if (freePlan) {
@@ -222,19 +222,19 @@ export function SubscriptionProvider({ children }) {
           setSubscriptionPlan(null);
           setPlanFeatures([]);
         }
-        
+
         setSubscription(null);
         subscriptionCache = null;
         cacheTimestamp = null;
       }
     } catch (error) {
-      if (error?.name !== 'AbortError' && 
-          !error?.message?.toLowerCase().includes('abort') && 
-          !error?.message?.toLowerCase().includes('cancel') &&
-          !abortController?.signal?.aborted) {
+      if (error?.name !== 'AbortError' &&
+        !error?.message?.toLowerCase().includes('abort') &&
+        !error?.message?.toLowerCase().includes('cancel') &&
+        !abortController?.signal?.aborted) {
         console.error('❌ Error loading subscription:', error);
       }
-      
+
       if (!abortController?.signal?.aborted) {
         setSubscription(null);
         setSubscriptionPlan(null);
@@ -258,7 +258,7 @@ export function SubscriptionProvider({ children }) {
     if (plan.inherits_from_plan_id) {
       try {
         const parentPlan = allPlans.find(p => p.id === plan.inherits_from_plan_id);
-        
+
         if (parentPlan) {
           const parentFeatures = await collectAllPlanFeatures(parentPlan, allPlans);
           features.push(...parentFeatures);
@@ -275,7 +275,7 @@ export function SubscriptionProvider({ children }) {
   useEffect(() => {
     let isMounted = true;
     const abortController = new AbortController();
-    
+
     // ✅ Longer initial delay to prevent race conditions
     const timeoutId = setTimeout(() => {
       if (isMounted && !abortController.signal.aborted) {
@@ -298,6 +298,16 @@ export function SubscriptionProvider({ children }) {
       return true;
     }
 
+    // ✅ New: Check user.is_premium flag for premium features
+    if (user?.is_premium) {
+      const basicFeatures = ['chat_rooms', 'community_polls', 'basic_stock_discussions', 'market_overview_access', 'basic_trading_tips', 'webinar_access'];
+      const premiumFeatures = ['premium_chat_rooms', 'premium_polls', 'premium_events', 'advisor_picks', 'pledge_pool', 'advanced_analytics', 'priority_notifications'];
+
+      if (premiumFeatures.includes(featureKey) || basicFeatures.includes(featureKey)) {
+        return true;
+      }
+    }
+
     // Check if feature is in plan features
     return planFeatures?.includes(featureKey) || planFeatures?.includes('*');
   }, [planFeatures, user]);
@@ -316,10 +326,14 @@ export function SubscriptionProvider({ children }) {
     if (user && ['admin', 'super_admin'].includes(user.app_role)) {
       return true;
     }
-    
+
+    if (user?.is_premium) {
+      return true;
+    }
+
     const planTypeLower = subscription?.plan_type?.toLowerCase();
     const isPremium = planTypeLower === 'premium' || planTypeLower === 'vip';
-    
+
     return isPremium;
   }, [subscription, user]);
 
@@ -327,10 +341,10 @@ export function SubscriptionProvider({ children }) {
     if (user && ['admin', 'super_admin'].includes(user.app_role)) {
       return true;
     }
-    
+
     const planTypeLower = subscription?.plan_type?.toLowerCase();
     const isVip = planTypeLower === 'vip';
-    
+
     return isVip;
   }, [subscription, user]);
 
@@ -351,10 +365,10 @@ export function SubscriptionProvider({ children }) {
     plansCache = null;
     plansCacheTimestamp = null;
     loadInProgress = false;
-    
+
     const abortController = new AbortController();
     loadSubscription(abortController);
-    
+
     return () => abortController.abort();
   }, [loadSubscription]);
 

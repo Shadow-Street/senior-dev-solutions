@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => ({
   ].filter(Boolean),
   server: {
     host: "::",
-    port: 8080,
+    port: 5173,
   },
   resolve: {
     alias: {

@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { EventAttendee, EventCheckIn, EventTicket } from '@/lib/apiClient';
 import {
   Dialog,
   DialogContent,
@@ -52,7 +51,7 @@ export default function EventAttendeesModal({ open, onClose, event }) { // Chang
 
   const loadAttendees = async () => {
     try {
-      const data = await base44.entities.EventAttendee.filter({ event_id: event.id });
+      const data = await EventAttendee.filter({ event_id: event.id });
       setAttendees(data || []);
     } catch (error) {
       console.error('Error loading attendees:', error);
@@ -64,8 +63,7 @@ export default function EventAttendeesModal({ open, onClose, event }) { // Chang
 
   const loadCheckIns = async () => {
     try {
-      // Assuming EventCheckIn is available via base44.entities
-      const checkInData = await base44.entities.EventCheckIn.filter({ event_id: event.id });
+      const checkInData = await EventCheckIn.filter({ event_id: event.id });
       setCheckIns(checkInData || []);
     } catch (error) {
       console.error('Error loading check-ins:', error);
@@ -77,9 +75,7 @@ export default function EventAttendeesModal({ open, onClose, event }) { // Chang
 
   const loadTickets = async () => {
     try {
-      // Assuming EventTicket is available via base44.entities
-      // This is a placeholder; actual filtering might be more complex
-      const ticketData = await base44.entities.EventTicket.filter({ event_id: event.id });
+      const ticketData = await EventTicket.filter({ event_id: event.id });
       setTickets(ticketData || []);
     } catch (error) {
       console.error('Error loading tickets:', error);
@@ -91,7 +87,7 @@ export default function EventAttendeesModal({ open, onClose, event }) { // Chang
 
   const filteredAttendees = attendees.filter(attendee => {
     const matchesSearch = attendee.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         attendee.user_email?.toLowerCase().includes(searchTerm.toLowerCase());
+      attendee.user_email?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || attendee.rsvp_status === statusFilter;
     return matchesSearch && matchesStatus;
   });

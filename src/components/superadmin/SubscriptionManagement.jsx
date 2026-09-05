@@ -30,12 +30,19 @@ export default function SubscriptionManagement({ user }) {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('plans'); // NEW STATE
 
-  const permissions = useMemo(() => ({
-    isSuperAdmin: user?.app_role === 'super_admin',
-    isAdmin: ['super_admin', 'admin'].includes(user?.app_role),
-    canEdit: ['super_admin', 'admin'].includes(user?.app_role),
-    canView: ['super_admin', 'admin', 'sub_admin'].includes(user?.app_role)
-  }), [user]);
+  const permissions = useMemo(() => {
+    // ✅ Check both app_role and role fields
+    const isSuperAdmin = user?.app_role === 'super_admin' || user?.role === 'super_admin';
+    const isAdmin = ['super_admin', 'admin'].includes(user?.app_role) || ['super_admin', 'admin'].includes(user?.role);
+    const isSubAdmin = user?.app_role === 'sub_admin' || user?.role === 'sub_admin';
+
+    return {
+      isSuperAdmin,
+      isAdmin,
+      canEdit: isSuperAdmin || isAdmin,
+      canView: isSuperAdmin || isAdmin || isSubAdmin
+    };
+  }, [user]);
 
   const loadData = useCallback(async () => {
     setIsLoading(true);

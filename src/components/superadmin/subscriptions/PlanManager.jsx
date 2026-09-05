@@ -85,23 +85,23 @@ const featureKeyMap = Object.fromEntries(
 // ✅ NEW: Normalize feature to key using database features
 const normalizeFeatureToKey = (feature, allFeatures) => {
   if (typeof feature !== 'string') return null;
-  
+
   // If it's already a key (lowercase with underscores) and exists in dynamically loaded features, return it
   if (allFeatures.some(f => f.key === feature)) {
     return feature;
   }
-  
+
   // Try to find by name in dynamically loaded features
   const foundFeature = allFeatures.find(f => f.name === feature);
   if (foundFeature) {
     return foundFeature.key;
   }
-  
+
   // Try reverse mapping from featureNameMap (if the feature string is a known display name from old mapping)
   if (featureKeyMap[feature]) {
     return featureKeyMap[feature];
   }
-  
+
   // As a last resort, if it's a string, and not found above, return it.
   // This handles cases where a feature might exist in a plan but not in the currently loaded FeatureConfig.
   // This helps prevent data loss on existing plans, though it suggests data inconsistency.
@@ -110,14 +110,14 @@ const normalizeFeatureToKey = (feature, allFeatures) => {
 
 const formatFeatureName = (feature, allFeatures) => {
   if (typeof feature !== 'string') return 'Feature';
-  
+
   // Try to find in dynamically loaded features first
   const dbFeature = allFeatures.find(f => f.key === feature);
   if (dbFeature) return dbFeature.name;
-  
+
   // Fallback to compatibility mapping
   if (featureNameMap[feature]) return featureNameMap[feature];
-  
+
   // If it's already a space-separated name, return it
   if (feature.includes(' ')) return feature;
 
@@ -242,7 +242,7 @@ function AdminPlanCard({ plan, onEdit, allPlans, availableFeatures }) { // Added
           )}
 
           {/* Features List */}
-          {plan.features && plan.features.length > 0 ? (
+          {plan.features && Array.isArray(plan.features) && plan.features.length > 0 ? (
             <div className="space-y-2">
               {plan.features.map((feature, index) => (
                 <div key={index} className="flex items-start gap-2">
@@ -275,7 +275,7 @@ function AdminPlanCard({ plan, onEdit, allPlans, availableFeatures }) { // Added
 export default function PlanManager({ plans, setPlans, permissions }) {
   // ✅ Load features from database
   const { features: AVAILABLE_FEATURES, isLoading: featuresLoading } = useFeatures();
-  
+
   const [editingPlan, setEditingPlan] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -291,17 +291,17 @@ export default function PlanManager({ plans, setPlans, permissions }) {
 
   const handleEdit = (plan) => {
     setEditingPlan(plan);
-    
+
     // ✅ FIXED: Normalize all features to keys
     const existingFeatures = Array.isArray(plan.features) ? plan.features : [];
     const normalizedFeatures = existingFeatures
       .map(f => normalizeFeatureToKey(f, AVAILABLE_FEATURES))
       .filter(f => f !== null); // Filter out any features that couldn't be normalized (or were null after normalization)
-    
+
     // console.log('Editing plan:', plan.name);
     // console.log('Original features:', existingFeatures);
     // console.log('Normalized features:', normalizedFeatures);
-    
+
     setFormData({
       name: plan.name,
       description: plan.description || '',
@@ -318,13 +318,13 @@ export default function PlanManager({ plans, setPlans, permissions }) {
     setFormData(prev => {
       const currentFeatures = prev.features || [];
       const isSelected = currentFeatures.includes(featureKey);
-      
+
       const newFeatures = isSelected
         ? currentFeatures.filter(f => f !== featureKey)
         : [...currentFeatures, featureKey];
-      
+
       // console.log('Toggle feature:', featureKey, 'isSelected:', isSelected, 'New features:', newFeatures);
-      
+
       return {
         ...prev,
         features: newFeatures
@@ -359,10 +359,15 @@ export default function PlanManager({ plans, setPlans, permissions }) {
 
       // console.log('Saving plan with features:', updateData.features);
 
+      // Update the plan on the server
       await SubscriptionPlan.update(editingPlan.id, updateData);
 
+      // Fetch the updated plan from the server to ensure we have the latest data
+      const updatedPlan = await SubscriptionPlan.get(editingPlan.id);
+
+      // Update the plans array with the fresh data from the server
       const updatedPlans = plans.map(p =>
-        p.id === editingPlan.id ? { ...p, ...updateData } : p
+        p.id === editingPlan.id ? updatedPlan : p
       );
       setPlans(updatedPlans);
 
@@ -384,7 +389,7 @@ export default function PlanManager({ plans, setPlans, permissions }) {
     }
 
     const planToDelete = plans.find(p => p.id === planId);
-    
+
     if (planToDelete?.is_system_plan) {
       toast.error("System plans (Free, Premium, VIP) cannot be deleted.");
       return;

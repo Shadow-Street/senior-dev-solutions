@@ -76,7 +76,10 @@ export default function PollOverview({ polls, stats }) {
                         )}
                       </td>
                       <td className="px-4 py-3 text-slate-500 text-xs">
-                        {formatDistanceToNow(new Date(poll.created_date), { addSuffix: true })}
+                        {poll.created_date
+                          ? formatDistanceToNow(new Date(poll.created_date), { addSuffix: true })
+                          : 'N/A'
+                        }
                       </td>
                     </tr>
                   ))}

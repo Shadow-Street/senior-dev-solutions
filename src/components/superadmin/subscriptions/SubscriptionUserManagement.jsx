@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Subscription, User } from '@/api/entities';
+import { Subscription, User, SubscriptionPlan } from '@/api/entities';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Search, 
-  RefreshCw, 
-  CheckCircle, 
-  XCircle, 
+import {
+  Search,
+  RefreshCw,
+  CheckCircle,
+  XCircle,
   Clock,
   AlertTriangle,
   Users as UsersIcon
@@ -26,6 +26,7 @@ import {
 export default function SubscriptionUserManagement({ permissions }) {
   const [subscriptions, setSubscriptions] = useState([]);
   const [users, setUsers] = useState([]);
+  const [plans, setPlans] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -37,12 +38,27 @@ export default function SubscriptionUserManagement({ permissions }) {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const [subsData, usersData] = await Promise.all([
+      const [subsData, usersData, plansData] = await Promise.all([
         Subscription.list('-created_date'),
-        User.list()
+        User.list(),
+        SubscriptionPlan.list()
       ]);
-      setSubscriptions(subsData);
+
+      // Map plan details to subscriptions
+      const enrichedSubs = subsData.map(sub => {
+        const plan = plansData.find(p => p.id === sub.plan_id ||
+          p.name.toLowerCase() === sub.plan_type?.toLowerCase());
+        return {
+          ...sub,
+          planDetails: plan,
+          displayPlanName: plan?.name || sub.plan_type || 'Unknown Plan',
+          displayPrice: plan?.price_monthly || plan?.price || sub.price || 0
+        };
+      });
+
+      setSubscriptions(enrichedSubs);
       setUsers(usersData);
+      setPlans(plansData);
     } catch (error) {
       console.error('Error loading subscription data:', error);
       toast.error('Failed to load subscription data');
@@ -90,7 +106,7 @@ export default function SubscriptionUserManagement({ permissions }) {
       );
     }
 
-    switch(subscription.status) {
+    switch (subscription.status) {
       case 'active':
         return (
           <Badge className="bg-green-100 text-green-800 border-green-300">
@@ -125,10 +141,10 @@ export default function SubscriptionUserManagement({ permissions }) {
   // Filter subscriptions
   const filteredSubscriptions = subscriptions.filter(sub => {
     const user = getUserForSubscription(sub);
-    const matchesSearch = !searchTerm || 
+    const matchesSearch = !searchTerm ||
       (user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       user?.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       sub.plan_type?.toLowerCase().includes(searchTerm.toLowerCase()));
+        user?.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        sub.plan_type?.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesStatus = statusFilter === 'all' ||
       (statusFilter === 'active' && sub.status === 'active' && !sub.cancelAtPeriodEnd) ||
@@ -245,7 +261,7 @@ export default function SubscriptionUserManagement({ permissions }) {
                           <p className="text-sm text-slate-500">{user?.email || 'No email'}</p>
                         </div>
                       </div>
-                      
+
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                         <div>
                           <p className="text-xs text-slate-500">Plan</p>
@@ -269,7 +285,7 @@ export default function SubscriptionUserManagement({ permissions }) {
                     {/* Status & Actions */}
                     <div className="flex flex-col items-end gap-3">
                       {getStatusBadge(subscription)}
-                      
+
                       {/* Reinstate Button - Only show for subscriptions marked for cancellation */}
                       {subscription.cancelAtPeriodEnd && subscription.status === 'active' && permissions.canEdit && (
                         <Button

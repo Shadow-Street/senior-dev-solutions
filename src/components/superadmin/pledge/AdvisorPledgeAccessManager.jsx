@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { AdvisorPledgeAccessRequest } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { 
-  Shield, 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
+import {
+  Shield,
+  CheckCircle,
+  XCircle,
+  Clock,
   TrendingUp,
   DollarSign,
   Eye,
@@ -43,7 +43,7 @@ export default function AdvisorPledgeAccessManager({ user }) {
   const loadRequests = async () => {
     setIsLoading(true);
     try {
-      const allRequests = await base44.entities.AdvisorPledgeAccessRequest.list('-created_date');
+      const allRequests = await AdvisorPledgeAccessRequest.list('-created_date');
       console.log('Loaded advisor pledge access requests:', allRequests);
       setRequests(Array.isArray(allRequests) ? allRequests : []);
     } catch (error) {
@@ -99,12 +99,12 @@ export default function AdvisorPledgeAccessManager({ user }) {
         ...(!approved && { rejection_reason: reviewData.rejection_reason })
       };
 
-      await base44.entities.AdvisorPledgeAccessRequest.update(selectedRequest.id, updateData);
+      await AdvisorPledgeAccessRequest.update(selectedRequest.id, updateData);
 
       toast.success(approved ? 'Advisor access approved!' : 'Request rejected');
       setShowReviewModal(false);
       setSelectedRequest(null);
-      
+
       // Reload requests
       loadRequests();
     } catch (error) {
@@ -353,7 +353,7 @@ export default function AdvisorPledgeAccessManager({ user }) {
                   max="50"
                   step="0.1"
                   value={reviewData.approved_commission_rate}
-                  onChange={(e) => setReviewData({...reviewData, approved_commission_rate: parseFloat(e.target.value)})}
+                  onChange={(e) => setReviewData({ ...reviewData, approved_commission_rate: parseFloat(e.target.value) })}
                   className="mt-2"
                 />
                 <p className="text-xs text-gray-500 mt-1">
@@ -366,7 +366,7 @@ export default function AdvisorPledgeAccessManager({ user }) {
                 <Textarea
                   id="admin_notes"
                   value={reviewData.admin_notes}
-                  onChange={(e) => setReviewData({...reviewData, admin_notes: e.target.value})}
+                  onChange={(e) => setReviewData({ ...reviewData, admin_notes: e.target.value })}
                   placeholder="Any conditions or notes for the advisor..."
                   rows={3}
                   className="mt-2"
@@ -378,7 +378,7 @@ export default function AdvisorPledgeAccessManager({ user }) {
                 <Textarea
                   id="rejection_reason"
                   value={reviewData.rejection_reason}
-                  onChange={(e) => setReviewData({...reviewData, rejection_reason: e.target.value})}
+                  onChange={(e) => setReviewData({ ...reviewData, rejection_reason: e.target.value })}
                   placeholder="Provide clear reason for rejection..."
                   rows={3}
                   className="mt-2"

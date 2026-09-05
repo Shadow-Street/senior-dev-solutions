@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { authAPI, PortfolioManager } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TrendingUp, Users, DollarSign, BarChart3, Activity, Briefcase } from 'lucide-react';
@@ -23,11 +23,11 @@ export default function PortfolioManagerDashboard() {
 
   const loadData = async () => {
     try {
-      const currentUser = await base44.auth.me();
+      const currentUser = await authAPI.me();
       setUser(currentUser);
 
       // Get PM profile
-      const pmProfiles = await base44.entities.PortfolioManager.filter({ user_id: currentUser.id });
+      const pmProfiles = await PortfolioManager.filter({ user_id: currentUser.id });
       if (pmProfiles.length > 0) {
         setPmProfile(pmProfiles[0]);
       }

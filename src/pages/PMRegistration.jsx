@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { authAPI, PortfolioManager } from '@/lib/apiClient';
+import { UploadFile } from '@/api/integrations';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,11 +35,11 @@ export default function PMRegistration() {
 
   const loadUserData = async () => {
     try {
-      const currentUser = await base44.auth.me();
+      const currentUser = await authAPI.me();
       setUser(currentUser);
 
       // Check if user already has a PM profile
-      const pmProfiles = await base44.entities.PortfolioManager.filter({ user_id: currentUser.id });
+      const pmProfiles = await PortfolioManager.filter({ user_id: currentUser.id });
       if (pmProfiles.length > 0) {
         setExistingPM(pmProfiles[0]);
       }
@@ -55,7 +56,7 @@ export default function PMRegistration() {
     if (!file) return;
 
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await UploadFile({ file });
       setFormData({ ...formData, sebi_document_url: file_url });
       toast.success('SEBI certificate uploaded successfully');
     } catch (error) {
@@ -74,7 +75,7 @@ export default function PMRegistration() {
 
     setIsSubmitting(true);
     try {
-      await base44.entities.PortfolioManager.create({
+      await PortfolioManager.create({
         ...formData,
         user_id: user.id,
         experience_years: parseInt(formData.experience_years),
@@ -131,7 +132,7 @@ export default function PMRegistration() {
                   <p className="text-gray-600 mb-4">
                     Your Portfolio Manager application has been approved.
                   </p>
-                  <Button 
+                  <Button
                     onClick={() => window.location.href = createPageUrl('PortfolioManagerDashboard')}
                     className="bg-blue-600 hover:bg-blue-700"
                   >
@@ -153,7 +154,7 @@ export default function PMRegistration() {
                       <p className="text-sm text-red-700">{existingPM.rejection_reason}</p>
                     </div>
                   )}
-                  <Button 
+                  <Button
                     onClick={() => window.location.href = createPageUrl('Dashboard')}
                     variant="outline"
                   >
@@ -198,7 +199,7 @@ export default function PMRegistration() {
                   <Input
                     id="display_name"
                     value={formData.display_name}
-                    onChange={(e) => setFormData({...formData, display_name: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
                     placeholder="Your professional name"
                     required
                   />
@@ -209,7 +210,7 @@ export default function PMRegistration() {
                   <Input
                     id="company_name"
                     value={formData.company_name}
-                    onChange={(e) => setFormData({...formData, company_name: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
                     placeholder="Registered company name"
                   />
                 </div>
@@ -219,7 +220,7 @@ export default function PMRegistration() {
                   <Input
                     id="sebi_reg"
                     value={formData.sebi_registration_number}
-                    onChange={(e) => setFormData({...formData, sebi_registration_number: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, sebi_registration_number: e.target.value })}
                     placeholder="INP000000000"
                     required
                   />
@@ -231,7 +232,7 @@ export default function PMRegistration() {
                     id="experience"
                     type="number"
                     value={formData.experience_years}
-                    onChange={(e) => setFormData({...formData, experience_years: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, experience_years: e.target.value })}
                     placeholder="Years"
                     min="1"
                     required
@@ -264,7 +265,7 @@ export default function PMRegistration() {
                 <Textarea
                   id="bio"
                   value={formData.bio}
-                  onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                   placeholder="Describe your investment philosophy and expertise..."
                   rows={4}
                 />
@@ -281,9 +282,9 @@ export default function PMRegistration() {
                         checked={formData.specialization.includes(spec)}
                         onChange={(e) => {
                           if (e.target.checked) {
-                            setFormData({...formData, specialization: [...formData.specialization, spec]});
+                            setFormData({ ...formData, specialization: [...formData.specialization, spec] });
                           } else {
-                            setFormData({...formData, specialization: formData.specialization.filter(s => s !== spec)});
+                            setFormData({ ...formData, specialization: formData.specialization.filter(s => s !== spec) });
                           }
                         }}
                         className="rounded"
@@ -302,7 +303,7 @@ export default function PMRegistration() {
                     id="fee"
                     type="number"
                     value={formData.performance_fee_percentage}
-                    onChange={(e) => setFormData({...formData, performance_fee_percentage: parseFloat(e.target.value)})}
+                    onChange={(e) => setFormData({ ...formData, performance_fee_percentage: parseFloat(e.target.value) })}
                     min="5"
                     max="25"
                     step="0.5"
@@ -314,7 +315,7 @@ export default function PMRegistration() {
                   <Label htmlFor="frequency">Fee Crystallization Frequency</Label>
                   <Select
                     value={formData.crystallization_frequency}
-                    onValueChange={(value) => setFormData({...formData, crystallization_frequency: value})}
+                    onValueChange={(value) => setFormData({ ...formData, crystallization_frequency: value })}
                   >
                     <SelectTrigger>
                       <SelectValue />

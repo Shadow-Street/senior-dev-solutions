@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { authAPI, PMClient, PMHolding, PMInvoice } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -19,11 +19,11 @@ export default function MyPMInvestments() {
 
   const loadData = async () => {
     try {
-      const currentUser = await base44.auth.me();
+      const currentUser = await authAPI.me();
       setUser(currentUser);
 
       // Get all PM clients where this user is the client
-      const myPMClients = await base44.entities.PMClient.filter({ user_id: currentUser.id });
+      const myPMClients = await PMClient.filter({ user_id: currentUser.id });
       setPMClients(myPMClients);
 
       // Load holdings for each PM client
@@ -31,10 +31,10 @@ export default function MyPMInvestments() {
       const invoicesMap = {};
 
       for (const client of myPMClients) {
-        const clientHoldings = await base44.entities.PMHolding.filter({ client_id: client.id });
+        const clientHoldings = await PMHolding.filter({ client_id: client.id });
         holdingsMap[client.id] = clientHoldings;
 
-        const clientInvoices = await base44.entities.PMInvoice.filter({ client_id: client.id });
+        const clientInvoices = await PMInvoice.filter({ client_id: client.id });
         invoicesMap[client.id] = clientInvoices;
       }
 
@@ -91,7 +91,7 @@ export default function MyPMInvestments() {
             const clientHoldings = holdings[client.id] || [];
             const clientInvoices = invoices[client.id] || [];
             const isProfitable = (client.unrealized_pnl || 0) >= 0;
-            const pnlPercent = client.invested_amount > 0 
+            const pnlPercent = client.invested_amount > 0
               ? ((client.unrealized_pnl / client.invested_amount) * 100).toFixed(2)
               : 0;
 
@@ -138,7 +138,7 @@ export default function MyPMInvestments() {
                         </div>
 
                         <div className={`${isProfitable ? 'bg-green-50' : 'bg-red-50'} p-4 rounded-lg`}>
-                          {isProfitable ? 
+                          {isProfitable ?
                             <TrendingUp className={`w-5 h-5 ${isProfitable ? 'text-green-600' : 'text-red-600'} mb-2`} /> :
                             <TrendingDown className={`w-5 h-5 ${isProfitable ? 'text-green-600' : 'text-red-600'} mb-2`} />
                           }
@@ -224,8 +224,8 @@ export default function MyPMInvestments() {
                                   <p className="font-semibold text-gray-900">₹{invoice.total_amount?.toFixed(2)}</p>
                                   <Badge className={
                                     invoice.status === 'paid' ? 'bg-green-100 text-green-800' :
-                                    invoice.status === 'overdue' ? 'bg-red-100 text-red-800' :
-                                    'bg-yellow-100 text-yellow-800'
+                                      invoice.status === 'overdue' ? 'bg-red-100 text-red-800' :
+                                        'bg-yellow-100 text-yellow-800'
                                   }>
                                     {invoice.status}
                                   </Badge>

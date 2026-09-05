@@ -18,7 +18,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns";
 import { Calendar as CalendarIcon, Crown, Shield, Upload, X, Image as ImageIcon } from "lucide-react";
 import { toast } from 'sonner';
+import { UploadFile } from '@/api/integrations';
 import apiClient from '@/lib/apiClient';
+import { useSubscription } from '@/components/hooks/useSubscription';
 
 export default function CreatePollModal({ open, onClose, room, user, onCreatePoll }) {
   const [formData, setFormData] = useState({
@@ -36,6 +38,11 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
 
+  // ✅ Check if user can create premium polls
+  const subscriptionContext = useSubscription();
+  const canCreatePremiumPolls = subscriptionContext?.hasFeatureAccess?.('premium_polls') ||
+    ['admin', 'super_admin'].includes(user?.app_role);
+
   // Auto-generate title when stock symbol or poll type changes
   React.useEffect(() => {
     if (open && room?.stock_symbol) {
@@ -49,7 +56,7 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
 
   const generateDefaultTitle = (stockSymbol, pollType) => {
     if (!stockSymbol) return "";
-    
+
     switch (pollType) {
       case "buy_sell_hold":
         return `What's your trading view on ${stockSymbol}?`;
@@ -92,8 +99,8 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
     setIsUploadingImage(true);
 
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      
+      const { file_url } = await UploadFile({ file });
+
       setFormData({ ...formData, image_url: file_url });
       setImagePreview(file_url);
       toast.success('Image uploaded successfully!');
@@ -112,7 +119,7 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.title.trim() || !formData.stock_symbol.trim()) {
       toast.error("Please provide both a poll question and stock symbol!");
       return;
@@ -121,18 +128,50 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
     setIsSubmitting(true);
 
     try {
+      // Generate options array based on poll_type
+      let options = [];
+      let votes = {};
+
+      switch (formData.poll_type) {
+        case 'buy_sell_hold':
+          options = ['Buy', 'Sell', 'Hold'];
+          break;
+        case 'sentiment':
+          options = ['Bullish', 'Bearish', 'Neutral'];
+          break;
+        case 'price_target':
+        case 'advisor_recommendation':
+          options = ['Yes', 'No'];
+          break;
+        case 'pledge_poll':
+          options = ['Will Pledge', 'Won\'t Pledge'];
+          break;
+        default:
+          options = ['Option 1', 'Option 2', 'Option 3'];
+      }
+
+      // Initialize votes object with zeros
+      options.forEach((_, index) => {
+        votes[index] = 0;
+      });
+
       const pollData = {
         title: formData.title.trim(),
         description: formData.description.trim(),
         stock_symbol: formData.stock_symbol.trim().toUpperCase(),
         poll_type: formData.poll_type,
+        options, // Add options array
+        votes, // Add initialized votes object
+        total_votes: 0,
         chatroom_id: room?.id || null,
+        chat_room_id: room?.id || null, // Support both field names
         creation_source: room ? "chatroom" : "admin_panel",
         expires_at: formData.expires_at ? formData.expires_at.toISOString() : null,
         is_premium: formData.is_premium,
         is_active: true,
+        status: 'active',
         created_by_admin: user?.app_role === 'admin' || user?.app_role === 'super_admin',
-        created_by_role: user?.app_role,
+        created_by_role: user?.app_role || user?.role || 'user',
         target_price: formData.target_price ? parseFloat(formData.target_price) : null,
         confidence_score: parseInt(formData.confidence_score),
         image_url: formData.image_url || null
@@ -141,7 +180,7 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
       console.log("Creating poll with data:", pollData);
 
       await onCreatePoll(pollData);
-      
+
       // Reset form on success
       setFormData({
         title: "",
@@ -155,9 +194,15 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
         image_url: ""
       });
       setImagePreview(null);
+
+      toast.success("Poll created successfully!");
+
     } catch (error) {
       console.error("Submission error in modal:", error);
-      toast.error("Failed to create poll. Please try again.");
+      const errorMessage = error.response?.data?.message ||
+        error.response?.data?.error ||
+        (error.response?.data?.includes && error.response.data.includes('already exists') ? "A poll for this stock already exists!" : "Failed to create poll. Please try again.");
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -169,7 +214,7 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
         <DialogHeader>
           <DialogTitle>Create New Poll</DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Stock Symbol */}
           <div>
@@ -177,7 +222,7 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
             <Input
               id="stock_symbol"
               value={formData.stock_symbol}
-              onChange={(e) => setFormData({...formData, stock_symbol: e.target.value.toUpperCase()})}
+              onChange={(e) => setFormData({ ...formData, stock_symbol: e.target.value.toUpperCase() })}
               placeholder="e.g., RELIANCE, TCS, WIPRO"
               required
               disabled={!!room?.stock_symbol}
@@ -194,7 +239,7 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
             <Label htmlFor="poll_type">Poll Type</Label>
             <Select
               value={formData.poll_type}
-              onValueChange={(value) => setFormData({...formData, poll_type: value})}
+              onValueChange={(value) => setFormData({ ...formData, poll_type: value })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select poll type" />
@@ -208,14 +253,14 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
               </SelectContent>
             </Select>
           </div>
-          
+
           {/* Poll Question */}
           <div>
             <Label htmlFor="title">Poll Question *</Label>
             <Input
               id="title"
               value={formData.title}
-              onChange={(e) => setFormData({...formData, title: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               placeholder="Auto-generated based on stock and poll type..."
               required
             />
@@ -223,14 +268,14 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
               This will appear as the poll description below the stock symbol
             </p>
           </div>
-          
+
           {/* Description */}
           <div>
             <Label htmlFor="description">Additional Details (Optional)</Label>
             <Textarea
               id="description"
               value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Add context, analysis, or reasoning..."
               rows={3}
             />
@@ -242,7 +287,7 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
             <p className="text-xs text-slate-500 mb-2">
               Add visual context with charts, graphs, or relevant images
             </p>
-            
+
             {!imagePreview ? (
               <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:border-purple-400 transition-colors">
                 <input
@@ -276,9 +321,9 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
               </div>
             ) : (
               <div className="relative border border-slate-300 rounded-lg overflow-hidden">
-                <img 
-                  src={imagePreview} 
-                  alt="Poll preview" 
+                <img
+                  src={imagePreview}
+                  alt="Poll preview"
                   className="w-full h-48 object-cover"
                 />
                 <Button
@@ -303,7 +348,7 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
                 type="number"
                 step="0.01"
                 value={formData.target_price}
-                onChange={(e) => setFormData({...formData, target_price: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, target_price: e.target.value })}
                 placeholder="Expected price target"
               />
             </div>
@@ -314,7 +359,7 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
             <Label htmlFor="confidence_score">Confidence Level</Label>
             <Select
               value={formData.confidence_score.toString()}
-              onValueChange={(value) => setFormData({...formData, confidence_score: parseInt(value)})}
+              onValueChange={(value) => setFormData({ ...formData, confidence_score: parseInt(value) })}
             >
               <SelectTrigger>
                 <SelectValue />
@@ -346,7 +391,7 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
                 <Calendar
                   mode="single"
                   selected={formData.expires_at}
-                  onSelect={(date) => setFormData({...formData, expires_at: date})}
+                  onSelect={(date) => setFormData({ ...formData, expires_at: date })}
                   disabled={(date) => date < new Date()}
                 />
               </PopoverContent>
@@ -354,36 +399,39 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
           </div>
 
           {/* Premium Poll Toggle */}
-          {user && ['admin', 'super_admin', 'advisor'].includes(user.app_role) && (
-            <div className="flex items-center justify-between p-4 border rounded-lg">
+          {canCreatePremiumPolls && (
+            <div className="flex items-center justify-between p-4 border rounded-lg bg-gradient-to-r from-purple-50 to-pink-50">
               <div className="flex items-center space-x-2">
                 <Crown className="w-4 h-4 text-purple-600" />
                 <Label htmlFor="is_premium" className="font-medium">Premium Poll</Label>
-                <Badge variant="outline" className="bg-purple-50 text-purple-700">
+                <Badge variant="outline" className="bg-purple-100 text-purple-700">
                   <Shield className="w-3 h-3 mr-1" />
-                  Admin Only
+                  Premium Feature
                 </Badge>
               </div>
-              <Switch
-                id="is_premium"
-                checked={formData.is_premium}
-                onCheckedChange={(checked) => setFormData({...formData, is_premium: checked})}
-              />
+              <div className="flex flex-col items-end">
+                <Switch
+                  id="is_premium"
+                  checked={formData.is_premium}
+                  onCheckedChange={(checked) => setFormData({ ...formData, is_premium: checked })}
+                />
+                <p className="text-xs text-slate-500 mt-1">Only visible to Premium/VIP members</p>
+              </div>
             </div>
           )}
-          
+
           <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={onClose}
               className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-300 transition-all duration-300"
             >
               Cancel
             </Button>
-            <Button 
-              type="submit" 
-              disabled={isSubmitting || isUploadingImage} 
+            <Button
+              type="submit"
+              disabled={isSubmitting || isUploadingImage}
               className="bg-purple-600 hover:bg-purple-700"
             >
               {isSubmitting ? "Creating..." : "Create Poll"}

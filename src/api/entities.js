@@ -3,6 +3,38 @@ import apiClient, { authAPI, User as BaseUser } from "../lib/apiClient";
 // Re-export all generic entity APIs from the central apiClient
 export * from "../lib/apiClient";
 
+import { createEntityAPI } from "../lib/apiClient";
+
+export const Announcement = createEntityAPI("/announcements");
+
+// ---- Financial Audit Logs ----
+export const FinancialAuditLog = createEntityAPI("/financials/audit-logs");
+
+// ---- Ticketing (RefundManagement.jsx expects Ticket) ----
+export const Ticket = createEntityAPI("/events/tickets");
+
+// ---- Alerts System ----
+export const AlertLog = createEntityAPI("/alerts/logs");
+
+// ---- Chat Room Subscription ----
+export const RoomSubscription = createEntityAPI("/chatrooms/subscriptions");
+
+// ---- Chat Room Invites ----
+export const ChatRoomInvite = createEntityAPI("/chat-management/invites");
+
+// ---- Chat Room Scheduling / Automation ----
+export const ChatRoomSchedule = createEntityAPI("/chat-management/automations");
+
+// ---- VIP / Premium Customization ----
+export const VIPCustomization = createEntityAPI("/chat-management/vip-features");
+
+// ---- Investment Allocations ----
+export const InvestmentAllocation = createEntityAPI("/investments/allocations");
+
+// ---- Educators ----
+export const Educator = createEntityAPI("/educators");
+
+
 // Backwards-compatible User helper with extra methods that existing code relies on
 export const User = {
   ...BaseUser,

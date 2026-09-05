@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { PMClient, PMHolding } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -19,12 +19,12 @@ export default function PMClients({ pmProfile }) {
 
   const loadClients = async () => {
     try {
-      const allClients = await base44.entities.PMClient.filter({ pm_id: pmProfile.id });
+      const allClients = await PMClient.filter({ pm_id: pmProfile.id });
       setClients(allClients);
 
       // Load holdings for each client
       for (const client of allClients) {
-        const clientHoldings = await base44.entities.PMHolding.filter({ client_id: client.id });
+        const clientHoldings = await PMHolding.filter({ client_id: client.id });
         setHoldings(prev => ({ ...prev, [client.id]: clientHoldings }));
       }
     } catch (error) {
@@ -89,7 +89,7 @@ export default function PMClients({ pmProfile }) {
         ) : (
           filteredClients.map((client) => {
             const clientHoldings = holdings[client.id] || [];
-            const pnlPercent = client.invested_amount > 0 
+            const pnlPercent = client.invested_amount > 0
               ? ((client.unrealized_pnl / client.invested_amount) * 100).toFixed(2)
               : 0;
             const isProfitable = client.unrealized_pnl >= 0;

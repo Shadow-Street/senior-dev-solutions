@@ -16,61 +16,62 @@ import {
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, MessageSquare, BarChart3, CalendarDays, Shield, Star, Sparkles, Wallet, Crown, Edit3, Home, Briefcase } from "lucide-react";
+import { LayoutDashboard, MessageSquare, BarChart3, CalendarDays, Shield, Star, Sparkles, Wallet, Crown, Edit3, Home, Briefcase, CreditCard } from "lucide-react";
 import { Toaster } from "sonner";
+
+import { useAuth } from "@/components/context/AuthContext";
 
 function InnerLayout({ children, currentPageName }) {
   const location = useLocation();
-  
-  // Mock user for UI purposes only - no authentication
-  const mockUser = {
-    id: "demo-user",
-    display_name: "Demo User",
-    email: "demo@protocall.com",
-    app_role: "trader",
-    roles: ["trader"],
+  const { user, loading } = useAuth();
+
+  const mockUser = user || {
+    id: "guest",
+    display_name: "Guest",
+    email: "",
+    app_role: "guest",
+    roles: [],
     profile_image_url: null
   };
 
   // Check if current page should show without sidebar
-  const isLandingPage = 
-    location.pathname === '/' || 
+  const isLandingPage =
     location.pathname === createPageUrl('Landing') ||
     location.pathname.toLowerCase() === '/landing' ||
     currentPageName === 'Landing';
-  
-  const isPublicContentPage = 
-    location.pathname === createPageUrl('Blogs') || 
+
+  const isPublicContentPage =
+    location.pathname === createPageUrl('Blogs') ||
     currentPageName === 'Blogs' ||
-    location.pathname === createPageUrl('BlogArticle') || 
+    location.pathname === createPageUrl('BlogArticle') ||
     currentPageName === 'BlogArticle' ||
-    location.pathname === createPageUrl('News') || 
+    location.pathname === createPageUrl('News') ||
     currentPageName === 'News' ||
-    location.pathname === createPageUrl('Contact') || 
+    location.pathname === createPageUrl('Contact') ||
     currentPageName === 'Contact' ||
-    location.pathname === createPageUrl('ContactSupport') || 
+    location.pathname === createPageUrl('ContactSupport') ||
     currentPageName === 'ContactSupport' ||
-    location.pathname === createPageUrl('Privacy') || 
+    location.pathname === createPageUrl('Privacy') ||
     currentPageName === 'Privacy' ||
-    location.pathname === createPageUrl('Terms') || 
+    location.pathname === createPageUrl('Terms') ||
     currentPageName === 'Terms' ||
-    location.pathname === createPageUrl('Cookies') || 
+    location.pathname === createPageUrl('Cookies') ||
     currentPageName === 'Cookies' ||
-    location.pathname === createPageUrl('RiskDisclosure') || 
+    location.pathname === createPageUrl('RiskDisclosure') ||
     currentPageName === 'RiskDisclosure';
 
   const isSuperAdminPage = location.pathname === createPageUrl('SuperAdmin') || currentPageName === 'SuperAdmin';
-  
-  const isAdvisorPortalPage = 
-    location.pathname === createPageUrl('AdvisorDashboard') || 
+
+  const isAdvisorPortalPage =
+    location.pathname === createPageUrl('AdvisorDashboard') ||
     currentPageName === 'AdvisorDashboard' ||
-    location.pathname === createPageUrl('AdvisorPledgeManagement') || 
+    location.pathname === createPageUrl('AdvisorPledgeManagement') ||
     currentPageName === 'AdvisorPledgeManagement' ||
-    location.pathname === createPageUrl('OrganizerDashboard') || 
+    location.pathname === createPageUrl('OrganizerDashboard') ||
     currentPageName === 'OrganizerDashboard';
 
-  const isFinfluencerPortalPage = 
-    location.pathname === createPageUrl('FinfluencerDashboard') || 
+  const isFinfluencerPortalPage =
+    location.pathname === createPageUrl('FinfluencerDashboard') ||
     currentPageName === 'FinfluencerDashboard';
 
   const isPMPortalPage =
@@ -88,11 +89,12 @@ function InnerLayout({ children, currentPageName }) {
       { key: 'advisors', title: 'Advisors', url: createPageUrl('Advisors'), icon: Shield, badge: null },
       { key: 'finfluencers', title: 'Finfluencers', url: createPageUrl('Finfluencers'), icon: Star, badge: null },
       { key: 'subscription', title: 'Subscription', url: createPageUrl('Subscription'), icon: Sparkles, badge: null },
+      { key: 'my_plans_access', title: 'My Plans & Access', url: '/plans-access', icon: CreditCard, badge: { text: 'Pro', color: 'bg-green-50 text-green-700 border-green-200' } },
       { key: 'feedback', title: 'Feedback', url: createPageUrl('Feedback'), icon: MessageSquare, badge: null },
     ];
 
     const allItems = [...hardcodedOrder];
-    
+
     const eventsIndex = allItems.findIndex(item => item.key === 'events');
     if (eventsIndex !== -1) {
       allItems.splice(eventsIndex + 1, 0, {
@@ -113,7 +115,7 @@ function InnerLayout({ children, currentPageName }) {
         icon: Shield,
         badge: { text: 'Portal', color: 'bg-purple-50 text-purple-700 border-purple-200' }
       });
-      
+
       allItems.splice(advisorsIndex + 2, 0, {
         key: 'advisor_pledge_management',
         title: 'Pledge Management',
@@ -160,7 +162,7 @@ function InnerLayout({ children, currentPageName }) {
   // Show all other pages with sidebar
   return (
     <>
-      <Toaster 
+      <Toaster
         position="top-right"
         toastOptions={{
           duration: 4000,
@@ -176,7 +178,7 @@ function InnerLayout({ children, currentPageName }) {
         }}
         richColors={false}
       />
-      
+
       <style>{`
         .sidebar-logo {
           display: flex;
@@ -200,11 +202,10 @@ function InnerLayout({ children, currentPageName }) {
         <div className="flex h-screen w-full bg-gray-50">
           <Sidebar className="border-r border-gray-200 bg-white">
             <SidebarHeader className="p-0">
-              <div className="sidebar-logo">
-                <img
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68bb21f4e5ccdcab161121f6/3023c1fa9_1235.png"
-                  alt="Protocall - Financial Networking Platform"
-                />
+              <div className="flex flex-col items-center justify-center p-4 bg-gradient-to-r from-purple-700 to-indigo-800 text-white min-h-[140px]">
+                <Shield className="w-10 h-10 mb-2" />
+                <div className="text-2xl font-bold tracking-tighter">PROTOCOL</div>
+                <div className="text-xs opacity-75 tracking-widest uppercase">Financial Networking</div>
               </div>
             </SidebarHeader>
 
@@ -236,9 +237,8 @@ function InnerLayout({ children, currentPageName }) {
                     <SidebarMenuItem key={item.key}>
                       <SidebarMenuButton
                         asChild
-                        className={`hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-700 transition-all duration-200 rounded-xl mb-1 ${
-                          location.pathname === item.url ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold shadow-md' : ''
-                        }`}
+                        className={`hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-700 transition-all duration-200 rounded-xl mb-1 ${location.pathname === item.url ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold shadow-md' : ''
+                          }`}
                       >
                         <Link to={item.url} className="flex items-center gap-3 px-3 py-2.5">
                           <item.icon className="w-4 h-4" />
@@ -283,7 +283,7 @@ function InnerLayout({ children, currentPageName }) {
                 </div>
               </div>
             </header>
-            
+
             <main className="flex-1 overflow-y-auto bg-gray-50">
               {children}
             </main>

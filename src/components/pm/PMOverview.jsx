@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { PMClient, PMStrategy, PMInvoice, PMTradeOrder } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, Users, DollarSign, Activity, Target, BarChart3 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
@@ -26,16 +26,16 @@ export default function PMOverview({ pmProfile }) {
   const loadOverviewData = async () => {
     try {
       const [clients, strategies, invoices, orders] = await Promise.all([
-        base44.entities.PMClient.filter({ pm_id: pmProfile.id, status: 'active' }),
-        base44.entities.PMStrategy.filter({ pm_id: pmProfile.id }),
-        base44.entities.PMInvoice.filter({ pm_id: pmProfile.id, status: 'paid' }),
-        base44.entities.PMTradeOrder.filter({ pm_id: pmProfile.id, status: 'pending' })
+        PMClient.filter({ pm_id: pmProfile.id, status: 'active' }),
+        PMStrategy.filter({ pm_id: pmProfile.id }),
+        PMInvoice.filter({ pm_id: pmProfile.id, status: 'paid' }),
+        PMTradeOrder.filter({ pm_id: pmProfile.id, status: 'pending' })
       ]);
 
       const totalAUM = clients.reduce((sum, c) => sum + (c.current_value || 0), 0);
       const totalRevenue = invoices.reduce((sum, i) => sum + (i.total_amount || 0), 0);
-      const avgReturn = clients.length > 0 
-        ? clients.reduce((sum, c) => sum + ((c.unrealized_pnl / c.invested_amount) * 100 || 0), 0) / clients.length 
+      const avgReturn = clients.length > 0
+        ? clients.reduce((sum, c) => sum + ((c.unrealized_pnl / c.invested_amount) * 100 || 0), 0) / clients.length
         : 0;
 
       setStats({

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { EventAttendee, EventTicket } from '@/lib/apiClient';
 import {
   Dialog,
   DialogContent,
@@ -28,9 +28,9 @@ export default function EventRSVPModal({ event, open, onClose }) {
     try {
       setIsLoading(true);
       const [attendeesData, ticketsData] = await Promise.all([
-        base44.entities.EventAttendee.filter({ event_id: event.id }),
-        event.is_premium && event.ticket_price > 0 
-          ? base44.entities.EventTicket.filter({ event_id: event.id, status: 'active' })
+        EventAttendee.filter({ event_id: event.id }),
+        event.is_premium && event.ticket_price > 0
+          ? EventTicket.filter({ event_id: event.id, status: 'active' })
           : Promise.resolve([])
       ]);
 
@@ -78,7 +78,7 @@ export default function EventRSVPModal({ event, open, onClose }) {
     a.download = `${event.title.replace(/[^a-z0-9]/gi, '_')}_attendees.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
-    
+
     toast.success('CSV exported successfully');
   };
 
@@ -134,8 +134,8 @@ export default function EventRSVPModal({ event, open, onClose }) {
             {/* Export Button */}
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold text-slate-900">RSVP List</h3>
-              <Button 
-                onClick={exportCSV} 
+              <Button
+                onClick={exportCSV}
                 variant="outline"
                 className="bg-slate-900 text-white hover:bg-slate-800"
               >
@@ -185,8 +185,8 @@ export default function EventRSVPModal({ event, open, onClose }) {
                         <td className="px-4 py-3">
                           <Badge className={
                             attendee.rsvp_status === 'yes' ? 'bg-green-100 text-green-800' :
-                            attendee.rsvp_status === 'maybe' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-red-100 text-red-800'
+                              attendee.rsvp_status === 'maybe' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-red-100 text-red-800'
                           }>
                             {attendee.rsvp_status.toUpperCase()}
                           </Badge>

@@ -10,18 +10,30 @@ export function useChatRoom(roomId, user) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [readReceipts, setReadReceipts] = useState([]);
-  
+
   // WebSocket connection
   const ws = useWebSocket(roomId, user, {
     onNewMessage: (message) => {
       setAllMessages(prev => {
-        // Avoid duplicates
+        // Avoid duplicates by ID
         if (prev.find(m => m.id === message.id)) return prev;
-        return [...prev, message];
+
+        // Remove matching optimistic message (same content/user) to prevent visual dup
+        const cleanPrev = prev.filter(m => {
+          if (!m.isOptimistic) return true;
+          // Loose match: content and user must match.
+          // Note: might be risky if user spams same msg rapidly, but acceptable.
+          if (m.content === message.content && (m.user_id === message.user_id || m.created_by === message.created_by)) {
+            return false;
+          }
+          return true;
+        });
+
+        return [...cleanPrev, message];
       });
     },
     onMessageUpdated: (message) => {
-      setAllMessages(prev => prev.map(m => 
+      setAllMessages(prev => prev.map(m =>
         m.id === message.id ? { ...m, ...message } : m
       ));
     },
@@ -50,27 +62,27 @@ export function useChatRoom(roomId, user) {
   // Load initial room data
   const loadRoomData = useCallback(async () => {
     if (!roomId) return;
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const [roomData, messagesData, usersData, receiptsData] = await Promise.all([
         ChatRoom.get(roomId).catch(() => null),
         Message.filter({ chat_room_id: roomId }, 'created_date', 100).catch(() => []),
         User.list().catch(() => []),
-        MessageReadReceipt.filter({ chat_room_id: roomId }).catch(() => [])
+        // MessageReadReceipt.filter({ chat_room_id: roomId }).catch(() => []) // Disabled: Schema mismatch (no chat_room_id)
       ]);
-      
+
       if (!roomData) {
         setError('Room not found');
         return;
       }
-      
+
       setRoom(roomData);
       setAllMessages(messagesData);
       setReadReceipts(receiptsData || []);
-      
+
       // Create users lookup map
       const usersMap = usersData.reduce((acc, u) => {
         acc[u.email || u.id] = u;
@@ -78,7 +90,7 @@ export function useChatRoom(roomId, user) {
         return acc;
       }, {});
       setUsers(usersMap);
-      
+
     } catch (err) {
       console.error('Failed to load room data:', err);
       setError('Failed to load chat room');
@@ -91,18 +103,18 @@ export function useChatRoom(roomId, user) {
   const messages = useMemo(() => {
     // Combine and deduplicate
     const messageMap = new Map();
-    
+
     allMessages.forEach(msg => {
       messageMap.set(msg.id, msg);
     });
-    
+
     ws.messages.forEach(msg => {
       if (msg.id) {
         messageMap.set(msg.id, { ...messageMap.get(msg.id), ...msg });
       }
     });
-    
-    return Array.from(messageMap.values()).sort((a, b) => 
+
+    return Array.from(messageMap.values()).sort((a, b) =>
       new Date(a.created_date || a.created_at) - new Date(b.created_date || b.created_at)
     );
   }, [allMessages, ws.messages]);
@@ -121,12 +133,40 @@ export function useChatRoom(roomId, user) {
 
   // Get user for a message
   const getUserForMessage = useCallback((message) => {
-    if (message.is_bot) {
-      return { display_name: 'AI Assistant', profile_color: '#6366F1', is_bot: true };
+    // Robust bot check: backend might not persist is_bot, so check message_type
+    if (message.is_bot || message.message_type === 'bot_insight' || message.user_id === 'bot') {
+      return { display_name: 'AI Assistant', profile_color: '#6366F1', is_bot: true, profile_image: null };
     }
-    
+
     const userId = message.user_id || message.created_by;
-    return users[userId] || {
+
+    // First try global users list
+    if (users[userId]) {
+      const u = users[userId];
+      return {
+        ...u,
+        display_name: u.display_name || u.name || 'Unknown',
+        profile_color: u.profile_color || '#6B7280'
+      };
+    }
+
+    // Fallback to message embedded user data if available
+    // Backend returns 'User' (Sequelize default) or 'user'
+    const fullUser = message.User || message.user || message.sender;
+    console.log("fullUser", fullUser);
+
+    if (fullUser) {
+      return {
+        ...fullUser,
+        display_name: fullUser.display_name || fullUser.name || message.created_by?.split('@')[0] || 'Unknown',
+        profile_color: fullUser.profile_color || '#6B7280',
+        trust_score: fullUser.trust_score,
+        profile_image: fullUser.profile_image_url
+      };
+    }
+
+    // Final fallback
+    return {
       display_name: message.created_by?.split('@')[0] || 'Unknown',
       profile_color: '#6B7280'
     };
@@ -135,7 +175,7 @@ export function useChatRoom(roomId, user) {
   // Send a chat message (with API fallback)
   const sendMessage = useCallback(async (content, metadata = {}) => {
     if (!content.trim() && !metadata.file_url) return;
-    
+
     // Optimistic message
     const tempId = `temp_${Date.now()}`;
     const optimisticMessage = {
@@ -148,15 +188,16 @@ export function useChatRoom(roomId, user) {
       isOptimistic: true,
       ...metadata
     };
-    
+
     setAllMessages(prev => [...prev, optimisticMessage]);
-    
+
     // Try WebSocket first
     if (ws.isConnected) {
       ws.sendMessage(content, metadata);
+      return; // Skip API call if WS is connected (backend handles creation)
     }
-    
-    // Always persist via API
+
+    // Fallback: Persist via API if WS offline
     try {
       const createdMessage = await Message.create({
         chat_room_id: roomId,
@@ -165,12 +206,12 @@ export function useChatRoom(roomId, user) {
         content,
         ...metadata
       });
-      
+
       // Replace optimistic message with real one
-      setAllMessages(prev => prev.map(m => 
+      setAllMessages(prev => prev.map(m =>
         m.id === tempId ? createdMessage : m
       ));
-      
+
       return createdMessage;
     } catch (err) {
       console.error('Failed to send message:', err);
@@ -184,20 +225,20 @@ export function useChatRoom(roomId, user) {
   // Edit a message
   const editMessage = useCallback(async (messageId, newContent) => {
     try {
-      const updated = await Message.update(messageId, { 
+      const updated = await Message.update(messageId, {
         content: newContent,
         is_edited: true,
         edited_at: new Date().toISOString()
       });
-      
-      setAllMessages(prev => prev.map(m => 
+
+      setAllMessages(prev => prev.map(m =>
         m.id === messageId ? { ...m, ...updated } : m
       ));
-      
+
       if (ws.isConnected) {
         ws.editMessage(messageId, newContent);
       }
-      
+
       return updated;
     } catch (err) {
       console.error('Failed to edit message:', err);
@@ -210,9 +251,9 @@ export function useChatRoom(roomId, user) {
   const deleteMessage = useCallback(async (messageId) => {
     try {
       await Message.delete(messageId);
-      
+
       setAllMessages(prev => prev.filter(m => m.id !== messageId));
-      
+
       if (ws.isConnected) {
         ws.deleteMessage(messageId);
       }
@@ -226,15 +267,15 @@ export function useChatRoom(roomId, user) {
   // Pin/unpin a message
   const togglePinMessage = useCallback(async (messageId, isPinned) => {
     try {
-      const updated = await Message.update(messageId, { 
+      const updated = await Message.update(messageId, {
         is_pinned: !isPinned,
         pinned_at: !isPinned ? new Date().toISOString() : null
       });
-      
-      setAllMessages(prev => prev.map(m => 
+
+      setAllMessages(prev => prev.map(m =>
         m.id === messageId ? { ...m, ...updated } : m
       ));
-      
+
       if (ws.isConnected) {
         if (!isPinned) {
           ws.pinMessage(messageId);
@@ -242,7 +283,7 @@ export function useChatRoom(roomId, user) {
           ws.unpinMessage(messageId);
         }
       }
-      
+
       toast.success(isPinned ? 'Message unpinned' : 'Message pinned');
       return updated;
     } catch (err) {
@@ -257,7 +298,7 @@ export function useChatRoom(roomId, user) {
     if (ws.isConnected) {
       ws.addReaction(messageId, emoji);
     }
-    
+
     // Optimistic update
     setAllMessages(prev => prev.map(m => {
       if (m.id === messageId) {
@@ -271,32 +312,35 @@ export function useChatRoom(roomId, user) {
   // Mark messages as read
   const markMessagesAsRead = useCallback(async () => {
     if (!user || !roomId || messages.length === 0) return;
-    
+
     const lastMessage = messages[messages.length - 1];
     if (!lastMessage) return;
-    
+
+    // Don't mark optimistic messages as read
+    if (String(lastMessage.id).startsWith('temp_')) return;
+
     // Check if already marked
     const alreadyRead = readReceipts.find(
       r => r.user_id === user.id && r.message_id === lastMessage.id
     );
     if (alreadyRead) return;
-    
+
     try {
       // Notify via WebSocket
       if (ws.isConnected) {
         ws.markAsRead(roomId);
       }
-      
+
       // Persist to API
       await MessageReadReceipt.create({
         chat_room_id: roomId,
         message_id: lastMessage.id,
         user_id: user.id,
         read_at: new Date().toISOString()
-      }).catch(() => {});
-      
+      }).catch(() => { });
+
       setReadReceipts(prev => [
-        ...prev, 
+        ...prev,
         { user_id: user.id, message_id: lastMessage.id, read_at: new Date().toISOString() }
       ]);
     } catch (err) {
@@ -325,13 +369,13 @@ export function useChatRoom(roomId, user) {
     isLoading,
     error,
     readReceipts,
-    
+
     // WebSocket state
     isConnected: ws.isConnected,
     typingUsers,
     participants: ws.participants,
     connectionError: ws.connectionError,
-    
+
     // Actions
     sendMessage,
     editMessage,
@@ -341,7 +385,7 @@ export function useChatRoom(roomId, user) {
     startTyping: ws.startTyping,
     stopTyping: ws.stopTyping,
     markAsRead: markMessagesAsRead,
-    
+
     // Utilities
     getUserForMessage,
     refetch: loadRoomData

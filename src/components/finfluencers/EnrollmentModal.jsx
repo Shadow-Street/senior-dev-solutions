@@ -9,12 +9,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { 
-  Shield, 
-  Clock, 
-  Users, 
-  Calendar, 
-  CreditCard, 
+import {
+  Shield,
+  Clock,
+  Users,
+  Calendar,
+  CreditCard,
   CheckCircle,
   Award,
   BookOpen,
@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
-import apiClient from '@/lib/apiClient';
+import { authAPI, CourseEnrollment, RevenueTransaction } from '@/lib/apiClient';
 
 export default function EnrollmentModal({ open, onClose, course, influencer }) {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -31,11 +31,11 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
 
   const handleEnrollment = async () => {
     setIsProcessing(true);
-    
+
     try {
       // Get current user
-      const currentUser = await base44.auth.me();
-      
+      const currentUser = await authAPI.me();
+
       // Check if Razorpay is loaded
       if (typeof window.Razorpay === 'undefined') {
         // Load Razorpay script dynamically
@@ -43,7 +43,7 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
         script.src = 'https://checkout.razorpay.com/v1/checkout.js';
         script.async = true;
         document.body.appendChild(script);
-        
+
         await new Promise((resolve, reject) => {
           script.onload = resolve;
           script.onerror = reject;
@@ -85,10 +85,10 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
             };
 
             // Create course enrollment record
-            await base44.entities.CourseEnrollment.create(enrollmentData);
+            await CourseEnrollment.create(enrollmentData);
 
             // Create revenue transaction record
-            await base44.entities.RevenueTransaction.create({
+            await RevenueTransaction.create({
               influencer_id: influencer.id,
               course_id: course.id,
               user_id: currentUser.id,
@@ -103,7 +103,7 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
             setIsProcessing(false);
             setEnrollmentSuccess(true);
             toast.success('Enrollment successful!');
-            
+
             // Close modal after 2 seconds
             setTimeout(() => {
               setEnrollmentSuccess(false);
@@ -125,7 +125,7 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
           color: '#7c3aed'
         },
         modal: {
-          ondismiss: function() {
+          ondismiss: function () {
             setIsProcessing(false);
             toast.info('Payment cancelled');
           }
@@ -134,7 +134,7 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
 
       const paymentObject = new window.Razorpay(options);
       paymentObject.open();
-      
+
     } catch (error) {
       console.error('Error initiating payment:', error);
       toast.error('Failed to initiate payment. Please try again.');
@@ -196,7 +196,7 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
                 </Badge>
               )}
             </div>
-            
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div className="flex items-center gap-1">
                 <Clock className="w-4 h-4 text-slate-500" />
@@ -283,7 +283,7 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
                 Lifetime Access
               </Badge>
             </div>
-            
+
             <div className="text-xs text-slate-600 space-y-1">
               <p>• Includes all course materials</p>
               <p>• Certificate of completion</p>
@@ -339,8 +339,8 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
           {/* Disclaimer */}
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
             <p className="text-xs text-amber-700">
-              <strong>Disclaimer:</strong> All course content is for educational purposes only. 
-              Past performance does not guarantee future results. Please consult with qualified 
+              <strong>Disclaimer:</strong> All course content is for educational purposes only.
+              Past performance does not guarantee future results. Please consult with qualified
               financial advisors before making investment decisions.
             </p>
           </div>

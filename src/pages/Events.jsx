@@ -12,9 +12,12 @@ import {
   List,
   Filter,
   Star,
+  Loader2
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { createPageUrl } from '@/utils';
+import { useAuth } from '@/components/context/AuthContext';
+import { Event } from '@/lib/apiClient';
 
 import EventCard from '../components/events/EventCard';
 import EventDetailsModal from '../components/events/EventDetailsModal';
@@ -23,62 +26,10 @@ import CreateEventModal from '../components/events/CreateEventModal';
 import FeaturedEventsSection from '../components/events/FeaturedEventsSection';
 import EventCalendarView from '../components/events/EventCalendarView';
 
-// Sample events - NO DATABASE CALLS
-const sampleEvents = [
-  {
-    id: 'sample-1',
-    title: 'Intro to Stock Trading',
-    description: 'Learn the basics of stock trading, market analysis, and risk management from industry experts.',
-    event_date: new Date(Date.now() + 86400000 * 7).toISOString(),
-    event_time: '10:00 AM',
-    location: 'Online Webinar',
-    organizer_name: 'Trading Academy',
-    image_url: 'https://images.unsplash.com/photo-1621379761921-2321528430b3?w=800&fit=crop',
-    is_premium: false,
-    ticket_price: 0,
-    status: 'scheduled',
-    is_featured: true,
-    average_rating: 4.5,
-    total_reviews: 10,
-  },
-  {
-    id: 'sample-2',
-    title: 'Advanced Options Strategies',
-    description: 'Master complex options strategies for income generation and hedging in volatile markets.',
-    event_date: new Date(Date.now() + 86400000 * 14).toISOString(),
-    event_time: '02:00 PM',
-    location: 'Virtual Classroom',
-    organizer_name: 'Elite Traders',
-    image_url: 'https://images.unsplash.com/photo-1579621970795-87facc2f939d?w=800&fit=crop',
-    is_premium: false,
-    ticket_price: 499,
-    status: 'scheduled',
-    is_featured: true,
-    average_rating: 4.8,
-    total_reviews: 25,
-  },
-  {
-    id: 'sample-3',
-    title: 'Market Analysis Masterclass',
-    description: 'Deep dive into technical and fundamental analysis techniques used by professional traders.',
-    event_date: new Date(Date.now() + 86400000 * 21).toISOString(),
-    event_time: '11:00 AM',
-    location: 'Online Workshop',
-    organizer_name: 'Market Gurus',
-    image_url: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&fit=crop',
-    is_premium: false,
-    ticket_price: 0,
-    status: 'scheduled',
-    is_featured: false,
-    average_rating: 4.2,
-    total_reviews: 8,
-  },
-];
-
 export default function EventsPage() {
-  const [events] = useState(sampleEvents);
-  const user = null; // Guest mode - no authentication
-  const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
+  const [events, setEvents] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showEventDetails, setShowEventDetails] = useState(false);
@@ -92,8 +43,26 @@ export default function EventsPage() {
   const [sortBy, setSortBy] = useState('date');
   const [minRating, setMinRating] = useState(0);
 
+  const fetchEvents = async () => {
+    try {
+      setIsLoading(true);
+      const data = await Event.list('event_date', 100);
+      if (Array.isArray(data)) {
+        setEvents(data);
+      } else {
+        setEvents([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch events:", error);
+      toast.error('Failed to load events');
+      setEvents([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    setIsLoading(false);
+    fetchEvents();
   }, []);
 
   const featuredEvents = events.filter(event =>
@@ -103,7 +72,11 @@ export default function EventsPage() {
   ).slice(0, 6);
 
   const filteredEvents = React.useMemo(() => {
-    let filtered = events.filter(event => ['approved', 'scheduled'].includes(event.status));
+    // Filter out canceled or rejected events unless user is admin
+    let filtered = events.filter(event =>
+      ['approved', 'scheduled', 'completed'].includes(event.status) ||
+      (user?.role === 'admin' || user?.id === event.organizer_id)
+    );
 
     if (searchTerm) {
       filtered = filtered.filter(event =>
@@ -123,7 +96,7 @@ export default function EventsPage() {
 
     if (minRating > 0) {
       filtered = filtered.filter(event =>
-        event.average_rating >= minRating && event.total_reviews > 0
+        (event.average_rating || 0) >= minRating
       );
     }
 
@@ -134,10 +107,12 @@ export default function EventsPage() {
       filtered = filtered.filter(event => new Date(event.event_date) < now || event.status === 'completed');
     }
 
-    return filtered.sort((a, b) =>
-      new Date(a.event_date).getTime() - new Date(b.event_date).getTime()
-    );
-  }, [events, searchTerm, statusFilter, eventTypeFilter, minRating, sortBy]);
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.event_date).getTime();
+      const dateB = new Date(b.event_date).getTime();
+      return statusFilter === 'past' ? dateB - dateA : dateA - dateB;
+    });
+  }, [events, searchTerm, statusFilter, eventTypeFilter, minRating, sortBy, user]);
 
   const handleViewDetails = (event) => {
     setSelectedEvent(event);
@@ -145,7 +120,12 @@ export default function EventsPage() {
   };
 
   const handleTicketPurchase = (event) => {
-    toast.info("Feature demo - ticket purchase requires login");
+    if (!user) {
+      toast.error("Please login to purchase tickets");
+      return;
+    }
+    setSelectedEvent(event);
+    setShowTicketPurchase(true);
   };
 
   const handleUpgradePremium = () => {
@@ -153,7 +133,11 @@ export default function EventsPage() {
   };
 
   const handleCreateEvent = () => {
-    toast.info("Feature demo - event creation requires login");
+    if (!user) {
+      toast.error("Please login to create an event");
+      return;
+    }
+    setShowCreateEvent(true);
   };
 
   return (
@@ -219,11 +203,10 @@ export default function EventsPage() {
               variant={viewMode === 'list' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setViewMode('list')}
-              className={`h-12 px-6 rounded-xl ${
-                viewMode === 'list'
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
-                  : 'bg-white text-gray-700'
-              }`}
+              className={`h-12 px-6 rounded-xl ${viewMode === 'list'
+                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
+                : 'bg-white text-gray-700'
+                }`}
             >
               <List className="w-4 h-4" />
             </Button>
@@ -232,11 +215,10 @@ export default function EventsPage() {
               variant={viewMode === 'calendar' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setViewMode('calendar')}
-              className={`h-12 px-6 rounded-xl ${
-                viewMode === 'calendar'
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
-                  : 'bg-white text-gray-700'
-              }`}
+              className={`h-12 px-6 rounded-xl ${viewMode === 'calendar'
+                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
+                : 'bg-white text-gray-700'
+                }`}
             >
               <CalendarIcon className="w-4 h-4" />
             </Button>
@@ -275,7 +257,7 @@ export default function EventsPage() {
                       onViewDetails={handleViewDetails}
                       onTicketPurchase={handleTicketPurchase}
                       onUpgradePremium={handleUpgradePremium}
-                      onUpdate={() => {}}
+                      onUpdate={() => { }}
                       isLocked={false}
                     />
                   ))}
@@ -302,7 +284,7 @@ export default function EventsPage() {
           onClose={() => setShowEventDetails(false)}
           onTicketPurchase={handleTicketPurchase}
           onUpgradePremium={handleUpgradePremium}
-          onUpdate={() => {}}
+          onUpdate={() => { }}
         />
       )}
 
@@ -311,7 +293,7 @@ export default function EventsPage() {
           event={selectedEvent}
           user={user}
           onClose={() => setShowTicketPurchase(false)}
-          onSuccess={() => {}}
+          onSuccess={() => { }}
         />
       )}
 
@@ -319,7 +301,10 @@ export default function EventsPage() {
         <CreateEventModal
           user={user}
           onClose={() => setShowCreateEvent(false)}
-          onSuccess={() => {}}
+          onSuccess={() => {
+            fetchEvents();
+            setShowCreateEvent(false);
+          }}
         />
       )}
     </div>

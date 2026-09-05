@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { useParams } from 'react-router-dom';
+import { authAPI, Advisor, AdvisorPlan, AdvisorSubscription, AdvisorPost, Review, CommissionTracking, PlatformSetting } from '@/lib/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -46,36 +48,36 @@ export default function AdvisorProfile() {
     const fetchData = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         console.log('🔍 Loading advisor profile for ID:', advisorId);
 
         // Load current user (optional - guest mode allowed)
-        const user = await base44.auth.me().catch(() => {
+        const user = await authAPI.me().catch(() => {
           console.log('👤 Guest mode - no user logged in');
           return null;
         });
-        
+
         if (!isMounted) return;
         setCurrentUser(user);
         console.log('✅ User loaded:', user?.email || 'Guest');
 
         // Load advisor data - CRITICAL
-        const advisorData = await base44.entities.Advisor.get(advisorId);
+        const advisorData = await Advisor.get(advisorId);
         if (!isMounted) return;
-        
+
         if (!advisorData) {
           throw new Error('Advisor not found');
         }
-        
+
         setAdvisor(advisorData);
         console.log('✅ Advisor loaded:', advisorData.display_name);
 
         // Load plans
         try {
-          const advisorPlans = await base44.entities.AdvisorPlan.filter({ 
-            advisor_id: advisorId, 
-            is_active: true 
+          const advisorPlans = await AdvisorPlan.filter({
+            advisor_id: advisorId,
+            is_active: true
           });
           if (isMounted) {
             setPlans(advisorPlans || []);
@@ -88,14 +90,15 @@ export default function AdvisorProfile() {
 
         // Load reviews
         try {
-          const advisorReviews = await base44.entities.AdvisorReview.filter({ 
-            advisor_id: advisorId, 
-            status: 'approved' 
+          const advisorReviews = await Review.filter({
+            entity_type: 'advisor',
+            entity_id: advisorId,
+            status: 'approved'
           }, '-created_date');
-          
+
           if (isMounted) {
             setReviews(advisorReviews || []);
-            
+
             if (advisorReviews && advisorReviews.length > 0) {
               const avgRating = advisorReviews.reduce((sum, review) => sum + review.rating, 0) / advisorReviews.length;
               setAverageRating(Math.round(avgRating * 10) / 10);
@@ -118,12 +121,12 @@ export default function AdvisorProfile() {
         // Only load user-specific data if logged in
         if (user) {
           try {
-            const userSub = await base44.entities.AdvisorSubscription.filter({ 
-              user_id: user.id, 
-              advisor_id: advisorId, 
-              status: 'active' 
+            const userSub = await AdvisorSubscription.filter({
+              user_id: user.id,
+              advisor_id: advisorId,
+              status: 'active'
             }, '', 1);
-            
+
             if (isMounted) {
               if (userSub && userSub.length > 0) {
                 setSubscription(userSub[0]);
@@ -131,24 +134,24 @@ export default function AdvisorProfile() {
 
                 // Load posts for subscribed users
                 try {
-                  const allPosts = await base44.entities.AdvisorPost.filter({ 
-                    advisor_id: advisorId, 
-                    status: 'published' 
+                  const allPosts = await AdvisorPost.filter({
+                    advisor_id: advisorId,
+                    status: 'published'
                   }, '-created_date', 50);
-                  
+
                   if (isMounted && allPosts) {
                     const userPlanId = userSub[0].plan_id;
                     const userPlan = plans.find(p => p.id === userPlanId);
-                    
+
                     const accessiblePosts = allPosts.filter(post => {
                       if (!post.required_plan_id) return true;
                       if (post.required_plan_id === userPlanId) return true;
-                      
+
                       const postPlan = plans.find(p => p.id === post.required_plan_id);
                       if (userPlan && postPlan && userPlan.price >= postPlan.price) {
                         return true;
                       }
-                      
+
                       return false;
                     });
 
@@ -163,11 +166,12 @@ export default function AdvisorProfile() {
 
               // Check if user has already reviewed
               try {
-                const existingReview = await base44.entities.AdvisorReview.filter({ 
-                  user_id: user.id, 
-                  advisor_id: advisorId 
+                const existingReview = await Review.filter({
+                  user_id: user.id,
+                  entity_type: 'advisor',
+                  entity_id: advisorId
                 }, '', 1);
-                
+
                 if (isMounted && existingReview && existingReview.length > 0) {
                   setUserReview(existingReview[0]);
                 }
@@ -218,7 +222,7 @@ export default function AdvisorProfile() {
 
   const handlePaymentSuccess = async (plan, paymentInfo) => {
     console.log('💳 Payment success:', { plan: plan.name, paymentInfo });
-    
+
     if (!currentUser || !advisor) {
       toast.error("User or advisor information missing");
       return;
@@ -231,8 +235,8 @@ export default function AdvisorProfile() {
     }
 
     try {
-      const settings = await base44.entities.PlatformSetting.filter({ 
-        setting_key: 'global_commission_rate' 
+      const settings = await PlatformSetting.filter({
+        setting_key: 'global_commission_rate'
       });
       const commissionRate = settings.length > 0 ? parseFloat(settings[0].setting_value) : 20;
 
@@ -248,14 +252,14 @@ export default function AdvisorProfile() {
         engagement_score: 0,
         notifications_enabled: true
       };
-      
-      const newSubscription = await base44.entities.AdvisorSubscription.create(subData);
+
+      const newSubscription = await AdvisorSubscription.create(subData);
       setSubscription(newSubscription);
 
       const platform_fee = plan.price * (commissionRate / 100);
       const advisor_payout = plan.price - platform_fee;
-      
-      await base44.entities.CommissionTracking.create({
+
+      await CommissionTracking.create({
         subscription_id: newSubscription.id,
         advisor_id: advisor.id,
         user_id: currentUser.id,
@@ -266,30 +270,30 @@ export default function AdvisorProfile() {
         transaction_date: new Date().toISOString()
       });
 
-      await base44.entities.Advisor.update(advisor.id, { 
-        follower_count: (advisor.follower_count || 0) + 1 
+      await Advisor.update(advisor.id, {
+        follower_count: (advisor.follower_count || 0) + 1
       });
-      
-      const allPosts = await base44.entities.AdvisorPost.filter({ 
-        advisor_id: advisorId, 
-        status: 'published' 
+
+      const allPosts = await AdvisorPost.filter({
+        advisor_id: advisorId,
+        status: 'published'
       }, '-created_date', 50);
-      
+
       const accessiblePosts = allPosts.filter(post => {
         if (!post.required_plan_id) return true;
         if (post.required_plan_id === plan.id) return true;
-        
+
         const postPlan = plans.find(p => p.id === post.required_plan_id);
         if (postPlan && plan.price >= postPlan.price) {
           return true;
         }
-        
+
         return false;
       });
-      
+
       setPosts(accessiblePosts);
 
-      toast.success(`You are now subscribed to ${advisor.display_name}!`);
+      toast.success(`You are now subscribed to ${advisor.display_name} !`);
     } catch (error) {
       console.error("❌ Subscription processing failed:", error);
       toast.error("An error occurred during subscription. Please contact support.");
@@ -304,27 +308,29 @@ export default function AdvisorProfile() {
 
     try {
       if (userReview) {
-        await base44.entities.AdvisorReview.update(userReview.id, { 
-          rating, 
-          review: reviewText 
+        await Review.update(userReview.id, {
+          rating,
+          content: reviewText
         });
         setUserReview({ ...userReview, rating, review: reviewText });
         toast.success("Review updated successfully!");
       } else {
-        const newReview = await base44.entities.AdvisorReview.create({
-          advisor_id: advisor.id,
+        const newReview = await Review.create({
+          entity_type: 'advisor',
+          entity_id: advisor.id,
           user_id: currentUser.id,
           rating,
-          review: reviewText,
+          content: reviewText,
           status: 'approved'
         });
         setUserReview(newReview);
         toast.success("Review submitted successfully!");
       }
 
-      const updatedReviews = await base44.entities.AdvisorReview.filter({ 
-        advisor_id: advisorId, 
-        status: 'approved' 
+      const updatedReviews = await Review.filter({
+        entity_type: 'advisor',
+        entity_id: advisorId,
+        status: 'approved'
       }, '-created_date');
       setReviews(updatedReviews);
 
@@ -358,18 +364,17 @@ export default function AdvisorProfile() {
         </Badge>
       );
     }
-    
+
     const plan = plans.find(p => p.id === postPlanId);
     if (!plan) return null;
-    
+
     const isHighTier = plan.price >= 2000;
-    
+
     return (
-      <Badge className={`text-xs flex items-center gap-1 ${
-        isHighTier 
-          ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white' 
-          : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
-      }`}>
+      <Badge className={`text - xs flex items - center gap - 1 ${isHighTier
+        ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white'
+        : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
+        } `}>
         {isHighTier ? <Crown className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
         {plan.name} Exclusive
       </Badge>
@@ -378,19 +383,19 @@ export default function AdvisorProfile() {
 
   const getRecommendationBadge = (post) => {
     if (!post.recommendation_status || post.recommendation_status === 'active') return null;
-    
+
     const config = {
       target_hit: { color: 'bg-green-100 text-green-800 border-green-300', label: '🎯 Target Hit', icon: '✅' },
       stop_loss_hit: { color: 'bg-red-100 text-red-800 border-red-300', label: '⚠️ Stop Loss', icon: '🛑' },
       expired: { color: 'bg-gray-100 text-gray-800 border-gray-300', label: 'Expired', icon: '⏰' },
       closed: { color: 'bg-blue-100 text-blue-800 border-blue-300', label: 'Closed', icon: '✓' }
     };
-    
+
     const status = config[post.recommendation_status];
     if (!status) return null;
-    
+
     return (
-      <Badge className={`${status.color} border text-xs font-semibold`}>
+      <Badge className={`${status.color} border text - xs font - semibold`}>
         {status.label}
         {post.return_percentage && (
           <span className="ml-1">({post.return_percentage > 0 ? '+' : ''}{post.return_percentage.toFixed(1)}%)</span>
@@ -524,11 +529,11 @@ export default function AdvisorProfile() {
                   ))}
                 </div>
               </div>
-            </div>
-          </Card>
+            </div >
+          </Card >
 
           {/* SUBSCRIPTION PLANS - NEW DESIGN */}
-          <Card className="rounded-xl shadow-lg">
+          < Card className="rounded-xl shadow-lg" >
             <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
               <CardTitle className="text-2xl">Choose Your Plan</CardTitle>
               <p className="text-sm text-slate-600 mt-1">
@@ -540,20 +545,19 @@ export default function AdvisorProfile() {
                 <div className="grid md:grid-cols-3 gap-6">
                   {plans.map((plan) => {
                     const activeSubs = 0; // You can calculate this if needed
-                    
+
                     return (
-                      <Card key={plan.id} className={`relative overflow-hidden hover:shadow-2xl transition-all duration-300 ${
-                        plan.is_active ? 'border-2 border-purple-200' : 'border-2 border-gray-200 opacity-75'
-                      }`}>
+                      <Card key={plan.id} className={`relative overflow-hidden hover:shadow-2xl transition-all duration-300 ${plan.is_active ? 'border-2 border-purple-200' : 'border-2 border-gray-200 opacity-75'
+                        }`}>
                         <div className={`p-6 text-center bg-gradient-to-br ${getPlanColor(plan.name)}`}>
                           <div className="text-4xl mb-2">
                             {getPlanIcon(plan.name)}
                           </div>
-                          
+
                           <h3 className="text-2xl font-bold text-white mb-3 tracking-wide">
                             {plan.name}
                           </h3>
-                          
+
                           <div className="flex items-baseline justify-center gap-1">
                             <span className="text-4xl font-bold text-white">₹{plan.price?.toLocaleString() || 0}</span>
                             <span className="text-white/90 text-sm font-medium">/ {plan.billing_interval}</span>
@@ -612,10 +616,10 @@ export default function AdvisorProfile() {
                 </div>
               )}
             </CardContent>
-          </Card>
+          </Card >
 
           {/* ADVISORY POSTS */}
-          <Card className="rounded-xl shadow-lg">
+          < Card className="rounded-xl shadow-lg" >
             <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 border-b">
               <CardTitle>Recent Advisory Posts</CardTitle>
             </CardHeader>
@@ -637,9 +641,9 @@ export default function AdvisorProfile() {
                             )}
                           </div>
                         </div>
-                        
+
                         {getRecommendationBadge(post)}
-                        
+
                         <p className="text-sm text-slate-600 mt-2 mb-3">{post.content}</p>
                         <div className="flex items-center gap-3 flex-wrap">
                           {post.stock_symbol && (
@@ -650,8 +654,8 @@ export default function AdvisorProfile() {
                           {post.recommendation_type && (
                             <Badge className={
                               post.recommendation_type === 'buy' ? 'bg-green-100 text-green-800' :
-                              post.recommendation_type === 'sell' ? 'bg-red-100 text-red-800' :
-                              'bg-yellow-100 text-yellow-800'
+                                post.recommendation_type === 'sell' ? 'bg-red-100 text-red-800' :
+                                  'bg-yellow-100 text-yellow-800'
                             }>
                               {post.recommendation_type.toUpperCase()}
                             </Badge>
@@ -686,10 +690,10 @@ export default function AdvisorProfile() {
                 </div>
               )}
             </CardContent>
-          </Card>
+          </Card >
 
           {/* REVIEWS AT BOTTOM */}
-          <Card className="rounded-xl shadow-lg">
+          < Card className="rounded-xl shadow-lg" >
             <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 border-b">
               <CardTitle className="flex items-center gap-2">
                 <Star className="w-5 h-5 text-yellow-500" />
@@ -741,8 +745,8 @@ export default function AdvisorProfile() {
               {/* Review List */}
               <ReviewSection reviews={reviews} />
             </CardContent>
-          </Card>
-        </div>
+          </Card >
+        </div >
 
         <PaymentModal
           open={showPaymentModal}
@@ -750,7 +754,7 @@ export default function AdvisorProfile() {
           plan={selectedPlan}
           onPaymentSuccess={handlePaymentSuccess}
         />
-      </div>
-    </ErrorBoundary>
+      </div >
+    </ErrorBoundary >
   );
 }
