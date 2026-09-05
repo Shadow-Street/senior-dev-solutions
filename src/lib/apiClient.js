@@ -158,7 +158,19 @@ export const FundPayoutRequest = createEntityAPI('/funds/payouts');
 export const FundInvoice = createEntityAPI('/funds/invoices');
 
 // User & Profile Management
-export const User = createEntityAPI('/users');
+export const User = {
+  ...createEntityAPI('/users'),
+  async me() {
+    return authAPI.me();
+  },
+  async updateMyUserData(updates) {
+    const response = await apiClient.put('/users/me', updates);
+    return response.data;
+  },
+  async logout() {
+    authAPI.logout();
+  }
+};
 export const TrustScoreLog = createEntityAPI('/users/trust-score-logs');
 export const Advisor = createEntityAPI('/users/advisors');
 export const UserInvestment = createEntityAPI('/users/investments');
@@ -316,6 +328,28 @@ export const AnalyticsEvent = createEntityAPI('/analytics/events');
 // Expenses & Financials
 export const Expense = createEntityAPI('/expenses');
 export const Income = createEntityAPI('/income');
+export const FinancialAuditLog = createEntityAPI('/financials/audit-logs');
+
+// Announcements
+export const Announcement = createEntityAPI('/announcements');
+
+// Tickets
+export const Ticket = createEntityAPI('/tickets');
+
+// Alerts
+export const AlertLog = createEntityAPI('/alerts/logs');
+
+// Room Management
+export const RoomSubscription = createEntityAPI('/chatrooms/subscriptions');
+export const ChatRoomInvite = createEntityAPI('/chatrooms/invites');
+export const ChatRoomSchedule = createEntityAPI('/chatrooms/schedules');
+export const VIPCustomization = createEntityAPI('/vip/customizations');
+
+// Investment Allocation
+export const InvestmentAllocation = createEntityAPI('/investments/allocations');
+
+// Educators
+export const Educator = createEntityAPI('/educators');
 
 // Feature Configuration
 export const FeatureConfig = {
