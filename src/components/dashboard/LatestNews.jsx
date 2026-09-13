@@ -29,51 +29,51 @@ export default function LatestNews() {
 
   const getSentimentIcon = (sentiment) => {
     switch (sentiment) {
-      case 'positive': return <TrendingUp className="w-3 h-3 text-green-500" />;
-      case 'negative': return <TrendingDown className="w-3 h-3 text-red-500" />;
-      default: return <Clock className="w-3 h-3 text-slate-500" />;
+      case 'positive': return <TrendingUp className="w-3 h-3 text-positive" />;
+      case 'negative': return <TrendingDown className="w-3 h-3 text-sell" />;
+      default: return <Clock className="w-3 h-3 text-muted-foreground" />;
     }
   };
 
   const getSentimentColor = (sentiment) => {
     switch (sentiment) {
-      case 'positive': return 'bg-green-100 text-green-800 border-green-200';
-      case 'negative': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-slate-100 text-slate-800 border-slate-200';
+      case 'positive': return 'bg-buy text-buy-foreground border-transparent';
+      case 'negative': return 'bg-sell-muted text-sell-muted-foreground border-sell/30';
+      default: return 'bg-surface-2 text-subtle border-divider';
     }
   };
 
   const getCategoryColor = (category) => {
     switch (category) {
-      case 'earnings': return 'bg-blue-100 text-blue-800';
-      case 'regulation': return 'bg-purple-100 text-purple-800';
-      case 'sector': return 'bg-orange-100 text-orange-800';
-      case 'market': return 'bg-green-100 text-green-800';
-      default: return 'bg-slate-100 text-slate-800';
+      case 'earnings': return 'bg-premium-muted text-premium-muted-foreground';
+      case 'regulation': return 'bg-surface-2 text-subtle';
+      case 'sector': return 'bg-premium-light/40 text-premium-muted-foreground';
+      case 'market': return 'bg-premium-muted text-primary';
+      default: return 'bg-surface-2 text-subtle';
     }
   };
 
   if (loading) {
     return (
-      <Card className="shadow-lg border-0 bg-white h-full flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+      <Card className="shadow-lg border border-border bg-card h-full flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </Card>
     );
   }
 
   return (
-    <Card className="shadow-lg border-0 bg-white">
-      <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
-        <CardTitle className="flex items-center gap-2 text-slate-900">
-          <Newspaper className="w-5 h-5 text-blue-600" />
+    <Card className="shadow-lg border border-border bg-card">
+      <CardHeader className="border-b border-divider bg-surface-2">
+        <CardTitle className="flex items-center gap-2 text-foreground">
+          <Newspaper className="w-5 h-5 text-protocall-blue" />
           Latest Market News
         </CardTitle>
-        <p className="text-sm text-slate-600">Stay updated with breaking market news and analysis</p>
+        <p className="text-sm text-subtle">Stay updated with breaking market news and analysis</p>
       </CardHeader>
       <CardContent className="p-6">
         <div className="space-y-4">
           {news.map((item, index) => (
-            <div key={index} className="flex gap-4 p-3 rounded-xl border bg-gradient-to-br from-white to-slate-50 hover:shadow-lg transition-all duration-200 cursor-pointer">
+            <div key={index} className="flex gap-4 p-3 rounded-xl border border-divider bg-surface-2 hover:shadow-lg transition-all duration-200 cursor-pointer">
               {/* Image */}
               <div className="flex-shrink-0">
                 <img
@@ -88,7 +88,7 @@ export default function LatestNews() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex-1">
-                    <h4 className="font-semibold text-sm text-slate-900 line-clamp-2">{item.title}</h4>
+                    <h4 className="font-semibold text-sm text-foreground line-clamp-2">{item.title}</h4>
                   </div>
                   <div className="flex items-center gap-1">
                     {/* Sentiment logic is loose here as API might not return it, default to neutral */}
@@ -96,13 +96,13 @@ export default function LatestNews() {
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-600 mb-2 line-clamp-2">{item.summary}</p>
+                <p className="text-xs text-subtle mb-2 line-clamp-2">{item.summary}</p>
 
                 <div className="flex flex-wrap items-center gap-2 mb-2">
                   <Badge variant="outline" className={`text-xs ${getCategoryColor(item.category || 'market')}`}>
                     {item.category || 'Market'}
                   </Badge>
-                  <div className="flex items-center justify-between text-xs text-slate-500 ml-auto">
+                  <div className="flex items-center justify-between text-xs text-subtle ml-auto">
                     <span className="font-medium mr-2">{item.source || 'Unknown'}</span>
                     <div className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
@@ -114,7 +114,7 @@ export default function LatestNews() {
             </div>
           ))}
           {news.length === 0 && (
-            <div className="text-center text-slate-500 py-8">
+            <div className="text-center text-muted-foreground py-8">
               No news available at the moment.
             </div>
           )}
@@ -122,7 +122,7 @@ export default function LatestNews() {
 
         <div className="mt-4 text-center">
           <Link to={createPageUrl("News")}>
-            <Button className="btn-primary">
+            <Button>
               <ExternalLink className="w-4 h-4 mr-2" />
               View All News
             </Button>

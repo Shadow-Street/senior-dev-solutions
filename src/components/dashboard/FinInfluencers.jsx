@@ -64,18 +64,18 @@ export default function FinInfluencers() {
   ];
 
   return (
-    <Card className="shadow-lg border-0 bg-white">
-      <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-purple-50">
-        <CardTitle className="flex items-center gap-2 text-slate-900">
-          <Star className="w-5 h-5 text-purple-600" />
+    <Card className="shadow-lg border border-border bg-card">
+      <CardHeader className="border-b border-divider bg-surface-2">
+        <CardTitle className="flex items-center gap-2 text-foreground">
+          <Star className="w-5 h-5 text-primary" />
           FinInfluencers
         </CardTitle>
-        <p className="text-sm text-slate-600">Expert market insights from verified influencers</p>
+        <p className="text-sm text-subtle">Expert market insights from verified influencers</p>
       </CardHeader>
       <CardContent className="p-6">
         <div className="space-y-4">
           {sampleInfluencers.map(influencer => (
-            <div key={influencer.id} className="flex gap-4 p-4 rounded-xl border bg-gradient-to-br from-white to-slate-50 hover:shadow-lg transition-all duration-200">
+            <div key={influencer.id} className="flex gap-4 p-4 rounded-xl border border-divider bg-surface-2 hover:shadow-lg transition-all duration-200">
               {/* Profile Section */}
               <div className="flex-shrink-0">
                 <div className="relative">
@@ -85,7 +85,7 @@ export default function FinInfluencers() {
                     className="w-12 h-12 rounded-full object-cover"
                   />
                   {influencer.verified && (
-                    <CheckCircle className="w-4 h-4 text-blue-500 absolute -bottom-1 -right-1 bg-white rounded-full" />
+                    <CheckCircle className="w-4 h-4 text-protocall-blue absolute -bottom-1 -right-1 bg-card rounded-full" />
                   )}
                 </div>
               </div>
@@ -94,8 +94,8 @@ export default function FinInfluencers() {
               <div className="flex-1 min-w-0">
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
                   <div>
-                    <h4 className="font-semibold text-slate-900">{influencer.display_name}</h4>
-                    <p className="text-xs text-slate-600 mb-2">{influencer.bio}</p>
+                    <h4 className="font-semibold text-foreground">{influencer.display_name}</h4>
+                    <p className="text-xs text-subtle mb-2">{influencer.bio}</p>
                     
                     <div className="flex flex-wrap gap-2 mb-2">
                       {influencer.specialization.map(spec => (
@@ -105,7 +105,7 @@ export default function FinInfluencers() {
                       ))}
                     </div>
 
-                    <div className="flex items-center gap-4 text-xs text-slate-500">
+                    <div className="flex items-center gap-4 text-xs text-subtle">
                       <div className="flex items-center gap-1">
                         <Users className="w-3 h-3" />
                         <span>{(influencer.follower_count / 1000).toFixed(0)}K followers</span>
@@ -119,7 +119,7 @@ export default function FinInfluencers() {
                 </div>
 
                 {/* Latest Post */}
-                <div className="mt-3 p-2 bg-slate-50 rounded-lg">
+                <div className="mt-3 p-2 bg-card border border-divider rounded-lg">
                   <div className="flex gap-3">
                     <div className="relative flex-shrink-0">
                       <img
@@ -132,8 +132,8 @@ export default function FinInfluencers() {
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h5 className="text-sm font-medium text-slate-900 truncate">{influencer.latest_post.title}</h5>
-                      <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
+                      <h5 className="text-sm font-medium text-foreground truncate">{influencer.latest_post.title}</h5>
+                      <div className="flex items-center gap-3 text-xs text-subtle mt-1">
                         <div className="flex items-center gap-1">
                           <Eye className="w-3 h-3" />
                           <span>{(influencer.latest_post.view_count / 1000).toFixed(1)}K views</span>
@@ -151,7 +151,7 @@ export default function FinInfluencers() {
 
         <div className="mt-4 text-center">
           <Link to={createPageUrl("Finfluencers")}>
-            <Button className="btn-primary">
+            <Button>
               View All FinInfluencers
             </Button>
           </Link>

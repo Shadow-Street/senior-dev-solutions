@@ -78,18 +78,18 @@ export default function FundManagerLayout({ children, activePage }) {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-purple-50">
+      <div className="flex h-screen items-center justify-center bg-background">
         <Loader2 className="w-12 h-12 animate-spin text-indigo-600" />
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-50 to-purple-50">
+    <div className="flex h-screen bg-background">
       {/* Sidebar */}
-      <aside className="w-72 bg-white border-r border-slate-200 flex flex-col shadow-lg">
+      <aside className="w-72 bg-sidebar text-sidebar-foreground border-r border-sidebar-border flex flex-col shadow-lg">
         {/* Logo Section */}
-        <div className="h-20 flex items-center justify-center border-b border-slate-200 bg-gradient-to-r from-indigo-600 to-purple-600">
+        <div className="h-20 flex items-center justify-center border-b border-sidebar-border bg-sidebar-dark">
           <div className="text-xl font-bold text-white flex items-center gap-2">
             <Shield className="w-7 h-7" />
             Fund Manager
@@ -106,8 +106,8 @@ export default function FundManagerLayout({ children, activePage }) {
                 key={item.path}
                 to={createPageUrl(item.path)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
-                    ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md'
-                    : 'hover:bg-slate-100 text-slate-700 hover:text-indigo-600'
+                    ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-md'
+                    : 'hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground'
                   }`}
               >
                 <Icon className="w-5 h-5" />
@@ -118,19 +118,19 @@ export default function FundManagerLayout({ children, activePage }) {
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-slate-200 space-y-3">
+        <div className="p-4 border-t border-sidebar-border space-y-3">
           <button
             onClick={handleBackToAdmin}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-all"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-sidebar-dark hover:bg-sidebar-accent text-sidebar-foreground rounded-lg transition-all"
           >
             <Home className="w-4 h-4" />
             <span className="text-sm font-medium">Back to Admin Panel</span>
           </button>
 
-          <div className="text-center p-4 bg-slate-50 rounded-lg border border-slate-100">
+          <div className="text-center p-4 bg-sidebar-dark rounded-lg border border-slate-100">
             <Shield className="w-8 h-8 mx-auto text-indigo-600 mb-2" />
-            <h3 className="font-bold text-slate-800">Protocol</h3>
-            <p className="text-xs text-slate-500">Fund Management System</p>
+            <h3 className="font-bold text-sidebar-foreground">Protocol</h3>
+            <p className="text-xs text-sidebar-muted-foreground">Fund Management System</p>
           </div>
         </div>
       </aside>
@@ -138,9 +138,9 @@ export default function FundManagerLayout({ children, activePage }) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Bar */}
-        <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 shadow-sm">
+        <header className="h-20 bg-card border-b border-border flex items-center justify-between px-8 shadow-sm">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Fund Management System</h1>
+            <h1 className="text-2xl font-bold text-foreground">Fund Management System</h1>
             <p className="text-sm text-slate-500">Manage investment funds and investors</p>
           </div>
 
@@ -151,12 +151,12 @@ export default function FundManagerLayout({ children, activePage }) {
                 <button className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-100 transition-all">
                   <Avatar className="w-10 h-10">
                     <AvatarImage src={user?.profile_image_url} alt={user?.display_name} />
-                    <AvatarFallback className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+                    <AvatarFallback className="bg-primary text-primary-foreground">
                       {user?.display_name?.charAt(0) || 'A'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="text-left hidden md:block">
-                    <p className="text-sm font-semibold text-slate-900">{user?.display_name}</p>
+                    <p className="text-sm font-semibold text-foreground">{user?.display_name}</p>
                     <p className="text-xs text-slate-500 uppercase">{user?.app_role}</p>
                   </div>
                   <ChevronDown className="w-4 h-4 text-slate-400" />

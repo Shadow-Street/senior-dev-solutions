@@ -61,40 +61,40 @@ const ReviewCard = ({ review }) => {
   const platformColor = review.social_platform ? platformColors[review.social_platform] : '';
   
   return (
-    <Card className="w-[350px] h-[180px] flex-shrink-0 bg-gradient-to-r from-blue-50 to-purple-50 border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300 p-5 relative flex flex-col">
+    <Card className="w-[350px] h-[180px] flex-shrink-0 bg-card border border-border shadow-lg hover:shadow-xl transition-shadow duration-300 p-5 relative flex flex-col">
       <div className="flex items-start gap-3 mb-3">
         <img
           src={review.profile_url}
           alt={review.username}
-          className="w-10 h-10 rounded-full border-2 border-purple-300 object-cover flex-shrink-0"
+          className="w-10 h-10 rounded-full border-2 border-protocall-premium-light object-cover flex-shrink-0"
         />
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-sm text-gray-900 truncate">{review.username}</p>
+          <p className="font-semibold text-sm text-foreground truncate">{review.username}</p>
           <div className="flex mt-1">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
                 size={12}
-                className={i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}
+                className={i < review.rating ? 'text-protocall-grape fill-protocall-grape' : 'text-muted-foreground/40'}
               />
             ))}
           </div>
         </div>
         
         {SocialIcon && (
-          <div className={`text-gray-600 transition-colors duration-200 ${platformColor} flex-shrink-0`}>
+          <div className={`text-subtle transition-colors duration-200 ${platformColor} flex-shrink-0`}>
             <SocialIcon size={18} />
           </div>
         )}
       </div>
       
       <div className="flex-1 overflow-hidden">
-        <p className="text-sm text-gray-700 leading-relaxed italic line-clamp-3">
+        <p className="text-sm text-subtle leading-relaxed italic line-clamp-3">
           "{review.review_text}"
         </p>
       </div>
       
-      <div className="absolute bottom-2 right-2 text-purple-200 text-5xl font-serif leading-none pointer-events-none">
+      <div className="absolute bottom-2 right-2 text-protocall-premium-light text-5xl font-serif leading-none pointer-events-none">
         "
       </div>
     </Card>
@@ -107,10 +107,10 @@ export default function ReviewScroller() {
   const duplicatedFirstRow = [...firstRowReviews, ...firstRowReviews, ...firstRowReviews];
 
   return (
-    <div className="w-full py-16 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 overflow-hidden">
+    <div className="w-full py-16 bg-surface-2 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-          <Star className="w-7 h-7 text-yellow-500 fill-yellow-500" />
+        <h2 className="text-3xl font-bold text-foreground flex items-center gap-2">
+          <Star className="w-7 h-7 text-protocall-grape fill-protocall-grape" />
           What Our Members Are Saying
         </h2>
       </div>

@@ -33,21 +33,21 @@ export default function StockHeatmap({ polls, recommendations }) {
   const heatmapData = sampleHeatmapData.map(stock => ({
     ...stock,
     intensity: stock.buy_percentage,
-    color: stock.buy_percentage >= 80 ? 'bg-emerald-600' :
-           stock.buy_percentage >= 60 ? 'bg-green-500' :
-           stock.buy_percentage >= 40 ? 'bg-yellow-500' :
-           stock.buy_percentage >= 20 ? 'bg-orange-500' : 'bg-red-500',
-    textColor: stock.buy_percentage >= 40 ? 'text-white' : 'text-white'
+    color: stock.buy_percentage >= 80 ? 'bg-buy' :
+           stock.buy_percentage >= 60 ? 'bg-buy/70' :
+           stock.buy_percentage >= 40 ? 'bg-hold' :
+           stock.buy_percentage >= 20 ? 'bg-sell/70' : 'bg-protocall-sell-text',
+    textColor: stock.buy_percentage >= 20 ? 'text-protocall-ink' : 'text-white'
   }));
 
   return (
-    <Card className="shadow-lg border-0 bg-white">
-      <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-green-50 pb-4">
-        <CardTitle className="flex items-center gap-2 text-slate-900">
-          <Activity className="w-5 h-5 text-green-600" />
+    <Card className="shadow-lg border border-border bg-card">
+      <CardHeader className="border-b border-divider bg-surface-2 pb-4">
+        <CardTitle className="flex items-center gap-2 text-foreground">
+          <Activity className="w-5 h-5 text-positive" />
           Community Buy Recommendations Heatmap
         </CardTitle>
-        <p className="text-sm text-slate-600">Real-time sentiment analysis • Darker = Stronger buy signal</p>
+        <p className="text-sm text-subtle">Real-time sentiment analysis • Darker = Stronger buy signal</p>
       </CardHeader>
       <CardContent className="p-0 overflow-visible">
         {/* Compact Heatmap Grid - No gaps */}
@@ -71,22 +71,22 @@ export default function StockHeatmap({ polls, recommendations }) {
 
               {/* Hover Tooltip - Now positioned below */}
               <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-[150]">
-                <div className="bg-slate-900 text-white px-3 py-2 rounded-lg shadow-xl text-xs whitespace-nowrap">
+                <div className="bg-protocall-ink text-white px-3 py-2 rounded-lg shadow-xl text-xs whitespace-nowrap">
                   <div className="font-bold mb-1">{stock.company_name}</div>
                   <div className="flex items-center justify-between gap-3 text-[10px]">
-                    <span className="text-slate-300">Price:</span>
+                    <span className="text-protocall-sidebar-muted">Price:</span>
                     <span className="font-semibold">₹{stock.price.toFixed(2)}</span>
                   </div>
                   <div className="flex items-center justify-between gap-3 text-[10px]">
-                    <span className="text-slate-300">Buy Signal:</span>
+                    <span className="text-protocall-sidebar-muted">Buy Signal:</span>
                     <span className="font-semibold">{stock.buy_percentage}%</span>
                   </div>
                   <div className="flex items-center justify-between gap-3 text-[10px]">
-                    <span className="text-slate-300">Votes:</span>
+                    <span className="text-protocall-sidebar-muted">Votes:</span>
                     <span className="font-semibold">{stock.total_votes}</span>
                   </div>
                   {/* Arrow pointing up */}
-                  <div className="absolute left-1/2 -translate-x-1/2 bottom-full w-0 h-0 border-l-4 border-r-4 border-b-4 border-l-transparent border-r-transparent border-b-slate-900"></div>
+                  <div className="absolute left-1/2 -translate-x-1/2 bottom-full w-0 h-0 border-l-4 border-r-4 border-b-4 border-l-transparent border-r-transparent border-b-protocall-ink"></div>
                 </div>
               </div>
             </div>
@@ -94,33 +94,33 @@ export default function StockHeatmap({ polls, recommendations }) {
         </div>
 
         {/* Professional Legend */}
-        <div className="px-6 py-4 bg-gradient-to-r from-slate-50 to-blue-50 border-t">
+        <div className="px-6 py-4 bg-surface-2 border-t border-divider">
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-emerald-600 rounded-sm shadow-sm"></div>
-              <span className="text-xs font-medium text-slate-700">Strong Buy (80%+)</span>
+              <div className="w-4 h-4 bg-buy rounded-sm shadow-sm"></div>
+              <span className="text-xs font-medium text-subtle">Strong Buy (80%+)</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-green-500 rounded-sm shadow-sm"></div>
-              <span className="text-xs font-medium text-slate-700">Buy (60-80%)</span>
+              <div className="w-4 h-4 bg-buy/70 rounded-sm shadow-sm"></div>
+              <span className="text-xs font-medium text-subtle">Buy (60-80%)</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-yellow-500 rounded-sm shadow-sm"></div>
-              <span className="text-xs font-medium text-slate-700">Hold (40-60%)</span>
+              <div className="w-4 h-4 bg-hold rounded-sm shadow-sm"></div>
+              <span className="text-xs font-medium text-subtle">Hold (40-60%)</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-orange-500 rounded-sm shadow-sm"></div>
-              <span className="text-xs font-medium text-slate-700">Weak (20-40%)</span>
+              <div className="w-4 h-4 bg-sell/70 rounded-sm shadow-sm"></div>
+              <span className="text-xs font-medium text-subtle">Weak (20-40%)</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-red-500 rounded-sm shadow-sm"></div>
-              <span className="text-xs font-medium text-slate-700">Sell (0-20%)</span>
+              <div className="w-4 h-4 bg-protocall-sell-text rounded-sm shadow-sm"></div>
+              <span className="text-xs font-medium text-subtle">Sell (0-20%)</span>
             </div>
           </div>
           
           {/* Additional Info */}
           <div className="mt-3 text-center">
-            <p className="text-xs text-slate-500 italic">
+            <p className="text-xs text-muted-foreground italic">
               Hover over any stock to see detailed information • Updated in real-time
             </p>
           </div>

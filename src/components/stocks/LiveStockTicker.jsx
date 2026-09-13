@@ -39,7 +39,7 @@ export default function LiveStockTicker({ className = "" }) {
 
   const PriceChange = ({ change }) => {
     const isPositive = change >= 0;
-    const colorClass = isPositive ? "text-green-600" : "text-red-600";
+    const colorClass = isPositive ? "text-positive" : "text-sell-muted-foreground";
     const Icon = isPositive ? TrendingUp : TrendingDown;
 
     return (
@@ -63,17 +63,17 @@ export default function LiveStockTicker({ className = "" }) {
           }
         `}
       </style>
-      <Card className={`w-full overflow-hidden bg-white shadow-sm border ${className}`}>
+      <Card className={`w-full overflow-hidden bg-card shadow-sm border border-border ${className}`}>
         <CardContent className="p-0">
-          <div className="flex items-center justify-between px-4 py-2 border-b">
+          <div className="flex items-center justify-between px-4 py-2 border-b border-divider">
             <div className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-blue-600" />
-              <h3 className="text-sm font-semibold text-gray-800">Live Market</h3>
-              <Badge variant="outline" className="bg-green-100 text-green-700 border-green-200">
+              <Activity className="w-5 h-5 text-protocall-blue" />
+              <h3 className="text-sm font-semibold text-foreground">Live Market</h3>
+              <Badge variant="outline" className="bg-buy text-buy-foreground border-transparent">
                 Market Open
               </Badge>
             </div>
-            <button onClick={() => setIsPlaying(!isPlaying)} className="text-gray-500 hover:text-gray-800">
+            <button onClick={() => setIsPlaying(!isPlaying)} className="text-muted-foreground hover:text-foreground">
               {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
             </button>
           </div>
@@ -84,10 +84,10 @@ export default function LiveStockTicker({ className = "" }) {
             >
               {stocks.map((stock, index) => (
                 <div key={index} className="flex items-center mx-4 flex-shrink-0">
-                  <span className="font-semibold text-gray-700 text-sm">{stock.symbol}</span>
-                  <span className="ml-2 text-gray-800 text-sm">₹{stock.current_price.toFixed(2)}</span>
+                  <span className="font-semibold text-foreground text-sm">{stock.symbol}</span>
+                  <span className="ml-2 text-subtle text-sm">₹{stock.current_price.toFixed(2)}</span>
                   <span className="ml-2"><PriceChange change={stock.change_percent} /></span>
-                  <span className="text-gray-300 mx-4">*</span>
+                  <span className="text-muted-foreground/50 mx-4">*</span>
                 </div>
               ))}
             </div>

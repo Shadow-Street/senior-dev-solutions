@@ -89,7 +89,7 @@ function InnerLayout({ children, currentPageName }) {
       { key: 'advisors', title: 'Advisors', url: createPageUrl('Advisors'), icon: Shield, badge: null },
       { key: 'finfluencers', title: 'Finfluencers', url: createPageUrl('Finfluencers'), icon: Star, badge: null },
       { key: 'subscription', title: 'Subscription', url: createPageUrl('Subscription'), icon: Sparkles, badge: null },
-      { key: 'my_plans_access', title: 'My Plans & Access', url: '/plans-access', icon: CreditCard, badge: { text: 'Pro', color: 'bg-green-50 text-green-700 border-green-200' } },
+      { key: 'my_plans_access', title: 'My Plans & Access', url: '/plans-access', icon: CreditCard, badge: { text: 'Pro', color: 'bg-protocall-premium-light text-protocall-premium-text border-transparent' } },
       { key: 'feedback', title: 'Feedback', url: createPageUrl('Feedback'), icon: MessageSquare, badge: null },
     ];
 
@@ -102,7 +102,7 @@ function InnerLayout({ children, currentPageName }) {
         title: 'Organize Events',
         url: createPageUrl('OrganizerDashboard'),
         icon: CalendarDays,
-        badge: { text: 'Portal', color: 'bg-purple-50 text-purple-700 border-purple-200' }
+        badge: { text: 'Portal', color: 'bg-protocall-premium-light text-protocall-premium-text border-transparent' }
       });
     }
 
@@ -113,7 +113,7 @@ function InnerLayout({ children, currentPageName }) {
         title: 'Advisor Dashboard',
         url: createPageUrl('AdvisorDashboard'),
         icon: Shield,
-        badge: { text: 'Portal', color: 'bg-purple-50 text-purple-700 border-purple-200' }
+        badge: { text: 'Portal', color: 'bg-protocall-premium-light text-protocall-premium-text border-transparent' }
       });
 
       allItems.splice(advisorsIndex + 2, 0, {
@@ -121,7 +121,7 @@ function InnerLayout({ children, currentPageName }) {
         title: 'Pledge Management',
         url: createPageUrl('AdvisorPledgeManagement'),
         icon: Crown,
-        badge: { text: 'Portal', color: 'bg-purple-50 text-purple-700 border-purple-200' }
+        badge: { text: 'Portal', color: 'bg-protocall-premium-light text-protocall-premium-text border-transparent' }
       });
     }
 
@@ -132,7 +132,7 @@ function InnerLayout({ children, currentPageName }) {
         title: 'Finfluencer Dashboard',
         url: createPageUrl('FinfluencerDashboard'),
         icon: Star,
-        badge: { text: 'Portal', color: 'bg-purple-50 text-purple-700 border-purple-200' }
+        badge: { text: 'Portal', color: 'bg-protocall-premium-light text-protocall-premium-text border-transparent' }
       });
     }
 
@@ -142,7 +142,7 @@ function InnerLayout({ children, currentPageName }) {
         title: 'PM Dashboard',
         url: createPageUrl('PortfolioManagerDashboard'),
         icon: Briefcase,
-        badge: { text: 'Portal', color: 'bg-blue-50 text-blue-700 border-blue-200' }
+        badge: { text: 'Portal', color: 'bg-protocall-premium-light text-protocall-premium-text border-transparent' }
       });
     }
 
@@ -186,7 +186,7 @@ function InnerLayout({ children, currentPageName }) {
           justify-content: center;
           padding: 0;
           min-height: 140px;
-          background: #3d3647;
+          background: #0B1024;
           width: 100%;
         }
         .sidebar-logo img {
@@ -199,29 +199,29 @@ function InnerLayout({ children, currentPageName }) {
       `}</style>
 
       <SidebarProvider defaultOpen={true}>
-        <div className="flex h-screen w-full bg-gray-50">
-          <Sidebar className="border-r border-gray-200 bg-white">
+        <div className="flex h-screen w-full bg-background">
+          <Sidebar className="border-r border-sidebar-border">
             <SidebarHeader className="p-0">
-              <div className="flex flex-col items-center justify-center p-4 bg-gradient-to-r from-purple-700 to-indigo-800 text-white min-h-[140px]">
+              <div className="flex flex-col items-center justify-center p-4 bg-sidebar-dark text-sidebar-foreground min-h-[140px]">
                 <Shield className="w-10 h-10 mb-2" />
                 <div className="text-2xl font-bold tracking-tighter">PROTOCOL</div>
-                <div className="text-xs opacity-75 tracking-widest uppercase">Financial Networking</div>
+                <div className="text-xs text-sidebar-muted-foreground tracking-widest uppercase">Financial Networking</div>
               </div>
             </SidebarHeader>
 
             <SidebarContent className="flex-1 flex flex-col gap-2 overflow-y-auto p-3">
               <div className="mb-4">
                 <Link to={createPageUrl("Profile")} className="block">
-                  <div className="p-3 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg shadow-md hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 cursor-pointer text-white relative group">
+                  <div className="p-3 bg-sidebar-dark rounded-lg shadow-md hover:bg-sidebar-accent transition-all duration-200 cursor-pointer text-sidebar-foreground relative group">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-semibold text-sm flex-shrink-0">
                         {mockUser.display_name?.charAt(0)?.toUpperCase() || 'U'}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-white truncate text-sm">{mockUser.display_name || 'Trader'}</p>
+                        <p className="font-semibold text-sidebar-foreground truncate text-sm">{mockUser.display_name || 'Trader'}</p>
                       </div>
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <Edit3 className="w-4 h-4 text-white" />
+                        <Edit3 className="w-4 h-4 text-sidebar-foreground" />
                       </div>
                     </div>
                   </div>
@@ -229,7 +229,7 @@ function InnerLayout({ children, currentPageName }) {
               </div>
 
               <SidebarGroup>
-                <SidebarGroupLabel className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2 py-2">
+                <SidebarGroupLabel className="text-xs font-semibold text-sidebar-muted-foreground uppercase tracking-wider px-2 py-2">
                   Trading Hub
                 </SidebarGroupLabel>
                 <SidebarMenu>
@@ -237,7 +237,7 @@ function InnerLayout({ children, currentPageName }) {
                     <SidebarMenuItem key={item.key}>
                       <SidebarMenuButton
                         asChild
-                        className={`hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-700 transition-all duration-200 rounded-xl mb-1 ${location.pathname === item.url ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold shadow-md' : ''
+                        className={`text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 rounded-xl mb-1 ${location.pathname === item.url ? 'bg-sidebar-primary text-sidebar-primary-foreground font-semibold shadow-md' : ''
                           }`}
                       >
                         <Link to={item.url} className="flex items-center gap-3 px-3 py-2.5">
@@ -256,26 +256,26 @@ function InnerLayout({ children, currentPageName }) {
               </SidebarGroup>
             </SidebarContent>
 
-            <SidebarFooter className="border-t border-gray-200 p-3">
-              <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-100">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs">
+            <SidebarFooter className="border-t border-sidebar-border p-3">
+              <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-sidebar-dark">
+                <div className="w-8 h-8 rounded-full bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-semibold text-xs">
                   {mockUser.display_name?.charAt(0)?.toUpperCase() || 'U'}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{mockUser.display_name || 'User'}</p>
-                  <p className="text-xs text-gray-500 truncate">{mockUser.email}</p>
+                  <p className="text-sm font-medium text-sidebar-foreground truncate">{mockUser.display_name || 'User'}</p>
+                  <p className="text-xs text-sidebar-muted-foreground truncate">{mockUser.email}</p>
                 </div>
               </div>
             </SidebarFooter>
           </Sidebar>
 
           <div className="flex-1 flex flex-col overflow-hidden">
-            <header className="bg-white border-b border-gray-200 relative flex-shrink-0">
+            <header className="bg-card border-b border-border relative flex-shrink-0">
               <div className="px-6 py-4 flex items-center justify-between">
-                <h1 className="text-xl font-semibold text-gray-900">{currentPageName || 'Protocall'}</h1>
+                <h1 className="text-xl font-semibold text-foreground">{currentPageName || 'Protocall'}</h1>
                 <div className="flex items-center gap-4">
                   <Link to={createPageUrl('Landing')}>
-                    <Button variant="outline" className="flex items-center gap-2 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                    <Button variant="outline" className="flex items-center gap-2 hover:bg-protocall-premium-bg hover:text-protocall-blue transition-colors">
                       <Home className="w-4 h-4" />
                       Back to Home
                     </Button>
@@ -284,7 +284,7 @@ function InnerLayout({ children, currentPageName }) {
               </div>
             </header>
 
-            <main className="flex-1 overflow-y-auto bg-gray-50">
+            <main className="flex-1 overflow-y-auto bg-background">
               {children}
             </main>
           </div>

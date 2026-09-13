@@ -22,7 +22,7 @@ export default function QuickActions({ user }) {
       label: "Join Chat",
       url: createPageUrl("ChatRooms"),
       show: true,
-      gradient: "from-blue-500 to-cyan-500",
+      gradient: "from-protocall-blue to-protocall-deep",
       iconColor: "text-white",
     },
     {
@@ -30,7 +30,7 @@ export default function QuickActions({ user }) {
       label: "Vote on Polls",
       url: createPageUrl("Polls"),
       show: true,
-      gradient: "from-purple-500 to-pink-500",
+      gradient: "from-protocall-grape to-protocall-deep",
       iconColor: "text-white",
     },
     {
@@ -38,7 +38,7 @@ export default function QuickActions({ user }) {
       label: "Browse Events",
       url: createPageUrl("Events"),
       show: true,
-      gradient: "from-green-500 to-emerald-500",
+      gradient: "from-protocall-deep to-protocall-blue",
       iconColor: "text-white",
     },
     {
@@ -46,7 +46,7 @@ export default function QuickActions({ user }) {
       label: "Become Advisor",
       url: createPageUrl("AdvisorRegistration"),
       show: !isAdvisor,
-      gradient: "from-indigo-500 to-purple-500",
+      gradient: "from-protocall-blue to-protocall-grape",
       iconColor: "text-white",
     },
     {
@@ -54,7 +54,7 @@ export default function QuickActions({ user }) {
       label: "Become Finfluencer",
       url: createPageUrl("Finfluencers"),
       show: !isFinfluencer,
-      gradient: "from-orange-500 to-red-500",
+      gradient: "from-protocall-grape to-protocall-light",
       iconColor: "text-white",
     },
     {
@@ -62,16 +62,16 @@ export default function QuickActions({ user }) {
       label: "Upgrade Plan",
       url: createPageUrl("Subscription"),
       show: true,
-      gradient: "from-amber-500 to-yellow-500",
+      gradient: "from-protocall-deep to-protocall-premium-light",
       iconColor: "text-white",
     },
   ];
 
   return (
-    <Card className="shadow-lg border-0 bg-white">
-      <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
-        <CardTitle className="flex items-center gap-2 text-slate-900">
-          <TrendingUp className="w-5 h-5 text-blue-600" />
+    <Card className="shadow-lg border border-border bg-card">
+      <CardHeader className="border-b border-divider bg-surface-2">
+        <CardTitle className="flex items-center gap-2 text-foreground">
+          <TrendingUp className="w-5 h-5 text-protocall-blue" />
           Quick Actions
         </CardTitle>
       </CardHeader>
@@ -82,12 +82,12 @@ export default function QuickActions({ user }) {
               <button
                 key={action.label + index}
                 onClick={() => window.location.href = action.url}
-                className="flex flex-col items-center gap-3 p-4 rounded-xl hover:bg-slate-50 transition-all duration-200 group"
+                className="flex flex-col items-center gap-3 p-4 rounded-xl hover:bg-surface-2 transition-all duration-200 group"
               >
                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.gradient} flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-200`}>
                   <action.icon className={`w-6 h-6 ${action.iconColor}`} />
                 </div>
-                <span className="text-xs font-medium text-slate-700 text-center leading-tight">{action.label}</span>
+                <span className="text-xs font-medium text-subtle text-center leading-tight">{action.label}</span>
               </button>
             )
           ))}

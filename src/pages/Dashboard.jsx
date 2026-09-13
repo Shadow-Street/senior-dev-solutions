@@ -80,8 +80,8 @@ export default function Dashboard() {
 
   if (authLoading || subLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 border-0">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="min-h-screen flex items-center justify-center bg-background border-0">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -91,14 +91,14 @@ export default function Dashboard() {
   const isVIP = hasVipAccess?.() || false;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         <AnnouncementBanner />
 
         {/* Dynamic Welcome Banner */}
-        <div className={`rounded-2xl p-8 text-white shadow-xl relative overflow-hidden transition-all duration-500 ${isVIP ? 'bg-gradient-to-r from-amber-500 via-yellow-600 to-orange-600' :
-          isPremium ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600' :
-            'bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900'
+        <div className={`rounded-2xl p-8 text-white shadow-xl relative overflow-hidden transition-all duration-500 ${isVIP ? 'bg-premium-gradient' :
+          isPremium ? 'bg-brand-gradient' :
+            'bg-gradient-to-r from-protocall-ink via-protocall-deep to-protocall-blue'
           }`}>
           <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full transform translate-x-32 -translate-y-32"></div>
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -107,18 +107,18 @@ export default function Dashboard() {
                 <h1 className="text-3xl font-bold">
                   Welcome back, {user?.display_name || user?.name || 'Trader'}!
                 </h1>
-                {isVIP && <Crown className="w-6 h-6 text-yellow-300 animate-pulse" />}
-                {isPremium && !isVIP && <Star className="w-6 h-6 text-blue-300" />}
+                {isVIP && <Crown className="w-6 h-6 text-protocall-premium-light animate-pulse" />}
+                {isPremium && !isVIP && <Star className="w-6 h-6 text-protocall-light" />}
               </div>
-              <p className="text-blue-100 text-lg opacity-90">
+              <p className="text-white/80 text-lg">
                 {isVIP ? "You have unlocked all VIP insights and direct advisor access." :
                   isPremium ? "Enjoy your premium features and enhanced market analytics." :
                     "Unlock premium insights to accelerate your trading journey."}
               </p>
             </div>
             {!isPremium && (
-              <Link to="/subscription" className="bg-white text-slate-900 px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-50 transition-colors shadow-lg group">
-                Upgrade Now <Zap className="w-4 h-4 text-blue-600 group-hover:scale-110 transition-transform" />
+              <Link to="/subscription" className="bg-protocall-card text-protocall-premium-text px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-protocall-premium-bg transition-colors shadow-lg group">
+                Upgrade Now <Zap className="w-4 h-4 text-protocall-blue group-hover:scale-110 transition-transform" />
               </Link>
             )}
           </div>
@@ -133,28 +133,30 @@ export default function Dashboard() {
             value={stats.totalTraders.toLocaleString()}
             sub="Community strength"
             icon={<Users className="w-5 h-5" />}
-            color="bg-emerald-500"
+            color="bg-buy text-buy-foreground"
+            chip="bg-protocall-ink/10"
+            overlay="bg-protocall-ink"
           />
           <StatCard
             title="Live Chat Rooms"
             value={stats.activeRooms}
             sub="Active discussions"
             icon={<MessageSquare className="w-5 h-5" />}
-            color="bg-blue-500"
+            color="bg-protocall-blue text-white"
           />
           <StatCard
             title="Active Polls"
             value={stats.activePolls}
             sub="Community sentiment"
             icon={<BarChart3 className="w-5 h-5" />}
-            color="bg-indigo-500"
+            color="bg-primary text-primary-foreground"
           />
           <StatCard
             title="Trending Stocks"
             value={stats.trendingStocksCount}
             sub="Market momentum"
             icon={<TrendingUp className="w-5 h-5" />}
-            color="bg-orange-500"
+            color="bg-protocall-deep text-white"
           />
         </div>
 
@@ -169,7 +171,7 @@ export default function Dashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="border-0 shadow-sm overflow-hidden">
                   <CardContent className="p-0">
-                    <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 text-white h-full min-h-[160px] flex flex-col justify-between">
+                    <div className="bg-gradient-to-br from-protocall-deep to-protocall-blue p-6 text-white h-full min-h-[160px] flex flex-col justify-between">
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <h3 className="font-bold text-lg flex items-center gap-2">
@@ -177,7 +179,7 @@ export default function Dashboard() {
                           </h3>
                           <Badge className="bg-white/20 text-white border-0">Premium</Badge>
                         </div>
-                        <p className="text-indigo-100 text-sm mb-4">Deep dive into market sentiment and volume profiles.</p>
+                        <p className="text-white/80 text-sm mb-4">Deep dive into market sentiment and volume profiles.</p>
                       </div>
                       <Link to="/samples/analytics" className="inline-flex items-center gap-2 text-sm font-semibold hover:gap-3 transition-all">
                         View Detailed Reports <ArrowRight className="w-4 h-4" />
@@ -188,7 +190,7 @@ export default function Dashboard() {
 
                 <Card className="border-0 shadow-sm overflow-hidden">
                   <CardContent className="p-0">
-                    <div className="bg-gradient-to-br from-amber-500 to-orange-600 p-6 text-white h-full min-h-[160px] flex flex-col justify-between">
+                    <div className="bg-gradient-to-br from-protocall-grape to-protocall-deep p-6 text-white h-full min-h-[160px] flex flex-col justify-between">
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <h3 className="font-bold text-lg flex items-center gap-2">
@@ -196,7 +198,7 @@ export default function Dashboard() {
                           </h3>
                           {isVIP ? <Badge className="bg-white/20 text-white border-0">VIP Access</Badge> : <Lock className="w-4 h-4 text-white/50" />}
                         </div>
-                        <p className="text-orange-100 text-sm mb-4">Real-time buy/sell pressure signals from SEBI advisors.</p>
+                        <p className="text-white/80 text-sm mb-4">Real-time buy/sell pressure signals from SEBI advisors.</p>
                       </div>
                       {isVIP ? (
                         <Link to="/AdvisorRecommendations" className="inline-flex items-center gap-2 text-sm font-semibold hover:gap-3 transition-all">
@@ -212,12 +214,12 @@ export default function Dashboard() {
                 </Card>
               </div>
             ) : (
-              <Card className="bg-slate-900 border-0 overflow-hidden relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+              <Card className="bg-protocall-ink border-0 overflow-hidden relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-protocall-blue/25 to-protocall-grape/25 opacity-50 group-hover:opacity-100 transition-opacity"></div>
                 <CardContent className="p-8 relative z-10 text-center">
                   <h3 className="text-xl font-bold text-white mb-2">Unlock Premium Insights</h3>
-                  <p className="text-slate-400 mb-6 max-w-md mx-auto">Get access to SEBI-certified advisor signals, advanced analytics, and exclusive VIP chat rooms.</p>
-                  <Link to="/subscription" className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all inline-block shadow-lg shadow-blue-900/40">
+                  <p className="text-protocall-sidebar-muted mb-6 max-w-md mx-auto">Get access to SEBI-certified advisor signals, advanced analytics, and exclusive VIP chat rooms.</p>
+                  <Link to="/subscription" className="bg-protocall-blue text-white px-8 py-3 rounded-xl font-bold hover:bg-protocall-deep transition-all inline-block shadow-lg shadow-protocall-deep/40">
                     Upgrade Your Plan
                   </Link>
                 </CardContent>
@@ -236,16 +238,16 @@ export default function Dashboard() {
 
             {/* Admin Quick Moderation Widget */}
             {isAdmin && (
-              <Card className="border-red-100 bg-red-50/30">
+              <Card className="border-protocall-premium-light bg-protocall-premium-bg">
                 <CardContent className="p-4">
-                  <h3 className="font-bold text-red-900 flex items-center gap-2 mb-3">
+                  <h3 className="font-bold text-protocall-premium-text flex items-center gap-2 mb-3">
                     <Zap className="w-4 h-4" /> Admin Operations
                   </h3>
                   <div className="grid grid-cols-2 gap-2">
-                    <Link to="/admin" className="text-[10px] bg-white border border-red-200 p-2 rounded text-center hover:bg-red-50 font-medium uppercase tracking-tight">Moderate Content</Link>
-                    <Link to="/admin" className="text-[10px] bg-white border border-red-200 p-2 rounded text-center hover:bg-red-50 font-medium uppercase tracking-tight">Manage Users</Link>
-                    <Link to="/admin" className="text-[10px] bg-white border border-red-200 p-2 rounded text-center hover:bg-red-50 font-medium uppercase tracking-tight">Poll Settle</Link>
-                    <Link to="/admin" className="text-[10px] bg-white border border-red-200 p-2 rounded text-center hover:bg-red-50 font-medium uppercase tracking-tight">Settings</Link>
+                    <Link to="/admin" className="text-[10px] bg-card border border-protocall-premium-light p-2 rounded text-center text-protocall-premium-text hover:bg-protocall-premium-light/40 font-medium uppercase tracking-tight">Moderate Content</Link>
+                    <Link to="/admin" className="text-[10px] bg-card border border-protocall-premium-light p-2 rounded text-center text-protocall-premium-text hover:bg-protocall-premium-light/40 font-medium uppercase tracking-tight">Manage Users</Link>
+                    <Link to="/admin" className="text-[10px] bg-card border border-protocall-premium-light p-2 rounded text-center text-protocall-premium-text hover:bg-protocall-premium-light/40 font-medium uppercase tracking-tight">Poll Settle</Link>
+                    <Link to="/admin" className="text-[10px] bg-card border border-protocall-premium-light p-2 rounded text-center text-protocall-premium-text hover:bg-protocall-premium-light/40 font-medium uppercase tracking-tight">Settings</Link>
                   </div>
                 </CardContent>
               </Card>
@@ -266,18 +268,18 @@ export default function Dashboard() {
   );
 }
 
-function StatCard({ title, value, sub, icon, color }) {
+function StatCard({ title, value, sub, icon, color, chip = "bg-white/20", overlay = "bg-white" }) {
   return (
-    <Card className={`${color} text-white border-0 shadow-lg overflow-hidden relative group`}>
-      <div className="absolute top-0 right-0 w-24 h-24 bg-white opacity-10 rounded-full transform translate-x-8 -translate-y-8 group-hover:scale-110 transition-transform"></div>
+    <Card className={`${color} border-0 shadow-lg overflow-hidden relative group`}>
+      <div className={`absolute top-0 right-0 w-24 h-24 ${overlay} opacity-10 rounded-full transform translate-x-8 -translate-y-8 group-hover:scale-110 transition-transform`}></div>
       <CardContent className="p-6 relative z-10">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-white/80 text-sm font-medium">{title}</p>
-            <p className="text-2xl font-bold mt-1 text-white">{value}</p>
-            <p className="text-white/60 text-xs mt-1">{sub}</p>
+            <p className="text-sm font-medium opacity-80">{title}</p>
+            <p className="text-2xl font-bold mt-1">{value}</p>
+            <p className="text-xs mt-1 opacity-70">{sub}</p>
           </div>
-          <div className="w-12 h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center backdrop-blur-sm group-hover:rotate-12 transition-transform">
+          <div className={`w-12 h-12 ${chip} rounded-2xl flex items-center justify-center backdrop-blur-sm group-hover:rotate-12 transition-transform`}>
             {icon}
           </div>
         </div>

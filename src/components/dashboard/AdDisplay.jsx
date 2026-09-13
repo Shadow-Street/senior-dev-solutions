@@ -18,7 +18,7 @@ export default function AdDisplay({ placement = 'dashboard', userContext = null,
   };
 
   return (
-    <Card className={`overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 ${className}`}>
+    <Card className={`overflow-hidden border border-border bg-card shadow-lg hover:shadow-xl transition-shadow duration-300 ${className}`}>
       <CardContent className="p-0">
         <div className="relative">
           <img 
@@ -27,25 +27,25 @@ export default function AdDisplay({ placement = 'dashboard', userContext = null,
             className="w-full h-48 object-cover"
           />
           <div className="absolute top-2 left-2">
-            <span className="bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+            <span className="bg-protocall-ink/70 text-white text-xs px-2 py-1 rounded">
               Sponsored
             </span>
           </div>
         </div>
         
         <div className="p-4">
-          <h3 className="font-semibold text-lg mb-2 line-clamp-2">
+          <h3 className="font-semibold text-lg mb-2 line-clamp-2 text-foreground">
             {sampleAd.title}
           </h3>
           {sampleAd.description && (
-            <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+            <p className="text-subtle text-sm mb-4 line-clamp-3">
               {sampleAd.description}
             </p>
           )}
           
           <Button 
             onClick={handleAdClick}
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            className="w-full bg-gradient-to-r from-protocall-blue to-protocall-grape text-white hover:from-protocall-deep hover:to-protocall-grape"
           >
             <ExternalLink className="w-4 h-4 mr-2" />
             Learn More

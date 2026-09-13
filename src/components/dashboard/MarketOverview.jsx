@@ -35,10 +35,10 @@ export default function MarketOverview({ stocks }) {
     : sampleData.losers;
 
   return (
-    <Card className="shadow-lg border-0 bg-white">
-      <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
-        <CardTitle className="flex items-center gap-2 text-slate-900">
-          <Activity className="w-5 h-5 text-blue-600" />
+    <Card className="shadow-lg border border-border bg-card">
+      <CardHeader className="border-b border-divider bg-surface-2">
+        <CardTitle className="flex items-center gap-2 text-foreground">
+          <Activity className="w-5 h-5 text-protocall-blue" />
           Market Overview
         </CardTitle>
       </CardHeader>
@@ -46,26 +46,26 @@ export default function MarketOverview({ stocks }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Top Gainers */}
           <div>
-            <h4 className="font-semibold text-green-700 mb-3 flex items-center gap-2">
+            <h4 className="font-semibold text-positive mb-3 flex items-center gap-2">
               <TrendingUp className="w-4 h-4" />
               Top Gainers
             </h4>
             <div className="space-y-2">
               {topGainers.length > 0 ? topGainers.map(stock => (
-                <div key={stock.id} className="flex items-center justify-between p-3 rounded-lg bg-green-50 hover:bg-green-100 transition-colors">
+                <div key={stock.id} className="flex items-center justify-between p-3 rounded-lg bg-buy-muted hover:bg-buy/30 transition-colors">
                   <div>
-                    <p className="font-semibold text-slate-900">{stock.symbol}</p>
-                    <p className="text-xs text-slate-500">{stock.company_name}</p>
+                    <p className="font-semibold text-foreground">{stock.symbol}</p>
+                    <p className="text-xs text-subtle">{stock.company_name}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold">₹{stock.current_price?.toFixed(2)}</p>
-                    <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">
+                    <p className="font-semibold text-foreground">₹{stock.current_price?.toFixed(2)}</p>
+                    <Badge variant="outline" className="bg-buy text-buy-foreground border-transparent">
                       +{stock.change_percent?.toFixed(2)}%
                     </Badge>
                   </div>
                 </div>
               )) : (
-                <div className="text-center text-gray-500 py-4">
+                <div className="text-center text-muted-foreground py-4">
                   <p>No gainers today</p>
                 </div>
               )}
@@ -74,26 +74,26 @@ export default function MarketOverview({ stocks }) {
 
           {/* Top Losers */}
           <div>
-            <h4 className="font-semibold text-red-700 mb-3 flex items-center gap-2">
+            <h4 className="font-semibold text-sell-muted-foreground mb-3 flex items-center gap-2">
               <TrendingDown className="w-4 h-4" />
               Top Losers
             </h4>
             <div className="space-y-2">
               {topLosers.length > 0 ? topLosers.map(stock => (
-                <div key={stock.id} className="flex items-center justify-between p-3 rounded-lg bg-red-50 hover:bg-red-100 transition-colors">
+                <div key={stock.id} className="flex items-center justify-between p-3 rounded-lg bg-sell-muted hover:bg-sell/20 transition-colors">
                   <div>
-                    <p className="font-semibold text-slate-900">{stock.symbol}</p>
-                    <p className="text-xs text-slate-500">{stock.company_name}</p>
+                    <p className="font-semibold text-foreground">{stock.symbol}</p>
+                    <p className="text-xs text-subtle">{stock.company_name}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold">₹{stock.current_price?.toFixed(2)}</p>
-                    <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">
+                    <p className="font-semibold text-foreground">₹{stock.current_price?.toFixed(2)}</p>
+                    <Badge variant="outline" className="bg-sell-muted text-sell-muted-foreground border-sell/30">
                       {stock.change_percent?.toFixed(2)}%
                     </Badge>
                   </div>
                 </div>
               )) : (
-                <div className="text-center text-gray-500 py-4">
+                <div className="text-center text-muted-foreground py-4">
                   <p>No losers today</p>
                 </div>
               )}

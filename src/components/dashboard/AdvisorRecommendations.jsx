@@ -51,23 +51,23 @@ export default function AdvisorRecommendations({ recommendations }) {
 
   const getRecommendationColor = (type) => {
     switch (type) {
-      case 'buy': return 'bg-green-100 text-green-800 border-green-200';
-      case 'sell': return 'bg-red-100 text-red-800 border-red-200';
-      case 'watch': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'buy': return 'bg-buy text-buy-foreground border-transparent';
+      case 'sell': return 'bg-sell-muted text-sell-muted-foreground border-sell/30';
+      case 'watch': return 'bg-premium-muted text-premium-muted-foreground border-premium/30';
+      default: return 'bg-hold-muted text-hold-muted-foreground border-hold/30';
     }
   };
 
   return (
-    <Card className="shadow-lg border-0 bg-white">
-      <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-green-50">
+    <Card className="shadow-lg border border-border bg-card">
+      <CardHeader className="border-b border-divider bg-premium-muted">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-slate-900">
-            <Shield className="w-5 h-5 text-green-600" />
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <Shield className="w-5 h-5 text-protocall-blue" />
             Advisor Picks
-            <Crown className="w-4 h-4 text-purple-600" />
+            <Crown className="w-4 h-4 text-protocall-premium-text" />
           </CardTitle>
-          <Badge className="bg-purple-100 text-purple-700 text-xs">
+          <Badge className="bg-premium text-premium-foreground text-xs">
             Premium
           </Badge>
         </div>
@@ -76,7 +76,7 @@ export default function AdvisorRecommendations({ recommendations }) {
         <div className="locked-poll-card">
           <div className="space-y-4">
             {recData.slice(0, 3).map((rec) => (
-              <div key={rec.id} className="p-4 rounded-lg border-2 border-blue-100 bg-gradient-to-br from-blue-50 to-white">
+              <div key={rec.id} className="p-4 rounded-lg border-2 border-protocall-premium-light bg-gradient-to-br from-premium-muted to-card">
                 <div className="flex items-start justify-between gap-2 mb-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
@@ -91,41 +91,41 @@ export default function AdvisorRecommendations({ recommendations }) {
                         <span className="ml-1 capitalize">{rec.recommendation_type}</span>
                       </Badge>
                     </div>
-                    <h4 className="font-semibold text-sm text-slate-900">{rec.title}</h4>
+                    <h4 className="font-semibold text-sm text-foreground">{rec.title}</h4>
                   </div>
                 </div>
                 
                 {rec.target_price && (
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-500">Target:</span>
-                    <span className="font-semibold text-green-700">₹{rec.target_price}</span>
+                    <span className="text-subtle">Target:</span>
+                    <span className="font-semibold text-positive">₹{rec.target_price}</span>
                   </div>
                 )}
                 
                 <div className="flex items-center justify-between text-xs mt-2">
                   <Badge variant="outline" className={`text-xs ${
-                    rec.risk_level === 'low' ? 'bg-green-50 text-green-700' :
-                    rec.risk_level === 'medium' ? 'bg-yellow-50 text-yellow-700' :
-                    'bg-red-50 text-red-700'
+                    rec.risk_level === 'low' ? 'bg-buy-muted text-buy-muted-foreground' :
+                    rec.risk_level === 'medium' ? 'bg-hold-muted text-hold-muted-foreground' :
+                    'bg-sell-muted text-sell-muted-foreground'
                   }`}>
                     {rec.risk_level} risk
                   </Badge>
-                  <span className="text-slate-500 capitalize">{rec.time_horizon?.replace('_', ' ')}</span>
+                  <span className="text-subtle capitalize">{rec.time_horizon?.replace('_', ' ')}</span>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center rounded-lg">
+        <div className="absolute inset-0 bg-card/80 backdrop-blur-sm flex items-center justify-center rounded-lg">
           <div className="text-center p-4">
-            <div className="inline-flex items-center justify-center bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-full p-3 mb-3">
+            <div className="inline-flex items-center justify-center bg-gradient-to-r from-protocall-deep to-protocall-blue text-white rounded-full p-3 mb-3">
               <Shield className="w-6 h-6" />
             </div>
-            <h3 className="font-bold text-gray-900 mb-2">Advisor Picks</h3>
-            <p className="text-sm text-gray-600 mb-4">Access exclusive recommendations from verified advisors</p>
+            <h3 className="font-bold text-foreground mb-2">Advisor Picks</h3>
+            <p className="text-sm text-subtle mb-4">Access exclusive recommendations from verified advisors</p>
             <Link to={createPageUrl("Subscription")}>
-              <Button size="sm" className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
+              <Button size="sm" className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white hover:from-protocall-grape hover:to-protocall-deep">
                 <Crown className="w-4 h-4 mr-2" />
                 Unlock Premium
               </Button>

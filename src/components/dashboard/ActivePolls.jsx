@@ -59,11 +59,11 @@ export default function ActivePolls({ polls }) {
   };
 
   return (
-    <Card className="shadow-lg border-0 bg-white">
-      <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-purple-50">
+    <Card className="shadow-lg border border-border bg-card">
+      <CardHeader className="border-b border-divider bg-surface-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-slate-900">
-            <BarChart3 className="w-5 h-5 text-purple-600" />
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <BarChart3 className="w-5 h-5 text-primary" />
             Active Polls
           </CardTitle>
           <Link to={createPageUrl("Polls")}>
@@ -80,10 +80,10 @@ export default function ActivePolls({ polls }) {
             const totalVotes = poll.total_votes || 0;
             
             return (
-              <div key={poll.id} className="p-3 rounded-lg border bg-gradient-to-br from-white to-slate-50">
+              <div key={poll.id} className="p-3 rounded-lg border border-divider bg-surface-2">
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
-                    <h4 className="font-semibold text-sm text-slate-900 mb-1">{poll.title}</h4>
+                    <h4 className="font-semibold text-sm text-foreground mb-1">{poll.title}</h4>
                     <Badge variant="outline" className="text-xs">
                       {poll.stock_symbol}
                     </Badge>
@@ -91,9 +91,9 @@ export default function ActivePolls({ polls }) {
                   <Badge 
                     variant="outline" 
                     className={`text-xs ${
-                      winningVote.type === 'buy' ? 'bg-green-100 text-green-800 border-green-200' :
-                      winningVote.type === 'sell' ? 'bg-red-100 text-red-800 border-red-200' :
-                      'bg-yellow-100 text-yellow-800 border-yellow-200'
+                      winningVote.type === 'buy' ? 'bg-buy text-buy-foreground border-transparent' :
+                      winningVote.type === 'sell' ? 'bg-sell-muted text-sell-muted-foreground border-sell/30' :
+                      'bg-hold-muted text-hold-muted-foreground border-hold/30'
                     }`}
                   >
                     {getVoteIcon(winningVote.type)}
@@ -101,7 +101,7 @@ export default function ActivePolls({ polls }) {
                   </Badge>
                 </div>
                 
-                <div className="flex items-center justify-between text-xs text-slate-500">
+                <div className="flex items-center justify-between text-xs text-subtle">
                   <span>{totalVotes} votes</span>
                   <span>{winningVote.count > 0 ? Math.round((winningVote.count / totalVotes) * 100) : 0}% consensus</span>
                 </div>

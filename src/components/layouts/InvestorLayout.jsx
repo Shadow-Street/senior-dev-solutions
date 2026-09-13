@@ -92,18 +92,18 @@ export default function InvestorLayout({ children, currentView }) { // Changed a
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
+      <div className="flex h-screen items-center justify-center bg-background">
         <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+    <div className="flex h-screen bg-background">
       {/* Sidebar */}
-      <aside className="w-72 bg-white/80 backdrop-blur-sm border-r border-slate-200 flex flex-col shadow-xl">
+      <aside className="w-72 bg-sidebar text-sidebar-foreground border-r border-sidebar-border flex flex-col shadow-xl">
         {/* Logo Section */}
-        <div className="h-20 flex items-center justify-center border-b border-slate-200 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="h-20 flex items-center justify-center border-b border-sidebar-border bg-sidebar-dark">
           <div className="text-xl font-bold text-white flex items-center gap-2">
             <Shield className="w-7 h-7" />
             Investor Portal
@@ -120,8 +120,8 @@ export default function InvestorLayout({ children, currentView }) { // Changed a
                 key={item.id}
                 onClick={() => navigate(createPageUrl(item.path))} // Use navigate for internal routing
                 className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl transition-all ${isActive
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105'
-                    : 'text-slate-600 hover:bg-white/60 hover:shadow-md'
+                    ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-lg scale-105'
+                    : 'text-sidebar-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-md'
                   }`}
               >
                 <div className="flex items-center gap-3">
@@ -139,19 +139,19 @@ export default function InvestorLayout({ children, currentView }) { // Changed a
         </nav>
 
         {/* Footer - Back to Main Dashboard */}
-        <div className="p-4 border-t border-slate-200 space-y-3">
+        <div className="p-4 border-t border-sidebar-border space-y-3">
           <button
             onClick={handleBackToDashboard}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-all"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-sidebar-dark hover:bg-sidebar-accent text-sidebar-foreground rounded-lg transition-all"
           >
             <Home className="w-4 h-4" />
             <span className="text-sm font-medium">Back to Main Dashboard</span>
           </button>
 
-          <div className="text-center p-4 bg-slate-50 rounded-lg">
-            <Shield className="w-8 h-8 mx-auto text-blue-600 mb-2" />
-            <h3 className="font-bold text-slate-800">Protocol</h3>
-            <p className="text-xs text-slate-500">Secure Investment Fund</p>
+          <div className="text-center p-4 bg-sidebar-dark rounded-lg">
+            <Shield className="w-8 h-8 mx-auto text-protocall-premium-light mb-2" />
+            <h3 className="font-bold text-sidebar-foreground">Protocol</h3>
+            <p className="text-xs text-sidebar-muted-foreground">Secure Investment Fund</p>
           </div>
         </div>
       </aside>
@@ -159,9 +159,9 @@ export default function InvestorLayout({ children, currentView }) { // Changed a
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Bar */}
-        <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 shadow-sm">
+        <header className="h-20 bg-card border-b border-border flex items-center justify-between px-8 shadow-sm">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Investment Dashboard</h1>
+            <h1 className="text-2xl font-bold text-foreground">Investment Dashboard</h1>
             <p className="text-sm text-slate-500">Manage your portfolio</p>
           </div>
 
@@ -187,12 +187,12 @@ export default function InvestorLayout({ children, currentView }) { // Changed a
                 <button className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-100 transition-all">
                   <Avatar className="w-10 h-10">
                     <AvatarImage src={investor?.profile_image_url} alt={investor?.full_name} />
-                    <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                    <AvatarFallback className="bg-primary text-primary-foreground">
                       {investor?.full_name?.charAt(0) || 'I'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="text-left hidden md:block">
-                    <p className="text-sm font-semibold text-slate-900">{investor?.full_name}</p>
+                    <p className="text-sm font-semibold text-foreground">{investor?.full_name}</p>
                     <p className="text-xs text-slate-500">{investor?.investor_code}</p>
                   </div>
                   <ChevronDown className="w-4 h-4 text-slate-400" />

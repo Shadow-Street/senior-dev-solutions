@@ -166,7 +166,7 @@ export default function FinfluencerLayout({ children, activePage }) {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+      <div className="flex h-screen w-full items-center justify-center bg-background">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-slate-600">Loading...</p>
@@ -178,12 +178,12 @@ export default function FinfluencerLayout({ children, activePage }) {
   return (
     <SidebarProvider>
       <div className="flex h-screen w-full overflow-hidden">
-        <div className="w-80 border-r border-gray-200 bg-white flex flex-col h-screen overflow-hidden">
+        <div className="w-80 border-r border-sidebar-border bg-sidebar text-sidebar-foreground flex flex-col h-screen overflow-hidden">
           {user && (
-            <div className="px-4 py-6 border-b border-gray-200 flex-shrink-0">
-              <div className="p-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg text-white">
+            <div className="px-4 py-6 border-b border-sidebar-border flex-shrink-0">
+              <div className="p-4 bg-sidebar-dark rounded-xl shadow-lg text-sidebar-foreground">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-full bg-white/25 flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-sidebar-primary flex items-center justify-center flex-shrink-0">
                     {user.profile_image_url ? (
                       <img src={user.profile_image_url} alt={user.display_name} className="w-12 h-12 rounded-full object-cover" />
                     ) : (
@@ -195,7 +195,7 @@ export default function FinfluencerLayout({ children, activePage }) {
                     <p className="text-xs text-white/80 truncate">{user.email}</p>
                   </div>
                 </div>
-                <Badge className="bg-white/20 text-white border-0 text-xs w-full justify-center py-1.5">
+                <Badge className="bg-protocall-premium-light text-protocall-premium-text border-0 text-xs w-full justify-center py-1.5">
                   <Star className="w-3.5 h-3.5 mr-1.5" />
                   Finfluencer
                 </Badge>
@@ -206,12 +206,12 @@ export default function FinfluencerLayout({ children, activePage }) {
           <div className="flex-1 overflow-y-auto px-4 py-4">
             <div className="space-y-3">
               <Collapsible open={finfluencerOpen} onOpenChange={setFinfluencerOpen}>
-                <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
+                <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2 rounded-lg bg-sidebar-dark hover:bg-sidebar-accent transition-colors">
                   <div className="flex items-center gap-2">
-                    <Star className="w-4 h-4 text-gray-700" />
-                    <span className="font-semibold text-sm text-gray-900">Finfluencer Dashboard</span>
+                    <Star className="w-4 h-4 text-sidebar-foreground" />
+                    <span className="font-semibold text-sm text-sidebar-foreground">Finfluencer Dashboard</span>
                   </div>
-                  <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${finfluencerOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 text-sidebar-muted-foreground transition-transform ${finfluencerOpen ? 'rotate-180' : ''}`} />
                 </CollapsibleTrigger>
                 <CollapsibleContent className="mt-1">
                   <div className="space-y-1 pl-2">
@@ -224,16 +224,16 @@ export default function FinfluencerLayout({ children, activePage }) {
                           to={item.url} 
                           className={`flex items-start gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
                             isActive 
-                              ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold shadow-md' 
-                              : 'hover:bg-blue-50 hover:text-blue-700'
+                              ? 'bg-sidebar-primary text-sidebar-primary-foreground font-semibold shadow-md' 
+                              : 'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                         >
-                          <Icon className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isActive ? 'text-white' : 'text-blue-600'}`} />
+                          <Icon className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isActive ? 'text-white' : 'text-protocall-premium-light'}`} />
                           <div className="flex-1 text-left">
-                            <p className={`text-sm font-medium leading-tight ${isActive ? 'text-white' : 'text-gray-900'}`}>
+                            <p className={`text-sm font-medium leading-tight ${isActive ? 'text-white' : 'text-sidebar-foreground'}`}>
                               {item.title}
                             </p>
-                            <p className={`text-xs leading-tight mt-0.5 ${isActive ? 'text-blue-100' : 'text-gray-500'}`}>
+                            <p className={`text-xs leading-tight mt-0.5 ${isActive ? 'text-sidebar-muted-foreground' : 'text-sidebar-muted-foreground'}`}>
                               {item.description}
                             </p>
                           </div>
@@ -245,12 +245,12 @@ export default function FinfluencerLayout({ children, activePage }) {
               </Collapsible>
 
               <Collapsible open={organizerOpen} onOpenChange={setOrganizerOpen}>
-                <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
+                <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2 rounded-lg bg-sidebar-dark hover:bg-sidebar-accent transition-colors">
                   <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-gray-700" />
-                    <span className="font-semibold text-sm text-gray-900">Event Organizer</span>
+                    <Calendar className="w-4 h-4 text-sidebar-foreground" />
+                    <span className="font-semibold text-sm text-sidebar-foreground">Event Organizer</span>
                   </div>
-                  <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${organizerOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 text-sidebar-muted-foreground transition-transform ${organizerOpen ? 'rotate-180' : ''}`} />
                 </CollapsibleTrigger>
                 <CollapsibleContent className="mt-1">
                   <div className="space-y-1 pl-2">
@@ -263,16 +263,16 @@ export default function FinfluencerLayout({ children, activePage }) {
                           to={item.url} 
                           className={`flex items-start gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
                             isActive 
-                              ? 'bg-gradient-to-r from-purple-500 to-blue-600 text-white font-semibold shadow-md' 
-                              : 'hover:bg-purple-50 hover:text-purple-700'
+                              ? 'bg-sidebar-primary text-sidebar-primary-foreground font-semibold shadow-md' 
+                              : 'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                         >
-                          <Icon className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isActive ? 'text-white' : 'text-purple-600'}`} />
+                          <Icon className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isActive ? 'text-white' : 'text-protocall-premium-light'}`} />
                           <div className="flex-1 text-left">
-                            <p className={`text-sm font-medium leading-tight ${isActive ? 'text-white' : 'text-gray-900'}`}>
+                            <p className={`text-sm font-medium leading-tight ${isActive ? 'text-white' : 'text-sidebar-foreground'}`}>
                               {item.title}
                             </p>
-                            <p className={`text-xs leading-tight mt-0.5 ${isActive ? 'text-purple-100' : 'text-gray-500'}`}>
+                            <p className={`text-xs leading-tight mt-0.5 ${isActive ? 'text-sidebar-muted-foreground' : 'text-sidebar-muted-foreground'}`}>
                               {item.description}
                             </p>
                           </div>
@@ -285,11 +285,11 @@ export default function FinfluencerLayout({ children, activePage }) {
             </div>
           </div>
 
-          <div className="px-4 py-4 border-t border-gray-200 flex-shrink-0">
+          <div className="px-4 py-4 border-t border-sidebar-border flex-shrink-0">
             <Link to={createPageUrl('Dashboard')}>
               <Button 
                 variant="outline" 
-                className="w-full h-12 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 border-blue-200 text-blue-700 font-semibold rounded-xl shadow-sm hover:shadow-md transition-all"
+                className="w-full h-12 flex items-center justify-center gap-2 bg-sidebar-dark hover:bg-sidebar-accent border-sidebar-border text-sidebar-foreground font-semibold rounded-xl shadow-sm hover:shadow-md transition-all"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Go to Main Dashboard</span>
@@ -297,11 +297,11 @@ export default function FinfluencerLayout({ children, activePage }) {
             </Link>
           </div>
 
-          <div className="border-t border-gray-200 p-4 flex-shrink-0">
+          <div className="border-t border-sidebar-border p-4 flex-shrink-0">
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <div className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-gray-100 cursor-pointer transition-colors">
+                  <div className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-sidebar-accent cursor-pointer transition-colors">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                       {user.profile_image_url ? (
                         <img src={user.profile_image_url} alt={user.display_name} className="w-10 h-10 rounded-full object-cover" />
@@ -310,10 +310,10 @@ export default function FinfluencerLayout({ children, activePage }) {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-900 truncate">{user.display_name || 'Finfluencer'}</p>
-                      <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                      <p className="text-sm font-semibold text-sidebar-foreground truncate">{user.display_name || 'Finfluencer'}</p>
+                      <p className="text-xs text-sidebar-muted-foreground truncate">{user.email}</p>
                     </div>
-                    <ChevronDown className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <ChevronDown className="w-4 h-4 text-sidebar-muted-foreground flex-shrink-0" />
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
