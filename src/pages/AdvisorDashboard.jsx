@@ -455,17 +455,17 @@ export default function AdvisorDashboard() {
 
   const getStatusBadge = (status) => {
     const config = {
-      published: { color: 'bg-green-100 text-green-800', label: 'Published' },
-      draft: { color: 'bg-gray-100 text-gray-800', label: 'Draft' },
-      active: { color: 'bg-green-100 text-green-800', label: 'Active' },
-      cancelled: { color: 'bg-red-100 text-red-800', label: 'Cancelled' },
-      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' },
-      approved: { color: 'bg-blue-100 text-blue-800', label: 'Approved' },
-      processed: { color: 'bg-green-100 text-green-800', label: 'Processed' },
-      rejected: { color: 'bg-red-100 text-red-800', label: 'Rejected' },
-      pending_approval: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending Approval' }
+      published: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Published' },
+      draft: { color: 'bg-surface-2 text-foreground', label: 'Draft' },
+      active: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Active' },
+      cancelled: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Cancelled' },
+      pending: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending' },
+      approved: { color: 'bg-premium-muted text-protocall-blue', label: 'Approved' },
+      processed: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Processed' },
+      rejected: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Rejected' },
+      pending_approval: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending Approval' }
     };
-    const { color, label } = config[status] || { color: 'bg-gray-100 text-gray-800', label: 'Unknown' };
+    const { color, label } = config[status] || { color: 'bg-surface-2 text-foreground', label: 'Unknown' };
     return <Badge className={`${color} border-0`}>{label}</Badge>;
   };
 
@@ -478,15 +478,15 @@ export default function AdvisorDashboard() {
   const getPlanColor = (planName) => {
     const name = planName?.toLowerCase();
     if (name?.includes('vip') || name?.includes('diamond') || name?.includes('gold')) {
-      return 'from-amber-500 to-orange-600';
+      return 'from-hold to-hold';
     }
     if (name?.includes('premium') || name?.includes('pro') || name?.includes('plus')) {
-      return 'from-purple-500 to-pink-600';
+      return 'from-protocall-deep to-protocall-blue';
     }
     if (name?.includes('basic') || name?.includes('starter') || name?.includes('momentum')) {
-      return 'from-blue-500 to-cyan-600';
+      return 'from-protocall-deep to-protocall-blue';
     }
-    return 'from-indigo-500 to-purple-600';
+    return 'from-protocall-deep to-protocall-blue';
   };
 
   const getPlanIcon = (planName) => {
@@ -509,10 +509,10 @@ export default function AdvisorDashboard() {
         <div className="p-6">
           <div className="max-w-7xl mx-auto">
             <div className="animate-pulse">
-              <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
+              <div className="h-8 bg-border rounded w-1/3 mb-6"></div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 {[...Array(4)].map((_, i) => (
-                  <div key={i} className="h-24 bg-gray-200 rounded"></div>
+                  <div key={i} className="h-24 bg-border rounded"></div>
                 ))}
               </div>
             </div>
@@ -528,9 +528,9 @@ export default function AdvisorDashboard() {
         <div className="min-h-screen flex items-center justify-center p-4">
           <Card className="max-w-md w-full">
             <CardContent className="p-8 text-center">
-              <ShieldCheck className="w-16 h-16 text-indigo-500 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-slate-800 mb-2">SEBI Advisor Registration Required</h2>
-              <p className="text-slate-600 mb-6">
+              <ShieldCheck className="w-16 h-16 text-protocall-premium-light mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-foreground mb-2">SEBI Advisor Registration Required</h2>
+              <p className="text-subtle mb-6">
                 Complete your SEBI advisor registration to access this dashboard.
               </p>
               <Button onClick={() => window.location.href = '/AdvisorRegistration'}>
@@ -548,20 +548,20 @@ export default function AdvisorDashboard() {
     return (
       <AdvisorLayout activePage="advisor-dashboard">
         <div className="min-h-screen flex items-center justify-center p-4">
-          <Card className="max-w-md w-full border-2 border-yellow-200">
+          <Card className="max-w-md w-full border-2 border-hold/30">
             <CardContent className="p-8 text-center">
-              <div className="w-20 h-20 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4">
-                <Clock className="w-10 h-10 text-yellow-600" />
+              <div className="w-20 h-20 rounded-full bg-hold-muted flex items-center justify-center mx-auto mb-4">
+                <Clock className="w-10 h-10 text-hold-muted-foreground" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-800 mb-2">Application Under Review</h2>
-              <p className="text-slate-600 mb-4">
+              <h2 className="text-2xl font-bold text-foreground mb-2">Application Under Review</h2>
+              <p className="text-subtle mb-4">
                 Your SEBI advisor application is currently being reviewed by our admin team.
               </p>
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                <p className="text-sm text-yellow-800">
+              <div className="bg-hold-muted border border-hold/30 rounded-lg p-4 mb-6">
+                <p className="text-sm text-hold-muted-foreground">
                   <strong>Status:</strong> {getStatusBadge(advisor.status)}
                 </p>
-                <p className="text-sm text-yellow-800 mt-2">
+                <p className="text-sm text-hold-muted-foreground mt-2">
                   We'll notify you via email once your application is approved. This usually takes 1-2 business days.
                 </p>
               </div>
@@ -579,21 +579,21 @@ export default function AdvisorDashboard() {
     return (
       <AdvisorLayout activePage="advisor-dashboard">
         <div className="min-h-screen flex items-center justify-center p-4">
-          <Card className="max-w-md w-full border-2 border-red-200">
+          <Card className="max-w-md w-full border-2 border-sell/30">
             <CardContent className="p-8 text-center">
-              <div className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-                <AlertCircle className="w-10 h-10 text-red-600" />
+              <div className="w-20 h-20 rounded-full bg-sell-muted flex items-center justify-center mx-auto mb-4">
+                <AlertCircle className="w-10 h-10 text-sell-muted-foreground" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-800 mb-2">Application Not Approved</h2>
-              <p className="text-slate-600 mb-4">
+              <h2 className="text-2xl font-bold text-foreground mb-2">Application Not Approved</h2>
+              <p className="text-subtle mb-4">
                 Unfortunately, your advisor application was not approved.
               </p>
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                <p className="text-sm text-red-800">
+              <div className="bg-sell-muted border border-sell/30 rounded-lg p-4 mb-6">
+                <p className="text-sm text-sell-muted-foreground">
                   <strong>Status:</strong> {getStatusBadge(advisor.status)}
                 </p>
                 {advisor.rejection_reason && (
-                  <p className="text-sm text-red-800 mt-2">
+                  <p className="text-sm text-sell-muted-foreground mt-2">
                     <strong>Reason:</strong> {advisor.rejection_reason}
                   </p>
                 )}
@@ -635,10 +635,10 @@ export default function AdvisorDashboard() {
                       <img
                         src={advisor.profile_image_url}
                         alt={advisor.display_name}
-                        className="w-20 h-20 rounded-full object-cover border-4 border-purple-200 shadow-lg"
+                        className="w-20 h-20 rounded-full object-cover border-4 border-protocall-premium-light shadow-lg"
                       />
                     ) : (
-                      <div className="w-20 h-20 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold border-4 border-purple-200 shadow-lg">
+                      <div className="w-20 h-20 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center text-white text-3xl font-bold border-4 border-protocall-premium-light shadow-lg">
                         {advisor.display_name?.charAt(0)?.toUpperCase() || 'A'}
                       </div>
                     )}
@@ -650,16 +650,16 @@ export default function AdvisorDashboard() {
                   </div>
 
                   <div>
-                    <h2 className="text-3xl font-bold text-slate-800">Welcome back, {advisor.display_name}!</h2>
-                    <p className="text-slate-600 mt-1">Here's your advisory dashboard overview</p>
+                    <h2 className="text-3xl font-bold text-foreground">Welcome back, {advisor.display_name}!</h2>
+                    <p className="text-subtle mt-1">Here's your advisory dashboard overview</p>
                     <div className="flex items-center gap-2 mt-2">
-                      <Badge className="bg-green-100 text-green-800 border-0">SEBI Registered</Badge>
-                      <span className="text-sm text-slate-500">#{advisor.sebi_registration_number}</span>
+                      <Badge className="bg-buy-muted text-buy-muted-foreground border-0">SEBI Registered</Badge>
+                      <span className="text-sm text-muted-foreground">#{advisor.sebi_registration_number}</span>
                     </div>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <Button onClick={() => setShowCreatePost(true)} className="bg-blue-600 hover:bg-blue-700">
+                  <Button onClick={() => setShowCreatePost(true)} className="bg-protocall-blue hover:bg-protocall-blue">
                     <PlusCircle className="w-4 h-4 mr-2" />
                     Create Advisory
                   </Button>
@@ -670,10 +670,10 @@ export default function AdvisorDashboard() {
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
-                      <Users className="w-8 h-8 text-indigo-600" />
+                      <Users className="w-8 h-8 text-protocall-blue" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-slate-600">Active Subscribers</p>
-                        <p className="text-2xl font-bold text-slate-900">{stats.activeSubscribers}</p>
+                        <p className="text-sm font-medium text-subtle">Active Subscribers</p>
+                        <p className="text-2xl font-bold text-foreground">{stats.activeSubscribers}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -682,10 +682,10 @@ export default function AdvisorDashboard() {
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
-                      <CreditCard className="w-8 h-8 text-green-600" />
+                      <CreditCard className="w-8 h-8 text-buy-muted-foreground" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-slate-600">Total Subscribers</p>
-                        <p className="text-2xl font-bold text-slate-900">{stats.totalSubscribers}</p>
+                        <p className="text-sm font-medium text-subtle">Total Subscribers</p>
+                        <p className="text-2xl font-bold text-foreground">{stats.totalSubscribers}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -694,10 +694,10 @@ export default function AdvisorDashboard() {
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
-                      <DollarSign className="w-8 h-8 text-purple-600" />
+                      <DollarSign className="w-8 h-8 text-protocall-premium-text" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-slate-600">Total Earnings</p>
-                        <p className="text-2xl font-bold text-slate-900">₹{stats.totalEarnings.toLocaleString()}</p>
+                        <p className="text-sm font-medium text-subtle">Total Earnings</p>
+                        <p className="text-2xl font-bold text-foreground">₹{stats.totalEarnings.toLocaleString()}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -706,10 +706,10 @@ export default function AdvisorDashboard() {
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
-                      <Wallet className="w-8 h-8 text-emerald-600" />
+                      <Wallet className="w-8 h-8 text-buy-muted-foreground" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-slate-600">Available Balance</p>
-                        <p className="text-2xl font-bold text-slate-900">₹{stats.availableBalance.toLocaleString()}</p>
+                        <p className="text-sm font-medium text-subtle">Available Balance</p>
+                        <p className="text-2xl font-bold text-foreground">₹{stats.availableBalance.toLocaleString()}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -718,10 +718,10 @@ export default function AdvisorDashboard() {
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
-                      <Star className="w-8 h-8 text-yellow-600" />
+                      <Star className="w-8 h-8 text-hold-muted-foreground" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-slate-600">Avg Rating</p>
-                        <p className="text-2xl font-bold text-slate-900">{stats.avgRating}/5</p>
+                        <p className="text-sm font-medium text-subtle">Avg Rating</p>
+                        <p className="text-2xl font-bold text-foreground">{stats.avgRating}/5</p>
                       </div>
                     </div>
                   </CardContent>
@@ -739,23 +739,23 @@ export default function AdvisorDashboard() {
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <FileText className="w-8 h-8 text-blue-600" />
+                          <FileText className="w-8 h-8 text-protocall-blue" />
                           <div>
-                            <p className="font-semibold text-slate-800">Total Posts</p>
-                            <p className="text-sm text-slate-500">Published advisories</p>
+                            <p className="font-semibold text-foreground">Total Posts</p>
+                            <p className="text-sm text-muted-foreground">Published advisories</p>
                           </div>
                         </div>
-                        <p className="text-2xl font-bold text-slate-900">{posts.length}</p>
+                        <p className="text-2xl font-bold text-foreground">{posts.length}</p>
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <CreditCard className="w-8 h-8 text-green-600" />
+                          <CreditCard className="w-8 h-8 text-buy-muted-foreground" />
                           <div>
-                            <p className="font-semibold text-slate-800">Active Plans</p>
-                            <p className="text-sm text-slate-500">Subscription plans</p>
+                            <p className="font-semibold text-foreground">Active Plans</p>
+                            <p className="text-sm text-muted-foreground">Subscription plans</p>
                           </div>
                         </div>
-                        <p className="text-2xl font-bold text-slate-900">{plans.length}</p>
+                        <p className="text-2xl font-bold text-foreground">{plans.length}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -785,8 +785,8 @@ export default function AdvisorDashboard() {
 
             <TabsContent value="posts" className="space-y-4 mt-0">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-slate-800">My Posts</h2>
-                <Button onClick={() => setShowCreatePost(true)} className="bg-blue-600 hover:bg-blue-700">
+                <h2 className="text-2xl font-bold text-foreground">My Posts</h2>
+                <Button onClick={() => setShowCreatePost(true)} className="bg-protocall-blue hover:bg-protocall-blue">
                   <PlusCircle className="w-4 h-4 mr-2" />
                   Create Advisory
                 </Button>
@@ -797,61 +797,61 @@ export default function AdvisorDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {posts.length > 0 ? (
                   posts.map(post => (
-                    <Card key={post.id} className="hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-200">
+                    <Card key={post.id} className="hover:shadow-xl transition-all duration-300 border-2 hover:border-protocall-premium-light">
                       <CardContent className="p-6">
                         <div className="space-y-4">
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2">
                                 {post.recommendation_type && (
-                                  <Badge variant="outline" className={`font-semibold ${post.recommendation_type === 'buy' ? 'text-green-600 border-green-600 bg-green-50' :
-                                    post.recommendation_type === 'sell' ? 'text-red-600 border-red-600 bg-red-50' :
-                                      'text-yellow-600 border-yellow-600 bg-yellow-50'
+                                  <Badge variant="outline" className={`font-semibold ${post.recommendation_type === 'buy' ? 'text-buy-muted-foreground border-buy bg-buy-muted' :
+                                    post.recommendation_type === 'sell' ? 'text-sell-muted-foreground border-sell bg-sell-muted' :
+                                      'text-hold-muted-foreground border-hold bg-hold-muted'
                                     }`}>
                                     {post.recommendation_type?.toUpperCase()}
                                   </Badge>
                                 )}
                                 {getStatusBadge(post.status)}
                               </div>
-                              <h3 className="font-bold text-lg text-slate-900 line-clamp-2 mb-2">
+                              <h3 className="font-bold text-lg text-foreground line-clamp-2 mb-2">
                                 {post.title}
                               </h3>
                             </div>
                           </div>
 
                           {post.stock_symbol && (
-                            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-3 border border-blue-200">
-                              <p className="text-xs text-slate-600 mb-1">Stock Symbol</p>
-                              <p className="text-xl font-bold text-blue-600">{post.stock_symbol}</p>
+                            <div className="bg-surface-2 rounded-lg p-3 border border-protocall-premium-light">
+                              <p className="text-xs text-subtle mb-1">Stock Symbol</p>
+                              <p className="text-xl font-bold text-protocall-blue">{post.stock_symbol}</p>
                             </div>
                           )}
 
                           {(post.target_price || post.stop_loss) && (
                             <div className="grid grid-cols-2 gap-3">
                               {post.target_price && (
-                                <div className="bg-green-50 rounded-lg p-3 border border-green-200">
-                                  <p className="text-xs text-slate-600 mb-1">Target Price</p>
-                                  <p className="text-lg font-bold text-green-700">₹{post.target_price}</p>
+                                <div className="bg-buy-muted rounded-lg p-3 border border-buy/30">
+                                  <p className="text-xs text-subtle mb-1">Target Price</p>
+                                  <p className="text-lg font-bold text-buy-muted-foreground">₹{post.target_price}</p>
                                 </div>
                               )}
                               {post.stop_loss && (
-                                <div className="bg-red-50 rounded-lg p-3 border border-red-200">
-                                  <p className="text-xs text-slate-600 mb-1">Stop Loss</p>
-                                  <p className="text-lg font-bold text-red-700">₹{post.stop_loss}</p>
+                                <div className="bg-sell-muted rounded-lg p-3 border border-sell/30">
+                                  <p className="text-xs text-subtle mb-1">Stop Loss</p>
+                                  <p className="text-lg font-bold text-sell-muted-foreground">₹{post.stop_loss}</p>
                                 </div>
                               )}
                             </div>
                           )}
 
-                          <p className="text-sm text-slate-600 line-clamp-3">
+                          <p className="text-sm text-subtle line-clamp-3">
                             {post.content}
                           </p>
 
                           <div className="flex items-center justify-between pt-3 border-t">
-                            <Badge className={post.required_plan_id ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}>
+                            <Badge className={post.required_plan_id ? 'bg-premium-muted text-protocall-premium-text' : 'bg-premium-muted text-protocall-blue'}>
                               {getPlanNameForPost(post.required_plan_id)}
                             </Badge>
-                            <div className="flex items-center gap-1 text-xs text-slate-500">
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
                               <Eye className="w-3 h-3" />
                               {post.view_count || 0}
                             </div>
@@ -875,14 +875,14 @@ export default function AdvisorDashboard() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleViewPostStats(post)}
-                              className="h-8 border-blue-200 text-blue-600 hover:bg-blue-50"
+                              className="h-8 border-protocall-premium-light text-protocall-blue hover:bg-premium-muted"
                             >
                               <BarChart3 className="w-3 h-3 mr-1" />
                               Stats
                             </Button>
                           </div>
 
-                          <div className="text-xs text-slate-500 pt-3 border-t">
+                          <div className="text-xs text-muted-foreground pt-3 border-t">
                             <span>{format(new Date(post.created_date), 'MMM d, yyyy')}</span>
                           </div>
                         </div>
@@ -893,8 +893,8 @@ export default function AdvisorDashboard() {
                   <div className="col-span-full">
                     <Card>
                       <CardContent className="p-8 text-center">
-                        <FileText className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                        <p className="text-slate-600">No advisories published yet.</p>
+                        <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                        <p className="text-subtle">No advisories published yet.</p>
                         <Button onClick={() => setShowCreatePost(true)} className="mt-4">
                           Create Your First Advisory
                         </Button>
@@ -908,22 +908,22 @@ export default function AdvisorDashboard() {
             <TabsContent value="plans" className="space-y-4 mt-0">
               <div className="flex justify-between items-center mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-800">Subscription Plans</h2>
-                  <p className="text-sm text-slate-600 mt-1">
+                  <h2 className="text-2xl font-bold text-foreground">Subscription Plans</h2>
+                  <p className="text-sm text-subtle mt-1">
                     You have {plans.length} of 3 plans created
                   </p>
                 </div>
                 {plans.length < 3 ? (
-                  <Button onClick={handleCreateNewPlan} className="bg-green-600 hover:bg-green-700">
+                  <Button onClick={handleCreateNewPlan} className="bg-buy hover:bg-buy">
                     <PlusCircle className="w-4 h-4 mr-2" />
                     Create New Plan
                   </Button>
                 ) : (
                   <div className="text-right">
-                    <Badge className="bg-orange-100 text-orange-800 border-0 mb-2">
+                    <Badge className="bg-hold-muted text-hold-muted-foreground border-0 mb-2">
                       Maximum Plans Reached
                     </Badge>
-                    <p className="text-xs text-slate-600">You can only create up to 3 plans</p>
+                    <p className="text-xs text-subtle">You can only create up to 3 plans</p>
                   </div>
                 )}
               </div>
@@ -936,15 +936,15 @@ export default function AdvisorDashboard() {
                     ).length;
 
                     return (
-                      <Card key={plan.id} className={`relative overflow-hidden hover:shadow-2xl transition-all duration-300 ${plan.is_active ? 'border-2 border-purple-200' : 'border-2 border-gray-200 opacity-75'
+                      <Card key={plan.id} className={`relative overflow-hidden hover:shadow-2xl transition-all duration-300 ${plan.is_active ? 'border-2 border-protocall-premium-light' : 'border-2 border-border opacity-75'
                         }`}>
                         <div className={`p-6 text-center bg-gradient-to-br ${getPlanColor(plan.name)}`}>
                           <div className="flex justify-between items-start mb-3">
-                            <Badge className={plan.is_active ? 'bg-white/90 text-green-600 border-0' : 'bg-white/90 text-gray-600 border-0'}>
+                            <Badge className={plan.is_active ? 'bg-white/90 text-buy-muted-foreground border-0' : 'bg-white/90 text-subtle border-0'}>
                               {plan.is_active ? 'Active' : 'Inactive'}
                             </Badge>
                             {activeSubs > 0 && (
-                              <Badge className="bg-white/90 text-blue-600 border-0">
+                              <Badge className="bg-white/90 text-protocall-blue border-0">
                                 {activeSubs} Subscriber{activeSubs > 1 ? 's' : ''}
                               </Badge>
                             )}
@@ -966,15 +966,15 @@ export default function AdvisorDashboard() {
 
                         <CardContent className="p-6">
                           {plan.description && (
-                            <p className="text-sm text-slate-600 mb-4 text-center leading-relaxed">
+                            <p className="text-sm text-subtle mb-4 text-center leading-relaxed">
                               {plan.description}
                             </p>
                           )}
 
                           {plan.monthly_post_limit && (
-                            <div className="bg-blue-50 rounded-lg p-3 mb-4 border border-blue-200">
-                              <p className="text-xs text-slate-600 mb-1 text-center">Monthly Post Limit</p>
-                              <p className="text-lg font-bold text-blue-600 text-center">
+                            <div className="bg-premium-muted rounded-lg p-3 mb-4 border border-protocall-premium-light">
+                              <p className="text-xs text-subtle mb-1 text-center">Monthly Post Limit</p>
+                              <p className="text-lg font-bold text-protocall-blue text-center">
                                 {plan.monthly_post_limit} Posts/Month
                               </p>
                             </div>
@@ -982,11 +982,11 @@ export default function AdvisorDashboard() {
 
                           {plan.features && plan.features.length > 0 && (
                             <div className="space-y-3 mb-6">
-                              <p className="text-xs font-semibold text-slate-700 text-center uppercase tracking-wide">What's Included</p>
+                              <p className="text-xs font-semibold text-subtle text-center uppercase tracking-wide">What's Included</p>
                               <ul className="space-y-2">
                                 {plan.features.map((feature, idx) => (
-                                  <li key={idx} className="flex items-start gap-2 text-sm text-slate-700">
-                                    <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                                  <li key={idx} className="flex items-start gap-2 text-sm text-subtle">
+                                    <CheckCircle className="w-4 h-4 text-buy-muted-foreground flex-shrink-0 mt-0.5" />
                                     <span>{feature}</span>
                                   </li>
                                 ))}
@@ -1018,7 +1018,7 @@ export default function AdvisorDashboard() {
                               size="sm"
                               variant="outline"
                               onClick={() => confirmDeletePlan(plan)}
-                              className="w-full text-red-600 hover:text-red-700 hover:border-red-600"
+                              className="w-full text-sell-muted-foreground hover:text-sell-muted-foreground hover:border-sell"
                             >
                               <Trash2 className="w-3 h-3 mr-1" />
                               Delete Plan
@@ -1032,9 +1032,9 @@ export default function AdvisorDashboard() {
                   <div className="col-span-full">
                     <Card>
                       <CardContent className="p-8 text-center">
-                        <CreditCard className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                        <p className="text-slate-600">No subscription plans created yet.</p>
-                        <Button onClick={handleCreateNewPlan} className="mt-4 bg-green-600 hover:bg-green-700">
+                        <CreditCard className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                        <p className="text-subtle">No subscription plans created yet.</p>
+                        <Button onClick={handleCreateNewPlan} className="mt-4 bg-buy hover:bg-buy">
                           Create Your First Plan
                         </Button>
                       </CardContent>
@@ -1045,7 +1045,7 @@ export default function AdvisorDashboard() {
             </TabsContent>
 
             <TabsContent value="subscribers" className="space-y-4 mt-0">
-              <h2 className="text-2xl font-bold text-slate-800 mb-6">Subscribers</h2>
+              <h2 className="text-2xl font-bold text-foreground mb-6">Subscribers</h2>
               <SubscriberAnalytics subscriptions={subscriptions || []} plans={plans || []} />
             </TabsContent>
 
@@ -1055,8 +1055,8 @@ export default function AdvisorDashboard() {
                 <Button
                   onClick={() => setFinancialTab('overview')}
                   className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'overview'
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
-                    : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
+                    ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg hover:shadow-xl hover:scale-105'
+                    : 'bg-surface-2 text-subtle hover:from-surface-2 hover:to-surface-2 hover:shadow-md border border-protocall-premium-light'
                     }`}
                 >
                   <DollarSign className="w-5 h-5 mr-2 inline-block" />
@@ -1065,8 +1065,8 @@ export default function AdvisorDashboard() {
                 <Button
                   onClick={() => setFinancialTab('payouts')}
                   className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'payouts'
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
-                    : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
+                    ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg hover:shadow-xl hover:scale-105'
+                    : 'bg-surface-2 text-subtle hover:from-surface-2 hover:to-surface-2 hover:shadow-md border border-protocall-premium-light'
                     }`}
                 >
                   <Wallet className="w-5 h-5 mr-2 inline-block" />
@@ -1075,8 +1075,8 @@ export default function AdvisorDashboard() {
                 <Button
                   onClick={() => setFinancialTab('refunds')}
                   className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'refunds'
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
-                    : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
+                    ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg hover:shadow-xl hover:scale-105'
+                    : 'bg-surface-2 text-subtle hover:from-surface-2 hover:to-surface-2 hover:shadow-md border border-protocall-premium-light'
                     }`}
                 >
                   <TrendingUp className="w-5 h-5 mr-2 inline-block" />
@@ -1087,11 +1087,11 @@ export default function AdvisorDashboard() {
               {financialTab === 'overview' && (
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-bold text-slate-800">Financial Overview</h2>
+                    <h2 className="text-2xl font-bold text-foreground">Financial Overview</h2>
                     <Button
                       onClick={() => setShowPayoutRequest(true)}
                       disabled={stats.availableBalance <= 0}
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-buy hover:bg-buy"
                     >
                       <Wallet className="w-4 h-4 mr-2" />
                       Request Payout
@@ -1109,11 +1109,11 @@ export default function AdvisorDashboard() {
               {financialTab === 'payouts' && (
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-bold text-slate-800">Payout Requests</h2>
+                    <h2 className="text-2xl font-bold text-foreground">Payout Requests</h2>
                     <Button
                       onClick={() => setShowPayoutRequest(true)}
                       disabled={stats.availableBalance <= 0}
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-buy hover:bg-buy"
                     >
                       <Wallet className="w-4 h-4 mr-2" />
                       Request Payout
@@ -1124,10 +1124,10 @@ export default function AdvisorDashboard() {
                     <Card>
                       <CardContent className="p-6">
                         <div className="flex items-center">
-                          <Wallet className="w-8 h-8 text-green-600" />
+                          <Wallet className="w-8 h-8 text-buy-muted-foreground" />
                           <div className="ml-4">
-                            <p className="text-sm font-medium text-slate-600">Available Balance</p>
-                            <p className="text-2xl font-bold text-slate-900">₹{stats.availableBalance.toLocaleString()}</p>
+                            <p className="text-sm font-medium text-subtle">Available Balance</p>
+                            <p className="text-2xl font-bold text-foreground">₹{stats.availableBalance.toLocaleString()}</p>
                           </div>
                         </div>
                       </CardContent>
@@ -1136,10 +1136,10 @@ export default function AdvisorDashboard() {
                     <Card>
                       <CardContent className="p-6">
                         <div className="flex items-center">
-                          <Clock className="w-8 h-8 text-orange-600" />
+                          <Clock className="w-8 h-8 text-hold-muted-foreground" />
                           <div className="ml-4">
-                            <p className="text-sm font-medium text-slate-600">Pending Payouts</p>
-                            <p className="text-2xl font-bold text-slate-900">₹{stats.pendingPayouts.toLocaleString()}</p>
+                            <p className="text-sm font-medium text-subtle">Pending Payouts</p>
+                            <p className="text-2xl font-bold text-foreground">₹{stats.pendingPayouts.toLocaleString()}</p>
                           </div>
                         </div>
                       </CardContent>
@@ -1148,10 +1148,10 @@ export default function AdvisorDashboard() {
                     <Card>
                       <CardContent className="p-6">
                         <div className="flex items-center">
-                          <TrendingUp className="w-8 h-8 text-blue-600" />
+                          <TrendingUp className="w-8 h-8 text-protocall-blue" />
                           <div className="ml-4">
-                            <p className="text-sm font-medium text-slate-600">Total Earned</p>
-                            <p className="text-2xl font-bold text-slate-900">₹{stats.totalEarnings.toLocaleString()}</p>
+                            <p className="text-sm font-medium text-subtle">Total Earned</p>
+                            <p className="text-2xl font-bold text-foreground">₹{stats.totalEarnings.toLocaleString()}</p>
                           </div>
                         </div>
                       </CardContent>
@@ -1166,13 +1166,13 @@ export default function AdvisorDashboard() {
                             <div className="flex justify-between items-start">
                               <div>
                                 <p className="font-semibold">₹{payout.requested_amount.toLocaleString()}</p>
-                                <p className="text-sm text-slate-600">{format(new Date(payout.created_date), 'MMM d, yyyy')}</p>
-                                <p className="text-xs text-slate-500">{payout.payout_method}</p>
+                                <p className="text-sm text-subtle">{format(new Date(payout.created_date), 'MMM d, yyyy')}</p>
+                                <p className="text-xs text-muted-foreground">{payout.payout_method}</p>
                               </div>
                               {getStatusBadge(payout.status)}
                             </div>
                             {payout.admin_notes && (
-                              <p className="text-sm text-slate-600 mt-2">Admin Notes: {payout.admin_notes}</p>
+                              <p className="text-sm text-subtle mt-2">Admin Notes: {payout.admin_notes}</p>
                             )}
                           </CardContent>
                         </Card>
@@ -1180,10 +1180,10 @@ export default function AdvisorDashboard() {
                     ) : (
                       <Card>
                         <CardContent className="p-8 text-center">
-                          <Wallet className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                          <p className="text-slate-600">No payout requests yet.</p>
+                          <Wallet className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                          <p className="text-subtle">No payout requests yet.</p>
                           {stats.availableBalance > 0 && (
-                            <Button onClick={() => setShowPayoutRequest(true)} className="mt-4 bg-green-600 hover:bg-green-700">
+                            <Button onClick={() => setShowPayoutRequest(true)} className="mt-4 bg-buy hover:bg-buy">
                               Request Your First Payout
                             </Button>
                           )}
@@ -1196,43 +1196,43 @@ export default function AdvisorDashboard() {
 
               {financialTab === 'refunds' && (
                 <div className="space-y-6">
-                  <h2 className="text-2xl font-bold text-slate-800">Refund Management</h2>
+                  <h2 className="text-2xl font-bold text-foreground">Refund Management</h2>
                   <RefundManagementSection advisorId={advisor?.id} />
                 </div>
               )}
             </TabsContent>
 
             <TabsContent value="analytics" className="mt-0">
-              <h2 className="text-2xl font-bold text-slate-800 mb-6">Advanced Analytics</h2>
+              <h2 className="text-2xl font-bold text-foreground mb-6">Advanced Analytics</h2>
 
               {/* Enhanced Analytics Section */}
               <div className="space-y-6">
                 {/* Performance Overview */}
                 <Card className="shadow-lg border-0">
-                  <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
+                  <CardHeader className="border-b bg-surface-2">
                     <CardTitle>Performance Overview</CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                      <div className="text-center p-4 bg-blue-50 rounded-xl">
-                        <div className="text-3xl font-bold text-blue-600">{posts.length}</div>
-                        <div className="text-sm text-slate-600 mt-1">Total Posts</div>
+                      <div className="text-center p-4 bg-premium-muted rounded-xl">
+                        <div className="text-3xl font-bold text-protocall-blue">{posts.length}</div>
+                        <div className="text-sm text-subtle mt-1">Total Posts</div>
                       </div>
-                      <div className="text-center p-4 bg-green-50 rounded-xl">
-                        <div className="text-3xl font-bold text-green-600">
+                      <div className="text-center p-4 bg-buy-muted rounded-xl">
+                        <div className="text-3xl font-bold text-buy-muted-foreground">
                           {posts.reduce((sum, p) => sum + (p.view_count || 0), 0)}
                         </div>
-                        <div className="text-sm text-slate-600 mt-1">Total Views</div>
+                        <div className="text-sm text-subtle mt-1">Total Views</div>
                       </div>
-                      <div className="text-center p-4 bg-purple-50 rounded-xl">
-                        <div className="text-3xl font-bold text-purple-600">{stats.activeSubscribers}</div>
-                        <div className="text-sm text-slate-600 mt-1">Active Subscribers</div>
+                      <div className="text-center p-4 bg-premium-muted rounded-xl">
+                        <div className="text-3xl font-bold text-protocall-premium-text">{stats.activeSubscribers}</div>
+                        <div className="text-sm text-subtle mt-1">Active Subscribers</div>
                       </div>
-                      <div className="text-center p-4 bg-orange-50 rounded-xl">
-                        <div className="text-3xl font-bold text-orange-600">
+                      <div className="text-center p-4 bg-hold-muted rounded-xl">
+                        <div className="text-3xl font-bold text-hold-muted-foreground">
                           {posts.length > 0 ? Math.round(posts.reduce((sum, p) => sum + (p.view_count || 0), 0) / posts.length) : 0}
                         </div>
-                        <div className="text-sm text-slate-600 mt-1">Avg Views/Post</div>
+                        <div className="text-sm text-subtle mt-1">Avg Views/Post</div>
                       </div>
                     </div>
                   </CardContent>
@@ -1240,7 +1240,7 @@ export default function AdvisorDashboard() {
 
                 {/* Revenue Trends */}
                 <Card className="shadow-lg border-0">
-                  <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
+                  <CardHeader className="border-b bg-surface-2">
                     <CardTitle>Revenue Trends</CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
@@ -1256,8 +1256,8 @@ export default function AdvisorDashboard() {
                       </ResponsiveContainer>
                     ) : (
                       <div className="text-center p-8">
-                        <TrendingUp className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                        <p className="text-slate-600">No revenue data available yet.</p>
+                        <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                        <p className="text-subtle">No revenue data available yet.</p>
                       </div>
                     )}
                   </CardContent>
@@ -1265,7 +1265,7 @@ export default function AdvisorDashboard() {
 
                 {/* Top Performing Posts */}
                 <Card className="shadow-lg border-0">
-                  <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
+                  <CardHeader className="border-b bg-surface-2">
                     <CardTitle>Top Performing Posts</CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
@@ -1275,26 +1275,26 @@ export default function AdvisorDashboard() {
                           .sort((a, b) => (b.view_count || 0) - (a.view_count || 0))
                           .slice(0, 5)
                           .map((post, index) => (
-                            <div key={post.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                            <div key={post.id} className="flex items-center justify-between p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
                               <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold text-sm">
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue text-white flex items-center justify-center font-bold text-sm">
                                   {index + 1}
                                 </div>
                                 <div>
-                                  <p className="font-semibold text-slate-800">{post.title}</p>
-                                  <p className="text-xs text-slate-500">{format(new Date(post.created_date), 'MMM dd, yyyy')}</p>
+                                  <p className="font-semibold text-foreground">{post.title}</p>
+                                  <p className="text-xs text-muted-foreground">{format(new Date(post.created_date), 'MMM dd, yyyy')}</p>
                                 </div>
                               </div>
                               <div className="flex items-center gap-4">
                                 <div className="text-right">
-                                  <p className="font-bold text-blue-600">{post.view_count || 0}</p>
-                                  <p className="text-xs text-slate-500">views</p>
+                                  <p className="font-bold text-protocall-blue">{post.view_count || 0}</p>
+                                  <p className="text-xs text-muted-foreground">views</p>
                                 </div>
                                 <Button
                                   size="sm"
                                   variant="outline"
                                   onClick={() => handleViewPostStats(post)}
-                                  className="border-blue-200 text-blue-600 hover:bg-blue-50"
+                                  className="border-protocall-premium-light text-protocall-blue hover:bg-premium-muted"
                                 >
                                   <BarChart3 className="w-3 h-3 mr-1" />
                                   Details
@@ -1304,7 +1304,7 @@ export default function AdvisorDashboard() {
                           ))}
                       </div>
                     ) : (
-                      <div className="text-center p-8 text-slate-500">
+                      <div className="text-center p-8 text-muted-foreground">
                         No posts available yet
                       </div>
                     )}
@@ -1313,7 +1313,7 @@ export default function AdvisorDashboard() {
 
                 {/* Subscriber Engagement */}
                 <Card className="shadow-lg border-0">
-                  <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
+                  <CardHeader className="border-b bg-surface-2">
                     <CardTitle>Subscriber Engagement</CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
@@ -1325,25 +1325,25 @@ export default function AdvisorDashboard() {
                         const avgEngagement = planSubs.length > 0 ? Math.round(totalPlanViews / planSubs.length) : 0;
 
                         return (
-                          <div key={plan.id} className="p-4 bg-slate-50 rounded-lg">
+                          <div key={plan.id} className="p-4 bg-surface-2 rounded-lg">
                             <div className="flex items-center justify-between mb-2">
-                              <h4 className="font-semibold text-slate-800">{plan.name}</h4>
-                              <Badge className="bg-blue-100 text-blue-800">
+                              <h4 className="font-semibold text-foreground">{plan.name}</h4>
+                              <Badge className="bg-premium-muted text-protocall-blue">
                                 {planSubs.length} subscribers
                               </Badge>
                             </div>
                             <div className="grid grid-cols-3 gap-4 text-sm">
                               <div>
-                                <p className="text-slate-500">Exclusive Posts</p>
-                                <p className="font-bold text-slate-800">{planPosts.length}</p>
+                                <p className="text-muted-foreground">Exclusive Posts</p>
+                                <p className="font-bold text-foreground">{planPosts.length}</p>
                               </div>
                               <div>
-                                <p className="text-slate-500">Total Views</p>
-                                <p className="font-bold text-slate-800">{totalPlanViews}</p>
+                                <p className="text-muted-foreground">Total Views</p>
+                                <p className="font-bold text-foreground">{totalPlanViews}</p>
                               </div>
                               <div>
-                                <p className="text-slate-500">Avg Views/Sub</p>
-                                <p className="font-bold text-slate-800">{avgEngagement}</p>
+                                <p className="text-muted-foreground">Avg Views/Sub</p>
+                                <p className="font-bold text-foreground">{avgEngagement}</p>
                               </div>
                             </div>
                           </div>
@@ -1405,7 +1405,7 @@ export default function AdvisorDashboard() {
           {showProfileImageModal && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
               <div className="bg-white rounded-lg p-6 max-w-md w-full mx-auto shadow-xl">
-                <h3 className="text-xl font-bold text-slate-800 mb-4">Update Profile Picture</h3>
+                <h3 className="text-xl font-bold text-foreground mb-4">Update Profile Picture</h3>
 
                 <div className="space-y-4">
                   <div className="flex justify-center">
@@ -1413,10 +1413,10 @@ export default function AdvisorDashboard() {
                       <img
                         src={advisor.profile_image_url}
                         alt="Current"
-                        className="w-32 h-32 rounded-full object-cover border-4 border-purple-200"
+                        className="w-32 h-32 rounded-full object-cover border-4 border-protocall-premium-light"
                       />
                     ) : (
-                      <div className="w-32 h-32 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white text-5xl font-bold">
+                      <div className="w-32 h-32 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center text-white text-5xl font-bold">
                         {advisor.display_name?.charAt(0)?.toUpperCase() || 'A'}
                       </div>
                     )}
@@ -1434,7 +1434,7 @@ export default function AdvisorDashboard() {
                       }}
                       className="mt-2"
                     />
-                    <p className="text-xs text-slate-500 mt-2">
+                    <p className="text-xs text-muted-foreground mt-2">
                       Recommended: Square image, at least 400x400px, max 5MB
                     </p>
                   </div>
@@ -1456,20 +1456,20 @@ export default function AdvisorDashboard() {
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
               <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                    <Trash2 className="w-6 h-6 text-red-600" />
+                  <div className="w-12 h-12 rounded-full bg-sell-muted flex items-center justify-center">
+                    <Trash2 className="w-6 h-6 text-sell-muted-foreground" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-slate-800">Delete Subscription Plan?</h3>
-                    <p className="text-sm text-slate-600">This action cannot be undone</p>
+                    <h3 className="text-xl font-bold text-foreground">Delete Subscription Plan?</h3>
+                    <p className="text-sm text-subtle">This action cannot be undone</p>
                   </div>
                 </div>
 
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-                  <p className="text-sm text-red-800 font-semibold mb-2">
+                <div className="bg-sell-muted border border-sell/30 rounded-lg p-4 mb-4">
+                  <p className="text-sm text-sell-muted-foreground font-semibold mb-2">
                     You are about to delete: <span className="font-bold">{deletingPlan.name}</span>
                   </p>
-                  <ul className="text-xs text-red-700 space-y-1 ml-4 list-disc">
+                  <ul className="text-xs text-sell-muted-foreground space-y-1 ml-4 list-disc">
                     <li>Price: ₹{deletingPlan.price?.toLocaleString()} / {deletingPlan.billing_interval}</li>
                     <li>This plan will be permanently removed</li>
                     <li>Historical data will be preserved</li>
@@ -1483,12 +1483,12 @@ export default function AdvisorDashboard() {
 
                   if (activeSubs > 0) {
                     return (
-                      <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
-                        <p className="text-sm text-orange-800 font-semibold flex items-center gap-2">
+                      <div className="bg-hold-muted border border-hold/30 rounded-lg p-4 mb-4">
+                        <p className="text-sm text-hold-muted-foreground font-semibold flex items-center gap-2">
                           <AlertCircle className="w-4 h-4" />
                           Warning: {activeSubs} Active Subscriber{activeSubs > 1 ? 's' : ''}
                         </p>
-                        <p className="text-xs text-orange-700 mt-1">
+                        <p className="text-xs text-hold-muted-foreground mt-1">
                           You cannot delete a plan with active subscribers. Please deactivate the plan instead, or wait for subscriptions to expire.
                         </p>
                       </div>
@@ -1510,7 +1510,7 @@ export default function AdvisorDashboard() {
                   </Button>
                   <Button
                     onClick={handleDeletePlan}
-                    className="flex-1 bg-red-600 hover:bg-red-700"
+                    className="flex-1 bg-sell hover:bg-sell"
                   >
                     Delete Plan
                   </Button>

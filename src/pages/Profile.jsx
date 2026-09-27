@@ -40,11 +40,11 @@ export default function Profile() {
 
   // Show profile immediately with mock data - no loading, no authentication
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-6">
+    <div className="w-full bg-background p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Profile Header */}
         <div className="text-center space-y-4 mb-8">
-          <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-2xl shadow-lg">
+          <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center text-white font-bold text-2xl shadow-lg">
             {user.profile_image_url ? (
               <img src={user.profile_image_url} alt={user.display_name} className="w-24 h-24 rounded-full object-cover" />
             ) : (
@@ -52,8 +52,8 @@ export default function Profile() {
             )}
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">{user.display_name}</h1>
-            <p className="text-slate-600">{user.email}</p>
+            <h1 className="text-3xl font-bold text-foreground">{user.display_name}</h1>
+            <p className="text-subtle">{user.email}</p>
           </div>
         </div>
 
@@ -64,35 +64,35 @@ export default function Profile() {
               <TabsList className="w-full bg-transparent rounded-none h-auto p-0 grid grid-cols-5 gap-2">
                 <TabsTrigger
                   value="general"
-                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700"
+                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg bg-background text-protocall-blue"
                 >
                   <Settings className="w-4 h-4" />
                   <span className="hidden sm:inline">General</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="referrals"
-                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700"
+                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg bg-background text-protocall-blue"
                 >
                   <Award className="w-4 h-4" />
                   <span className="hidden sm:inline">Referrals</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="subscription"
-                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700"
+                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg bg-background text-protocall-blue"
                 >
                   <Crown className="w-4 h-4" />
                   <span className="hidden sm:inline">Subscription</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="trust-score"
-                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700"
+                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg bg-background text-protocall-blue"
                 >
                   <Shield className="w-4 h-4" />
                   <span className="hidden sm:inline">Trust Score</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="credits"
-                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700"
+                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg bg-background text-protocall-blue"
                 >
                   <Star className="w-4 h-4" />
                   <span className="hidden sm:inline">Credits</span>

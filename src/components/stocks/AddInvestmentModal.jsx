@@ -173,7 +173,7 @@ export default function AddInvestmentModal({ open, onClose, onSave, existingInve
             <div className="space-y-2">
               <Label htmlFor="stock-search">Search Stock</Label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="stock-search"
                   placeholder="e.g., Reliance, TCS, HDFC Bank..."
@@ -189,7 +189,7 @@ export default function AddInvestmentModal({ open, onClose, onSave, existingInve
                     <div
                       key={stock.id}
                       onClick={() => handleSelectStock(stock)}
-                      className="p-2 hover:bg-gray-100 cursor-pointer text-sm"
+                      className="p-2 hover:bg-surface-2 cursor-pointer text-sm"
                     >
                       <span className="font-semibold">{stock.symbol}</span> - {stock.company_name}
                     </div>
@@ -197,7 +197,7 @@ export default function AddInvestmentModal({ open, onClose, onSave, existingInve
                 </div>
               )}
               {searchTerm.length >= 2 && searchedStocks.length === 0 && !isSearching && (
-                <div className="text-center py-4 text-gray-500">
+                <div className="text-center py-4 text-muted-foreground">
                   No stocks found matching your search
                 </div>
               )}
@@ -206,10 +206,10 @@ export default function AddInvestmentModal({ open, onClose, onSave, existingInve
 
           {/* Selected Stock Display */}
           {selectedStock && (
-            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-surface-2 rounded-lg">
               <div>
                 <p className="font-bold text-lg">{selectedStock.symbol}</p>
-                <p className="text-sm text-slate-600">{selectedStock.company_name}</p>
+                <p className="text-sm text-subtle">{selectedStock.company_name}</p>
               </div>
               {!existingInvestment && (
                 <Button variant="ghost" size="sm" onClick={() => setSelectedStock(null)}>
@@ -244,7 +244,7 @@ export default function AddInvestmentModal({ open, onClose, onSave, existingInve
               </div>
             ))}
             {!existingInvestment && (
-              <Button variant="outline" size="sm" onClick={addTransactionRow} className="w-full hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200">
+              <Button variant="outline" size="sm" onClick={addTransactionRow} className="w-full hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 transition-all duration-200">
                 <Plus className="h-4 w-4 mr-2" />
                 Add another buy transaction
               </Button>
@@ -260,7 +260,7 @@ export default function AddInvestmentModal({ open, onClose, onSave, existingInve
                   <Button
                     id="purchase-date"
                     variant={"outline"}
-                    className="w-full justify-start text-left font-normal hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200"
+                    className="w-full justify-start text-left font-normal hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 transition-all duration-200"
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {purchaseDate ? format(purchaseDate, "PPP") : <span>Pick a date</span>}
@@ -289,7 +289,7 @@ export default function AddInvestmentModal({ open, onClose, onSave, existingInve
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => { resetForm(); onClose(); }} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200">Cancel</Button>
+          <Button variant="outline" onClick={() => { resetForm(); onClose(); }} className="hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 transition-all duration-200">Cancel</Button>
           <Button onClick={handleSubmit} disabled={isSaving}>
             {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             {isSaving ? 'Saving...' : (existingInvestment ? 'Update Investment' : 'Add to Portfolio')}

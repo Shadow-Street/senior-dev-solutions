@@ -65,15 +65,15 @@ export default function DisableContentCreatorsPage() {
   };
 
   return (
-    <Card className="border-orange-200 bg-orange-50">
+    <Card className="border-hold/30 bg-hold-muted">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-orange-800">
+        <CardTitle className="flex items-center gap-2 text-hold-muted-foreground">
           <AlertCircle className="w-5 h-5" />
           Fix Navigation Issues
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="text-sm text-orange-700">
+        <div className="text-sm text-hold-muted-foreground">
           <p className="mb-2">This tool will:</p>
           <ul className="list-disc list-inside space-y-1 ml-2">
             <li>Remove duplicate "Content Creators" / "Finfluencers" pages</li>
@@ -83,35 +83,35 @@ export default function DisableContentCreatorsPage() {
         </div>
 
         {isComplete && foundIssues.length > 0 && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+          <div className="bg-buy-muted border border-buy/30 rounded-lg p-3">
             <div className="flex items-start gap-2 mb-2">
-              <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
+              <CheckCircle className="w-5 h-5 text-buy-muted-foreground mt-0.5" />
               <div>
-                <p className="font-semibold text-green-800">Issues Fixed:</p>
-                <ul className="text-sm text-green-700 space-y-1 mt-2">
+                <p className="font-semibold text-buy-muted-foreground">Issues Fixed:</p>
+                <ul className="text-sm text-buy-muted-foreground space-y-1 mt-2">
                   {foundIssues.map((issue, idx) => (
                     <li key={idx}>✓ {issue}</li>
                   ))}
                 </ul>
               </div>
             </div>
-            <p className="text-sm text-green-600 font-medium mt-3">
+            <p className="text-sm text-buy-muted-foreground font-medium mt-3">
               Please refresh your browser to see the updated navigation.
             </p>
           </div>
         )}
 
         {isComplete && foundIssues.length === 0 && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-blue-600" />
-            <span className="text-sm text-blue-700">No issues found. Navigation is already clean!</span>
+          <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-3 flex items-center gap-2">
+            <CheckCircle className="w-5 h-5 text-protocall-ink/75" />
+            <span className="text-sm text-protocall-blue">No issues found. Navigation is already clean!</span>
           </div>
         )}
 
         <Button 
           onClick={handleFixDuplicates}
           disabled={isProcessing || isComplete}
-          className="w-full bg-orange-600 hover:bg-orange-700"
+          className="w-full bg-hold hover:bg-hold"
         >
           {isProcessing ? (
             <>

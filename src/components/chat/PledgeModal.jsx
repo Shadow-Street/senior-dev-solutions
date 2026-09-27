@@ -81,19 +81,19 @@ export default function PledgeModal({ open, onClose, stockSymbol, userVote, onPl
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Target className="w-5 h-5 text-purple-600" />
+            <Target className="w-5 h-5 text-protocall-premium-text" />
             Make Market Commitment
           </DialogTitle>
           <div className="flex items-center gap-2 mt-2">
             <Badge variant="outline">{stockSymbol}</Badge>
             <Badge className={`${
-              userVote === 'buy' ? 'bg-green-100 text-green-800' :
-              userVote === 'sell' ? 'bg-red-100 text-red-800' :
-              'bg-orange-100 text-orange-800'
+              userVote === 'buy' ? 'bg-buy-muted text-buy-muted-foreground' :
+              userVote === 'sell' ? 'bg-sell-muted text-sell-muted-foreground' :
+              'bg-hold-muted text-hold-muted-foreground'
             }`}>
               {userVote.toUpperCase()} Decision
             </Badge>
-            <Badge variant="outline" className="bg-purple-50 text-purple-700">
+            <Badge variant="outline" className="bg-premium-muted text-protocall-premium-text">
               <Clock className="w-3 h-3 mr-1" />
               Today's Session
             </Badge>
@@ -115,7 +115,7 @@ export default function PledgeModal({ open, onClose, stockSymbol, userVote, onPl
                 placeholder="100"
                 required
               />
-              <p className="text-xs text-slate-500 mt-1">Number of shares</p>
+              <p className="text-xs text-muted-foreground mt-1">Number of shares</p>
             </div>
             
             <div>
@@ -132,7 +132,7 @@ export default function PledgeModal({ open, onClose, stockSymbol, userVote, onPl
                 placeholder="2500.00"
                 required
               />
-              <p className="text-xs text-slate-500 mt-1">Expected price</p>
+              <p className="text-xs text-muted-foreground mt-1">Expected price</p>
             </div>
           </div>
 
@@ -159,7 +159,7 @@ export default function PledgeModal({ open, onClose, stockSymbol, userVote, onPl
               placeholder="250000"
               required
             />
-            <p className="text-xs text-slate-500 mt-1">Auto-calculated or manual entry</p>
+            <p className="text-xs text-muted-foreground mt-1">Auto-calculated or manual entry</p>
           </div>
 
           <div>
@@ -177,7 +177,7 @@ export default function PledgeModal({ open, onClose, stockSymbol, userVote, onPl
                     <div className="flex items-center gap-2">
                       <div className="flex">
                         {Array(rating).fill(0).map((_, i) => (
-                          <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                          <Star key={i} className="w-3 h-3 fill-hold text-hold" />
                         ))}
                       </div>
                       <span>{rating} Star{rating > 1 ? 's' : ''}</span>
@@ -200,8 +200,8 @@ export default function PledgeModal({ open, onClose, stockSymbol, userVote, onPl
           </div>
 
           {/* Pledge Summary */}
-          <div className="p-4 bg-purple-50 rounded-lg space-y-2 text-sm">
-            <h4 className="font-semibold text-purple-900 flex items-center gap-2">
+          <div className="p-4 bg-premium-muted rounded-lg space-y-2 text-sm">
+            <h4 className="font-semibold text-protocall-premium-text flex items-center gap-2">
               <Target className="w-4 h-4" />
               Commitment Summary
             </h4>
@@ -223,7 +223,7 @@ export default function PledgeModal({ open, onClose, stockSymbol, userVote, onPl
                 <span className="font-semibold">₹{pledgeData.target_price || 0}</span>
               </div>
             </div>
-            <div className="flex justify-between border-t pt-2 font-bold text-purple-800">
+            <div className="flex justify-between border-t pt-2 font-bold text-protocall-premium-text">
               <span>Total Commitment:</span>
               <span>₹{parseFloat(pledgeData.amount_committed || 0).toLocaleString()}</span>
             </div>
@@ -236,7 +236,7 @@ export default function PledgeModal({ open, onClose, stockSymbol, userVote, onPl
             <Button 
               type="submit" 
               disabled={isSubmitting}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-primary hover:bg-primary"
             >
               <Target className="w-4 h-4 mr-2" />
               {isSubmitting ? 'Creating...' : 'Commit Pledge'}

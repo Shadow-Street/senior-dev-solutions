@@ -165,8 +165,8 @@ export default function ReportsManager() {
     return (
       <div className="flex justify-center items-center h-full p-12">
         <div className="text-center">
-            <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
-            <p className="text-slate-600 font-medium">Generating Reports...</p>
+            <Loader2 className="w-12 h-12 animate-spin text-protocall-blue mx-auto mb-4" />
+            <p className="text-subtle font-medium">Generating Reports...</p>
         </div>
       </div>
     );
@@ -178,13 +178,13 @@ export default function ReportsManager() {
             <Card className="shadow-lg border-0 bg-white">
                 <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="w-6 h-6 text-slate-700" />
+                    <BarChart3 className="w-6 h-6 text-subtle" />
                     Reporting & Analytics
                 </CardTitle>
                 </CardHeader>
                 <CardContent>
-                <div className="flex flex-col items-center justify-center h-96 text-center text-slate-500">
-                    <BarChart3 className="w-24 h-24 text-slate-300 mb-4" />
+                <div className="flex flex-col items-center justify-center h-96 text-center text-muted-foreground">
+                    <BarChart3 className="w-24 h-24 text-muted-foreground mb-4" />
                     <h2 className="text-xl font-semibold">No Data to Generate Reports</h2>
                     <p className="mt-2 max-w-md">
                     Once there are investments and allocations, this section will populate with detailed reports.
@@ -201,7 +201,7 @@ export default function ReportsManager() {
   return (
     <div className="p-8 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-slate-900">Reporting & Analytics</h1>
+        <h1 className="text-3xl font-bold text-foreground">Reporting & Analytics</h1>
         <Button variant="outline" onClick={loadData}>
           <Download className="w-4 h-4 mr-2" />
           Refresh Reports
@@ -226,7 +226,7 @@ export default function ReportsManager() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${reportData.totalPNL >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <div className={`text-2xl font-bold ${reportData.totalPNL >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
               {formatCurrency(reportData.totalPNL)}
             </div>
             <p className="text-xs text-muted-foreground">Total Unrealized Profit & Loss</p>
@@ -243,14 +243,14 @@ export default function ReportsManager() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-50 to-indigo-50">
+        <Card className="bg-surface-2">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Profit Payouts</CardTitle>
-            <DollarSign className="h-4 w-4 text-purple-600" />
+            <DollarSign className="h-4 w-4 text-protocall-premium-text" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-900">{formatCurrency(reportData.totalProfitPayouts)}</div>
-            <p className="text-xs text-purple-600">Lifetime distributed to investors</p>
+            <div className="text-2xl font-bold text-protocall-premium-text">{formatCurrency(reportData.totalProfitPayouts)}</div>
+            <p className="text-xs text-protocall-premium-text">Lifetime distributed to investors</p>
           </CardContent>
         </Card>
 
@@ -260,7 +260,7 @@ export default function ReportsManager() {
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">+ {formatCurrency(reportData.aumGrowth.reduce((acc, item) => acc + item.aum, 0))}</div>
+            <div className="text-2xl font-bold text-protocall-blue">+ {formatCurrency(reportData.aumGrowth.reduce((acc, item) => acc + item.aum, 0))}</div>
             <p className="text-xs text-muted-foreground">Based on new investments this year</p>
           </CardContent>
         </Card>
@@ -281,11 +281,11 @@ export default function ReportsManager() {
                   <YAxis tickFormatter={(value) => formatCurrency(value)} />
                   <Tooltip formatter={(value) => formatCurrency(value)} />
                   <Legend />
-                  <Line type="monotone" dataKey="aum" name="Cumulative AUM" stroke="#3b82f6" strokeWidth={2} />
+                  <Line type="monotone" dataKey="aum" name="Cumulative AUM" stroke="hsl(var(--chart-1))" strokeWidth={2} />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-[300px] flex items-center justify-center text-slate-500">
+              <div className="h-[300px] flex items-center justify-center text-muted-foreground">
                 No growth data available
               </div>
             )}
@@ -317,7 +317,7 @@ export default function ReportsManager() {
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-[300px] flex items-center justify-center text-slate-500">
+              <div className="h-[300px] flex items-center justify-center text-muted-foreground">
                 No distribution data available
               </div>
             )}
@@ -335,9 +335,9 @@ export default function ReportsManager() {
                       <table className="w-full">
                           <thead>
                               <tr className="border-b">
-                                  <th className="py-2 text-left text-sm font-semibold text-slate-600">Investor</th>
-                                  <th className="py-2 text-left text-sm font-semibold text-slate-600">Plan</th>
-                                  <th className="py-2 text-right text-sm font-semibold text-slate-600">Profit/Loss</th>
+                                  <th className="py-2 text-left text-sm font-semibold text-subtle">Investor</th>
+                                  <th className="py-2 text-left text-sm font-semibold text-subtle">Plan</th>
+                                  <th className="py-2 text-right text-sm font-semibold text-subtle">Profit/Loss</th>
                               </tr>
                           </thead>
                           <tbody>
@@ -345,7 +345,7 @@ export default function ReportsManager() {
                                   <tr key={alloc.id} className="border-b">
                                       <td className="py-3 text-sm">{alloc.investorName}</td>
                                       <td className="py-3 text-sm">{alloc.planName}</td>
-                                      <td className={`py-3 text-right text-sm font-semibold ${alloc.profit_loss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                      <td className={`py-3 text-right text-sm font-semibold ${alloc.profit_loss >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
                                           {formatCurrency(alloc.profit_loss)}
                                       </td>
                                   </tr>
@@ -353,7 +353,7 @@ export default function ReportsManager() {
                           </tbody>
                       </table>
                     ) : (
-                      <div className="py-8 text-center text-slate-500">No allocation data available</div>
+                      <div className="py-8 text-center text-muted-foreground">No allocation data available</div>
                     )}
                 </div>
             </CardContent>
@@ -366,15 +366,15 @@ export default function ReportsManager() {
                       <table className="w-full">
                           <thead>
                               <tr className="border-b">
-                                  <th className="py-2 text-left text-sm font-semibold text-slate-600">Investor</th>
-                                  <th className="py-2 text-right text-sm font-semibold text-slate-600">Total Invested</th>
+                                  <th className="py-2 text-left text-sm font-semibold text-subtle">Investor</th>
+                                  <th className="py-2 text-right text-sm font-semibold text-subtle">Total Invested</th>
                               </tr>
                           </thead>
                           <tbody>
                               {reportData.largestInvestors.map(inv => (
                                   <tr key={inv.id} className="border-b">
                                       <td className="py-3 text-sm">{inv.name}</td>
-                                      <td className="py-3 text-right text-sm font-semibold text-blue-600">
+                                      <td className="py-3 text-right text-sm font-semibold text-protocall-blue">
                                           {formatCurrency(inv.totalInvested)}
                                       </td>
                                   </tr>
@@ -382,7 +382,7 @@ export default function ReportsManager() {
                           </tbody>
                       </table>
                     ) : (
-                      <div className="py-8 text-center text-slate-500">No investor data available</div>
+                      <div className="py-8 text-center text-muted-foreground">No investor data available</div>
                     )}
                 </div>
             </CardContent>

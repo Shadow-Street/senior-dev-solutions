@@ -88,7 +88,7 @@ export default function EditEventModal({ open, onClose, event, onSubmit }) { // 
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"> {/* Updated className */}
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Edit className="w-5 h-5 text-purple-600" /> {/* Added Edit icon */}
+            <Edit className="w-5 h-5 text-protocall-premium-text" /> {/* Added Edit icon */}
             Edit Event
           </DialogTitle>
         </DialogHeader>
@@ -179,9 +179,9 @@ export default function EditEventModal({ open, onClose, event, onSubmit }) { // 
                 )}
               </div>
               
-              <div className="bg-yellow-50 p-3 rounded-lg flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-yellow-800">
+              <div className="bg-hold-muted p-3 rounded-lg flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-hold-muted-foreground mt-0.5 flex-shrink-0" />
+                <div className="text-sm text-hold-muted-foreground">
                   <p><strong>Important:</strong> After editing, your event will need admin approval again before going live. All existing RSVPs will be preserved.</p>
                 </div>
               </div>
@@ -190,7 +190,7 @@ export default function EditEventModal({ open, onClose, event, onSubmit }) { // 
                 <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting} className="bg-purple-600 hover:bg-purple-700"> {/* Updated button type and color */}
+                <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary"> {/* Updated button type and color */}
                   {isSubmitting ? 'Saving...' : 'Save Changes'} {/* Updated button text */}
                 </Button>
               </div>

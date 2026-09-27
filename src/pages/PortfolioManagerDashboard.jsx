@@ -42,7 +42,7 @@ export default function PortfolioManagerDashboard() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
       </div>
     );
   }
@@ -52,9 +52,9 @@ export default function PortfolioManagerDashboard() {
       <div className="flex items-center justify-center min-h-screen">
         <Card className="max-w-lg">
           <CardContent className="p-8 text-center">
-            <Briefcase className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <Briefcase className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">Not Registered as PM</h2>
-            <p className="text-gray-600">You need to register as a Portfolio Manager to access this dashboard.</p>
+            <p className="text-subtle">You need to register as a Portfolio Manager to access this dashboard.</p>
           </CardContent>
         </Card>
       </div>
@@ -66,12 +66,12 @@ export default function PortfolioManagerDashboard() {
       <div className="flex items-center justify-center min-h-screen">
         <Card className="max-w-lg">
           <CardContent className="p-8 text-center">
-            <Activity className="w-16 h-16 text-orange-500 mx-auto mb-4" />
+            <Activity className="w-16 h-16 text-hold mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">Application Pending</h2>
-            <p className="text-gray-600 mb-4">
+            <p className="text-subtle mb-4">
               Your Portfolio Manager application is currently under review by the SuperAdmin.
             </p>
-            <p className="text-sm text-gray-500">Status: <span className="font-semibold">{pmProfile.status}</span></p>
+            <p className="text-sm text-muted-foreground">Status: <span className="font-semibold">{pmProfile.status}</span></p>
           </CardContent>
         </Card>
       </div>
@@ -79,13 +79,13 @@ export default function PortfolioManagerDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
+    <div className="min-h-screen bg-surface-2 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Portfolio Manager Dashboard</h1>
-            <p className="text-gray-600 mt-1">
+            <h1 className="text-3xl font-bold text-foreground">Portfolio Manager Dashboard</h1>
+            <p className="text-subtle mt-1">
               {pmProfile.display_name} • SEBI Reg: {pmProfile.sebi_registration_number}
             </p>
           </div>

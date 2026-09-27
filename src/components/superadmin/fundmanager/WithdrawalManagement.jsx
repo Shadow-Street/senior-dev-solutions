@@ -76,30 +76,30 @@ export default function WithdrawalManagement({ onUpdate }) {
   const getStatusIcon = (status) => {
     switch (status) {
       case 'pending':
-        return <Clock className="w-4 h-4 text-yellow-600" />;
+        return <Clock className="w-4 h-4 text-hold-muted-foreground" />;
       case 'approved':
-        return <CheckCircle className="w-4 h-4 text-blue-600" />;
+        return <CheckCircle className="w-4 h-4 text-protocall-blue" />;
       case 'processed':
-        return <CheckCircle className="w-4 h-4 text-green-600" />;
+        return <CheckCircle className="w-4 h-4 text-buy-muted-foreground" />;
       case 'rejected':
-        return <XCircle className="w-4 h-4 text-red-600" />;
+        return <XCircle className="w-4 h-4 text-sell-muted-foreground" />;
       default:
-        return <Clock className="w-4 h-4 text-gray-600" />;
+        return <Clock className="w-4 h-4 text-subtle" />;
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-hold-muted text-hold-muted-foreground border-hold/30';
       case 'approved':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-premium-muted text-protocall-blue border-protocall-premium-light';
       case 'processed':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-buy-muted text-buy-muted-foreground border-buy/30';
       case 'rejected':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-sell-muted text-sell-muted-foreground border-sell/30';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-surface-2 text-foreground border-border';
     }
   };
 
@@ -337,7 +337,7 @@ export default function WithdrawalManagement({ onUpdate }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
       </div>
     );
   }
@@ -345,12 +345,12 @@ export default function WithdrawalManagement({ onUpdate }) {
   return (
     <div className="space-y-6">
       {/* Info Banner */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
+      <div className="bg-surface-2 border border-protocall-premium-light rounded-lg p-4">
         <div className="flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-          <div className="text-sm text-blue-900">
+          <AlertTriangle className="w-5 h-5 text-protocall-blue flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-protocall-blue">
             <p className="font-semibold mb-1">Withdrawal Processing Flow:</p>
-            <ol className="list-decimal list-inside space-y-1 text-blue-800">
+            <ol className="list-decimal list-inside space-y-1 text-protocall-blue">
               <li><strong>Pending</strong> → Click "Approve" to approve the request</li>
               <li><strong>Approved</strong> → Click "Process Payout" to credit funds to investor wallet</li>
               <li><strong>Processed</strong> → Withdrawal completed (funds in investor wallet)</li>
@@ -365,15 +365,15 @@ export default function WithdrawalManagement({ onUpdate }) {
         </CardHeader>
         <CardContent>
           {withdrawalRequests.length === 0 ? (
-            <div className="py-12 text-center text-slate-500">
-              <DollarSign className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+            <div className="py-12 text-center text-muted-foreground">
+              <DollarSign className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
               <p>No withdrawal requests found</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b-2 border-slate-200">
+                  <tr className="border-b-2 border-border">
                     <th className="text-left py-3 px-4 text-sm font-semibold">Investor</th>
                     <th className="text-left py-3 px-4 text-sm font-semibold">Fund Plan</th>
                     <th className="text-right py-3 px-4 text-sm font-semibold">Amount</th>
@@ -389,14 +389,14 @@ export default function WithdrawalManagement({ onUpdate }) {
                     const fundPlan = fundPlans[request.fund_plan_id];
                     
                     return (
-                      <tr key={request.id} className="border-b border-slate-100 hover:bg-slate-50">
+                      <tr key={request.id} className="border-b border-divider hover:bg-surface-2">
                         <td className="py-4 px-4">
                           <p className="font-medium text-sm">{investor?.full_name || 'Unknown'}</p>
-                          <p className="text-xs text-slate-500">{investor?.investor_code || 'N/A'}</p>
+                          <p className="text-xs text-muted-foreground">{investor?.investor_code || 'N/A'}</p>
                         </td>
                         <td className="py-4 px-4">
                           <p className="text-sm">{fundPlan?.plan_name || 'N/A'}</p>
-                          <p className="text-xs text-slate-500">{fundPlan?.plan_code || 'Unknown'}</p>
+                          <p className="text-xs text-muted-foreground">{fundPlan?.plan_code || 'Unknown'}</p>
                         </td>
                         <td className="py-4 px-4 text-right">
                           <p className="font-bold text-sm">₹{(request.withdrawal_amount || 0).toLocaleString('en-IN')}</p>
@@ -413,7 +413,7 @@ export default function WithdrawalManagement({ onUpdate }) {
                           </Badge>
                         </td>
                         <td className="py-4 px-4 text-center">
-                          <p className="text-xs text-slate-600">
+                          <p className="text-xs text-subtle">
                             {new Date(request.created_date).toLocaleDateString('en-IN', {
                               day: 'numeric',
                               month: 'short',
@@ -429,7 +429,7 @@ export default function WithdrawalManagement({ onUpdate }) {
                                 <Button
                                   size="sm"
                                   onClick={() => handleApproveRequest(request)}
-                                  className="bg-green-600 hover:bg-green-700 text-white"
+                                  className="bg-buy hover:bg-buy text-buy-foreground"
                                 >
                                   <CheckCircle className="w-4 h-4 mr-1" />
                                   Approve
@@ -451,12 +451,12 @@ export default function WithdrawalManagement({ onUpdate }) {
                                 <Button
                                   size="sm"
                                   onClick={() => handleProcessPayout(request)}
-                                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg animate-pulse"
+                                  className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white font-semibold shadow-lg animate-pulse"
                                 >
                                   <Send className="w-4 h-4 mr-1" />
                                   Process Payout
                                 </Button>
-                                <p className="text-xs text-center text-blue-600 font-medium">
+                                <p className="text-xs text-center text-protocall-blue font-medium">
                                   Click to credit wallet
                                 </p>
                               </div>
@@ -465,11 +465,11 @@ export default function WithdrawalManagement({ onUpdate }) {
                             {/* STEP 3: Processed Status - Show Completed */}
                             {request.status === 'processed' && (
                               <div className="flex flex-col items-center gap-1">
-                                <Badge className="bg-green-100 text-green-800 border border-green-300">
+                                <Badge className="bg-buy-muted text-buy-muted-foreground border border-buy/30">
                                   <CheckCircle className="w-4 h-4 mr-1" />
                                   Completed
                                 </Badge>
-                                <p className="text-xs text-slate-500">
+                                <p className="text-xs text-muted-foreground">
                                   {request.processed_date && new Date(request.processed_date).toLocaleDateString('en-IN', {
                                     day: 'numeric',
                                     month: 'short'
@@ -480,7 +480,7 @@ export default function WithdrawalManagement({ onUpdate }) {
                             
                             {/* Rejected Status */}
                             {request.status === 'rejected' && (
-                              <Badge className="bg-red-100 text-red-800">
+                              <Badge className="bg-sell-muted text-sell-muted-foreground">
                                 <XCircle className="w-4 h-4 mr-1" />
                                 Rejected
                               </Badge>
@@ -523,7 +523,7 @@ export default function WithdrawalManagement({ onUpdate }) {
             <Button variant="outline" onClick={() => setShowApproveModal(false)} disabled={isProcessing}>
               Cancel
             </Button>
-            <Button onClick={confirmApprove} disabled={isProcessing} className="bg-green-600 hover:bg-green-700">
+            <Button onClick={confirmApprove} disabled={isProcessing} className="bg-buy hover:bg-buy">
               {isProcessing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
               Confirm Approval
             </Button>
@@ -579,27 +579,27 @@ export default function WithdrawalManagement({ onUpdate }) {
             {selectedRequest && allocations[selectedRequest.allocation_id] && (
               <>
                 {/* Current Investment Info */}
-                <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
-                  <h4 className="font-semibold text-slate-900 mb-2">Current Investment</h4>
+                <div className="p-4 bg-surface-2 rounded-lg border border-border">
+                  <h4 className="font-semibold text-foreground mb-2">Current Investment</h4>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div>
-                      <p className="text-slate-600">Total Invested:</p>
-                      <p className="font-bold text-slate-900">₹{(allocations[selectedRequest.allocation_id].total_invested || 0).toLocaleString('en-IN')}</p>
+                      <p className="text-subtle">Total Invested:</p>
+                      <p className="font-bold text-foreground">₹{(allocations[selectedRequest.allocation_id].total_invested || 0).toLocaleString('en-IN')}</p>
                     </div>
                     <div>
-                      <p className="text-slate-600">Withdrawal Amount:</p>
-                      <p className="font-bold text-red-600">-₹{selectedRequest.withdrawal_amount.toLocaleString('en-IN')}</p>
+                      <p className="text-subtle">Withdrawal Amount:</p>
+                      <p className="font-bold text-sell-muted-foreground">-₹{selectedRequest.withdrawal_amount.toLocaleString('en-IN')}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* What Will Happen */}
-                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <h4 className="font-semibold text-blue-900 mb-2">What will happen:</h4>
+                <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
+                  <h4 className="font-semibold text-protocall-blue mb-2">What will happen:</h4>
                   {selectedRequest.withdrawal_type === 'full' || 
                    selectedRequest.withdrawal_amount >= (allocations[selectedRequest.allocation_id].total_invested || 0) ? (
                     <>
-                      <ul className="text-sm text-blue-800 space-y-1">
+                      <ul className="text-sm text-protocall-blue space-y-1">
                         <li>• Full withdrawal - Investment plan will be <strong>CLOSED</strong></li>
                         <li>• Credit ₹{selectedRequest.withdrawal_amount.toLocaleString('en-IN')} to investor's wallet</li>
                         <li>• Final investment amount: ₹0</li>
@@ -610,7 +610,7 @@ export default function WithdrawalManagement({ onUpdate }) {
                     </>
                   ) : (
                     <>
-                      <ul className="text-sm text-blue-800 space-y-1">
+                      <ul className="text-sm text-protocall-blue space-y-1">
                         <li>• Partial withdrawal - Investment plan remains <strong>ACTIVE</strong></li>
                         <li>• Credit ₹{selectedRequest.withdrawal_amount.toLocaleString('en-IN')} to investor's wallet</li>
                         <li>• New investment amount: <strong>₹{(allocations[selectedRequest.allocation_id].total_invested - selectedRequest.withdrawal_amount).toLocaleString('en-IN')}</strong></li>
@@ -623,9 +623,9 @@ export default function WithdrawalManagement({ onUpdate }) {
                 </div>
 
                 {/* Warning */}
-                <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200 flex items-start gap-2">
-                  <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-yellow-800">
+                <div className="p-4 bg-hold-muted rounded-lg border border-hold/30 flex items-start gap-2">
+                  <AlertTriangle className="w-5 h-5 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-hold-muted-foreground">
                     This action cannot be undone. Make sure you have verified the withdrawal request.
                   </p>
                 </div>
@@ -636,7 +636,7 @@ export default function WithdrawalManagement({ onUpdate }) {
             <Button variant="outline" onClick={() => setShowProcessModal(false)} disabled={isProcessing}>
               Cancel
             </Button>
-            <Button onClick={confirmProcessPayout} disabled={isProcessing} className="bg-blue-600 hover:bg-blue-700">
+            <Button onClick={confirmProcessPayout} disabled={isProcessing} className="bg-protocall-blue hover:bg-protocall-blue">
               {isProcessing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
               Process Payout
             </Button>

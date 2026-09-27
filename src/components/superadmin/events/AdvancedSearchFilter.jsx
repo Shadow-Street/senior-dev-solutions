@@ -76,42 +76,42 @@ export default function AdvancedSearchFilter({
       id: 'upcoming',
       name: 'Upcoming Events',
       icon: Clock,
-      color: 'bg-blue-100 text-blue-700 hover:bg-blue-200',
+      color: 'bg-premium-muted text-protocall-blue hover:bg-premium-muted',
       filters: { status: 'approved', dateFrom: new Date() }
     },
     {
       id: 'featured',
       name: 'Featured',
       icon: Star,
-      color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200',
+      color: 'bg-hold-muted text-hold-muted-foreground hover:bg-hold-muted',
       filters: { isFeatured: 'true' }
     },
     {
       id: 'premium',
       name: 'Premium Events',
       icon: Sparkles,
-      color: 'bg-purple-100 text-purple-700 hover:bg-purple-200',
+      color: 'bg-premium-muted text-protocall-premium-text hover:bg-premium-muted',
       filters: { isPremium: 'true' }
     },
     {
       id: 'high-capacity',
       name: 'Large Events',
       icon: Users,
-      color: 'bg-green-100 text-green-700 hover:bg-green-200',
+      color: 'bg-buy-muted text-buy-muted-foreground hover:bg-buy-muted',
       filters: { minCapacity: '100' }
     },
     {
       id: 'pending',
       name: 'Pending Approval',
       icon: Clock,
-      color: 'bg-orange-100 text-orange-700 hover:bg-orange-200',
+      color: 'bg-hold-muted text-hold-muted-foreground hover:bg-hold-muted',
       filters: { status: 'pending_approval' }
     },
     {
       id: 'popular',
       name: 'Popular (50+ Attendees)',
       icon: TrendingUp,
-      color: 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200',
+      color: 'bg-premium-muted text-protocall-blue hover:bg-premium-muted',
       filters: { attendeeMin: '50' }
     }
   ];
@@ -226,7 +226,7 @@ export default function AdvancedSearchFilter({
         <CardContent className="p-4">
           <div className="flex gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
               <Input
                 placeholder="Search events by title, organizer, location, description..."
                 value={searchTerm}
@@ -236,7 +236,7 @@ export default function AdvancedSearchFilter({
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm('')}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-subtle"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -251,7 +251,7 @@ export default function AdvancedSearchFilter({
               <Filter className="w-5 h-5" />
               Advanced
               {activeFiltersCount > 0 && (
-                <Badge className="absolute -top-2 -right-2 bg-red-500 text-white px-2 py-0.5 text-xs">
+                <Badge className="absolute -top-2 -right-2 bg-protocall-sell-text text-white px-2 py-0.5 text-xs">
                   {activeFiltersCount}
                 </Badge>
               )}
@@ -261,7 +261,7 @@ export default function AdvancedSearchFilter({
               <Button
                 variant="ghost"
                 onClick={handleResetFilters}
-                className="h-12 gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="h-12 gap-2 text-sell-muted-foreground hover:text-sell-muted-foreground hover:bg-sell-muted"
               >
                 <X className="w-5 h-5" />
                 Clear All
@@ -271,8 +271,8 @@ export default function AdvancedSearchFilter({
 
           {/* Search Results Count */}
           {searchTerm && (
-            <div className="mt-3 text-sm text-slate-600">
-              Searching across <span className="font-semibold text-slate-800">{totalEvents}</span> events
+            <div className="mt-3 text-sm text-subtle">
+              Searching across <span className="font-semibold text-foreground">{totalEvents}</span> events
             </div>
           )}
         </CardContent>
@@ -282,8 +282,8 @@ export default function AdvancedSearchFilter({
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="w-4 h-4 text-purple-600" />
-            <span className="text-sm font-semibold text-slate-700">Quick Filters</span>
+            <Sparkles className="w-4 h-4 text-protocall-premium-text" />
+            <span className="text-sm font-semibold text-subtle">Quick Filters</span>
           </div>
           <div className="flex flex-wrap gap-2">
             {quickFilters.map((qf) => {
@@ -311,22 +311,22 @@ export default function AdvancedSearchFilter({
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <Star className="w-4 h-4 text-yellow-600" />
-                <span className="text-sm font-semibold text-slate-700">Saved Presets</span>
+                <Star className="w-4 h-4 text-hold-muted-foreground" />
+                <span className="text-sm font-semibold text-subtle">Saved Presets</span>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
               {savedPresets.map((preset) => (
-                <div key={preset.id} className="flex items-center gap-1 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-1.5">
+                <div key={preset.id} className="flex items-center gap-1 bg-hold-muted border border-hold/30 rounded-lg px-3 py-1.5">
                   <button
                     onClick={() => handleLoadPreset(preset)}
-                    className="text-sm font-medium text-yellow-800 hover:text-yellow-900"
+                    className="text-sm font-medium text-hold-muted-foreground hover:text-hold-muted-foreground"
                   >
                     {preset.name}
                   </button>
                   <button
                     onClick={() => handleDeletePreset(preset.id)}
-                    className="text-yellow-600 hover:text-yellow-800 ml-1"
+                    className="text-hold-muted-foreground hover:text-hold-muted-foreground ml-1"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -339,11 +339,11 @@ export default function AdvancedSearchFilter({
 
       {/* Advanced Filters Panel */}
       {showAdvancedFilters && (
-        <Card className="border-2 border-blue-200 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50">
+        <Card className="border-2 border-protocall-premium-light shadow-lg">
+          <CardHeader className="bg-surface-2">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
-                <Filter className="w-5 h-5 text-blue-600" />
+                <Filter className="w-5 h-5 text-protocall-blue" />
                 Advanced Filters
               </CardTitle>
               <Button
@@ -362,7 +362,7 @@ export default function AdvancedSearchFilter({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="status" className="text-sm font-semibold flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-slate-500" />
+                  <Clock className="w-4 h-4 text-muted-foreground" />
                   Event Status
                 </Label>
                 <Select
@@ -386,7 +386,7 @@ export default function AdvancedSearchFilter({
 
               <div className="space-y-2">
                 <Label htmlFor="isPremium" className="text-sm font-semibold flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-slate-500" />
+                  <Sparkles className="w-4 h-4 text-muted-foreground" />
                   Premium Status
                 </Label>
                 <Select
@@ -406,7 +406,7 @@ export default function AdvancedSearchFilter({
 
               <div className="space-y-2">
                 <Label htmlFor="isFeatured" className="text-sm font-semibold flex items-center gap-2">
-                  <Star className="w-4 h-4 text-slate-500" />
+                  <Star className="w-4 h-4 text-muted-foreground" />
                   Featured Status
                 </Label>
                 <Select
@@ -429,7 +429,7 @@ export default function AdvancedSearchFilter({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="organizer" className="text-sm font-semibold flex items-center gap-2">
-                  <Users className="w-4 h-4 text-slate-500" />
+                  <Users className="w-4 h-4 text-muted-foreground" />
                   Organizer Name
                 </Label>
                 <Input
@@ -442,7 +442,7 @@ export default function AdvancedSearchFilter({
 
               <div className="space-y-2">
                 <Label htmlFor="location" className="text-sm font-semibold flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-slate-500" />
+                  <MapPin className="w-4 h-4 text-muted-foreground" />
                   Location
                 </Label>
                 <Input
@@ -457,7 +457,7 @@ export default function AdvancedSearchFilter({
             {/* Row 3: Price Range */}
             <div className="space-y-2">
               <Label className="text-sm font-semibold flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-slate-500" />
+                <DollarSign className="w-4 h-4 text-muted-foreground" />
                 Price Range (₹)
               </Label>
               <div className="grid grid-cols-2 gap-3">
@@ -479,7 +479,7 @@ export default function AdvancedSearchFilter({
             {/* Row 4: Capacity Range */}
             <div className="space-y-2">
               <Label className="text-sm font-semibold flex items-center gap-2">
-                <Users className="w-4 h-4 text-slate-500" />
+                <Users className="w-4 h-4 text-muted-foreground" />
                 Capacity Range
               </Label>
               <div className="grid grid-cols-2 gap-3">
@@ -501,7 +501,7 @@ export default function AdvancedSearchFilter({
             {/* Row 5: Attendee Count Range */}
             <div className="space-y-2">
               <Label className="text-sm font-semibold flex items-center gap-2">
-                <Users className="w-4 h-4 text-slate-500" />
+                <Users className="w-4 h-4 text-muted-foreground" />
                 Current Attendees Range
               </Label>
               <div className="grid grid-cols-2 gap-3">
@@ -523,7 +523,7 @@ export default function AdvancedSearchFilter({
             {/* Row 6: Date Range */}
             <div className="space-y-2">
               <Label className="text-sm font-semibold flex items-center gap-2">
-                <CalendarIcon className="w-4 h-4 text-slate-500" />
+                <CalendarIcon className="w-4 h-4 text-muted-foreground" />
                 Event Date Range
               </Label>
               <div className="grid grid-cols-2 gap-3">
@@ -573,11 +573,11 @@ export default function AdvancedSearchFilter({
 
             {/* Active Filters Summary */}
             {activeFiltersCount > 0 && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+              <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4 mt-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Filter className="w-4 h-4 text-blue-600" />
-                    <span className="text-sm font-semibold text-blue-900">
+                    <Filter className="w-4 h-4 text-protocall-blue" />
+                    <span className="text-sm font-semibold text-protocall-blue">
                       {activeFiltersCount} filter{activeFiltersCount > 1 ? 's' : ''} active
                     </span>
                   </div>
@@ -585,7 +585,7 @@ export default function AdvancedSearchFilter({
                     variant="ghost"
                     size="sm"
                     onClick={handleResetFilters}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    className="text-sell-muted-foreground hover:text-sell-muted-foreground hover:bg-sell-muted"
                   >
                     <X className="w-4 h-4 mr-1" />
                     Clear All
@@ -618,9 +618,9 @@ export default function AdvancedSearchFilter({
               />
             </div>
 
-            <div className="bg-slate-50 rounded-lg p-3 text-sm">
-              <p className="font-semibold text-slate-700 mb-2">Current Filters:</p>
-              <ul className="space-y-1 text-slate-600">
+            <div className="bg-surface-2 rounded-lg p-3 text-sm">
+              <p className="font-semibold text-subtle mb-2">Current Filters:</p>
+              <ul className="space-y-1 text-subtle">
                 {searchTerm && <li>• Search: "{searchTerm}"</li>}
                 {filters.status !== 'all' && <li>• Status: {filters.status}</li>}
                 {filters.isPremium !== 'all' && <li>• Premium: {filters.isPremium === 'true' ? 'Yes' : 'No'}</li>}

@@ -100,7 +100,7 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
       </div>
     );
   }
@@ -109,9 +109,9 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
     <div className="space-y-6">
       {/* Global Settings Card */}
       <Card className="shadow-lg border-0">
-        <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50">
+        <CardHeader className="bg-surface-2">
           <CardTitle className="flex items-center gap-2">
-            <Settings className="w-5 h-5 text-purple-600" />
+            <Settings className="w-5 h-5 text-protocall-premium-text" />
             Global Commission Settings
           </CardTitle>
         </CardHeader>
@@ -122,7 +122,7 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
                 Default Commission Rate (%)
               </Label>
               <div className="relative">
-                <Percent className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                <Percent className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
                   id="globalRate"
                   type="number"
@@ -134,7 +134,7 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
                   step="0.1"
                 />
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 Platform commission percentage for advisor subscriptions
               </p>
             </div>
@@ -144,7 +144,7 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
                 Minimum Payout Threshold (₹)
               </Label>
               <div className="relative">
-                <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
                   id="minPayout"
                   type="number"
@@ -155,18 +155,18 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
                   step="100"
                 />
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 Minimum amount advisors must earn before requesting payout
               </p>
             </div>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-protocall-blue flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-semibold text-blue-900">Commission Calculation Example</p>
-                <p className="text-xs text-blue-700 mt-1">
+                <p className="text-sm font-semibold text-protocall-blue">Commission Calculation Example</p>
+                <p className="text-xs text-protocall-blue mt-1">
                   For a ₹1,000 subscription at {globalRate}% commission:
                   <br />
                   • Platform Fee: ₹{((1000 * globalRate) / 100).toFixed(2)}
@@ -181,7 +181,7 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
             <Button 
               onClick={handleSaveSettings} 
               disabled={isSaving}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-primary hover:bg-primary"
             >
               {isSaving ? (
                 <>
@@ -201,12 +201,12 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
 
       {/* Individual Advisor Override Settings */}
       <Card className="shadow-lg border-0">
-        <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50">
+        <CardHeader className="bg-surface-2">
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-indigo-600" />
+            <TrendingUp className="w-5 h-5 text-protocall-blue" />
             Advisor-Specific Commission Overrides
           </CardTitle>
-          <p className="text-sm text-slate-600 mt-2">
+          <p className="text-sm text-subtle mt-2">
             Set custom commission rates for individual advisors. Leave empty to use global rate ({globalRate}%).
           </p>
         </CardHeader>
@@ -219,7 +219,7 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
                 const example = calculateEarnings(1000, advisor.id);
 
                 return (
-                  <div key={advisor.id} className="border border-slate-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <div key={advisor.id} className="border border-border rounded-lg p-4 hover:shadow-md transition-shadow">
                     <div className="flex items-start gap-4">
                       <img
                         src={advisor.profile_image_url || `https://avatar.vercel.sh/${advisor.display_name}.png`}
@@ -229,8 +229,8 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
                       
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <h4 className="font-semibold text-slate-800">{advisor.display_name}</h4>
-                          <Badge className="bg-blue-100 text-blue-800 text-xs">
+                          <h4 className="font-semibold text-foreground">{advisor.display_name}</h4>
+                          <Badge className="bg-premium-muted text-protocall-blue text-xs">
                             SEBI: {advisor.sebi_registration_number}
                           </Badge>
                         </div>
@@ -239,7 +239,7 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
                           <div className="space-y-2">
                             <Label className="text-xs">Custom Commission Rate (%)</Label>
                             <div className="relative">
-                              <Percent className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-3 h-3" />
+                              <Percent className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-3 h-3" />
                               <Input
                                 type="number"
                                 value={overrideValue || ''}
@@ -253,23 +253,23 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
                             </div>
                           </div>
 
-                          <div className="bg-slate-50 rounded-lg p-3">
-                            <p className="text-xs text-slate-600 mb-1">Effective Rate</p>
+                          <div className="bg-surface-2 rounded-lg p-3">
+                            <p className="text-xs text-subtle mb-1">Effective Rate</p>
                             <div className="flex items-center gap-2">
-                              <Badge className={overrideValue ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}>
+                              <Badge className={overrideValue ? 'bg-premium-muted text-protocall-premium-text' : 'bg-premium-muted text-protocall-blue'}>
                                 {effectiveRate}%
                               </Badge>
                               {overrideValue ? (
-                                <span className="text-xs text-purple-600">Custom</span>
+                                <span className="text-xs text-protocall-premium-text">Custom</span>
                               ) : (
-                                <span className="text-xs text-slate-500">Default</span>
+                                <span className="text-xs text-muted-foreground">Default</span>
                               )}
                             </div>
                           </div>
 
-                          <div className="bg-green-50 rounded-lg p-3">
-                            <p className="text-xs text-green-700 font-medium">Example (₹1,000 subscription):</p>
-                            <div className="text-xs text-green-800 mt-1 space-y-0.5">
+                          <div className="bg-buy-muted rounded-lg p-3">
+                            <p className="text-xs text-buy-muted-foreground font-medium">Example (₹1,000 subscription):</p>
+                            <div className="text-xs text-buy-muted-foreground mt-1 space-y-0.5">
                               <div>Platform: ₹{example.platformFee.toFixed(2)}</div>
                               <div className="font-semibold">Advisor: ₹{example.advisorPayout.toFixed(2)}</div>
                             </div>
@@ -282,8 +282,8 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
               })
             ) : (
               <div className="text-center p-8">
-                <ShieldCheck className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-500">No approved advisors to configure</p>
+                <ShieldCheck className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                <p className="text-muted-foreground">No approved advisors to configure</p>
               </div>
             )}
           </div>
@@ -293,7 +293,7 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
               <Button 
                 onClick={handleSaveSettings} 
                 disabled={isSaving}
-                className="bg-purple-600 hover:bg-purple-700"
+                className="bg-primary hover:bg-primary"
               >
                 {isSaving ? (
                   <>

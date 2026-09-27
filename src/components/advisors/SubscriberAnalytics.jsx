@@ -17,10 +17,10 @@ import { format, differenceInDays } from 'date-fns';
 export default function SubscriberAnalytics({ subscriptions, plans }) {
   const getStatusBadge = (status) => {
     const config = {
-      active: { color: 'bg-green-100 text-green-800', label: 'Active', icon: CheckCircle },
-      cancelled: { color: 'bg-red-100 text-red-800', label: 'Cancelled', icon: XCircle },
-      expired: { color: 'bg-gray-100 text-gray-800', label: 'Expired', icon: Clock },
-      payment_failed: { color: 'bg-orange-100 text-orange-800', label: 'Payment Failed', icon: XCircle }
+      active: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Active', icon: CheckCircle },
+      cancelled: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Cancelled', icon: XCircle },
+      expired: { color: 'bg-surface-2 text-foreground', label: 'Expired', icon: Clock },
+      payment_failed: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Payment Failed', icon: XCircle }
     };
     const { color, label, icon: Icon } = config[status] || config.active;
     return (
@@ -69,10 +69,10 @@ export default function SubscriberAnalytics({ subscriptions, plans }) {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <Users className="w-8 h-8 text-blue-600" />
+              <Users className="w-8 h-8 text-protocall-blue" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">Total Subscribers</p>
-                <p className="text-2xl font-bold text-slate-900">{subscriptions.length}</p>
+                <p className="text-sm font-medium text-subtle">Total Subscribers</p>
+                <p className="text-2xl font-bold text-foreground">{subscriptions.length}</p>
               </div>
             </div>
           </CardContent>
@@ -81,10 +81,10 @@ export default function SubscriberAnalytics({ subscriptions, plans }) {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <Activity className="w-8 h-8 text-green-600" />
+              <Activity className="w-8 h-8 text-buy-muted-foreground" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">Active Now</p>
-                <p className="text-2xl font-bold text-green-900">{activeSubscriptions.length}</p>
+                <p className="text-sm font-medium text-subtle">Active Now</p>
+                <p className="text-2xl font-bold text-buy-muted-foreground">{activeSubscriptions.length}</p>
               </div>
             </div>
           </CardContent>
@@ -93,10 +93,10 @@ export default function SubscriberAnalytics({ subscriptions, plans }) {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <DollarSign className="w-8 h-8 text-purple-600" />
+              <DollarSign className="w-8 h-8 text-protocall-premium-text" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">Total Revenue</p>
-                <p className="text-2xl font-bold text-slate-900">₹{totalRevenue.toLocaleString()}</p>
+                <p className="text-sm font-medium text-subtle">Total Revenue</p>
+                <p className="text-2xl font-bold text-foreground">₹{totalRevenue.toLocaleString()}</p>
               </div>
             </div>
           </CardContent>
@@ -105,10 +105,10 @@ export default function SubscriberAnalytics({ subscriptions, plans }) {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <TrendingUp className="w-8 h-8 text-orange-600" />
+              <TrendingUp className="w-8 h-8 text-hold-muted-foreground" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">Avg Duration</p>
-                <p className="text-2xl font-bold text-slate-900">{Math.round(avgSubscriptionDuration)} days</p>
+                <p className="text-sm font-medium text-subtle">Avg Duration</p>
+                <p className="text-2xl font-bold text-foreground">{Math.round(avgSubscriptionDuration)} days</p>
               </div>
             </div>
           </CardContent>
@@ -133,43 +133,43 @@ export default function SubscriberAnalytics({ subscriptions, plans }) {
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-4 flex-1">
                           <Avatar className="h-12 w-12">
-                            <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                            <AvatarFallback className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
                               {sub.user_id?.substring(0, 2).toUpperCase() || 'U'}
                             </AvatarFallback>
                           </Avatar>
                           
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-2">
-                              <h4 className="font-semibold text-slate-800">Subscriber #{sub.user_id?.substring(0, 8)}</h4>
+                              <h4 className="font-semibold text-foreground">Subscriber #{sub.user_id?.substring(0, 8)}</h4>
                               {getStatusBadge(sub.status)}
                             </div>
                             
                             <div className="grid grid-cols-2 gap-4 text-sm">
                               <div>
-                                <p className="text-slate-500 text-xs">Plan</p>
-                                <p className="font-medium text-slate-900">{getPlanName(sub.plan_id)}</p>
+                                <p className="text-muted-foreground text-xs">Plan</p>
+                                <p className="font-medium text-foreground">{getPlanName(sub.plan_id)}</p>
                               </div>
                               
                               <div>
-                                <p className="text-slate-500 text-xs">Monthly Revenue</p>
-                                <p className="font-medium text-green-700">₹{planPrice.toLocaleString()}</p>
+                                <p className="text-muted-foreground text-xs">Monthly Revenue</p>
+                                <p className="font-medium text-buy-muted-foreground">₹{planPrice.toLocaleString()}</p>
                               </div>
                               
                               <div>
-                                <p className="text-slate-500 text-xs">Started</p>
-                                <p className="font-medium text-slate-900">
+                                <p className="text-muted-foreground text-xs">Started</p>
+                                <p className="font-medium text-foreground">
                                   {format(new Date(sub.start_date), 'MMM dd, yyyy')}
                                 </p>
                               </div>
                               
                               <div>
-                                <p className="text-slate-500 text-xs">
+                                <p className="text-muted-foreground text-xs">
                                   {sub.status === 'active' ? 'Renews In' : 'Ended'}
                                 </p>
-                                <p className="font-medium text-slate-900">
+                                <p className="font-medium text-foreground">
                                   {sub.end_date ? (
                                     sub.status === 'active' && daysRemaining > 0 ? (
-                                      <span className="text-orange-600">{daysRemaining} days</span>
+                                      <span className="text-hold-muted-foreground">{daysRemaining} days</span>
                                     ) : (
                                       format(new Date(sub.end_date), 'MMM dd, yyyy')
                                     )
@@ -180,7 +180,7 @@ export default function SubscriberAnalytics({ subscriptions, plans }) {
 
                             {sub.auto_renew && sub.status === 'active' && (
                               <div className="mt-3">
-                                <Badge className="bg-blue-100 text-blue-800 border-0 text-xs">
+                                <Badge className="bg-premium-muted text-protocall-blue border-0 text-xs">
                                   <CheckCircle className="w-3 h-3 mr-1" />
                                   Auto-Renew Enabled
                                 </Badge>
@@ -190,10 +190,10 @@ export default function SubscriberAnalytics({ subscriptions, plans }) {
                         </div>
                         
                         <div className="text-right">
-                          <p className="text-xs text-slate-500 mb-1">Lifetime Value</p>
-                          <p className="text-lg font-bold text-purple-600">₹{planPrice.toLocaleString()}</p>
+                          <p className="text-xs text-muted-foreground mb-1">Lifetime Value</p>
+                          <p className="text-lg font-bold text-protocall-premium-text">₹{planPrice.toLocaleString()}</p>
                           {sub.payment_id && (
-                            <p className="text-xs text-slate-400 mt-1">
+                            <p className="text-xs text-muted-foreground mt-1">
                               Payment ID: {sub.payment_id.substring(0, 10)}...
                             </p>
                           )}
@@ -206,9 +206,9 @@ export default function SubscriberAnalytics({ subscriptions, plans }) {
             </div>
           ) : (
             <div className="text-center py-12">
-              <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500 text-lg">No subscribers yet</p>
-              <p className="text-slate-400 text-sm">Subscribers will appear here once they subscribe to your plans</p>
+              <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground text-lg">No subscribers yet</p>
+              <p className="text-muted-foreground text-sm">Subscribers will appear here once they subscribe to your plans</p>
             </div>
           )}
         </CardContent>

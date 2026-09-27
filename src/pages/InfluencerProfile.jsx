@@ -235,9 +235,9 @@ export default function InfluencerProfile() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
-        <AlertCircle className="w-16 h-16 text-red-500 mb-4" />
-        <h2 className="text-2xl font-bold text-slate-800 mb-2">{error}</h2>
-        <p className="text-slate-600 mb-6">The finfluencer you are looking for might not exist or there was an error.</p>
+        <AlertCircle className="w-16 h-16 text-sell mb-4" />
+        <h2 className="text-2xl font-bold text-foreground mb-2">{error}</h2>
+        <p className="text-subtle mb-6">The finfluencer you are looking for might not exist or there was an error.</p>
         <Link to={createPageUrl("Finfluencers")}>
           <Button variant="outline">
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -249,10 +249,10 @@ export default function InfluencerProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
+    <div className="min-h-screen bg-surface-2 p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         <Link to={createPageUrl("Finfluencers")}>
-          <Button variant="outline" className="mb-4 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50">
+          <Button variant="outline" className="mb-4 hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to All Finfluencers
           </Button>
@@ -268,15 +268,15 @@ export default function InfluencerProfile() {
                 className="w-32 h-32 rounded-full object-cover shadow-lg"
               />
               {influencer.verified && (
-                <CheckCircle className="w-8 h-8 text-blue-500 absolute bottom-1 right-1 bg-white rounded-full p-1" />
+                <CheckCircle className="w-8 h-8 text-protocall-premium-light absolute bottom-1 right-1 bg-white rounded-full p-1" />
               )}
             </div>
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl font-bold text-slate-900">{influencer.display_name}</h1>
-              <p className="text-slate-600 mt-1">{influencer.bio}</p>
+              <h1 className="text-3xl font-bold text-foreground">{influencer.display_name}</h1>
+              <p className="text-subtle mt-1">{influencer.bio}</p>
               <div className="flex flex-wrap gap-2 justify-center md:justify-start mt-3">
                 {influencer.sebi_registered && (
-                  <Badge className="bg-green-100 text-green-800">
+                  <Badge className="bg-buy-muted text-buy-muted-foreground">
                     <Shield className="w-3 h-3 mr-1" />
                     SEBI Registered
                   </Badge>
@@ -285,18 +285,18 @@ export default function InfluencerProfile() {
                   <Badge key={spec} variant="secondary">{spec}</Badge>
                 ))}
               </div>
-              <div className="flex items-center justify-center md:justify-start gap-6 mt-4 text-slate-700">
+              <div className="flex items-center justify-center md:justify-start gap-6 mt-4 text-subtle">
                 <div className="text-center">
                   <p className="font-bold text-lg">{(influencer.follower_count / 1000).toFixed(0)}K</p>
-                  <p className="text-sm text-slate-500">Followers</p>
+                  <p className="text-sm text-muted-foreground">Followers</p>
                 </div>
                 <div className="text-center">
                   <p className="font-bold text-lg">{influencer.success_rate}%</p>
-                  <p className="text-sm text-slate-500">Success Rate</p>
+                  <p className="text-sm text-muted-foreground">Success Rate</p>
                 </div>
                 <div className="text-center">
                   <p className="font-bold text-lg">{courses.length}</p>
-                  <p className="text-sm text-slate-500">Courses</p>
+                  <p className="text-sm text-muted-foreground">Courses</p>
                 </div>
               </div>
             </div>
@@ -311,9 +311,9 @@ export default function InfluencerProfile() {
                       href={url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center"
+                      className="w-10 h-10 bg-surface-2 hover:bg-border rounded-full flex items-center justify-center"
                     >
-                      <Icon className="w-5 h-5 text-slate-600" />
+                      <Icon className="w-5 h-5 text-subtle" />
                     </a>
                   );
                 })}
@@ -321,7 +321,7 @@ export default function InfluencerProfile() {
 
               {/* ✅ Show subscription status or upgrade button */}
               {canAccessPremium ? (
-                <Badge className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2">
+                <Badge className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white px-4 py-2">
                   <Star className="w-4 h-4 mr-2" />
                   {user?.app_role === 'super_admin' || user?.app_role === 'admin'
                     ? 'Admin Access'
@@ -329,7 +329,7 @@ export default function InfluencerProfile() {
                 </Badge>
               ) : (
                 <Link to={createPageUrl("Subscription")}>
-                  <Button className="w-full bg-purple-600 hover:bg-purple-700">
+                  <Button className="w-full bg-primary hover:bg-primary">
                     <Star className="w-4 h-4 mr-2" />
                     Subscribe for Premium
                   </Button>
@@ -344,14 +344,14 @@ export default function InfluencerProfile() {
           <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto bg-transparent gap-3">
             <TabsTrigger
               value="videos"
-              className="justify-center whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-12 rounded-xl font-semibold shadow-md flex items-center gap-2 px-4 py-3 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg"
+              className="justify-center whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-12 rounded-xl font-semibold shadow-md flex items-center gap-2 px-4 py-3 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg"
             >
               <Play className="w-4 h-4" />
               Videos ({videos.length})
             </TabsTrigger>
             <TabsTrigger
               value="courses"
-              className="justify-center whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-12 rounded-xl font-semibold shadow-md flex items-center gap-2 px-4 py-3 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg"
+              className="justify-center whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-12 rounded-xl font-semibold shadow-md flex items-center gap-2 px-4 py-3 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg"
             >
               <BookOpen className="w-4 h-4" />
               Courses ({courses.length})
@@ -371,7 +371,7 @@ export default function InfluencerProfile() {
                 ))}
               </div>
             ) : (
-              <p className="text-center text-slate-500 py-12">This finfluencer hasn't posted any videos yet.</p>
+              <p className="text-center text-muted-foreground py-12">This finfluencer hasn't posted any videos yet.</p>
             )}
           </TabsContent>
 
@@ -388,7 +388,7 @@ export default function InfluencerProfile() {
                 ))}
               </div>
             ) : (
-              <p className="text-center text-slate-500 py-12">This finfluencer hasn't created any courses yet.</p>
+              <p className="text-center text-muted-foreground py-12">This finfluencer hasn't created any courses yet.</p>
             )}
           </TabsContent>
         </Tabs>

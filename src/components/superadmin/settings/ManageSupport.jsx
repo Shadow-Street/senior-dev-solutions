@@ -18,7 +18,7 @@ export default function ManageSupport({ settings, onChange }) {
           onChange={(e) => handleInputChange('support_email', e.target.value)}
           placeholder="e.g., support@protocol.app"
         />
-        <p className="text-xs text-slate-500">This email will be displayed on the contact and support pages.</p>
+        <p className="text-xs text-muted-foreground">This email will be displayed on the contact and support pages.</p>
       </div>
 
       <div className="space-y-2">

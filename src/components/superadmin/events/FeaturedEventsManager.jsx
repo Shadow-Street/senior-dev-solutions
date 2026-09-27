@@ -183,43 +183,43 @@ export default function FeaturedEventsManager({ events, onUpdate, onViewDetails 
     <div className="space-y-6">
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-gradient-to-br from-yellow-50 to-orange-50 border-0 shadow-md">
+        <Card className="bg-gradient-to-br from-surface-2 to-hold-muted border-0 shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl">
+              <div className="p-3 bg-hold rounded-xl">
                 <Star className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">Featured Events</p>
-                <p className="text-2xl font-bold text-gray-900">{featuredEvents.length}</p>
+                <p className="text-sm font-medium text-subtle">Featured Events</p>
+                <p className="text-2xl font-bold text-foreground">{featuredEvents.length}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-0 shadow-md">
+        <Card className="bg-surface-2 border-0 shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
+              <div className="p-3 bg-gradient-to-br from-protocall-deep to-protocall-blue rounded-xl">
                 <TrendingUp className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">Available to Feature</p>
-                <p className="text-2xl font-bold text-gray-900">{nonFeaturedEvents.length}</p>
+                <p className="text-sm font-medium text-subtle">Available to Feature</p>
+                <p className="text-2xl font-bold text-foreground">{nonFeaturedEvents.length}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-0 shadow-md">
+        <Card className="bg-gradient-to-br from-surface-2 to-buy-muted border-0 shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl">
+              <div className="p-3 bg-buy-soft rounded-xl">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">Max Featured Slots</p>
-                <p className="text-2xl font-bold text-gray-900">10</p>
+                <p className="text-sm font-medium text-subtle">Max Featured Slots</p>
+                <p className="text-2xl font-bold text-foreground">10</p>
               </div>
             </div>
           </CardContent>
@@ -231,24 +231,24 @@ export default function FeaturedEventsManager({ events, onUpdate, onViewDetails 
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Crown className="w-6 h-6 text-yellow-600" />
+              <Crown className="w-6 h-6 text-hold-muted-foreground" />
               <CardTitle>Featured Events (Drag to Reorder)</CardTitle>
             </div>
             <Button
               onClick={() => setShowAddModal(true)}
               disabled={featuredEvents.length >= 10 || isProcessing}
-              className="bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
+              className="bg-hold hover:from-hold hover:to-hold text-hold-foreground shadow-md hover:shadow-lg transition-all duration-300"
             >
               <Star className="w-4 h-4 mr-2" />
               Add Featured Event
             </Button>
           </div>
           {featuredEvents.length >= 10 && (
-            <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-2">
-              <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
+            <div className="mt-2 p-3 bg-hold-muted border border-hold/30 rounded-lg flex items-start gap-2">
+              <AlertCircle className="w-5 h-5 text-hold-muted-foreground mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-yellow-900">Maximum featured events reached</p>
-                <p className="text-xs text-yellow-700 mt-1">Remove an event to add a new one</p>
+                <p className="text-sm font-medium text-hold-muted-foreground">Maximum featured events reached</p>
+                <p className="text-xs text-hold-muted-foreground mt-1">Remove an event to add a new one</p>
               </div>
             </div>
           )}
@@ -256,14 +256,14 @@ export default function FeaturedEventsManager({ events, onUpdate, onViewDetails 
         <CardContent>
           {featuredEvents.length === 0 ? (
             <div className="text-center py-12">
-              <Star className="mx-auto h-16 w-16 text-gray-300" />
-              <h3 className="mt-4 text-lg font-medium text-gray-900">No Featured Events Yet</h3>
-              <p className="mt-2 text-sm text-gray-500">
+              <Star className="mx-auto h-16 w-16 text-muted-foreground" />
+              <h3 className="mt-4 text-lg font-medium text-foreground">No Featured Events Yet</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
                 Start featuring events to highlight them on the platform
               </p>
               <Button
                 onClick={() => setShowAddModal(true)}
-                className="mt-4 bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700"
+                className="mt-4 bg-hold hover:from-hold hover:to-hold"
               >
                 <Star className="w-4 h-4 mr-2" />
                 Add First Featured Event
@@ -276,7 +276,7 @@ export default function FeaturedEventsManager({ events, onUpdate, onViewDetails 
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
-                    className={`space-y-3 ${snapshot.isDraggingOver ? 'bg-blue-50 rounded-lg p-2' : ''}`}
+                    className={`space-y-3 ${snapshot.isDraggingOver ? 'bg-premium-muted rounded-lg p-2' : ''}`}
                   >
                     {featuredEvents.map((event, index) => {
                       const stats = getEventStats(event);
@@ -286,19 +286,19 @@ export default function FeaturedEventsManager({ events, onUpdate, onViewDetails 
                             <div
                               ref={provided.innerRef}
                               {...provided.draggableProps}
-                              className={`bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-4 border-2 border-yellow-200 transition-all duration-300 ${
+                              className={`bg-gradient-to-r from-surface-2 to-hold-muted rounded-xl p-4 border-2 border-hold/30 transition-all duration-300 ${
                                 snapshot.isDragging ? 'shadow-2xl scale-105' : 'shadow-md hover:shadow-lg'
                               }`}
                             >
                               <div className="flex items-start gap-4">
                                 {/* Drag Handle */}
                                 <div {...provided.dragHandleProps} className="cursor-grab active:cursor-grabbing pt-1">
-                                  <GripVertical className="w-5 h-5 text-gray-400" />
+                                  <GripVertical className="w-5 h-5 text-muted-foreground" />
                                 </div>
 
                                 {/* Priority Badge */}
                                 <div className="flex-shrink-0">
-                                  <Badge className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white text-lg font-bold w-10 h-10 rounded-full flex items-center justify-center">
+                                  <Badge className="bg-hold text-hold-foreground text-lg font-bold w-10 h-10 rounded-full flex items-center justify-center">
                                     {index + 1}
                                   </Badge>
                                 </div>
@@ -308,23 +308,23 @@ export default function FeaturedEventsManager({ events, onUpdate, onViewDetails 
                                   <div className="flex items-start justify-between">
                                     <div>
                                       <div className="flex items-center gap-2">
-                                        <h4 className="font-semibold text-gray-900 text-lg">{event.title}</h4>
-                                        <Crown className="w-5 h-5 text-yellow-600" />
+                                        <h4 className="font-semibold text-foreground text-lg">{event.title}</h4>
+                                        <Crown className="w-5 h-5 text-hold-muted-foreground" />
                                       </div>
-                                      <p className="text-sm text-gray-600 mt-1">
+                                      <p className="text-sm text-subtle mt-1">
                                         by {event.organizer_name || 'Unknown'}
                                       </p>
                                       <div className="flex items-center gap-4 mt-2">
-                                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                           <Calendar className="w-4 h-4" />
                                           {new Date(event.event_date).toLocaleDateString()}
                                         </div>
-                                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                           <Users className="w-4 h-4" />
                                           {stats.attendees} attendees
                                         </div>
                                         {event.is_premium && (
-                                          <Badge className="bg-purple-100 text-purple-800 text-xs">
+                                          <Badge className="bg-premium-muted text-protocall-premium-text text-xs">
                                             Premium
                                           </Badge>
                                         )}
@@ -364,7 +364,7 @@ export default function FeaturedEventsManager({ events, onUpdate, onViewDetails 
                                         size="sm"
                                         onClick={() => handleRemoveFeatured(event)}
                                         disabled={isProcessing}
-                                        className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                                        className="text-sell-muted-foreground hover:text-sell-muted-foreground hover:bg-sell-muted"
                                       >
                                         <Star className="w-4 h-4 fill-current" />
                                       </Button>
@@ -391,7 +391,7 @@ export default function FeaturedEventsManager({ events, onUpdate, onViewDetails 
         <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-2xl">
-              <Star className="w-6 h-6 text-yellow-600" />
+              <Star className="w-6 h-6 text-hold-muted-foreground" />
               Add Featured Event
             </DialogTitle>
             <DialogDescription>
@@ -414,7 +414,7 @@ export default function FeaturedEventsManager({ events, onUpdate, onViewDetails 
                 onChange={(e) => setFeaturedPriority(parseInt(e.target.value) || 1)}
                 className="mt-2"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Lower numbers appear first. Events will be automatically reordered.
               </p>
             </div>
@@ -433,8 +433,8 @@ export default function FeaturedEventsManager({ events, onUpdate, onViewDetails 
             {/* Event List */}
             <div className="space-y-2 max-h-96 overflow-y-auto">
               {filteredNonFeatured.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  <AlertCircle className="mx-auto h-12 w-12 text-gray-400" />
+                <div className="text-center py-8 text-muted-foreground">
+                  <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground" />
                   <p className="mt-2">No events available to feature</p>
                 </div>
               ) : (
@@ -444,26 +444,26 @@ export default function FeaturedEventsManager({ events, onUpdate, onViewDetails 
                     onClick={() => setSelectedEvent(event)}
                     className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
                       selectedEvent?.id === event.id
-                        ? 'border-yellow-500 bg-gradient-to-r from-yellow-50 to-orange-50 shadow-md'
-                        : 'border-gray-200 hover:border-yellow-300 hover:bg-yellow-50'
+                        ? 'border-hold bg-gradient-to-r from-surface-2 to-hold-muted shadow-md'
+                        : 'border-border hover:border-hold/30 hover:bg-hold-muted'
                     }`}
                   >
                     <div className="flex items-start justify-between">
                       <div>
-                        <h4 className="font-semibold text-gray-900">{event.title}</h4>
-                        <p className="text-sm text-gray-600 mt-1">by {event.organizer_name}</p>
+                        <h4 className="font-semibold text-foreground">{event.title}</h4>
+                        <p className="text-sm text-subtle mt-1">by {event.organizer_name}</p>
                         <div className="flex items-center gap-3 mt-2">
-                          <div className="flex items-center gap-1 text-xs text-gray-500">
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
                             <Calendar className="w-3 h-3" />
                             {new Date(event.event_date).toLocaleDateString()}
                           </div>
                           {event.is_premium && (
-                            <Badge className="bg-purple-100 text-purple-800 text-xs">
+                            <Badge className="bg-premium-muted text-protocall-premium-text text-xs">
                               Premium
                             </Badge>
                           )}
                           <Badge className={`text-xs ${
-                            event.status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                            event.status === 'approved' ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-premium-muted text-protocall-blue'
                           }`}>
                             {event.status}
                           </Badge>
@@ -471,7 +471,7 @@ export default function FeaturedEventsManager({ events, onUpdate, onViewDetails 
                       </div>
                       {selectedEvent?.id === event.id && (
                         <div className="flex-shrink-0">
-                          <div className="w-6 h-6 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-full flex items-center justify-center">
+                          <div className="w-6 h-6 bg-hold rounded-full flex items-center justify-center">
                             <Star className="w-4 h-4 text-white fill-current" />
                           </div>
                         </div>
@@ -498,7 +498,7 @@ export default function FeaturedEventsManager({ events, onUpdate, onViewDetails 
             <Button
               onClick={handleAddFeatured}
               disabled={!selectedEvent || isProcessing}
-              className="bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700"
+              className="bg-hold hover:from-hold hover:to-hold"
             >
               {isProcessing ? (
                 <>Processing...</>

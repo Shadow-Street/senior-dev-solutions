@@ -143,7 +143,7 @@ export default function PromoCodeManager({ promoCodes, setPromoCodes, permission
                                     {promo.expiry_date ? new Date(promo.expiry_date).toLocaleDateString() : 'No Expiry'}
                                 </TableCell>
                                 <TableCell>
-                                    <Badge variant={promo.is_active ? 'default' : 'destructive'} className={promo.is_active ? 'bg-green-100 text-green-800' : ''}>
+                                    <Badge variant={promo.is_active ? 'default' : 'destructive'} className={promo.is_active ? 'bg-buy-muted text-buy-muted-foreground' : ''}>
                                         {promo.is_active ? 'Active' : 'Inactive'}
                                     </Badge>
                                 </TableCell>
@@ -152,7 +152,7 @@ export default function PromoCodeManager({ promoCodes, setPromoCodes, permission
                                         <Edit className="w-4 h-4" />
                                     </Button>
                                     <Button variant="ghost" size="icon" onClick={() => handleDelete(promo.id)} disabled={!permissions.isSuperAdmin}>
-                                        <Trash2 className="w-4 h-4 text-red-500" />
+                                        <Trash2 className="w-4 h-4 text-sell" />
                                     </Button>
                                 </TableCell>
                             </TableRow>

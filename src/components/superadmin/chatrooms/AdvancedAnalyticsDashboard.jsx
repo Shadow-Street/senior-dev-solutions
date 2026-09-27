@@ -346,8 +346,8 @@ export default function AdvancedAnalyticsDashboard() {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 font-medium">Loading Advanced Analytics...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <p className="text-lg text-subtle font-medium">Loading Advanced Analytics...</p>
         </div>
       </div>
     );
@@ -392,7 +392,7 @@ export default function AdvancedAnalyticsDashboard() {
 
       {/* Retention & Sentiment */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-r from-green-500 to-emerald-600 text-white">
+        <Card className="bg-buy-soft text-buy-foreground">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -404,7 +404,7 @@ export default function AdvancedAnalyticsDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -416,7 +416,7 @@ export default function AdvancedAnalyticsDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -428,7 +428,7 @@ export default function AdvancedAnalyticsDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+        <Card className="bg-hold text-hold-foreground">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -445,7 +445,7 @@ export default function AdvancedAnalyticsDashboard() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Clock className="w-5 h-5 text-blue-600" />
+            <Clock className="w-5 h-5 text-protocall-blue" />
             Peak Activity Hours
           </CardTitle>
         </CardHeader>
@@ -458,8 +458,8 @@ export default function AdvancedAnalyticsDashboard() {
               <YAxis yAxisId="right" orientation="right" />
               <Tooltip />
               <Legend />
-              <Bar yAxisId="left" dataKey="messages" fill="#3B82F6" name="Messages" />
-              <Bar yAxisId="right" dataKey="users" fill="#8B5CF6" name="Active Users" />
+              <Bar yAxisId="left" dataKey="messages" fill="hsl(var(--chart-1))" name="Messages" />
+              <Bar yAxisId="right" dataKey="users" fill="hsl(var(--primary))" name="Active Users" />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
@@ -469,7 +469,7 @@ export default function AdvancedAnalyticsDashboard() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-green-600" />
+            <TrendingUp className="w-5 h-5 text-buy-muted-foreground" />
             Growth Trends
           </CardTitle>
         </CardHeader>
@@ -481,9 +481,9 @@ export default function AdvancedAnalyticsDashboard() {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Area type="monotone" dataKey="messages" stackId="1" stroke="#3B82F6" fill="#3B82F6" fillOpacity={0.6} name="Messages" />
-              <Area type="monotone" dataKey="activeUsers" stackId="2" stroke="#10B981" fill="#10B981" fillOpacity={0.6} name="Active Users" />
-              <Area type="monotone" dataKey="newUsers" stackId="3" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.6} name="New Users" />
+              <Area type="monotone" dataKey="messages" stackId="1" stroke="hsl(var(--chart-1))" fill="hsl(var(--chart-1))" fillOpacity={0.6} name="Messages" />
+              <Area type="monotone" dataKey="activeUsers" stackId="2" stroke="hsl(var(--chart-2))" fill="hsl(var(--chart-2))" fillOpacity={0.6} name="Active Users" />
+              <Area type="monotone" dataKey="newUsers" stackId="3" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.6} name="New Users" />
             </AreaChart>
           </ResponsiveContainer>
         </CardContent>
@@ -494,7 +494,7 @@ export default function AdvancedAnalyticsDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-purple-600" />
+              <Users className="w-5 h-5 text-protocall-premium-text" />
               User Engagement Levels
             </CardTitle>
           </CardHeader>
@@ -525,7 +525,7 @@ export default function AdvancedAnalyticsDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-blue-600" />
+              <MessageSquare className="w-5 h-5 text-protocall-blue" />
               Messages by Room (Top 10)
             </CardTitle>
           </CardHeader>
@@ -536,7 +536,7 @@ export default function AdvancedAnalyticsDashboard() {
                 <XAxis type="number" />
                 <YAxis dataKey="name" type="category" width={120} />
                 <Tooltip />
-                <Bar dataKey="value" fill="#3B82F6" />
+                <Bar dataKey="value" fill="hsl(var(--chart-1))" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -547,14 +547,14 @@ export default function AdvancedAnalyticsDashboard() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-green-600" />
+            <BarChart3 className="w-5 h-5 text-buy-muted-foreground" />
             Room Performance Metrics
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-xs text-slate-700 uppercase">
+              <thead className="bg-surface-2 text-xs text-subtle uppercase">
                 <tr>
                   <th className="px-4 py-3 text-left">Room Name</th>
                   <th className="px-4 py-3 text-left">Type</th>
@@ -566,7 +566,7 @@ export default function AdvancedAnalyticsDashboard() {
               </thead>
               <tbody>
                 {analytics.roomPerformance.map((room, index) => (
-                  <tr key={index} className="border-b hover:bg-slate-50">
+                  <tr key={index} className="border-b hover:bg-surface-2">
                     <td className="px-4 py-3 font-medium">{room.name}</td>
                     <td className="px-4 py-3">
                       <Badge variant="outline">{room.type}</Badge>
@@ -576,9 +576,9 @@ export default function AdvancedAnalyticsDashboard() {
                     <td className="px-4 py-3 text-right">{room.avgMessagesPerUser}</td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <div className="w-16 h-2 bg-slate-200 rounded-full overflow-hidden">
+                        <div className="w-16 h-2 bg-border rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-green-500"
+                            className="h-full bg-buy"
                             style={{ width: `${Math.min(room.engagementScore * 10, 100)}%` }}
                           ></div>
                         </div>
@@ -597,15 +597,15 @@ export default function AdvancedAnalyticsDashboard() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Award className="w-5 h-5 text-yellow-600" />
+            <Award className="w-5 h-5 text-hold-muted-foreground" />
             Top Contributors
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {analytics.topContributors.map((contributor, index) => (
-              <div key={contributor.userId} className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg">
-                <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full font-bold">
+              <div key={contributor.userId} className="flex items-center gap-4 p-4 bg-surface-2 rounded-lg">
+                <div className="flex items-center justify-center w-10 h-10 bg-hold text-hold-foreground rounded-full font-bold">
                   #{index + 1}
                 </div>
                 <img
@@ -614,12 +614,12 @@ export default function AdvancedAnalyticsDashboard() {
                   className="w-12 h-12 rounded-full"
                 />
                 <div className="flex-1">
-                  <p className="font-medium text-slate-900">{contributor.name}</p>
-                  <p className="text-xs text-slate-500">{contributor.email}</p>
+                  <p className="font-medium text-foreground">{contributor.name}</p>
+                  <p className="text-xs text-muted-foreground">{contributor.email}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-blue-600">{contributor.messageCount}</p>
-                  <p className="text-xs text-slate-500">messages</p>
+                  <p className="text-2xl font-bold text-protocall-blue">{contributor.messageCount}</p>
+                  <p className="text-xs text-muted-foreground">messages</p>
                 </div>
               </div>
             ))}

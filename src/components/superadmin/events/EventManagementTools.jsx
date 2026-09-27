@@ -57,17 +57,17 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
 
   return (
     <Card className="shadow-lg border-0 bg-white">
-      <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
+      <CardHeader className="border-b bg-surface-2">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-blue-600" />
+            <Activity className="w-5 h-5 text-protocall-blue" />
             Event Management & Automation Tools
           </CardTitle>
-          <Badge variant="outline" className="text-slate-600">
+          <Badge variant="outline" className="text-subtle">
             Platform-wide oversight
           </Badge>
         </div>
-        <p className="text-sm text-slate-600">Monitor and manage all event features across the platform</p>
+        <p className="text-sm text-subtle">Monitor and manage all event features across the platform</p>
       </CardHeader>
       <CardContent className="p-6">
         <Tabs defaultValue="overview" className="w-full">
@@ -81,78 +81,78 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
 
           <TabsContent value="overview" className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                <QrCode className="w-6 h-6 text-green-600 mb-2" />
-                <p className="text-sm text-green-700 font-medium">Check-Ins</p>
-                <p className="text-2xl font-bold text-green-900">{stats.totalCheckIns}</p>
+              <div className="p-4 bg-buy-muted rounded-lg border border-buy/30">
+                <QrCode className="w-6 h-6 text-buy-muted-foreground mb-2" />
+                <p className="text-sm text-buy-muted-foreground font-medium">Check-Ins</p>
+                <p className="text-2xl font-bold text-buy-muted-foreground">{stats.totalCheckIns}</p>
               </div>
 
-              <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-                <Ticket className="w-6 h-6 text-purple-600 mb-2" />
-                <p className="text-sm text-purple-700 font-medium">Promo Codes</p>
-                <p className="text-2xl font-bold text-purple-900">{stats.activePromoCodes}/{stats.totalPromoCodes}</p>
+              <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
+                <Ticket className="w-6 h-6 text-protocall-premium-text mb-2" />
+                <p className="text-sm text-protocall-premium-text font-medium">Promo Codes</p>
+                <p className="text-2xl font-bold text-protocall-premium-text">{stats.activePromoCodes}/{stats.totalPromoCodes}</p>
               </div>
 
-              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <Mail className="w-6 h-6 text-blue-600 mb-2" />
-                <p className="text-sm text-blue-700 font-medium">Reminders Sent</p>
-                <p className="text-2xl font-bold text-blue-900">{stats.remindersSent}</p>
+              <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
+                <Mail className="w-6 h-6 text-protocall-blue mb-2" />
+                <p className="text-sm text-protocall-blue font-medium">Reminders Sent</p>
+                <p className="text-2xl font-bold text-protocall-blue">{stats.remindersSent}</p>
               </div>
 
-              <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
-                <Star className="w-6 h-6 text-orange-600 mb-2" />
-                <p className="text-sm text-orange-700 font-medium">Avg Feedback</p>
-                <p className="text-2xl font-bold text-orange-900">{stats.avgFeedbackRating.toFixed(1)}⭐</p>
+              <div className="p-4 bg-hold-muted rounded-lg border border-hold/30">
+                <Star className="w-6 h-6 text-hold-muted-foreground mb-2" />
+                <p className="text-sm text-hold-muted-foreground font-medium">Avg Feedback</p>
+                <p className="text-2xl font-bold text-hold-muted-foreground">{stats.avgFeedbackRating.toFixed(1)}⭐</p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="bg-gradient-to-r from-blue-50 to-purple-50">
+              <Card className="bg-surface-2">
                 <CardContent className="p-6">
-                  <h4 className="font-semibold text-slate-900 mb-4">Automation Actions</h4>
+                  <h4 className="font-semibold text-foreground mb-4">Automation Actions</h4>
                   <div className="space-y-3">
                     <Button 
                       onClick={handleSendReminders}
                       disabled={isSendingReminders}
-                      className="w-full bg-blue-600 hover:bg-blue-700"
+                      className="w-full bg-protocall-blue hover:bg-protocall-blue"
                     >
                       {isSendingReminders ? 'Sending...' : 'Send Event Reminders Now'}
                     </Button>
                     <Button 
                       onClick={handleSendFeedbackRequests}
                       disabled={isSendingFeedback}
-                      className="w-full bg-purple-600 hover:bg-purple-700"
+                      className="w-full bg-primary hover:bg-primary"
                     >
                       {isSendingFeedback ? 'Sending...' : 'Send Feedback Requests'}
                     </Button>
                   </div>
-                  <p className="text-xs text-slate-600 mt-3">
+                  <p className="text-xs text-subtle mt-3">
                     These functions are normally automated via cron jobs. Use these buttons to manually trigger them.
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-r from-green-50 to-emerald-50">
+              <Card className="bg-gradient-to-r from-surface-2 to-buy-muted">
                 <CardContent className="p-6">
-                  <h4 className="font-semibold text-slate-900 mb-4">System Health</h4>
+                  <h4 className="font-semibold text-foreground mb-4">System Health</h4>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-700">Reminder System</span>
-                      <Badge className="bg-green-100 text-green-800">
+                      <span className="text-sm text-subtle">Reminder System</span>
+                      <Badge className="bg-buy-muted text-buy-muted-foreground">
                         <CheckCircle className="w-3 h-3 mr-1" />
                         Active
                       </Badge>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-700">Feedback Automation</span>
-                      <Badge className="bg-green-100 text-green-800">
+                      <span className="text-sm text-subtle">Feedback Automation</span>
+                      <Badge className="bg-buy-muted text-buy-muted-foreground">
                         <CheckCircle className="w-3 h-3 mr-1" />
                         Active
                       </Badge>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-700">QR Check-In</span>
-                      <Badge className="bg-green-100 text-green-800">
+                      <span className="text-sm text-subtle">QR Check-In</span>
+                      <Badge className="bg-buy-muted text-buy-muted-foreground">
                         <CheckCircle className="w-3 h-3 mr-1" />
                         Active
                       </Badge>
@@ -167,16 +167,16 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
             <div className="grid grid-cols-1 gap-4">
               {checkIns.length > 0 ? (
                 checkIns.map(checkIn => (
-                  <div key={checkIn.id} className="p-4 bg-slate-50 rounded-lg border">
+                  <div key={checkIn.id} className="p-4 bg-surface-2 rounded-lg border">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-semibold text-slate-900">{checkIn.user_name}</p>
-                        <p className="text-sm text-slate-600">Event ID: {checkIn.event_id}</p>
-                        <p className="text-xs text-slate-500">
+                        <p className="font-semibold text-foreground">{checkIn.user_name}</p>
+                        <p className="text-sm text-subtle">Event ID: {checkIn.event_id}</p>
+                        <p className="text-xs text-muted-foreground">
                           Checked in: {format(new Date(checkIn.checked_in_at), 'PPp')}
                         </p>
                       </div>
-                      <Badge className="bg-green-100 text-green-800">
+                      <Badge className="bg-buy-muted text-buy-muted-foreground">
                         {checkIn.check_in_method}
                       </Badge>
                     </div>
@@ -184,8 +184,8 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
                 ))
               ) : (
                 <div className="text-center py-12">
-                  <QrCode className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                  <p className="text-slate-600">No check-ins recorded yet</p>
+                  <QrCode className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-subtle">No check-ins recorded yet</p>
                 </div>
               )}
             </div>
@@ -198,24 +198,24 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
                   <Card key={promo.id} className="border-2">
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between mb-3">
-                        <code className="text-lg font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded">
+                        <code className="text-lg font-bold text-protocall-premium-text bg-premium-muted px-3 py-1 rounded">
                           {promo.code}
                         </code>
-                        <Badge className={promo.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                        <Badge className={promo.is_active ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-surface-2 text-foreground'}>
                           {promo.is_active ? 'Active' : 'Inactive'}
                         </Badge>
                       </div>
-                      <p className="text-sm text-slate-700 mb-2">{promo.description}</p>
+                      <p className="text-sm text-subtle mb-2">{promo.description}</p>
                       <div className="grid grid-cols-2 gap-2 text-xs">
-                        <div className="bg-blue-50 p-2 rounded">
-                          <p className="text-blue-600">Discount</p>
-                          <p className="font-semibold text-blue-900">
+                        <div className="bg-premium-muted p-2 rounded">
+                          <p className="text-protocall-blue">Discount</p>
+                          <p className="font-semibold text-protocall-blue">
                             {promo.discount_type === 'percentage' ? `${promo.discount_value}%` : `₹${promo.discount_value}`}
                           </p>
                         </div>
-                        <div className="bg-green-50 p-2 rounded">
-                          <p className="text-green-600">Usage</p>
-                          <p className="font-semibold text-green-900">
+                        <div className="bg-buy-muted p-2 rounded">
+                          <p className="text-buy-muted-foreground">Usage</p>
+                          <p className="font-semibold text-buy-muted-foreground">
                             {promo.current_uses} / {promo.max_uses || '∞'}
                           </p>
                         </div>
@@ -225,8 +225,8 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
                 ))
               ) : (
                 <div className="col-span-2 text-center py-12">
-                  <Ticket className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                  <p className="text-slate-600">No promo codes created yet</p>
+                  <Ticket className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-subtle">No promo codes created yet</p>
                 </div>
               )}
             </div>
@@ -235,14 +235,14 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
           <TabsContent value="reminders" className="space-y-4">
             <div className="flex justify-between items-center mb-4">
               <div>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-subtle">
                   {stats.remindersSent} sent, {stats.remindersPending} pending
                 </p>
               </div>
               <Button 
                 onClick={handleSendReminders}
                 disabled={isSendingReminders}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-protocall-blue hover:bg-protocall-blue"
               >
                 {isSendingReminders ? 'Sending...' : 'Trigger Reminders Now'}
               </Button>
@@ -251,21 +251,21 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
             <div className="space-y-3">
               {reminders.length > 0 ? (
                 reminders.slice(0, 50).map(reminder => (
-                  <div key={reminder.id} className="p-4 bg-slate-50 rounded-lg border">
+                  <div key={reminder.id} className="p-4 bg-surface-2 rounded-lg border">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-semibold text-slate-900">
+                        <p className="font-semibold text-foreground">
                           {reminder.reminder_type.replace(/_/g, ' ').toUpperCase()}
                         </p>
-                        <p className="text-sm text-slate-600">Event: {reminder.event_id}</p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-sm text-subtle">Event: {reminder.event_id}</p>
+                        <p className="text-xs text-muted-foreground">
                           {reminder.sent 
                             ? `Sent: ${format(new Date(reminder.sent_at), 'PPp')}`
                             : `Scheduled: ${format(new Date(reminder.scheduled_time), 'PPp')}`
                           }
                         </p>
                       </div>
-                      <Badge className={reminder.sent ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
+                      <Badge className={reminder.sent ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-hold-muted text-hold-muted-foreground'}>
                         {reminder.sent ? 'Sent' : 'Pending'}
                       </Badge>
                     </div>
@@ -273,8 +273,8 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
                 ))
               ) : (
                 <div className="text-center py-12">
-                  <Mail className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                  <p className="text-slate-600">No reminders logged yet</p>
+                  <Mail className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-subtle">No reminders logged yet</p>
                 </div>
               )}
             </div>
@@ -283,14 +283,14 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
           <TabsContent value="feedback" className="space-y-4">
             <div className="flex justify-between items-center mb-4">
               <div>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-subtle">
                   {stats.feedbackReceived} received, {stats.feedbackPending} pending
                 </p>
               </div>
               <Button 
                 onClick={handleSendFeedbackRequests}
                 disabled={isSendingFeedback}
-                className="bg-purple-600 hover:bg-purple-700"
+                className="bg-primary hover:bg-primary"
               >
                 {isSendingFeedback ? 'Sending...' : 'Send Feedback Requests'}
               </Button>
@@ -303,47 +303,47 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between mb-3">
                         <div>
-                          <p className="font-semibold text-slate-900">{feedback.user_name}</p>
-                          <p className="text-sm text-slate-600">Event: {feedback.event_id}</p>
+                          <p className="font-semibold text-foreground">{feedback.user_name}</p>
+                          <p className="text-sm text-subtle">Event: {feedback.event_id}</p>
                           <div className="flex items-center gap-2 mt-1">
                             <div className="flex items-center">
                               {[1, 2, 3, 4, 5].map(star => (
                                 <Star 
                                   key={star} 
-                                  className={`w-4 h-4 ${star <= feedback.rating ? 'fill-yellow-400 text-yellow-400' : 'text-slate-300'}`}
+                                  className={`w-4 h-4 ${star <= feedback.rating ? 'fill-hold text-hold' : 'text-muted-foreground'}`}
                                 />
                               ))}
                             </div>
-                            <span className="text-sm text-slate-600">{feedback.rating}/5</span>
+                            <span className="text-sm text-subtle">{feedback.rating}/5</span>
                           </div>
                         </div>
-                        <Badge className={feedback.would_recommend ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                        <Badge className={feedback.would_recommend ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-surface-2 text-foreground'}>
                           {feedback.would_recommend ? 'Recommends' : 'Neutral'}
                         </Badge>
                       </div>
                       
                       {feedback.feedback_text && (
-                        <p className="text-sm text-slate-700 mb-3 p-3 bg-white rounded border">
+                        <p className="text-sm text-subtle mb-3 p-3 bg-white rounded border">
                           {feedback.feedback_text}
                         </p>
                       )}
                       
                       <div className="grid grid-cols-4 gap-2 text-xs">
-                        <div className="bg-blue-50 p-2 rounded text-center">
-                          <p className="text-blue-600">Content</p>
-                          <p className="font-bold text-blue-900">{feedback.content_quality}/5</p>
+                        <div className="bg-premium-muted p-2 rounded text-center">
+                          <p className="text-protocall-blue">Content</p>
+                          <p className="font-bold text-protocall-blue">{feedback.content_quality}/5</p>
                         </div>
-                        <div className="bg-purple-50 p-2 rounded text-center">
-                          <p className="text-purple-600">Presentation</p>
-                          <p className="font-bold text-purple-900">{feedback.presentation_quality}/5</p>
+                        <div className="bg-premium-muted p-2 rounded text-center">
+                          <p className="text-protocall-premium-text">Presentation</p>
+                          <p className="font-bold text-protocall-premium-text">{feedback.presentation_quality}/5</p>
                         </div>
-                        <div className="bg-green-50 p-2 rounded text-center">
-                          <p className="text-green-600">Venue</p>
-                          <p className="font-bold text-green-900">{feedback.venue_rating}/5</p>
+                        <div className="bg-buy-muted p-2 rounded text-center">
+                          <p className="text-buy-muted-foreground">Venue</p>
+                          <p className="font-bold text-buy-muted-foreground">{feedback.venue_rating}/5</p>
                         </div>
-                        <div className="bg-orange-50 p-2 rounded text-center">
-                          <p className="text-orange-600">Value</p>
-                          <p className="font-bold text-orange-900">{feedback.value_for_money}/5</p>
+                        <div className="bg-hold-muted p-2 rounded text-center">
+                          <p className="text-hold-muted-foreground">Value</p>
+                          <p className="font-bold text-hold-muted-foreground">{feedback.value_for_money}/5</p>
                         </div>
                       </div>
                     </CardContent>
@@ -351,8 +351,8 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
                 ))
               ) : (
                 <div className="text-center py-12">
-                  <Star className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                  <p className="text-slate-600">No feedback received yet</p>
+                  <Star className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-subtle">No feedback received yet</p>
                 </div>
               )}
             </div>

@@ -97,7 +97,7 @@ export default function InquiryForm() {
 
   return (
     <Card className="shadow-lg border-0 bg-white">
-      <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50">
+      <CardHeader className="bg-surface-2">
         <CardTitle>Send an Inquiry</CardTitle>
         <CardDescription>Our team typically responds within 24 hours.</CardDescription>
       </CardHeader>
@@ -139,7 +139,7 @@ export default function InquiryForm() {
               I am not a robot
             </Label>
           </div>
-          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
+          <Button type="submit" className="w-full bg-protocall-blue hover:bg-protocall-blue" disabled={isSubmitting}>
             {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
             Send Inquiry
           </Button>

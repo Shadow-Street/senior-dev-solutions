@@ -150,23 +150,23 @@ function AdminPlanCard({ plan, onEdit, allPlans, availableFeatures }) { // Added
   const getPlanColor = () => {
     const planName = plan.name.toLowerCase();
     if (planName.includes('vip') || planName.includes('elite')) {
-      return 'text-yellow-600';
+      return 'text-hold-muted-foreground';
     }
     if (planName.includes('premium')) {
-      return 'text-purple-600';
+      return 'text-protocall-premium-text';
     }
-    return 'text-blue-600';
+    return 'text-protocall-blue';
   };
 
   const getCardBackground = () => {
     const planName = plan.name.toLowerCase();
     if (planName.includes('vip') || planName.includes('elite')) {
-      return 'bg-gradient-to-br from-yellow-50 to-orange-50';
+      return 'bg-gradient-to-br from-surface-2 to-hold-muted';
     }
     if (planName.includes('premium')) {
-      return 'bg-gradient-to-br from-purple-50 to-pink-50';
+      return 'bg-surface-2';
     }
-    return 'bg-gradient-to-br from-blue-50 to-cyan-50';
+    return 'bg-surface-2';
   };
 
   const monthlyPrice = plan.price_monthly || 0;
@@ -179,7 +179,7 @@ function AdminPlanCard({ plan, onEdit, allPlans, availableFeatures }) { // Added
   const parentPlanName = thisTierInfo.parent;
 
   return (
-    <Card className={`relative overflow-hidden border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 ${getCardBackground()}`}>
+    <Card className={`relative overflow-hidden border border-border shadow-md hover:shadow-lg transition-all duration-300 ${getCardBackground()}`}>
       <CardContent className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
@@ -187,12 +187,12 @@ function AdminPlanCard({ plan, onEdit, allPlans, availableFeatures }) { // Added
             <span className={getPlanColor()}>
               {getPlanIcon()}
             </span>
-            <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
+            <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-xs">System</Badge>
             {plan.is_active && (
-              <Badge className="bg-gray-900 text-white text-xs">Active</Badge>
+              <Badge className="bg-protocall-ink text-white text-xs">Active</Badge>
             )}
           </div>
         </div>
@@ -200,22 +200,23 @@ function AdminPlanCard({ plan, onEdit, allPlans, availableFeatures }) { // Added
         {/* Pricing */}
         <div className="mb-4">
           <div className="flex items-baseline gap-1">
-            <span className="text-4xl font-bold text-gray-900">
+            <span className="text-4xl font-bold text-foreground">
               ₹{monthlyPrice}
             </span>
-            <span className="text-gray-500">/month</span>
+            <span className="text-muted-foreground">/month</span>
           </div>
+          {/* <div>, not <p>: Badge renders a <div> and cannot nest in a <p>. */}
           {!isFree && annualPrice > 0 && (
-            <p className="text-sm text-gray-600 mt-1">
-              or ₹{annualPrice}/year
+            <div className="mt-1 flex items-center gap-2 text-sm text-subtle">
+              <span>or ₹{annualPrice}/year</span>
               {monthlySavings > 0 && (
-                <Badge className="ml-2 bg-green-100 text-green-700 text-xs border-0">
+                <Badge className="bg-buy-muted text-buy-muted-foreground text-xs border-0">
                   Save {monthlySavings}%
                 </Badge>
               )}
-            </p>
+            </div>
           )}
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             {isFree ? 'Basic platform access' : plan.description || 'Access to premium features'}
           </p>
         </div>
@@ -224,9 +225,9 @@ function AdminPlanCard({ plan, onEdit, allPlans, availableFeatures }) { // Added
         <div className="mb-6">
           {/* Parent Plan Inclusion */}
           {parentPlanName && (
-            <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg mb-3 border border-blue-100">
-              <Shield className="w-4 h-4 text-blue-600 flex-shrink-0" />
-              <span className="text-sm font-medium text-blue-900">
+            <div className="flex items-center gap-2 p-3 bg-premium-muted rounded-lg mb-3 border border-protocall-premium-light">
+              <Shield className="w-4 h-4 text-protocall-blue flex-shrink-0" />
+              <span className="text-sm font-medium text-protocall-blue">
                 Includes All {parentPlanName} Features
               </span>
             </div>
@@ -235,7 +236,7 @@ function AdminPlanCard({ plan, onEdit, allPlans, availableFeatures }) { // Added
           {/* Features Header */}
           {plan.features && plan.features.length > 0 && (
             <div className="mb-3">
-              <h4 className="text-sm font-semibold text-gray-900">
+              <h4 className="text-sm font-semibold text-foreground">
                 {parentPlanName ? `Additional ${plan.name} Features:` : 'Features:'}
               </h4>
             </div>
@@ -246,15 +247,15 @@ function AdminPlanCard({ plan, onEdit, allPlans, availableFeatures }) { // Added
             <div className="space-y-2">
               {plan.features.map((feature, index) => (
                 <div key={index} className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-gray-700">
+                  <Check className="w-4 h-4 text-positive flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-subtle">
                     {formatFeatureName(feature, availableFeatures)}
                   </span>
                 </div>
               ))}
             </div>
           ) : parentPlanName ? (
-            <p className="text-sm text-gray-500 italic">No additional unique features</p>
+            <p className="text-sm text-muted-foreground italic">No additional unique features</p>
           ) : null}
         </div>
 
@@ -262,7 +263,7 @@ function AdminPlanCard({ plan, onEdit, allPlans, availableFeatures }) { // Added
         <Button
           onClick={() => onEdit(plan)}
           variant="outline"
-          className="w-full hover:bg-gray-50"
+          className="w-full hover:bg-surface-2"
         >
           <Edit className="w-4 h-4 mr-2" />
           Edit
@@ -417,8 +418,8 @@ export default function PlanManager({ plans, setPlans, permissions }) {
   if (featuresLoading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <p className="ml-3 text-gray-700">Loading features...</p>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-protocall-blue"></div>
+        <p className="ml-3 text-subtle">Loading features...</p>
       </div>
     );
   }
@@ -434,8 +435,8 @@ export default function PlanManager({ plans, setPlans, permissions }) {
     <div className="space-y-6">
       {/* ✅ Show warning if no features exist */}
       {AVAILABLE_FEATURES.length === 0 && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <p className="text-sm text-yellow-800">
+        <div className="bg-hold-muted border border-hold/30 rounded-lg p-4">
+          <p className="text-sm text-hold-muted-foreground">
             ⚠️ No features available. Please add features in the Feature Management tab first, or ensure they are properly configured.
           </p>
         </div>
@@ -475,7 +476,7 @@ export default function PlanManager({ plans, setPlans, permissions }) {
                 disabled={editingPlan?.is_system_plan}
               />
               {editingPlan?.is_system_plan && (
-                <p className="text-xs text-amber-600 mt-1">System plan names cannot be changed</p>
+                <p className="text-xs text-hold-muted-foreground mt-1">System plan names cannot be changed</p>
               )}
             </div>
 
@@ -517,21 +518,21 @@ export default function PlanManager({ plans, setPlans, permissions }) {
             {/* ✅ Feature Selection with Checkboxes - DYNAMICALLY LOADED */}
             <div>
               <Label className="text-base font-semibold mb-3 block">Select Plan Features</Label>
-              <p className="text-sm text-gray-500 mb-4">
+              <p className="text-sm text-muted-foreground mb-4">
                 Choose which features should be included in this subscription plan
               </p>
 
               <div className="space-y-6">
                 {/* Basic Features */}
                 {featuresByTier.basic.length > 0 && (
-                  <div className="border rounded-lg p-4 bg-blue-50">
-                    <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                  <div className="border rounded-lg p-4 bg-premium-muted">
+                    <h4 className="font-semibold text-protocall-blue mb-3 flex items-center gap-2">
                       <UserCircle className="w-4 h-4" />
                       Basic Tier Features
                     </h4>
                     <div className="space-y-3">
                       {featuresByTier.basic.map((feature) => (
-                        <div key={feature.key} className="flex items-start gap-3 p-2 rounded hover:bg-blue-100 transition-colors">
+                        <div key={feature.key} className="flex items-start gap-3 p-2 rounded hover:bg-premium-muted transition-colors">
                           <Checkbox
                             id={feature.key}
                             checked={isFeatureSelected(feature.key)}
@@ -540,11 +541,11 @@ export default function PlanManager({ plans, setPlans, permissions }) {
                           <div className="flex-1">
                             <label
                               htmlFor={feature.key}
-                              className="text-sm font-medium text-gray-900 cursor-pointer"
+                              className="text-sm font-medium text-foreground cursor-pointer"
                             >
                               {feature.name}
                             </label>
-                            <p className="text-xs text-gray-600 mt-0.5">{feature.description}</p>
+                            <p className="text-xs text-subtle mt-0.5">{feature.description}</p>
                           </div>
                         </div>
                       ))}
@@ -554,14 +555,14 @@ export default function PlanManager({ plans, setPlans, permissions }) {
 
                 {/* Premium Features */}
                 {featuresByTier.premium.length > 0 && (
-                  <div className="border rounded-lg p-4 bg-purple-50">
-                    <h4 className="font-semibold text-purple-900 mb-3 flex items-center gap-2">
+                  <div className="border rounded-lg p-4 bg-premium-muted">
+                    <h4 className="font-semibold text-protocall-premium-text mb-3 flex items-center gap-2">
                       <Sparkles className="w-4 h-4" />
                       Premium Tier Features
                     </h4>
                     <div className="space-y-3">
                       {featuresByTier.premium.map((feature) => (
-                        <div key={feature.key} className="flex items-start gap-3 p-2 rounded hover:bg-purple-100 transition-colors">
+                        <div key={feature.key} className="flex items-start gap-3 p-2 rounded hover:bg-premium-muted transition-colors">
                           <Checkbox
                             id={feature.key}
                             checked={isFeatureSelected(feature.key)}
@@ -570,11 +571,11 @@ export default function PlanManager({ plans, setPlans, permissions }) {
                           <div className="flex-1">
                             <label
                               htmlFor={feature.key}
-                              className="text-sm font-medium text-gray-900 cursor-pointer"
+                              className="text-sm font-medium text-foreground cursor-pointer"
                             >
                               {feature.name}
                             </label>
-                            <p className="text-xs text-gray-600 mt-0.5">{feature.description}</p>
+                            <p className="text-xs text-subtle mt-0.5">{feature.description}</p>
                           </div>
                         </div>
                       ))}
@@ -584,14 +585,14 @@ export default function PlanManager({ plans, setPlans, permissions }) {
 
                 {/* VIP Features */}
                 {featuresByTier.vip.length > 0 && (
-                  <div className="border rounded-lg p-4 bg-yellow-50">
-                    <h4 className="font-semibold text-yellow-900 mb-3 flex items-center gap-2">
+                  <div className="border rounded-lg p-4 bg-hold-muted">
+                    <h4 className="font-semibold text-hold-muted-foreground mb-3 flex items-center gap-2">
                       <Crown className="w-4 h-4" />
                       VIP Tier Features
                     </h4>
                     <div className="space-y-3">
                       {featuresByTier.vip.map((feature) => (
-                        <div key={feature.key} className="flex items-start gap-3 p-2 rounded hover:bg-yellow-100 transition-colors">
+                        <div key={feature.key} className="flex items-start gap-3 p-2 rounded hover:bg-hold-muted transition-colors">
                           <Checkbox
                             id={feature.key}
                             checked={isFeatureSelected(feature.key)}
@@ -600,11 +601,11 @@ export default function PlanManager({ plans, setPlans, permissions }) {
                           <div className="flex-1">
                             <label
                               htmlFor={feature.key}
-                              className="text-sm font-medium text-gray-900 cursor-pointer"
+                              className="text-sm font-medium text-foreground cursor-pointer"
                             >
                               {feature.name}
                             </label>
-                            <p className="text-xs text-gray-600 mt-0.5">{feature.description}</p>
+                            <p className="text-xs text-subtle mt-0.5">{feature.description}</p>
                           </div>
                         </div>
                       ))}
@@ -615,8 +616,8 @@ export default function PlanManager({ plans, setPlans, permissions }) {
 
               {/* Selected Features Summary */}
               {formData.features?.length > 0 && (
-                <div className="mt-4 p-3 bg-gray-50 rounded-lg border">
-                  <p className="text-sm font-medium text-gray-700 mb-2">
+                <div className="mt-4 p-3 bg-surface-2 rounded-lg border">
+                  <p className="text-sm font-medium text-subtle mb-2">
                     Selected Features ({formData.features.length}):
                   </p>
                   <div className="flex flex-wrap gap-2">

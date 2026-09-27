@@ -18,9 +18,9 @@ export default function CourseCard({ course, educator, canAccessPremium }) {
   const [showEnrollModal, setShowEnrollModal] = useState(false);
 
   const difficultyColors = {
-    beginner: 'bg-green-100 text-green-800 border-green-200',
-    intermediate: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    advanced: 'bg-red-100 text-red-800 border-red-200'
+    beginner: 'bg-buy-muted text-buy-muted-foreground border-buy/30',
+    intermediate: 'bg-hold-muted text-hold-muted-foreground border-hold/30',
+    advanced: 'bg-sell-muted text-sell-muted-foreground border-sell/30'
   };
 
   const handleEnroll = () => {
@@ -34,13 +34,13 @@ export default function CourseCard({ course, educator, canAccessPremium }) {
   return (
     <Card className="shadow-lg border-0 bg-white flex flex-col">
       {/* Course Header */}
-      <div className="relative bg-gradient-to-r from-indigo-500 to-blue-500 p-4 text-white">
+      <div className="relative bg-gradient-to-r from-protocall-deep to-protocall-blue p-4 text-white">
         <div className="flex items-center justify-between">
           <Badge className="bg-white/20 text-white border-white/30">
             {course.course_type.replace('_', ' ').toUpperCase()}
           </Badge>
           <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 text-yellow-300" />
+            <Star className="w-4 h-4 text-hold" />
             <span className="font-medium">{course.rating}</span>
           </div>
         </div>
@@ -58,7 +58,7 @@ export default function CourseCard({ course, educator, canAccessPremium }) {
 
       <CardHeader className="pb-3">
         <div className="space-y-2">
-          <Badge variant="outline" className="border-indigo-200 bg-indigo-50 text-indigo-700">
+          <Badge variant="outline" className="border-protocall-premium-light bg-premium-muted text-protocall-blue">
             {course.category.replace('_', ' ')}
           </Badge>
           <CardTitle className="text-lg leading-tight">{course.title}</CardTitle>
@@ -66,7 +66,7 @@ export default function CourseCard({ course, educator, canAccessPremium }) {
 
         {/* Educator */}
         {educator && (
-          <div className="flex items-center gap-2 text-sm text-slate-600">
+          <div className="flex items-center gap-2 text-sm text-subtle">
             <img
               src={educator.profile_image_url}
               alt={educator.display_name}
@@ -74,32 +74,32 @@ export default function CourseCard({ course, educator, canAccessPremium }) {
             />
             <span className="font-medium">{educator.display_name}</span>
             {educator.verified && (
-              <CheckCircle className="w-4 h-4 text-green-500" />
+              <CheckCircle className="w-4 h-4 text-positive" />
             )}
           </div>
         )}
       </CardHeader>
 
       <CardContent className="space-y-4 flex-1">
-        <p className="text-sm text-slate-600 line-clamp-2">{course.description}</p>
+        <p className="text-sm text-subtle line-clamp-2">{course.description}</p>
 
         {/* Key Info */}
-        <div className="flex justify-between items-center text-sm text-slate-700">
+        <div className="flex justify-between items-center text-sm text-subtle">
           <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 text-yellow-500" />
+            <Star className="w-4 h-4 text-hold" />
             <span>{course.rating} ({course.current_enrollments} reviews)</span>
           </div>
           <div className="flex items-center gap-1">
-            <Users className="w-4 h-4 text-blue-500" />
+            <Users className="w-4 h-4 text-protocall-premium-light" />
             <span>{course.current_enrollments} students</span>
           </div>
         </div>
 
         {/* Live Course Date */}
         {course.course_type === 'live_workshop' && course.scheduled_date && (
-          <div className="flex items-center gap-2 text-sm bg-blue-50 p-2 rounded-lg">
-            <Calendar className="w-4 h-4 text-blue-600" />
-            <span className="text-blue-800 font-medium">
+          <div className="flex items-center gap-2 text-sm bg-premium-muted p-2 rounded-lg">
+            <Calendar className="w-4 h-4 text-protocall-blue" />
+            <span className="text-protocall-blue font-medium">
               {format(new Date(course.scheduled_date), 'MMM d, yyyy • h:mm a')}
             </span>
           </div>
@@ -118,16 +118,16 @@ export default function CourseCard({ course, educator, canAccessPremium }) {
 
         {/* Capacity Check for Live Courses */}
         {course.course_type === 'live_workshop' && course.max_participants && (
-          <div className="bg-slate-50 p-3 rounded-lg">
+          <div className="bg-surface-2 p-3 rounded-lg">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-600">Capacity:</span>
+              <span className="text-subtle">Capacity:</span>
               <span className="font-semibold">
                 {course.current_enrollments} / {course.max_participants}
               </span>
             </div>
-            <div className="mt-2 bg-slate-200 rounded-full h-2">
+            <div className="mt-2 bg-border rounded-full h-2">
               <div 
-                className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+                className="bg-protocall-blue h-2 rounded-full transition-all duration-300"
                 style={{ 
                   width: `${(course.current_enrollments / course.max_participants) * 100}%` 
                 }}
@@ -137,10 +137,10 @@ export default function CourseCard({ course, educator, canAccessPremium }) {
         )}
 
         <div className="flex items-center justify-between mt-auto pt-4">
-          <p className="text-2xl font-bold text-slate-900">₹{course.price}</p>
+          <p className="text-2xl font-bold text-foreground">₹{course.price}</p>
           <Button 
             onClick={handleEnroll} 
-            className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white"
+            className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white"
             disabled={!canAccessPremium}
           >
             <BookOpen className="w-4 h-4 mr-2" />

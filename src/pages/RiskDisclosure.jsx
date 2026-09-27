@@ -8,9 +8,9 @@ import PageFooter from '../components/footer/PageFooter';
 
 export default function RiskDisclosure() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+    <div className="min-h-screen bg-surface-2">
       {/* Header */}
-      <div className="bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 text-white py-12">
+      <div className="bg-gradient-to-r from-sell via-hold to-hold text-white py-12">
         <div className="max-w-5xl mx-auto px-6">
           <Link to={createPageUrl('Landing')}>
             <Button variant="outline" className="mb-6 bg-white/20 border-white/30 text-white hover:bg-white/30">
@@ -22,7 +22,7 @@ export default function RiskDisclosure() {
             <AlertTriangle className="w-10 h-10" />
             <h1 className="text-4xl font-bold">Risk Disclosure Statement</h1>
           </div>
-          <p className="text-orange-100 text-lg">
+          <p className="text-hold-muted-foreground text-lg">
             Last Updated: January 1, 2025
           </p>
         </div>
@@ -31,17 +31,17 @@ export default function RiskDisclosure() {
       {/* Content */}
       <div className="max-w-5xl mx-auto px-6 py-12">
         {/* Critical Warning Banner */}
-        <Card className="mb-8 border-red-300 bg-red-50 p-6">
+        <Card className="mb-8 border-sell/30 bg-sell-muted p-6">
           <div className="flex items-start gap-4">
-            <AlertCircle className="w-8 h-8 text-red-600 flex-shrink-0 mt-1" />
+            <AlertCircle className="w-8 h-8 text-sell-muted-foreground flex-shrink-0 mt-1" />
             <div>
-              <h3 className="text-xl font-bold text-red-900 mb-3">IMPORTANT: PLEASE READ CAREFULLY</h3>
-              <p className="text-sm text-red-800 leading-relaxed mb-3">
+              <h3 className="text-xl font-bold text-sell-muted-foreground mb-3">IMPORTANT: PLEASE READ CAREFULLY</h3>
+              <p className="text-sm text-sell-muted-foreground leading-relaxed mb-3">
                 Trading and investing in securities involves significant risks and is not suitable for everyone. 
                 You may lose some or all of your invested capital. Before using any features on Protocall, 
                 you must read and understand all the risks outlined in this disclosure.
               </p>
-              <p className="text-sm text-red-800 leading-relaxed font-semibold">
+              <p className="text-sm text-sell-muted-foreground leading-relaxed font-semibold">
                 BY USING PROTOCALL, YOU ACKNOWLEDGE THAT YOU HAVE READ, UNDERSTOOD, AND ACCEPTED ALL THE RISKS 
                 DESCRIBED IN THIS DOCUMENT.
               </p>
@@ -51,12 +51,12 @@ export default function RiskDisclosure() {
 
         <Card className="p-8 mb-8">
           {/* Table of Contents */}
-          <div className="mb-8 p-4 bg-slate-50 rounded-lg">
+          <div className="mb-8 p-4 bg-surface-2 rounded-lg">
             <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
               <FileText className="w-5 h-5" />
               Table of Contents
             </h3>
-            <ol className="space-y-1 text-sm text-blue-600">
+            <ol className="space-y-1 text-sm text-protocall-blue">
               <li><a href="#general" className="hover:underline">1. General Investment Risks</a></li>
               <li><a href="#market" className="hover:underline">2. Market Risks</a></li>
               <li><a href="#platform" className="hover:underline">3. Platform-Specific Risks</a></li>
@@ -74,17 +74,17 @@ export default function RiskDisclosure() {
 
           {/* Section 1 */}
           <section id="general" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-orange-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-sell to-hold rounded-full"></div>
               1. General Investment Risks
             </h2>
-            <div className="space-y-4 text-slate-700">
-              <Card className="bg-amber-50 border-amber-200 p-4">
+            <div className="space-y-4 text-subtle">
+              <Card className="bg-hold-muted border-hold/30 p-4">
                 <div className="flex items-start gap-3">
-                  <TrendingDown className="w-6 h-6 text-amber-700 flex-shrink-0" />
+                  <TrendingDown className="w-6 h-6 text-hold-muted-foreground flex-shrink-0" />
                   <div>
-                    <p className="font-bold text-amber-900 mb-2">RISK OF LOSS</p>
-                    <p className="text-sm text-amber-800">
+                    <p className="font-bold text-hold-muted-foreground mb-2">RISK OF LOSS</p>
+                    <p className="text-sm text-hold-muted-foreground">
                       All investments carry risk. You may lose some or all of your invested capital. 
                       Never invest money you cannot afford to lose.
                     </p>
@@ -142,11 +142,11 @@ export default function RiskDisclosure() {
 
           {/* Section 2 */}
           <section id="market" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-orange-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-sell to-hold rounded-full"></div>
               2. Market Risks
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">2.1 Systematic Risk (Market Risk)</h3>
               <p>
                 Broad market movements affect all securities to varying degrees:
@@ -207,11 +207,11 @@ export default function RiskDisclosure() {
 
           {/* Section 3 */}
           <section id="platform" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-orange-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-sell to-hold rounded-full"></div>
               3. Platform-Specific Risks
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">3.1 Technology Platform Risks</h3>
               <p>
                 As a technology platform, Protocall faces inherent risks:
@@ -249,7 +249,7 @@ export default function RiskDisclosure() {
 
               <h3 className="font-bold text-lg mt-4">3.4 No Investment Advice</h3>
               <p>
-                <strong className="text-red-700">CRITICAL DISCLAIMER:</strong>
+                <strong className="text-sell-muted-foreground">CRITICAL DISCLAIMER:</strong>
               </p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>Protocall is a technology platform, not a financial advisor</li>
@@ -263,17 +263,17 @@ export default function RiskDisclosure() {
 
           {/* Section 4 */}
           <section id="pledge" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-orange-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-sell to-hold rounded-full"></div>
               4. Pledge Pool Risks
             </h2>
-            <div className="space-y-4 text-slate-700">
-              <Card className="bg-red-50 border-red-300 p-4">
+            <div className="space-y-4 text-subtle">
+              <Card className="bg-sell-muted border-sell/30 p-4">
                 <div className="flex items-start gap-3">
-                  <AlertTriangle className="w-6 h-6 text-red-600 flex-shrink-0" />
+                  <AlertTriangle className="w-6 h-6 text-sell-muted-foreground flex-shrink-0" />
                   <div>
-                    <p className="font-bold text-red-900 mb-2">HIGH-RISK FEATURE WARNING</p>
-                    <p className="text-sm text-red-800">
+                    <p className="font-bold text-sell-muted-foreground mb-2">HIGH-RISK FEATURE WARNING</p>
+                    <p className="text-sm text-sell-muted-foreground">
                       Pledge Pool is a high-risk feature that involves coordinated trading. This section contains 
                       critical risk disclosures you must understand before using Pledge Pool.
                     </p>
@@ -348,11 +348,11 @@ export default function RiskDisclosure() {
 
           {/* Section 5 */}
           <section id="advisor" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-orange-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-sell to-hold rounded-full"></div>
               5. Advisor Recommendation Risks
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">5.1 No Guarantee of Accuracy</h3>
               <p>
                 SEBI-registered advisors on our Platform provide independent recommendations, but:
@@ -376,7 +376,7 @@ export default function RiskDisclosure() {
               </ul>
 
               <h3 className="font-bold text-lg mt-4">5.3 Independent Verification Required</h3>
-              <p className="font-semibold text-red-700">
+              <p className="font-semibold text-sell-muted-foreground">
                 You must independently verify:
               </p>
               <ul className="list-disc pl-6 space-y-2">
@@ -401,11 +401,11 @@ export default function RiskDisclosure() {
 
           {/* Section 6 */}
           <section id="community" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-orange-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-sell to-hold rounded-full"></div>
               6. Community Content Risks
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">6.1 Unverified Information</h3>
               <p>
                 Community-generated content carries significant risks:
@@ -456,11 +456,11 @@ export default function RiskDisclosure() {
 
           {/* Section 7 */}
           <section id="technical" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-orange-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-sell to-hold rounded-full"></div>
               7. Technical and Operational Risks
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">7.1 System Downtime</h3>
               <p>
                 The Platform may experience downtime due to:
@@ -511,11 +511,11 @@ export default function RiskDisclosure() {
 
           {/* Section 8 */}
           <section id="regulatory" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-orange-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-sell to-hold rounded-full"></div>
               8. Regulatory and Legal Risks
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">8.1 SEBI Regulations</h3>
               <p>
                 Securities trading is heavily regulated. You must comply with:
@@ -566,11 +566,11 @@ export default function RiskDisclosure() {
 
           {/* Section 9 */}
           <section id="liquidity" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-orange-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-sell to-hold rounded-full"></div>
               9. Liquidity Risks
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">9.1 Stock Liquidity</h3>
               <p>
                 Not all stocks are equally liquid:
@@ -607,11 +607,11 @@ export default function RiskDisclosure() {
 
           {/* Section 10 */}
           <section id="cyber" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-orange-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-sell to-hold rounded-full"></div>
               10. Cybersecurity Risks
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">10.1 Account Security Risks</h3>
               <p>
                 Your account may be vulnerable to:
@@ -652,20 +652,20 @@ export default function RiskDisclosure() {
 
           {/* Section 11 */}
           <section id="limitation" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-orange-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-sell to-hold rounded-full"></div>
               11. Limitation of Liability
             </h2>
-            <div className="space-y-4 text-slate-700">
-              <Card className="bg-red-50 border-red-300 p-4">
-                <p className="font-bold text-red-900 mb-2">CRITICAL LEGAL NOTICE</p>
-                <p className="text-sm text-red-800">
+            <div className="space-y-4 text-subtle">
+              <Card className="bg-sell-muted border-sell/30 p-4">
+                <p className="font-bold text-sell-muted-foreground mb-2">CRITICAL LEGAL NOTICE</p>
+                <p className="text-sm text-sell-muted-foreground">
                   This section limits our liability for losses you may incur. Please read carefully.
                 </p>
               </Card>
 
               <h3 className="font-bold text-lg mt-4">11.1 No Liability for Investment Losses</h3>
-              <p className="font-semibold uppercase text-red-700">
+              <p className="font-semibold uppercase text-sell-muted-foreground">
                 PROTOCALL SHALL NOT BE LIABLE FOR ANY TRADING OR INVESTMENT LOSSES YOU INCUR, INCLUDING BUT NOT LIMITED TO:
               </p>
               <ul className="list-disc pl-6 space-y-2">
@@ -705,55 +705,55 @@ export default function RiskDisclosure() {
 
           {/* Section 12 */}
           <section id="acknowledgment" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-orange-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-sell to-hold rounded-full"></div>
               12. Your Acknowledgment
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p className="font-bold text-lg">
                 By using Protocall, you acknowledge and agree that:
               </p>
               
-              <Card className="bg-orange-50 border-orange-300 p-6 mt-4">
-                <ul className="space-y-3 text-slate-800">
+              <Card className="bg-hold-muted border-hold/30 p-6 mt-4">
+                <ul className="space-y-3 text-foreground">
                   <li className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
                     <span>You have read and understood this entire Risk Disclosure Statement</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
                     <span>You understand that trading involves substantial risk of loss</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
                     <span>You are financially capable of bearing such losses</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
                     <span>You will conduct your own research and due diligence before making investment decisions</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
                     <span>You will not rely solely on Platform features, advisor recommendations, or community sentiment</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
                     <span>You will consult with qualified financial advisors before making significant investment decisions</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
                     <span>You accept full responsibility for your investment decisions and outcomes</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
                     <span>You will comply with all applicable laws, regulations, and tax requirements</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
                     <span>Protocall is not liable for your trading or investment losses</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
                     <span>You will only invest money you can afford to lose</span>
                   </li>
                 </ul>
@@ -776,11 +776,11 @@ export default function RiskDisclosure() {
 
           {/* Additional Disclosures */}
           <section className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-orange-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-sell to-hold rounded-full"></div>
               Additional Risk Disclosures
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">Derivatives and Leverage Risk</h3>
               <p>
                 If you trade in derivatives (futures, options) or use leverage:
@@ -829,12 +829,12 @@ export default function RiskDisclosure() {
 
           {/* SEBI Standard Disclosure */}
           <section className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-orange-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-sell to-hold rounded-full"></div>
               SEBI Standard Risk Disclosure
             </h2>
-            <div className="space-y-4 text-slate-700">
-              <Card className="bg-slate-50 border-slate-300 p-6">
+            <div className="space-y-4 text-subtle">
+              <Card className="bg-surface-2 border-border p-6">
                 <p className="text-sm leading-relaxed mb-4">
                   <strong>Stock Brokers can accept securities as margin from clients only by way of pledge in the 
                   depository system w.e.f. September 1, 2020.</strong>
@@ -864,17 +864,17 @@ export default function RiskDisclosure() {
 
           {/* Contact for Questions */}
           <section className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-orange-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-sell to-hold rounded-full"></div>
               Questions About Risks?
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 If you have questions about the risks involved in using Protocall or trading in securities, 
                 please contact us:
               </p>
 
-              <Card className="bg-blue-50 p-6 mt-4">
+              <Card className="bg-premium-muted p-6 mt-4">
                 <h4 className="font-bold mb-3 text-lg">Protocall Support</h4>
                 <div className="space-y-2 text-sm">
                   <p><strong>Email:</strong> support@protocall.in</p>
@@ -883,7 +883,7 @@ export default function RiskDisclosure() {
                 </div>
               </Card>
 
-              <p className="text-sm text-slate-600 mt-4">
+              <p className="text-sm text-subtle mt-4">
                 We also recommend consulting with a qualified financial advisor or investment consultant 
                 who can assess your individual risk tolerance and financial situation.
               </p>
@@ -891,7 +891,7 @@ export default function RiskDisclosure() {
           </section>
 
           {/* Final Acknowledgment */}
-          <Card className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-6 mt-8">
+          <Card className="bg-gradient-to-r from-sell to-hold text-white p-6 mt-8">
             <div className="flex items-start gap-4">
               <AlertTriangle className="w-10 h-10 flex-shrink-0" />
               <div>
@@ -907,7 +907,7 @@ export default function RiskDisclosure() {
                   <li>✓ You will conduct your own independent research and due diligence</li>
                   <li>✓ You will comply with all applicable laws and regulations</li>
                 </ul>
-                <p className="text-sm text-orange-100 mt-4 font-semibold">
+                <p className="text-sm text-hold-muted-foreground mt-4 font-semibold">
                   If you do not understand or accept these risks, you should not use the Platform.
                 </p>
               </div>
@@ -919,23 +919,23 @@ export default function RiskDisclosure() {
         <div className="grid md:grid-cols-3 gap-4 mt-8">
           <Link to={createPageUrl('Terms')}>
             <Card className="p-6 hover:shadow-lg transition-all cursor-pointer h-full">
-              <FileText className="w-8 h-8 text-blue-600 mb-3" />
+              <FileText className="w-8 h-8 text-protocall-blue mb-3" />
               <h3 className="font-bold mb-2">Terms of Service</h3>
-              <p className="text-sm text-slate-600">Review our terms and conditions</p>
+              <p className="text-sm text-subtle">Review our terms and conditions</p>
             </Card>
           </Link>
           <Link to={createPageUrl('Privacy')}>
             <Card className="p-6 hover:shadow-lg transition-all cursor-pointer h-full">
-              <Shield className="w-8 h-8 text-green-600 mb-3" />
+              <Shield className="w-8 h-8 text-buy-muted-foreground mb-3" />
               <h3 className="font-bold mb-2">Privacy Policy</h3>
-              <p className="text-sm text-slate-600">Learn how we protect your data</p>
+              <p className="text-sm text-subtle">Learn how we protect your data</p>
             </Card>
           </Link>
           <Link to={createPageUrl('Feedback')}>
             <Card className="p-6 hover:shadow-lg transition-all cursor-pointer h-full">
-              <FileText className="w-8 h-8 text-purple-600 mb-3" />
+              <FileText className="w-8 h-8 text-protocall-premium-text mb-3" />
               <h3 className="font-bold mb-2">Contact Support</h3>
-              <p className="text-sm text-slate-600">Get help with any questions</p>
+              <p className="text-sm text-subtle">Get help with any questions</p>
             </Card>
           </Link>
         </div>

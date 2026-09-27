@@ -52,23 +52,23 @@ export default function PortfolioManagers() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
+    <div className="min-h-screen bg-surface-2 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white shadow-lg">
+        <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue rounded-xl p-8 text-white shadow-lg">
           <div className="flex items-center gap-4 mb-4">
             <div className="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center">
               <Briefcase className="w-8 h-8" />
             </div>
             <div>
               <h1 className="text-3xl font-bold">Portfolio Managers</h1>
-              <p className="text-blue-100 mt-1">SEBI Registered Portfolio Managers</p>
+              <p className="text-protocall-blue mt-1">SEBI Registered Portfolio Managers</p>
             </div>
           </div>
         </div>
@@ -77,7 +77,7 @@ export default function PortfolioManagers() {
         <Card>
           <CardContent className="p-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
               <Input
                 placeholder="Search by name, company, or specialization..."
                 value={searchTerm}
@@ -92,9 +92,9 @@ export default function PortfolioManagers() {
         {filteredPMs.length === 0 ? (
           <Card>
             <CardContent className="text-center py-12">
-              <Briefcase className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Portfolio Managers Found</h3>
-              <p className="text-gray-600">Try adjusting your search criteria</p>
+              <Briefcase className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-foreground mb-2">No Portfolio Managers Found</h3>
+              <p className="text-subtle">Try adjusting your search criteria</p>
             </CardContent>
           </Card>
         ) : (
@@ -103,14 +103,14 @@ export default function PortfolioManagers() {
               <Card key={pm.id} className="hover:shadow-xl transition-shadow">
                 <CardHeader className="pb-4">
                   <div className="flex items-start gap-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-2xl">
+                    <div className="w-16 h-16 bg-gradient-to-br from-protocall-deep to-protocall-blue rounded-full flex items-center justify-center text-white font-bold text-2xl">
                       {pm.display_name.charAt(0)}
                     </div>
                     <div className="flex-1">
                       <CardTitle className="text-lg">{pm.display_name}</CardTitle>
-                      <p className="text-sm text-gray-600 mt-1">{pm.company_name}</p>
+                      <p className="text-sm text-subtle mt-1">{pm.company_name}</p>
                       <div className="flex items-center gap-2 mt-2">
-                        <Badge className="bg-green-100 text-green-800 text-xs">
+                        <Badge className="bg-buy-muted text-buy-muted-foreground text-xs">
                           <Shield className="w-3 h-3 mr-1" />
                           SEBI Registered
                         </Badge>
@@ -121,19 +121,19 @@ export default function PortfolioManagers() {
 
                 <CardContent className="space-y-4">
                   {pm.bio && (
-                    <p className="text-sm text-gray-600 line-clamp-2">{pm.bio}</p>
+                    <p className="text-sm text-subtle line-clamp-2">{pm.bio}</p>
                   )}
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-blue-50 p-3 rounded-lg">
-                      <Users className="w-4 h-4 text-blue-600 mb-1" />
-                      <p className="text-xs text-blue-600">Clients</p>
-                      <p className="text-lg font-bold text-blue-900">{pm.total_clients || 0}</p>
+                    <div className="bg-premium-muted p-3 rounded-lg">
+                      <Users className="w-4 h-4 text-protocall-blue mb-1" />
+                      <p className="text-xs text-protocall-blue">Clients</p>
+                      <p className="text-lg font-bold text-protocall-blue">{pm.total_clients || 0}</p>
                     </div>
-                    <div className="bg-green-50 p-3 rounded-lg">
-                      <TrendingUp className="w-4 h-4 text-green-600 mb-1" />
-                      <p className="text-xs text-green-600">Total AUM</p>
-                      <p className="text-lg font-bold text-green-900">
+                    <div className="bg-buy-muted p-3 rounded-lg">
+                      <TrendingUp className="w-4 h-4 text-buy-muted-foreground mb-1" />
+                      <p className="text-xs text-buy-muted-foreground">Total AUM</p>
+                      <p className="text-lg font-bold text-buy-muted-foreground">
                         ₹{pm.total_aum ? (pm.total_aum / 100000).toFixed(1) : 0}L
                       </p>
                     </div>
@@ -141,7 +141,7 @@ export default function PortfolioManagers() {
 
                   {pm.specialization && pm.specialization.length > 0 && (
                     <div>
-                      <p className="text-xs font-semibold text-gray-700 mb-2">Specialization:</p>
+                      <p className="text-xs font-semibold text-subtle mb-2">Specialization:</p>
                       <div className="flex flex-wrap gap-2">
                         {pm.specialization.slice(0, 3).map((spec, idx) => (
                           <Badge key={idx} variant="outline" className="text-xs">
@@ -154,17 +154,17 @@ export default function PortfolioManagers() {
 
                   <div className="flex items-center justify-between pt-2">
                     <div className="text-sm">
-                      <p className="text-gray-600">Performance Fee</p>
-                      <p className="font-semibold text-gray-900">{pm.performance_fee_percentage}%</p>
+                      <p className="text-subtle">Performance Fee</p>
+                      <p className="font-semibold text-foreground">{pm.performance_fee_percentage}%</p>
                     </div>
                     <div className="text-sm">
-                      <p className="text-gray-600">Experience</p>
-                      <p className="font-semibold text-gray-900">{pm.experience_years || 0} years</p>
+                      <p className="text-subtle">Experience</p>
+                      <p className="font-semibold text-foreground">{pm.experience_years || 0} years</p>
                     </div>
                   </div>
 
                   <Button
-                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    className="w-full bg-protocall-blue hover:bg-protocall-blue"
                     onClick={() => handleApplyAsClient(pm.id)}
                   >
                     Become a Client

@@ -64,13 +64,13 @@ const SuperAdminDashboard = () => {
     if (loading) return <div className="p-8 flex justify-center text-white">Loading Dashboard...</div>;
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white p-6">
+        <div className="min-h-screen bg-protocall-ink text-white p-6">
             <header className="mb-8 flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                    <h1 className="text-3xl font-bold bg-protocall-blue bg-clip-text text-transparent">
                         Super Admin Command Center
                     </h1>
-                    <p className="text-gray-400">System Overview & Control</p>
+                    <p className="text-muted-foreground">System Overview & Control</p>
                 </div>
                 <Button onClick={fetchDashboardData} variant="outline" className="gap-2">
                     <RefreshCw className="h-4 w-4" /> Refresh
@@ -79,40 +79,40 @@ const SuperAdminDashboard = () => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <Card className="bg-gray-800 border-gray-700 text-white">
+                <Card className="bg-protocall-ink border-protocall-ink text-white">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-                        <Users className="h-4 w-4 text-blue-400" />
+                        <Users className="h-4 w-4 text-protocall-premium-light" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{stats?.users?.total || 0}</div>
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-muted-foreground">
                             {stats?.users?.active || 0} active now
                         </p>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-gray-800 border-gray-700 text-white">
+                <Card className="bg-protocall-ink border-protocall-ink text-white">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-                        <DollarSign className="h-4 w-4 text-green-400" />
+                        <DollarSign className="h-4 w-4 text-positive" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">₹{stats?.revenue?.total || 0}</div>
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-muted-foreground">
                             Across all streams
                         </p>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-gray-800 border-gray-700 text-white">
+                <Card className="bg-protocall-ink border-protocall-ink text-white">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">System Health</CardTitle>
-                        <Activity className="h-4 w-4 text-purple-400" />
+                        <Activity className="h-4 w-4 text-protocall-premium-light" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">99.9%</div>
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-muted-foreground">
                             All services operational
                         </p>
                     </CardContent>
@@ -120,14 +120,14 @@ const SuperAdminDashboard = () => {
             </div>
 
             <Tabs defaultValue="users" className="space-y-4">
-                <TabsList className="bg-gray-800 border-gray-700">
+                <TabsList className="bg-protocall-ink border-protocall-ink">
                     <TabsTrigger value="users">User Management</TabsTrigger>
                     <TabsTrigger value="content">Content Moderation</TabsTrigger>
                     <TabsTrigger value="settings">System Settings</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="users" className="space-y-4">
-                    <Card className="bg-gray-800 border-gray-700">
+                    <Card className="bg-protocall-ink border-protocall-ink">
                         <CardHeader className="flex flex-row justify-between items-center">
                             <div>
                                 <CardTitle>Users Directory</CardTitle>
@@ -138,15 +138,15 @@ const SuperAdminDashboard = () => {
                                     placeholder="Search email..."
                                     value={userSearch}
                                     onChange={(e) => setUserSearch(e.target.value)}
-                                    className="bg-gray-700 border-gray-600 w-64"
+                                    className="bg-protocall-ink border-protocall-ink w-64"
                                 />
                                 <Button type="submit" size="icon"><Search className="h-4 w-4" /></Button>
                             </form>
                         </CardHeader>
                         <CardContent>
-                            <div className="rounded-md border border-gray-700">
+                            <div className="rounded-md border border-protocall-ink">
                                 <table className="w-full text-sm text-left">
-                                    <thead className="bg-gray-700 text-gray-300 uppercase">
+                                    <thead className="bg-protocall-ink text-protocall-sidebar-muted uppercase">
                                         <tr>
                                             <th className="px-4 py-3">User</th>
                                             <th className="px-4 py-3">Role</th>
@@ -155,33 +155,33 @@ const SuperAdminDashboard = () => {
                                             <th className="px-4 py-3 text-right">Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-700 text-gray-300">
+                                    <tbody className="divide-y divide-border text-muted-foreground">
                                         {users.map((user) => (
-                                            <tr key={user.id} className="hover:bg-gray-750">
+                                            <tr key={user.id} className="hover:bg-protocall-ink">
                                                 <td className="px-4 py-3">
                                                     <div>
                                                         <div className="font-bold text-white">{user.name}</div>
-                                                        <div className="text-gray-500 text-xs">{user.email}</div>
+                                                        <div className="text-muted-foreground text-xs">{user.email}</div>
                                                     </div>
                                                 </td>
                                                 <td className="px-4 py-3">
                                                     <Badge variant="outline" className="capitalize">{user.role}</Badge>
                                                 </td>
                                                 <td className="px-4 py-3">
-                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.status === 'active' ? 'bg-green-100 text-green-800' :
-                                                            user.status === 'banned' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'
+                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.status === 'active' ? 'bg-buy-muted text-buy-muted-foreground' :
+                                                            user.status === 'banned' ? 'bg-sell-muted text-sell-muted-foreground' : 'bg-surface-2 text-foreground'
                                                         }`}>
                                                         {user.status}
                                                     </span>
                                                 </td>
-                                                <td className="px-4 py-3 text-gray-400">
+                                                <td className="px-4 py-3 text-muted-foreground">
                                                     {new Date(user.created_at).toLocaleDateString()}
                                                 </td>
                                                 <td className="px-4 py-3 text-right">
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
-                                                        className={user.status === 'banned' ? "text-green-500 hover:text-green-400" : "text-red-500 hover:text-red-400"}
+                                                        className={user.status === 'banned' ? "text-positive hover:text-positive" : "text-sell hover:text-sell"}
                                                         onClick={() => handleBanUser(user.id, user.status)}
                                                     >
                                                         {user.status === 'banned' ? <UserCheck className="h-4 w-4" /> : <UserX className="h-4 w-4" />}
@@ -197,10 +197,10 @@ const SuperAdminDashboard = () => {
                 </TabsContent>
 
                 <TabsContent value="content">
-                    <Card className="bg-gray-800 border-gray-700 text-white">
+                    <Card className="bg-protocall-ink border-protocall-ink text-white">
                         <CardHeader><CardTitle>Content Moderation</CardTitle></CardHeader>
                         <CardContent>
-                            <div className="flex flex-col items-center justify-center p-8 text-gray-500">
+                            <div className="flex flex-col items-center justify-center p-8 text-muted-foreground">
                                 <ShieldAlert className="h-12 w-12 mb-4" />
                                 <p>Moderation Queue is currently empty.</p>
                             </div>

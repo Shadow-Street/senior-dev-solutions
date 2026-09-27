@@ -199,7 +199,7 @@ export default function AlertModal({ stock: initialStock, user, isPremium, open,
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <BellRing className="w-5 h-5 text-blue-600" />
+            <BellRing className="w-5 h-5 text-protocall-blue" />
             {stock ? `Stock Alerts for ${stock.symbol}` : 'Create New Stock Alert'}
           </DialogTitle>
           <DialogDescription>
@@ -213,7 +213,7 @@ export default function AlertModal({ stock: initialStock, user, isPremium, open,
           <div className="py-4 space-y-4">
             <Label htmlFor="stock-search">Search for a stock</Label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 id="stock-search"
                 placeholder="e.g., Reliance, TCS..."
@@ -229,9 +229,9 @@ export default function AlertModal({ stock: initialStock, user, isPremium, open,
             {searchedStocks.length > 0 && (
               <div className="border rounded-md max-h-40 overflow-y-auto">
                 {searchedStocks.map(s => (
-                  <div key={s.id} onClick={() => handleSelectStock(s)} className="p-3 hover:bg-slate-50 cursor-pointer">
+                  <div key={s.id} onClick={() => handleSelectStock(s)} className="p-3 hover:bg-surface-2 cursor-pointer">
                     <p className="font-semibold">{s.symbol}</p>
-                    <p className="text-sm text-slate-500">{s.company_name}</p>
+                    <p className="text-sm text-muted-foreground">{s.company_name}</p>
                   </div>
                 ))}
               </div>
@@ -311,9 +311,9 @@ export default function AlertModal({ stock: initialStock, user, isPremium, open,
                   <div className="space-y-3">
                     <h3 className="text-lg font-semibold">Community & Expert Alerts</h3>
                     
-                    <div className="flex items-center justify-between p-3 bg-amber-50 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-hold-muted rounded-lg">
                       <div className="flex items-center gap-3">
-                        <Users className="w-5 h-5 text-amber-600" />
+                        <Users className="w-5 h-5 text-hold-muted-foreground" />
                         <div>
                           <p className="font-medium">Community Consensus Changes</p>
                           <p className="text-sm text-muted-foreground">
@@ -327,9 +327,9 @@ export default function AlertModal({ stock: initialStock, user, isPremium, open,
                       />
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-premium-muted rounded-lg">
                       <div className="flex items-center gap-3">
-                        <TrendingUp className="w-5 h-5 text-blue-600" />
+                        <TrendingUp className="w-5 h-5 text-protocall-blue" />
                         <div>
                           <p className="font-medium">SEBI Advisor Updates</p>
                           <p className="text-sm text-muted-foreground">
@@ -343,9 +343,9 @@ export default function AlertModal({ stock: initialStock, user, isPremium, open,
                       />
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-buy-muted rounded-lg">
                       <div className="flex items-center gap-3">
-                        <Settings className="w-5 h-5 text-green-600" />
+                        <Settings className="w-5 h-5 text-buy-muted-foreground" />
                         <div>
                           <p className="font-medium">Daily Portfolio Summary</p>
                           <p className="text-sm text-muted-foreground">
@@ -426,15 +426,15 @@ export default function AlertModal({ stock: initialStock, user, isPremium, open,
             <TabsContent value="premium" className="space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
-                  <Crown className="w-5 h-5 text-purple-600" />
+                  <Crown className="w-5 h-5 text-protocall-premium-text" />
                   <h3 className="text-lg font-semibold">Premium Alert Features</h3>
                 </div>
 
                 {isPremium ? (
                   <div className="space-y-4">
-                    <div className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-200">
-                      <h4 className="font-semibold text-purple-800 mb-2">✅ Premium Features Active</h4>
-                      <ul className="space-y-2 text-sm text-purple-700">
+                    <div className="p-4 bg-surface-2 rounded-lg border border-protocall-premium-light">
+                      <h4 className="font-semibold text-protocall-premium-text mb-2">✅ Premium Features Active</h4>
+                      <ul className="space-y-2 text-sm text-protocall-premium-text">
                         <li>• Combined community + advisor recommendations</li>
                         <li>• Advanced consensus tracking with confidence scores</li>
                         <li>• Priority alert delivery</li>
@@ -443,8 +443,8 @@ export default function AlertModal({ stock: initialStock, user, isPremium, open,
                       </ul>
                     </div>
 
-                    <div className="p-3 bg-green-50 rounded-lg">
-                      <p className="text-sm text-green-800">
+                    <div className="p-3 bg-buy-muted rounded-lg">
+                      <p className="text-sm text-buy-muted-foreground">
                         🎯 Your alerts will include premium insights from verified SEBI advisors 
                         and weighted community consensus data.
                       </p>
@@ -452,14 +452,14 @@ export default function AlertModal({ stock: initialStock, user, isPremium, open,
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border-2 border-dashed border-gray-300">
+                    <div className="p-4 bg-surface-2 rounded-lg border-2 border-dashed border-border">
                       <div className="text-center space-y-3">
-                        <Lock className="w-12 h-12 text-gray-400 mx-auto" />
-                        <h4 className="font-semibold text-gray-700">Premium Alert Features</h4>
-                        <p className="text-sm text-gray-600">
+                        <Lock className="w-12 h-12 text-muted-foreground mx-auto" />
+                        <h4 className="font-semibold text-subtle">Premium Alert Features</h4>
+                        <p className="text-sm text-subtle">
                           Unlock advanced alerts with advisor insights and community consensus
                         </p>
-                        <ul className="text-xs text-gray-500 space-y-1">
+                        <ul className="text-xs text-muted-foreground space-y-1">
                           <li>• Combined expert + community recommendations</li>
                           <li>• Advanced risk assessment alerts</li>
                           <li>• Priority notification delivery</li>
@@ -469,7 +469,7 @@ export default function AlertModal({ stock: initialStock, user, isPremium, open,
                     </div>
 
                     <Link to={createPageUrl("Subscription")}>
-                      <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600">
+                      <Button className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue">
                         <Crown className="w-4 h-4 mr-2" />
                         Upgrade to Premium - ₹999/month
                       </Button>
@@ -490,7 +490,7 @@ export default function AlertModal({ stock: initialStock, user, isPremium, open,
           <Button 
             onClick={handleSaveWrapper} 
             disabled={isSaving || isLoading || !stock}
-            className="bg-gradient-to-r from-blue-600 to-purple-600"
+            className="bg-gradient-to-r from-protocall-deep to-protocall-blue"
           >
             {isSaving ? <Loader2 className="animate-spin mr-2"/> : null}
             {isSaving ? 'Saving...' : 'Save Alert Settings'}

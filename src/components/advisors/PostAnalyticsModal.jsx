@@ -130,38 +130,38 @@ export default function PostAnalyticsModal({ open, onClose, post, advisorId }) {
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-blue-600" />
+            <Users className="w-5 h-5 text-protocall-blue" />
             Post Analytics: {post.title}
           </DialogTitle>
         </DialogHeader>
 
         {/* Stats Summary */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <Card className="border-blue-200 bg-blue-50">
+          <Card className="border-protocall-premium-light bg-premium-muted">
             <CardContent className="p-4 text-center">
-              <div className="text-3xl font-bold text-blue-600">{stats.totalViews}</div>
-              <div className="text-xs text-slate-600 mt-1">Total Views</div>
+              <div className="text-3xl font-bold text-protocall-blue">{stats.totalViews}</div>
+              <div className="text-xs text-subtle mt-1">Total Views</div>
             </CardContent>
           </Card>
 
-          <Card className="border-green-200 bg-green-50">
+          <Card className="border-buy/30 bg-buy-muted">
             <CardContent className="p-4 text-center">
-              <div className="text-3xl font-bold text-green-600">{stats.subscriberViews}</div>
-              <div className="text-xs text-slate-600 mt-1">Subscriber Views</div>
+              <div className="text-3xl font-bold text-buy-muted-foreground">{stats.subscriberViews}</div>
+              <div className="text-xs text-subtle mt-1">Subscriber Views</div>
             </CardContent>
           </Card>
 
-          <Card className="border-orange-200 bg-orange-50">
+          <Card className="border-hold/30 bg-hold-muted">
             <CardContent className="p-4 text-center">
-              <div className="text-3xl font-bold text-orange-600">{stats.nonSubscriberViews}</div>
-              <div className="text-xs text-slate-600 mt-1">Non-Subscriber</div>
+              <div className="text-3xl font-bold text-hold-muted-foreground">{stats.nonSubscriberViews}</div>
+              <div className="text-xs text-subtle mt-1">Non-Subscriber</div>
             </CardContent>
           </Card>
 
-          <Card className="border-purple-200 bg-purple-50">
+          <Card className="border-protocall-premium-light bg-premium-muted">
             <CardContent className="p-4 text-center">
-              <div className="text-3xl font-bold text-purple-600">{stats.engagement}%</div>
-              <div className="text-xs text-slate-600 mt-1">Engagement</div>
+              <div className="text-3xl font-bold text-protocall-premium-text">{stats.engagement}%</div>
+              <div className="text-xs text-subtle mt-1">Engagement</div>
             </CardContent>
           </Card>
         </div>
@@ -169,7 +169,7 @@ export default function PostAnalyticsModal({ open, onClose, post, advisorId }) {
         {/* Filters */}
         <div className="flex flex-col md:flex-row gap-3 mb-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="Search by User ID..."
               value={searchTerm}
@@ -197,12 +197,12 @@ export default function PostAnalyticsModal({ open, onClose, post, advisorId }) {
 
         {/* Viewers List */}
         <div className="space-y-3">
-          <h3 className="font-semibold text-slate-700">Viewers ({filteredViewers.length})</h3>
+          <h3 className="font-semibold text-subtle">Viewers ({filteredViewers.length})</h3>
 
           {isLoading ? (
-            <div className="text-center py-8 text-slate-500">Loading analytics...</div>
+            <div className="text-center py-8 text-muted-foreground">Loading analytics...</div>
           ) : filteredViewers.length === 0 ? (
-            <div className="text-center py-8 text-slate-500">
+            <div className="text-center py-8 text-muted-foreground">
               {searchTerm || statusFilter !== 'all'
                 ? 'No viewers match your filters'
                 : 'No views yet for this post'}
@@ -213,14 +213,14 @@ export default function PostAnalyticsModal({ open, onClose, post, advisorId }) {
                 <Card key={index} className="p-4 hover:shadow-md transition-shadow">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center text-white font-semibold text-sm">
                         {viewer.user_id.substring(0, 2).toUpperCase()}
                       </div>
                       <div>
-                        <p className="font-medium text-slate-800">
+                        <p className="font-medium text-foreground">
                           User: {viewer.user_id.substring(0, 8)}...
                         </p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-muted-foreground">
                           <Clock className="w-3 h-3 inline mr-1" />
                           {format(new Date(viewer.viewed_at), 'MMM dd, yyyy h:mm a')}
                         </p>
@@ -229,12 +229,12 @@ export default function PostAnalyticsModal({ open, onClose, post, advisorId }) {
 
                     <div className="flex items-center gap-2">
                       {viewer.isSubscriber ? (
-                        <Badge className="bg-green-100 text-green-800 flex items-center gap-1">
+                        <Badge className="bg-buy-muted text-buy-muted-foreground flex items-center gap-1">
                           <CheckCircle className="w-3 h-3" />
                           Subscribed
                         </Badge>
                       ) : (
-                        <Badge className="bg-gray-100 text-gray-800 flex items-center gap-1">
+                        <Badge className="bg-surface-2 text-foreground flex items-center gap-1">
                           <XCircle className="w-3 h-3" />
                           Non-Subscriber
                         </Badge>
@@ -249,22 +249,22 @@ export default function PostAnalyticsModal({ open, onClose, post, advisorId }) {
 
         {/* Post Details */}
         <div className="mt-6 pt-6 border-t">
-          <h3 className="font-semibold text-slate-700 mb-3">Post Details</h3>
+          <h3 className="font-semibold text-subtle mb-3">Post Details</h3>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <span className="text-slate-500">Published:</span>
+              <span className="text-muted-foreground">Published:</span>
               <span className="ml-2 font-medium">{format(new Date(post.created_date), 'MMM dd, yyyy')}</span>
             </div>
             <div>
-              <span className="text-slate-500">Stock:</span>
+              <span className="text-muted-foreground">Stock:</span>
               <span className="ml-2 font-medium">{post.stock_symbol || 'N/A'}</span>
             </div>
             <div>
-              <span className="text-slate-500">Type:</span>
+              <span className="text-muted-foreground">Type:</span>
               <span className="ml-2 font-medium capitalize">{post.recommendation_type || 'N/A'}</span>
             </div>
             <div>
-              <span className="text-slate-500">Status:</span>
+              <span className="text-muted-foreground">Status:</span>
               <span className="ml-2 font-medium capitalize">{post.recommendation_status || 'Active'}</span>
             </div>
           </div>

@@ -162,10 +162,10 @@ export default function AdvisorRegistration() {
     // Show loading state while checking status
     if (isCheckingStatus) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-100">
+            <div className="min-h-screen flex items-center justify-center bg-surface-2">
                 <Card className="w-full max-w-md text-center p-8">
-                    <Loader2 className="w-12 h-12 mx-auto mb-4 animate-spin text-blue-600" />
-                    <p className="text-slate-600">Checking your advisor status...</p>
+                    <Loader2 className="w-12 h-12 mx-auto mb-4 animate-spin text-protocall-blue" />
+                    <p className="text-subtle">Checking your advisor status...</p>
                 </Card>
             </div>
         );
@@ -176,32 +176,32 @@ export default function AdvisorRegistration() {
         const statusConfig = {
             'pending_approval': {
                 icon: AlertCircle,
-                color: 'text-yellow-600',
-                bgColor: 'bg-yellow-50',
+                color: 'text-hold-muted-foreground',
+                bgColor: 'bg-hold-muted',
                 title: 'Application Under Review',
                 message: 'Thank you for registering. Our team will review your application and you will be notified via email once it\'s processed. This usually takes 2-3 business days.',
                 action: null,
             },
             'approved': {
                 icon: CheckCircle,
-                color: 'text-green-600',
-                bgColor: 'bg-green-50',
+                color: 'text-buy-muted-foreground',
+                bgColor: 'bg-buy-muted',
                 title: 'Application Approved!',
                 message: 'Congratulations! You are now approved as an advisor and can start providing recommendations immediately.',
                 action: 'advisor_dashboard',
             },
             'rejected': {
                 icon: AlertCircle,
-                color: 'text-red-600',
-                bgColor: 'bg-red-50',
+                color: 'text-sell-muted-foreground',
+                bgColor: 'bg-sell-muted',
                 title: 'Application Rejected',
                 message: 'Unfortunately, your application was not approved. If you believe this was an error, please contact support for assistance.',
                 action: null,
             },
             'suspended': {
                 icon: AlertCircle,
-                color: 'text-orange-600',
-                bgColor: 'bg-orange-50',
+                color: 'text-hold-muted-foreground',
+                bgColor: 'bg-hold-muted',
                 title: 'Account Suspended',
                 message: 'Your advisor account has been suspended. Please contact support for more information.',
                 action: null,
@@ -212,7 +212,7 @@ export default function AdvisorRegistration() {
         const StatusIcon = config.icon;
 
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-100 p-6">
+            <div className="min-h-screen flex items-center justify-center bg-surface-2 p-6">
                 <Card className="w-full max-w-md text-center p-8">
                     <CardHeader>
                         <div className={`w-16 h-16 rounded-full ${config.bgColor} flex items-center justify-center mx-auto mb-4`}>
@@ -221,18 +221,18 @@ export default function AdvisorRegistration() {
                         <CardTitle className={`text-2xl font-bold ${config.color}`}>
                             {config.title}
                         </CardTitle>
-                        <CardDescription className="text-slate-600 mt-3">
+                        <CardDescription className="text-subtle mt-3">
                             {config.message}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         {/* ✅ DUPLICATE REGISTRATION WARNING */}
-                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                        <div className="bg-hold-muted border border-hold/30 rounded-lg p-4">
                             <div className="flex items-start gap-3">
-                                <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5" />
+                                <AlertCircle className="w-5 h-5 text-hold-muted-foreground mt-0.5" />
                                 <div className="text-left">
-                                    <p className="font-semibold text-amber-900 text-sm">Cannot Register Again</p>
-                                    <p className="text-xs text-amber-700 mt-1">
+                                    <p className="font-semibold text-hold-muted-foreground text-sm">Cannot Register Again</p>
+                                    <p className="text-xs text-hold-muted-foreground mt-1">
                                         You already have an advisor application. Only one application per account is allowed.
                                     </p>
                                 </div>
@@ -240,30 +240,30 @@ export default function AdvisorRegistration() {
                         </div>
 
                         {/* Application Details */}
-                        <div className="bg-slate-50 rounded-lg p-4 text-left">
-                            <h4 className="font-semibold text-slate-900 mb-3">Your Application Details</h4>
+                        <div className="bg-surface-2 rounded-lg p-4 text-left">
+                            <h4 className="font-semibold text-foreground mb-3">Your Application Details</h4>
                             <div className="space-y-2 text-sm">
                                 <div className="flex justify-between">
-                                    <span className="text-slate-600">Email:</span>
-                                    <span className="font-medium text-slate-900">{currentUser?.email}</span>
+                                    <span className="text-subtle">Email:</span>
+                                    <span className="font-medium text-foreground">{currentUser?.email}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-slate-600">Display Name:</span>
-                                    <span className="font-medium text-slate-900">{existingAdvisor.display_name}</span>
+                                    <span className="text-subtle">Display Name:</span>
+                                    <span className="font-medium text-foreground">{existingAdvisor.display_name}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-slate-600">SEBI Number:</span>
-                                    <span className="font-medium text-slate-900">{existingAdvisor.sebi_registration_number}</span>
+                                    <span className="text-subtle">SEBI Number:</span>
+                                    <span className="font-medium text-foreground">{existingAdvisor.sebi_registration_number}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-slate-600">Status:</span>
+                                    <span className="text-subtle">Status:</span>
                                     <Badge className={`${config.bgColor} ${config.color} border-0`}>
                                         {approvalStatus.replace('_', ' ').toUpperCase()}
                                     </Badge>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-slate-600">Submitted:</span>
-                                    <span className="font-medium text-slate-900">
+                                    <span className="text-subtle">Submitted:</span>
+                                    <span className="font-medium text-foreground">
                                         {new Date(existingAdvisor.created_date).toLocaleDateString()}
                                     </span>
                                 </div>
@@ -272,14 +272,6 @@ export default function AdvisorRegistration() {
 
                         {/* Action Buttons */}
                         <div className="flex flex-col gap-3">
-                            {config.action === 'advisor_dashboard' && (
-                                <Link to={createPageUrl("AdvisorDashboard")}>
-                                    <Button className="w-full bg-green-600 hover:bg-green-700">
-                                        <CheckCircle className="w-4 h-4 mr-2" />
-                                        Go to Advisor Dashboard
-                                    </Button>
-                                </Link>
-                            )}
                             <Link to={createPageUrl("Dashboard")}>
                                 <Button variant="outline" className="w-full">
                                     Return to Dashboard
@@ -294,7 +286,7 @@ export default function AdvisorRegistration() {
 
     // Show registration form if not registered yet
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-100 p-6">
+        <div className="min-h-screen flex items-center justify-center bg-surface-2 p-6">
             <Card className="w-full max-w-2xl">
                 <CardHeader>
                     <CardTitle className="text-3xl font-bold text-center">Become a Stock Advisor</CardTitle>
@@ -303,24 +295,24 @@ export default function AdvisorRegistration() {
                     {/* Platform Settings Info */}
                     <div className="space-y-2 mt-4">
                         {settings.advisorApprovalRequired ? (
-                            <Badge variant="outline" className="bg-yellow-50 text-yellow-800 border-yellow-200">
+                            <Badge variant="outline" className="bg-hold-muted text-hold-muted-foreground border-hold/30">
                                 <AlertCircle className="w-3 h-3 mr-1" />
                                 Pending Admin Approval Required
                             </Badge>
                         ) : (
-                            <Badge variant="outline" className="bg-green-50 text-green-800 border-green-200">
+                            <Badge variant="outline" className="bg-buy-muted text-buy-muted-foreground border-buy/30">
                                 <CheckCircle className="w-3 h-3 mr-1" />
                                 Auto-Approval Enabled
                             </Badge>
                         )}
 
-                        <div className="text-sm text-slate-600 bg-blue-50 p-3 rounded-lg">
+                        <div className="text-sm text-subtle bg-premium-muted p-3 rounded-lg">
                             <p className="font-medium">Platform Commission: {settings.commissionRate}%</p>
                             <p>You'll receive {100 - settings.commissionRate}% of your advisor plan revenues.</p>
                         </div>
 
                         {usingDefaults && (
-                            <div className="flex items-center gap-2 text-xs text-amber-600 bg-amber-50 p-2 rounded-lg">
+                            <div className="flex items-center gap-2 text-xs text-hold-muted-foreground bg-hold-muted p-2 rounded-lg">
                                 <AlertCircle className="w-3 h-3" />
                                 <span>Default settings applied until admin configures values.</span>
                             </div>
@@ -331,7 +323,7 @@ export default function AdvisorRegistration() {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* ✅ PRE-FILLED EMAIL (READ-ONLY) */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-subtle mb-2">
                                 Email Address
                             </label>
                             <div className="relative">
@@ -340,19 +332,19 @@ export default function AdvisorRegistration() {
                                     value={currentUser?.email || ''}
                                     readOnly
                                     disabled
-                                    className="bg-slate-100 cursor-not-allowed"
+                                    className="bg-surface-2 cursor-not-allowed"
                                 />
-                                <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             </div>
-                            <p className="text-xs text-slate-500 mt-1">
+                            <p className="text-xs text-muted-foreground mt-1">
                                 This is your logged-in account email and cannot be changed.
                             </p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Full Name <span className="text-red-500">*</span>
+                                <label className="block text-sm font-medium text-subtle mb-2">
+                                    Full Name <span className="text-sell">*</span>
                                 </label>
                                 <Input
                                     name="fullName"
@@ -363,8 +355,8 @@ export default function AdvisorRegistration() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    SEBI Registration Number <span className="text-red-500">*</span>
+                                <label className="block text-sm font-medium text-subtle mb-2">
+                                    SEBI Registration Number <span className="text-sell">*</span>
                                 </label>
                                 <Input
                                     name="sebiNumber"
@@ -377,7 +369,7 @@ export default function AdvisorRegistration() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-subtle mb-2">
                                 Bio / Advisory Focus
                             </label>
                             <Textarea
@@ -391,19 +383,19 @@ export default function AdvisorRegistration() {
 
                         {/* Enhanced File Upload */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                SEBI Certificate <span className="text-red-500">*</span>
+                            <label className="block text-sm font-medium text-subtle mb-2">
+                                SEBI Certificate <span className="text-sell">*</span>
                             </label>
-                            <div className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 ${fileName ? 'border-green-300 bg-green-50' : 'border-gray-300 border-dashed'} rounded-md transition-colors`}>
+                            <div className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 ${fileName ? 'border-buy/30 bg-buy-muted' : 'border-border border-dashed'} rounded-md transition-colors`}>
                                 <div className="space-y-1 text-center">
                                     {fileName ? (
                                         <>
-                                            <FileCheck className="mx-auto h-12 w-12 text-green-500" />
-                                            <div className="text-sm text-gray-600">
-                                                <p className="font-semibold text-green-700">{fileName}</p>
-                                                <p className="text-xs text-gray-500 mt-1">File uploaded successfully ✓</p>
+                                            <FileCheck className="mx-auto h-12 w-12 text-positive" />
+                                            <div className="text-sm text-subtle">
+                                                <p className="font-semibold text-buy-muted-foreground">{fileName}</p>
+                                                <p className="text-xs text-muted-foreground mt-1">File uploaded successfully ✓</p>
                                             </div>
-                                            <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500">
+                                            <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-protocall-blue hover:text-protocall-premium-light">
                                                 <span className="text-sm">Change file</span>
                                                 <input
                                                     id="file-upload"
@@ -417,9 +409,9 @@ export default function AdvisorRegistration() {
                                         </>
                                     ) : (
                                         <>
-                                            <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
-                                            <div className="flex text-sm text-gray-600">
-                                                <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                                            <UploadCloud className="mx-auto h-12 w-12 text-muted-foreground" />
+                                            <div className="flex text-sm text-subtle">
+                                                <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-protocall-blue hover:text-protocall-premium-light focus-within:outline-none">
                                                     <span>Upload a file</span>
                                                     <input
                                                         id="file-upload"
@@ -432,7 +424,7 @@ export default function AdvisorRegistration() {
                                                 </label>
                                                 <p className="pl-1">or drag and drop</p>
                                             </div>
-                                            <p className="text-xs text-gray-500">PDF, JPG, PNG up to 10MB</p>
+                                            <p className="text-xs text-muted-foreground">PDF, JPG, PNG up to 10MB</p>
                                         </>
                                     )}
                                 </div>
@@ -450,7 +442,7 @@ export default function AdvisorRegistration() {
                             )}
                         </Button>
 
-                        <p className="text-xs text-center text-slate-500">
+                        <p className="text-xs text-center text-muted-foreground">
                             By submitting this application, you agree to our terms and confirm that all information provided is accurate.
                         </p>
                     </form>

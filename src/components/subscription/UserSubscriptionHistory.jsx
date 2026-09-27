@@ -44,7 +44,7 @@ export default function UserSubscriptionHistory() {
         <Card className="mt-8">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-gray-500" />
+                    <FileText className="w-5 h-5 text-muted-foreground" />
                     Billing History
                 </CardTitle>
             </CardHeader>
@@ -65,7 +65,7 @@ export default function UserSubscriptionHistory() {
                                 <TableCell>{format(new Date(inv.issued_date || inv.created_at), 'MMM dd, yyyy')}</TableCell>
                                 <TableCell>₹{inv.total_amount}</TableCell>
                                 <TableCell>
-                                    <Badge variant={inv.status === 'paid' ? 'default' : 'secondary'} className={inv.status === 'paid' ? 'bg-green-100 text-green-700 hover:bg-green-200' : ''}>
+                                    <Badge variant={inv.status === 'paid' ? 'default' : 'secondary'} className={inv.status === 'paid' ? 'bg-buy-muted text-buy-muted-foreground hover:bg-buy-muted' : ''}>
                                         {inv.status}
                                     </Badge>
                                 </TableCell>

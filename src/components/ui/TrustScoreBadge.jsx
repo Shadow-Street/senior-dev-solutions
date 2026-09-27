@@ -16,40 +16,40 @@ export default function TrustScoreBadge({ score, showScore = true, size = "sm" }
       case "trusted":
         return {
           icon: ShieldCheck,
-          bgColor: "bg-green-100",
-          textColor: "text-green-800",
-          borderColor: "border-green-200",
-          iconColor: "text-green-600",
+          bgColor: "bg-buy-muted",
+          textColor: "text-buy-muted-foreground",
+          borderColor: "border-buy/30",
+          iconColor: "text-buy-muted-foreground",
           label: "Trusted",
           showStar: true
         };
       case "neutral":
         return {
           icon: BadgeIcon,
-          bgColor: "bg-yellow-100",
-          textColor: "text-yellow-800",
-          borderColor: "border-yellow-200",
-          iconColor: "text-yellow-600",
+          bgColor: "bg-hold-muted",
+          textColor: "text-hold-muted-foreground",
+          borderColor: "border-hold/30",
+          iconColor: "text-hold-muted-foreground",
           label: "Neutral",
           showStar: false
         };
       case "low":
         return {
           icon: ShieldAlert,
-          bgColor: "bg-red-100",
-          textColor: "text-red-800",
-          borderColor: "border-red-200",
-          iconColor: "text-red-600",
+          bgColor: "bg-sell-muted",
+          textColor: "text-sell-muted-foreground",
+          borderColor: "border-sell/30",
+          iconColor: "text-sell-muted-foreground",
           label: "Low Trust",
           showStar: false
         };
       default:
         return {
           icon: BadgeIcon,
-          bgColor: "bg-slate-100",
-          textColor: "text-slate-800",
-          borderColor: "border-slate-200",
-          iconColor: "text-slate-600",
+          bgColor: "bg-surface-2",
+          textColor: "text-foreground",
+          borderColor: "border-border",
+          iconColor: "text-subtle",
           label: "Unrated",
           showStar: false
         };
@@ -114,7 +114,7 @@ export default function TrustScoreBadge({ score, showScore = true, size = "sm" }
         <IconComponent className={`${sizeConfig.iconSize} ${config.iconColor}`} />
         {config.showStar && (
           <Star 
-            className={`${sizeConfig.starSize} text-yellow-500 absolute -top-0.5 -right-0.5 fill-current`} 
+            className={`${sizeConfig.starSize} text-hold absolute -top-0.5 -right-0.5 fill-current`} 
           />
         )}
       </div>

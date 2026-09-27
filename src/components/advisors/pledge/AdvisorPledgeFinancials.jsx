@@ -98,10 +98,10 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
 
   const getStatusBadge = (status) => {
     const config = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' },
-      approved: { color: 'bg-blue-100 text-blue-800', label: 'Approved' },
-      processed: { color: 'bg-green-100 text-green-800', label: 'Processed' },
-      rejected: { color: 'bg-red-100 text-red-800', label: 'Rejected' }
+      pending: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending' },
+      approved: { color: 'bg-premium-muted text-protocall-blue', label: 'Approved' },
+      processed: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Processed' },
+      rejected: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Rejected' }
     };
     const { color, label } = config[status] || config.pending;
     return <span className={`px-2 py-1 text-xs rounded-full font-semibold ${color}`}>{label}</span>;
@@ -110,7 +110,7 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
       </div>
     );
   }
@@ -122,8 +122,8 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
         <Button
           onClick={() => setFinancialTab('overview')}
           className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'overview'
-            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
-            : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
+            ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg hover:shadow-xl hover:scale-105'
+            : 'bg-surface-2 text-subtle hover:from-surface-2 hover:to-surface-2 hover:shadow-md border border-protocall-premium-light'
             }`}
         >
           <DollarSign className="w-5 h-5 mr-2 inline-block" />
@@ -132,8 +132,8 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
         <Button
           onClick={() => setFinancialTab('payouts')}
           className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'payouts'
-            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
-            : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
+            ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg hover:shadow-xl hover:scale-105'
+            : 'bg-surface-2 text-subtle hover:from-surface-2 hover:to-surface-2 hover:shadow-md border border-protocall-premium-light'
             }`}
         >
           <Wallet className="w-5 h-5 mr-2 inline-block" />
@@ -142,8 +142,8 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
         <Button
           onClick={() => setFinancialTab('refunds')}
           className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'refunds'
-            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
-            : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
+            ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg hover:shadow-xl hover:scale-105'
+            : 'bg-surface-2 text-subtle hover:from-surface-2 hover:to-surface-2 hover:shadow-md border border-protocall-premium-light'
             }`}
         >
           <TrendingUp className="w-5 h-5 mr-2 inline-block" />
@@ -154,11 +154,11 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
       {financialTab === 'overview' && (
         <div className="space-y-6">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-gray-900">Financial Overview</h2>
+            <h2 className="text-2xl font-bold text-foreground">Financial Overview</h2>
             <Button
               onClick={() => setShowPayoutRequest(true)}
               disabled={availableBalance <= 0}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-buy hover:bg-buy"
             >
               <Wallet className="w-4 h-4 mr-2" />
               Request Payout
@@ -176,11 +176,11 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
       {financialTab === 'payouts' && (
         <div className="space-y-6">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-gray-900">Payout Requests</h2>
+            <h2 className="text-2xl font-bold text-foreground">Payout Requests</h2>
             <Button
               onClick={() => setShowPayoutRequest(true)}
               disabled={availableBalance <= 0}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-buy hover:bg-buy"
             >
               <Wallet className="w-4 h-4 mr-2" />
               Request Payout
@@ -191,10 +191,10 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center">
-                  <Wallet className="w-8 h-8 text-green-600" />
+                  <Wallet className="w-8 h-8 text-buy-muted-foreground" />
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-slate-600">Available Balance</p>
-                    <p className="text-2xl font-bold text-slate-900">₹{stats.availableBalance.toLocaleString()}</p>
+                    <p className="text-sm font-medium text-subtle">Available Balance</p>
+                    <p className="text-2xl font-bold text-foreground">₹{stats.availableBalance.toLocaleString()}</p>
                   </div>
                 </div>
               </CardContent>
@@ -203,10 +203,10 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center">
-                  <Clock className="w-8 h-8 text-orange-600" />
+                  <Clock className="w-8 h-8 text-hold-muted-foreground" />
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-slate-600">Pending Payouts</p>
-                    <p className="text-2xl font-bold text-slate-900">₹{stats.pendingPayouts.toLocaleString()}</p>
+                    <p className="text-sm font-medium text-subtle">Pending Payouts</p>
+                    <p className="text-2xl font-bold text-foreground">₹{stats.pendingPayouts.toLocaleString()}</p>
                   </div>
                 </div>
               </CardContent>
@@ -215,10 +215,10 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center">
-                  <TrendingUp className="w-8 h-8 text-blue-600" />
+                  <TrendingUp className="w-8 h-8 text-protocall-blue" />
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-slate-600">Total Earned</p>
-                    <p className="text-2xl font-bold text-slate-900">₹{stats.netEarnings.toLocaleString()}</p>
+                    <p className="text-sm font-medium text-subtle">Total Earned</p>
+                    <p className="text-2xl font-bold text-foreground">₹{stats.netEarnings.toLocaleString()}</p>
                   </div>
                 </div>
               </CardContent>
@@ -233,13 +233,13 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="font-semibold">₹{payout.requested_amount.toLocaleString()}</p>
-                        <p className="text-sm text-slate-600">{format(new Date(payout.created_date), 'MMM d, yyyy')}</p>
-                        <p className="text-xs text-slate-500">{payout.payout_method}</p>
+                        <p className="text-sm text-subtle">{format(new Date(payout.created_date), 'MMM d, yyyy')}</p>
+                        <p className="text-xs text-muted-foreground">{payout.payout_method}</p>
                       </div>
                       {getStatusBadge(payout.status)}
                     </div>
                     {payout.admin_notes && (
-                      <p className="text-sm text-slate-600 mt-2">Admin Notes: {payout.admin_notes}</p>
+                      <p className="text-sm text-subtle mt-2">Admin Notes: {payout.admin_notes}</p>
                     )}
                   </CardContent>
                 </Card>
@@ -247,10 +247,10 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
             ) : (
               <Card>
                 <CardContent className="p-8 text-center">
-                  <Wallet className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                  <p className="text-slate-600">No payout requests yet.</p>
+                  <Wallet className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-subtle">No payout requests yet.</p>
                   {stats.availableBalance > 0 && (
-                    <Button onClick={() => setShowPayoutRequest(true)} className="mt-4 bg-green-600 hover:bg-green-700">
+                    <Button onClick={() => setShowPayoutRequest(true)} className="mt-4 bg-buy hover:bg-buy">
                       Request Your First Payout
                     </Button>
                   )}
@@ -263,12 +263,12 @@ export default function AdvisorPledgeFinancials({ user, advisorProfile, accessRe
 
       {financialTab === 'refunds' && (
         <div className="space-y-6">
-          <h2 className="text-2xl font-bold text-gray-900">Refund Management</h2>
+          <h2 className="text-2xl font-bold text-foreground">Refund Management</h2>
           <Card>
             <CardContent className="p-8 text-center">
-              <TrendingUp className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-600">No refund requests for pledge trading</p>
-              <p className="text-sm text-slate-500 mt-2">Pledge trading refunds are managed through the convenience fee system</p>
+              <TrendingUp className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <p className="text-subtle">No refund requests for pledge trading</p>
+              <p className="text-sm text-muted-foreground mt-2">Pledge trading refunds are managed through the convenience fee system</p>
             </CardContent>
           </Card>
         </div>

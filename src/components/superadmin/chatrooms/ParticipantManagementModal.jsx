@@ -239,9 +239,9 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
   });
 
   const roleConfig = {
-    admin: { color: 'bg-red-100 text-red-800', label: 'Admin', icon: Shield },
-    moderator: { color: 'bg-purple-100 text-purple-800', label: 'Moderator', icon: Shield },
-    member: { color: 'bg-blue-100 text-blue-800', label: 'Member', icon: Users }
+    admin: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Admin', icon: Shield },
+    moderator: { color: 'bg-premium-muted text-protocall-premium-text', label: 'Moderator', icon: Shield },
+    member: { color: 'bg-premium-muted text-protocall-blue', label: 'Member', icon: Users }
   };
 
   return (
@@ -249,7 +249,7 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-cyan-600" />
+            <Users className="w-5 h-5 text-protocall-blue" />
             Participant Management - {chatRoom?.name}
           </DialogTitle>
           <DialogDescription>
@@ -260,25 +260,25 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
         <div className="space-y-4">
           {/* Stats */}
           <div className="grid grid-cols-4 gap-3">
-            <div className="bg-blue-50 p-3 rounded-lg">
-              <p className="text-xs text-blue-600">Total Participants</p>
-              <p className="text-xl font-bold text-blue-800">{participants.length}</p>
+            <div className="bg-premium-muted p-3 rounded-lg">
+              <p className="text-xs text-protocall-blue">Total Participants</p>
+              <p className="text-xl font-bold text-protocall-blue">{participants.length}</p>
             </div>
-            <div className="bg-purple-50 p-3 rounded-lg">
-              <p className="text-xs text-purple-600">Moderators</p>
-              <p className="text-xl font-bold text-purple-800">
+            <div className="bg-premium-muted p-3 rounded-lg">
+              <p className="text-xs text-protocall-premium-text">Moderators</p>
+              <p className="text-xl font-bold text-protocall-premium-text">
                 {participants.filter(p => p.role === 'moderator').length}
               </p>
             </div>
-            <div className="bg-green-50 p-3 rounded-lg">
-              <p className="text-xs text-green-600">Online Now</p>
-              <p className="text-xl font-bold text-green-800">
+            <div className="bg-buy-muted p-3 rounded-lg">
+              <p className="text-xs text-buy-muted-foreground">Online Now</p>
+              <p className="text-xl font-bold text-buy-muted-foreground">
                 {participants.filter(p => p.is_online).length}
               </p>
             </div>
-            <div className="bg-orange-50 p-3 rounded-lg">
-              <p className="text-xs text-orange-600">Muted/Banned</p>
-              <p className="text-xl font-bold text-orange-800">
+            <div className="bg-hold-muted p-3 rounded-lg">
+              <p className="text-xs text-hold-muted-foreground">Muted/Banned</p>
+              <p className="text-xl font-bold text-hold-muted-foreground">
                 {participants.filter(p => p.is_muted || p.is_banned).length}
               </p>
             </div>
@@ -286,7 +286,7 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
 
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               placeholder="Search participants..."
               value={searchTerm}
@@ -298,7 +298,7 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
           {/* Participants Table */}
           <div className="border rounded-lg overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-xs text-slate-700 uppercase">
+              <thead className="bg-surface-2 text-xs text-subtle uppercase">
                 <tr>
                   <th className="px-4 py-3 text-left">Participant</th>
                   <th className="px-4 py-3 text-left">Role</th>
@@ -317,8 +317,8 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
                 ) : filteredParticipants.length === 0 ? (
                   <tr>
                     <td colSpan="5" className="px-4 py-8 text-center">
-                      <Users className="w-12 h-12 text-slate-400 mx-auto mb-2" />
-                      <p className="text-slate-600">No participants found</p>
+                      <Users className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-subtle">No participants found</p>
                     </td>
                   </tr>
                 ) : (
@@ -327,7 +327,7 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
                     const RoleIcon = config.icon;
 
                     return (
-                      <tr key={participant.id} className="border-b hover:bg-slate-50">
+                      <tr key={participant.id} className="border-b hover:bg-surface-2">
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             <div className="relative">
@@ -337,14 +337,14 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
                                 className="w-10 h-10 rounded-full"
                               />
                               {participant.is_online && (
-                                <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                                <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-buy rounded-full border-2 border-white"></div>
                               )}
                             </div>
                             <div>
-                              <p className="font-medium text-slate-900">
+                              <p className="font-medium text-foreground">
                                 {participant.user?.display_name || participant.user_name}
                               </p>
-                              <p className="text-xs text-slate-500">
+                              <p className="text-xs text-muted-foreground">
                                 {participant.user?.email || participant.user_email}
                               </p>
                             </div>
@@ -361,19 +361,19 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
                         <td className="px-4 py-3">
                           <div className="space-y-1">
                             {participant.is_banned && (
-                              <Badge className="bg-red-100 text-red-800 border-0">
+                              <Badge className="bg-sell-muted text-sell-muted-foreground border-0">
                                 <Ban className="w-3 h-3 mr-1" />
                                 Banned
                               </Badge>
                             )}
                             {participant.is_muted && !participant.is_banned && (
-                              <Badge className="bg-orange-100 text-orange-800 border-0">
+                              <Badge className="bg-hold-muted text-hold-muted-foreground border-0">
                                 <VolumeX className="w-3 h-3 mr-1" />
                                 Muted
                               </Badge>
                             )}
                             {!participant.is_muted && !participant.is_banned && participant.is_online && (
-                              <Badge className="bg-green-100 text-green-800 border-0">
+                              <Badge className="bg-buy-muted text-buy-muted-foreground border-0">
                                 Online
                               </Badge>
                             )}
@@ -382,11 +382,11 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
 
                         <td className="px-4 py-3">
                           <div className="space-y-1">
-                            <div className="flex items-center gap-1 text-xs text-slate-600">
+                            <div className="flex items-center gap-1 text-xs text-subtle">
                               <MessageSquare className="w-3 h-3" />
                               {participant.message_count || 0} messages
                             </div>
-                            <div className="flex items-center gap-1 text-xs text-slate-500">
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
                               <Clock className="w-3 h-3" />
                               Joined {new Date(participant.joined_at).toLocaleDateString()}
                             </div>
@@ -400,7 +400,7 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handlePromoteToModerator(participant.id, participant.user_id)}
-                                className="text-purple-600 hover:text-purple-800"
+                                className="text-protocall-premium-text hover:text-protocall-premium-text"
                               >
                                 <Shield className="w-4 h-4 mr-1" />
                                 Make Mod
@@ -412,7 +412,7 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleDemoteFromModerator(participant.id)}
-                                className="text-slate-600 hover:text-slate-800"
+                                className="text-subtle hover:text-foreground"
                               >
                                 <UserCheck className="w-4 h-4 mr-1" />
                                 Demote
@@ -424,7 +424,7 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleMuteUser(participant.id, 24)}
-                                className="text-orange-600 hover:text-orange-800"
+                                className="text-hold-muted-foreground hover:text-hold-muted-foreground"
                               >
                                 <VolumeX className="w-4 h-4 mr-1" />
                                 Mute
@@ -436,7 +436,7 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleUnmuteUser(participant.id)}
-                                className="text-green-600 hover:text-green-800"
+                                className="text-buy-muted-foreground hover:text-buy-muted-foreground"
                               >
                                 <UserCheck className="w-4 h-4 mr-1" />
                                 Unmute
@@ -448,7 +448,7 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleBanUser(participant.id)}
-                                className="text-red-600 hover:text-red-800"
+                                className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                               >
                                 <Ban className="w-4 h-4 mr-1" />
                                 Ban
@@ -460,7 +460,7 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleUnbanUser(participant.id)}
-                                className="text-green-600 hover:text-green-800"
+                                className="text-buy-muted-foreground hover:text-buy-muted-foreground"
                               >
                                 <UserCheck className="w-4 h-4 mr-1" />
                                 Unban

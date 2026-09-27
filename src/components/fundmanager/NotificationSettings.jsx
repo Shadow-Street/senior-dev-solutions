@@ -151,7 +151,7 @@ export default function NotificationSettings({ user, isOpen, onClose }) {
       <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
-            <Bell className="w-6 h-6 text-blue-600" />
+            <Bell className="w-6 h-6 text-protocall-blue" />
             Notification Preferences
           </DialogTitle>
           <DialogDescription>
@@ -161,41 +161,41 @@ export default function NotificationSettings({ user, isOpen, onClose }) {
 
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
           </div>
         ) : (
           <div className="space-y-4 py-4">
             {/* Channel Headers */}
-            <div className="grid grid-cols-12 gap-4 pb-2 border-b border-slate-200">
+            <div className="grid grid-cols-12 gap-4 pb-2 border-b border-border">
               <div className="col-span-6"></div>
               <div className="col-span-2 flex items-center justify-center">
                 <div className="text-center">
-                  <Bell className="w-5 h-5 text-blue-600 mx-auto mb-1" />
-                  <span className="text-xs font-semibold text-slate-700">In-App</span>
+                  <Bell className="w-5 h-5 text-protocall-blue mx-auto mb-1" />
+                  <span className="text-xs font-semibold text-subtle">In-App</span>
                 </div>
               </div>
               <div className="col-span-2 flex items-center justify-center">
                 <div className="text-center">
-                  <Mail className="w-5 h-5 text-purple-600 mx-auto mb-1" />
-                  <span className="text-xs font-semibold text-slate-700">Email</span>
+                  <Mail className="w-5 h-5 text-protocall-premium-text mx-auto mb-1" />
+                  <span className="text-xs font-semibold text-subtle">Email</span>
                 </div>
               </div>
               <div className="col-span-2 flex items-center justify-center">
                 <div className="text-center">
-                  <Smartphone className="w-5 h-5 text-green-600 mx-auto mb-1" />
-                  <span className="text-xs font-semibold text-slate-700">Push</span>
+                  <Smartphone className="w-5 h-5 text-buy-muted-foreground mx-auto mb-1" />
+                  <span className="text-xs font-semibold text-subtle">Push</span>
                 </div>
               </div>
             </div>
 
             {/* Notification Categories */}
             {NOTIFICATION_CATEGORIES.map((cat) => (
-              <Card key={cat.category} className="border-slate-200">
+              <Card key={cat.category} className="border-border">
                 <CardContent className="p-4">
                   <div className="grid grid-cols-12 gap-4 items-center">
                     <div className="col-span-6">
-                      <h4 className="font-semibold text-slate-900">{cat.label}</h4>
-                      <p className="text-xs text-slate-500 mt-0.5">{cat.description}</p>
+                      <h4 className="font-semibold text-foreground">{cat.label}</h4>
+                      <p className="text-xs text-muted-foreground mt-0.5">{cat.description}</p>
                     </div>
                     
                     <div className="col-span-2 flex justify-center">
@@ -224,7 +224,7 @@ export default function NotificationSettings({ user, isOpen, onClose }) {
             ))}
 
             {/* Quick Actions */}
-            <div className="flex gap-3 pt-4 border-t border-slate-200">
+            <div className="flex gap-3 pt-4 border-t border-border">
               <Button
                 variant="outline"
                 size="sm"
@@ -270,7 +270,7 @@ export default function NotificationSettings({ user, isOpen, onClose }) {
           <Button 
             onClick={handleSave} 
             disabled={isLoading || isSaving}
-            className="bg-gradient-to-r from-blue-600 to-purple-600"
+            className="bg-gradient-to-r from-protocall-deep to-protocall-blue"
           >
             {isSaving ? (
               <>

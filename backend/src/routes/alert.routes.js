@@ -40,4 +40,11 @@ settingsRouter.get('/stock/:symbol', authMiddleware, async (req, res) => {
 createCrudRoutes(settingsRouter, settingsController);
 router.use('/settings', settingsRouter);
 
+// Alert log
+const logRouter = express.Router();
+createCrudRoutes(logRouter, createCrudController(db.AlertLog, {
+  defaultOrderBy: 'created_at', defaultOrder: 'DESC'
+}));
+router.use('/logs', logRouter);
+
 module.exports = router;

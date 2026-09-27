@@ -180,11 +180,11 @@ export default function CreateCampaignForm({ vendor, onSuccess, onCancel, isAdmi
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-8 text-white">
+      <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue rounded-2xl p-8 text-white">
         <h1 className="text-3xl font-bold mb-2">
           {isAdmin ? 'Create Admin Campaign' : 'Create New Ad Campaign'}
         </h1>
-        <p className="text-blue-100">
+        <p className="text-protocall-blue">
           {isAdmin ? 'Create promotional campaigns for the platform' : 'Reach thousands of active traders and investors'}
         </p>
       </div>
@@ -192,9 +192,9 @@ export default function CreateCampaignForm({ vendor, onSuccess, onCancel, isAdmi
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Basic Campaign Details */}
         <Card className="shadow-lg border-0">
-          <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100">
+          <CardHeader className="bg-surface-2">
             <CardTitle className="flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-blue-600" />
+              <DollarSign className="w-5 h-5 text-protocall-blue" />
               Campaign Details
             </CardTitle>
           </CardHeader>
@@ -255,13 +255,13 @@ export default function CreateCampaignForm({ vendor, onSuccess, onCancel, isAdmi
                     </Button>
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                  <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-surface-2">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <Upload className={`w-8 h-8 mb-4 ${isUploading ? 'animate-spin' : 'text-gray-400'}`} />
-                      <p className="mb-2 text-sm text-gray-500">
+                      <Upload className={`w-8 h-8 mb-4 ${isUploading ? 'animate-spin' : 'text-muted-foreground'}`} />
+                      <p className="mb-2 text-sm text-muted-foreground">
                         <span className="font-semibold">Click to upload</span> ad creative
                       </p>
-                      <p className="text-xs text-gray-500">PNG, JPG up to 5MB</p>
+                      <p className="text-xs text-muted-foreground">PNG, JPG up to 5MB</p>
                     </div>
                     <input 
                       type="file" 
@@ -279,9 +279,9 @@ export default function CreateCampaignForm({ vendor, onSuccess, onCancel, isAdmi
 
         {/* Billing Model */}
         <Card className="shadow-lg border-0">
-          <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-100">
+          <CardHeader className="bg-gradient-to-r from-surface-2 to-buy-muted">
             <CardTitle className="flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-green-600" />
+              <DollarSign className="w-5 h-5 text-buy-muted-foreground" />
               Billing & Budget
             </CardTitle>
           </CardHeader>
@@ -372,7 +372,7 @@ export default function CreateCampaignForm({ vendor, onSuccess, onCancel, isAdmi
             )}
 
             {(formData.billing_model === 'weekly' || formData.billing_model === 'monthly') && (
-              <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+              <Card className="bg-surface-2 border-protocall-premium-light">
                 <CardContent className="p-4">
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
@@ -380,12 +380,12 @@ export default function CreateCampaignForm({ vendor, onSuccess, onCancel, isAdmi
                       <span className="font-semibold">₹{pricing.baseFee.toFixed(2)}</span>
                     </div>
                     {pricing.hasPremiumPlacements && (
-                      <div className="flex justify-between text-sm text-amber-600">
+                      <div className="flex justify-between text-sm text-hold-muted-foreground">
                         <span>Premium placement surcharge (5%):</span>
                         <span className="font-semibold">+ ₹{pricing.surcharge.toFixed(2)}</span>
                       </div>
                     )}
-                    <div className="border-t pt-2 flex justify-between font-bold text-lg text-green-600">
+                    <div className="border-t pt-2 flex justify-between font-bold text-lg text-buy-muted-foreground">
                       <span>Total Cost:</span>
                       <span>₹{pricing.totalFee.toFixed(2)}</span>
                     </div>
@@ -398,13 +398,13 @@ export default function CreateCampaignForm({ vendor, onSuccess, onCancel, isAdmi
 
         {/* Targeting & Placement */}
         <Card className="shadow-lg border-0">
-          <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-100">
+          <CardHeader className="bg-surface-2">
             <CardTitle className="flex items-center gap-2">
-              <Target className="w-5 h-5 text-purple-600" />
+              <Target className="w-5 h-5 text-protocall-premium-text" />
               Targeting & Placement
             </CardTitle>
             {pricing.hasPremiumPlacements && (
-              <div className="flex items-center gap-2 text-sm text-amber-600">
+              <div className="flex items-center gap-2 text-sm text-hold-muted-foreground">
                 <AlertCircle className="w-4 h-4" />
                 Premium placements incur 5% additional charges
               </div>
@@ -421,7 +421,7 @@ export default function CreateCampaignForm({ vendor, onSuccess, onCancel, isAdmi
                   { id: 'stocks', label: 'Stock Pages', premium: true },
                   { id: 'polls', label: 'Polls Section', premium: true }
                 ].map((placement) => (
-                  <div key={placement.id} className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50">
+                  <div key={placement.id} className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-surface-2">
                     <Checkbox
                       id={placement.id}
                       checked={formData.placement_locations.includes(placement.id)}
@@ -453,7 +453,7 @@ export default function CreateCampaignForm({ vendor, onSuccess, onCancel, isAdmi
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-muted-foreground mt-2">
                 Leave empty to show to all users. Select specific sectors to target users interested in those areas.
               </p>
             </div>
@@ -475,7 +475,7 @@ export default function CreateCampaignForm({ vendor, onSuccess, onCancel, isAdmi
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-muted-foreground mt-2">
                 Target users viewing specific stock pages or having these stocks in their portfolio.
               </p>
             </div>
@@ -490,7 +490,7 @@ export default function CreateCampaignForm({ vendor, onSuccess, onCancel, isAdmi
           <Button 
             type="submit" 
             disabled={isSubmitting || isUploading}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
           >
             {isSubmitting ? 'Creating...' : isAdmin ? 'Create & Activate' : 'Submit for Approval'}
           </Button>

@@ -209,8 +209,8 @@ export default function PledgeModal({
             <DialogTitle>Session Not Found</DialogTitle>
             <DialogDescription>
               <div className="p-6 text-center">
-                <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-                <p className="text-gray-600">
+                <AlertCircle className="w-12 h-12 text-sell mx-auto mb-4" />
+                <p className="text-subtle">
                   Session information is missing. Please close this dialog and try again.
                 </p>
               </div>
@@ -230,25 +230,25 @@ export default function PledgeModal({
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-xl">
-              <Target className="w-6 h-6 text-blue-600" />
+              <Target className="w-6 h-6 text-protocall-blue" />
               Place Your Pledge - {session.stock_name}
             </DialogTitle>
             <DialogDescription>
               <div className="flex items-center gap-2 mt-2">
-                <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                <Badge variant="outline" className="bg-premium-muted text-protocall-blue">
                   {pledgeData.stock_symbol}
                 </Badge>
                 <Badge variant="outline" className={`${
-                  session.session_mode === 'buy_only' ? 'bg-green-50 text-green-700' :
-                  session.session_mode === 'sell_only' ? 'bg-red-50 text-red-700' :
-                  'bg-purple-50 text-purple-700'
+                  session.session_mode === 'buy_only' ? 'bg-buy-muted text-buy-muted-foreground' :
+                  session.session_mode === 'sell_only' ? 'bg-sell-muted text-sell-muted-foreground' :
+                  'bg-premium-muted text-protocall-premium-text'
                 }`}>
                   {session.session_mode === 'buy_only' ? 'Buy Only' :
                    session.session_mode === 'sell_only' ? 'Sell Only' :
                    'Buy & Sell Cycle'}
                 </Badge>
                 {session.allow_amo && (
-                  <Badge variant="outline" className="bg-orange-50 text-orange-700">
+                  <Badge variant="outline" className="bg-hold-muted text-hold-muted-foreground">
                     <Clock className="w-3 h-3 mr-1" />
                     AMO Enabled
                   </Badge>
@@ -259,16 +259,16 @@ export default function PledgeModal({
 
           <form onSubmit={handleInitialSubmit} className="space-y-6">
             {/* Buy Configuration */}
-            <div className="p-4 bg-gradient-to-br from-green-50 to-blue-50 rounded-xl border-2 border-green-200">
+            <div className="p-4 bg-surface-2 rounded-xl border-2 border-buy/30">
               <div className="flex items-center gap-2 mb-3">
-                <TrendingUp className="w-5 h-5 text-green-600" />
-                <h4 className="font-semibold text-green-900">Buy Configuration</h4>
+                <TrendingUp className="w-5 h-5 text-buy-muted-foreground" />
+                <h4 className="font-semibold text-buy-muted-foreground">Buy Configuration</h4>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="qty" className="text-sm font-medium">
-                    Quantity <span className="text-red-500">*</span>
+                    Quantity <span className="text-sell">*</span>
                   </Label>
                   <Input
                     id="qty"
@@ -280,7 +280,7 @@ export default function PledgeModal({
                     required
                   />
                   {sessionLimits?.min_qty && (
-                    <p className="text-xs text-gray-600 mt-1">
+                    <p className="text-xs text-subtle mt-1">
                       Min: {sessionLimits.min_qty} {sessionLimits.max_qty && `| Max: ${sessionLimits.max_qty}`}
                     </p>
                   )}
@@ -288,7 +288,7 @@ export default function PledgeModal({
 
                 <div>
                   <Label htmlFor="price_target" className="text-sm font-medium">
-                    Buy Price <span className="text-red-500">*</span>
+                    Buy Price <span className="text-sell">*</span>
                   </Label>
                   <div className="flex gap-2 mt-2">
                     <Input
@@ -315,7 +315,7 @@ export default function PledgeModal({
                     </Button>
                   </div>
                   {currentMarketPrice && (
-                    <p className="text-xs text-gray-600 mt-1">
+                    <p className="text-xs text-subtle mt-1">
                       Current Market: ₹{currentMarketPrice}
                     </p>
                   )}
@@ -325,11 +325,11 @@ export default function PledgeModal({
 
             {/* Sell Configuration - Only for Buy-Sell Cycle */}
             {isBuySellCycle && (
-              <div className="p-4 bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl border-2 border-orange-200">
+              <div className="p-4 bg-gradient-to-br from-surface-2 to-hold-muted rounded-xl border-2 border-hold/30">
                 <div className="flex items-center gap-2 mb-3">
-                  <TrendingDown className="w-5 h-5 text-orange-600" />
-                  <h4 className="font-semibold text-orange-900">Sell Configuration</h4>
-                  <Badge variant="outline" className="ml-auto bg-blue-50 text-blue-700 text-xs">
+                  <TrendingDown className="w-5 h-5 text-hold-muted-foreground" />
+                  <h4 className="font-semibold text-hold-muted-foreground">Sell Configuration</h4>
+                  <Badge variant="outline" className="ml-auto bg-premium-muted text-protocall-blue text-xs">
                     Optional
                   </Badge>
                 </div>
@@ -352,12 +352,12 @@ export default function PledgeModal({
 
                   {/* Dynamic Info Based on User Choice */}
                   {pledgeData.auto_sell_price && parseFloat(pledgeData.auto_sell_price) > 0 ? (
-                    <div className="p-3 bg-green-100 rounded-lg border border-green-300">
+                    <div className="p-3 bg-buy-muted rounded-lg border border-buy/30">
                       <div className="flex items-start gap-2">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <CheckCircle className="w-5 h-5 text-buy-muted-foreground mt-0.5 flex-shrink-0" />
                         <div>
-                          <p className="text-sm font-semibold text-green-900">🤖 Auto-Sell Enabled</p>
-                          <p className="text-xs text-green-800 mt-1">
+                          <p className="text-sm font-semibold text-buy-muted-foreground">🤖 Auto-Sell Enabled</p>
+                          <p className="text-xs text-buy-muted-foreground mt-1">
                             System will automatically sell when price reaches ₹{pledgeData.auto_sell_price}.
                             You'll be notified when the sale is executed. Admin can override if needed.
                           </p>
@@ -365,12 +365,12 @@ export default function PledgeModal({
                       </div>
                     </div>
                   ) : (
-                    <div className="p-3 bg-blue-100 rounded-lg border border-blue-300">
+                    <div className="p-3 bg-premium-muted rounded-lg border border-protocall-premium-light">
                       <div className="flex items-start gap-2">
-                        <Users className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                        <Users className="w-5 h-5 text-protocall-blue mt-0.5 flex-shrink-0" />
                         <div>
-                          <p className="text-sm font-semibold text-blue-900">👨‍💼 Admin-Managed Position</p>
-                          <p className="text-xs text-blue-800 mt-1">
+                          <p className="text-sm font-semibold text-protocall-blue">👨‍💼 Admin-Managed Position</p>
+                          <p className="text-xs text-protocall-blue mt-1">
                             Our admin will monitor market trends and execute the sell at the optimal time
                             (intraday, days, or weeks later based on market conditions).
                           </p>
@@ -380,10 +380,10 @@ export default function PledgeModal({
                   )}
 
                   {/* Universal Manual Sell Note */}
-                  <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="p-3 bg-surface-2 rounded-lg border border-border">
                     <div className="flex items-start gap-2">
-                      <AlertCircle className="w-4 h-4 text-gray-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-xs text-gray-700">
+                      <AlertCircle className="w-4 h-4 text-subtle mt-0.5 flex-shrink-0" />
+                      <p className="text-xs text-subtle">
                         <strong>Note:</strong> You can always sell manually via your Demat account
                         (Zerodha/Upstox) anytime, regardless of this setting.
                       </p>
@@ -394,20 +394,20 @@ export default function PledgeModal({
             )}
 
             {/* Fee Summary */}
-            <div className="p-4 bg-gray-50 rounded-xl border">
-              <h4 className="font-semibold text-gray-900 mb-3">Fee Summary</h4>
+            <div className="p-4 bg-surface-2 rounded-xl border">
+              <h4 className="font-semibold text-foreground mb-3">Fee Summary</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Pledge Value:</span>
+                  <span className="text-subtle">Pledge Value:</span>
                   <span className="font-semibold">₹{totalPledgeValue.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Convenience Fee:</span>
+                  <span className="text-subtle">Convenience Fee:</span>
                   <span className="font-semibold">₹{convenienceFee.toFixed(2)}</span>
                 </div>
                 <div className="border-t pt-2 flex justify-between text-base">
-                  <span className="font-semibold text-gray-900">Total to Pay:</span>
-                  <span className="font-bold text-blue-600">₹{(totalPledgeValue + convenienceFee).toFixed(2)}</span>
+                  <span className="font-semibold text-foreground">Total to Pay:</span>
+                  <span className="font-bold text-protocall-blue">₹{(totalPledgeValue + convenienceFee).toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -425,7 +425,7 @@ export default function PledgeModal({
               </Button>
               <Button
                 type="submit"
-                className="flex-1 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+                className="flex-1 bg-gradient-to-r from-buy to-protocall-blue hover:from-buy hover:to-protocall-blue"
                 disabled={isProcessing}
               >
                 {isProcessing ? (

@@ -35,12 +35,12 @@ import { Link } from 'react-router-dom'; // Import Link
 import FinancialStatement from '../components/entity/FinancialStatement'; // Import FinancialStatement
 
 const statusConfig = {
-  pending: { label: 'Pending Approval', icon: Clock, color: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
-  active: { label: 'Live Campaign', icon: PlayCircle, color: 'bg-green-100 text-green-800 border-green-200' },
-  rejected: { label: 'Rejected', icon: XCircle, color: 'bg-red-100 text-red-800 border-red-200' },
-  paused: { label: 'Paused', icon: AlertTriangle, color: 'bg-gray-100 text-gray-800 border-gray-200' },
-  expired: { label: 'Expired', icon: AlertTriangle, color: 'bg-blue-100 text-blue-800 border-blue-200' },
-  completed: { label: 'Completed', icon: CheckCircle, color: 'bg-purple-100 text-purple-800 border-purple-200' },
+  pending: { label: 'Pending Approval', icon: Clock, color: 'bg-hold-muted text-hold-muted-foreground border-hold/30' },
+  active: { label: 'Live Campaign', icon: PlayCircle, color: 'bg-buy-muted text-buy-muted-foreground border-buy/30' },
+  rejected: { label: 'Rejected', icon: XCircle, color: 'bg-sell-muted text-sell-muted-foreground border-sell/30' },
+  paused: { label: 'Paused', icon: AlertTriangle, color: 'bg-surface-2 text-foreground border-border' },
+  expired: { label: 'Expired', icon: AlertTriangle, color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light' },
+  completed: { label: 'Completed', icon: CheckCircle, color: 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light' },
 };
 
 function AddFundsModal({ vendor, onFundsAdded }) {
@@ -82,12 +82,12 @@ function AddFundsModal({ vendor, onFundsAdded }) {
     <DialogContent>
       <DialogHeader>
         <DialogTitle className="flex items-center gap-2">
-          <Wallet className="w-6 h-6 text-purple-600" />
+          <Wallet className="w-6 h-6 text-protocall-premium-text" />
           Add Funds to Wallet
         </DialogTitle>
       </DialogHeader>
       <div className="py-4 space-y-4">
-        <p>Your current balance is <strong className="text-purple-700">₹{(vendor.wallet_balance || 0).toFixed(2)}</strong>.</p>
+        <p>Your current balance is <strong className="text-protocall-premium-text">₹{(vendor.wallet_balance || 0).toFixed(2)}</strong>.</p>
         <div>
           <label htmlFor="amount" className="text-sm font-medium">Amount to Add (₹)</label>
           <Input
@@ -99,10 +99,10 @@ function AddFundsModal({ vendor, onFundsAdded }) {
             className="mt-2"
           />
         </div>
-        <Button onClick={handleAddFunds} disabled={isProcessing || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0} className="w-full bg-gradient-to-r from-purple-600 to-blue-600">
+        <Button onClick={handleAddFunds} disabled={isProcessing || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0} className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue">
           {isProcessing ? "Processing..." : `Add ₹${parseFloat(amount || 0).toFixed(2)} to Wallet`}
         </Button>
-        <p className="text-xs text-gray-500 text-center">This simulates a secure payment process. No real money will be charged.</p>
+        <p className="text-xs text-muted-foreground text-center">This simulates a secure payment process. No real money will be charged.</p>
       </div>
     </DialogContent>
   );
@@ -118,7 +118,7 @@ function AnalyticsModal({ campaign }) {
     <DialogContent>
       <DialogHeader>
         <DialogTitle className="flex items-center gap-2">
-          <BarChart2 className="w-6 h-6 text-blue-600" />
+          <BarChart2 className="w-6 h-6 text-protocall-blue" />
           Campaign Analytics: {campaign.title}
         </DialogTitle>
         <DialogDescription>
@@ -176,7 +176,7 @@ function EditCampaignModal({ campaign, vendor, isOpen, onClose, onSuccess }) {
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Megaphone className="w-6 h-6 text-blue-600" />
+            <Megaphone className="w-6 h-6 text-protocall-blue" />
             Edit Campaign: {campaign.title}
           </DialogTitle>
           <DialogDescription>
@@ -470,9 +470,9 @@ export default function VendorDashboard() {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-900">
+      <div className="flex h-screen items-center justify-center bg-protocall-ink">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
           <p className="text-white">Loading Vendor Dashboard...</p>
         </div>
       </div>
@@ -482,22 +482,22 @@ export default function VendorDashboard() {
   if (!user) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <p className="text-gray-700">Access denied. Redirecting...</p>
+        <p className="text-subtle">Access denied. Redirecting...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
+    <div className="min-h-screen bg-surface-2 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
+        <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue rounded-2xl p-8 text-white">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold mb-2">
                 {isAdminView ? 'Ad Campaign Overview' : 'Vendor Dashboard'}
               </h1>
-              <p className="text-blue-100">
+              <p className="text-protocall-blue">
                 {isAdminView ? 'Monitor all vendor advertising campaigns' : 'Manage your advertising campaigns and track performance'}
               </p>
             </div>
@@ -513,28 +513,28 @@ export default function VendorDashboard() {
           <TabsList className="grid w-full grid-cols-4 bg-transparent p-1 rounded-xl gap-2">
             <TabsTrigger 
               value="overview" 
-              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-12 px-6 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-3 py-3 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md"
+              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-12 px-6 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-3 py-3 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
             >
               <BarChart3 className="w-5 h-5" />
               Overview
             </TabsTrigger>
             <TabsTrigger 
               value="campaigns" 
-              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-12 px-6 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-3 py-3 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md"
+              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-12 px-6 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-3 py-3 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
             >
               <Megaphone className="w-5 h-5" />
               My Campaigns
             </TabsTrigger>
             <TabsTrigger 
               value="financials" 
-              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-12 px-6 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-3 py-3 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md"
+              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-12 px-6 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-3 py-3 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
             >
               <Receipt className="w-5 h-5" />
               Financials
             </TabsTrigger>
             <TabsTrigger 
               value="create" 
-              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-12 px-6 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-3 py-3 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md"
+              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-12 px-6 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-3 py-3 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
             >
               <PlusCircle className="w-5 h-5" />
               Create Campaign
@@ -548,12 +548,12 @@ export default function VendorDashboard() {
               <Card className="shadow-md border-0 bg-white">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4">
-                    <div className="p-3 bg-blue-100 rounded-lg">
-                      <BarChart3 className="w-6 h-6 text-blue-600" />
+                    <div className="p-3 bg-premium-muted rounded-lg">
+                      <BarChart3 className="w-6 h-6 text-protocall-blue" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Total Campaigns</p>
-                      <p className="text-2xl font-bold text-gray-800">{stats.totalCampaigns}</p>
+                      <p className="text-sm text-muted-foreground">Total Campaigns</p>
+                      <p className="text-2xl font-bold text-foreground">{stats.totalCampaigns}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -562,13 +562,13 @@ export default function VendorDashboard() {
               <Card className="shadow-md border-0 bg-white">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4">
-                    <div className="p-3 bg-green-100 rounded-lg">
-                      <Activity className="w-6 h-6 text-green-600" />
+                    <div className="p-3 bg-buy-muted rounded-lg">
+                      <Activity className="w-6 h-6 text-buy-muted-foreground" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Active Campaigns</p>
-                      <p className="text-2xl font-bold text-gray-800">{stats.activeCampaigns}</p>
-                      <p className="text-xs text-gray-400">{stats.pendingCampaigns} pending approval</p>
+                      <p className="text-sm text-muted-foreground">Active Campaigns</p>
+                      <p className="text-2xl font-bold text-foreground">{stats.activeCampaigns}</p>
+                      <p className="text-xs text-muted-foreground">{stats.pendingCampaigns} pending approval</p>
                     </div>
                   </div>
                 </CardContent>
@@ -577,13 +577,13 @@ export default function VendorDashboard() {
               <Card className="shadow-md border-0 bg-white">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4">
-                    <div className="p-3 bg-purple-100 rounded-lg">
-                      <Eye className="w-6 h-6 text-purple-600" />
+                    <div className="p-3 bg-premium-muted rounded-lg">
+                      <Eye className="w-6 h-6 text-protocall-premium-text" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Total Impressions</p>
-                      <p className="text-2xl font-bold text-gray-800">{(stats.totalImpressions || 0).toLocaleString()}</p>
-                      <p className="text-xs text-gray-400">{(stats.totalClicks || 0).toLocaleString()} clicks</p>
+                      <p className="text-sm text-muted-foreground">Total Impressions</p>
+                      <p className="text-2xl font-bold text-foreground">{(stats.totalImpressions || 0).toLocaleString()}</p>
+                      <p className="text-xs text-muted-foreground">{(stats.totalClicks || 0).toLocaleString()} clicks</p>
                     </div>
                   </div>
                 </CardContent>
@@ -595,13 +595,13 @@ export default function VendorDashboard() {
                 <Card className="shadow-md border-0 bg-white">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-4">
-                      <div className="p-3 bg-orange-100 rounded-lg">
-                        <Wallet className="w-6 h-6 text-orange-600" />
+                      <div className="p-3 bg-hold-muted rounded-lg">
+                        <Wallet className="w-6 h-6 text-hold-muted-foreground" />
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Total Vendor Balance</p>
-                        <p className="text-2xl font-bold text-gray-800">₹{vendorWalletStats.totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                        <p className="text-xs text-gray-400">{vendorWalletStats.totalVendors} real vendors</p>
+                        <p className="text-sm text-muted-foreground">Total Vendor Balance</p>
+                        <p className="text-2xl font-bold text-foreground">₹{vendorWalletStats.totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                        <p className="text-xs text-muted-foreground">{vendorWalletStats.totalVendors} real vendors</p>
                       </div>
                     </div>
                   </CardContent>
@@ -612,18 +612,18 @@ export default function VendorDashboard() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="p-3 bg-green-100 rounded-lg">
-                          <Wallet className="w-6 h-6 text-green-600" />
+                        <div className="p-3 bg-buy-muted rounded-lg">
+                          <Wallet className="w-6 h-6 text-buy-muted-foreground" />
                         </div>
                         <div>
-                          <p className="text-sm text-gray-500">Wallet Balance</p>
-                          <p className="text-2xl font-bold text-gray-800">₹{(vendor.wallet_balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                          <p className="text-sm text-muted-foreground">Wallet Balance</p>
+                          <p className="text-2xl font-bold text-foreground">₹{(vendor.wallet_balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                         </div>
                       </div>
                     </div>
                     <Button 
                       onClick={() => setIsAddFundsModalOpen(true)}
-                      className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+                      className="w-full bg-buy-soft hover:from-buy hover:to-buy"
                     >
                       <IndianRupee className="w-4 h-4 mr-2" /> {/* Changed to IndianRupee icon */}
                       Add Funds
@@ -639,7 +639,7 @@ export default function VendorDashboard() {
             {/* Search and Filter */}
             <div className="flex flex-col md:flex-row gap-4 mt-6">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
                   placeholder="Search campaigns..."
                   value={searchTerm}
@@ -651,7 +651,7 @@ export default function VendorDashboard() {
                 <Button
                   variant={statusFilter === 'all' ? "default" : "outline"}
                   onClick={() => setStatusFilter('all')}
-                  className={`flex items-center gap-2 ${statusFilter === 'all' ? 'bg-gray-700 text-white' : ''}`}
+                  className={`flex items-center gap-2 ${statusFilter === 'all' ? 'bg-protocall-ink text-white' : ''}`}
                 >
                   All
                 </Button>
@@ -660,7 +660,7 @@ export default function VendorDashboard() {
                     key={status}
                     variant={statusFilter === status ? "default" : "outline"}
                     onClick={() => setStatusFilter(statusFilter === status ? 'all' : status)}
-                    className={`flex items-center gap-2 ${statusFilter === status ? 'bg-gray-700 text-white' : ''}`}
+                    className={`flex items-center gap-2 ${statusFilter === status ? 'bg-protocall-ink text-white' : ''}`}
                   >
                     <config.icon className="w-4 h-4" />
                     {config.label}
@@ -678,7 +678,7 @@ export default function VendorDashboard() {
               <CardContent>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left">
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                    <thead className="text-xs text-subtle uppercase bg-surface-2">
                       <tr>
                         <th className="px-6 py-3 text-left">Campaign</th>
                         {isAdminView && <th className="px-6 py-3 text-left">Vendor</th>}
@@ -696,12 +696,12 @@ export default function VendorDashboard() {
                       ) : filteredCampaigns.length === 0 ? (
                         <tr><td colSpan={isAdminView ? "8" : "7"} className="text-center p-8">
                             <div className="flex flex-col items-center">
-                              <Megaphone className="w-12 h-12 text-gray-400 mb-4" />
-                              <h3 className="lg:text-lg font-semibold text-gray-600">No Campaigns Found</h3>
-                              <p className="text-gray-500 mb-4">{isAdminView ? "No vendors have created campaigns yet." : "Create your first campaign to get started!"}</p>
+                              <Megaphone className="w-12 h-12 text-muted-foreground mb-4" />
+                              <h3 className="lg:text-lg font-semibold text-subtle">No Campaigns Found</h3>
+                              <p className="text-muted-foreground mb-4">{isAdminView ? "No vendors have created campaigns yet." : "Create your first campaign to get started!"}</p>
                               <Button 
                                 onClick={() => setActiveTab('create')} // Go to create tab
-                                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2"
+                                className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white px-6 py-2"
                               >
                                 Create Campaign
                               </Button>
@@ -715,10 +715,10 @@ export default function VendorDashboard() {
                           (((campaign.spent_today || 0) / campaign.daily_budget) * 100) : 0;
                         
                         return (
-                          <tr key={campaign.id} className="bg-white border-b hover:bg-gray-50">
+                          <tr key={campaign.id} className="bg-white border-b hover:bg-surface-2">
                             <td className="px-6 py-4">
                               <div className="font-semibold">{campaign.title}</div>
-                              <div className="text-xs text-gray-500 flex gap-2 flex-wrap mt-1">
+                              <div className="text-xs text-muted-foreground flex gap-2 flex-wrap mt-1">
                                 {campaign.target_sectors?.length > 0 && (
                                   <span>🎯 {campaign.target_sectors.slice(0,2).join(', ')}</span>
                                 )}
@@ -726,28 +726,28 @@ export default function VendorDashboard() {
                                   <span>📈 {campaign.target_stocks.slice(0,2).join(', ')}</span>
                                 )}
                               </div>
-                              <div className="text-xs text-blue-600 mt-1">
+                              <div className="text-xs text-protocall-blue mt-1">
                                 📍 {campaign.placement_locations?.join(', ') || 'Global'}
                               </div>
                             </td>
                             {isAdminView && <td className="px-6 py-4">{campaign.vendor?.company_name || 'N/A'}</td>}
                             <td className="px-6 py-4">
                               <div className="font-medium capitalize">{campaign.billing_model}</div>
-                              <div className="text-xs text-gray-500 font-mono">
+                              <div className="text-xs text-muted-foreground font-mono">
                                 {campaign.billing_model === 'cpc' && `₹${(campaign.cpc_rate || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/click`}
                                 {campaign.billing_model === 'weekly' && `₹${(campaign.weekly_fee || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/week`}
                                 {campaign.billing_model === 'monthly' && `₹${(campaign.monthly_fee || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month`}
                               </div>
                             </td>
                             <td className="px-6 py-4">
-                              <div className="flex items-center gap-1 text-xs text-gray-600">
+                              <div className="flex items-center gap-1 text-xs text-subtle">
                                 <Calendar className="w-3 h-3" />
                                 {campaign.start_date && campaign.end_date ? (
                                   <>
                                     {new Date(campaign.start_date).toLocaleDateString()} → {new Date(campaign.end_date).toLocaleDateString()}
                                   </>
                                 ) : (
-                                  <span className="text-gray-400">Not scheduled</span>
+                                  <span className="text-muted-foreground">Not scheduled</span>
                                 )}
                               </div>
                             </td>
@@ -756,10 +756,10 @@ export default function VendorDashboard() {
                                 <div className="space-y-1">
                                   {campaign.total_budget && (
                                     <div>
-                                      <div className="text-xs text-gray-500">Total: ₹{(campaign.revenue_generated || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} / ₹{campaign.total_budget.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</div>
-                                      <div className="w-full bg-gray-200 rounded-full h-2">
+                                      <div className="text-xs text-muted-foreground">Total: ₹{(campaign.revenue_generated || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} / ₹{campaign.total_budget.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</div>
+                                      <div className="w-full bg-border rounded-full h-2">
                                         <div
-                                          className={`h-2 rounded-full ${budgetProgress >= 90 ? 'bg-red-500' : budgetProgress >= 70 ? 'bg-yellow-500' : 'bg-green-500'}`}
+                                          className={`h-2 rounded-full ${budgetProgress >= 90 ? 'bg-sell' : budgetProgress >= 70 ? 'bg-hold' : 'bg-buy'}`}
                                           style={{ width: `${Math.min(budgetProgress, 100)}%` }}
                                         ></div>
                                       </div>
@@ -767,10 +767,10 @@ export default function VendorDashboard() {
                                   )}
                                   {campaign.daily_budget && (
                                     <div>
-                                      <div className="text-xs text-gray-500">Today: ₹{(campaign.spent_today || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} / ₹{campaign.daily_budget.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</div>
-                                      <div className="w-full bg-gray-200 rounded-full h-1">
+                                      <div className="text-xs text-muted-foreground">Today: ₹{(campaign.spent_today || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} / ₹{campaign.daily_budget.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</div>
+                                      <div className="w-full bg-border rounded-full h-1">
                                         <div
-                                          className={`h-1 rounded-full ${dailyBudgetProgress >= 90 ? 'bg-red-500' : dailyBudgetProgress >= 70 ? 'bg-yellow-500' : 'bg-green-500'}`}
+                                          className={`h-1 rounded-full ${dailyBudgetProgress >= 90 ? 'bg-sell' : dailyBudgetProgress >= 70 ? 'bg-hold' : 'bg-buy'}`}
                                           style={{ width: `${Math.min(dailyBudgetProgress, 100)}%` }}
                                         ></div>
                                       </div>
@@ -778,7 +778,7 @@ export default function VendorDashboard() {
                                   )}
                                 </div>
                               ) : (
-                                <span className="text-xs text-gray-400">Not Applicable</span>
+                                <span className="text-xs text-muted-foreground">Not Applicable</span>
                               )}
                             </td>
                             <td className="px-6 py-4">
@@ -792,7 +792,7 @@ export default function VendorDashboard() {
                                 {statusConfig[campaign.status]?.label}
                               </Badge>
                               {campaign.is_edited && (
-                                <div className="text-xs text-orange-600 mt-1">Edited - Pending Review</div>
+                                <div className="text-xs text-hold-muted-foreground mt-1">Edited - Pending Review</div>
                               )}
                             </td>
                             <td className="px-6 py-4 text-right">
@@ -810,7 +810,7 @@ export default function VendorDashboard() {
                                       variant="outline"
                                       size="sm"
                                       onClick={() => handleEditCampaign(campaign)}
-                                      className="text-blue-600 hover:text-blue-800"
+                                      className="text-protocall-blue hover:text-protocall-blue"
                                     >
                                       Edit
                                     </Button>
@@ -839,10 +839,10 @@ export default function VendorDashboard() {
               />
             )}
             {!vendor && !isAdminView && (
-              <p className="text-gray-500 text-center p-8">Vendor profile not found to display financial statements.</p>
+              <p className="text-muted-foreground text-center p-8">Vendor profile not found to display financial statements.</p>
             )}
             {isAdminView && (
-              <p className="text-gray-500 text-center p-8">Financial statements for specific vendors are available through the Vendor's dashboard. This view does not show aggregated financial data.</p>
+              <p className="text-muted-foreground text-center p-8">Financial statements for specific vendors are available through the Vendor's dashboard. This view does not show aggregated financial data.</p>
             )}
           </TabsContent>
 
@@ -851,7 +851,7 @@ export default function VendorDashboard() {
             <Card className="shadow-lg border-0 bg-white p-6">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Megaphone className="w-6 h-6 text-purple-600" />
+                  <Megaphone className="w-6 h-6 text-protocall-premium-text" />
                   {isAdminView ? "Create Test Ad Campaign" : "Launch a New Ad Campaign"}
                 </CardTitle>
                 <CardDescription>
@@ -861,12 +861,12 @@ export default function VendorDashboard() {
               <CardContent>
                 <Button 
                   onClick={() => setIsCreateModalOpen(true)}
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg"
+                  className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white px-6 py-3 rounded-xl font-semibold shadow-lg"
                 >
                   <PlusCircle className="w-5 h-5 mr-2" />
                   Start New Campaign Form
                 </Button>
-                <p className="text-sm text-gray-500 mt-4">Click the button above to open the campaign creation form in a new window.</p>
+                <p className="text-sm text-muted-foreground mt-4">Click the button above to open the campaign creation form in a new window.</p>
               </CardContent>
             </Card>
           </TabsContent>
@@ -877,7 +877,7 @@ export default function VendorDashboard() {
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Megaphone className="w-6 h-6 text-purple-600" />
+                <Megaphone className="w-6 h-6 text-protocall-premium-text" />
                 {isAdminView ? "Create Test Ad Campaign" : "Create New Ad Campaign"}
               </DialogTitle>
               <DialogDescription>
@@ -920,7 +920,7 @@ export default function VendorDashboard() {
                           className="rounded-lg w-full object-contain max-h-64" 
                         />
                       ) : (
-                        <div className="flex items-center justify-center h-48 bg-gray-100 text-gray-500 rounded-lg">
+                        <div className="flex items-center justify-center h-48 bg-surface-2 text-muted-foreground rounded-lg">
                           No creative image available
                         </div>
                       )}
@@ -928,49 +928,49 @@ export default function VendorDashboard() {
                   </Card>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-gray-500 text-sm">Description:</p>
+                      <p className="text-muted-foreground text-sm">Description:</p>
                       <p className="font-semibold">{selectedCampaign.description}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500 text-sm">CTA Link:</p>
+                      <p className="text-muted-foreground text-sm">CTA Link:</p>
                       {selectedCampaign.cta_link ? (
-                        <a href={selectedCampaign.cta_link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline break-all">
+                        <a href={selectedCampaign.cta_link} target="_blank" rel="noopener noreferrer" className="text-protocall-premium-light hover:underline break-all">
                           {selectedCampaign.cta_link}
                         </a>
                       ) : (
-                        <p className="text-gray-500">N/A</p>
+                        <p className="text-muted-foreground">N/A</p>
                       )}
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-gray-500 text-sm">Status:</p> 
+                      <p className="text-muted-foreground text-sm">Status:</p> 
                       <Badge className={`ml-0 ${statusConfig[selectedCampaign.status]?.color}`}>
                         {statusConfig[selectedCampaign.status]?.label}
                       </Badge>
                     </div>
                     <div>
-                      <p className="text-gray-500 text-sm">Billing Model:</p>
+                      <p className="text-muted-foreground text-sm">Billing Model:</p>
                       <p className="font-semibold capitalize">{selectedCampaign.billing_model}</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     <div>
-                      <p className="text-gray-500 text-sm">Impressions:</p>
+                      <p className="text-muted-foreground text-sm">Impressions:</p>
                       <p className="font-semibold">{(selectedCampaign.impressions || 0).toLocaleString()}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500 text-sm">Clicks:</p>
+                      <p className="text-muted-foreground text-sm">Clicks:</p>
                       <p className="font-semibold">{(selectedCampaign.clicks || 0).toLocaleString()}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500 text-sm">Revenue:</p>
+                      <p className="text-muted-foreground text-sm">Revenue:</p>
                       <p className="font-semibold">₹{(selectedCampaign.revenue_generated || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-gray-500 text-sm">Campaign Period:</p>
+                      <p className="text-muted-foreground text-sm">Campaign Period:</p>
                       <p className="font-semibold">
                         {selectedCampaign.start_date && selectedCampaign.end_date ? 
                           `${new Date(selectedCampaign.start_date).toLocaleDateString()} → ${new Date(selectedCampaign.end_date).toLocaleDateString()}` : 
@@ -980,19 +980,19 @@ export default function VendorDashboard() {
                     {/* Display billing model specific rates if available */}
                     {selectedCampaign.billing_model === 'cpc' && (
                       <div>
-                        <p className="text-gray-500 text-sm">CPC Rate:</p>
+                        <p className="text-muted-foreground text-sm">CPC Rate:</p>
                         <p className="font-semibold">₹{(selectedCampaign.cpc_rate || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/click</p>
                       </div>
                     )}
                     {selectedCampaign.billing_model === 'weekly' && (
                       <div>
-                        <p className="text-gray-500 text-sm">Weekly Fee:</p>
+                        <p className="text-muted-foreground text-sm">Weekly Fee:</p>
                         <p className="font-semibold">₹{(selectedCampaign.weekly_fee || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/week</p>
                       </div>
                     )}
                     {selectedCampaign.billing_model === 'monthly' && (
                       <div>
-                        <p className="text-gray-500 text-sm">Monthly Fee:</p>
+                        <p className="text-muted-foreground text-sm">Monthly Fee:</p>
                         <p className="font-semibold">₹{(selectedCampaign.monthly_fee || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month</p>
                       </div>
                     )}
@@ -1004,19 +1004,19 @@ export default function VendorDashboard() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {selectedCampaign.target_sectors?.length > 0 && (
                           <div>
-                            <p className="text-gray-500 text-sm">Target Sectors:</p>
+                            <p className="text-muted-foreground text-sm">Target Sectors:</p>
                             <p className="font-semibold">{selectedCampaign.target_sectors.join(', ')}</p>
                           </div>
                         )}
                         {selectedCampaign.target_stocks?.length > 0 && (
                           <div>
-                            <p className="text-gray-500 text-sm">Target Stocks:</p>
+                            <p className="text-muted-foreground text-sm">Target Stocks:</p>
                             <p className="font-semibold">{selectedCampaign.target_stocks.join(', ')}</p>
                           </div>
                         )}
                         {selectedCampaign.placement_locations?.length > 0 && (
                           <div>
-                            <p className="text-gray-500 text-sm">Placement Locations:</p>
+                            <p className="text-muted-foreground text-sm">Placement Locations:</p>
                             <p className="font-semibold">{selectedCampaign.placement_locations.join(', ')}</p>
                           </div>
                         )}

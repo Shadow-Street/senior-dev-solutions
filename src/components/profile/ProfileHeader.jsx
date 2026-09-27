@@ -13,9 +13,9 @@ export default function ProfileHeader({ user, subscription, referrals }) {
 
   const getReferralBadge = () => {
     const successfulSignups = referrals.filter(r => r.signup_completed).length;
-    if (successfulSignups >= 10) return { name: 'Champion', icon: Award, color: 'text-yellow-500' };
-    if (successfulSignups >= 5) return { name: 'Leader', icon: Star, color: 'text-slate-500' };
-    if (successfulSignups >= 1) return { name: 'Builder', icon: Star, color: 'text-orange-500' };
+    if (successfulSignups >= 10) return { name: 'Champion', icon: Award, color: 'text-hold' };
+    if (successfulSignups >= 5) return { name: 'Leader', icon: Star, color: 'text-muted-foreground' };
+    if (successfulSignups >= 1) return { name: 'Builder', icon: Star, color: 'text-hold' };
     return null;
   };
 
@@ -31,8 +31,8 @@ export default function ProfileHeader({ user, subscription, referrals }) {
               <AvatarFallback className="text-xl">{user.display_name?.[0]}</AvatarFallback>
             </Avatar>
             <div className="flex-1 text-center sm:text-left">
-              <h2 className="text-xl font-bold text-slate-900">{user.display_name}</h2>
-              <p className="text-sm text-slate-600">{user.email}</p>
+              <h2 className="text-xl font-bold text-foreground">{user.display_name}</h2>
+              <p className="text-sm text-subtle">{user.email}</p>
             </div>
             <div className="flex items-center gap-4">
               {referralBadge && (

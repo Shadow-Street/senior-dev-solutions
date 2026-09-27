@@ -125,21 +125,21 @@ export default function ChatRoomTable({ chatRooms, messages, users, onUpdate, on
 
   const getRoomTypeColor = (roomType) => {
     switch (roomType) {
-      case 'premium': return 'bg-purple-100 text-purple-800';
-      case 'admin': return 'bg-blue-100 text-blue-800';
-      case 'premium_admin': return 'bg-indigo-100 text-indigo-800';
-      case 'stock_specific': return 'bg-green-100 text-green-800';
-      case 'sector': return 'bg-cyan-100 text-cyan-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'premium': return 'bg-premium-muted text-protocall-premium-text';
+      case 'admin': return 'bg-premium-muted text-protocall-blue';
+      case 'premium_admin': return 'bg-premium-muted text-protocall-blue';
+      case 'stock_specific': return 'bg-buy-muted text-buy-muted-foreground';
+      case 'sector': return 'bg-premium-muted text-protocall-blue';
+      default: return 'bg-surface-2 text-foreground';
     }
   };
 
   const getPlanBadgeColor = (plan) => {
     switch (plan) {
-      case 'vip': return 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white';
-      case 'premium': return 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white';
-      case 'basic': return 'bg-gray-200 text-gray-700';
-      default: return 'bg-gray-100 text-gray-600';
+      case 'vip': return 'bg-hold text-hold-foreground';
+      case 'premium': return 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white';
+      case 'basic': return 'bg-border text-subtle';
+      default: return 'bg-surface-2 text-subtle';
     }
   };
 
@@ -153,7 +153,7 @@ export default function ChatRoomTable({ chatRooms, messages, users, onUpdate, on
           {/* Filters */}
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Search rooms by name, description, or stock symbol..."
                 value={searchTerm}
@@ -204,7 +204,7 @@ export default function ChatRoomTable({ chatRooms, messages, users, onUpdate, on
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+              <thead className="text-xs text-subtle uppercase bg-surface-2">
                 <tr>
                   <th className="px-6 py-3 text-left">Room Details</th>
                   <th className="px-6 py-3 text-left">Type</th>
@@ -220,18 +220,18 @@ export default function ChatRoomTable({ chatRooms, messages, users, onUpdate, on
                   const isActive = room.is_meeting_active || (room.participant_count && room.participant_count > 0);
 
                   return (
-                    <tr key={room.id} className="bg-white border-b hover:bg-slate-50 transition-colors">
+                    <tr key={room.id} className="bg-white border-b hover:bg-surface-2 transition-colors">
                       {/* Room Details Column */}
                       <td className="px-6 py-4">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold text-slate-900">{room.name}</span>
+                            <span className="font-semibold text-foreground">{room.name}</span>
                             {room.is_premium && (
-                              <Lock className="w-3 h-3 text-purple-600" />
+                              <Lock className="w-3 h-3 text-protocall-premium-text" />
                             )}
                           </div>
                           {room.description && (
-                            <p className="text-xs text-slate-500">{room.description}</p>
+                            <p className="text-xs text-muted-foreground">{room.description}</p>
                           )}
                           {room.stock_symbol && (
                             <Badge variant="outline" className="text-xs">
@@ -251,7 +251,7 @@ export default function ChatRoomTable({ chatRooms, messages, users, onUpdate, on
 
                       {/* Participants Column */}
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 text-slate-600 text-xs">
+                        <div className="flex items-center gap-2 text-subtle text-xs">
                           <Users className="w-3 h-3" />
                           <span>{room.participant_count || 0}</span>
                         </div>
@@ -259,7 +259,7 @@ export default function ChatRoomTable({ chatRooms, messages, users, onUpdate, on
 
                       {/* Messages Column */}
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 text-slate-600 text-xs">
+                        <div className="flex items-center gap-2 text-subtle text-xs">
                           <MessageSquare className="w-3 h-3" />
                           <span>{roomMessages.length}</span>
                         </div>
@@ -268,12 +268,12 @@ export default function ChatRoomTable({ chatRooms, messages, users, onUpdate, on
                       {/* Status Column */}
                       <td className="px-6 py-4 space-y-1">
                         {isActive && (
-                          <Badge className="bg-green-100 text-green-700 text-xs">
+                          <Badge className="bg-buy-muted text-buy-muted-foreground text-xs">
                             Live
                           </Badge>
                         )}
                         {room.is_meeting_active && (
-                          <Badge className="bg-blue-100 text-blue-700 text-xs flex items-center gap-1">
+                          <Badge className="bg-premium-muted text-protocall-blue text-xs flex items-center gap-1">
                             <Video className="w-3 h-3" />
                             Meeting
                           </Badge>
@@ -317,7 +317,7 @@ export default function ChatRoomTable({ chatRooms, messages, users, onUpdate, on
                             variant="ghost"
                             size="sm"
                             onClick={() => handleEdit(room)}
-                            className="text-blue-600 hover:text-blue-800"
+                            className="text-protocall-blue hover:text-protocall-blue"
                           >
                             <Edit className="w-4 h-4" />
                           </Button>
@@ -325,7 +325,7 @@ export default function ChatRoomTable({ chatRooms, messages, users, onUpdate, on
                             variant="ghost"
                             size="sm"
                             onClick={() => onDelete(room.id)}
-                            className="text-red-600 hover:text-red-800"
+                            className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -339,9 +339,9 @@ export default function ChatRoomTable({ chatRooms, messages, users, onUpdate, on
 
             {filteredRooms.length === 0 && (
               <div className="text-center py-12">
-                <MessageSquare className="mx-auto h-12 w-12 text-slate-400" />
-                <h3 className="mt-2 text-sm font-medium text-slate-900">No chat rooms found</h3>
-                <p className="mt-1 text-sm text-slate-500">
+                <MessageSquare className="mx-auto h-12 w-12 text-muted-foreground" />
+                <h3 className="mt-2 text-sm font-medium text-foreground">No chat rooms found</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
                   {chatRooms.length === 0
                     ? "No chat rooms have been created yet."
                     : "Try adjusting your search or filter criteria."

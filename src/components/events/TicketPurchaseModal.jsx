@@ -159,13 +159,13 @@ export default function TicketPurchaseModal({ event, user, onClose, onSuccess })
       <Dialog open={true} onOpenChange={onClose}>
         <DialogContent className="max-w-md">
           <div className="text-center py-8">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="w-10 h-10 text-green-600" />
+            <div className="w-16 h-16 bg-buy-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-10 h-10 text-buy-muted-foreground" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">Payment Successful!</h3>
-            <p className="text-gray-600 mb-2">Your ticket has been confirmed.</p>
-            <p className="text-green-600 font-semibold">✅ Your RSVP is set to YES</p>
-            <p className="text-sm text-gray-500 mt-4">Check your notifications for details.</p>
+            <h3 className="text-2xl font-bold text-foreground mb-2">Payment Successful!</h3>
+            <p className="text-subtle mb-2">Your ticket has been confirmed.</p>
+            <p className="text-buy-muted-foreground font-semibold">✅ Your RSVP is set to YES</p>
+            <p className="text-sm text-muted-foreground mt-4">Check your notifications for details.</p>
           </div>
         </DialogContent>
       </Dialog>
@@ -177,18 +177,18 @@ export default function TicketPurchaseModal({ event, user, onClose, onSuccess })
       <Dialog open={!showPayment} onOpenChange={onClose}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-slate-800 flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-blue-600" />
+            <DialogTitle className="text-xl font-bold text-foreground flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-protocall-blue" />
               Purchase Ticket
             </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-6">
             {/* Event Summary */}
-            <div className="p-4 bg-slate-50 rounded-lg">
-              <h3 className="font-semibold text-slate-800 mb-2">{event.title}</h3>
+            <div className="p-4 bg-surface-2 rounded-lg">
+              <h3 className="font-semibold text-foreground mb-2">{event.title}</h3>
               
-              <div className="space-y-2 text-sm text-slate-600">
+              <div className="space-y-2 text-sm text-subtle">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
                   <span>{formatDate(event.event_date)}</span>
@@ -211,26 +211,26 @@ export default function TicketPurchaseModal({ event, user, onClose, onSuccess })
             {/* Price Breakdown */}
             <div className="p-4 border rounded-lg">
               <div className="flex justify-between items-center mb-2">
-                <span className="text-slate-600">Event Ticket</span>
+                <span className="text-subtle">Event Ticket</span>
                 <span className="font-medium">₹{(event.ticket_price || 0).toLocaleString()}</span>
               </div>
               
               <div className="flex justify-between items-center mb-2">
-                <span className="text-slate-600">Platform Fee</span>
+                <span className="text-subtle">Platform Fee</span>
                 <span className="font-medium">₹0</span>
               </div>
               
               <div className="border-t pt-2">
                 <div className="flex justify-between items-center">
-                  <span className="font-semibold text-slate-800">Total Amount</span>
-                  <span className="font-bold text-lg text-slate-800">₹{(event.ticket_price || 0).toLocaleString()}</span>
+                  <span className="font-semibold text-foreground">Total Amount</span>
+                  <span className="font-bold text-lg text-foreground">₹{(event.ticket_price || 0).toLocaleString()}</span>
                 </div>
               </div>
             </div>
 
             {/* Auto-RSVP Notice */}
-            <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-sm text-green-800 text-center">
+            <div className="p-3 bg-buy-muted border border-buy/30 rounded-lg">
+              <p className="text-sm text-buy-muted-foreground text-center">
                 ✅ After payment, your RSVP will be automatically set to <strong>"YES"</strong>
               </p>
             </div>
@@ -248,7 +248,7 @@ export default function TicketPurchaseModal({ event, user, onClose, onSuccess })
               
               <Button 
                 onClick={handlePurchase}
-                className="flex-1 bg-blue-600 hover:bg-blue-700"
+                className="flex-1 bg-protocall-blue hover:bg-protocall-blue"
                 disabled={isProcessing}
               >
                 {isProcessing ? (
@@ -265,7 +265,7 @@ export default function TicketPurchaseModal({ event, user, onClose, onSuccess })
             </div>
 
             {/* Terms & Conditions */}
-            <div className="text-xs text-slate-500 text-center">
+            <div className="text-xs text-muted-foreground text-center">
               By completing this purchase, you agree to our Terms of Service and Event Cancellation Policy.
             </div>
           </div>

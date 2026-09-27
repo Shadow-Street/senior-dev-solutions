@@ -18,13 +18,13 @@ export default function AlertsTable({
     }
 
     if (!alerts || alerts.length === 0) {
-        return <div className="text-center p-8 text-gray-500">{emptyMessage}</div>;
+        return <div className="text-center p-8 text-muted-foreground">{emptyMessage}</div>;
     }
 
     return (
         <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-                <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+                <thead className="text-xs text-subtle uppercase bg-surface-2">
                     <tr>
                         <th className="px-6 py-3">Alert Details</th>
                         <th className="px-6 py-3">Type &amp; Entity</th>
@@ -40,12 +40,12 @@ export default function AlertsTable({
                         const StatusIcon = statusConfig[alert.status]?.icon || Clock;
                         
                         return (
-                            <tr key={alert.id} className="bg-white border-b hover:bg-slate-50">
+                            <tr key={alert.id} className="bg-white border-b hover:bg-surface-2">
                                 <td className="px-6 py-4">
                                     <div>
                                         <div className="font-semibold">{alert.title}</div>
-                                        <div className="text-xs text-slate-500 mt-1">{alert.stock_symbol}</div>
-                                        <div className="text-xs text-slate-600 mt-1 max-w-xs">
+                                        <div className="text-xs text-muted-foreground mt-1">{alert.stock_symbol}</div>
+                                        <div className="text-xs text-subtle mt-1 max-w-xs">
                                             {alert.message?.substring(0, 100)}...
                                         </div>
                                     </div>
@@ -55,7 +55,7 @@ export default function AlertsTable({
                                     <Badge variant="outline" className="mr-2">
                                         {alert.entity_type}
                                     </Badge>
-                                    <div className="text-xs text-slate-500 mt-1">
+                                    <div className="text-xs text-muted-foreground mt-1">
                                         {alertTypeLabels[alert.alert_type]}
                                     </div>
                                 </td>
@@ -67,13 +67,13 @@ export default function AlertsTable({
                                 </td>
                                 
                                 <td className="px-6 py-4">
-                                    <Badge className={statusConfig[alert.status]?.color || 'bg-gray-100'}>
+                                    <Badge className={statusConfig[alert.status]?.color || 'bg-surface-2'}>
                                         <StatusIcon className="w-3 h-3 mr-1" />
                                         {alert.status}
                                     </Badge>
                                 </td>
                                 
-                                <td className="px-6 py-4 text-slate-500">
+                                <td className="px-6 py-4 text-muted-foreground">
                                     {new Date(alert.created_date).toLocaleDateString()}
                                     <div className="text-xs">
                                         {new Date(alert.created_date).toLocaleTimeString()}

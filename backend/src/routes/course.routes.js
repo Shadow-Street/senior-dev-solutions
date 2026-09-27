@@ -39,7 +39,7 @@ router.get('/category/:category', async (req, res) => {
 });
 
 // CRUD routes
-createCrudRoutes(router, courseController);
+// CRUD routes are registered at the bottom so '/:id' cannot shadow '/enrollments'.
 
 // Enrollments sub-routes
 const enrollmentRouter = express.Router();
@@ -95,5 +95,8 @@ enrollmentRouter.post('/enroll', authMiddleware, async (req, res) => {
 
 createCrudRoutes(enrollmentRouter, enrollmentController);
 router.use('/enrollments', enrollmentRouter);
+
+// CRUD LAST — '/:id' must not shadow the sub-routers mounted above.
+createCrudRoutes(router, courseController);
 
 module.exports = router;

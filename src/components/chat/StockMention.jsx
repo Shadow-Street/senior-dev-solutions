@@ -50,7 +50,7 @@ export default function StockMention({ symbol }) {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.2 }}
       >
-        <Card className="my-2 p-3 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
+        <Card className="my-2 p-3 bg-surface-2 border border-protocall-premium-light">
           <div className="flex items-center gap-3">
             <Skeleton className="h-12 w-12 rounded-lg" />
             <div className="flex-1">
@@ -65,7 +65,7 @@ export default function StockMention({ symbol }) {
 
   if (error || !stockData) {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-1 bg-slate-100 text-slate-700 rounded text-sm font-medium">
+      <span className="inline-flex items-center gap-1 px-2 py-1 bg-surface-2 text-subtle rounded text-sm font-medium">
         <BarChart3 className="w-3 h-3" />
         {symbol}
       </span>
@@ -80,13 +80,13 @@ export default function StockMention({ symbol }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
     >
-      <Card className="my-2 p-4 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 border-2 border-transparent hover:border-blue-300 hover:shadow-lg transition-all duration-300 group relative overflow-hidden">
+      <Card className="my-2 p-4 bg-surface-2 border-2 border-transparent hover:border-protocall-premium-light hover:shadow-lg transition-all duration-300 group relative overflow-hidden">
         {/* Animated gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 via-purple-400/10 to-pink-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-gradient-to-r from-protocall-blue/10 via-protocall-grape/10 to-protocall-grape/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         {/* Live indicator pulse */}
         <motion.div
-          className="absolute top-2 right-2 w-2 h-2 bg-green-500 rounded-full"
+          className="absolute top-2 right-2 w-2 h-2 bg-buy rounded-full"
           animate={{ scale: [1, 1.2, 1], opacity: [1, 0.5, 1] }}
           transition={{ duration: 2, repeat: Infinity }}
         />
@@ -94,7 +94,7 @@ export default function StockMention({ symbol }) {
         <div className="flex items-center gap-3 relative z-10">
           {/* Stock Icon with gradient */}
           <motion.div 
-            className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 via-purple-600 to-pink-600 flex items-center justify-center text-white font-bold text-base flex-shrink-0 shadow-md"
+            className="w-14 h-14 rounded-xl bg-gradient-to-br from-protocall-deep via-protocall-grape to-protocall-blue flex items-center justify-center text-white font-bold text-base flex-shrink-0 shadow-md"
             whileHover={{ scale: 1.05, rotate: 5 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
@@ -104,18 +104,18 @@ export default function StockMention({ symbol }) {
           {/* Stock Info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <h4 className="font-bold text-slate-900 text-base truncate">{stockData.symbol}</h4>
-              <Sparkles className="w-3 h-3 text-yellow-500" />
-              <span className="text-xs text-slate-500 truncate">{stockData.company_name || ''}</span>
+              <h4 className="font-bold text-foreground text-base truncate">{stockData.symbol}</h4>
+              <Sparkles className="w-3 h-3 text-hold" />
+              <span className="text-xs text-muted-foreground truncate">{stockData.company_name || ''}</span>
             </div>
             
             <div className="flex items-center gap-3">
-              <span className="font-bold text-xl text-slate-900">
+              <span className="font-bold text-xl text-foreground">
                 ₹{stockData.current_price?.toFixed(2) || 0}
               </span>
               <motion.div 
                 className={`flex items-center gap-1 px-2 py-1 rounded-full text-sm font-semibold ${
-                  isPositive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                  isPositive ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-sell-muted text-sell-muted-foreground'
                 }`}
                 animate={{ scale: [1, 1.05, 1] }}
                 transition={{ duration: 1, repeat: Infinity }}
@@ -134,7 +134,7 @@ export default function StockMention({ symbol }) {
             >
               <Button 
                 size="sm" 
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-md"
+                className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white border-0 shadow-md"
               >
                 <ExternalLink className="w-4 h-4 mr-1" />
                 View

@@ -168,8 +168,8 @@ export default function FinfluencerLayout({ children, activePage }) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <p className="text-subtle">Loading...</p>
         </div>
       </div>
     );
@@ -302,7 +302,7 @@ export default function FinfluencerLayout({ children, activePage }) {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <div className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-sidebar-accent cursor-pointer transition-colors">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                       {user.profile_image_url ? (
                         <img src={user.profile_image_url} alt={user.display_name} className="w-10 h-10 rounded-full object-cover" />
                       ) : (
@@ -323,7 +323,7 @@ export default function FinfluencerLayout({ children, activePage }) {
                       Profile Settings
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-red-600">
+                  <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-sell-muted-foreground">
                     <LogOut className="w-4 h-4" />
                     Logout
                   </DropdownMenuItem>
@@ -334,18 +334,18 @@ export default function FinfluencerLayout({ children, activePage }) {
         </div>
 
         <div className="flex-1 flex flex-col overflow-hidden h-screen">
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-blue-100 px-8 py-4 flex-shrink-0">
+          <div className="bg-surface-2 border-b border-protocall-premium-light px-8 py-4 flex-shrink-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                  <Star className="w-5 h-5 text-blue-600" />
+                <div className="w-8 h-8 rounded-lg bg-premium-muted flex items-center justify-center">
+                  <Star className="w-5 h-5 text-protocall-blue" />
                 </div>
-                <span className="font-bold text-base text-blue-900">Finfluencer Portal</span>
+                <span className="font-bold text-base text-protocall-blue">Finfluencer Portal</span>
               </div>
               <Link to={createPageUrl('Dashboard')}>
                 <Button 
                   variant="outline" 
-                  className="bg-white hover:bg-gray-50 border-blue-200 text-blue-700 hover:text-blue-900 font-semibold shadow-sm hover:shadow-md transition-all"
+                  className="bg-white hover:bg-surface-2 border-protocall-premium-light text-protocall-blue hover:text-protocall-blue font-semibold shadow-sm hover:shadow-md transition-all"
                 >
                   <Home className="w-4 h-4 mr-2" />
                   Go to Main Dashboard
@@ -354,28 +354,28 @@ export default function FinfluencerLayout({ children, activePage }) {
             </div>
           </div>
 
-          <div className="bg-white border-b border-gray-200 px-8 py-5 flex items-center justify-between flex-shrink-0">
+          <div className="bg-white border-b border-border px-8 py-5 flex items-center justify-between flex-shrink-0">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-1">
+              <h1 className="text-2xl font-bold text-foreground mb-1">
                 {finfluencerNavItems.find(item => item.matchPattern(location.pathname, location.search))?.title ||
                  organizerNavItems.find(item => item.matchPattern(location.pathname, location.search))?.title ||
                  'Finfluencer Dashboard'}
               </h1>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-subtle">
                 {finfluencerNavItems.find(item => item.matchPattern(location.pathname, location.search))?.description ||
                  organizerNavItems.find(item => item.matchPattern(location.pathname, location.search))?.description ||
                  'Manage your content and followers'}
               </p>
             </div>
             {user && (
-              <Badge className="bg-green-100 text-green-800 border-green-200 px-4 py-2 text-sm font-semibold">
+              <Badge className="bg-buy-muted text-buy-muted-foreground border-buy/30 px-4 py-2 text-sm font-semibold">
                 <Star className="w-4 h-4 mr-2" />
                 Verified Creator
               </Badge>
             )}
           </div>
           
-          <div className="flex-1 overflow-y-auto bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+          <div className="flex-1 overflow-y-auto bg-surface-2">
             {children}
           </div>
         </div>

@@ -160,11 +160,11 @@ export default function FeatureHubContent({ user }) {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'live': return 'bg-green-100 text-green-800 border-green-300';
-      case 'partial': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'placeholder': return 'bg-purple-100 text-purple-800 border-purple-300';
-      case 'deprecated': return 'bg-red-100 text-red-800 border-red-300';
-      default: return 'bg-gray-100 text-gray-800 border-gray-300';
+      case 'live': return 'bg-buy-muted text-buy-muted-foreground border-buy/30';
+      case 'partial': return 'bg-hold-muted text-hold-muted-foreground border-hold/30';
+      case 'placeholder': return 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light';
+      case 'deprecated': return 'bg-sell-muted text-sell-muted-foreground border-sell/30';
+      default: return 'bg-surface-2 text-foreground border-border';
     }
   };
 
@@ -194,7 +194,7 @@ export default function FeatureHubContent({ user }) {
               {getStatusLabel(feature.status)}
             </Badge>
             {feature.visible_to_users && (
-              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300">
+              <Badge variant="outline" className="bg-premium-muted text-protocall-blue border-protocall-premium-light">
                 <Eye className="w-3 h-3 mr-1" />
                 Visible
               </Badge>
@@ -203,16 +203,16 @@ export default function FeatureHubContent({ user }) {
 
           {/* Feature Icon & Info */}
           <div className="mb-4 mt-6">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center mb-3">
-              <IconComponent className="w-6 h-6 text-purple-600" />
+            <div className="w-12 h-12 bg-surface-2 rounded-xl flex items-center justify-center mb-3">
+              <IconComponent className="w-6 h-6 text-protocall-premium-text" />
             </div>
-            <h3 className="font-bold text-lg text-slate-900 mb-1">{feature.feature_name}</h3>
-            <p className="text-sm text-slate-600 line-clamp-2">{feature.description}</p>
+            <h3 className="font-bold text-lg text-foreground mb-1">{feature.feature_name}</h3>
+            <p className="text-sm text-subtle line-clamp-2">{feature.description}</p>
           </div>
 
           {/* Release Info */}
           {(feature.release_quarter || feature.release_date) && (
-            <div className="flex items-center gap-2 text-xs text-slate-500 mb-3">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
               <Calendar className="w-3 h-3" />
               <span>{feature.release_quarter || feature.release_date}</span>
             </div>
@@ -220,7 +220,7 @@ export default function FeatureHubContent({ user }) {
 
           {/* Priority Badge */}
           {feature.priority > 0 && (
-            <div className="flex items-center gap-2 text-xs text-orange-600 mb-3">
+            <div className="flex items-center gap-2 text-xs text-hold-muted-foreground mb-3">
               <Flag className="w-3 h-3" />
               <span>Priority: {feature.priority}</span>
             </div>
@@ -247,7 +247,7 @@ export default function FeatureHubContent({ user }) {
             <Button
               size="sm"
               variant="outline"
-              className="text-red-600 hover:bg-red-50"
+              className="text-sell-muted-foreground hover:bg-sell-muted"
               onClick={(e) => handleDeleteClick(e, feature)}
             >
               <Trash2 className="w-4 h-4" />
@@ -263,7 +263,7 @@ export default function FeatureHubContent({ user }) {
     
     if (tierFeatures.length === 0) {
       return (
-        <div className="text-center py-12 text-slate-500">
+        <div className="text-center py-12 text-muted-foreground">
           <p>No features defined for this tier yet.</p>
           <Button
             onClick={() => {
@@ -291,7 +291,7 @@ export default function FeatureHubContent({ user }) {
 
     if (disabledFeatures.length === 0) {
       return (
-        <div className="text-center py-12 text-slate-500">
+        <div className="text-center py-12 text-muted-foreground">
           <p>No features are currently hidden from users.</p>
           <Button
             onClick={() => {
@@ -318,8 +318,8 @@ export default function FeatureHubContent({ user }) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading features...</p>
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-subtle">Loading features...</p>
         </div>
       </div>
     );
@@ -335,25 +335,25 @@ export default function FeatureHubContent({ user }) {
   return (
     <div className="space-y-6">
       {/* Admin Header */}
-      <Card className="border-0 shadow-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+      <Card className="border-0 shadow-xl bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <Shield className="w-6 h-6" />
-                <Badge className="bg-yellow-500 text-yellow-900 border-0">
+                <Badge className="bg-hold text-hold-foreground border-0">
                   SuperAdmin Only
                 </Badge>
               </div>
               <CardTitle className="text-3xl font-bold mb-2">Feature Hub & Roadmap Manager</CardTitle>
-              <p className="text-blue-100">Manage and visualize all platform features across subscription tiers</p>
+              <p className="text-white/80">Manage and visualize all platform features across subscription tiers</p>
             </div>
             <Button
               onClick={() => {
                 setEditingFeature(null);
                 setShowEditModal(true);
               }}
-              className="bg-white text-purple-600 hover:bg-blue-50"
+              className="bg-white text-protocall-premium-text hover:bg-premium-muted"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add New Feature
@@ -368,10 +368,10 @@ export default function FeatureHubContent({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Total Features</p>
-                <p className="text-3xl font-bold text-slate-900">{stats.total}</p>
+                <p className="text-sm text-muted-foreground">Total Features</p>
+                <p className="text-3xl font-bold text-foreground">{stats.total}</p>
               </div>
-              <Sparkles className="w-12 h-12 text-purple-600" />
+              <Sparkles className="w-12 h-12 text-protocall-premium-text" />
             </div>
           </CardContent>
         </Card>
@@ -380,10 +380,10 @@ export default function FeatureHubContent({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Live Features</p>
-                <p className="text-3xl font-bold text-green-600">{stats.live}</p>
+                <p className="text-sm text-muted-foreground">Live Features</p>
+                <p className="text-3xl font-bold text-buy-muted-foreground">{stats.live}</p>
               </div>
-              <CheckCircle className="w-12 h-12 text-green-600" />
+              <CheckCircle className="w-12 h-12 text-buy-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -392,10 +392,10 @@ export default function FeatureHubContent({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Coming Soon</p>
-                <p className="text-3xl font-bold text-purple-600">{stats.comingSoon}</p>
+                <p className="text-sm text-muted-foreground">Coming Soon</p>
+                <p className="text-3xl font-bold text-protocall-premium-text">{stats.comingSoon}</p>
               </div>
-              <Sparkles className="w-12 h-12 text-purple-600" />
+              <Sparkles className="w-12 h-12 text-protocall-premium-text" />
             </div>
           </CardContent>
         </Card>
@@ -404,10 +404,10 @@ export default function FeatureHubContent({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Partial</p>
-                <p className="text-3xl font-bold text-yellow-600">{stats.partial}</p>
+                <p className="text-sm text-muted-foreground">Partial</p>
+                <p className="text-3xl font-bold text-hold-muted-foreground">{stats.partial}</p>
               </div>
-              <AlertCircle className="w-12 h-12 text-yellow-600" />
+              <AlertCircle className="w-12 h-12 text-hold-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -417,7 +417,7 @@ export default function FeatureHubContent({ user }) {
       <Card className="border-0 shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-purple-600" />
+            <Sparkles className="w-5 h-5 text-protocall-premium-text" />
             Feature & Module Management
           </CardTitle>
         </CardHeader>
@@ -426,7 +426,7 @@ export default function FeatureHubContent({ user }) {
             <TabsList className="grid w-full grid-cols-4 bg-transparent p-1 rounded-xl gap-2 mb-6">
               <TabsTrigger
                 value="basic"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
               >
                 <Users className="w-4 h-4" />
                 Basic Features
@@ -434,7 +434,7 @@ export default function FeatureHubContent({ user }) {
 
               <TabsTrigger
                 value="premium"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
               >
                 <Crown className="w-4 h-4" /> {/* Changed from Star to Crown as per outline */}
                 Premium Features
@@ -442,7 +442,7 @@ export default function FeatureHubContent({ user }) {
 
               <TabsTrigger
                 value="vip"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
               >
                 <Gem className="w-4 h-4" /> {/* Changed from Crown to Gem as per outline */}
                 VIP Elite Features
@@ -450,7 +450,7 @@ export default function FeatureHubContent({ user }) {
 
               <TabsTrigger
                 value="disabled"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
               >
                 <EyeOff className="w-4 h-4" />
                 Disabled
@@ -460,8 +460,8 @@ export default function FeatureHubContent({ user }) {
             <TabsContent value="basic" className="space-y-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">Basic Features</h3>
-                  <p className="text-slate-600">Core features available to all community members</p>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Basic Features</h3>
+                  <p className="text-subtle">Core features available to all community members</p>
                 </div>
                 <Button
                   onClick={() => {
@@ -480,8 +480,8 @@ export default function FeatureHubContent({ user }) {
             <TabsContent value="premium" className="space-y-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">Premium Features</h3>
-                  <p className="text-slate-600">Advanced features for serious retail traders</p>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Premium Features</h3>
+                  <p className="text-subtle">Advanced features for serious retail traders</p>
                 </div>
                 <Button
                   onClick={() => {
@@ -500,8 +500,8 @@ export default function FeatureHubContent({ user }) {
             <TabsContent value="vip" className="space-y-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">VIP Elite Features</h3>
-                  <p className="text-slate-600">Ultimate package for professional traders</p>
+                  <h3 className="text-xl font-bold text-foreground mb-2">VIP Elite Features</h3>
+                  <p className="text-subtle">Ultimate package for professional traders</p>
                 </div>
                 <Button
                   onClick={() => {
@@ -520,8 +520,8 @@ export default function FeatureHubContent({ user }) {
             <TabsContent value="disabled" className="space-y-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">Disabled Features</h3>
-                  <p className="text-slate-600">Features currently hidden from users</p>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Disabled Features</h3>
+                  <p className="text-subtle">Features currently hidden from users</p>
                 </div>
                 <Button
                   onClick={() => {

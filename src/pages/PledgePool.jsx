@@ -42,10 +42,10 @@ export default function PledgePool() {
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center min-h-[calc(100vh-200px)] bg-gray-50">
+            <div className="flex items-center justify-center min-h-[60vh] bg-surface-2">
                 <div className="text-center">
-                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
-                    <p className="text-gray-600">Loading Your Pledges...</p>
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-protocall-blue" />
+                    <p className="text-subtle">Loading Your Pledges...</p>
                 </div>
             </div>
         );
@@ -53,10 +53,10 @@ export default function PledgePool() {
 
     if (!user) {
          return (
-            <div className="flex items-center justify-center min-h-[calc(100vh-200px)] bg-gray-50">
+            <div className="flex items-center justify-center min-h-[60vh] bg-surface-2">
                 <div className="text-center p-8 bg-white rounded-xl shadow-md">
-                    <h2 className="text-xl font-semibold text-gray-800">Authentication Required</h2>
-                    <p className="text-gray-600 mt-2">Please log in to manage and view your pledges.</p>
+                    <h2 className="text-xl font-semibold text-foreground">Authentication Required</h2>
+                    <p className="text-subtle mt-2">Please log in to manage and view your pledges.</p>
                 </div>
             </div>
         );
@@ -75,13 +75,13 @@ export default function PledgePool() {
             description="Join collective trading sessions and execute trades together with the community. Upgrade to Premium or VIP to unlock Pledge Pool access."
             variant="full"
         >
-            <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-full">
+            <div className="p-4 sm:p-6 lg:p-8 bg-surface-2 min-h-full">
                 <div className="mb-6">
                     <div className="flex items-center gap-3 mb-2">
-                        <Wallet className="w-8 h-8 text-blue-600" />
-                        <h1 className="text-3xl font-bold text-gray-900">Pledge Pool</h1>
+                        <Wallet className="w-8 h-8 text-protocall-blue" />
+                        <h1 className="text-3xl font-bold text-foreground">Pledge Pool</h1>
                     </div>
-                    <p className="text-gray-600 text-sm ml-11">
+                    <p className="text-subtle text-sm ml-11">
                         Coordinate your trading with the community through secure pledge sessions
                     </p>
                 </div>

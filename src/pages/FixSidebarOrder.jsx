@@ -125,8 +125,8 @@ export default function FixSidebarOrderPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="min-h-screen bg-surface-2 p-6 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
       </div>
     );
   }
@@ -134,12 +134,12 @@ export default function FixSidebarOrderPage() {
   // Check if user is admin
   if (user && !['admin', 'super_admin'].includes(user.app_role)) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-2 p-6 flex items-center justify-center">
         <Card className="max-w-md">
           <CardContent className="pt-6">
-            <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+            <AlertTriangle className="w-12 h-12 text-sell mx-auto mb-4" />
             <h2 className="text-xl font-bold text-center mb-2">Access Denied</h2>
-            <p className="text-gray-600 text-center">This page is for administrators only.</p>
+            <p className="text-subtle text-center">This page is for administrators only.</p>
           </CardContent>
         </Card>
       </div>
@@ -167,10 +167,10 @@ export default function FixSidebarOrderPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-surface-2 p-6">
       <div className="max-w-4xl mx-auto space-y-6">
-        <Card className="border-2 border-blue-200">
-          <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+        <Card className="border-2 border-protocall-premium-light">
+          <CardHeader className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
             <CardTitle className="text-2xl flex items-center gap-2">
               <RefreshCw className="w-6 h-6" />
               Fix Sidebar Order
@@ -179,21 +179,21 @@ export default function FixSidebarOrderPage() {
           <CardContent className="pt-6">
             <div className="space-y-4">
               {/* Status */}
-              <div className={`p-4 rounded-lg flex items-center gap-3 ${isCorrectOrder ? 'bg-green-50 border-2 border-green-200' : 'bg-red-50 border-2 border-red-200'}`}>
+              <div className={`p-4 rounded-lg flex items-center gap-3 ${isCorrectOrder ? 'bg-buy-muted border-2 border-buy/30' : 'bg-sell-muted border-2 border-sell/30'}`}>
                 {isCorrectOrder ? (
                   <>
-                    <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />
+                    <CheckCircle className="w-6 h-6 text-buy-muted-foreground flex-shrink-0" />
                     <div>
-                      <p className="font-semibold text-green-900">✅ Sidebar is in correct order!</p>
-                      <p className="text-sm text-green-700">No action needed.</p>
+                      <p className="font-semibold text-buy-muted-foreground">✅ Sidebar is in correct order!</p>
+                      <p className="text-sm text-buy-muted-foreground">No action needed.</p>
                     </div>
                   </>
                 ) : (
                   <>
-                    <AlertTriangle className="w-6 h-6 text-red-600 flex-shrink-0" />
+                    <AlertTriangle className="w-6 h-6 text-sell-muted-foreground flex-shrink-0" />
                     <div>
-                      <p className="font-semibold text-red-900">❌ Sidebar is out of order!</p>
-                      <p className="text-sm text-red-700">Click the button below to fix it automatically.</p>
+                      <p className="font-semibold text-sell-muted-foreground">❌ Sidebar is out of order!</p>
+                      <p className="text-sm text-sell-muted-foreground">Click the button below to fix it automatically.</p>
                     </div>
                   </>
                 )}
@@ -202,11 +202,11 @@ export default function FixSidebarOrderPage() {
               {/* Current vs Target Order */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white p-4 rounded-lg border">
-                  <h3 className="font-semibold mb-3 text-red-600">❌ Current Order:</h3>
+                  <h3 className="font-semibold mb-3 text-sell-muted-foreground">❌ Current Order:</h3>
                   <ol className="space-y-1 text-sm">
                     {combinedItems.slice(0, 11).map((item, index) => (
                       <li key={item.id} className="flex items-center gap-2">
-                        <span className="text-gray-500">{index + 1}.</span>
+                        <span className="text-muted-foreground">{index + 1}.</span>
                         <span>{item.name}</span>
                         <Badge variant="outline" className="ml-auto text-xs">
                           {item.sort_order || '?'}
@@ -216,12 +216,12 @@ export default function FixSidebarOrderPage() {
                   </ol>
                 </div>
 
-                <div className="bg-white p-4 rounded-lg border border-green-200">
-                  <h3 className="font-semibold mb-3 text-green-600">✅ Target Order:</h3>
+                <div className="bg-white p-4 rounded-lg border border-buy/30">
+                  <h3 className="font-semibold mb-3 text-buy-muted-foreground">✅ Target Order:</h3>
                   <ol className="space-y-1 text-sm">
                     {targetOrder.map((name, index) => (
                       <li key={name} className="flex items-center gap-2">
-                        <span className="text-gray-500">{index + 1}.</span>
+                        <span className="text-muted-foreground">{index + 1}.</span>
                         <span className="font-medium">{name}</span>
                       </li>
                     ))}
@@ -234,7 +234,7 @@ export default function FixSidebarOrderPage() {
                 <Button
                   onClick={handleFix}
                   disabled={isFixing || isFixed}
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-6 text-lg"
+                  className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white py-6 text-lg"
                 >
                   {isFixing ? (
                     <>

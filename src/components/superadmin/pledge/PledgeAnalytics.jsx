@@ -196,7 +196,7 @@ export default function PledgeAnalytics({ user, sessions, pledges, executions, i
                 <div>
                     <p className="text-sm font-medium text-white/80">{title}</p>
                     <p className="text-3xl font-bold">{value}</p>
-                    {subtitle && <p className="text-xs text-white/70 mt-1">{subtitle}</p>}
+                    {subtitle && <p className="text-xs text-white/80 mt-1">{subtitle}</p>}
                     {trend && <p className="text-xs text-white/90 mt-1 flex items-center gap-1">
                         <TrendingUp className="w-3 h-3" /> {trend}
                     </p>}
@@ -214,9 +214,9 @@ export default function PledgeAnalytics({ user, sessions, pledges, executions, i
         return (
             <div className="flex items-center justify-center p-12">
                 <div className="text-center">
-                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
-                    <p className="text-lg font-medium text-gray-700">Loading analytics data...</p>
-                    <p className="text-sm text-gray-500">Calculating comprehensive statistics</p>
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-protocall-blue" />
+                    <p className="text-lg font-medium text-subtle">Loading analytics data...</p>
+                    <p className="text-sm text-muted-foreground">Calculating comprehensive statistics</p>
                 </div>
             </div>
         );
@@ -231,42 +231,42 @@ export default function PledgeAnalytics({ user, sessions, pledges, executions, i
                     value={analytics.totalSessions}
                     subtitle={`${analytics.activeSessions} active sessions`}
                     icon={Target}
-                    gradient="from-blue-500 to-blue-600"
+                    gradient="from-protocall-deep to-protocall-blue"
                 />
                 <StatsCard
                     title="Pledge Value"
                     value={`₹${(analytics.totalPledgeValue / 1000).toFixed(0)}k`}
                     subtitle="Total pledged amount"
                     icon={DollarSign}
-                    gradient="from-green-500 to-emerald-600"
+                    gradient="from-buy to-buy-soft"
                 />
                 <StatsCard
                     title="Execution Value"
                     value={`₹${(analytics.totalExecutionValue / 1000).toFixed(0)}k`}
                     subtitle="Successfully executed"
                     icon={Activity}
-                    gradient="from-purple-500 to-purple-600"
+                    gradient="from-protocall-deep to-protocall-blue"
                 />
                 <StatsCard
                     title="Participation Rate"
                     value={`${analytics.participationRate}%`}
                     subtitle="User engagement"
                     icon={Users}
-                    gradient="from-cyan-500 to-blue-600"
+                    gradient="from-protocall-deep to-protocall-blue"
                 />
                 <StatsCard
                     title="Success Rate"
                     value={`${analytics.successRate}%`}
                     subtitle="Execution success"
                     icon={TrendingUp}
-                    gradient="from-orange-500 to-red-500"
+                    gradient="from-hold to-sell"
                 />
                 <StatsCard
                     title="Total Users"
                     value={pledges && pledges.length > 0 ? new Set(pledges.map(p => p.user_id)).size : 0}
                     subtitle="Unique participants"
                     icon={Users}
-                    gradient="from-pink-500 to-rose-600"
+                    gradient="from-protocall-deep to-sell"
                 />
                 {/* New Financial Metrics Cards */}
                 <StatsCard
@@ -274,21 +274,21 @@ export default function PledgeAnalytics({ user, sessions, pledges, executions, i
                     value={`₹${(analytics.totalCommissionEarned / 1000).toFixed(2)}k`}
                     subtitle="Total commission from executions"
                     icon={DollarSign}
-                    gradient="from-yellow-500 to-amber-600"
+                    gradient="from-hold to-hold"
                 />
                 <StatsCard
                     title="Convenience Fees"
                     value={`₹${(analytics.totalConvenienceFees / 1000).toFixed(2)}k`}
                     subtitle="Total fees collected from pledges"
                     icon={DollarSign}
-                    gradient="from-lime-500 to-green-600"
+                    gradient="from-buy to-buy-soft"
                 />
                 <StatsCard
                     title="Total Revenue"
                     value={`₹${(analytics.totalRevenue / 1000).toFixed(2)}k`}
                     subtitle="Commission + Convenience Fees"
                     icon={DollarSign}
-                    gradient="from-indigo-500 to-purple-700"
+                    gradient="from-protocall-deep to-protocall-blue"
                 />
             </div>
 
@@ -298,7 +298,7 @@ export default function PledgeAnalytics({ user, sessions, pledges, executions, i
                 <Card className="shadow-lg border-0 bg-white">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <PieChart className="w-5 h-5 text-purple-600" />
+                            <PieChart className="w-5 h-5 text-protocall-premium-text" />
                             Session Mode Distribution
                         </CardTitle>
                     </CardHeader>
@@ -324,8 +324,8 @@ export default function PledgeAnalytics({ user, sessions, pledges, executions, i
                                 </RechartsPieChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="text-center py-12 text-gray-500">
-                                <PieChart className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                            <div className="text-center py-12 text-muted-foreground">
+                                <PieChart className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
                                 No session data available in the database.
                             </div>
                         )}
@@ -336,7 +336,7 @@ export default function PledgeAnalytics({ user, sessions, pledges, executions, i
                 <Card className="shadow-lg border-0 bg-white">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <BarChart3 className="w-5 h-5 text-green-600" />
+                            <BarChart3 className="w-5 h-5 text-buy-muted-foreground" />
                             Top Pledged Stocks
                         </CardTitle>
                     </CardHeader>
@@ -348,12 +348,12 @@ export default function PledgeAnalytics({ user, sessions, pledges, executions, i
                                     <XAxis dataKey="stock" />
                                     <YAxis />
                                     <Tooltip formatter={(value) => [`₹${value.toLocaleString()}`, 'Pledge Value']} />
-                                    <Bar dataKey="value" fill="#10B981" radius={[4, 4, 0, 0]} />
+                                    <Bar dataKey="value" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
                                 </BarChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="text-center py-12 text-gray-500">
-                                <BarChart3 className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                            <div className="text-center py-12 text-muted-foreground">
+                                <BarChart3 className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
                                 No pledge data available in the database.
                             </div>
                         )}
@@ -364,7 +364,7 @@ export default function PledgeAnalytics({ user, sessions, pledges, executions, i
                 <Card className="shadow-lg border-0 bg-white">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <Activity className="w-5 h-5 text-blue-600" />
+                            <Activity className="w-5 h-5 text-protocall-blue" />
                             Execution Trend
                         </CardTitle>
                     </CardHeader>
@@ -379,12 +379,12 @@ export default function PledgeAnalytics({ user, sessions, pledges, executions, i
                                         name === 'value' ? `₹${value.toLocaleString()}` : value,
                                         name === 'value' ? 'Execution Value' : 'Executions'
                                     ]} />
-                                    <Line type="monotone" dataKey="executions" stroke="#3B82F6" strokeWidth={3} />
+                                    <Line type="monotone" dataKey="executions" stroke="hsl(var(--chart-1))" strokeWidth={3} />
                                 </LineChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="text-center py-12 text-gray-500">
-                                <Activity className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                            <div className="text-center py-12 text-muted-foreground">
+                                <Activity className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
                                 No execution data available in the database.
                             </div>
                         )}
@@ -395,7 +395,7 @@ export default function PledgeAnalytics({ user, sessions, pledges, executions, i
                 <Card className="shadow-lg border-0 bg-white">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <Users className="w-5 h-5 text-cyan-600" />
+                            <Users className="w-5 h-5 text-protocall-blue" />
                             Participation Trend
                         </CardTitle>
                     </CardHeader>
@@ -408,13 +408,13 @@ export default function PledgeAnalytics({ user, sessions, pledges, executions, i
                                     <YAxis />
                                     <Tooltip />
                                     <Legend />
-                                    <Bar dataKey="sessions" fill="#8B5CF6" name="Sessions" />
-                                    <Bar dataKey="pledges" fill="#10B981" name="Pledges" />
+                                    <Bar dataKey="sessions" fill="hsl(var(--primary))" name="Sessions" />
+                                    <Bar dataKey="pledges" fill="hsl(var(--chart-2))" name="Pledges" />
                                 </BarChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="text-center py-12 text-gray-500">
-                                <Users className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                            <div className="text-center py-12 text-muted-foreground">
+                                <Users className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
                                 No participation data available in the database.
                             </div>
                         )}

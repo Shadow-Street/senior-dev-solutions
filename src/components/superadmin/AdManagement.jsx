@@ -41,20 +41,20 @@ import { format } from 'date-fns';
 import CreateCampaignForm from '../vendor/CreateCampaignForm';
 
 const statusConfig = {
-  pending: { label: 'Pending', icon: Clock, color: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
-  active: { label: 'Active', icon: PlayCircle, color: 'bg-green-100 text-green-800 border-green-200' },
-  rejected: { label: 'Rejected', icon: XCircle, color: 'bg-red-100 text-red-800 border-red-200' },
-  paused: { label: 'Paused', icon: PauseCircle, color: 'bg-gray-100 text-gray-800 border-gray-200' },
-  expired: { label: 'Expired', icon: AlertTriangle, color: 'bg-blue-100 text-blue-800 border-blue-200' },
-  completed: { label: 'Completed', icon: CheckCircle, color: 'bg-purple-100 text-purple-800 border-purple-200' },
-  budget_exhausted: { label: 'Budget Exhausted', icon: AlertTriangle, color: 'bg-orange-100 text-orange-800 border-orange-200' }
+  pending: { label: 'Pending', icon: Clock, color: 'bg-hold-muted text-hold-muted-foreground border-hold/30' },
+  active: { label: 'Active', icon: PlayCircle, color: 'bg-buy-muted text-buy-muted-foreground border-buy/30' },
+  rejected: { label: 'Rejected', icon: XCircle, color: 'bg-sell-muted text-sell-muted-foreground border-sell/30' },
+  paused: { label: 'Paused', icon: PauseCircle, color: 'bg-surface-2 text-foreground border-border' },
+  expired: { label: 'Expired', icon: AlertTriangle, color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light' },
+  completed: { label: 'Completed', icon: CheckCircle, color: 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light' },
+  budget_exhausted: { label: 'Budget Exhausted', icon: AlertTriangle, color: 'bg-hold-muted text-hold-muted-foreground border-hold/30' }
 };
 
 const billingStatusConfig = {
-  pending: { label: 'Pending', color: 'bg-yellow-100 text-yellow-800' },
-  paid: { label: 'Paid', color: 'bg-green-100 text-green-800' },
-  failed: { label: 'Failed', color: 'bg-red-100 text-red-800' },
-  refunded: { label: 'Refunded', color: 'bg-gray-100 text-gray-800' }
+  pending: { label: 'Pending', color: 'bg-hold-muted text-hold-muted-foreground' },
+  paid: { label: 'Paid', color: 'bg-buy-muted text-buy-muted-foreground' },
+  failed: { label: 'Failed', color: 'bg-sell-muted text-sell-muted-foreground' },
+  refunded: { label: 'Refunded', color: 'bg-surface-2 text-foreground' }
 };
 
 // Edit Campaign Period Modal Component
@@ -139,7 +139,7 @@ function EditCampaignPeriodModal({ campaign, isOpen, onClose, onSave }) {
           <Button variant="outline" onClick={onClose} disabled={isSaving}>
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={isSaving} className="bg-black hover:bg-gray-800">
+          <Button onClick={handleSave} disabled={isSaving} className="bg-black hover:bg-protocall-ink">
             {isSaving ? 'Saving...' : 'Save Changes'}
           </Button>
         </DialogFooter>
@@ -221,7 +221,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Megaphone className="w-5 h-5 text-blue-600" />
+            <Megaphone className="w-5 h-5 text-protocall-blue" />
             Campaign Review: {campaign.title}
           </DialogTitle>
           <DialogDescription>
@@ -245,7 +245,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
                   />
                 </div>
               ) : (
-                <div className="h-32 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500">
+                <div className="h-32 bg-surface-2 rounded-lg flex items-center justify-center text-muted-foreground">
                   No creative uploaded
                 </div>
               )}
@@ -262,7 +262,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
                 <p><strong>Vendor:</strong> {campaign.vendor?.company_name || 'Unknown'}</p>
                 <p><strong>Description:</strong> {campaign.description || 'No description'}</p>
                 <p><strong>CTA Link:</strong> 
-                  <a href={campaign.cta_link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline ml-1 break-all">
+                  <a href={campaign.cta_link} target="_blank" rel="noopener noreferrer" className="text-protocall-premium-light hover:underline ml-1 break-all">
                     {campaign.cta_link}
                   </a>
                 </p>
@@ -289,13 +289,13 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
                 )}
                 
                 {['weekly', 'monthly'].includes(campaign.billing_model) && (
-                  <div className="p-3 bg-slate-50 rounded border">
+                  <div className="p-3 bg-surface-2 rounded border">
                     <div className="flex justify-between"><span>Base Fee:</span> <span>₹{billingInfo.baseFee.toFixed(2)}</span></div>
                     {billingInfo.hasPremiumPlacements && (
-                      <div className="flex justify-between text-amber-600"><span>Surcharge (5%):</span> <span>+₹{billingInfo.surcharge.toFixed(2)}</span></div>
+                      <div className="flex justify-between text-hold-muted-foreground"><span>Surcharge (5%):</span> <span>+₹{billingInfo.surcharge.toFixed(2)}</span></div>
                     )}
                     <div className="flex justify-between font-bold border-t pt-2 mt-2">
-                      <span>Total:</span> <span className="text-green-600">₹{billingInfo.totalFee.toFixed(2)}</span>
+                      <span>Total:</span> <span className="text-buy-muted-foreground">₹{billingInfo.totalFee.toFixed(2)}</span>
                     </div>
                   </div>
                 )}
@@ -324,11 +324,11 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
 
           {/* Previous Rejection Reason */}
           {campaign.status === 'rejected' && campaign.rejection_reason && (
-            <Card className="bg-red-50 border-red-200">
+            <Card className="bg-sell-muted border-sell/30">
               <CardHeader>
-                <CardTitle className="text-base text-red-800">Rejection Reason</CardTitle>
+                <CardTitle className="text-base text-sell-muted-foreground">Rejection Reason</CardTitle>
               </CardHeader>
-              <CardContent className="text-sm text-red-700">
+              <CardContent className="text-sm text-sell-muted-foreground">
                 <p>{campaign.rejection_reason}</p>
               </CardContent>
             </Card>
@@ -351,7 +351,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
                 {isProcessing ? 'Processing...' : 'Reject'}
               </Button>
               <Button 
-                className="bg-green-600 hover:bg-green-700" 
+                className="bg-buy hover:bg-buy" 
                 onClick={() => handleAction('approve')}
                 disabled={isProcessing}
               >
@@ -374,7 +374,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
           
           {campaign.status === 'paused' && (
             <Button 
-              className="bg-green-600 hover:bg-green-700" 
+              className="bg-buy hover:bg-buy" 
               onClick={() => handleAction('resume')}
               disabled={isProcessing}
             >
@@ -643,8 +643,8 @@ export default function AdManagement({ user }) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading Ad Management...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <p className="text-subtle">Loading Ad Management...</p>
         </div>
       </div>
     );
@@ -658,14 +658,14 @@ export default function AdManagement({ user }) {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-2xl flex items-center gap-2">
-                <Megaphone className="w-6 h-6 text-blue-600" />
+                <Megaphone className="w-6 h-6 text-protocall-blue" />
                 Ad Campaign Management
               </CardTitle>
-              <p className="text-slate-600 mt-1">Manage vendor ad campaigns and track performance</p>
+              <p className="text-subtle mt-1">Manage vendor ad campaigns and track performance</p>
             </div>
             <Button
               onClick={handleCreateCampaign}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
             >
               <PlusCircle className="w-4 h-4 mr-2" />
               Create Admin Campaign
@@ -676,11 +676,11 @@ export default function AdManagement({ user }) {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-green-500 to-emerald-600 text-white">
+        <Card className="shadow-lg border-0 bg-buy-soft text-buy-foreground">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-100 text-sm font-medium">Total Revenue</p>
+                <p className="text-protocall-ink/75 text-sm font-medium">Total Revenue</p>
                 <p className="text-3xl font-bold mt-2">₹{(stats.totalRevenue / 1000).toFixed(1)}k</p>
               </div>
               <DollarSign className="w-12 h-12 opacity-20" />
@@ -688,11 +688,11 @@ export default function AdManagement({ user }) {
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-500 to-cyan-600 text-white">
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-100 text-sm font-medium">Active Campaigns</p>
+                <p className="text-white/80 text-sm font-medium">Active Campaigns</p>
                 <p className="text-3xl font-bold mt-2">{stats.activeCampaigns}</p>
               </div>
               <Activity className="w-12 h-12 opacity-20" />
@@ -700,11 +700,11 @@ export default function AdManagement({ user }) {
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-purple-500 to-pink-600 text-white">
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-purple-100 text-sm font-medium">Total Impressions</p>
+                <p className="text-white/80 text-sm font-medium">Total Impressions</p>
                 <p className="text-3xl font-bold mt-2">{(stats.totalImpressions / 1000).toFixed(1)}k</p>
               </div>
               <Eye className="w-12 h-12 opacity-20" />
@@ -712,11 +712,11 @@ export default function AdManagement({ user }) {
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-orange-500 to-red-600 text-white">
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-hold to-sell text-white">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-orange-100 text-sm font-medium">CTR</p>
+                <p className="text-hold-muted-foreground text-sm font-medium">CTR</p>
                 <p className="text-3xl font-bold mt-2">{stats.ctr.toFixed(2)}%</p>
               </div>
               <TrendingUp className="w-12 h-12 opacity-20" />
@@ -731,7 +731,7 @@ export default function AdManagement({ user }) {
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
                   placeholder="Search campaigns or vendors..."
                   value={searchTerm}
@@ -766,49 +766,49 @@ export default function AdManagement({ user }) {
         <CardContent>
           {filteredCampaigns.length === 0 ? (
             <div className="text-center py-12">
-              <Megaphone className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No campaigns found</p>
+              <Megaphone className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <p className="text-subtle">No campaigns found</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-slate-50 border-b">
+                <thead className="bg-surface-2 border-b">
                   <tr>
-                    <th className="text-left p-4 font-semibold text-sm text-slate-700 uppercase tracking-wider">Campaign & Vendor</th>
-                    <th className="text-left p-4 font-semibold text-sm text-slate-700 uppercase tracking-wider">Billing Model</th>
-                    <th className="text-left p-4 font-semibold text-sm text-slate-700 uppercase tracking-wider">Campaign Period</th>
-                    <th className="text-left p-4 font-semibold text-sm text-slate-700 uppercase tracking-wider">Performance</th>
-                    <th className="text-left p-4 font-semibold text-sm text-slate-700 uppercase tracking-wider">Status</th>
-                    <th className="text-left p-4 font-semibold text-sm text-slate-700 uppercase tracking-wider">Actions</th>
+                    <th className="text-left p-4 font-semibold text-sm text-subtle uppercase tracking-wider">Campaign & Vendor</th>
+                    <th className="text-left p-4 font-semibold text-sm text-subtle uppercase tracking-wider">Billing Model</th>
+                    <th className="text-left p-4 font-semibold text-sm text-subtle uppercase tracking-wider">Campaign Period</th>
+                    <th className="text-left p-4 font-semibold text-sm text-subtle uppercase tracking-wider">Performance</th>
+                    <th className="text-left p-4 font-semibold text-sm text-subtle uppercase tracking-wider">Status</th>
+                    <th className="text-left p-4 font-semibold text-sm text-subtle uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredCampaigns.map((campaign) => {
                     const StatusIcon = statusConfig[campaign.status]?.icon || Clock;
                     return (
-                      <tr key={campaign.id} className="border-b hover:bg-slate-50 transition-colors">
+                      <tr key={campaign.id} className="border-b hover:bg-surface-2 transition-colors">
                         <td className="p-4">
                           <div>
-                            <p className="font-semibold text-slate-900">{campaign.title}</p>
-                            <p className="text-sm text-slate-500">{campaign.vendor?.company_name || 'Unknown'}</p>
+                            <p className="font-semibold text-foreground">{campaign.title}</p>
+                            <p className="text-sm text-muted-foreground">{campaign.vendor?.company_name || 'Unknown'}</p>
                           </div>
                         </td>
                         <td className="p-4">
                           <div>
-                            <p className="font-semibold text-slate-900">{campaign.billing_model?.toUpperCase()}</p>
+                            <p className="font-semibold text-foreground">{campaign.billing_model?.toUpperCase()}</p>
                             {campaign.billing_model === 'cpc' && (
-                              <p className="text-sm text-slate-500">₹{campaign.cpc_rate}/click</p>
+                              <p className="text-sm text-muted-foreground">₹{campaign.cpc_rate}/click</p>
                             )}
                             {campaign.billing_model === 'weekly' && campaign.weekly_fee && (
-                              <p className="text-sm text-slate-500">₹{campaign.weekly_fee}/month</p>
+                              <p className="text-sm text-muted-foreground">₹{campaign.weekly_fee}/month</p>
                             )}
                             {campaign.billing_model === 'monthly' && campaign.monthly_fee && (
-                              <p className="text-sm text-slate-500">₹{campaign.monthly_fee}/month</p>
+                              <p className="text-sm text-muted-foreground">₹{campaign.monthly_fee}/month</p>
                             )}
                           </div>
                         </td>
                         <td className="p-4">
-                          <div className="flex items-center gap-2 text-slate-600">
+                          <div className="flex items-center gap-2 text-subtle">
                             {campaign.start_date && campaign.end_date ? (
                               <>
                                 <Calendar className="w-4 h-4 flex-shrink-0" />
@@ -819,13 +819,13 @@ export default function AdManagement({ user }) {
                             ) : (
                               <>
                                 <Calendar className="w-4 h-4 flex-shrink-0" />
-                                <span className="text-sm text-slate-400">Not scheduled</span>
+                                <span className="text-sm text-muted-foreground">Not scheduled</span>
                               </>
                             )}
                           </div>
                         </td>
                         <td className="p-4">
-                          <div className="text-sm text-slate-700">
+                          <div className="text-sm text-subtle">
                             <p>Impressions: <span className="font-semibold">{(campaign.impressions || 0).toLocaleString()}</span></p>
                             <p>Clicks: <span className="font-semibold">{(campaign.clicks || 0).toLocaleString()}</span></p>
                           </div>
@@ -877,10 +877,10 @@ export default function AdManagement({ user }) {
                 <DollarSign className="w-5 h-5" />
                 Billing History & Invoices
               </CardTitle>
-              <p className="text-sm text-slate-600 mt-1">View and download records of campaign billings.</p>
+              <p className="text-sm text-subtle mt-1">View and download records of campaign billings.</p>
             </div>
             <div className="relative w-64">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Search invoices..."
                 value={billingSearchTerm}
@@ -893,43 +893,43 @@ export default function AdManagement({ user }) {
         <CardContent>
           {filteredBillingRecords.length === 0 ? (
             <div className="text-center py-12">
-              <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No billing records found.</p>
+              <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <p className="text-subtle">No billing records found.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-slate-50 border-b">
+                <thead className="bg-surface-2 border-b">
                   <tr>
-                    <th className="text-left p-4 font-semibold text-sm text-slate-700 uppercase tracking-wider">Invoice ID</th>
-                    <th className="text-left p-4 font-semibold text-sm text-slate-700 uppercase tracking-wider">Campaign</th>
-                    <th className="text-left p-4 font-semibold text-sm text-slate-700 uppercase tracking-wider">Vendor</th>
-                    <th className="text-left p-4 font-semibold text-sm text-slate-700 uppercase tracking-wider">Amount</th>
-                    <th className="text-left p-4 font-semibold text-sm text-slate-700 uppercase tracking-wider">Billing Date</th>
-                    <th className="text-left p-4 font-semibold text-sm text-slate-700 uppercase tracking-wider">Status</th>
-                    <th className="text-left p-4 font-semibold text-sm text-slate-700 uppercase tracking-wider">Actions</th>
+                    <th className="text-left p-4 font-semibold text-sm text-subtle uppercase tracking-wider">Invoice ID</th>
+                    <th className="text-left p-4 font-semibold text-sm text-subtle uppercase tracking-wider">Campaign</th>
+                    <th className="text-left p-4 font-semibold text-sm text-subtle uppercase tracking-wider">Vendor</th>
+                    <th className="text-left p-4 font-semibold text-sm text-subtle uppercase tracking-wider">Amount</th>
+                    <th className="text-left p-4 font-semibold text-sm text-subtle uppercase tracking-wider">Billing Date</th>
+                    <th className="text-left p-4 font-semibold text-sm text-subtle uppercase tracking-wider">Status</th>
+                    <th className="text-left p-4 font-semibold text-sm text-subtle uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredBillingRecords.map((record) => (
-                    <tr key={record.id} className="border-b hover:bg-slate-50 transition-colors">
+                    <tr key={record.id} className="border-b hover:bg-surface-2 transition-colors">
                       <td className="p-4">
-                        <p className="font-mono text-sm text-slate-700">{record.invoice_number || record.id.slice(-8).toUpperCase()}</p>
+                        <p className="font-mono text-sm text-subtle">{record.invoice_number || record.id.slice(-8).toUpperCase()}</p>
                       </td>
                       <td className="p-4">
-                        <p className="text-sm text-slate-900">{record.campaign?.title || 'N/A'}</p>
+                        <p className="text-sm text-foreground">{record.campaign?.title || 'N/A'}</p>
                       </td>
                       <td className="p-4">
-                        <p className="text-sm text-slate-700">{record.vendor?.company_name || 'Unknown'}</p>
+                        <p className="text-sm text-subtle">{record.vendor?.company_name || 'Unknown'}</p>
                       </td>
                       <td className="p-4">
-                        <p className="font-semibold text-slate-900">₹{(record.amount || 0).toLocaleString()}</p>
+                        <p className="font-semibold text-foreground">₹{(record.amount || 0).toLocaleString()}</p>
                       </td>
                       <td className="p-4">
-                        <p className="text-sm text-slate-700">{formatDate(record.created_date)}</p>
+                        <p className="text-sm text-subtle">{formatDate(record.created_date)}</p>
                       </td>
                       <td className="p-4">
-                        <Badge className={billingStatusConfig[record.payment_status]?.color || 'bg-gray-100 text-gray-700'}>
+                        <Badge className={billingStatusConfig[record.payment_status]?.color || 'bg-surface-2 text-subtle'}>
                           {billingStatusConfig[record.payment_status]?.label || record.payment_status}
                         </Badge>
                       </td>
@@ -965,7 +965,7 @@ export default function AdManagement({ user }) {
               <YAxis />
               <Tooltip formatter={(value) => [`₹${value.toLocaleString()}`, 'Revenue']} />
               <Legend />
-              <Line type="monotone" dataKey="revenue" stroke="#8b5cf6" strokeWidth={2} name="Revenue" />
+              <Line type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" strokeWidth={2} name="Revenue" />
             </LineChart>
           </ResponsiveContainer>
         </CardContent>

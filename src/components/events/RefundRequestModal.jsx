@@ -65,20 +65,20 @@ export default function RefundRequestModal({ ticket, event, onClose, onSuccess }
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Refund Amount Display */}
-          <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-blue-800 font-medium">Refund Amount</p>
-                <p className="text-2xl font-bold text-blue-900">₹{ticket.ticket_price.toLocaleString()}</p>
+                <p className="text-sm text-protocall-blue font-medium">Refund Amount</p>
+                <p className="text-2xl font-bold text-protocall-blue">₹{ticket.ticket_price.toLocaleString()}</p>
               </div>
-              <DollarSign className="w-8 h-8 text-blue-600" />
+              <DollarSign className="w-8 h-8 text-protocall-blue" />
             </div>
           </div>
 
           {/* Event Details */}
           <div className="space-y-2">
-            <p className="text-sm font-medium text-slate-700">Event: {event.title}</p>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm font-medium text-subtle">Event: {event.title}</p>
+            <p className="text-sm text-subtle">
               Ticket ID: {ticket.id.slice(-8).toUpperCase()}
             </p>
           </div>
@@ -158,7 +158,7 @@ export default function RefundRequestModal({ ticket, event, onClose, onSuccess }
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-protocall-blue hover:bg-protocall-blue"
             >
               {isSubmitting ? 'Submitting...' : 'Submit Request'}
             </Button>

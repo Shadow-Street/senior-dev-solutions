@@ -49,7 +49,7 @@ const UserActivityMap = ({ locations }) => (
         center={[loc.lat, loc.lng]}
         radius={Math.min(10 + Math.sqrt(loc.userCount) * 2, 30)}
         pathOptions={{
-          color: '#4f46e5',
+          color: 'hsl(var(--chart-1))',
           fillColor: '#6366f1',
           fillOpacity: 0.6,
           weight: 1,
@@ -219,7 +219,7 @@ export default function ActivityTracker({ currentAdmin }) {
           <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
             <div>
               <CardTitle className="flex items-center gap-2 text-2xl">
-                <Activity className="w-7 h-7 text-indigo-600" />
+                <Activity className="w-7 h-7 text-protocall-blue" />
                 User Activity & Location Tracker
               </CardTitle>
               <CardDescription className="mt-1">
@@ -255,10 +255,10 @@ export default function ActivityTracker({ currentAdmin }) {
       </Card>
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Total Users" value={activityStats.total} icon={Users} color="text-blue-500" description={`${activityStats.newToday} new today`} />
-        <StatCard title="Active Users" value={activityStats.active} icon={UserCheck} color="text-green-500" description={`${activityStats.total > 0 ? ((activityStats.active / activityStats.total) * 100).toFixed(1) : 0}% of total`} />
-        <StatCard title="Inactive Users" value={activityStats.inactive} icon={UserX} color="text-red-500" description={`${activityStats.total > 0 ? ((activityStats.inactive / activityStats.total) * 100).toFixed(1) : 0}% of total`} />
-        <StatCard title="Locations Tracked" value={activityStats.locations.length} icon={MapPin} color="text-purple-500" description="Cities with active users" />
+        <StatCard title="Total Users" value={activityStats.total} icon={Users} color="text-protocall-premium-light" description={`${activityStats.newToday} new today`} />
+        <StatCard title="Active Users" value={activityStats.active} icon={UserCheck} color="text-positive" description={`${activityStats.total > 0 ? ((activityStats.active / activityStats.total) * 100).toFixed(1) : 0}% of total`} />
+        <StatCard title="Inactive Users" value={activityStats.inactive} icon={UserX} color="text-sell" description={`${activityStats.total > 0 ? ((activityStats.inactive / activityStats.total) * 100).toFixed(1) : 0}% of total`} />
+        <StatCard title="Locations Tracked" value={activityStats.locations.length} icon={MapPin} color="text-protocall-premium-light" description="Cities with active users" />
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
@@ -319,7 +319,7 @@ export default function ActivityTracker({ currentAdmin }) {
         <CardContent>
           <div className="overflow-x-auto max-h-[500px]">
             <Table>
-              <TableHeader className="sticky top-0 bg-slate-50">
+              <TableHeader className="sticky top-0 bg-surface-2">
                 <TableRow>
                   <TableHead>User</TableHead>
                   <TableHead>Role</TableHead>
@@ -338,8 +338,8 @@ export default function ActivityTracker({ currentAdmin }) {
                     <TableCell><Badge variant="outline">{user.app_role}</Badge></TableCell>
                     <TableCell>
                       {isAfter(parseISO(user.last_activity_date), subDays(new Date(), 30))
-                        ? <Badge className="bg-green-100 text-green-800">Active</Badge>
-                        : <Badge className="bg-red-100 text-red-800">Inactive</Badge>
+                        ? <Badge className="bg-buy-muted text-buy-muted-foreground">Active</Badge>
+                        : <Badge className="bg-sell-muted text-sell-muted-foreground">Inactive</Badge>
                       }
                     </TableCell>
                     <TableCell>{user.city}, {user.country}</TableCell>

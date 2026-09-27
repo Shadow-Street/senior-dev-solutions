@@ -362,8 +362,8 @@ export default function PollManagement({ user }) {
   if (isLoading) {
     return (
       <div className="text-center p-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-600 mx-auto mb-4"></div>
-        <p className="text-lg text-slate-600">Loading Poll Management Dashboard...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+        <p className="text-lg text-subtle">Loading Poll Management Dashboard...</p>
       </div>
     );
   }
@@ -398,9 +398,9 @@ export default function PollManagement({ user }) {
             {filteredPolls.length === 0 && enrichedPolls.length > 0 &&
               <Card className="shadow-lg border-0 bg-white">
                 <CardContent className="p-8 text-center">
-                  <Vote className="mx-auto h-12 w-12 text-slate-400" />
-                  <h3 className="mt-2 text-sm font-medium text-slate-900">No polls match your filters</h3>
-                  <p className="mt-1 text-sm text-slate-500">Try adjusting your search term or filter criteria to see more results.</p>
+                  <Vote className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <h3 className="mt-2 text-sm font-medium text-foreground">No polls match your filters</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">Try adjusting your search term or filter criteria to see more results.</p>
                   <Button
                     variant="outline"
                     onClick={() => {
@@ -432,15 +432,15 @@ export default function PollManagement({ user }) {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Polls & Pledges Management</h2>
-          <p className="text-slate-600">Monitor and manage community polls and premium content with real-time updates</p>
+          <h2 className="text-2xl font-bold text-foreground">Polls & Pledges Management</h2>
+          <p className="text-subtle">Monitor and manage community polls and premium content with real-time updates</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
             onClick={handleRefresh} 
             variant="outline"
             disabled={isRefreshing}
-            className="bg-white hover:bg-slate-50"
+            className="bg-white hover:bg-surface-2"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
             Refresh
@@ -450,7 +450,7 @@ export default function PollManagement({ user }) {
             Export
           </Button>
           {canCreatePolls &&
-            <Button onClick={() => setShowCreateModal(true)} className="bg-cyan-600 hover:bg-cyan-700">
+            <Button onClick={() => setShowCreateModal(true)} className="bg-protocall-blue hover:bg-protocall-blue">
               <Plus className="w-4 h-4 mr-2" />
               Create Poll
             </Button>
@@ -460,7 +460,7 @@ export default function PollManagement({ user }) {
 
       {/* Quick Stats - Colorful Design */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl p-4 shadow-lg flex items-center gap-4">
+        <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white rounded-xl p-4 shadow-lg flex items-center gap-4">
           <div className="p-3 bg-white/20 rounded-full">
             <Vote className="w-6 h-6" />
           </div>
@@ -469,7 +469,7 @@ export default function PollManagement({ user }) {
             <p className="text-sm opacity-90">Total Polls</p>
           </div>
         </div>
-        <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl p-4 shadow-lg flex items-center gap-4">
+        <div className="bg-buy-soft text-buy-foreground rounded-xl p-4 shadow-lg flex items-center gap-4">
           <div className="p-3 bg-white/20 rounded-full">
             <TrendingUp className="w-6 h-6" />
           </div>
@@ -478,7 +478,7 @@ export default function PollManagement({ user }) {
             <p className="text-sm opacity-90">Active</p>
           </div>
         </div>
-        <div className="bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl p-4 shadow-lg flex items-center gap-4">
+        <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white rounded-xl p-4 shadow-lg flex items-center gap-4">
           <div className="p-3 bg-white/20 rounded-full">
             <Crown className="w-6 h-6" />
           </div>
@@ -487,7 +487,7 @@ export default function PollManagement({ user }) {
             <p className="text-sm opacity-90">Premium</p>
           </div>
         </div>
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl p-4 shadow-lg flex items-center gap-4">
+        <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white rounded-xl p-4 shadow-lg flex items-center gap-4">
           <div className="p-3 bg-white/20 rounded-full">
             <Shield className="w-6 h-6" />
           </div>
@@ -496,7 +496,7 @@ export default function PollManagement({ user }) {
             <p className="text-sm opacity-90">Admin Created</p>
           </div>
         </div>
-        <div className="bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl p-4 shadow-lg flex items-center gap-4">
+        <div className="bg-hold text-hold-foreground rounded-xl p-4 shadow-lg flex items-center gap-4">
           <div className="p-3 bg-white/20 rounded-full">
             <BarChart3 className="w-6 h-6" />
           </div>
@@ -512,7 +512,7 @@ export default function PollManagement({ user }) {
         <CardContent className="p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Search polls by title, stock symbol, chat room..."
                 value={searchTerm}
@@ -562,19 +562,19 @@ export default function PollManagement({ user }) {
       {/* Main Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid grid-cols-4 bg-transparent rounded-lg p-1 gap-2">
-          <TabsTrigger value="overview" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md">
+          <TabsTrigger value="overview" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md">
             <BarChart3 className="w-4 h-4" />
             Overview
           </TabsTrigger>
-          <TabsTrigger value="polls" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md">
+          <TabsTrigger value="polls" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md">
             <Vote className="w-4 h-4" />
             Manage Polls
           </TabsTrigger>
-          <TabsTrigger value="analytics" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md">
+          <TabsTrigger value="analytics" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md">
             <PieChart className="w-4 h-4" />
             Analytics
           </TabsTrigger>
-          <TabsTrigger value="tomorrows-pick" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md">
+          <TabsTrigger value="tomorrows-pick" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md">
             <Target className="w-4 h-4" />
             Tomorrow's Pick
           </TabsTrigger>

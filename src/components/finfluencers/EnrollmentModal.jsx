@@ -122,7 +122,7 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
         },
         notes: orderData.notes,
         theme: {
-          color: '#7c3aed'
+          color: 'hsl(var(--primary))'
         },
         modal: {
           ondismiss: function () {
@@ -149,16 +149,16 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
       <Dialog open={open} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-md text-center">
           <div className="py-8">
-            <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-slate-900 mb-2">
+            <CheckCircle className="w-16 h-16 text-positive mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-foreground mb-2">
               Enrollment Successful!
             </h3>
-            <p className="text-slate-600 mb-4">
+            <p className="text-subtle mb-4">
               You're now enrolled in "{course.title}"
             </p>
             {course.course_type === 'live_session' && (
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <p className="text-sm text-blue-800">
+              <div className="bg-premium-muted p-4 rounded-lg">
+                <p className="text-sm text-protocall-blue">
                   You'll receive meeting details via email before the session starts.
                 </p>
               </div>
@@ -173,16 +173,16 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-slate-900">
+          <DialogTitle className="text-xl font-bold text-foreground">
             Enroll in Course
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
           {/* Course Summary */}
-          <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg">
-            <h3 className="font-bold text-lg text-slate-900 mb-2">{course.title}</h3>
-            <div className="flex items-center gap-3 text-sm text-slate-600 mb-3">
+          <div className="bg-surface-2 p-4 rounded-lg">
+            <h3 className="font-bold text-lg text-foreground mb-2">{course.title}</h3>
+            <div className="flex items-center gap-3 text-sm text-subtle mb-3">
               <img
                 src={influencer.profile_image_url}
                 alt={influencer.display_name}
@@ -190,7 +190,7 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
               />
               <span className="font-medium">{influencer.display_name}</span>
               {influencer.sebi_registered && (
-                <Badge className="bg-green-100 text-green-800 text-xs">
+                <Badge className="bg-buy-muted text-buy-muted-foreground text-xs">
                   <Shield className="w-3 h-3 mr-1" />
                   SEBI Registered
                 </Badge>
@@ -199,20 +199,20 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div className="flex items-center gap-1">
-                <Clock className="w-4 h-4 text-slate-500" />
+                <Clock className="w-4 h-4 text-muted-foreground" />
                 <span>{course.duration_hours} hours</span>
               </div>
               <div className="flex items-center gap-1">
-                <BookOpen className="w-4 h-4 text-slate-500" />
+                <BookOpen className="w-4 h-4 text-muted-foreground" />
                 <span className="capitalize">{course.difficulty_level}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Users className="w-4 h-4 text-slate-500" />
+                <Users className="w-4 h-4 text-muted-foreground" />
                 <span>{course.current_enrollments} enrolled</span>
               </div>
               {course.course_type === 'live_session' && course.scheduled_date && (
                 <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4 text-slate-500" />
+                  <Calendar className="w-4 h-4 text-muted-foreground" />
                   <span>{format(new Date(course.scheduled_date), 'MMM d')}</span>
                 </div>
               )}
@@ -221,8 +221,8 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
 
           {/* Course Description */}
           <div>
-            <h4 className="font-semibold text-slate-900 mb-2">What You'll Learn</h4>
-            <p className="text-slate-600 text-sm leading-relaxed">
+            <h4 className="font-semibold text-foreground mb-2">What You'll Learn</h4>
+            <p className="text-subtle text-sm leading-relaxed">
               {course.description}
             </p>
           </div>
@@ -230,12 +230,12 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
           {/* Curriculum */}
           {course.curriculum && course.curriculum.length > 0 && (
             <div>
-              <h4 className="font-semibold text-slate-900 mb-3">Course Curriculum</h4>
+              <h4 className="font-semibold text-foreground mb-3">Course Curriculum</h4>
               <div className="space-y-2">
                 {course.curriculum.map((topic, index) => (
                   <div key={index} className="flex items-center gap-2 text-sm">
-                    <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                    <span className="text-slate-600">{topic}</span>
+                    <CheckCircle className="w-4 h-4 text-positive flex-shrink-0" />
+                    <span className="text-subtle">{topic}</span>
                   </div>
                 ))}
               </div>
@@ -244,20 +244,20 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
 
           {/* Prerequisites */}
           {course.prerequisites && (
-            <div className="bg-amber-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-amber-800 mb-2 flex items-center gap-2">
+            <div className="bg-hold-muted p-4 rounded-lg">
+              <h4 className="font-semibold text-hold-muted-foreground mb-2 flex items-center gap-2">
                 <Award className="w-4 h-4" />
                 Prerequisites
               </h4>
-              <p className="text-sm text-amber-700">{course.prerequisites}</p>
+              <p className="text-sm text-hold-muted-foreground">{course.prerequisites}</p>
             </div>
           )}
 
           {/* Live Session Info */}
           {course.course_type === 'live_session' && (
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-blue-800 mb-2">Live Session Details</h4>
-              <div className="space-y-2 text-sm text-blue-700">
+            <div className="bg-premium-muted p-4 rounded-lg">
+              <h4 className="font-semibold text-protocall-blue mb-2">Live Session Details</h4>
+              <div className="space-y-2 text-sm text-protocall-blue">
                 {course.scheduled_date && (
                   <p>
                     <strong>Date & Time:</strong> {format(new Date(course.scheduled_date), 'EEEE, MMMM d, yyyy • h:mm a')}
@@ -271,20 +271,20 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
           )}
 
           {/* Pricing */}
-          <div className="bg-slate-50 p-4 rounded-lg">
+          <div className="bg-surface-2 p-4 rounded-lg">
             <div className="flex items-center justify-between mb-3">
               <div>
-                <span className="text-3xl font-bold text-slate-900">
+                <span className="text-3xl font-bold text-foreground">
                   ₹{course.price?.toLocaleString('en-IN')}
                 </span>
-                <p className="text-sm text-slate-500">One-time payment</p>
+                <p className="text-sm text-muted-foreground">One-time payment</p>
               </div>
-              <Badge className="bg-green-100 text-green-800">
+              <Badge className="bg-buy-muted text-buy-muted-foreground">
                 Lifetime Access
               </Badge>
             </div>
 
-            <div className="text-xs text-slate-600 space-y-1">
+            <div className="text-xs text-subtle space-y-1">
               <p>• Includes all course materials</p>
               <p>• Certificate of completion</p>
               <p>• 30-day money-back guarantee</p>
@@ -295,12 +295,12 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
           </div>
 
           {/* Payment Method Selection */}
-          <div className="bg-white border border-slate-200 rounded-lg p-4">
-            <h4 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+          <div className="bg-white border border-border rounded-lg p-4">
+            <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
               <CreditCard className="w-4 h-4" />
               Payment Method
             </h4>
-            <div className="text-sm text-slate-600">
+            <div className="text-sm text-subtle">
               <p>Secure payment powered by Razorpay</p>
               <p className="text-xs mt-1">Supports UPI, Cards, Net Banking & Wallets</p>
             </div>
@@ -320,7 +320,7 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
             <Button
               onClick={handleEnrollment}
               disabled={isProcessing}
-              className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+              className="flex-1 bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white"
             >
               {isProcessing ? (
                 <>
@@ -337,8 +337,8 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
           </div>
 
           {/* Disclaimer */}
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-            <p className="text-xs text-amber-700">
+          <div className="bg-hold-muted border border-hold/30 rounded-lg p-3">
+            <p className="text-xs text-hold-muted-foreground">
               <strong>Disclaimer:</strong> All course content is for educational purposes only.
               Past performance does not guarantee future results. Please consult with qualified
               financial advisors before making investment decisions.

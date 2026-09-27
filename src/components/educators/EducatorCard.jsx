@@ -34,7 +34,7 @@ export default function EducatorCard({ educator, canAccessPremium }) {
             className="w-20 h-20 rounded-full object-cover mx-auto mb-3"
           />
           {educator.verified && (
-            <CheckCircle className="w-5 h-5 text-green-500 absolute -bottom-1 -right-1 bg-white rounded-full" />
+            <CheckCircle className="w-5 h-5 text-positive absolute -bottom-1 -right-1 bg-white rounded-full" />
           )}
         </div>
         
@@ -44,13 +44,13 @@ export default function EducatorCard({ educator, canAccessPremium }) {
           {/* Certifications */}
           <div className="flex flex-wrap gap-1 justify-center">
             {educator.certification?.slice(0, 3).map((cert) => (
-              <Badge key={cert} className="bg-blue-100 text-blue-800 text-xs">
+              <Badge key={cert} className="bg-premium-muted text-protocall-blue text-xs">
                 <Award className="w-3 h-3 mr-1" />
                 {cert}
               </Badge>
             ))}
             {educator.certification?.length > 3 && (
-              <Badge className="bg-blue-100 text-blue-800 text-xs">
+              <Badge className="bg-premium-muted text-protocall-blue text-xs">
                 +{educator.certification.length - 3}
               </Badge>
             )}
@@ -75,28 +75,28 @@ export default function EducatorCard({ educator, canAccessPremium }) {
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-4 text-center">
-          <div className="bg-slate-50 p-3 rounded-lg">
+          <div className="bg-surface-2 p-3 rounded-lg">
             <div className="flex items-center justify-center gap-1 mb-1">
-              <Users className="w-4 h-4 text-slate-600" />
-              <span className="text-lg font-bold text-slate-800">{educator.student_count}</span>
+              <Users className="w-4 h-4 text-subtle" />
+              <span className="text-lg font-bold text-foreground">{educator.student_count}</span>
             </div>
-            <p className="text-xs text-slate-600">Students</p>
+            <p className="text-xs text-subtle">Students</p>
           </div>
-          <div className="bg-slate-50 p-3 rounded-lg">
+          <div className="bg-surface-2 p-3 rounded-lg">
             <div className="flex items-center justify-center gap-1 mb-1">
-              <Calendar className="w-4 h-4 text-slate-600" />
-              <span className="text-lg font-bold text-slate-800">{educator.experience_years}</span>
+              <Calendar className="w-4 h-4 text-subtle" />
+              <span className="text-lg font-bold text-foreground">{educator.experience_years}</span>
             </div>
-            <p className="text-xs text-slate-600">Years Exp.</p>
+            <p className="text-xs text-subtle">Years Exp.</p>
           </div>
         </div>
 
         {/* Rating */}
         {educator.rating && (
-          <div className="flex items-center justify-center gap-2 bg-yellow-50 p-2 rounded-lg">
-            <Star className="w-4 h-4 text-yellow-500 fill-current" />
-            <span className="font-semibold text-yellow-700">{educator.rating}</span>
-            <span className="text-sm text-yellow-600">({educator.success_rate}% success rate)</span>
+          <div className="flex items-center justify-center gap-2 bg-hold-muted p-2 rounded-lg">
+            <Star className="w-4 h-4 text-hold fill-current" />
+            <span className="font-semibold text-hold-muted-foreground">{educator.rating}</span>
+            <span className="text-sm text-hold-muted-foreground">({educator.success_rate}% success rate)</span>
           </div>
         )}
 
@@ -114,7 +114,7 @@ export default function EducatorCard({ educator, canAccessPremium }) {
                   href={url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 hover:text-slate-800 transition-colors"
+                  className="w-8 h-8 bg-surface-2 hover:bg-border rounded-full flex items-center justify-center text-subtle hover:text-foreground transition-colors"
                 >
                   <Icon className="w-4 h-4" />
                 </a>
@@ -126,7 +126,7 @@ export default function EducatorCard({ educator, canAccessPremium }) {
         {/* Action Buttons */}
         <div className="space-y-2">
           <Link to={createPageUrl(`EducatorProfile?id=${educator.id}`)}>
-            <Button className="w-full bg-gradient-to-r from-indigo-500 to-blue-600 text-white hover:from-indigo-600 hover:to-blue-700">
+            <Button className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue text-white hover:from-protocall-deep hover:to-protocall-blue">
               <BookOpen className="w-4 h-4 mr-2" />
               View Profile & Courses
             </Button>
@@ -134,7 +134,7 @@ export default function EducatorCard({ educator, canAccessPremium }) {
           
           {educator.course_price_range && (
             <div className="text-center">
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-subtle">
                 Courses from ₹{educator.course_price_range.min} - ₹{educator.course_price_range.max}
               </p>
             </div>

@@ -62,30 +62,30 @@ export default function PledgeSessionCard({
   const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   const statusConfig = {
-    draft: { label: 'Draft', color: 'bg-gray-100 text-gray-800', icon: <FileText className="w-3 h-3 mr-1" /> },
-    active: { label: 'Active', color: 'bg-green-100 text-green-800', icon: <Activity className="w-3 h-3 mr-1" /> },
-    closed: { label: 'Closed', color: 'bg-yellow-100 text-yellow-800', icon: <Clock className="w-3 h-3 mr-1" /> },
-    executing: { label: 'Executing', color: 'bg-blue-100 text-blue-800', icon: <Loader2 className="w-3 h-3 mr-1 animate-spin" /> },
+    draft: { label: 'Draft', color: 'bg-surface-2 text-foreground', icon: <FileText className="w-3 h-3 mr-1" /> },
+    active: { label: 'Active', color: 'bg-buy-muted text-buy-muted-foreground', icon: <Activity className="w-3 h-3 mr-1" /> },
+    closed: { label: 'Closed', color: 'bg-hold-muted text-hold-muted-foreground', icon: <Clock className="w-3 h-3 mr-1" /> },
+    executing: { label: 'Executing', color: 'bg-premium-muted text-protocall-blue', icon: <Loader2 className="w-3 h-3 mr-1 animate-spin" /> },
     // CHANGED: icon for awaiting_sell_execution from TrendingUp to Clock as per outline
-    awaiting_sell_execution: { label: 'Awaiting Sell', color: 'bg-indigo-100 text-indigo-800', icon: <Clock className="w-3 h-3 mr-1" /> },
-    completed: { label: 'Completed', color: 'bg-purple-100 text-purple-800', icon: <CheckCircle className="w-3 h-3 mr-1" /> },
-    cancelled: { label: 'Cancelled', color: 'bg-red-100 text-red-800', icon: <XCircle className="w-3 h-3 mr-1" /> },
+    awaiting_sell_execution: { label: 'Awaiting Sell', color: 'bg-premium-muted text-protocall-blue', icon: <Clock className="w-3 h-3 mr-1" /> },
+    completed: { label: 'Completed', color: 'bg-premium-muted text-protocall-premium-text', icon: <CheckCircle className="w-3 h-3 mr-1" /> },
+    cancelled: { label: 'Cancelled', color: 'bg-sell-muted text-sell-muted-foreground', icon: <XCircle className="w-3 h-3 mr-1" /> },
   };
 
   // Session Mode Configuration
   const sessionModeConfig = {
     buy_only: {
-      color: 'bg-green-100 text-green-700 border-green-200',
+      color: 'bg-buy-muted text-buy-muted-foreground border-buy/30',
       icon: ShoppingCart,
       label: 'BUY ONLY'
     },
     sell_only: {
-      color: 'bg-red-100 text-red-700 border-red-200',
+      color: 'bg-sell-muted text-sell-muted-foreground border-sell/30',
       icon: ShoppingBag,
       label: 'SELL ONLY'
     },
     buy_sell_cycle: {
-      color: 'bg-blue-100 text-blue-700 border-blue-200',
+      color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
       icon: Repeat,
       label: 'BUY & SELL'
     },
@@ -110,20 +110,20 @@ export default function PledgeSessionCard({
     <>
       <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
         {/* Card Header with Gradient */}
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4">
+        <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue p-4">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <div className="flex items-center gap-2">
                   <h3 className="text-xl font-bold text-white">{session.stock_symbol}</h3>
                   {/* Stock Price Indicator */}
-                  <div className={`flex items-center gap-1 px-2 py-0.5 rounded ${mockPriceChange > 0 ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
+                  <div className={`flex items-center gap-1 px-2 py-0.5 rounded ${mockPriceChange > 0 ? 'bg-buy/20' : 'bg-sell/20'}`}>
                     {mockPriceChange > 0 ? (
-                      <TrendingUp className="w-3 h-3 text-green-300" />
+                      <TrendingUp className="w-3 h-3 text-positive" />
                     ) : (
-                      <TrendingDown className="w-3 h-3 text-red-300" />
+                      <TrendingDown className="w-3 h-3 text-sell" />
                     )}
-                    <span className={`text-xs font-semibold ${mockPriceChange > 0 ? 'text-green-300' : 'text-red-300'}`}>
+                    <span className={`text-xs font-semibold ${mockPriceChange > 0 ? 'text-positive' : 'text-sell'}`}>
                       {mockPriceChange > 0 ? '+' : '-'}{mockPricePercent}%
                     </span>
                   </div>
@@ -141,7 +141,7 @@ export default function PledgeSessionCard({
                 </Badge>
 
                 {session.allow_amo && (
-                  <Badge className="bg-indigo-100 text-indigo-700 border-0">
+                  <Badge className="bg-premium-muted text-protocall-blue border-0">
                     <Moon className="w-3 h-3 mr-1" />
                     AMO
                   </Badge>
@@ -176,20 +176,20 @@ export default function PledgeSessionCard({
 
                 {session.status === 'draft' && (
                   <DropdownMenuItem onClick={onActivate}>
-                    <Play className="w-4 h-4 mr-2 text-green-600" />
-                    <span className="text-green-600">Activate Session</span>
+                    <Play className="w-4 h-4 mr-2 text-buy-muted-foreground" />
+                    <span className="text-buy-muted-foreground">Activate Session</span>
                   </DropdownMenuItem>
                 )}
 
                 {session.status === 'active' && (
                   <>
                     <DropdownMenuItem onClick={() => onExecute(session)}>
-                      <Play className="w-4 h-4 mr-2 text-blue-600" />
-                      <span className="text-blue-600">Execute Now</span>
+                      <Play className="w-4 h-4 mr-2 text-protocall-blue" />
+                      <span className="text-protocall-blue">Execute Now</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={onClose}>
-                      <StopCircle className="w-4 h-4 mr-2 text-yellow-600" />
-                      <span className="text-yellow-600">Close Session</span>
+                      <StopCircle className="w-4 h-4 mr-2 text-hold-muted-foreground" />
+                      <span className="text-hold-muted-foreground">Close Session</span>
                     </DropdownMenuItem>
                   </>
                 )}
@@ -197,13 +197,13 @@ export default function PledgeSessionCard({
                 {/* NEW: Dropdown menu item for 'Execute Sell Orders' */}
                 {session.status === 'awaiting_sell_execution' && (
                   <DropdownMenuItem onClick={() => onExecute(session)}>
-                    <TrendingDown className="w-4 h-4 mr-2 text-red-600" />
-                    <span className="text-red-600">Execute Sell Orders</span>
+                    <TrendingDown className="w-4 h-4 mr-2 text-sell-muted-foreground" />
+                    <span className="text-sell-muted-foreground">Execute Sell Orders</span>
                   </DropdownMenuItem>
                 )}
 
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={onDelete} className="text-red-600">
+                <DropdownMenuItem onClick={onDelete} className="text-sell-muted-foreground">
                   <Trash2 className="w-4 h-4 mr-2" />
                   Delete Session
                 </DropdownMenuItem>
@@ -215,7 +215,7 @@ export default function PledgeSessionCard({
         <CardContent className="p-6 space-y-4">
           {/* Display stock symbol and status badge pair in CardContent */}
           <div className="flex justify-between items-center text-sm">
-            <Badge variant="outline" className="font-mono text-blue-700 bg-blue-50 border-blue-200">
+            <Badge variant="outline" className="font-mono text-protocall-blue bg-premium-muted border-protocall-premium-light">
               {session.stock_symbol}
             </Badge>
             <Badge variant="outline" className={cn("font-semibold text-xs", sessionStatus.color)}>
@@ -226,12 +226,12 @@ export default function PledgeSessionCard({
 
           {/* Special highlighted panel for 'awaiting_sell_execution' status */}
           {session.status === 'awaiting_sell_execution' && (
-            <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
-              <h4 className="font-semibold text-sm text-indigo-800 flex items-center gap-2">
+            <div className="p-3 bg-premium-muted border border-protocall-premium-light rounded-lg">
+              <h4 className="font-semibold text-sm text-protocall-blue flex items-center gap-2">
                 <TrendingUp className="w-4 h-4" />
                 Sell Phase Active
               </h4>
-              <p className="text-xs text-indigo-700 mt-1">
+              <p className="text-xs text-protocall-blue mt-1">
                 Buy orders are complete and positions are now live. You can monitor and manage sell executions from the <b className="font-bold">"Executions"</b> tab.
               </p>
             </div>
@@ -239,66 +239,66 @@ export default function PledgeSessionCard({
 
           {/* Session Stats Grid */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="bg-premium-muted p-4 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <Users className="w-5 h-5 text-blue-600" />
-                <span className="text-xs text-blue-600 font-semibold">TOTAL</span>
+                <Users className="w-5 h-5 text-protocall-blue" />
+                <span className="text-xs text-protocall-blue font-semibold">TOTAL</span>
               </div>
-              <p className="text-2xl font-bold text-blue-900">{session.total_pledges || 0}</p>
-              <p className="text-xs text-blue-600">Total Pledges</p>
+              <p className="text-2xl font-bold text-protocall-blue">{session.total_pledges || 0}</p>
+              <p className="text-xs text-protocall-blue">Total Pledges</p>
               <div className="mt-2 flex gap-2 text-xs">
-                <span className="text-green-600">Buy: {session.buy_pledges_count || 0}</span>
-                <span className="text-red-600">Sell: {session.sell_pledges_count || 0}</span>
+                <span className="text-buy-muted-foreground">Buy: {session.buy_pledges_count || 0}</span>
+                <span className="text-sell-muted-foreground">Sell: {session.sell_pledges_count || 0}</span>
               </div>
             </div>
 
-            <div className="bg-green-50 p-4 rounded-lg">
+            <div className="bg-buy-muted p-4 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <DollarSign className="w-5 h-5 text-green-600" />
-                <span className="text-xs text-green-600 font-semibold">VALUE</span>
+                <DollarSign className="w-5 h-5 text-buy-muted-foreground" />
+                <span className="text-xs text-buy-muted-foreground font-semibold">VALUE</span>
               </div>
-              <p className="text-2xl font-bold text-green-900">
+              <p className="text-2xl font-bold text-buy-muted-foreground">
                 ₹{((session.total_pledge_value || 0) / 1000).toFixed(1)}k
               </p>
-              <p className="text-xs text-green-600">Total Value</p>
+              <p className="text-xs text-buy-muted-foreground">Total Value</p>
               <div className="mt-2 flex gap-2 text-xs">
-                <span className="text-green-600">Buy: ₹{((session.buy_pledges_value || 0) / 1000).toFixed(1)}k</span>
-                <span className="text-red-600">Sell: ₹{((session.sell_pledges_value || 0) / 1000).toFixed(1)}k</span>
+                <span className="text-buy-muted-foreground">Buy: ₹{((session.buy_pledges_value || 0) / 1000).toFixed(1)}k</span>
+                <span className="text-sell-muted-foreground">Sell: ₹{((session.sell_pledges_value || 0) / 1000).toFixed(1)}k</span>
               </div>
             </div>
 
-            <div className="bg-purple-50 p-4 rounded-lg">
+            <div className="bg-premium-muted p-4 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <CheckCircle className="w-5 h-5 text-purple-600" />
-                <span className="text-xs text-purple-600 font-semibold">READY</span>
+                <CheckCircle className="w-5 h-5 text-protocall-premium-text" />
+                <span className="text-xs text-protocall-premium-text font-semibold">READY</span>
               </div>
-              <p className="text-2xl font-bold text-purple-900">{readyPledges.length}</p>
-              <p className="text-xs text-purple-600">Ready to Execute</p>
+              <p className="text-2xl font-bold text-protocall-premium-text">{readyPledges.length}</p>
+              <p className="text-xs text-protocall-premium-text">Ready to Execute</p>
             </div>
 
-            <div className="bg-orange-50 p-4 rounded-lg">
+            <div className="bg-hold-muted p-4 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <Activity className="w-5 h-5 text-orange-600" />
-                <span className="text-xs text-orange-600 font-semibold">EXECUTED</span>
+                <Activity className="w-5 h-5 text-hold-muted-foreground" />
+                <span className="text-xs text-hold-muted-foreground font-semibold">EXECUTED</span>
               </div>
-              <p className="text-2xl font-bold text-orange-900">{executedPledges.length}</p>
-              <p className="text-xs text-orange-600">Completed</p>
+              <p className="text-2xl font-bold text-hold-muted-foreground">{executedPledges.length}</p>
+              <p className="text-xs text-hold-muted-foreground">Completed</p>
             </div>
           </div>
 
           {/* Recalculate Stats Button */}
           {(session.total_pledges === 0 && pledges.length > 0) && (
-            <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div className="p-3 bg-hold-muted border border-hold/30 rounded-lg">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-yellow-600" />
-                  <span className="text-sm text-yellow-800">Stats may be out of sync</span>
+                  <AlertTriangle className="w-4 h-4 text-hold-muted-foreground" />
+                  <span className="text-sm text-hold-muted-foreground">Stats may be out of sync</span>
                 </div>
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={onRecalculateStats}
-                  className="text-yellow-700 border-yellow-300 hover:bg-yellow-100"
+                  className="text-hold-muted-foreground border-hold/30 hover:bg-hold-muted"
                 >
                   <RefreshCw className="w-3 h-3 mr-1" />
                   Recalculate
@@ -309,11 +309,11 @@ export default function PledgeSessionCard({
 
           {/* Session Timeline */}
           <div className="space-y-2 text-sm">
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 text-subtle">
               <Calendar className="w-4 h-4" />
               <span>Start: {format(new Date(session.session_start), 'PPp')}</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 text-subtle">
               <Clock className="w-4 h-4" />
               <span>End: {format(new Date(session.session_end), 'PPp')}</span>
             </div>
@@ -324,7 +324,7 @@ export default function PledgeSessionCard({
             {/* Highlight session_end execution rule */}
             <Badge
               variant="outline"
-              className={`text-xs ${isSessionEndRule ? 'bg-orange-100 text-orange-700 border-orange-300 font-semibold' : ''}`}
+              className={`text-xs ${isSessionEndRule ? 'bg-hold-muted text-hold-muted-foreground border-hold/30 font-semibold' : ''}`}
             >
               {isSessionEndRule && <Clock className="w-3 h-3 mr-1" />}
               {session.execution_rule}
@@ -351,7 +351,7 @@ export default function PledgeSessionCard({
             {session.status === 'active' && (
               <Button
                 size="sm"
-                className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                className="flex-1 bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
                 onClick={() => onExecute(session)}
               >
                 <PlayCircle className="w-4 h-4 mr-2" />
@@ -363,7 +363,7 @@ export default function PledgeSessionCard({
             {session.status === 'awaiting_sell_execution' && (
               <Button
                 size="sm"
-                className="flex-1 bg-red-600 hover:bg-red-700"
+                className="flex-1 bg-sell hover:bg-sell"
                 onClick={() => onExecute(session)}
               >
                 <TrendingDown className="w-4 h-4 mr-2" />
@@ -374,7 +374,7 @@ export default function PledgeSessionCard({
             {session.status === 'draft' && (
               <Button
                 size="sm"
-                className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                className="flex-1 bg-buy-soft hover:from-buy hover:to-buy"
                 onClick={onActivate}
               >
                 <Play className="w-4 h-4 mr-2" />
@@ -403,7 +403,7 @@ export default function PledgeSessionCard({
             {session.description && (
               <div>
                 <h4 className="font-semibold mb-2">Description</h4>
-                <p className="text-sm text-gray-600">{session.description}</p>
+                <p className="text-sm text-subtle">{session.description}</p>
               </div>
             )}
 
@@ -411,27 +411,27 @@ export default function PledgeSessionCard({
             {session.execution_reason && (
               <div>
                 <h4 className="font-semibold mb-2">Execution Rationale</h4>
-                <p className="text-sm text-gray-600">{session.execution_reason}</p>
+                <p className="text-sm text-subtle">{session.execution_reason}</p>
               </div>
             )}
 
             {/* Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <p className="text-xs text-blue-600 mb-1">Total Pledges</p>
-                <p className="text-2xl font-bold text-blue-900">{session.total_pledges || 0}</p>
+              <div className="bg-premium-muted p-4 rounded-lg">
+                <p className="text-xs text-protocall-blue mb-1">Total Pledges</p>
+                <p className="text-2xl font-bold text-protocall-blue">{session.total_pledges || 0}</p>
               </div>
-              <div className="bg-green-50 p-4 rounded-lg">
-                <p className="text-xs text-green-600 mb-1">Total Value</p>
-                <p className="text-2xl font-bold text-green-900">₹{((session.total_pledge_value || 0) / 1000).toFixed(1)}k</p>
+              <div className="bg-buy-muted p-4 rounded-lg">
+                <p className="text-xs text-buy-muted-foreground mb-1">Total Value</p>
+                <p className="text-2xl font-bold text-buy-muted-foreground">₹{((session.total_pledge_value || 0) / 1000).toFixed(1)}k</p>
               </div>
-              <div className="bg-purple-50 p-4 rounded-lg">
-                <p className="text-xs text-purple-600 mb-1">Buy Pledges</p>
-                <p className="text-2xl font-bold text-purple-900">{session.buy_pledges_count || 0}</p>
+              <div className="bg-premium-muted p-4 rounded-lg">
+                <p className="text-xs text-protocall-premium-text mb-1">Buy Pledges</p>
+                <p className="text-2xl font-bold text-protocall-premium-text">{session.buy_pledges_count || 0}</p>
               </div>
-              <div className="bg-orange-50 p-4 rounded-lg">
-                <p className="text-xs text-orange-600 mb-1">Sell Pledges</p>
-                <p className="text-2xl font-bold text-orange-900">{session.sell_pledges_count || 0}</p>
+              <div className="bg-hold-muted p-4 rounded-lg">
+                <p className="text-xs text-hold-muted-foreground mb-1">Sell Pledges</p>
+                <p className="text-2xl font-bold text-hold-muted-foreground">{session.sell_pledges_count || 0}</p>
               </div>
             </div>
 
@@ -440,32 +440,32 @@ export default function PledgeSessionCard({
               <h4 className="font-semibold">Configuration</h4>
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div>
-                  <p className="text-gray-500">Session Mode</p>
+                  <p className="text-muted-foreground">Session Mode</p>
                   <p className="font-medium">{session.session_mode?.replace('_', ' ')}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Execution Rule</p>
+                  <p className="text-muted-foreground">Execution Rule</p>
                   {/* Highlight session_end in modal too */}
-                  <p className={`font-medium ${isSessionEndRule ? 'text-orange-600 font-semibold' : ''}`}>
+                  <p className={`font-medium ${isSessionEndRule ? 'text-hold-muted-foreground font-semibold' : ''}`}>
                     {session.execution_rule}
                   </p>
                 </div>
                 <div>
-                  <p className="text-gray-500">AMO Enabled</p>
+                  <p className="text-muted-foreground">AMO Enabled</p>
                   <p className="font-medium">{session.allow_amo ? 'Yes' : 'No'}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Convenience Fee</p>
+                  <p className="text-muted-foreground">Convenience Fee</p>
                   <p className="font-medium">
                     {session.convenience_fee_type === 'flat' ? '₹' : ''}{session.convenience_fee_amount}{session.convenience_fee_type === 'percent' ? '%' : ''}
                   </p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Min Quantity</p>
+                  <p className="text-muted-foreground">Min Quantity</p>
                   <p className="font-medium">{session.min_qty || 1}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Max Quantity</p>
+                  <p className="text-muted-foreground">Max Quantity</p>
                   <p className="font-medium">{session.max_qty || 'Unlimited'}</p>
                 </div>
               </div>
@@ -476,16 +476,16 @@ export default function PledgeSessionCard({
               <h4 className="font-semibold">Timeline</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Session Start</span>
+                  <span className="text-muted-foreground">Session Start</span>
                   <span className="font-medium">{format(new Date(session.session_start), 'PPp')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Session End</span>
+                  <span className="text-muted-foreground">Session End</span>
                   <span className="font-medium">{format(new Date(session.session_end), 'PPp')}</span>
                 </div>
                 {session.last_executed_at && (
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Last Executed</span>
+                    <span className="text-muted-foreground">Last Executed</span>
                     <span className="font-medium">{format(new Date(session.last_executed_at), 'PPp')}</span>
                   </div>
                 )}
@@ -495,13 +495,13 @@ export default function PledgeSessionCard({
             {/* Badges */}
             <div className="flex flex-wrap gap-2">
               {session.is_advisor_recommended && (
-                <Badge className="bg-blue-100 text-blue-700">SEBI Advisor Recommended</Badge>
+                <Badge className="bg-premium-muted text-protocall-blue">SEBI Advisor Recommended</Badge>
               )}
               {session.is_analyst_certified && (
-                <Badge className="bg-green-100 text-green-700">Analyst Certified</Badge>
+                <Badge className="bg-buy-muted text-buy-muted-foreground">Analyst Certified</Badge>
               )}
               {session.allow_amo && (
-                <Badge className="bg-indigo-100 text-indigo-700">
+                <Badge className="bg-premium-muted text-protocall-blue">
                   <Moon className="w-3 h-3 mr-1" />
                   AMO Enabled
                 </Badge>
@@ -524,7 +524,7 @@ export default function PledgeSessionCard({
                     setShowDetailsModal(false);
                     onExecute(session);
                   }}
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  className="flex-1 bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
                 >
                   <Play className="w-4 h-4 mr-2" />
                   Execute
@@ -537,7 +537,7 @@ export default function PledgeSessionCard({
                     setShowDetailsModal(false);
                     onExecute(session);
                   }}
-                  className="flex-1 bg-red-600 hover:bg-red-700"
+                  className="flex-1 bg-sell hover:bg-sell"
                 >
                   <TrendingDown className="w-4 h-4 mr-2" />
                   Execute Sell Orders

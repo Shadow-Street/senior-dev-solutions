@@ -94,7 +94,7 @@ export default function FundManager_Allocations() {
     return (
       <FundManagerLayout activePage="allocations">
         <div className="flex items-center justify-center h-full p-12">
-          <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+          <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
         </div>
       </FundManagerLayout>
     );
@@ -104,8 +104,8 @@ export default function FundManager_Allocations() {
     <FundManagerLayout activePage="allocations">
       <div className="p-8 space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Fund Allocations</h1>
-          <p className="text-slate-600 mt-1">Manage investor fund allocations and execute pending requests</p>
+          <h1 className="text-3xl font-bold text-foreground">Fund Allocations</h1>
+          <p className="text-subtle mt-1">Manage investor fund allocations and execute pending requests</p>
         </div>
 
         {/* Tabs */}
@@ -116,7 +116,7 @@ export default function FundManager_Allocations() {
                 variant={activeTab === 'pending' ? 'default' : 'outline'}
                 onClick={() => setActiveTab('pending')}
                 size="sm"
-                className={activeTab === 'pending' ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white' : ''}
+                className={activeTab === 'pending' ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white' : ''}
               >
                 <Clock className="w-4 h-4 mr-2" />
                 Pending Executions ({pendingRequests.length})
@@ -125,7 +125,7 @@ export default function FundManager_Allocations() {
                 variant={activeTab === 'active' ? 'default' : 'outline'}
                 onClick={() => setActiveTab('active')}
                 size="sm"
-                className={activeTab === 'active' ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white' : ''}
+                className={activeTab === 'active' ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white' : ''}
               >
                 <CheckCircle className="w-4 h-4 mr-2" />
                 Active Allocations ({allocations.filter(a => a.status === 'active').length})
@@ -137,41 +137,41 @@ export default function FundManager_Allocations() {
         {/* Pending Executions Tab */}
         {activeTab === 'pending' && (
           <Card className="border-0 shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-yellow-50 to-orange-50">
+            <CardHeader className="bg-gradient-to-r from-surface-2 to-hold-muted">
               <CardTitle className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-yellow-600" />
+                <Clock className="w-5 h-5 text-hold-muted-foreground" />
                 Pending Allocation Executions ({pendingRequests.length})
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               {pendingRequests.length === 0 ? (
-                <div className="py-12 text-center text-slate-500">
-                  <CheckCircle className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                <div className="py-12 text-center text-muted-foreground">
+                  <CheckCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                   <p className="text-sm">No pending execution requests</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-slate-50">
+                    <thead className="bg-surface-2">
                       <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Request Date</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Investor Code</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Investor Name</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Fund Plan</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase">Requested Amount</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase">Wallet Balance</th>
-                        <th className="px-4 py-3 text-center text-xs font-medium text-slate-500 uppercase">Actions</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Request Date</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Investor Code</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Investor Name</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Fund Plan</th>
+                        <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase">Requested Amount</th>
+                        <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase">Wallet Balance</th>
+                        <th className="px-4 py-3 text-center text-xs font-medium text-muted-foreground uppercase">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-200">
+                    <tbody className="divide-y divide-divider">
                       {pendingRequests.map((req) => {
                         const investor = getInvestorDetails(req.investor_id);
                         const plan = getPlanDetails(req.fund_plan_id);
                         const wallet = getWalletDetails(req.investor_id);
 
                         return (
-                          <tr key={req.id} className="hover:bg-slate-50">
-                            <td className="px-4 py-4 text-sm text-slate-600">
+                          <tr key={req.id} className="hover:bg-surface-2">
+                            <td className="px-4 py-4 text-sm text-subtle">
                               {new Date(req.created_date).toLocaleString('en-US', {
                                 day: 'numeric',
                                 month: 'short',
@@ -181,30 +181,30 @@ export default function FundManager_Allocations() {
                               })}
                             </td>
                             <td className="px-4 py-4">
-                              <span className="text-sm font-bold text-blue-600">
+                              <span className="text-sm font-bold text-protocall-blue">
                                 {investor?.investor_code || 'N/A'}
                               </span>
                             </td>
-                            <td className="px-4 py-4 text-sm text-slate-900">
+                            <td className="px-4 py-4 text-sm text-foreground">
                               {investor?.full_name || 'Unknown'}
                             </td>
                             <td className="px-4 py-4">
                               <div className="flex flex-col">
-                                <span className="text-sm font-medium text-slate-900">{plan?.plan_name || 'Unknown'}</span>
-                                <span className="text-xs text-slate-500">{plan?.plan_code || ''}</span>
+                                <span className="text-sm font-medium text-foreground">{plan?.plan_name || 'Unknown'}</span>
+                                <span className="text-xs text-muted-foreground">{plan?.plan_code || ''}</span>
                               </div>
                             </td>
-                            <td className="px-4 py-4 text-right text-sm font-bold text-blue-600">
+                            <td className="px-4 py-4 text-right text-sm font-bold text-protocall-blue">
                               ₹{(req.requested_amount || 0).toLocaleString('en-IN')}
                             </td>
-                            <td className="px-4 py-4 text-right text-sm font-semibold text-green-600">
+                            <td className="px-4 py-4 text-right text-sm font-semibold text-buy-muted-foreground">
                               ₹{((wallet?.available_balance || 0) + (wallet?.locked_balance || 0)).toLocaleString('en-IN')}
                             </td>
                             <td className="px-4 py-4 text-center">
                               <Button
                                 onClick={() => handleExecuteClick(req)}
                                 size="sm"
-                                className="bg-gradient-to-r from-green-500 to-emerald-600 text-white"
+                                className="bg-buy-soft text-buy-foreground"
                               >
                                 <CheckCircle className="w-4 h-4 mr-1" />
                                 Execute Allocation
@@ -229,26 +229,26 @@ export default function FundManager_Allocations() {
             </CardHeader>
             <CardContent className="p-6">
               {allocations.filter(a => a.status === 'active').length === 0 ? (
-                <div className="py-12 text-center text-slate-500">
-                  <CheckCircle className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                <div className="py-12 text-center text-muted-foreground">
+                  <CheckCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                   <p>No active allocations</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-slate-50">
+                    <thead className="bg-surface-2">
                       <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Investor Code</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Investor Name</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Fund Plan</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase">Units Held</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase">Total Invested</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase">Current Value</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase">P&L</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Investment Date</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Investor Code</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Investor Name</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Fund Plan</th>
+                        <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase">Units Held</th>
+                        <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase">Total Invested</th>
+                        <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase">Current Value</th>
+                        <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase">P&L</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Investment Date</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-200">
+                    <tbody className="divide-y divide-divider">
                       {allocations.filter(a => a.status === 'active').map((alloc) => {
                         const investor = getInvestorDetails(alloc.investor_id);
                         const plan = getPlanDetails(alloc.fund_plan_id);
@@ -256,42 +256,42 @@ export default function FundManager_Allocations() {
                         const profitLossPercent = alloc.total_invested > 0 ? ((profitLoss / alloc.total_invested) * 100).toFixed(2) : 0;
 
                         return (
-                          <tr key={alloc.id} className="hover:bg-slate-50">
+                          <tr key={alloc.id} className="hover:bg-surface-2">
                             <td className="px-4 py-4">
-                              <span className="text-sm font-bold text-blue-600">
+                              <span className="text-sm font-bold text-protocall-blue">
                                 {investor?.investor_code || 'N/A'}
                               </span>
                             </td>
-                            <td className="px-4 py-4 text-sm text-slate-900">
+                            <td className="px-4 py-4 text-sm text-foreground">
                               {investor?.full_name || 'Unknown'}
                             </td>
                             <td className="px-4 py-4">
                               <div className="flex flex-col">
-                                <span className="text-sm font-medium text-slate-900">{plan?.plan_name || 'Unknown'}</span>
-                                <span className="text-xs text-slate-500">{plan?.plan_code || ''}</span>
+                                <span className="text-sm font-medium text-foreground">{plan?.plan_name || 'Unknown'}</span>
+                                <span className="text-xs text-muted-foreground">{plan?.plan_code || ''}</span>
                               </div>
                             </td>
-                            <td className="px-4 py-4 text-right text-sm text-slate-600">
+                            <td className="px-4 py-4 text-right text-sm text-subtle">
                               {(alloc.units_held || 0).toFixed(4)}
                             </td>
-                            <td className="px-4 py-4 text-right text-sm font-semibold text-blue-600">
+                            <td className="px-4 py-4 text-right text-sm font-semibold text-protocall-blue">
                               ₹{(alloc.total_invested || 0).toLocaleString('en-IN')}
                             </td>
-                            <td className="px-4 py-4 text-right text-sm font-semibold text-green-600">
+                            <td className="px-4 py-4 text-right text-sm font-semibold text-buy-muted-foreground">
                               ₹{(alloc.current_value || 0).toLocaleString('en-IN')}
                             </td>
                             <td className="px-4 py-4 text-right">
                               <div className="flex flex-col items-end">
-                                <span className={`font-semibold text-sm flex items-center gap-1 ${profitLoss >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                                <span className={`font-semibold text-sm flex items-center gap-1 ${profitLoss >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
                                   {profitLoss >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                                   {profitLoss >= 0 ? '+' : ''}₹{Math.abs(profitLoss).toLocaleString('en-IN')}
                                 </span>
-                                <span className={`text-xs ${profitLoss >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                                <span className={`text-xs ${profitLoss >= 0 ? 'text-positive' : 'text-sell'}`}>
                                   {profitLoss >= 0 ? '+' : ''}{profitLossPercent}%
                                 </span>
                               </div>
                             </td>
-                            <td className="px-4 py-4 text-sm text-slate-600">
+                            <td className="px-4 py-4 text-sm text-subtle">
                               {alloc.investment_date ? new Date(alloc.investment_date).toLocaleDateString('en-US', {
                                 day: 'numeric',
                                 month: 'short',

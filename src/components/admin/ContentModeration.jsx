@@ -68,11 +68,11 @@ export default function ContentModeration({ polls = [], onPollUpdated, currentUs
             {/* Header / Toolbar */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                 <div>
-                    <h2 className="text-2xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent inline-flex items-center gap-2">
-                        <Shield className="w-6 h-6 text-orange-500" />
+                    <h2 className="text-2xl font-bold bg-gradient-to-r from-sell to-hold bg-clip-text text-transparent inline-flex items-center gap-2">
+                        <Shield className="w-6 h-6 text-hold" />
                         Content Police
                     </h2>
-                    <p className="text-slate-500 text-sm mt-1">Review, flag, and manage user-generated content.</p>
+                    <p className="text-muted-foreground text-sm mt-1">Review, flag, and manage user-generated content.</p>
                 </div>
 
                 <div className="flex bg-white p-1 rounded-lg border shadow-sm">
@@ -90,14 +90,14 @@ export default function ContentModeration({ polls = [], onPollUpdated, currentUs
                         variant={filterStatus === 'flagged' ? 'secondary' : 'ghost'}
                         size="sm"
                         onClick={() => setFilterStatus('flagged')}
-                        className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                        className="text-sell hover:text-sell-muted-foreground hover:bg-sell-muted"
                     >Flagged</Button>
                 </div>
             </div>
 
             {/* Bulk Toolbar */}
             {selectedItems.length > 0 && (
-                <div className="bg-slate-900 text-white p-3 rounded-lg flex justify-between items-center mb-4 animate-in slide-in-from-top-2">
+                <div className="bg-protocall-ink text-white p-3 rounded-lg flex justify-between items-center mb-4 animate-in slide-in-from-top-2">
                     <span className="text-sm font-medium px-2">{selectedItems.length} items selected</span>
                     <div className="flex gap-2">
                         <Button size="sm" variant="destructive" onClick={() => handleBulkAction('delete')}>
@@ -116,28 +116,28 @@ export default function ContentModeration({ polls = [], onPollUpdated, currentUs
 
                 <TabsContent value="polls" className="mt-4 space-y-4">
                     {filteredPolls.map(poll => (
-                        <div key={poll.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-start md:items-center hover:shadow-md transition-shadow group">
+                        <div key={poll.id} className="bg-white p-4 rounded-xl border border-border shadow-sm flex flex-col md:flex-row gap-4 items-start md:items-center hover:shadow-md transition-shadow group">
                             <input
                                 type="checkbox"
-                                className="mt-1.5 md:mt-0 rounded border-slate-300 text-orange-600 focus:ring-orange-500 w-4 h-4"
+                                className="mt-1.5 md:mt-0 rounded border-border text-hold-muted-foreground focus:ring-hold/30 w-4 h-4"
                                 checked={selectedItems.includes(poll.id)}
                                 onChange={() => toggleSelection(poll.id)}
                             />
 
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-1">
-                                    <Badge variant={poll.is_active ? 'default' : 'secondary'} className={poll.is_active ? 'bg-green-100 text-green-700' : ''}>
+                                    <Badge variant={poll.is_active ? 'default' : 'secondary'} className={poll.is_active ? 'bg-buy-muted text-buy-muted-foreground' : ''}>
                                         {poll.is_active ? 'Active' : 'Closed'}
                                     </Badge>
                                     {poll.is_premium && (
-                                        <Badge className="bg-purple-100 text-purple-700 border-purple-200">
+                                        <Badge className="bg-premium-muted text-protocall-premium-text border-protocall-premium-light">
                                             Premium
                                         </Badge>
                                     )}
-                                    <span className="text-xs text-slate-400 font-mono">ID: {poll.id.slice(0, 8)}</span>
+                                    <span className="text-xs text-muted-foreground font-mono">ID: {poll.id.slice(0, 8)}</span>
                                 </div>
-                                <h4 className="font-semibold text-slate-900 truncate">{poll.title}</h4>
-                                <p className="text-sm text-slate-500 truncate">{poll.stock_symbol ? `$${poll.stock_symbol}` : 'General'} • Created {new Date(poll.created_at).toLocaleDateString()}</p>
+                                <h4 className="font-semibold text-foreground truncate">{poll.title}</h4>
+                                <p className="text-sm text-muted-foreground truncate">{poll.stock_symbol ? `$${poll.stock_symbol}` : 'General'} • Created {new Date(poll.created_at).toLocaleDateString()}</p>
                             </div>
 
                             <div className="flex items-center gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
@@ -154,7 +154,7 @@ export default function ContentModeration({ polls = [], onPollUpdated, currentUs
                                     size="sm"
                                     variant="outline"
                                     onClick={() => handleAction('toggle-active', poll)}
-                                    className={poll.is_active ? 'text-red-600 hover:text-red-700 hover:bg-red-50' : 'text-green-600 hover:text-green-700 hover:bg-green-50'}
+                                    className={poll.is_active ? 'text-sell-muted-foreground hover:text-sell-muted-foreground hover:bg-sell-muted' : 'text-buy-muted-foreground hover:text-buy-muted-foreground hover:bg-buy-muted'}
                                     title={poll.is_active ? "Suspend" : "Activate"}
                                 >
                                     {poll.is_active ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -163,7 +163,7 @@ export default function ContentModeration({ polls = [], onPollUpdated, currentUs
                                 <Button
                                     size="sm"
                                     variant="ghost"
-                                    className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                                    className="text-sell hover:text-sell-muted-foreground hover:bg-sell-muted"
                                     onClick={() => handleAction('delete', poll)}
                                 >
                                     <Trash2 className="w-4 h-4" />
@@ -172,7 +172,7 @@ export default function ContentModeration({ polls = [], onPollUpdated, currentUs
                         </div>
                     ))}
                     {filteredPolls.length === 0 && (
-                        <div className="text-center py-12 text-slate-400">
+                        <div className="text-center py-12 text-muted-foreground">
                             <Layers className="w-12 h-12 mx-auto mb-2 opacity-20" />
                             <p>No polls found matching filters.</p>
                         </div>

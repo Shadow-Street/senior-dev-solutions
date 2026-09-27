@@ -131,7 +131,7 @@ export default function EventCancellationModal({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-2xl text-red-700">
+          <DialogTitle className="flex items-center gap-2 text-2xl text-sell-muted-foreground">
             <AlertTriangle className="w-6 h-6" />
             Cancel Event
           </DialogTitle>
@@ -142,15 +142,15 @@ export default function EventCancellationModal({
 
         <div className="space-y-6 py-4">
           {/* Event Summary */}
-          <div className="bg-gradient-to-r from-red-50 to-pink-50 p-4 rounded-xl border-2 border-red-200">
-            <h3 className="font-semibold text-red-900 mb-2">{event.title}</h3>
+          <div className="bg-surface-2 p-4 rounded-xl border-2 border-sell/30">
+            <h3 className="font-semibold text-sell-muted-foreground mb-2">{event.title}</h3>
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="flex items-center gap-2 text-red-700">
+              <div className="flex items-center gap-2 text-sell-muted-foreground">
                 <Users className="w-4 h-4" />
                 <span>{activeTickets.length} Active Tickets</span>
               </div>
               {isPremiumEvent && (
-                <div className="flex items-center gap-2 text-red-700">
+                <div className="flex items-center gap-2 text-sell-muted-foreground">
                   <DollarSign className="w-4 h-4" />
                   <span>Total Refund: ₹{totalRefundAmount.toLocaleString()}</span>
                 </div>
@@ -161,26 +161,26 @@ export default function EventCancellationModal({
           {/* Cancellation Reason */}
           <div className="space-y-2">
             <Label htmlFor="reason" className="text-sm font-semibold">
-              Cancellation Reason <span className="text-red-500">*</span>
+              Cancellation Reason <span className="text-sell">*</span>
             </Label>
             <Textarea
               id="reason"
               placeholder="Explain why this event is being cancelled (will be visible to attendees)..."
               value={cancellationReason}
               onChange={(e) => setCancellationReason(e.target.value)}
-              className="h-32 border-2 border-gray-200 focus:border-red-400 rounded-xl"
+              className="h-32 border-2 border-border focus:border-sell rounded-xl"
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               This reason will be sent to all attendees in the notification email.
             </p>
           </div>
 
           {/* Options */}
           <div className="space-y-4 border-t pt-4">
-            <h4 className="font-semibold text-gray-900">Cancellation Options</h4>
+            <h4 className="font-semibold text-foreground">Cancellation Options</h4>
             
             {/* Notify Attendees */}
-            <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-xl border border-blue-200">
+            <div className="flex items-start gap-3 p-4 bg-premium-muted rounded-xl border border-protocall-premium-light">
               <Checkbox
                 id="notify"
                 checked={notifyAttendees}
@@ -188,11 +188,11 @@ export default function EventCancellationModal({
                 className="mt-1"
               />
               <div className="flex-1">
-                <Label htmlFor="notify" className="flex items-center gap-2 font-semibold text-blue-900 cursor-pointer">
+                <Label htmlFor="notify" className="flex items-center gap-2 font-semibold text-protocall-blue cursor-pointer">
                   <Mail className="w-4 h-4" />
                   Send Notification to Attendees
                 </Label>
-                <p className="text-sm text-blue-700 mt-1">
+                <p className="text-sm text-protocall-blue mt-1">
                   All {activeTickets.length} ticket holders will receive an in-app notification about the cancellation.
                 </p>
               </div>
@@ -200,7 +200,7 @@ export default function EventCancellationModal({
 
             {/* Process Refunds */}
             {isPremiumEvent && activeTickets.length > 0 && (
-              <div className="flex items-start gap-3 p-4 bg-green-50 rounded-xl border border-green-200">
+              <div className="flex items-start gap-3 p-4 bg-buy-muted rounded-xl border border-buy/30">
                 <Checkbox
                   id="refunds"
                   checked={processRefunds}
@@ -209,15 +209,15 @@ export default function EventCancellationModal({
                   className="mt-1"
                 />
                 <div className="flex-1">
-                  <Label htmlFor="refunds" className="flex items-center gap-2 font-semibold text-green-900">
+                  <Label htmlFor="refunds" className="flex items-center gap-2 font-semibold text-buy-muted-foreground">
                     <DollarSign className="w-4 h-4" />
                     Process Full Refunds (Required)
-                    <Badge className="bg-green-600 text-white ml-2">Mandatory</Badge>
+                    <Badge className="bg-buy text-buy-foreground ml-2">Mandatory</Badge>
                   </Label>
-                  <p className="text-sm text-green-700 mt-1">
+                  <p className="text-sm text-buy-muted-foreground mt-1">
                     Full refunds will be automatically initiated for all {activeTickets.length} active tickets (₹{totalRefundAmount.toLocaleString()})
                   </p>
-                  <p className="text-xs text-green-600 mt-2 flex items-center gap-1">
+                  <p className="text-xs text-buy-muted-foreground mt-2 flex items-center gap-1">
                     <Info className="w-3 h-3" />
                     Refunds will be processed within 5-7 business days
                   </p>
@@ -226,8 +226,8 @@ export default function EventCancellationModal({
             )}
 
             {!isPremiumEvent && (
-              <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
-                <p className="text-sm text-gray-600 flex items-center gap-2">
+              <div className="p-4 bg-surface-2 rounded-xl border border-border">
+                <p className="text-sm text-subtle flex items-center gap-2">
                   <Info className="w-4 h-4" />
                   This is a free event, so no refunds will be processed.
                 </p>
@@ -236,12 +236,12 @@ export default function EventCancellationModal({
           </div>
 
           {/* Warning */}
-          <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4">
+          <div className="bg-hold-muted border-2 border-hold/30 rounded-xl p-4">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-yellow-700 flex-shrink-0 mt-0.5" />
+              <AlertTriangle className="w-5 h-5 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
               <div>
-                <h4 className="font-semibold text-yellow-900">Important Warning</h4>
-                <ul className="text-sm text-yellow-800 mt-2 space-y-1 list-disc list-inside">
+                <h4 className="font-semibold text-hold-muted-foreground">Important Warning</h4>
+                <ul className="text-sm text-hold-muted-foreground mt-2 space-y-1 list-disc list-inside">
                   <li>This action cannot be undone</li>
                   <li>Event status will be permanently changed to "Cancelled"</li>
                   <li>All active tickets will be invalidated</li>
@@ -258,14 +258,14 @@ export default function EventCancellationModal({
             variant="outline"
             onClick={onClose}
             disabled={isProcessing}
-            className="border-2 border-gray-300 hover:bg-gray-50 rounded-xl"
+            className="border-2 border-border hover:bg-surface-2 rounded-xl"
           >
             Cancel
           </Button>
           <Button
             onClick={handleCancelEvent}
             disabled={isProcessing || !cancellationReason.trim()}
-            className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+            className="bg-gradient-to-r from-sell to-protocall-blue hover:from-sell hover:to-protocall-blue text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
           >
             {isProcessing ? (
               <>

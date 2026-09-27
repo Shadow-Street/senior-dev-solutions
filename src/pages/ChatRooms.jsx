@@ -62,7 +62,7 @@ export default function ChatRooms() {
       setChatRooms(rooms || []);
     } catch (error) {
       console.error("Failed to fetch chat rooms:", error);
-      toast.error("Failed to load chat rooms");
+      toast.error("Failed to load Stock Chat Rooms");
       setChatRooms([]);
     } finally {
       setIsLoading(false);
@@ -148,21 +148,21 @@ export default function ChatRooms() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+    <div className="w-full bg-background p-4 sm:p-6">
+      <div className="mx-auto w-full max-w-7xl">
+        <div className="flex flex-wrap gap-4 justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">
-              Trading Chat Rooms
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+              Stock Chat Rooms
             </h1>
-            <p className="text-slate-500 text-lg mt-1">Connect with fellow retail investors</p>
+            <p className="text-subtle text-base sm:text-lg mt-1">Connect with fellow retail investors</p>
           </div>
           <div className="flex items-center gap-3">
-            <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 px-3 py-1 text-sm border-emerald-100">
+            <Badge variant="secondary" className="bg-buy-muted text-buy-muted-foreground px-3 py-1 text-sm border-buy/30">
               <Users className="w-4 h-4 mr-2" />
               {totalParticipants} Active
             </Badge>
-            <Button onClick={() => setShowCreateModal(true)} className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-lg shadow-purple-200">
+            <Button onClick={() => setShowCreateModal(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow-lg">
               <Plus className="w-4 h-4 mr-2" />
               Create Room
             </Button>
@@ -172,12 +172,12 @@ export default function ChatRooms() {
         <div className="flex flex-col gap-6 mb-8">
           {/* Search Bar */}
           <div className="relative w-full">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
             <Input
-              placeholder="Search chat rooms..."
+              placeholder="Search Stock Chat Rooms..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 h-12 rounded-xl bg-white shadow-sm border-slate-200 text-base"
+              className="pl-12 h-12 rounded-xl bg-white shadow-sm border-border text-base"
             />
           </div>
 
@@ -196,8 +196,8 @@ export default function ChatRooms() {
                 onClick={() => setFilter(filterOption.value)}
                 variant="ghost"
                 className={`h-9 rounded-full font-medium transition-all duration-300 px-4 ${filter === filterOption.value
-                  ? 'bg-blue-600 text-white shadow-md hover:bg-blue-700'
-                  : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 shadow-sm border border-slate-200'
+                  ? 'bg-protocall-blue text-white shadow-md hover:bg-protocall-blue'
+                  : 'bg-white text-subtle hover:bg-surface-2 hover:text-foreground shadow-sm border border-border'
                   }`}
               >
                 {filterOption.icon && <filterOption.icon className="w-4 h-4 mr-2" />}
@@ -242,15 +242,15 @@ export default function ChatRooms() {
 
         {!isLoading && filteredRooms.length === 0 && (
           <div className="text-center py-12">
-            <MessageSquare className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-slate-700 mb-2">No chat rooms found</h3>
-            <p className="text-slate-500 mb-4">
+            <MessageSquare className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-foreground mb-2">No Stock Chat Rooms found</h3>
+            <p className="text-muted-foreground mb-4">
               {searchTerm || filter !== 'all'
                 ? "Try adjusting your search or filters"
                 : "Be the first to create a chat room!"}
             </p>
             {chatRooms.length === 0 && (
-              <Button onClick={() => setShowCreateModal(true)} className="bg-violet-600 hover:bg-blue-700">
+              <Button onClick={() => setShowCreateModal(true)} className="bg-primary hover:bg-protocall-blue">
                 <Plus className="w-4 h-4 mr-2" />
                 Create First Room
               </Button>

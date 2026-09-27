@@ -113,6 +113,12 @@ router.use("/emails", emailRoutes);
 // Commissions
 router.use("/commissions", require("./commission.routes"));
 
+// Announcements & Financials
+router.use("/announcements", require("./announcement.routes"));
+router.use("/financials", require("./financial.routes"));
+router.use("/expenses", require("./expense.routes"));
+router.use("/income", require("./income.routes"));
+
 // Static Pages & Localization
 router.use("/static-pages", require("./staticpage.routes"));
 router.use("/localization", require("./localization.routes"));

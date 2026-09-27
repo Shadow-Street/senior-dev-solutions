@@ -80,39 +80,39 @@ export default function PMOverview({ pmProfile }) {
     <div className="space-y-6">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+        <Card className="bg-gradient-to-br from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-100 text-sm">Total AUM</p>
+                <p className="text-white/80 text-sm">Total AUM</p>
                 <p className="text-3xl font-bold mt-2">₹{(stats.totalAUM / 100000).toFixed(2)}L</p>
-                <p className="text-blue-100 text-xs mt-1">{stats.totalClients} Active Clients</p>
+                <p className="text-white/80 text-xs mt-1">{stats.totalClients} Active Clients</p>
               </div>
               <TrendingUp className="w-12 h-12 opacity-80" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white">
+        <Card className="bg-buy-soft text-buy-foreground">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-100 text-sm">Total Revenue</p>
+                <p className="text-protocall-ink/75 text-sm">Total Revenue</p>
                 <p className="text-3xl font-bold mt-2">₹{(stats.totalRevenue / 1000).toFixed(0)}K</p>
-                <p className="text-green-100 text-xs mt-1">From Performance Fees</p>
+                <p className="text-protocall-ink/75 text-xs mt-1">From Performance Fees</p>
               </div>
               <DollarSign className="w-12 h-12 opacity-80" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+        <Card className="bg-gradient-to-br from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-purple-100 text-sm">Avg Return</p>
+                <p className="text-white/80 text-sm">Avg Return</p>
                 <p className="text-3xl font-bold mt-2">{stats.avgReturn}%</p>
-                <p className="text-purple-100 text-xs mt-1">{stats.activeStrategies} Active Strategies</p>
+                <p className="text-white/80 text-xs mt-1">{stats.activeStrategies} Active Strategies</p>
               </div>
               <Target className="w-12 h-12 opacity-80" />
             </div>
@@ -125,7 +125,7 @@ export default function PMOverview({ pmProfile }) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-blue-600" />
+              <BarChart3 className="w-5 h-5 text-protocall-blue" />
               AUM Growth Trend
             </CardTitle>
           </CardHeader>
@@ -136,7 +136,7 @@ export default function PMOverview({ pmProfile }) {
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip formatter={(value) => `₹${(value / 100000).toFixed(2)}L`} />
-                <Line type="monotone" dataKey="aum" stroke="#3B82F6" strokeWidth={2} />
+                <Line type="monotone" dataKey="aum" stroke="hsl(var(--chart-1))" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
@@ -145,7 +145,7 @@ export default function PMOverview({ pmProfile }) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-green-600" />
+              <Activity className="w-5 h-5 text-buy-muted-foreground" />
               Strategy Distribution
             </CardTitle>
           </CardHeader>
@@ -180,25 +180,25 @@ export default function PMOverview({ pmProfile }) {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <Users className="w-6 h-6 text-blue-600 mb-2" />
-              <p className="text-2xl font-bold text-blue-900">{stats.totalClients}</p>
-              <p className="text-sm text-blue-600">Active Clients</p>
+            <div className="bg-premium-muted p-4 rounded-lg">
+              <Users className="w-6 h-6 text-protocall-blue mb-2" />
+              <p className="text-2xl font-bold text-protocall-blue">{stats.totalClients}</p>
+              <p className="text-sm text-protocall-blue">Active Clients</p>
             </div>
-            <div className="bg-green-50 p-4 rounded-lg">
-              <Target className="w-6 h-6 text-green-600 mb-2" />
-              <p className="text-2xl font-bold text-green-900">{stats.activeStrategies}</p>
-              <p className="text-sm text-green-600">Active Strategies</p>
+            <div className="bg-buy-muted p-4 rounded-lg">
+              <Target className="w-6 h-6 text-buy-muted-foreground mb-2" />
+              <p className="text-2xl font-bold text-buy-muted-foreground">{stats.activeStrategies}</p>
+              <p className="text-sm text-buy-muted-foreground">Active Strategies</p>
             </div>
-            <div className="bg-orange-50 p-4 rounded-lg">
-              <Activity className="w-6 h-6 text-orange-600 mb-2" />
-              <p className="text-2xl font-bold text-orange-900">{stats.pendingOrders}</p>
-              <p className="text-sm text-orange-600">Pending Orders</p>
+            <div className="bg-hold-muted p-4 rounded-lg">
+              <Activity className="w-6 h-6 text-hold-muted-foreground mb-2" />
+              <p className="text-2xl font-bold text-hold-muted-foreground">{stats.pendingOrders}</p>
+              <p className="text-sm text-hold-muted-foreground">Pending Orders</p>
             </div>
-            <div className="bg-purple-50 p-4 rounded-lg">
-              <DollarSign className="w-6 h-6 text-purple-600 mb-2" />
-              <p className="text-2xl font-bold text-purple-900">{pmProfile.performance_fee_percentage}%</p>
-              <p className="text-sm text-purple-600">Performance Fee</p>
+            <div className="bg-premium-muted p-4 rounded-lg">
+              <DollarSign className="w-6 h-6 text-protocall-premium-text mb-2" />
+              <p className="text-2xl font-bold text-protocall-premium-text">{pmProfile.performance_fee_percentage}%</p>
+              <p className="text-sm text-protocall-premium-text">Performance Fee</p>
             </div>
           </div>
         </CardContent>

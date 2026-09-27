@@ -10,8 +10,8 @@ const StatCard = ({ title, value, icon: Icon, color }) => (
       <Icon className={`w-5 h-5 ${color.iconText}`} />
     </div>
     <div>
-      <p className="text-xs font-semibold text-slate-500">{title}</p>
-      <p className="text-xl font-bold text-slate-800">{value}</p>
+      <p className="text-xs font-semibold text-muted-foreground">{title}</p>
+      <p className="text-xl font-bold text-foreground">{value}</p>
     </div>
   </div>
 );
@@ -19,11 +19,11 @@ const StatCard = ({ title, value, icon: Icon, color }) => (
 export default function PollOverview({ polls, stats }) {
 
   const overviewData = [
-    { title: 'Total Polls', value: stats?.total || 0, icon: Vote, color: { bg: 'bg-blue-50', iconBg: 'bg-blue-100', iconText: 'text-blue-600' } },
-    { title: 'Active Polls', value: stats?.active || 0, icon: CheckCircle, color: { bg: 'bg-green-50', iconBg: 'bg-green-100', iconText: 'text-green-600' } },
-    { title: 'Premium Polls', value: stats?.premium || 0, icon: Crown, color: { bg: 'bg-purple-50', iconBg: 'bg-purple-100', iconText: 'text-purple-600' } },
-    { title: 'Total Votes', value: stats?.totalVotes || 0, icon: Users, color: { bg: 'bg-orange-50', iconBg: 'bg-orange-100', iconText: 'text-orange-600' } },
-    { title: 'Avg. Votes', value: stats?.avgVotes || 0, icon: TrendingUp, color: { bg: 'bg-indigo-50', iconBg: 'bg-indigo-100', iconText: 'text-indigo-600' } }
+    { title: 'Total Polls', value: stats?.total || 0, icon: Vote, color: { bg: 'bg-premium-muted', iconBg: 'bg-premium-muted', iconText: 'text-protocall-blue' } },
+    { title: 'Active Polls', value: stats?.active || 0, icon: CheckCircle, color: { bg: 'bg-buy-muted', iconBg: 'bg-buy-muted', iconText: 'text-buy-muted-foreground' } },
+    { title: 'Premium Polls', value: stats?.premium || 0, icon: Crown, color: { bg: 'bg-premium-muted', iconBg: 'bg-premium-muted', iconText: 'text-protocall-premium-text' } },
+    { title: 'Total Votes', value: stats?.totalVotes || 0, icon: Users, color: { bg: 'bg-hold-muted', iconBg: 'bg-hold-muted', iconText: 'text-hold-muted-foreground' } },
+    { title: 'Avg. Votes', value: stats?.avgVotes || 0, icon: TrendingUp, color: { bg: 'bg-premium-muted', iconBg: 'bg-premium-muted', iconText: 'text-protocall-blue' } }
   ];
 
   const topPolls = [...polls]
@@ -41,7 +41,7 @@ export default function PollOverview({ polls, stats }) {
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-green-600" />
+            <TrendingUp className="w-5 h-5 text-buy-muted-foreground" />
             Top Performing Polls
           </CardTitle>
         </CardHeader>
@@ -49,7 +49,7 @@ export default function PollOverview({ polls, stats }) {
           {topPolls.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+                <thead className="text-xs text-subtle uppercase bg-surface-2">
                   <tr>
                     <th className="px-4 py-2 text-left">Poll Title</th>
                     <th className="px-4 py-2 text-center">Votes</th>
@@ -59,23 +59,23 @@ export default function PollOverview({ polls, stats }) {
                 </thead>
                 <tbody className="divide-y">
                   {topPolls.map(poll => (
-                    <tr key={poll.id} className="hover:bg-slate-50">
+                    <tr key={poll.id} className="hover:bg-surface-2">
                       <td className="px-4 py-3">
-                        <div className="font-medium text-slate-800">{poll.title}</div>
-                        <div className="text-xs text-slate-500">{poll.stock_symbol}</div>
+                        <div className="font-medium text-foreground">{poll.title}</div>
+                        <div className="text-xs text-muted-foreground">{poll.stock_symbol}</div>
                       </td>
-                      <td className="px-4 py-3 text-center font-bold text-slate-700">{poll.total_votes || 0}</td>
+                      <td className="px-4 py-3 text-center font-bold text-subtle">{poll.total_votes || 0}</td>
                       <td className="px-4 py-3 text-center">
                         {poll.is_active ? (
-                          <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">Active</Badge>
+                          <Badge variant="outline" className="text-buy-muted-foreground border-buy/30 bg-buy-muted">Active</Badge>
                         ) : (
                           <Badge variant="outline">Expired</Badge>
                         )}
                         {poll.is_premium && (
-                          <Badge className="ml-2 bg-purple-100 text-purple-700 border-0">Premium</Badge>
+                          <Badge className="ml-2 bg-premium-muted text-protocall-premium-text border-0">Premium</Badge>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-slate-500 text-xs">
+                      <td className="px-4 py-3 text-muted-foreground text-xs">
                         {poll.created_date
                           ? formatDistanceToNow(new Date(poll.created_date), { addSuffix: true })
                           : 'N/A'
@@ -88,9 +88,9 @@ export default function PollOverview({ polls, stats }) {
             </div>
           ) : (
             <div className="text-center py-12">
-              <PollIcon className="mx-auto h-12 w-12 text-slate-300" />
-              <h3 className="mt-2 text-sm font-medium text-slate-900">No polls to display</h3>
-              <p className="mt-1 text-sm text-slate-500">Polls will appear here as they are created.</p>
+              <PollIcon className="mx-auto h-12 w-12 text-muted-foreground" />
+              <h3 className="mt-2 text-sm font-medium text-foreground">No polls to display</h3>
+              <p className="mt-1 text-sm text-muted-foreground">Polls will appear here as they are created.</p>
             </div>
           )}
         </CardContent>

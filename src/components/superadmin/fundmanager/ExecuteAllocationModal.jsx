@@ -201,16 +201,16 @@ export default function ExecuteAllocationModal({ isOpen, onClose, request, inves
 
         <div className="space-y-4 py-4">
           {/* Investor Info */}
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+          <div className="bg-surface-2 border border-border rounded-lg p-4">
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div>
-                <p className="text-slate-600">Investor</p>
-                <p className="font-bold text-slate-900">{investor.full_name}</p>
-                <p className="text-xs text-slate-500">{investor.investor_code}</p>
+                <p className="text-subtle">Investor</p>
+                <p className="font-bold text-foreground">{investor.full_name}</p>
+                <p className="text-xs text-muted-foreground">{investor.investor_code}</p>
               </div>
               <div>
-                <p className="text-slate-600">Investment Amount</p>
-                <p className="font-bold text-blue-600">₹{request.requested_amount.toLocaleString('en-IN')}</p>
+                <p className="text-subtle">Investment Amount</p>
+                <p className="font-bold text-protocall-blue">₹{request.requested_amount.toLocaleString('en-IN')}</p>
               </div>
             </div>
           </div>
@@ -227,22 +227,22 @@ export default function ExecuteAllocationModal({ isOpen, onClose, request, inves
               step="0.01"
               className="mt-1"
             />
-            <p className="text-xs text-slate-500 mt-1">Enter the current Net Asset Value per unit</p>
+            <p className="text-xs text-muted-foreground mt-1">Enter the current Net Asset Value per unit</p>
           </div>
 
           {/* Calculated Units */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
             <Label>Units to be Allocated</Label>
-            <p className="text-3xl font-bold text-blue-600 mt-1">{units.toFixed(4)}</p>
-            <p className="text-xs text-slate-600 mt-1">
+            <p className="text-3xl font-bold text-protocall-blue mt-1">{units.toFixed(4)}</p>
+            <p className="text-xs text-subtle mt-1">
               Calculation: ₹{request.requested_amount.toLocaleString('en-IN')} ÷ ₹{nav} = {units.toFixed(4)} units
             </p>
           </div>
 
           {/* Info */}
-          <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-start gap-2">
-            <AlertCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-            <div className="text-xs text-green-800">
+          <div className="bg-buy-muted border border-buy/30 rounded-lg p-3 flex items-start gap-2">
+            <AlertCircle className="w-5 h-5 text-buy-muted-foreground mt-0.5 flex-shrink-0" />
+            <div className="text-xs text-buy-muted-foreground">
               <p className="font-semibold mb-1">Multiple Allocations Supported:</p>
               <p>This will create a new allocation entry. The investor can have multiple allocations in the same plan.</p>
             </div>
@@ -256,7 +256,7 @@ export default function ExecuteAllocationModal({ isOpen, onClose, request, inves
           <Button
             onClick={handleExecute}
             disabled={isProcessing || !nav || nav <= 0}
-            className="bg-gradient-to-r from-blue-600 to-purple-600"
+            className="bg-gradient-to-r from-protocall-deep to-protocall-blue"
           >
             {isProcessing ? (
               <>

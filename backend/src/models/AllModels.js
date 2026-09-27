@@ -7,6 +7,18 @@ const createModel = (tableName, fields) => (sequelize) => {
     ...fields,
     created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
     updated_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+
+    // The frontend was migrated from Base44 and reads `created_date` /
+    // `updated_date` in ~357 places. Expose them as virtuals so responses
+    // carry both spellings; no extra columns, no query cost.
+    created_date: {
+      type: DataTypes.VIRTUAL,
+      get() { return this.getDataValue('created_at'); },
+    },
+    updated_date: {
+      type: DataTypes.VIRTUAL,
+      get() { return this.getDataValue('updated_at'); },
+    },
   }, { tableName, timestamps: false });
 };
 
@@ -265,11 +277,14 @@ module.exports = {
     user_id: DataTypes.UUID,
     event_id: DataTypes.UUID, // Can be null
     subscription_id: DataTypes.UUID, // Added for subscription refunds
+    payment_id: DataTypes.UUID, // Legacy column, retained for existing rows
     transaction_id: DataTypes.STRING, // Original Payment ID
+    transaction_type: { type: DataTypes.STRING, defaultValue: 'subscription' }, // event_ticket | subscription
     razorpay_refund_id: DataTypes.STRING, // Razorpay Refund ID
     reason: DataTypes.TEXT,
     status: { type: DataTypes.STRING, defaultValue: 'pending' }, // pending, approved, rejected, completed
     refund_amount: DataTypes.DECIMAL(10, 2),
+    amount: DataTypes.DECIMAL(15, 2), // Legacy column, retained for existing rows
     admin_notes: DataTypes.TEXT,
     processed_at: DataTypes.DATE,
     processed_by: DataTypes.UUID
@@ -678,6 +693,7 @@ module.exports = {
     author_id: DataTypes.UUID,
     image_url: DataTypes.STRING,
     source: DataTypes.STRING,
+    url: DataTypes.STRING, // canonical article link from the provider
     views_count: DataTypes.INTEGER
   }),
 
@@ -990,17 +1006,6 @@ module.exports = {
   }),
 
   // Refund Request
-  RefundRequest: createModel('refund_requests', {
-    payment_id: DataTypes.UUID,
-    user_id: DataTypes.UUID,
-    event_id: DataTypes.UUID,
-    ticket_id: DataTypes.UUID,
-    amount: DataTypes.DECIMAL(15, 2),
-    reason: DataTypes.TEXT,
-    status: { type: DataTypes.STRING, defaultValue: 'pending' },
-    processed_at: DataTypes.DATE,
-    processed_by: DataTypes.UUID
-  }),
   // Chat Room Management & Automation
   RoomAutomation: createModel('room_automations', {
     chat_room_id: DataTypes.UUID,
@@ -1038,5 +1043,86 @@ module.exports = {
     config: DataTypes.JSON,
     min_trust_score: DataTypes.INTEGER,
     required_plan_tier: DataTypes.STRING
+  }),
+
+  // --- Commission settings ---------------------------------------------
+  CommissionSettings: createModel('commission_settings', {
+    entity_type: DataTypes.STRING,            // advisor | finfluencer | organizer
+    commission_percent: DataTypes.DECIMAL(5, 2),
+    flat_fee: DataTypes.DECIMAL(15, 2),
+    currency: { type: DataTypes.STRING, defaultValue: 'INR' },
+    is_active: { type: DataTypes.BOOLEAN, defaultValue: true },
+    updated_by: DataTypes.UUID
+  }),
+
+  // --- Role templates -------------------------------------------------
+  RoleTemplate: createModel('role_templates', {
+    name: DataTypes.STRING,
+    description: DataTypes.TEXT,
+    is_active: { type: DataTypes.BOOLEAN, defaultValue: true },
+    user_count: { type: DataTypes.INTEGER, defaultValue: 0 },
+    created_by: DataTypes.UUID,
+    created_by_name: DataTypes.STRING
+  }),
+  RoleTemplatePermission: createModel('role_template_permissions', {
+    template_id: DataTypes.UUID,
+    permission_id: DataTypes.UUID
+  }),
+
+  // --- Alert log ------------------------------------------------------
+  AlertLog: createModel('alert_logs', {
+    alert_type: DataTypes.STRING,
+    severity: { type: DataTypes.STRING, defaultValue: 'info' }, // info | warning | critical
+    message: DataTypes.TEXT,
+    status: { type: DataTypes.STRING, defaultValue: 'open' },   // open | acknowledged | resolved
+    entity_type: DataTypes.STRING,
+    entity_id: DataTypes.UUID,
+    triggered_at: DataTypes.DATE,
+    resolved_at: DataTypes.DATE,
+    resolved_by: DataTypes.UUID,
+    metadata: DataTypes.JSON
+  }),
+
+  // --- Announcements --------------------------------------------------
+  Announcement: createModel('announcements', {
+    title: DataTypes.STRING,
+    message: DataTypes.TEXT,
+    type: { type: DataTypes.STRING, defaultValue: 'info' },     // info | warning | success
+    priority: { type: DataTypes.STRING, defaultValue: 'normal' },
+    target: { type: DataTypes.STRING, defaultValue: 'all' },    // all | premium | advisors
+    is_active: { type: DataTypes.BOOLEAN, defaultValue: true },
+    starts_at: DataTypes.DATE,
+    ends_at: DataTypes.DATE,
+    created_by: DataTypes.UUID
+  }),
+
+  // --- Financials -----------------------------------------------------
+  Expense: createModel('expenses', {
+    category: DataTypes.STRING,
+    description: DataTypes.TEXT,
+    amount: DataTypes.DECIMAL(15, 2),
+    currency: { type: DataTypes.STRING, defaultValue: 'INR' },
+    vendor: DataTypes.STRING,
+    status: { type: DataTypes.STRING, defaultValue: 'recorded' },
+    expense_date: DataTypes.DATE,
+    recorded_by: DataTypes.UUID
+  }),
+  Income: createModel('income', {
+    source: DataTypes.STRING,
+    description: DataTypes.TEXT,
+    amount: DataTypes.DECIMAL(15, 2),
+    currency: { type: DataTypes.STRING, defaultValue: 'INR' },
+    status: { type: DataTypes.STRING, defaultValue: 'recorded' },
+    income_date: DataTypes.DATE,
+    recorded_by: DataTypes.UUID
+  }),
+  FinancialAuditLog: createModel('financial_audit_logs', {
+    admin_id: DataTypes.UUID,
+    admin_name: DataTypes.STRING,
+    action: DataTypes.STRING,
+    entity_type: DataTypes.STRING,
+    entity_id: DataTypes.UUID,
+    amount: DataTypes.DECIMAL(15, 2),
+    details: DataTypes.JSON
   }),
 };

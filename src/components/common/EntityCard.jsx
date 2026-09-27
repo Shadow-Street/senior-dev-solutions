@@ -7,35 +7,35 @@ import { Eye, FileText, Star, BookOpen, User } from 'lucide-react';
 const getStatusConfig = (status) => {
   const configs = {
     pending: { 
-      color: 'bg-yellow-100 text-yellow-800', 
+      color: 'bg-hold-muted text-hold-muted-foreground', 
       label: 'Pending' 
     },
     pending_approval: { 
-      color: 'bg-yellow-100 text-yellow-800', 
+      color: 'bg-hold-muted text-hold-muted-foreground', 
       label: 'Pending' 
     },
     approved: { 
-      color: 'bg-green-100 text-green-800', 
+      color: 'bg-buy-muted text-buy-muted-foreground', 
       label: 'Active' 
     },
     active: { 
-      color: 'bg-green-100 text-green-800', 
+      color: 'bg-buy-muted text-buy-muted-foreground', 
       label: 'Active' 
     },
     rejected: { 
-      color: 'bg-red-100 text-red-800', 
+      color: 'bg-sell-muted text-sell-muted-foreground', 
       label: 'Rejected' 
     },
     suspended: { 
-      color: 'bg-gray-100 text-gray-800', 
+      color: 'bg-surface-2 text-foreground', 
       label: 'Suspended' 
     },
     inactive: { 
-      color: 'bg-gray-100 text-gray-800', 
+      color: 'bg-surface-2 text-foreground', 
       label: 'Inactive' 
     }
   };
-  return configs[status] || { color: 'bg-gray-100 text-gray-800', label: status || 'Unknown' };
+  return configs[status] || { color: 'bg-surface-2 text-foreground', label: status || 'Unknown' };
 };
 
 const getActionIcon = (actionType) => {
@@ -94,7 +94,7 @@ export default function EntityCard({
     <Card className="group hover:shadow-lg transition-all duration-200 border-0 shadow-md overflow-hidden">
       <CardContent className="p-0">
         {/* Header with gradient background */}
-        <div className="bg-gradient-to-r from-slate-50 to-slate-100 p-4 border-b">
+        <div className="bg-surface-2 p-4 border-b">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img
@@ -103,10 +103,10 @@ export default function EntityCard({
                 className="w-12 h-12 rounded-full object-cover ring-2 ring-white shadow-sm"
               />
               <div>
-                <h3 className="font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">
+                <h3 className="font-semibold text-foreground group-hover:text-protocall-blue transition-colors">
                   {getDisplayName()}
                 </h3>
-                <p className="text-sm text-slate-600">{getEmail()}</p>
+                <p className="text-sm text-subtle">{getEmail()}</p>
               </div>
             </div>
             <Badge className={`${statusConfig.color} border-0`}>
@@ -123,18 +123,18 @@ export default function EntityCard({
                 {getRoleDisplay()}
               </Badge>
               {entity.verified && (
-                <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700">
+                <Badge variant="outline" className="text-xs bg-premium-muted text-protocall-blue">
                   Verified
                 </Badge>
               )}
               {entity.sebi_registered && (
-                <Badge variant="outline" className="text-xs bg-green-50 text-green-700">
+                <Badge variant="outline" className="text-xs bg-buy-muted text-buy-muted-foreground">
                   SEBI
                 </Badge>
               )}
             </div>
             <div className="text-right">
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 {entity.follower_count !== undefined && `${entity.follower_count} followers`}
                 {entity.success_rate !== undefined && `${entity.success_rate}% success`}
               </p>
@@ -143,7 +143,7 @@ export default function EntityCard({
 
           {/* Bio/Description */}
           {entity.bio && (
-            <p className="text-sm text-slate-600 mb-4 line-clamp-2">
+            <p className="text-sm text-subtle mb-4 line-clamp-2">
               {entity.bio}
             </p>
           )}

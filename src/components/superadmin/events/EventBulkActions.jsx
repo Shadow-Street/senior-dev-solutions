@@ -106,26 +106,26 @@ export default function EventBulkActions({
     <>
       {/* Bulk Actions Toolbar */}
       <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 animate-in slide-in-from-bottom-5">
-        <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-4">
+        <div className="bg-white rounded-2xl shadow-2xl border border-border p-4">
           <div className="flex items-center gap-4">
             {/* Selection Count */}
-            <div className="flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
-              <Badge className="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-bold">
+            <div className="flex items-center gap-3 px-4 py-2 bg-surface-2 rounded-xl">
+              <Badge className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white text-sm font-bold">
                 {selectedEvents.length}
               </Badge>
-              <span className="text-sm font-semibold text-slate-700">
+              <span className="text-sm font-semibold text-subtle">
                 {selectedEvents.length === 1 ? 'event' : 'events'} selected
               </span>
             </div>
 
-            <div className="h-8 w-px bg-slate-200"></div>
+            <div className="h-8 w-px bg-border"></div>
 
             {/* Action Buttons */}
             <div className="flex items-center gap-2">
               {canApprove && (
                 <Button
                   onClick={() => setShowApproveDialog(true)}
-                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
+                  className="bg-buy-soft hover:from-buy hover:to-buy text-buy-foreground shadow-md hover:shadow-lg transition-all duration-300"
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
                   Approve ({pendingCount})
@@ -136,7 +136,7 @@ export default function EventBulkActions({
                 <Button
                   onClick={() => setShowRejectDialog(true)}
                   variant="outline"
-                  className="border-2 border-red-300 text-red-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 hover:border-red-400 shadow-md hover:shadow-lg transition-all duration-300"
+                  className="border-2 border-sell/30 text-sell-muted-foreground hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-sell shadow-md hover:shadow-lg transition-all duration-300"
                 >
                   <XCircle className="w-4 h-4 mr-2" />
                   Reject ({pendingCount})
@@ -146,7 +146,7 @@ export default function EventBulkActions({
               <Button
                 onClick={handleBulkExport}
                 variant="outline"
-                className="border-2 border-blue-300 text-blue-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 hover:border-blue-400 shadow-md hover:shadow-lg transition-all duration-300"
+                className="border-2 border-protocall-premium-light text-protocall-blue hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-protocall-blue shadow-md hover:shadow-lg transition-all duration-300"
               >
                 <Download className="w-4 h-4 mr-2" />
                 Export
@@ -155,21 +155,21 @@ export default function EventBulkActions({
               <Button
                 onClick={() => setShowDeleteDialog(true)}
                 variant="outline"
-                className="border-2 border-slate-300 text-slate-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 hover:border-red-300 hover:text-red-700 shadow-md hover:shadow-lg transition-all duration-300"
+                className="border-2 border-border text-subtle hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-sell/30 hover:text-sell-muted-foreground shadow-md hover:shadow-lg transition-all duration-300"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Delete
               </Button>
             </div>
 
-            <div className="h-8 w-px bg-slate-200"></div>
+            <div className="h-8 w-px bg-border"></div>
 
             {/* Clear Selection */}
             <Button
               onClick={onClearSelection}
               variant="ghost"
               size="icon"
-              className="hover:bg-slate-100 rounded-xl"
+              className="hover:bg-surface-2 rounded-xl"
             >
               <X className="w-5 h-5" />
             </Button>
@@ -182,7 +182,7 @@ export default function EventBulkActions({
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-600" />
+              <CheckCircle className="w-5 h-5 text-buy-muted-foreground" />
               Bulk Approve Events
             </DialogTitle>
             <DialogDescription>
@@ -191,14 +191,14 @@ export default function EventBulkActions({
           </DialogHeader>
 
           <div className="space-y-4">
-            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-              <p className="text-sm text-green-800">
+            <div className="bg-buy-muted p-4 rounded-lg border border-buy/30">
+              <p className="text-sm text-buy-muted-foreground">
                 <strong>{pendingCount}</strong> event{pendingCount !== 1 ? 's' : ''} will be approved and visible to users
               </p>
             </div>
 
             <div>
-              <label className="text-sm font-medium text-slate-700 mb-2 block">
+              <label className="text-sm font-medium text-subtle mb-2 block">
                 Admin Notes (Optional)
               </label>
               <Textarea
@@ -221,7 +221,7 @@ export default function EventBulkActions({
             <Button
               onClick={handleBulkApprove}
               disabled={isProcessing}
-              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
+              className="bg-buy-soft hover:from-buy hover:to-buy text-buy-foreground"
             >
               {isProcessing ? (
                 <>
@@ -244,7 +244,7 @@ export default function EventBulkActions({
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <XCircle className="w-5 h-5 text-red-600" />
+              <XCircle className="w-5 h-5 text-sell-muted-foreground" />
               Bulk Reject Events
             </DialogTitle>
             <DialogDescription>
@@ -253,24 +253,24 @@ export default function EventBulkActions({
           </DialogHeader>
 
           <div className="space-y-4">
-            <div className="bg-red-50 p-4 rounded-lg border border-red-200">
-              <p className="text-sm text-red-800">
+            <div className="bg-sell-muted p-4 rounded-lg border border-sell/30">
+              <p className="text-sm text-sell-muted-foreground">
                 <strong>{pendingCount}</strong> event{pendingCount !== 1 ? 's' : ''} will be rejected. Organizers will be notified.
               </p>
             </div>
 
             <div>
-              <label className="text-sm font-medium text-slate-700 mb-2 block">
-                Reason for Rejection <span className="text-red-500">*</span>
+              <label className="text-sm font-medium text-subtle mb-2 block">
+                Reason for Rejection <span className="text-sell">*</span>
               </label>
               <Textarea
                 placeholder="Provide a clear reason for rejection..."
                 value={adminNotes}
                 onChange={(e) => setAdminNotes(e.target.value)}
                 rows={4}
-                className="border-red-200 focus:border-red-400"
+                className="border-sell/30 focus:border-sell"
               />
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 This message will be sent to all organizers
               </p>
             </div>
@@ -290,7 +290,7 @@ export default function EventBulkActions({
             <Button
               onClick={handleBulkReject}
               disabled={isProcessing || !adminNotes.trim()}
-              className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white"
+              className="bg-gradient-to-r from-sell to-protocall-blue hover:from-sell hover:to-protocall-blue text-white"
             >
               {isProcessing ? (
                 <>
@@ -313,7 +313,7 @@ export default function EventBulkActions({
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-red-600" />
+              <AlertTriangle className="w-5 h-5 text-sell-muted-foreground" />
               Bulk Delete Events
             </DialogTitle>
             <DialogDescription>
@@ -322,12 +322,12 @@ export default function EventBulkActions({
           </DialogHeader>
 
           <div className="space-y-4">
-            <div className="bg-red-50 p-4 rounded-lg border-2 border-red-200">
+            <div className="bg-sell-muted p-4 rounded-lg border-2 border-sell/30">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                <AlertTriangle className="w-5 h-5 text-sell-muted-foreground mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-semibold text-red-800 mb-1">Warning: Permanent Deletion</p>
-                  <p className="text-sm text-red-700">
+                  <p className="text-sm font-semibold text-sell-muted-foreground mb-1">Warning: Permanent Deletion</p>
+                  <p className="text-sm text-sell-muted-foreground">
                     You are about to permanently delete <strong>{selectedEvents.length}</strong> event{selectedEvents.length !== 1 ? 's' : ''}.
                     This will also delete all associated tickets, RSVPs, and revenue records.
                   </p>
@@ -335,8 +335,8 @@ export default function EventBulkActions({
               </div>
             </div>
 
-            <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-              <p className="text-sm text-yellow-800">
+            <div className="bg-hold-muted p-4 rounded-lg border border-hold/30">
+              <p className="text-sm text-hold-muted-foreground">
                 <strong>Note:</strong> Consider cancelling events instead of deleting them to preserve records
               </p>
             </div>
@@ -353,7 +353,7 @@ export default function EventBulkActions({
             <Button
               onClick={handleBulkDelete}
               disabled={isProcessing}
-              className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white"
+              className="bg-gradient-to-r from-sell to-protocall-blue hover:from-sell hover:to-protocall-blue text-white"
             >
               {isProcessing ? (
                 <>

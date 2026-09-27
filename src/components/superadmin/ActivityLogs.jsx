@@ -37,33 +37,33 @@ import { toast } from 'sonner';
 
 // Action color mapping for visual indicators
 const actionColors = {
-  'USER_CREATED': 'bg-green-100 text-green-800 border-green-300',
-  'USER_UPDATED': 'bg-blue-100 text-blue-800 border-blue-300',
-  'USER_DELETED': 'bg-red-100 text-red-800 border-red-300',
-  'USER_ROLE_CHANGED': 'bg-purple-100 text-purple-800 border-purple-300',
-  'USER_INVITED': 'bg-cyan-100 text-cyan-800 border-cyan-300',
-  'POLL_CREATED': 'bg-green-100 text-green-800 border-green-300',
-  'POLL_UPDATED': 'bg-blue-100 text-blue-800 border-blue-300',
-  'POLL_DELETED': 'bg-red-100 text-red-800 border-red-300',
-  'POLL_SUSPENDED': 'bg-orange-100 text-orange-800 border-orange-300',
-  'CHATROOM_CREATED': 'bg-green-100 text-green-800 border-green-300',
-  'CHATROOM_UPDATED': 'bg-blue-100 text-blue-800 border-blue-300',
-  'CHATROOM_DELETED': 'bg-red-100 text-red-800 border-red-300',
-  'CONTENT_MODERATED': 'bg-yellow-100 text-yellow-800 border-yellow-300',
-  'SETTING_UPDATED': 'bg-indigo-100 text-indigo-800 border-indigo-300',
-  'ROLE_CREATED': 'bg-green-100 text-green-800 border-green-300',
-  'ROLE_UPDATED': 'bg-blue-100 text-blue-800 border-blue-300',
-  'PERMISSION_GRANTED': 'bg-purple-100 text-purple-800 border-purple-300',
-  'PERMISSION_REVOKED': 'bg-red-100 text-red-800 border-red-300',
-  'EVENT_APPROVED': 'bg-green-100 text-green-800 border-green-300',
-  'EVENT_REJECTED': 'bg-red-100 text-red-800 border-red-300',
-  'PAYOUT_APPROVED': 'bg-green-100 text-green-800 border-green-300',
-  'PAYOUT_REJECTED': 'bg-red-100 text-red-800 border-red-300',
-  'ADVISOR_APPROVED': 'bg-green-100 text-green-800 border-green-300',
-  'ADVISOR_REJECTED': 'bg-red-100 text-red-800 border-red-300',
-  'FINFLUENCER_APPROVED': 'bg-green-100 text-green-800 border-green-300',
-  'FINFLUENCER_REJECTED': 'bg-red-100 text-red-800 border-red-300',
-  'DEFAULT': 'bg-gray-100 text-gray-800 border-gray-300'
+  'USER_CREATED': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
+  'USER_UPDATED': 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+  'USER_DELETED': 'bg-sell-muted text-sell-muted-foreground border-sell/30',
+  'USER_ROLE_CHANGED': 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light',
+  'USER_INVITED': 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+  'POLL_CREATED': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
+  'POLL_UPDATED': 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+  'POLL_DELETED': 'bg-sell-muted text-sell-muted-foreground border-sell/30',
+  'POLL_SUSPENDED': 'bg-hold-muted text-hold-muted-foreground border-hold/30',
+  'CHATROOM_CREATED': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
+  'CHATROOM_UPDATED': 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+  'CHATROOM_DELETED': 'bg-sell-muted text-sell-muted-foreground border-sell/30',
+  'CONTENT_MODERATED': 'bg-hold-muted text-hold-muted-foreground border-hold/30',
+  'SETTING_UPDATED': 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+  'ROLE_CREATED': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
+  'ROLE_UPDATED': 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+  'PERMISSION_GRANTED': 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light',
+  'PERMISSION_REVOKED': 'bg-sell-muted text-sell-muted-foreground border-sell/30',
+  'EVENT_APPROVED': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
+  'EVENT_REJECTED': 'bg-sell-muted text-sell-muted-foreground border-sell/30',
+  'PAYOUT_APPROVED': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
+  'PAYOUT_REJECTED': 'bg-sell-muted text-sell-muted-foreground border-sell/30',
+  'ADVISOR_APPROVED': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
+  'ADVISOR_REJECTED': 'bg-sell-muted text-sell-muted-foreground border-sell/30',
+  'FINFLUENCER_APPROVED': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
+  'FINFLUENCER_REJECTED': 'bg-sell-muted text-sell-muted-foreground border-sell/30',
+  'DEFAULT': 'bg-surface-2 text-foreground border-border'
 };
 
 // Entity type icons
@@ -280,8 +280,8 @@ export default function ActivityLogs({ user }) {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 font-medium">Loading Activity Logs...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <p className="text-lg text-subtle font-medium">Loading Activity Logs...</p>
         </div>
       </div>
     );
@@ -292,15 +292,15 @@ export default function ActivityLogs({ user }) {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Activity Logs</h2>
-          <p className="text-slate-600">Complete audit trail of all administrative actions</p>
+          <h2 className="text-2xl font-bold text-foreground">Activity Logs</h2>
+          <p className="text-subtle">Complete audit trail of all administrative actions</p>
         </div>
         <div className="flex items-center gap-3">
           <Button
             onClick={handleRefresh}
             variant="outline"
             disabled={isRefreshing}
-            className="bg-white hover:bg-slate-50"
+            className="bg-white hover:bg-surface-2"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
             Refresh
@@ -314,7 +314,7 @@ export default function ActivityLogs({ user }) {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <FileText className="w-8 h-8" />
@@ -326,7 +326,7 @@ export default function ActivityLogs({ user }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <Calendar className="w-8 h-8" />
@@ -338,7 +338,7 @@ export default function ActivityLogs({ user }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
+        <Card className="bg-buy-soft text-buy-foreground">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <Activity className="w-8 h-8" />
@@ -350,7 +350,7 @@ export default function ActivityLogs({ user }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-orange-500 to-amber-500 text-white">
+        <Card className="bg-hold text-hold-foreground">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <Shield className="w-8 h-8" />
@@ -369,7 +369,7 @@ export default function ActivityLogs({ user }) {
           <div className="flex flex-col gap-4">
             {/* Search */}
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Search by action, admin, entity type, or details..."
                 value={searchTerm}
@@ -465,7 +465,7 @@ export default function ActivityLogs({ user }) {
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+              <thead className="text-xs text-subtle uppercase bg-surface-2">
                 <tr>
                   <th className="px-4 py-3 text-left">Timestamp</th>
                   <th className="px-4 py-3 text-left">Admin</th>
@@ -479,9 +479,9 @@ export default function ActivityLogs({ user }) {
                 {filteredLogs.length === 0 ? (
                   <tr>
                     <td colSpan="6" className="px-4 py-12 text-center">
-                      <FileText className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-                      <p className="text-slate-600 font-medium">No activity logs found</p>
-                      <p className="text-slate-500 text-sm">Try adjusting your filters</p>
+                      <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                      <p className="text-subtle font-medium">No activity logs found</p>
+                      <p className="text-muted-foreground text-sm">Try adjusting your filters</p>
                     </td>
                   </tr>
                 ) : (
@@ -492,25 +492,25 @@ export default function ActivityLogs({ user }) {
 
                     return (
                       <React.Fragment key={log.id}>
-                        <tr className="border-b hover:bg-slate-50 transition-colors">
-                          <td className="px-4 py-3 text-slate-600">
+                        <tr className="border-b hover:bg-surface-2 transition-colors">
+                          <td className="px-4 py-3 text-subtle">
                             <div className="flex flex-col">
                               <span className="font-medium">
                                 {new Date(log.created_date).toLocaleDateString()}
                               </span>
-                              <span className="text-xs text-slate-500">
+                              <span className="text-xs text-muted-foreground">
                                 {new Date(log.created_date).toLocaleTimeString()}
                               </span>
                             </div>
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
-                              <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                                <UserIcon className="w-4 h-4 text-indigo-600" />
+                              <div className="w-8 h-8 rounded-full bg-premium-muted flex items-center justify-center">
+                                <UserIcon className="w-4 h-4 text-protocall-blue" />
                               </div>
                               <div>
-                                <div className="font-medium text-slate-900">{log.admin_name}</div>
-                                <div className="text-xs text-slate-500">Admin ID: {log.admin_id ? log.admin_id.toString().slice(-6) : 'N/A'}</div>
+                                <div className="font-medium text-foreground">{log.admin_name}</div>
+                                <div className="text-xs text-muted-foreground">Admin ID: {log.admin_id ? log.admin_id.toString().slice(-6) : 'N/A'}</div>
                               </div>
                             </div>
                           </td>
@@ -521,17 +521,17 @@ export default function ActivityLogs({ user }) {
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
-                              <EntityIcon className="w-4 h-4 text-slate-500" />
-                              <span className="font-medium text-slate-700">{log.entity_type}</span>
+                              <EntityIcon className="w-4 h-4 text-muted-foreground" />
+                              <span className="font-medium text-subtle">{log.entity_type}</span>
                             </div>
                             {log.entity_id && (
-                              <div className="text-xs text-slate-500 mt-1">
+                              <div className="text-xs text-muted-foreground mt-1">
                                 ID: {log.entity_id.slice(-8)}
                               </div>
                             )}
                           </td>
                           <td className="px-4 py-3 max-w-md">
-                            <p className="text-slate-600 truncate">
+                            <p className="text-subtle truncate">
                               {log.details}
                             </p>
                           </td>
@@ -560,25 +560,25 @@ export default function ActivityLogs({ user }) {
                         </tr>
                         {isExpanded && (
                           <tr>
-                            <td colSpan="6" className="px-4 py-4 bg-slate-50">
+                            <td colSpan="6" className="px-4 py-4 bg-surface-2">
                               <div className="space-y-2">
                                 <div className="grid grid-cols-2 gap-4">
                                   <div>
-                                    <p className="text-xs font-semibold text-slate-600 mb-1">Admin Information</p>
-                                    <p className="text-sm text-slate-700">Name: {log.admin_name}</p>
-                                    <p className="text-sm text-slate-700">ID: {log.admin_id}</p>
+                                    <p className="text-xs font-semibold text-subtle mb-1">Admin Information</p>
+                                    <p className="text-sm text-subtle">Name: {log.admin_name}</p>
+                                    <p className="text-sm text-subtle">ID: {log.admin_id}</p>
                                   </div>
                                   <div>
-                                    <p className="text-xs font-semibold text-slate-600 mb-1">Entity Information</p>
-                                    <p className="text-sm text-slate-700">Type: {log.entity_type}</p>
+                                    <p className="text-xs font-semibold text-subtle mb-1">Entity Information</p>
+                                    <p className="text-sm text-subtle">Type: {log.entity_type}</p>
                                     {log.entity_id && (
-                                      <p className="text-sm text-slate-700">ID: {log.entity_id}</p>
+                                      <p className="text-sm text-subtle">ID: {log.entity_id}</p>
                                     )}
                                   </div>
                                 </div>
                                 <div>
-                                  <p className="text-xs font-semibold text-slate-600 mb-1">Full Details</p>
-                                  <p className="text-sm text-slate-700 bg-white p-3 rounded border border-slate-200">
+                                  <p className="text-xs font-semibold text-subtle mb-1">Full Details</p>
+                                  <p className="text-sm text-subtle bg-white p-3 rounded border border-border">
                                     {log.details}
                                   </p>
                                 </div>
@@ -609,42 +609,42 @@ export default function ActivityLogs({ user }) {
           {selectedLog && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-slate-50 p-4 rounded-lg">
-                  <p className="text-xs font-semibold text-slate-600 mb-2">Timestamp</p>
-                  <p className="text-sm font-medium text-slate-900">
+                <div className="bg-surface-2 p-4 rounded-lg">
+                  <p className="text-xs font-semibold text-subtle mb-2">Timestamp</p>
+                  <p className="text-sm font-medium text-foreground">
                     {new Date(selectedLog.created_date).toLocaleString()}
                   </p>
                 </div>
 
-                <div className="bg-slate-50 p-4 rounded-lg">
-                  <p className="text-xs font-semibold text-slate-600 mb-2">Action Type</p>
+                <div className="bg-surface-2 p-4 rounded-lg">
+                  <p className="text-xs font-semibold text-subtle mb-2">Action Type</p>
                   <Badge className={`${actionColors[selectedLog.action] || actionColors.DEFAULT} border`}>
                     {selectedLog.action.replace(/_/g, ' ')}
                   </Badge>
                 </div>
               </div>
 
-              <div className="bg-slate-50 p-4 rounded-lg">
-                <p className="text-xs font-semibold text-slate-600 mb-2">Admin Information</p>
+              <div className="bg-surface-2 p-4 rounded-lg">
+                <p className="text-xs font-semibold text-subtle mb-2">Admin Information</p>
                 <div className="space-y-1">
-                  <p className="text-sm text-slate-700"><span className="font-medium">Name:</span> {selectedLog.admin_name}</p>
-                  <p className="text-sm text-slate-700"><span className="font-medium">Admin ID:</span> {selectedLog.admin_id}</p>
+                  <p className="text-sm text-subtle"><span className="font-medium">Name:</span> {selectedLog.admin_name}</p>
+                  <p className="text-sm text-subtle"><span className="font-medium">Admin ID:</span> {selectedLog.admin_id}</p>
                 </div>
               </div>
 
-              <div className="bg-slate-50 p-4 rounded-lg">
-                <p className="text-xs font-semibold text-slate-600 mb-2">Entity Information</p>
+              <div className="bg-surface-2 p-4 rounded-lg">
+                <p className="text-xs font-semibold text-subtle mb-2">Entity Information</p>
                 <div className="space-y-1">
-                  <p className="text-sm text-slate-700"><span className="font-medium">Entity Type:</span> {selectedLog.entity_type}</p>
+                  <p className="text-sm text-subtle"><span className="font-medium">Entity Type:</span> {selectedLog.entity_type}</p>
                   {selectedLog.entity_id && (
-                    <p className="text-sm text-slate-700"><span className="font-medium">Entity ID:</span> {selectedLog.entity_id}</p>
+                    <p className="text-sm text-subtle"><span className="font-medium">Entity ID:</span> {selectedLog.entity_id}</p>
                   )}
                 </div>
               </div>
 
-              <div className="bg-slate-50 p-4 rounded-lg">
-                <p className="text-xs font-semibold text-slate-600 mb-2">Action Details</p>
-                <p className="text-sm text-slate-700 whitespace-pre-wrap">{selectedLog.details}</p>
+              <div className="bg-surface-2 p-4 rounded-lg">
+                <p className="text-xs font-semibold text-subtle mb-2">Action Details</p>
+                <p className="text-sm text-subtle whitespace-pre-wrap">{selectedLog.details}</p>
               </div>
 
               <div className="flex justify-end">

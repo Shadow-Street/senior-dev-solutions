@@ -14,7 +14,7 @@ export default function PricingPreview() {
       price: "Free",
       period: "forever",
       icon: Check,
-      color: "from-gray-500 to-gray-600",
+      color: "from-protocall-ink to-protocall-sidebar-bg",
       features: [
         "Community Chat Rooms",
         "Basic Polls Access",
@@ -28,7 +28,7 @@ export default function PricingPreview() {
       price: "₹499",
       period: "/month",
       icon: Zap,
-      color: "from-blue-500 to-purple-600",
+      color: "from-protocall-deep to-protocall-blue",
       features: [
         "Everything in Basic",
         "Advisor Recommendations",
@@ -43,7 +43,7 @@ export default function PricingPreview() {
       price: "₹999",
       period: "/month",
       icon: Crown,
-      color: "from-purple-500 to-pink-600",
+      color: "from-protocall-deep to-protocall-blue",
       features: [
         "Everything in Premium",
         "Priority Support 24/7",
@@ -56,11 +56,11 @@ export default function PricingPreview() {
   ];
 
   return (
-    <section className="py-20 px-6 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 relative overflow-hidden">
+    <section className="py-20 px-6 bg-surface-2 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-400 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-400 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-protocall-blue rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary rounded-full blur-3xl"></div>
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -73,11 +73,11 @@ export default function PricingPreview() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-protocall-deep to-protocall-blue bg-clip-text text-transparent">
               Simple, Transparent Pricing
             </span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-subtle max-w-3xl mx-auto">
             Choose the plan that fits your trading journey
           </p>
         </motion.div>
@@ -97,13 +97,13 @@ export default function PricingPreview() {
               {/* Recommended Badge */}
               {plan.recommended && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                  <Badge className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 text-sm font-semibold shadow-lg">
+                  <Badge className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white px-4 py-1 text-sm font-semibold shadow-lg">
                     Most Popular
                   </Badge>
                 </div>
               )}
 
-              <Card className={`relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-300 ${plan.recommended ? 'ring-2 ring-blue-500 ring-offset-2' : ''}`}>
+              <Card className={`relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-300 ${plan.recommended ? 'ring-2 ring-ring ring-offset-2' : ''}`}>
                 <CardContent className="p-8">
                   {/* Icon */}
                   <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${plan.color} flex items-center justify-center mb-6`}>
@@ -111,16 +111,16 @@ export default function PricingPreview() {
                   </div>
 
                   {/* Plan Name */}
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-2xl font-bold text-foreground mb-2">
                     {plan.name}
                   </h3>
 
                   {/* Price */}
                   <div className="mb-6">
-                    <span className="text-4xl font-bold text-gray-900">
+                    <span className="text-4xl font-bold text-foreground">
                       {plan.price}
                     </span>
-                    <span className="text-gray-600 ml-1">
+                    <span className="text-subtle ml-1">
                       {plan.period}
                     </span>
                   </div>
@@ -129,8 +129,8 @@ export default function PricingPreview() {
                   <ul className="space-y-3 mb-8">
                     {plan.features.map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-3">
-                        <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-600">{feature}</span>
+                        <Check className="w-5 h-5 text-positive flex-shrink-0 mt-0.5" />
+                        <span className="text-subtle">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -140,8 +140,8 @@ export default function PricingPreview() {
                     <Button
                       className={`w-full ${
                         plan.recommended
-                          ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
-                          : 'bg-gray-900 hover:bg-gray-800'
+                          ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue'
+                          : 'bg-protocall-ink hover:bg-protocall-ink'
                       } text-white rounded-full py-6 text-lg font-semibold shadow-lg`}
                     >
                       {plan.price === "Free" ? "Get Started Free" : "Choose Plan"}
@@ -166,11 +166,11 @@ export default function PricingPreview() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="text-center mt-12"
         >
-          <p className="text-gray-600 mb-4">
+          <p className="text-subtle mb-4">
             Not sure which plan to choose? Compare all features
           </p>
           <Link to={createPageUrl('Subscription')}>
-            <Button variant="outline" className="rounded-full px-8 py-6 text-lg border-2 border-blue-600 text-blue-600 hover:bg-blue-50">
+            <Button variant="outline" className="rounded-full px-8 py-6 text-lg border-2 border-protocall-blue text-protocall-blue hover:bg-premium-muted">
               View Detailed Comparison
             </Button>
           </Link>

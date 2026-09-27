@@ -22,9 +22,9 @@ export default function SubscriptionInfo({ subscription }) {
   }
 
   return (
-    <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
+    <Card className="bg-surface-2 border-protocall-premium-light">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-purple-800">
+        <CardTitle className="flex items-center gap-2 text-protocall-premium-text">
           <Crown className="w-5 h-5" />
           Your Subscription
         </CardTitle>
@@ -32,11 +32,11 @@ export default function SubscriptionInfo({ subscription }) {
       <CardContent className="space-y-4">
         <div className="flex justify-between items-center">
           <span className="font-semibold text-lg capitalize">{subscription.plan_type} Plan</span>
-          <span className="text-sm text-green-600 font-semibold flex items-center gap-1">
+          <span className="text-sm text-buy-muted-foreground font-semibold flex items-center gap-1">
             <CheckCircle className="w-4 h-4" /> Active
           </span>
         </div>
-        <div className="flex items-center gap-2 text-slate-600">
+        <div className="flex items-center gap-2 text-subtle">
           <Calendar className="w-4 h-4" />
           <span>Renews on {format(new Date(subscription.end_date), 'MMMM d, yyyy')}</span>
         </div>

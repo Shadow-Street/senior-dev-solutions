@@ -185,20 +185,20 @@ export default function ModerationRulesPanel() {
   };
 
   const ruleTypeConfig = {
-    word_filter: { icon: MessageSquare, color: 'text-red-600', label: 'Word Filter' },
-    spam_detection: { icon: AlertTriangle, color: 'text-orange-600', label: 'Spam Detection' },
-    link_filter: { icon: LinkIcon, color: 'text-blue-600', label: 'Link Filter' },
-    caps_lock: { icon: MessageSquare, color: 'text-yellow-600', label: 'Caps Lock' },
-    rate_limit: { icon: Clock, color: 'text-purple-600', label: 'Rate Limit' },
-    mention_limit: { icon: MessageSquare, color: 'text-cyan-600', label: 'Mention Limit' },
-    file_restriction: { icon: FileText, color: 'text-green-600', label: 'File Restriction' }
+    word_filter: { icon: MessageSquare, color: 'text-sell-muted-foreground', label: 'Word Filter' },
+    spam_detection: { icon: AlertTriangle, color: 'text-hold-muted-foreground', label: 'Spam Detection' },
+    link_filter: { icon: LinkIcon, color: 'text-protocall-blue', label: 'Link Filter' },
+    caps_lock: { icon: MessageSquare, color: 'text-hold-muted-foreground', label: 'Caps Lock' },
+    rate_limit: { icon: Clock, color: 'text-protocall-premium-text', label: 'Rate Limit' },
+    mention_limit: { icon: MessageSquare, color: 'text-protocall-blue', label: 'Mention Limit' },
+    file_restriction: { icon: FileText, color: 'text-buy-muted-foreground', label: 'File Restriction' }
   };
 
   const severityColors = {
-    low: 'bg-blue-100 text-blue-800',
-    medium: 'bg-yellow-100 text-yellow-800',
-    high: 'bg-orange-100 text-orange-800',
-    critical: 'bg-red-100 text-red-800'
+    low: 'bg-premium-muted text-protocall-blue',
+    medium: 'bg-hold-muted text-hold-muted-foreground',
+    high: 'bg-hold-muted text-hold-muted-foreground',
+    critical: 'bg-sell-muted text-sell-muted-foreground'
   };
 
   // Group rules by type
@@ -209,8 +209,8 @@ export default function ModerationRulesPanel() {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 font-medium">Loading Moderation Rules...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <p className="text-lg text-subtle font-medium">Loading Moderation Rules...</p>
         </div>
       </div>
     );
@@ -224,7 +224,7 @@ export default function ModerationRulesPanel() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold">Enhanced Moderation Rules</h3>
-              <p className="text-sm text-slate-600">Create automated moderation rules for your chat rooms</p>
+              <p className="text-sm text-subtle">Create automated moderation rules for your chat rooms</p>
             </div>
             <Button onClick={() => { resetForm(); setShowCreateModal(true); }}>
               <Plus className="w-4 h-4 mr-2" />
@@ -236,7 +236,7 @@ export default function ModerationRulesPanel() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -248,7 +248,7 @@ export default function ModerationRulesPanel() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white">
+        <Card className="bg-buy-soft text-buy-foreground">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -260,7 +260,7 @@ export default function ModerationRulesPanel() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -272,7 +272,7 @@ export default function ModerationRulesPanel() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+        <Card className="bg-hold text-hold-foreground">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -288,10 +288,10 @@ export default function ModerationRulesPanel() {
       {/* Rules Tabs */}
       <Tabs defaultValue="global" className="space-y-6">
         <TabsList className="grid grid-cols-2 bg-transparent rounded-lg p-1 gap-2">
-          <TabsTrigger value="global" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white">
+          <TabsTrigger value="global" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white">
             Global Rules ({globalRules.length})
           </TabsTrigger>
-          <TabsTrigger value="room" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white">
+          <TabsTrigger value="room" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white">
             Room-Specific ({roomSpecificRules.length})
           </TabsTrigger>
         </TabsList>
@@ -305,9 +305,9 @@ export default function ModerationRulesPanel() {
               <div className="space-y-3">
                 {globalRules.length === 0 ? (
                   <div className="text-center py-12">
-                    <Shield className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                    <p className="text-slate-600 font-medium">No global rules yet</p>
-                    <p className="text-slate-500 text-sm mt-1">Create rules that apply to all rooms</p>
+                    <Shield className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-subtle font-medium">No global rules yet</p>
+                    <p className="text-muted-foreground text-sm mt-1">Create rules that apply to all rooms</p>
                   </div>
                 ) : (
                   globalRules.map(rule => {
@@ -315,14 +315,14 @@ export default function ModerationRulesPanel() {
                     const Icon = config.icon;
 
                     return (
-                      <div key={rule.id} className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                      <div key={rule.id} className="flex items-center gap-4 p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
                         <div className={`w-12 h-12 rounded-full bg-white flex items-center justify-center ${config.color}`}>
                           <Icon className="w-6 h-6" />
                         </div>
 
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <p className="font-medium text-slate-900">{rule.rule_name}</p>
+                            <p className="font-medium text-foreground">{rule.rule_name}</p>
                             <Badge variant="outline" className={config.color}>
                               {config.label}
                             </Badge>
@@ -330,17 +330,17 @@ export default function ModerationRulesPanel() {
                               {rule.severity}
                             </Badge>
                             {rule.is_active ? (
-                              <Badge className="bg-green-100 text-green-800">Active</Badge>
+                              <Badge className="bg-buy-muted text-buy-muted-foreground">Active</Badge>
                             ) : (
-                              <Badge className="bg-gray-100 text-gray-800">Inactive</Badge>
+                              <Badge className="bg-surface-2 text-foreground">Inactive</Badge>
                             )}
                           </div>
-                          <p className="text-sm text-slate-600">
+                          <p className="text-sm text-subtle">
                             Action: {rule.action.replace(/_/g, ' ')} • 
                             Violations: {rule.violation_count || 0}
                           </p>
                           {rule.auto_escalate && (
-                            <p className="text-xs text-purple-600 mt-1">
+                            <p className="text-xs text-protocall-premium-text mt-1">
                               Auto-escalate after {rule.escalation_threshold} violations
                             </p>
                           )}
@@ -369,7 +369,7 @@ export default function ModerationRulesPanel() {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDelete(rule.id)}
-                            className="text-red-600 hover:text-red-800"
+                            className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -392,9 +392,9 @@ export default function ModerationRulesPanel() {
               <div className="space-y-3">
                 {roomSpecificRules.length === 0 ? (
                   <div className="text-center py-12">
-                    <Shield className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                    <p className="text-slate-600 font-medium">No room-specific rules yet</p>
-                    <p className="text-slate-500 text-sm mt-1">Create rules for individual rooms</p>
+                    <Shield className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-subtle font-medium">No room-specific rules yet</p>
+                    <p className="text-muted-foreground text-sm mt-1">Create rules for individual rooms</p>
                   </div>
                 ) : (
                   roomSpecificRules.map(rule => {
@@ -403,14 +403,14 @@ export default function ModerationRulesPanel() {
                     const Icon = config.icon;
 
                     return (
-                      <div key={rule.id} className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                      <div key={rule.id} className="flex items-center gap-4 p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
                         <div className={`w-12 h-12 rounded-full bg-white flex items-center justify-center ${config.color}`}>
                           <Icon className="w-6 h-6" />
                         </div>
 
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <p className="font-medium text-slate-900">{rule.rule_name}</p>
+                            <p className="font-medium text-foreground">{rule.rule_name}</p>
                             <Badge variant="outline">{room?.name || 'Unknown Room'}</Badge>
                             <Badge variant="outline" className={config.color}>
                               {config.label}
@@ -419,12 +419,12 @@ export default function ModerationRulesPanel() {
                               {rule.severity}
                             </Badge>
                             {rule.is_active ? (
-                              <Badge className="bg-green-100 text-green-800">Active</Badge>
+                              <Badge className="bg-buy-muted text-buy-muted-foreground">Active</Badge>
                             ) : (
-                              <Badge className="bg-gray-100 text-gray-800">Inactive</Badge>
+                              <Badge className="bg-surface-2 text-foreground">Inactive</Badge>
                             )}
                           </div>
-                          <p className="text-sm text-slate-600">
+                          <p className="text-sm text-subtle">
                             Action: {rule.action.replace(/_/g, ' ')} • 
                             Violations: {rule.violation_count || 0}
                           </p>
@@ -453,7 +453,7 @@ export default function ModerationRulesPanel() {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDelete(rule.id)}
-                            className="text-red-600 hover:text-red-800"
+                            className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>

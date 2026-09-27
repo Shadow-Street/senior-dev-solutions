@@ -147,8 +147,8 @@ export default function AccessControlPanel() {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 font-medium">Loading Access Control...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <p className="text-lg text-subtle font-medium">Loading Access Control...</p>
         </div>
       </div>
     );
@@ -162,10 +162,10 @@ export default function AccessControlPanel() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Shield className="w-5 h-5 text-blue-600" />
+                <Shield className="w-5 h-5 text-protocall-blue" />
                 Tiered Access Control
               </h3>
-              <p className="text-sm text-slate-600">Manage room access permissions and user whitelists</p>
+              <p className="text-sm text-subtle">Manage room access permissions and user whitelists</p>
             </div>
           </div>
         </CardContent>
@@ -174,15 +174,15 @@ export default function AccessControlPanel() {
       {/* Rooms List by Type */}
       <Tabs defaultValue="premium" className="space-y-6">
         <TabsList className="grid grid-cols-3 bg-transparent rounded-lg p-1 gap-2">
-          <TabsTrigger value="premium" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white">
+          <TabsTrigger value="premium" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white">
             <Crown className="w-4 h-4 mr-1" />
             Premium ({rooms.filter(r => r.is_premium).length})
           </TabsTrigger>
-          <TabsTrigger value="private" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-cyan-600 data-[state=active]:text-white">
+          <TabsTrigger value="private" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white">
             <Lock className="w-4 h-4 mr-1" />
             Private ({rooms.filter(r => r.is_private).length})
           </TabsTrigger>
-          <TabsTrigger value="paid" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white">
+          <TabsTrigger value="paid" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-buy data-[state=active]:to-buy-soft data-[state=active]:text-white">
             <DollarSign className="w-4 h-4 mr-1" />
             Paid ({rooms.filter(r => r.is_paid).length})
           </TabsTrigger>
@@ -197,13 +197,13 @@ export default function AccessControlPanel() {
             <CardContent>
               <div className="space-y-3">
                 {rooms.filter(r => r.is_premium).map(room => (
-                  <div key={room.id} className="flex items-center gap-4 p-4 bg-purple-50 rounded-lg">
-                    <Crown className="w-10 h-10 text-purple-600" />
+                  <div key={room.id} className="flex items-center gap-4 p-4 bg-premium-muted rounded-lg">
+                    <Crown className="w-10 h-10 text-protocall-premium-text" />
                     <div className="flex-1">
-                      <p className="font-medium text-slate-900">{room.name}</p>
-                      <p className="text-sm text-slate-600">{getAccessSummary(room)}</p>
+                      <p className="font-medium text-foreground">{room.name}</p>
+                      <p className="text-sm text-subtle">{getAccessSummary(room)}</p>
                     </div>
-                    <Badge className="bg-purple-100 text-purple-800">
+                    <Badge className="bg-premium-muted text-protocall-premium-text">
                       {room.premium_tier?.toUpperCase()}
                     </Badge>
                     <Button variant="outline" size="sm" onClick={() => handleManageAccess(room)}>
@@ -225,13 +225,13 @@ export default function AccessControlPanel() {
             <CardContent>
               <div className="space-y-3">
                 {rooms.filter(r => r.is_private).map(room => (
-                  <div key={room.id} className="flex items-center gap-4 p-4 bg-blue-50 rounded-lg">
-                    <Lock className="w-10 h-10 text-blue-600" />
+                  <div key={room.id} className="flex items-center gap-4 p-4 bg-premium-muted rounded-lg">
+                    <Lock className="w-10 h-10 text-protocall-blue" />
                     <div className="flex-1">
-                      <p className="font-medium text-slate-900">{room.name}</p>
-                      <p className="text-sm text-slate-600">{getAccessSummary(room)}</p>
+                      <p className="font-medium text-foreground">{room.name}</p>
+                      <p className="text-sm text-subtle">{getAccessSummary(room)}</p>
                     </div>
-                    <Badge className="bg-blue-100 text-blue-800">
+                    <Badge className="bg-premium-muted text-protocall-blue">
                       {room.allowed_user_ids?.length || 0} users
                     </Badge>
                     <Button variant="outline" size="sm" onClick={() => handleManageAccess(room)}>
@@ -257,15 +257,15 @@ export default function AccessControlPanel() {
                   const monthlyRevenue = roomSubs.length * (room.room_price || 0);
 
                   return (
-                    <div key={room.id} className="flex items-center gap-4 p-4 bg-green-50 rounded-lg">
-                      <DollarSign className="w-10 h-10 text-green-600" />
+                    <div key={room.id} className="flex items-center gap-4 p-4 bg-buy-muted rounded-lg">
+                      <DollarSign className="w-10 h-10 text-buy-muted-foreground" />
                       <div className="flex-1">
-                        <p className="font-medium text-slate-900">{room.name}</p>
-                        <p className="text-sm text-slate-600">
+                        <p className="font-medium text-foreground">{room.name}</p>
+                        <p className="text-sm text-subtle">
                           ₹{room.room_price}/month • {roomSubs.length} subscribers • ₹{monthlyRevenue}/mo revenue
                         </p>
                       </div>
-                      <Badge className="bg-green-100 text-green-800">
+                      <Badge className="bg-buy-muted text-buy-muted-foreground">
                         ₹{room.room_price}
                       </Badge>
                       <Button variant="outline" size="sm" onClick={() => handleManageAccess(room)}>
@@ -295,19 +295,19 @@ export default function AccessControlPanel() {
               {/* Room Info */}
               <div className="flex gap-3">
                 {selectedRoom.is_premium && (
-                  <Badge className="bg-purple-100 text-purple-800">
+                  <Badge className="bg-premium-muted text-protocall-premium-text">
                     <Crown className="w-3 h-3 mr-1" />
                     {selectedRoom.premium_tier}
                   </Badge>
                 )}
                 {selectedRoom.is_private && (
-                  <Badge className="bg-blue-100 text-blue-800">
+                  <Badge className="bg-premium-muted text-protocall-blue">
                     <Lock className="w-3 h-3 mr-1" />
                     Private
                   </Badge>
                 )}
                 {selectedRoom.is_paid && (
-                  <Badge className="bg-green-100 text-green-800">
+                  <Badge className="bg-buy-muted text-buy-muted-foreground">
                     <DollarSign className="w-3 h-3 mr-1" />
                     ₹{selectedRoom.room_price}/mo
                   </Badge>
@@ -317,7 +317,7 @@ export default function AccessControlPanel() {
               {/* Add User (for private rooms) */}
               {selectedRoom.is_private && (
                 <div className="space-y-4">
-                  <h4 className="font-semibold text-slate-900">Add User to Whitelist</h4>
+                  <h4 className="font-semibold text-foreground">Add User to Whitelist</h4>
                   
                   <div className="flex gap-3">
                     <select
@@ -343,37 +343,37 @@ export default function AccessControlPanel() {
               {/* Whitelisted Users (for private rooms) */}
               {selectedRoom.is_private && (
                 <div className="space-y-4">
-                  <h4 className="font-semibold text-slate-900">Whitelisted Users ({selectedRoom.allowed_user_ids?.length || 0})</h4>
+                  <h4 className="font-semibold text-foreground">Whitelisted Users ({selectedRoom.allowed_user_ids?.length || 0})</h4>
                   
                   <div className="space-y-2 max-h-96 overflow-y-auto">
                     {selectedRoom.allowed_user_ids?.length === 0 ? (
                       <div className="text-center py-8">
-                        <Users className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-                        <p className="text-slate-600">No users whitelisted yet</p>
+                        <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                        <p className="text-subtle">No users whitelisted yet</p>
                       </div>
                     ) : (
                       selectedRoom.allowed_user_ids?.map(userId => {
                         const user = users.find(u => u.id === userId);
                         return user ? (
-                          <div key={userId} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                          <div key={userId} className="flex items-center justify-between p-3 bg-surface-2 rounded-lg">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                              <div className="w-10 h-10 rounded-full bg-premium-muted flex items-center justify-center">
                                 {user.profile_image_url ? (
                                   <img src={user.profile_image_url} alt={user.display_name} className="w-10 h-10 rounded-full" />
                                 ) : (
-                                  <Users className="w-5 h-5 text-blue-600" />
+                                  <Users className="w-5 h-5 text-protocall-blue" />
                                 )}
                               </div>
                               <div>
-                                <p className="font-medium text-slate-900">{user.display_name || user.email}</p>
-                                <p className="text-xs text-slate-500">{user.email}</p>
+                                <p className="font-medium text-foreground">{user.display_name || user.email}</p>
+                                <p className="text-xs text-muted-foreground">{user.email}</p>
                               </div>
                             </div>
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => handleRemoveUser(userId)}
-                              className="text-red-600 hover:text-red-800"
+                              className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -388,35 +388,35 @@ export default function AccessControlPanel() {
               {/* Subscribers (for paid rooms) */}
               {selectedRoom.is_paid && (
                 <div className="space-y-4">
-                  <h4 className="font-semibold text-slate-900">Active Subscribers</h4>
+                  <h4 className="font-semibold text-foreground">Active Subscribers</h4>
                   
                   <div className="space-y-2 max-h-96 overflow-y-auto">
                     {subscriptions.filter(s => s.room_id === selectedRoom.id && s.status === 'active').map(sub => {
                       const user = users.find(u => u.id === sub.user_id);
                       return user ? (
-                        <div key={sub.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                        <div key={sub.id} className="flex items-center justify-between p-3 bg-surface-2 rounded-lg">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                            <div className="w-10 h-10 rounded-full bg-buy-muted flex items-center justify-center">
                               {user.profile_image_url ? (
                                 <img src={user.profile_image_url} alt={user.display_name} className="w-10 h-10 rounded-full" />
                               ) : (
-                                <Users className="w-5 h-5 text-green-600" />
+                                <Users className="w-5 h-5 text-buy-muted-foreground" />
                               )}
                             </div>
                             <div>
-                              <p className="font-medium text-slate-900">{user.display_name || user.email}</p>
-                              <p className="text-xs text-slate-500">
+                              <p className="font-medium text-foreground">{user.display_name || user.email}</p>
+                              <p className="text-xs text-muted-foreground">
                                 Subscribed {new Date(sub.start_date).toLocaleDateString()}
                               </p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
                             <Badge className={`text-xs ${
-                              sub.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                              sub.status === 'active' ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-surface-2 text-foreground'
                             }`}>
                               {sub.status}
                             </Badge>
-                            <span className="text-sm font-medium text-slate-900">₹{sub.amount_paid}</span>
+                            <span className="text-sm font-medium text-foreground">₹{sub.amount_paid}</span>
                           </div>
                         </div>
                       ) : null;
@@ -428,45 +428,45 @@ export default function AccessControlPanel() {
               {/* Tier Access Info */}
               {selectedRoom.is_premium && (
                 <div className="space-y-4">
-                  <h4 className="font-semibold text-slate-900">Subscription Tier Access</h4>
+                  <h4 className="font-semibold text-foreground">Subscription Tier Access</h4>
                   
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-surface-2 rounded-lg">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center text-xs">
+                        <div className="w-8 h-8 rounded-full bg-border flex items-center justify-center text-xs">
                           B
                         </div>
                         <span className="font-medium">Basic Tier</span>
                       </div>
                       {selectedRoom.premium_tier === 'basic' ? (
-                        <CheckCircle className="w-5 h-5 text-green-600" />
+                        <CheckCircle className="w-5 h-5 text-buy-muted-foreground" />
                       ) : (
-                        <XCircle className="w-5 h-5 text-red-400" />
+                        <XCircle className="w-5 h-5 text-sell" />
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-surface-2 rounded-lg">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-purple-300 flex items-center justify-center text-xs text-white font-semibold">
+                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-xs text-white font-semibold">
                           P
                         </div>
                         <span className="font-medium">Premium Tier</span>
                       </div>
                       {['basic', 'premium'].includes(selectedRoom.premium_tier) ? (
-                        <CheckCircle className="w-5 h-5 text-green-600" />
+                        <CheckCircle className="w-5 h-5 text-buy-muted-foreground" />
                       ) : (
-                        <XCircle className="w-5 h-5 text-red-400" />
+                        <XCircle className="w-5 h-5 text-sell" />
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-surface-2 rounded-lg">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-xs font-semibold">
+                        <div className="w-8 h-8 rounded-full bg-hold flex items-center justify-center text-xs font-semibold">
                           V
                         </div>
                         <span className="font-medium">VIP Tier</span>
                       </div>
-                      <CheckCircle className="w-5 h-5 text-green-600" />
+                      <CheckCircle className="w-5 h-5 text-buy-muted-foreground" />
                     </div>
                   </div>
                 </div>

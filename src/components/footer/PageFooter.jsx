@@ -11,7 +11,6 @@ import {
   MapPin,
   MessageCircle,
   CheckCircle,
-  Calendar,
   Facebook,
   Twitter,
   Instagram,
@@ -30,46 +29,46 @@ export default function PageFooter() {
       name: 'Facebook',
       url: settings.facebook_url || '#',
       icon: Facebook,
-      color: 'hover:text-blue-600',
-      gradient: 'from-blue-500 to-blue-700',
-      shadow: 'shadow-blue-500/50'
+      color: 'hover:text-protocall-blue',
+      gradient: 'from-protocall-deep to-protocall-blue',
+      shadow: 'shadow-protocall-blue/50'
     },
     {
       name: 'Twitter',
       url: settings.twitter_url || '#',
       icon: Twitter,
-      color: 'hover:text-blue-400',
-      gradient: 'from-blue-400 to-blue-600',
-      shadow: 'shadow-blue-400/50'
+      color: 'hover:text-protocall-premium-light',
+      gradient: 'from-protocall-blue to-protocall-blue',
+      shadow: 'shadow-protocall-blue/50'
     },
     {
       name: 'Instagram',
       url: settings.instagram_url || '#',
       icon: Instagram,
-      color: 'hover:text-pink-600',
-      gradient: 'from-pink-500 to-purple-600',
-      shadow: 'shadow-pink-500/50'
+      color: 'hover:text-protocall-premium-text',
+      gradient: 'from-protocall-deep to-protocall-blue',
+      shadow: 'shadow-protocall-grape/50'
     },
     {
       name: 'LinkedIn',
       url: settings.linkedin_url || '#',
       icon: Linkedin,
-      color: 'hover:text-blue-700',
-      gradient: 'from-blue-600 to-blue-800',
-      shadow: 'shadow-blue-600/50'
+      color: 'hover:text-protocall-blue',
+      gradient: 'from-protocall-deep to-protocall-blue',
+      shadow: 'shadow-protocall-deep/50'
     },
     {
       name: 'YouTube',
       url: settings.youtube_url || '#',
       icon: Youtube,
-      color: 'hover:text-red-600',
-      gradient: 'from-red-500 to-red-700',
-      shadow: 'shadow-red-500/50'
+      color: 'hover:text-sell-muted-foreground',
+      gradient: 'from-sell to-sell',
+      shadow: 'shadow-sell/50'
     }
   ];
 
   return (
-    <footer className="bg-gradient-to-r from-blue-900 via-blue-800 to-purple-900 text-white">
+    <footer className="bg-gradient-to-r from-protocall-deep via-protocall-grape to-protocall-blue text-white">
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12 mb-8">
 
@@ -152,28 +151,28 @@ export default function PageFooter() {
             <div className="space-y-3">
               <Link
                 to={createPageUrl("Terms")}
-                className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group text-sm"
+                className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group text-sm"
               >
                 <FileText className="w-4 h-4" />
                 <span>Terms of Service</span>
               </Link>
               <Link
                 to={createPageUrl("Privacy")}
-                className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group text-sm"
+                className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group text-sm"
               >
                 <Lock className="w-4 h-4" />
                 <span>Privacy Policy</span>
               </Link>
               <Link
                 to={createPageUrl("Cookies")}
-                className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group text-sm"
+                className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group text-sm"
               >
                 <Cookie className="w-4 h-4" />
                 <span>Cookies Policy</span>
               </Link>
               <Link
                 to={createPageUrl("RiskDisclosure")}
-                className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group text-sm"
+                className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group text-sm"
               >
                 <AlertTriangle className="w-4 h-4" />
                 <span>Risk Disclosure</span>
@@ -187,28 +186,21 @@ export default function PageFooter() {
             <div className="space-y-3">
               <Link
                 to={createPageUrl("News")}
-                className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group text-sm"
+                className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group text-sm"
               >
                 <FileText className="w-4 h-4" />
                 <span>Market News</span>
               </Link>
               <Link
                 to={createPageUrl("Blogs")}
-                className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group text-sm"
+                className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group text-sm"
               >
                 <FileText className="w-4 h-4" />
                 <span>Blogs & Articles</span>
               </Link>
               <Link
-                to={createPageUrl("Events")}
-                className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group text-sm"
-              >
-                <Calendar className="w-4 h-4" />
-                <span>Events & Webinars</span>
-              </Link>
-              <Link
                 to={createPageUrl("Finfluencers")}
-                className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group text-sm"
+                className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group text-sm"
               >
                 <FileText className="w-4 h-4" />
                 <span>Learn from Experts</span>
@@ -221,15 +213,15 @@ export default function PageFooter() {
             <h3 className="text-lg font-semibold mb-4 text-white">Regulatory</h3>
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm">
-                <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+                <CheckCircle className="w-4 h-4 text-positive flex-shrink-0" />
                 <span className="text-white/80">SEBI Registered</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
-                <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+                <CheckCircle className="w-4 h-4 text-positive flex-shrink-0" />
                 <span className="text-white/80">RBI Compliant</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
-                <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+                <CheckCircle className="w-4 h-4 text-positive flex-shrink-0" />
                 <span className="text-white/80">ISO 27001 Certified</span>
               </div>
             </div>
@@ -242,7 +234,7 @@ export default function PageFooter() {
               {settings.contact_email && (
                 <a
                   href={`mailto:${settings.contact_email}`}
-                  className="flex items-start gap-2 text-white/70 hover:text-white transition-colors group text-sm"
+                  className="flex items-start gap-2 text-white/80 hover:text-white transition-colors group text-sm"
                 >
                   <Mail className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <div>
@@ -255,7 +247,7 @@ export default function PageFooter() {
               {settings.contact_phone && (
                 <a
                   href={`tel:${settings.contact_phone}`}
-                  className="flex items-start gap-2 text-white/70 hover:text-white transition-colors group text-sm"
+                  className="flex items-start gap-2 text-white/80 hover:text-white transition-colors group text-sm"
                 >
                   <Phone className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <div>
@@ -267,7 +259,7 @@ export default function PageFooter() {
 
               <Link
                 to={createPageUrl("ContactSupport")}
-                className="flex items-start gap-2 text-white/70 hover:text-white transition-colors group text-sm"
+                className="flex items-start gap-2 text-white/80 hover:text-white transition-colors group text-sm"
               >
                 <MessageCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <div>
@@ -277,7 +269,7 @@ export default function PageFooter() {
               </Link>
 
               {settings.company_address && (
-                <div className="flex items-start gap-2 text-white/70 text-sm">
+                <div className="flex items-start gap-2 text-white/80 text-sm">
                   <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <div>
                     <span className="block">{settings.company_address}</span>

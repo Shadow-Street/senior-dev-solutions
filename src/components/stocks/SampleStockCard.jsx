@@ -66,10 +66,10 @@ export default function SampleStockCard() {
 
   const getAdviceColor = (advice) => {
     switch(advice) {
-      case 'buy': return 'bg-green-50 border-green-200 text-green-800';
-      case 'sell': return 'bg-red-50 border-red-200 text-red-800';
-      case 'hold': return 'bg-amber-50 border-amber-200 text-amber-800';
-      default: return 'bg-gray-50 border-gray-200 text-gray-800';
+      case 'buy': return 'bg-buy-muted border-buy/30 text-buy-muted-foreground';
+      case 'sell': return 'bg-sell-muted border-sell/30 text-sell-muted-foreground';
+      case 'hold': return 'bg-hold-muted border-hold/30 text-hold-muted-foreground';
+      default: return 'bg-surface-2 border-border text-foreground';
     }
   };
 
@@ -79,7 +79,7 @@ export default function SampleStockCard() {
         {/* Trending badge */}
         <div className="absolute top-2 right-2 z-10">
           {sampleStock.is_trending && (
-            <Badge className="bg-orange-100 text-orange-800 text-xs">
+            <Badge className="bg-hold-muted text-hold-muted-foreground text-xs">
               Trending
             </Badge>
           )}
@@ -89,7 +89,7 @@ export default function SampleStockCard() {
           <div className="flex items-start justify-between">
             <div>
               <CardTitle className="text-lg">{sampleStock.symbol}</CardTitle>
-              <p className="text-xs text-slate-500 truncate">{sampleStock.company_name}</p>
+              <p className="text-xs text-muted-foreground truncate">{sampleStock.company_name}</p>
             </div>
           </div>
         </CardHeader>
@@ -98,12 +98,12 @@ export default function SampleStockCard() {
           {/* Price Section */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-2xl font-bold text-slate-900">₹{sampleStock.current_price.toFixed(2)}</span>
+              <span className="text-2xl font-bold text-foreground">₹{sampleStock.current_price.toFixed(2)}</span>
               <Badge
                 variant="outline"
                 className={`${isPositive
-                  ? "bg-green-100 text-green-800 border-green-200"
-                  : "bg-red-100 text-red-800 border-red-200"
+                  ? "bg-buy-muted text-buy-muted-foreground border-buy/30"
+                  : "bg-sell-muted text-sell-muted-foreground border-sell/30"
                 }`}
               >
                 {isPositive ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
@@ -112,19 +112,19 @@ export default function SampleStockCard() {
             </div>
 
             {/* User Investment & Profit/Loss */}
-            <div className="bg-slate-50 rounded-lg p-3">
+            <div className="bg-surface-2 rounded-lg p-3">
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Invested</span>
+                  <span className="text-sm text-subtle">Invested</span>
                   <span className="text-sm font-medium">₹{sampleUserInvestment.total_invested.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600">Current Value</span>
+                  <span className="text-sm text-subtle">Current Value</span>
                   <span className="text-sm font-medium">₹{profitLossData.currentValue.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center border-t pt-2">
-                  <span className="text-sm text-slate-600">P&L</span>
-                  <span className={`text-sm font-bold ${profitLossData.profitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <span className="text-sm text-subtle">P&L</span>
+                  <span className={`text-sm font-bold ${profitLossData.profitLoss >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
                     {profitLossData.profitLoss >= 0 ? '+' : ''}₹{profitLossData.profitLoss.toLocaleString()}
                     ({profitLossData.profitLoss >= 0 ? '+' : ''}{profitLossData.profitLossPercent.toFixed(1)}%)
                   </span>
@@ -132,7 +132,7 @@ export default function SampleStockCard() {
               </div>
             </div>
 
-            <div className="text-xs text-slate-500 space-y-1">
+            <div className="text-xs text-muted-foreground space-y-1">
               <div className="flex justify-between">
                 <span>Day High:</span>
                 <span className="font-medium">₹{sampleStock.day_high.toFixed(2)}</span>
@@ -150,8 +150,8 @@ export default function SampleStockCard() {
 
           {/* Premium Advice Section */}
           <div className="space-y-2">
-            <h4 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-              <Crown className="w-4 h-4 text-purple-500" />
+            <h4 className="text-sm font-semibold text-subtle flex items-center gap-2">
+              <Crown className="w-4 h-4 text-protocall-premium-light" />
               Community & Advisor Insights
             </h4>
 
@@ -173,10 +173,10 @@ export default function SampleStockCard() {
                 </div>
               </div>
             ) : (
-              <div className="relative rounded-lg p-3 bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200">
+              <div className="relative rounded-lg p-3 bg-surface-2 border border-protocall-premium-light">
                 <div className="flex items-center justify-center">
-                  <Lock className="w-4 h-4 text-purple-500 mr-2" />
-                  <span className="text-sm text-purple-700 font-medium">Upgrade to Premium to unlock advice</span>
+                  <Lock className="w-4 h-4 text-protocall-premium-light mr-2" />
+                  <span className="text-sm text-protocall-premium-text font-medium">Upgrade to Premium to unlock advice</span>
                 </div>
                 <Link to={createPageUrl("Subscription")} className="absolute inset-0">
                   <div className="w-full h-full"></div>
@@ -193,38 +193,38 @@ export default function SampleStockCard() {
           {/* Action Buttons */}
           <div className="grid grid-cols-3 gap-2">
             <Link to={createPageUrl("ChatRooms")}>
-              <Button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg">
+              <Button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg">
                 <MessageSquare className="w-3 h-3" />
                 Chat
               </Button>
             </Link>
             <Link to={createPageUrl("Polls")}>
-              <Button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg">
+              <Button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg">
                 <BarChart3 className="w-3 h-3" />
                 Poll
               </Button>
             </Link>
             <Button
               onClick={() => setShowAlertModal(true)}
-              className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg relative">
+              className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg relative">
               <Bell className="w-3 h-3" />
               Alert
               {/* Sample alert badge */}
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-protocall-sell-text text-white text-xs rounded-full flex items-center justify-center">
                 2
               </div>
             </Button>
           </div>
 
           {/* Sample Alert Status */}
-          <div className="bg-green-50 border border-green-200 rounded-lg p-2">
+          <div className="bg-buy-muted border border-buy/30 rounded-lg p-2">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-xs text-green-700 font-medium">
+              <div className="w-2 h-2 bg-buy rounded-full"></div>
+              <span className="text-xs text-buy-muted-foreground font-medium">
                 2 active alerts configured
               </span>
             </div>
-            <div className="text-xs text-green-600 mt-1">
+            <div className="text-xs text-buy-muted-foreground mt-1">
               Price ±5% • Profit +10% target
             </div>
           </div>

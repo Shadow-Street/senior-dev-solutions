@@ -174,25 +174,25 @@ export default function ContentModeration() {
   };
 
   const violationTypeConfig = {
-    scam: { color: 'bg-red-500', label: 'Scam/Fraud', icon: '⚠️' },
-    personal_info: { color: 'bg-orange-500', label: 'Personal Info Leak', icon: '🔒' },
-    harassment: { color: 'bg-purple-500', label: 'Harassment', icon: '🚫' },
-    inappropriate: { color: 'bg-pink-500', label: 'Inappropriate Content', icon: '❌' },
-    spam: { color: 'bg-yellow-500', label: 'Spam', icon: '📢' }
+    scam: { color: 'bg-sell', label: 'Scam/Fraud', icon: '⚠️' },
+    personal_info: { color: 'bg-hold', label: 'Personal Info Leak', icon: '🔒' },
+    harassment: { color: 'bg-primary', label: 'Harassment', icon: '🚫' },
+    inappropriate: { color: 'bg-primary', label: 'Inappropriate Content', icon: '❌' },
+    spam: { color: 'bg-hold', label: 'Spam', icon: '📢' }
   };
 
   const severityConfig = {
-    critical: { color: 'text-red-600 bg-red-100', label: 'Critical' },
-    high: { color: 'text-orange-600 bg-orange-100', label: 'High' },
-    medium: { color: 'text-yellow-600 bg-yellow-100', label: 'Medium' },
-    low: { color: 'text-blue-600 bg-blue-100', label: 'Low' }
+    critical: { color: 'text-sell-muted-foreground bg-sell-muted', label: 'Critical' },
+    high: { color: 'text-hold-muted-foreground bg-hold-muted', label: 'High' },
+    medium: { color: 'text-hold-muted-foreground bg-hold-muted', label: 'Medium' },
+    low: { color: 'text-protocall-blue bg-premium-muted', label: 'Low' }
   };
 
   const statusConfig = {
-    pending: { color: 'text-yellow-600 bg-yellow-100', label: 'Pending Review', icon: Clock },
-    reviewed: { color: 'text-blue-600 bg-blue-100', label: 'Reviewed', icon: Eye },
-    dismissed: { color: 'text-gray-600 bg-gray-100', label: 'Dismissed', icon: XCircle },
-    escalated: { color: 'text-red-600 bg-red-100', label: 'Escalated', icon: AlertTriangle }
+    pending: { color: 'text-hold-muted-foreground bg-hold-muted', label: 'Pending Review', icon: Clock },
+    reviewed: { color: 'text-protocall-blue bg-premium-muted', label: 'Reviewed', icon: Eye },
+    dismissed: { color: 'text-subtle bg-surface-2', label: 'Dismissed', icon: XCircle },
+    escalated: { color: 'text-sell-muted-foreground bg-sell-muted', label: 'Escalated', icon: AlertTriangle }
   };
 
   return (
@@ -200,50 +200,50 @@ export default function ContentModeration() {
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-red-600" />
+            <Shield className="w-5 h-5 text-sell-muted-foreground" />
             Content Moderation & Safety
           </CardTitle>
           
           {/* Stats Overview */}
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 mt-4">
-            <div className="bg-slate-50 p-3 rounded-lg">
-              <p className="text-xs text-slate-600">Total Reports</p>
-              <p className="text-lg font-bold text-slate-800">{stats.total}</p>
+            <div className="bg-surface-2 p-3 rounded-lg">
+              <p className="text-xs text-subtle">Total Reports</p>
+              <p className="text-lg font-bold text-foreground">{stats.total}</p>
             </div>
-            <div className="bg-yellow-50 p-3 rounded-lg">
-              <p className="text-xs text-yellow-600">Pending</p>
-              <p className="text-lg font-bold text-yellow-800">{stats.pending}</p>
+            <div className="bg-hold-muted p-3 rounded-lg">
+              <p className="text-xs text-hold-muted-foreground">Pending</p>
+              <p className="text-lg font-bold text-hold-muted-foreground">{stats.pending}</p>
             </div>
-            <div className="bg-blue-50 p-3 rounded-lg">
-              <p className="text-xs text-blue-600">Reviewed</p>
-              <p className="text-lg font-bold text-blue-800">{stats.reviewed}</p>
+            <div className="bg-premium-muted p-3 rounded-lg">
+              <p className="text-xs text-protocall-blue">Reviewed</p>
+              <p className="text-lg font-bold text-protocall-blue">{stats.reviewed}</p>
             </div>
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <p className="text-xs text-gray-600">Dismissed</p>
-              <p className="text-lg font-bold text-gray-800">{stats.dismissed}</p>
+            <div className="bg-surface-2 p-3 rounded-lg">
+              <p className="text-xs text-subtle">Dismissed</p>
+              <p className="text-lg font-bold text-foreground">{stats.dismissed}</p>
             </div>
-            <div className="bg-red-50 p-3 rounded-lg">
-              <p className="text-xs text-red-600">Critical</p>
-              <p className="text-lg font-bold text-red-800">{stats.critical}</p>
+            <div className="bg-sell-muted p-3 rounded-lg">
+              <p className="text-xs text-sell-muted-foreground">Critical</p>
+              <p className="text-lg font-bold text-sell-muted-foreground">{stats.critical}</p>
             </div>
-            <div className="bg-orange-50 p-3 rounded-lg">
-              <p className="text-xs text-orange-600">High</p>
-              <p className="text-lg font-bold text-orange-800">{stats.high}</p>
+            <div className="bg-hold-muted p-3 rounded-lg">
+              <p className="text-xs text-hold-muted-foreground">High</p>
+              <p className="text-lg font-bold text-hold-muted-foreground">{stats.high}</p>
             </div>
-            <div className="bg-yellow-50 p-3 rounded-lg">
-              <p className="text-xs text-yellow-600">Medium</p>
-              <p className="text-lg font-bold text-yellow-800">{stats.medium}</p>
+            <div className="bg-hold-muted p-3 rounded-lg">
+              <p className="text-xs text-hold-muted-foreground">Medium</p>
+              <p className="text-lg font-bold text-hold-muted-foreground">{stats.medium}</p>
             </div>
-            <div className="bg-blue-50 p-3 rounded-lg">
-              <p className="text-xs text-blue-600">Low</p>
-              <p className="text-lg font-bold text-blue-800">{stats.low}</p>
+            <div className="bg-premium-muted p-3 rounded-lg">
+              <p className="text-xs text-protocall-blue">Low</p>
+              <p className="text-lg font-bold text-protocall-blue">{stats.low}</p>
             </div>
           </div>
           
           {/* Filters */}
           <div className="flex flex-col md:flex-row gap-4 mt-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Search by user, content, or violation type..."
                 value={searchTerm}
@@ -281,7 +281,7 @@ export default function ContentModeration() {
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+              <thead className="text-xs text-subtle uppercase bg-surface-2">
                 <tr>
                   <th scope="col" className="px-6 py-3">Violation Details</th>
                   <th scope="col" className="px-6 py-3">User & Content</th>
@@ -301,17 +301,17 @@ export default function ContentModeration() {
                   const StatusIcon = statusStyle.icon || Clock;
                   
                   return (
-                    <tr key={log.id} className="bg-white border-b hover:bg-slate-50 transition-colors">
+                    <tr key={log.id} className="bg-white border-b hover:bg-surface-2 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-start gap-3">
                           <div className="text-lg">{violationConfig.icon}</div>
                           <div>
-                            <div className="font-semibold text-slate-800">{violationConfig.label}</div>
-                            <div className="text-xs text-slate-500">
+                            <div className="font-semibold text-foreground">{violationConfig.label}</div>
+                            <div className="text-xs text-muted-foreground">
                               Action: <span className="font-medium">{log.action_taken}</span>
                             </div>
                             {log.chatRoom && (
-                              <div className="text-xs text-slate-400">
+                              <div className="text-xs text-muted-foreground">
                                 Room: {log.chatRoom.name}
                               </div>
                             )}
@@ -322,11 +322,11 @@ export default function ContentModeration() {
                       <td className="px-6 py-4">
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
-                            <UserIcon className="w-4 h-4 text-slate-400" />
+                            <UserIcon className="w-4 h-4 text-muted-foreground" />
                             <span className="font-medium">{log.user?.display_name || 'Unknown User'}</span>
                           </div>
-                          <div className="text-xs text-slate-600 max-w-xs">
-                            <div className="bg-slate-50 p-2 rounded border-l-2 border-slate-300">
+                          <div className="text-xs text-subtle max-w-xs">
+                            <div className="bg-surface-2 p-2 rounded border-l-2 border-border">
                               "{log.message_content?.substring(0, 100)}
                               {log.message_content?.length > 100 ? '...' : ''}"
                             </div>
@@ -347,7 +347,7 @@ export default function ContentModeration() {
                         </Badge>
                       </td>
                       
-                      <td className="px-6 py-4 text-slate-500">
+                      <td className="px-6 py-4 text-muted-foreground">
                         {new Date(log.created_date).toLocaleDateString()}
                         <div className="text-xs">
                           {new Date(log.created_date).toLocaleTimeString()}
@@ -370,7 +370,7 @@ export default function ContentModeration() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="text-green-600 hover:text-green-800"
+                                className="text-buy-muted-foreground hover:text-buy-muted-foreground"
                                 onClick={() => handleStatusUpdate(log.id, 'dismissed')}
                               >
                                 <XCircle className="w-4 h-4" />
@@ -378,7 +378,7 @@ export default function ContentModeration() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="text-red-600 hover:text-red-800"
+                                className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                                 onClick={() => handleStatusUpdate(log.id, 'escalated')}
                               >
                                 <AlertTriangle className="w-4 h-4" />
@@ -396,9 +396,9 @@ export default function ContentModeration() {
 
           {filteredLogs.length === 0 && !isLoading && (
             <div className="text-center py-8">
-              <Shield className="mx-auto h-12 w-12 text-slate-400" />
-              <h3 className="mt-2 text-sm font-medium text-slate-900">No moderation reports</h3>
-              <p className="mt-1 text-sm text-slate-500">
+              <Shield className="mx-auto h-12 w-12 text-muted-foreground" />
+              <h3 className="mt-2 text-sm font-medium text-foreground">No moderation reports</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
                 {moderationLogs.length === 0 
                   ? "No content violations have been detected."
                   : "Try adjusting your search or filter criteria."
@@ -422,14 +422,14 @@ export default function ContentModeration() {
           {selectedLog && (
             <div className="space-y-6">
               {/* Violation Summary */}
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="bg-sell-muted border border-sell/30 rounded-lg p-4">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="text-2xl">{violationTypeConfig[selectedLog.violation_type]?.icon}</div>
                   <div>
-                    <h3 className="font-semibold text-red-800">
+                    <h3 className="font-semibold text-sell-muted-foreground">
                       {violationTypeConfig[selectedLog.violation_type]?.label}
                     </h3>
-                    <p className="text-sm text-red-600">
+                    <p className="text-sm text-sell-muted-foreground">
                       Severity: {selectedLog.severity} • Action Taken: {selectedLog.action_taken}
                     </p>
                   </div>
@@ -437,40 +437,40 @@ export default function ContentModeration() {
               </div>
 
               {/* User Information */}
-              <div className="bg-slate-50 p-4 rounded-lg">
+              <div className="bg-surface-2 p-4 rounded-lg">
                 <h4 className="font-semibold mb-3">User Details</h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-slate-600">Display Name</p>
+                    <p className="text-sm text-subtle">Display Name</p>
                     <p className="font-medium">{selectedLog.user?.display_name}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-slate-600">Email</p>
+                    <p className="text-sm text-subtle">Email</p>
                     <p className="font-medium">{selectedLog.user?.email}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-slate-600">Trust Score</p>
+                    <p className="text-sm text-subtle">Trust Score</p>
                     <p className="font-medium">{selectedLog.user?.trust_score || 50}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-slate-600">User Role</p>
+                    <p className="text-sm text-subtle">User Role</p>
                     <p className="font-medium">{selectedLog.user?.app_role}</p>
                   </div>
                 </div>
               </div>
 
               {/* Flagged Content */}
-              <div className="bg-yellow-50 p-4 rounded-lg">
+              <div className="bg-hold-muted p-4 rounded-lg">
                 <h4 className="font-semibold mb-3">Flagged Message Content</h4>
-                <div className="bg-white p-3 rounded border-l-4 border-red-500">
+                <div className="bg-white p-3 rounded border-l-4 border-sell">
                   <p className="text-sm">{selectedLog.message_content}</p>
                 </div>
                 {selectedLog.chatRoom && (
-                  <p className="text-xs text-slate-500 mt-2">
+                  <p className="text-xs text-muted-foreground mt-2">
                     Posted in: <span className="font-medium">{selectedLog.chatRoom.name}</span>
                   </p>
                 )}
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-muted-foreground">
                   Detected on: {new Date(selectedLog.created_date).toLocaleString()}
                 </p>
               </div>
@@ -499,7 +499,7 @@ export default function ContentModeration() {
                 <div className="flex gap-3">
                   <Button
                     variant="ghost"
-                    className="text-green-600 hover:text-green-800"
+                    className="text-buy-muted-foreground hover:text-buy-muted-foreground"
                     onClick={() => handleStatusUpdate(selectedLog.id, 'dismissed')}
                   >
                     <XCircle className="w-4 h-4 mr-2" />
@@ -508,7 +508,7 @@ export default function ContentModeration() {
                   
                   <Button
                     variant="ghost"
-                    className="text-blue-600 hover:text-blue-800"
+                    className="text-protocall-blue hover:text-protocall-blue"
                     onClick={() => handleStatusUpdate(selectedLog.id, 'reviewed')}
                   >
                     <CheckCircle className="w-4 h-4 mr-2" />
@@ -516,7 +516,7 @@ export default function ContentModeration() {
                   </Button>
                   
                   <Button
-                    className="bg-red-600 hover:bg-red-700"
+                    className="bg-sell hover:bg-sell"
                     onClick={() => handleStatusUpdate(selectedLog.id, 'escalated')}
                   >
                     <AlertTriangle className="w-4 h-4 mr-2" />

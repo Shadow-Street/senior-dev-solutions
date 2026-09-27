@@ -27,21 +27,21 @@ export default function LiveActivityBadge({ sessionId, className = '' }) {
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       {activeUsers > 0 && (
-        <Badge className="bg-green-100 text-green-800 border-green-200 text-xs animate-pulse">
+        <Badge className="bg-buy-muted text-buy-muted-foreground border-buy/30 text-xs animate-pulse">
           <Users className="w-3 h-3 mr-1" />
           {activeUsers} {activeUsers === 1 ? 'user' : 'users'} active
         </Badge>
       )}
       
       {recentPledges > 0 && (
-        <Badge variant="outline" className="text-xs border-blue-200 text-blue-700">
+        <Badge variant="outline" className="text-xs border-protocall-premium-light text-protocall-blue">
           <Activity className="w-3 h-3 mr-1" />
           {recentPledges} {recentPledges === 1 ? 'pledge' : 'pledges'} (5min)
         </Badge>
       )}
 
       {lastActivity && (
-        <Badge variant="outline" className="text-xs text-gray-600">
+        <Badge variant="outline" className="text-xs text-subtle">
           <Clock className="w-3 h-3 mr-1" />
           {formatDistanceToNow(new Date(lastActivity), { addSuffix: true })}
         </Badge>

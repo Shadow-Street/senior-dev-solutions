@@ -92,7 +92,7 @@ export default function PayoutRequestModal({ open, onClose, onSubmit, availableB
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Wallet className="w-5 h-5 text-green-600" />
+            <Wallet className="w-5 h-5 text-buy-muted-foreground" />
             Request Payout
           </DialogTitle>
           <DialogDescription>
@@ -103,7 +103,7 @@ export default function PayoutRequestModal({ open, onClose, onSubmit, availableB
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label>Available Balance</Label>
-            <div className="p-3 bg-green-50 rounded-lg text-green-800 font-semibold">
+            <div className="p-3 bg-buy-muted rounded-lg text-buy-muted-foreground font-semibold">
               ₹{availableBalance.toLocaleString()}
             </div>
           </div>
@@ -153,8 +153,8 @@ export default function PayoutRequestModal({ open, onClose, onSubmit, availableB
 
           {/* Bank Transfer Fields */}
           {formData.payout_method === 'bank_transfer' && (
-            <div className="space-y-3 p-4 bg-slate-50 rounded-lg">
-              <h4 className="font-semibold text-slate-800">Bank Details</h4>
+            <div className="space-y-3 p-4 bg-surface-2 rounded-lg">
+              <h4 className="font-semibold text-foreground">Bank Details</h4>
               <div>
                 <Label htmlFor="account_holder">Account Holder Name *</Label>
                 <Input
@@ -199,7 +199,7 @@ export default function PayoutRequestModal({ open, onClose, onSubmit, availableB
 
           {/* UPI Field */}
           {formData.payout_method === 'upi' && (
-            <div className="p-4 bg-slate-50 rounded-lg">
+            <div className="p-4 bg-surface-2 rounded-lg">
               <Label htmlFor="upi_id">UPI ID *</Label>
               <Input
                 id="upi_id"
@@ -213,7 +213,7 @@ export default function PayoutRequestModal({ open, onClose, onSubmit, availableB
 
           {/* PayPal Field */}
           {formData.payout_method === 'paypal' && (
-            <div className="p-4 bg-slate-50 rounded-lg">
+            <div className="p-4 bg-surface-2 rounded-lg">
               <Label htmlFor="paypal_email">PayPal Email *</Label>
               <Input
                 id="paypal_email"
@@ -226,8 +226,8 @@ export default function PayoutRequestModal({ open, onClose, onSubmit, availableB
             </div>
           )}
 
-          <div className="bg-yellow-50 p-3 rounded-lg">
-            <p className="text-sm text-yellow-800">
+          <div className="bg-hold-muted p-3 rounded-lg">
+            <p className="text-sm text-hold-muted-foreground">
               <strong>Note:</strong> Payout requests are processed within 3-5 business days after approval. 
               You'll receive email notifications about the status updates.
             </p>
@@ -240,7 +240,7 @@ export default function PayoutRequestModal({ open, onClose, onSubmit, availableB
             <Button 
               type="submit" 
               disabled={isSubmitting || !formData.requested_amount || !formData.payout_method}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-buy hover:bg-buy"
             >
               {isSubmitting ? 'Submitting...' : 'Submit Request'}
             </Button>

@@ -158,7 +158,7 @@ export default function PayoutRequestModal({ investor, wallet, isOpen, onClose, 
         <DialogContent className="max-w-lg max-h-[90vh] flex flex-col">
           <DialogHeader className="flex-shrink-0">
             <DialogTitle className="flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-green-600" />
+              <DollarSign className="w-5 h-5 text-buy-muted-foreground" />
               Request Payout
             </DialogTitle>
             <DialogDescription>
@@ -168,9 +168,9 @@ export default function PayoutRequestModal({ investor, wallet, isOpen, onClose, 
 
           {/* KYC Verification Check */}
           {investor?.kyc_status !== 'verified' && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-2 flex-shrink-0">
-              <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-red-700">
+            <div className="bg-sell-muted border border-sell/30 rounded-lg p-4 flex items-start gap-2 flex-shrink-0">
+              <AlertTriangle className="w-5 h-5 text-sell-muted-foreground flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-sell-muted-foreground">
                 <p className="font-semibold mb-1">KYC Verification Required</p>
                 <p>
                   {investor?.kyc_status === 'pending' && 
@@ -185,9 +185,9 @@ export default function PayoutRequestModal({ investor, wallet, isOpen, onClose, 
           )}
 
           {!payoutsEnabled && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2 flex-shrink-0">
-              <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-red-700">
+            <div className="bg-sell-muted border border-sell/30 rounded-lg p-3 flex items-start gap-2 flex-shrink-0">
+              <AlertTriangle className="w-5 h-5 text-sell-muted-foreground flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-sell-muted-foreground">
                 <p className="font-semibold">Payouts Disabled</p>
                 <p>Fund payouts are currently disabled by the fund manager. Please try again later.</p>
               </div>
@@ -196,15 +196,15 @@ export default function PayoutRequestModal({ investor, wallet, isOpen, onClose, 
 
           <div className="flex-1 overflow-y-auto px-1 space-y-4 py-2">
             {/* Wallet Balance */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-blue-600">Available Balance</p>
-                  <p className="text-2xl font-bold text-blue-900">
+                  <p className="text-sm text-protocall-blue">Available Balance</p>
+                  <p className="text-2xl font-bold text-protocall-blue">
                     ₹{availableBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
-                <Wallet className="w-10 h-10 text-blue-600" />
+                <Wallet className="w-10 h-10 text-protocall-blue" />
               </div>
             </div>
 
@@ -223,7 +223,7 @@ export default function PayoutRequestModal({ investor, wallet, isOpen, onClose, 
                 className="text-lg font-semibold"
                 disabled={!payoutsEnabled || isProcessing || investor?.kyc_status !== 'verified'}
               />
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 Minimum: ₹100 | Maximum: ₹{availableBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
               </p>
             </div>
@@ -247,7 +247,7 @@ export default function PayoutRequestModal({ investor, wallet, isOpen, onClose, 
 
             {/* Bank Details */}
             <div className="space-y-3 pt-2">
-              <h4 className="font-semibold text-sm text-slate-700">Bank Account Details</h4>
+              <h4 className="font-semibold text-sm text-subtle">Bank Account Details</h4>
               
               <div className="space-y-2">
                 <Label htmlFor="account_number">Account Number</Label>
@@ -297,9 +297,9 @@ export default function PayoutRequestModal({ investor, wallet, isOpen, onClose, 
             </div>
 
             {/* Warning */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start gap-2">
-              <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-yellow-700">
+            <div className="bg-hold-muted border border-hold/30 rounded-lg p-3 flex items-start gap-2">
+              <AlertTriangle className="w-5 h-5 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-hold-muted-foreground">
                 <p className="font-semibold">Processing Time</p>
                 <p>Payout requests are typically processed within 3-5 business days after admin approval.</p>
               </div>
@@ -320,7 +320,7 @@ export default function PayoutRequestModal({ investor, wallet, isOpen, onClose, 
                 !payoutsEnabled ||
                 investor?.kyc_status !== 'verified'
               }
-              className="bg-gradient-to-r from-green-600 to-emerald-600"
+              className="bg-buy-soft"
             >
               {isProcessing ? 'Submitting...' : 'Submit Request'}
             </Button>

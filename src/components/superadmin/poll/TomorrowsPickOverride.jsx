@@ -115,10 +115,10 @@ export default function TomorrowsPickOverride({ user }) {
     return (
       <Card className="animate-pulse">
         <CardHeader>
-          <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+          <div className="h-6 bg-border rounded w-3/4"></div>
         </CardHeader>
         <CardContent>
-          <div className="h-32 bg-gray-200 rounded"></div>
+          <div className="h-32 bg-border rounded"></div>
         </CardContent>
       </Card>
     );
@@ -126,20 +126,20 @@ export default function TomorrowsPickOverride({ user }) {
 
   return (
     <Card className="shadow-lg border-0 bg-white">
-      <CardHeader className="border-b bg-gradient-to-r from-amber-50 to-orange-50">
-        <CardTitle className="flex items-center gap-2 text-slate-900">
-          <Target className="w-5 h-5 text-amber-600" />
+      <CardHeader className="border-b bg-gradient-to-r from-surface-2 to-hold-muted">
+        <CardTitle className="flex items-center gap-2 text-foreground">
+          <Target className="w-5 h-5 text-hold-muted-foreground" />
           Tomorrow's Pick Override
-          {isOverrideActive && <Badge className="bg-purple-500 text-white">ACTIVE</Badge>}
+          {isOverrideActive && <Badge className="bg-primary text-white">ACTIVE</Badge>}
         </CardTitle>
-        <p className="text-sm text-slate-600">Manually control what appears as "Tomorrow's Pick" in chat sidebars</p>
+        <p className="text-sm text-subtle">Manually control what appears as "Tomorrow's Pick" in chat sidebars</p>
       </CardHeader>
 
       <CardContent className="p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h4 className="font-semibold text-slate-900">Override Mode</h4>
-            <p className="text-sm text-slate-600">Enable to manually select tomorrow's pick</p>
+            <h4 className="font-semibold text-foreground">Override Mode</h4>
+            <p className="text-sm text-subtle">Enable to manually select tomorrow's pick</p>
           </div>
           <Switch
             checked={isOverrideActive}
@@ -148,15 +148,15 @@ export default function TomorrowsPickOverride({ user }) {
         </div>
 
         {isOverrideActive && (
-          <div className="space-y-4 p-4 bg-amber-50 rounded-lg border-2 border-amber-200">
-            <div className="flex items-center gap-2 text-amber-700 mb-4">
+          <div className="space-y-4 p-4 bg-hold-muted rounded-lg border-2 border-hold/30">
+            <div className="flex items-center gap-2 text-hold-muted-foreground mb-4">
               <Sparkles className="w-4 h-4" />
               <span className="font-semibold text-sm">Override Configuration</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-subtle mb-2">
                   Stock Symbol *
                 </label>
                 <Input
@@ -167,7 +167,7 @@ export default function TomorrowsPickOverride({ user }) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-subtle mb-2">
                   Target Price
                 </label>
                 <Input
@@ -179,7 +179,7 @@ export default function TomorrowsPickOverride({ user }) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-subtle mb-2">
                   Recommendation Type
                 </label>
                 <Select
@@ -199,7 +199,7 @@ export default function TomorrowsPickOverride({ user }) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-subtle mb-2">
                   Confidence Level
                 </label>
                 <Select
@@ -219,7 +219,7 @@ export default function TomorrowsPickOverride({ user }) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-subtle mb-2">
                 Analysis & Reasoning *
               </label>
               <Textarea
@@ -245,7 +245,7 @@ export default function TomorrowsPickOverride({ user }) {
           <Button
             onClick={handleSave}
             disabled={isSaving}
-            className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 flex items-center gap-2"
+            className="bg-hold hover:from-hold hover:to-hold flex items-center gap-2"
           >
             {isSaving ? (
               <>
@@ -262,12 +262,12 @@ export default function TomorrowsPickOverride({ user }) {
         </div>
 
         {!isOverrideActive && (
-          <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <div className="flex items-center gap-2 text-blue-700 mb-2">
+          <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
+            <div className="flex items-center gap-2 text-protocall-blue mb-2">
               <TrendingUp className="w-4 h-4" />
               <span className="font-semibold text-sm">Auto Mode Active</span>
             </div>
-            <p className="text-xs text-blue-600">
+            <p className="text-xs text-protocall-blue">
               System automatically selects the most recommended stock by advisors or highest voted by community.
             </p>
           </div>

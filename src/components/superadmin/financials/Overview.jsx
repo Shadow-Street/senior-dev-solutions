@@ -68,22 +68,22 @@ export default function Overview({ data, subscriptionTransactions, refunds }) { 
         </div>
         
         {/* Enhanced footer with better styling */}
-        <div className="p-5 bg-gradient-to-br from-gray-50 to-white">
+        <div className="p-5 bg-gradient-to-br from-surface-2 to-white">
           {change && (
             <div className="flex items-center gap-2 text-sm">
               {/* Assuming 'change' always implies an upward trend for display, or a generic icon */}
-              <div className="p-1.5 bg-green-100 rounded-lg">
-                <TrendingUp className="w-4 h-4 text-green-600" /> 
+              <div className="p-1.5 bg-buy-muted rounded-lg">
+                <TrendingUp className="w-4 h-4 text-buy-muted-foreground" /> 
               </div>
-              <span className="text-gray-700 font-medium">{change}</span>
+              <span className="text-subtle font-medium">{change}</span>
             </div>
           )}
           {badge && (
             <div className="mt-3">
               <span className={`px-4 py-1.5 text-xs rounded-full font-semibold shadow-sm ${
-                badge.status === 'Excellent' ? 'bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700 border border-emerald-200' :
-                badge.status === 'Good' ? 'bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 border border-amber-200' :
-                'bg-gradient-to-r from-red-100 to-rose-100 text-red-700 border border-red-200'
+                badge.status === 'Excellent' ? 'bg-gradient-to-r from-surface-2 to-buy-muted text-buy-muted-foreground border border-buy/30' :
+                badge.status === 'Good' ? 'bg-gradient-to-r from-surface-2 to-hold-muted text-hold-muted-foreground border border-hold/30' :
+                'bg-gradient-to-r from-surface-2 to-sell-muted text-sell-muted-foreground border border-sell/30'
               }`}>
                 {badge.status}
               </span>
@@ -98,53 +98,53 @@ export default function Overview({ data, subscriptionTransactions, refunds }) { 
     <div className="space-y-6"> {/* Changed space-y-8 to space-y-6 */}
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-50 to-blue-100">
+        <Card className="shadow-lg border-0 bg-surface-2">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-blue-600 font-medium">Gross Revenue</p>
-                <p className="text-3xl font-bold text-blue-900">₹{(data.stats.grossRevenue / 1000).toFixed(1)}k</p>
+                <p className="text-sm text-protocall-blue font-medium">Gross Revenue</p>
+                <p className="text-3xl font-bold text-protocall-blue">₹{(data.stats.grossRevenue / 1000).toFixed(1)}k</p>
               </div>
-              <TrendingUp className="w-10 h-10 text-blue-600 opacity-50" />
+              <TrendingUp className="w-10 h-10 text-protocall-blue opacity-50" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-green-50 to-green-100">
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-surface-2 to-buy-muted">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-green-600 font-medium">Net Revenue</p>
-                <p className="text-3xl font-bold text-green-900">₹{(data.stats.netRevenue / 1000).toFixed(1)}k</p>
-                <p className="text-xs text-green-600 mt-1">After discounts & refunds</p>
+                <p className="text-sm text-buy-muted-foreground font-medium">Net Revenue</p>
+                <p className="text-3xl font-bold text-buy-muted-foreground">₹{(data.stats.netRevenue / 1000).toFixed(1)}k</p>
+                <p className="text-xs text-buy-muted-foreground mt-1">After discounts & refunds</p>
               </div>
-              <DollarSign className="w-10 h-10 text-green-600 opacity-50" />
+              <DollarSign className="w-10 h-10 text-buy-muted-foreground opacity-50" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-orange-50 to-orange-100">
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-surface-2 to-hold-muted">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-orange-600 font-medium">Total Refunded</p>
-                <p className="text-3xl font-bold text-orange-900">₹{(refundStats.amount / 1000).toFixed(1)}k</p>
-                <p className="text-xs text-orange-600 mt-1">{refundStats.processed} processed</p>
+                <p className="text-sm text-hold-muted-foreground font-medium">Total Refunded</p>
+                <p className="text-3xl font-bold text-hold-muted-foreground">₹{(refundStats.amount / 1000).toFixed(1)}k</p>
+                <p className="text-xs text-hold-muted-foreground mt-1">{refundStats.processed} processed</p>
               </div>
-              <RotateCcw className="w-10 h-10 text-orange-600 opacity-50" />
+              <RotateCcw className="w-10 h-10 text-hold-muted-foreground opacity-50" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-purple-50 to-purple-100">
+        <Card className="shadow-lg border-0 bg-surface-2">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-purple-600 font-medium">Net Profit</p>
-                <p className="text-3xl font-bold text-purple-900">₹{(data.stats.netProfit / 1000).toFixed(1)}k</p>
-                <p className="text-xs text-purple-600 mt-1">After all deductions</p>
+                <p className="text-sm text-protocall-premium-text font-medium">Net Profit</p>
+                <p className="text-3xl font-bold text-protocall-premium-text">₹{(data.stats.netProfit / 1000).toFixed(1)}k</p>
+                <p className="text-xs text-protocall-premium-text mt-1">After all deductions</p>
               </div>
-              <BarChart3 className="w-10 h-10 text-purple-600 opacity-50" />
+              <BarChart3 className="w-10 h-10 text-protocall-premium-text opacity-50" />
             </div>
           </CardContent>
         </Card>
@@ -152,8 +152,8 @@ export default function Overview({ data, subscriptionTransactions, refunds }) { 
 
       {/* Enhanced Secondary KPI Cards - Additional Metrics */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-          <BarChart3 className="w-6 h-6 text-blue-600" />
+        <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+          <BarChart3 className="w-6 h-6 text-protocall-blue" />
           Additional Metrics
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -163,7 +163,7 @@ export default function Overview({ data, subscriptionTransactions, refunds }) { 
             subtitle="Promotional value"
             icon={Gift} 
             change="Customer savings"
-            gradient="from-pink-500 via-rose-500 to-pink-600"
+            gradient="from-protocall-deep via-sell to-protocall-blue"
           />
           <StatCard 
             title="Ad Revenue" 
@@ -171,7 +171,7 @@ export default function Overview({ data, subscriptionTransactions, refunds }) { 
             subtitle="From campaigns"
             icon={Megaphone} // Changed from TrendingUp to Megaphone as per original intent for ad revenue
             change="Advertising income"
-            gradient="from-teal-500 via-cyan-500 to-teal-600"
+            gradient="from-buy via-protocall-grape to-buy-soft"
           />
           <StatCard 
             title="Subscription Revenue" 
@@ -179,7 +179,7 @@ export default function Overview({ data, subscriptionTransactions, refunds }) { 
             subtitle="Platform plans"
             icon={Crown} 
             change={`${subscriptionTransactions.length} transactions`}
-            gradient="from-indigo-500 via-blue-500 to-indigo-600"
+            gradient="from-protocall-deep via-protocall-grape to-protocall-blue"
           />
           <StatCard 
             title="Platform Health" 
@@ -197,7 +197,7 @@ export default function Overview({ data, subscriptionTransactions, refunds }) { 
                   ? 'Good' 
                   : 'Needs Attention' 
             }}
-            gradient="from-violet-500 via-purple-500 to-violet-600"
+            gradient="from-protocall-deep via-protocall-grape to-protocall-blue"
           />
         </div>
       </div>
@@ -221,9 +221,9 @@ export default function Overview({ data, subscriptionTransactions, refunds }) { 
                   itemStyle={{ textTransform: 'capitalize' }}
                 />
                 <Legend />
-                <Bar dataKey="netRevenue" name="Net Revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="netRevenue" name="Net Revenue" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="expenses" name="Expenses" fill="#f43f5e" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="profit" name="Profit" fill="#10b981" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="profit" name="Profit" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

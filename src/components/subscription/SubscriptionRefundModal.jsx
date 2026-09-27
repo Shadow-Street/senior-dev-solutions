@@ -65,7 +65,7 @@ export default function SubscriptionRefundModal({ subscription, onClose, onSucce
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <DollarSign className="w-5 h-5 text-blue-600" />
+            <DollarSign className="w-5 h-5 text-protocall-blue" />
             Request Subscription Refund
           </DialogTitle>
         </DialogHeader>
@@ -78,14 +78,14 @@ export default function SubscriptionRefundModal({ subscription, onClose, onSucce
             </AlertDescription>
           </Alert>
 
-          <div className="p-4 bg-slate-50 rounded-lg">
+          <div className="p-4 bg-surface-2 rounded-lg">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-slate-600">Subscription Plan:</span>
+              <span className="text-sm text-subtle">Subscription Plan:</span>
               <span className="font-semibold capitalize">{subscription.plan_type}</span>
             </div>
             <div className="flex justify-between items-center mt-2">
-              <span className="text-sm text-slate-600">Refund Amount:</span>
-              <span className="font-semibold text-green-600">₹{subscription.price.toLocaleString()}</span>
+              <span className="text-sm text-subtle">Refund Amount:</span>
+              <span className="font-semibold text-buy-muted-foreground">₹{subscription.price.toLocaleString()}</span>
             </div>
           </div>
 

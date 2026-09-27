@@ -117,9 +117,9 @@ export default function AdvisorPledgeAccessManager({ user }) {
 
   const getStatusBadge = (status) => {
     const config = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', icon: Clock, text: 'Pending Review' },
-      approved: { color: 'bg-green-100 text-green-800', icon: CheckCircle, text: 'Approved' },
-      rejected: { color: 'bg-red-100 text-red-800', icon: XCircle, text: 'Rejected' }
+      pending: { color: 'bg-hold-muted text-hold-muted-foreground', icon: Clock, text: 'Pending Review' },
+      approved: { color: 'bg-buy-muted text-buy-muted-foreground', icon: CheckCircle, text: 'Approved' },
+      rejected: { color: 'bg-sell-muted text-sell-muted-foreground', icon: XCircle, text: 'Rejected' }
     };
     const { color, icon: Icon, text } = config[status] || config.pending;
     return (
@@ -132,10 +132,10 @@ export default function AdvisorPledgeAccessManager({ user }) {
 
   const getVolumeBadge = (volume) => {
     const config = {
-      low: 'bg-blue-100 text-blue-800',
-      medium: 'bg-purple-100 text-purple-800',
-      high: 'bg-orange-100 text-orange-800',
-      very_high: 'bg-red-100 text-red-800'
+      low: 'bg-premium-muted text-protocall-blue',
+      medium: 'bg-premium-muted text-protocall-premium-text',
+      high: 'bg-hold-muted text-hold-muted-foreground',
+      very_high: 'bg-sell-muted text-sell-muted-foreground'
     };
     return <Badge className={config[volume] || config.medium}>{volume.replace('_', ' ').toUpperCase()}</Badge>;
   };
@@ -143,8 +143,8 @@ export default function AdvisorPledgeAccessManager({ user }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-        <span className="ml-3 text-gray-600">Loading advisor requests...</span>
+        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+        <span className="ml-3 text-subtle">Loading advisor requests...</span>
       </div>
     );
   }
@@ -157,8 +157,8 @@ export default function AdvisorPledgeAccessManager({ user }) {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Advisor Pledge Access Requests</h2>
-          <p className="text-gray-600 mt-1">
+          <h2 className="text-2xl font-bold text-foreground">Advisor Pledge Access Requests</h2>
+          <p className="text-subtle mt-1">
             Review and approve advisors to create and manage pledge sessions
           </p>
         </div>
@@ -169,38 +169,38 @@ export default function AdvisorPledgeAccessManager({ user }) {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="border-2 border-yellow-200">
+        <Card className="border-2 border-hold/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Pending Requests</p>
-                <p className="text-3xl font-bold text-yellow-600">{pendingRequests.length}</p>
+                <p className="text-sm text-subtle">Pending Requests</p>
+                <p className="text-3xl font-bold text-hold-muted-foreground">{pendingRequests.length}</p>
               </div>
-              <Clock className="w-10 h-10 text-yellow-600" />
+              <Clock className="w-10 h-10 text-hold-muted-foreground" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-green-200">
+        <Card className="border-2 border-buy/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Approved Advisors</p>
-                <p className="text-3xl font-bold text-green-600">{approvedRequests.length}</p>
+                <p className="text-sm text-subtle">Approved Advisors</p>
+                <p className="text-3xl font-bold text-buy-muted-foreground">{approvedRequests.length}</p>
               </div>
-              <CheckCircle className="w-10 h-10 text-green-600" />
+              <CheckCircle className="w-10 h-10 text-buy-muted-foreground" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-red-200">
+        <Card className="border-2 border-sell/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Rejected Requests</p>
-                <p className="text-3xl font-bold text-red-600">{rejectedRequests.length}</p>
+                <p className="text-sm text-subtle">Rejected Requests</p>
+                <p className="text-3xl font-bold text-sell-muted-foreground">{rejectedRequests.length}</p>
               </div>
-              <XCircle className="w-10 h-10 text-red-600" />
+              <XCircle className="w-10 h-10 text-sell-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -210,9 +210,9 @@ export default function AdvisorPledgeAccessManager({ user }) {
       {requests.length === 0 ? (
         <Card>
           <CardContent className="text-center py-12">
-            <Shield className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No Requests Yet</h3>
-            <p className="text-gray-600">Advisor pledge access requests will appear here</p>
+            <Shield className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-foreground mb-2">No Requests Yet</h3>
+            <p className="text-subtle">Advisor pledge access requests will appear here</p>
           </CardContent>
         </Card>
       ) : (
@@ -223,53 +223,53 @@ export default function AdvisorPledgeAccessManager({ user }) {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-3">
-                      <Shield className="w-6 h-6 text-blue-600" />
+                      <Shield className="w-6 h-6 text-protocall-blue" />
                       <div>
-                        <h3 className="text-lg font-bold text-gray-900">{request.advisor_name}</h3>
-                        <p className="text-sm text-gray-600">SEBI: {request.sebi_registration || 'N/A'}</p>
+                        <h3 className="text-lg font-bold text-foreground">{request.advisor_name}</h3>
+                        <p className="text-sm text-subtle">SEBI: {request.sebi_registration || 'N/A'}</p>
                       </div>
                       {getStatusBadge(request.status)}
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                      <div className="p-3 bg-blue-50 rounded-lg">
-                        <p className="text-xs text-blue-600 mb-1">Experience</p>
-                        <p className="font-semibold text-blue-900">{request.experience_years || 0} years</p>
+                      <div className="p-3 bg-premium-muted rounded-lg">
+                        <p className="text-xs text-protocall-blue mb-1">Experience</p>
+                        <p className="font-semibold text-protocall-blue">{request.experience_years || 0} years</p>
                       </div>
-                      <div className="p-3 bg-purple-50 rounded-lg">
-                        <p className="text-xs text-purple-600 mb-1">Trading Volume</p>
+                      <div className="p-3 bg-premium-muted rounded-lg">
+                        <p className="text-xs text-protocall-premium-text mb-1">Trading Volume</p>
                         {getVolumeBadge(request.trading_volume_estimate)}
                       </div>
-                      <div className="p-3 bg-green-50 rounded-lg">
-                        <p className="text-xs text-green-600 mb-1">Requested Rate</p>
-                        <p className="font-semibold text-green-900">{request.commission_rate_requested || 0}%</p>
+                      <div className="p-3 bg-buy-muted rounded-lg">
+                        <p className="text-xs text-buy-muted-foreground mb-1">Requested Rate</p>
+                        <p className="font-semibold text-buy-muted-foreground">{request.commission_rate_requested || 0}%</p>
                       </div>
-                      <div className="p-3 bg-gray-50 rounded-lg">
-                        <p className="text-xs text-gray-600 mb-1">Submitted</p>
-                        <p className="font-semibold text-gray-900 text-xs">
+                      <div className="p-3 bg-surface-2 rounded-lg">
+                        <p className="text-xs text-subtle mb-1">Submitted</p>
+                        <p className="font-semibold text-foreground text-xs">
                           {new Date(request.created_date).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
 
-                    <div className="p-4 bg-gray-50 rounded-lg mb-4">
-                      <p className="text-sm font-semibold text-gray-700 mb-2">Reason for Request:</p>
-                      <p className="text-sm text-gray-600">{request.reason}</p>
+                    <div className="p-4 bg-surface-2 rounded-lg mb-4">
+                      <p className="text-sm font-semibold text-subtle mb-2">Reason for Request:</p>
+                      <p className="text-sm text-subtle">{request.reason}</p>
                     </div>
 
                     {request.status === 'approved' && (
-                      <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="p-3 bg-buy-muted border border-buy/30 rounded-lg">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-sm font-semibold text-green-800">Approved Commission Rate</p>
-                            <p className="text-xs text-green-600 mt-1">Reviewed on {new Date(request.reviewed_at).toLocaleDateString()}</p>
+                            <p className="text-sm font-semibold text-buy-muted-foreground">Approved Commission Rate</p>
+                            <p className="text-xs text-buy-muted-foreground mt-1">Reviewed on {new Date(request.reviewed_at).toLocaleDateString()}</p>
                           </div>
-                          <Badge className="bg-green-600 text-white text-lg px-4 py-2">
+                          <Badge className="bg-buy text-buy-foreground text-lg px-4 py-2">
                             {request.approved_commission_rate}%
                           </Badge>
                         </div>
                         {request.admin_notes && (
-                          <p className="text-xs text-green-700 mt-2">
+                          <p className="text-xs text-buy-muted-foreground mt-2">
                             <strong>Notes:</strong> {request.admin_notes}
                           </p>
                         )}
@@ -277,9 +277,9 @@ export default function AdvisorPledgeAccessManager({ user }) {
                     )}
 
                     {request.status === 'rejected' && request.rejection_reason && (
-                      <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                        <p className="text-sm font-semibold text-red-800 mb-1">Rejection Reason:</p>
-                        <p className="text-sm text-red-600">{request.rejection_reason}</p>
+                      <div className="p-3 bg-sell-muted border border-sell/30 rounded-lg">
+                        <p className="text-sm font-semibold text-sell-muted-foreground mb-1">Rejection Reason:</p>
+                        <p className="text-sm text-sell-muted-foreground">{request.rejection_reason}</p>
                       </div>
                     )}
                   </div>
@@ -289,7 +289,7 @@ export default function AdvisorPledgeAccessManager({ user }) {
                       <>
                         <Button
                           onClick={() => handleApprove(request)}
-                          className="bg-green-600 hover:bg-green-700"
+                          className="bg-buy hover:bg-buy"
                         >
                           <CheckCircle className="w-4 h-4 mr-2" />
                           Approve
@@ -297,7 +297,7 @@ export default function AdvisorPledgeAccessManager({ user }) {
                         <Button
                           onClick={() => handleReject(request)}
                           variant="outline"
-                          className="text-red-600 border-red-600 hover:bg-red-50"
+                          className="text-sell-muted-foreground border-sell hover:bg-sell-muted"
                         >
                           <XCircle className="w-4 h-4 mr-2" />
                           Reject
@@ -323,22 +323,22 @@ export default function AdvisorPledgeAccessManager({ user }) {
             </DialogHeader>
 
             <div className="space-y-6">
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="p-4 bg-premium-muted border border-protocall-premium-light rounded-lg">
                 <div className="flex items-center gap-3 mb-2">
-                  <Shield className="w-5 h-5 text-blue-600" />
-                  <h3 className="font-semibold text-blue-900">{selectedRequest.advisor_name}</h3>
+                  <Shield className="w-5 h-5 text-protocall-blue" />
+                  <h3 className="font-semibold text-protocall-blue">{selectedRequest.advisor_name}</h3>
                 </div>
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
-                    <p className="text-blue-600">Experience:</p>
+                    <p className="text-protocall-blue">Experience:</p>
                     <p className="font-semibold">{selectedRequest.experience_years || 0} years</p>
                   </div>
                   <div>
-                    <p className="text-blue-600">Volume Estimate:</p>
+                    <p className="text-protocall-blue">Volume Estimate:</p>
                     <p className="font-semibold">{selectedRequest.trading_volume_estimate.replace('_', ' ')}</p>
                   </div>
                   <div className="col-span-2">
-                    <p className="text-blue-600">Requested Rate:</p>
+                    <p className="text-protocall-blue">Requested Rate:</p>
                     <p className="font-semibold">{selectedRequest.commission_rate_requested || 0}%</p>
                   </div>
                 </div>
@@ -356,7 +356,7 @@ export default function AdvisorPledgeAccessManager({ user }) {
                   onChange={(e) => setReviewData({ ...reviewData, approved_commission_rate: parseFloat(e.target.value) })}
                   className="mt-2"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Typical range: 10-20%. Advisor will earn this percentage on all pledge executions.
                 </p>
               </div>
@@ -397,7 +397,7 @@ export default function AdvisorPledgeAccessManager({ user }) {
                   variant="outline"
                   onClick={() => handleSubmitReview(false)}
                   disabled={isProcessing}
-                  className="text-red-600 border-red-600 hover:bg-red-50"
+                  className="text-sell-muted-foreground border-sell hover:bg-sell-muted"
                 >
                   {isProcessing ? (
                     <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -409,7 +409,7 @@ export default function AdvisorPledgeAccessManager({ user }) {
                 <Button
                   onClick={() => handleSubmitReview(true)}
                   disabled={isProcessing}
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-buy hover:bg-buy"
                 >
                   {isProcessing ? (
                     <Loader2 className="w-4 h-4 animate-spin mr-2" />

@@ -259,10 +259,10 @@ export default function FinfluencerManagement() {
 
   const getStatusBadge = (status) => {
     const config = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending', icon: Clock },
-      approved: { color: 'bg-green-100 text-green-800', label: 'Approved', icon: CheckCircle },
-      rejected: { color: 'bg-red-100 text-red-800', label: 'Rejected', icon: XCircle },
-      suspended: { color: 'bg-orange-100 text-orange-800', label: 'Suspended', icon: Ban }
+      pending: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending', icon: Clock },
+      approved: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Approved', icon: CheckCircle },
+      rejected: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Rejected', icon: XCircle },
+      suspended: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Suspended', icon: Ban }
     };
     const { color, label, icon: Icon } = config[status] || config.pending;
     return (
@@ -276,7 +276,7 @@ export default function FinfluencerManagement() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
       </div>
     );
   }
@@ -287,8 +287,8 @@ export default function FinfluencerManagement() {
         <CardHeader>
           <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-2xl font-bold text-slate-800">Finfluencer Management</h2>
-              <p className="text-sm text-slate-600">Manage content creators and their courses</p>
+              <h2 className="text-2xl font-bold text-foreground">Finfluencer Management</h2>
+              <p className="text-sm text-subtle">Manage content creators and their courses</p>
             </div>
           </div>
         </CardHeader>
@@ -302,8 +302,8 @@ export default function FinfluencerManagement() {
           >
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'overview'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
-                : 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md'
+                ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
+                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">
@@ -320,8 +320,8 @@ export default function FinfluencerManagement() {
           >
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'pricing'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
-                : 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md'
+                ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
+                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">
@@ -338,8 +338,8 @@ export default function FinfluencerManagement() {
           >
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'payouts'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
-                : 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md'
+                ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
+                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">
@@ -362,7 +362,7 @@ export default function FinfluencerManagement() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 text-sm border border-gray-300 rounded-md bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="px-3 py-2 text-sm border border-border rounded-md bg-white hover:border-border focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
             >
               <option value="all">All Status</option>
               <option value="pending">Pending</option>
@@ -377,10 +377,10 @@ export default function FinfluencerManagement() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-600">Total Finfluencers</p>
+                    <p className="text-sm text-subtle">Total Finfluencers</p>
                     <p className="text-2xl font-bold">{stats.total}</p>
                   </div>
-                  <Star className="w-8 h-8 text-purple-600" />
+                  <Star className="w-8 h-8 text-protocall-premium-text" />
                 </div>
               </CardContent>
             </Card>
@@ -388,10 +388,10 @@ export default function FinfluencerManagement() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-600">Pending Approval</p>
+                    <p className="text-sm text-subtle">Pending Approval</p>
                     <p className="text-2xl font-bold">{stats.pending}</p>
                   </div>
-                  <Clock className="w-8 h-8 text-orange-600" />
+                  <Clock className="w-8 h-8 text-hold-muted-foreground" />
                 </div>
               </CardContent>
             </Card>
@@ -399,10 +399,10 @@ export default function FinfluencerManagement() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-600">Active Finfluencers</p>
+                    <p className="text-sm text-subtle">Active Finfluencers</p>
                     <p className="text-2xl font-bold">{stats.approved}</p>
                   </div>
-                  <CheckCircle className="w-8 h-8 text-green-600" />
+                  <CheckCircle className="w-8 h-8 text-buy-muted-foreground" />
                 </div>
               </CardContent>
             </Card>
@@ -410,12 +410,12 @@ export default function FinfluencerManagement() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-600">Total Revenue</p>
+                    <p className="text-sm text-subtle">Total Revenue</p>
                     <p className="text-2xl font-bold">
                       ₹{Object.values(finfluencerStats).reduce((sum, stat) => sum + (stat?.totalEarnings || 0), 0).toLocaleString()}
                     </p>
                   </div>
-                  <DollarSign className="w-8 h-8 text-blue-600" />
+                  <DollarSign className="w-8 h-8 text-protocall-blue" />
                 </div>
               </CardContent>
             </Card>
@@ -432,60 +432,60 @@ export default function FinfluencerManagement() {
                       <img
                         src={finfluencer.profile_image_url || `https://avatar.vercel.sh/${finfluencer.display_name}.png`}
                         alt={finfluencer.display_name}
-                        className="w-20 h-20 rounded-full object-cover border-2 border-purple-200"
+                        className="w-20 h-20 rounded-full object-cover border-2 border-protocall-premium-light"
                       />
 
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-xl font-bold text-slate-800">{finfluencer.display_name}</h3>
+                          <h3 className="text-xl font-bold text-foreground">{finfluencer.display_name}</h3>
                           {getStatusBadge(finfluencer.status)}
                           {finfluencer.verified && (
-                            <Badge className="bg-blue-100 text-blue-800 border-0">
+                            <Badge className="bg-premium-muted text-protocall-blue border-0">
                               <CheckCircle className="w-3 h-3 mr-1" />
                               Verified
                             </Badge>
                           )}
                         </div>
 
-                        <p className="text-sm text-slate-600 mb-4">{finfluencer.bio}</p>
+                        <p className="text-sm text-subtle mb-4">{finfluencer.bio}</p>
 
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                          <div className="bg-blue-50 rounded-lg p-3">
+                          <div className="bg-premium-muted rounded-lg p-3">
                             <div className="flex items-center gap-2 mb-1">
-                              <FileText className="w-4 h-4 text-blue-600" />
-                              <p className="text-xs text-blue-600 font-medium">Courses</p>
+                              <FileText className="w-4 h-4 text-protocall-blue" />
+                              <p className="text-xs text-protocall-blue font-medium">Courses</p>
                             </div>
-                            <p className="text-lg font-bold text-blue-900">
+                            <p className="text-lg font-bold text-protocall-blue">
                               {stats.activeCourses || 0} / {stats.totalCourses || 0}
                             </p>
-                            <p className="text-xs text-blue-600">Active / Total</p>
+                            <p className="text-xs text-protocall-blue">Active / Total</p>
                           </div>
 
-                          <div className="bg-green-50 rounded-lg p-3">
+                          <div className="bg-buy-muted rounded-lg p-3">
                             <div className="flex items-center gap-2 mb-1">
-                              <Users className="w-4 h-4 text-green-600" />
-                              <p className="text-xs text-green-600 font-medium">Students</p>
+                              <Users className="w-4 h-4 text-buy-muted-foreground" />
+                              <p className="text-xs text-buy-muted-foreground font-medium">Students</p>
                             </div>
-                            <p className="text-lg font-bold text-green-900">{stats.totalStudents || 0}</p>
-                            <p className="text-xs text-green-600">{stats.totalViews || 0} total views</p>
+                            <p className="text-lg font-bold text-buy-muted-foreground">{stats.totalStudents || 0}</p>
+                            <p className="text-xs text-buy-muted-foreground">{stats.totalViews || 0} total views</p>
                           </div>
 
-                          <div className="bg-purple-50 rounded-lg p-3">
+                          <div className="bg-premium-muted rounded-lg p-3">
                             <div className="flex items-center gap-2 mb-1">
-                              <DollarSign className="w-4 h-4 text-purple-600" />
-                              <p className="text-xs text-purple-600 font-medium">Earnings</p>
+                              <DollarSign className="w-4 h-4 text-protocall-premium-text" />
+                              <p className="text-xs text-protocall-premium-text font-medium">Earnings</p>
                             </div>
-                            <p className="text-lg font-bold text-purple-900">₹{(stats.totalEarnings || 0).toLocaleString()}</p>
-                            <p className="text-xs text-purple-600">Total revenue</p>
+                            <p className="text-lg font-bold text-protocall-premium-text">₹{(stats.totalEarnings || 0).toLocaleString()}</p>
+                            <p className="text-xs text-protocall-premium-text">Total revenue</p>
                           </div>
 
-                          <div className="bg-orange-50 rounded-lg p-3">
+                          <div className="bg-hold-muted rounded-lg p-3">
                             <div className="flex items-center gap-2 mb-1">
-                              <Star className="w-4 h-4 text-orange-600" />
-                              <p className="text-xs text-orange-600 font-medium">Rating</p>
+                              <Star className="w-4 h-4 text-hold-muted-foreground" />
+                              <p className="text-xs text-hold-muted-foreground font-medium">Rating</p>
                             </div>
-                            <p className="text-lg font-bold text-orange-900">{stats.avgRating || 0} ⭐</p>
-                            <p className="text-xs text-orange-600">Average rating</p>
+                            <p className="text-lg font-bold text-hold-muted-foreground">{stats.avgRating || 0} ⭐</p>
+                            <p className="text-xs text-hold-muted-foreground">Average rating</p>
                           </div>
                         </div>
 
@@ -502,7 +502,7 @@ export default function FinfluencerManagement() {
                         <Button
                           variant="outline"
                           onClick={() => openDetailsModal(finfluencer)}
-                          className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                          className="text-protocall-blue border-protocall-blue hover:bg-premium-muted"
                         >
                           <Eye className="w-4 h-4 mr-2" />
                           View Details
@@ -510,11 +510,11 @@ export default function FinfluencerManagement() {
 
                         {finfluencer.status === 'pending' && (
                           <>
-                            <Button onClick={() => handleStatusChange(finfluencer.id, 'approved')} className="bg-green-600 hover:bg-green-700">
+                            <Button onClick={() => handleStatusChange(finfluencer.id, 'approved')} className="bg-buy hover:bg-buy">
                               <CheckCircle className="w-4 h-4 mr-2" />
                               Approve
                             </Button>
-                            <Button onClick={() => handleStatusChange(finfluencer.id, 'rejected')} variant="outline" className="text-red-600 border-red-600 hover:bg-red-50">
+                            <Button onClick={() => handleStatusChange(finfluencer.id, 'rejected')} variant="outline" className="text-sell-muted-foreground border-sell hover:bg-sell-muted">
                               <XCircle className="w-4 h-4 mr-2" />
                               Reject
                             </Button>
@@ -522,14 +522,14 @@ export default function FinfluencerManagement() {
                         )}
 
                         {finfluencer.status === 'approved' && (
-                          <Button onClick={() => handleStatusChange(finfluencer.id, 'suspended')} variant="outline" className="text-orange-600 border-orange-600 hover:bg-orange-50">
+                          <Button onClick={() => handleStatusChange(finfluencer.id, 'suspended')} variant="outline" className="text-hold-muted-foreground border-hold hover:bg-hold-muted">
                             <Ban className="w-4 h-4 mr-2" />
                             Suspend
                           </Button>
                         )}
 
                         {finfluencer.status === 'suspended' && (
-                          <Button onClick={() => handleStatusChange(finfluencer.id, 'approved')} className="bg-green-600 hover:bg-green-700">
+                          <Button onClick={() => handleStatusChange(finfluencer.id, 'approved')} className="bg-buy hover:bg-buy">
                             <CheckCircle className="w-4 h-4 mr-2" />
                             Reactivate
                           </Button>
@@ -541,7 +541,7 @@ export default function FinfluencerManagement() {
                             setSelectedFinfluencer(finfluencer);
                             setShowDetailsModal(false);
                           }}
-                          className="text-indigo-600 border-indigo-600 hover:bg-indigo-50"
+                          className="text-protocall-blue border-protocall-blue hover:bg-premium-muted"
                         >
                           <BarChart3 className="w-4 h-4 mr-2" />
                           Analytics
@@ -553,7 +553,7 @@ export default function FinfluencerManagement() {
                             setFinfluencerToDelete(finfluencer);
                             setShowDeleteDialog(true);
                           }}
-                          className="text-red-600 border-red-600 hover:bg-red-50"
+                          className="text-sell-muted-foreground border-sell hover:bg-sell-muted"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
                           Delete
@@ -569,8 +569,8 @@ export default function FinfluencerManagement() {
           {filteredFinfluencers.length === 0 && (
             <Card>
               <CardContent className="p-12 text-center">
-                <Star className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                <p className="text-slate-500">No finfluencers found</p>
+                <Star className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">No finfluencers found</p>
               </CardContent>
             </Card>
           )}
@@ -623,7 +623,7 @@ export default function FinfluencerManagement() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setFinfluencerToDelete(null)}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction onClick={handleDelete} className="bg-sell hover:bg-sell">
               Delete Finfluencer
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -662,7 +662,7 @@ function FinfluencerDetailsModal({ finfluencer, stats, onClose, reviewNotes, set
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Star className="w-5 h-5 text-purple-600" />
+            <Star className="w-5 h-5 text-protocall-premium-text" />
             Finfluencer Details: {finfluencer.display_name}
           </DialogTitle>
           <DialogDescription>
@@ -672,7 +672,7 @@ function FinfluencerDetailsModal({ finfluencer, stats, onClose, reviewNotes, set
 
         {isLoading ? (
           <div className="flex items-center justify-center p-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
           </div>
         ) : (
           <div className="space-y-6">
@@ -682,27 +682,27 @@ function FinfluencerDetailsModal({ finfluencer, stats, onClose, reviewNotes, set
               </CardHeader>
               <CardContent className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-slate-600">Display Name</p>
+                  <p className="text-sm text-subtle">Display Name</p>
                   <p className="font-semibold">{finfluencer.display_name}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-slate-600">Email</p>
+                  <p className="text-sm text-subtle">Email</p>
                   <p className="font-semibold">{user?.email || 'N/A'}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-slate-600">Status</p>
+                  <p className="text-sm text-subtle">Status</p>
                   <p className="font-semibold capitalize">{finfluencer.status?.replace('_', ' ')}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-slate-600">Followers</p>
+                  <p className="text-sm text-subtle">Followers</p>
                   <p className="font-semibold">{finfluencer.follower_count || 0}</p>
                 </div>
                 <div className="col-span-2">
-                  <p className="text-sm text-slate-600">Bio</p>
+                  <p className="text-sm text-subtle">Bio</p>
                   <p className="font-medium text-sm">{finfluencer.bio}</p>
                 </div>
                 <div className="col-span-2">
-                  <p className="text-sm text-slate-600">Specialization</p>
+                  <p className="text-sm text-subtle">Specialization</p>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {finfluencer.specialization?.map((spec, idx) => (
                       <Badge key={idx} variant="outline">{spec}</Badge>
@@ -717,25 +717,25 @@ function FinfluencerDetailsModal({ finfluencer, stats, onClose, reviewNotes, set
                 <CardTitle className="text-lg">Performance Metrics</CardTitle>
               </CardHeader>
               <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <FileText className="w-5 h-5 text-blue-600 mb-2" />
-                  <p className="text-xs text-blue-600">Total Courses</p>
-                  <p className="text-2xl font-bold text-blue-900">{stats?.totalCourses || 0}</p>
+                <div className="bg-premium-muted p-3 rounded-lg">
+                  <FileText className="w-5 h-5 text-protocall-blue mb-2" />
+                  <p className="text-xs text-protocall-blue">Total Courses</p>
+                  <p className="text-2xl font-bold text-protocall-blue">{stats?.totalCourses || 0}</p>
                 </div>
-                <div className="bg-green-50 p-3 rounded-lg">
-                  <Users className="w-5 h-5 text-green-600 mb-2" />
-                  <p className="text-xs text-green-600">Total Students</p>
-                  <p className="text-2xl font-bold text-green-900">{stats?.totalStudents || 0}</p>
+                <div className="bg-buy-muted p-3 rounded-lg">
+                  <Users className="w-5 h-5 text-buy-muted-foreground mb-2" />
+                  <p className="text-xs text-buy-muted-foreground">Total Students</p>
+                  <p className="text-2xl font-bold text-buy-muted-foreground">{stats?.totalStudents || 0}</p>
                 </div>
-                <div className="bg-purple-50 p-3 rounded-lg">
-                  <DollarSign className="w-5 h-5 text-purple-600 mb-2" />
-                  <p className="text-xs text-purple-600">Total Earnings</p>
-                  <p className="text-2xl font-bold text-purple-900">₹{(stats?.totalEarnings || 0).toLocaleString()}</p>
+                <div className="bg-premium-muted p-3 rounded-lg">
+                  <DollarSign className="w-5 h-5 text-protocall-premium-text mb-2" />
+                  <p className="text-xs text-protocall-premium-text">Total Earnings</p>
+                  <p className="text-2xl font-bold text-protocall-premium-text">₹{(stats?.totalEarnings || 0).toLocaleString()}</p>
                 </div>
-                <div className="bg-orange-50 p-3 rounded-lg">
-                  <Star className="w-5 h-5 text-orange-600 mb-2" />
-                  <p className="text-xs text-orange-600">Avg Rating</p>
-                  <p className="text-2xl font-bold text-orange-900">{stats?.avgRating || 0}⭐</p>
+                <div className="bg-hold-muted p-3 rounded-lg">
+                  <Star className="w-5 h-5 text-hold-muted-foreground mb-2" />
+                  <p className="text-xs text-hold-muted-foreground">Avg Rating</p>
+                  <p className="text-2xl font-bold text-hold-muted-foreground">{stats?.avgRating || 0}⭐</p>
                 </div>
               </CardContent>
             </Card>
@@ -748,14 +748,14 @@ function FinfluencerDetailsModal({ finfluencer, stats, onClose, reviewNotes, set
                 {courses.length > 0 ? (
                   <div className="space-y-3">
                     {courses.map(course => (
-                      <div key={course.id} className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                      <div key={course.id} className="flex justify-between items-center p-3 bg-surface-2 rounded-lg">
                         <div>
                           <p className="font-semibold">{course.title}</p>
-                          <p className="text-sm text-slate-600">{course.category?.replace('_', ' ')}</p>
+                          <p className="text-sm text-subtle">{course.category?.replace('_', ' ')}</p>
                         </div>
                         <div className="text-right">
-                          <p className="font-bold text-purple-600">₹{course.price?.toLocaleString()}</p>
-                          <Badge className={course.status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                          <p className="font-bold text-protocall-premium-text">₹{course.price?.toLocaleString()}</p>
+                          <Badge className={course.status === 'approved' ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-surface-2 text-foreground'}>
                             {course.status}
                           </Badge>
                         </div>
@@ -763,7 +763,7 @@ function FinfluencerDetailsModal({ finfluencer, stats, onClose, reviewNotes, set
                     ))}
                   </div>
                 ) : (
-                  <p className="text-slate-500 text-center py-4">No courses created yet</p>
+                  <p className="text-muted-foreground text-center py-4">No courses created yet</p>
                 )}
               </CardContent>
             </Card>
@@ -778,9 +778,9 @@ function FinfluencerDetailsModal({ finfluencer, stats, onClose, reviewNotes, set
               />
             </div>
 
-            <div className="bg-slate-50 p-4 rounded-lg">
+            <div className="bg-surface-2 p-4 rounded-lg">
               <label htmlFor="commission_override_rate" className="text-sm font-medium flex items-center gap-2 mb-2">
-                <Percent className="w-4 h-4 text-slate-500" />
+                <Percent className="w-4 h-4 text-muted-foreground" />
                 Commission Override Rate (%)
               </label>
               <Input
@@ -790,7 +790,7 @@ function FinfluencerDetailsModal({ finfluencer, stats, onClose, reviewNotes, set
                 value={commissionOverride}
                 onChange={(e) => setCommissionOverride(e.target.value)}
               />
-              <p className="text-xs text-slate-500 mt-1">Set a custom commission rate for this finfluencer. Leave blank to use the global default.</p>
+              <p className="text-xs text-muted-foreground mt-1">Set a custom commission rate for this finfluencer. Leave blank to use the global default.</p>
             </div>
 
             {finfluencer.status === 'pending' && (
@@ -800,14 +800,14 @@ function FinfluencerDetailsModal({ finfluencer, stats, onClose, reviewNotes, set
                 </Button>
                 <Button
                   variant="ghost"
-                  className="text-red-600 hover:text-red-800"
+                  className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                   onClick={() => handleStatusChange(finfluencer.id, 'rejected')}
                 >
                   <XCircle className="w-4 h-4 mr-2" />
                   Reject Application
                 </Button>
                 <Button
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-buy hover:bg-buy"
                   onClick={() => handleStatusChange(finfluencer.id, 'approved')}
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
@@ -823,7 +823,7 @@ function FinfluencerDetailsModal({ finfluencer, stats, onClose, reviewNotes, set
                 </Button>
                 <Button
                   variant="ghost"
-                  className="text-orange-600 hover:text-orange-800"
+                  className="text-hold-muted-foreground hover:text-hold-muted-foreground"
                   onClick={() => handleStatusChange(finfluencer.id, 'suspended')}
                 >
                   <Ban className="w-4 h-4 mr-2" />
@@ -838,7 +838,7 @@ function FinfluencerDetailsModal({ finfluencer, stats, onClose, reviewNotes, set
                   Close
                 </Button>
                 <Button
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-buy hover:bg-buy"
                   onClick={() => handleStatusChange(finfluencer.id, 'approved')}
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
@@ -887,7 +887,7 @@ function FinfluencerAnalyticsModal({ finfluencer, stats, onClose }) {
         <CardHeader className="border-b">
           <div className="flex justify-between items-center">
             <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-purple-600" />
+              <BarChart3 className="w-5 h-5 text-protocall-premium-text" />
               {finfluencer.display_name} - Detailed Analytics
             </CardTitle>
             <Button variant="outline" onClick={onClose}>Close</Button>
@@ -896,7 +896,7 @@ function FinfluencerAnalyticsModal({ finfluencer, stats, onClose }) {
         <CardContent className="p-6">
           {isLoading ? (
             <div className="flex items-center justify-center p-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
             </div>
           ) : (
             <Tabs defaultValue="overview" className="w-full">
@@ -908,35 +908,35 @@ function FinfluencerAnalyticsModal({ finfluencer, stats, onClose }) {
 
               <TabsContent value="overview" className="space-y-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <Card className="bg-blue-50">
+                  <Card className="bg-premium-muted">
                     <CardContent className="p-4">
-                      <FileText className="w-6 h-6 text-blue-600 mb-2" />
-                      <p className="text-2xl font-bold text-blue-900">{stats?.totalCourses || 0}</p>
-                      <p className="text-xs text-blue-600">Total Courses</p>
+                      <FileText className="w-6 h-6 text-protocall-blue mb-2" />
+                      <p className="text-2xl font-bold text-protocall-blue">{stats?.totalCourses || 0}</p>
+                      <p className="text-xs text-protocall-blue">Total Courses</p>
                     </CardContent>
                   </Card>
 
-                  <Card className="bg-green-50">
+                  <Card className="bg-buy-muted">
                     <CardContent className="p-4">
-                      <Users className="w-6 h-6 text-green-600 mb-2" />
-                      <p className="text-2xl font-bold text-green-900">{stats?.totalStudents || 0}</p>
-                      <p className="text-xs text-green-600">Total Students</p>
+                      <Users className="w-6 h-6 text-buy-muted-foreground mb-2" />
+                      <p className="text-2xl font-bold text-buy-muted-foreground">{stats?.totalStudents || 0}</p>
+                      <p className="text-xs text-buy-muted-foreground">Total Students</p>
                     </CardContent>
                   </Card>
 
-                  <Card className="bg-purple-50">
+                  <Card className="bg-premium-muted">
                     <CardContent className="p-4">
-                      <DollarSign className="w-6 h-6 text-purple-600 mb-2" />
-                      <p className="text-2xl font-bold text-purple-900">₹{(stats?.totalEarnings || 0).toLocaleString()}</p>
-                      <p className="text-xs text-purple-600">Total Earnings</p>
+                      <DollarSign className="w-6 h-6 text-protocall-premium-text mb-2" />
+                      <p className="text-2xl font-bold text-protocall-premium-text">₹{(stats?.totalEarnings || 0).toLocaleString()}</p>
+                      <p className="text-xs text-protocall-premium-text">Total Earnings</p>
                     </CardContent>
                   </Card>
 
-                  <Card className="bg-orange-50">
+                  <Card className="bg-hold-muted">
                     <CardContent className="p-4">
-                      <Star className="w-6 h-6 text-orange-600 mb-2" />
-                      <p className="text-2xl font-bold text-orange-900">{stats?.avgRating || 0}⭐</p>
-                      <p className="text-xs text-orange-600">Avg Rating</p>
+                      <Star className="w-6 h-6 text-hold-muted-foreground mb-2" />
+                      <p className="text-2xl font-bold text-hold-muted-foreground">{stats?.avgRating || 0}⭐</p>
+                      <p className="text-xs text-hold-muted-foreground">Avg Rating</p>
                     </CardContent>
                   </Card>
                 </div>
@@ -954,13 +954,13 @@ function FinfluencerAnalyticsModal({ finfluencer, stats, onClose }) {
                             <div className="flex gap-2 flex-wrap mb-2">
                               <Badge variant="outline">{course.category?.replace('_', ' ')}</Badge>
                               <Badge className={
-                                course.status === 'approved' ? 'bg-green-100 text-green-800' :
-                                'bg-yellow-100 text-yellow-800'
+                                course.status === 'approved' ? 'bg-buy-muted text-buy-muted-foreground' :
+                                'bg-hold-muted text-hold-muted-foreground'
                               }>
                                 {course.status}
                               </Badge>
                             </div>
-                            <div className="flex gap-4 text-xs text-slate-500">
+                            <div className="flex gap-4 text-xs text-muted-foreground">
                               <span>👥 {courseEnrollments.length} students</span>
                               <span>💰 ₹{course.price}</span>
                               <span>📅 {format(new Date(course.created_date), 'MMM d, yyyy')}</span>
@@ -980,16 +980,16 @@ function FinfluencerAnalyticsModal({ finfluencer, stats, onClose }) {
                       <div className="flex justify-between items-center">
                         <div>
                           <p className="font-medium">Course: {courses.find(c => c.id === enrollment.course_id)?.title}</p>
-                          <p className="text-sm text-slate-600">
+                          <p className="text-sm text-subtle">
                             Enrolled: {format(new Date(enrollment.created_date), 'MMM d, yyyy')}
                           </p>
                         </div>
                         <div className="text-right">
-                          <Badge className={enrollment.enrollment_status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}>
+                          <Badge className={enrollment.enrollment_status === 'completed' ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-premium-muted text-protocall-blue'}>
                             {enrollment.enrollment_status}
                           </Badge>
                           {enrollment.rating && (
-                            <p className="text-sm text-slate-600 mt-1">
+                            <p className="text-sm text-subtle mt-1">
                               Rating: {enrollment.rating}⭐
                             </p>
                           )}
@@ -1056,10 +1056,10 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
 
   const getStatusBadge = (status) => {
     const config = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' },
-      approved: { color: 'bg-blue-100 text-blue-800', label: 'Approved' },
-      processed: { color: 'bg-green-100 text-green-800', label: 'Processed' },
-      rejected: { color: 'bg-red-100 text-red-800', label: 'Rejected' }
+      pending: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending' },
+      approved: { color: 'bg-premium-muted text-protocall-blue', label: 'Approved' },
+      processed: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Processed' },
+      rejected: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Rejected' }
     };
     const { color, label } = config[status] || config.pending;
     return <Badge className={`${color} border-0`}>{label}</Badge>;
@@ -1068,7 +1068,7 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
       </div>
     );
   }
@@ -1076,41 +1076,41 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-50 to-blue-100">
+        <Card className="shadow-lg border-0 bg-surface-2">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-blue-700 font-semibold mb-1">Gross Earnings</p>
-                <p className="text-3xl font-bold text-blue-900">₹{totalGrossEarnings.toLocaleString()}</p>
-                <p className="text-xs text-blue-600 mt-1">Total course revenue</p>
+                <p className="text-sm text-protocall-blue font-semibold mb-1">Gross Earnings</p>
+                <p className="text-3xl font-bold text-protocall-blue">₹{totalGrossEarnings.toLocaleString()}</p>
+                <p className="text-xs text-protocall-blue mt-1">Total course revenue</p>
               </div>
-              <DollarSign className="w-12 h-12 text-blue-600 opacity-70" />
+              <DollarSign className="w-12 h-12 text-protocall-blue opacity-70" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-purple-50 to-purple-100">
+        <Card className="shadow-lg border-0 bg-surface-2">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-purple-700 font-semibold mb-1">Platform Commission</p>
-                <p className="text-3xl font-bold text-purple-900">₹{totalPlatformCommission.toLocaleString()}</p>
-                <p className="text-xs text-purple-600 mt-1">Total commission earned</p>
+                <p className="text-sm text-protocall-premium-text font-semibold mb-1">Platform Commission</p>
+                <p className="text-3xl font-bold text-protocall-premium-text">₹{totalPlatformCommission.toLocaleString()}</p>
+                <p className="text-xs text-protocall-premium-text mt-1">Total commission earned</p>
               </div>
-              <TrendingUp className="w-12 h-12 text-purple-600 opacity-70" />
+              <TrendingUp className="w-12 h-12 text-protocall-premium-text opacity-70" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-orange-50 to-orange-100">
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-surface-2 to-hold-muted">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-orange-700 font-semibold mb-1">Payout Pending</p>
-                <p className="text-3xl font-bold text-orange-900">₹{Math.max(0, pendingPayoutAmount).toLocaleString()}</p>
-                <p className="text-xs text-orange-600 mt-1">Awaiting finfluencer requests</p>
+                <p className="text-sm text-hold-muted-foreground font-semibold mb-1">Payout Pending</p>
+                <p className="text-3xl font-bold text-hold-muted-foreground">₹{Math.max(0, pendingPayoutAmount).toLocaleString()}</p>
+                <p className="text-xs text-hold-muted-foreground mt-1">Awaiting finfluencer requests</p>
               </div>
-              <Wallet className="w-12 h-12 text-orange-600 opacity-70" />
+              <Wallet className="w-12 h-12 text-hold-muted-foreground opacity-70" />
             </div>
           </CardContent>
         </Card>
@@ -1121,10 +1121,10 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-600">Total Requests</p>
+                <p className="text-sm text-subtle">Total Requests</p>
                 <p className="text-2xl font-bold">{safePayoutRequests.length}</p>
               </div>
-              <Wallet className="w-8 h-8 text-blue-600" />
+              <Wallet className="w-8 h-8 text-protocall-blue" />
             </div>
           </CardContent>
         </Card>
@@ -1132,10 +1132,10 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-600">Pending</p>
+                <p className="text-sm text-subtle">Pending</p>
                 <p className="text-2xl font-bold">₹{totalPending.toLocaleString()}</p>
               </div>
-              <Clock className="w-8 h-8 text-orange-600" />
+              <Clock className="w-8 h-8 text-hold-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -1143,10 +1143,10 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-600">Approved</p>
+                <p className="text-sm text-subtle">Approved</p>
                 <p className="text-2xl font-bold">₹{totalApproved.toLocaleString()}</p>
               </div>
-              <CheckCircle className="w-8 h-8 text-blue-600" />
+              <CheckCircle className="w-8 h-8 text-protocall-blue" />
             </div>
           </CardContent>
         </Card>
@@ -1154,21 +1154,21 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-600">Processed</p>
+                <p className="text-sm text-subtle">Processed</p>
                 <p className="text-2xl font-bold">₹{totalProcessed.toLocaleString()}</p>
               </div>
-              <CheckCircle className="w-8 h-8 text-green-600" />
+              <CheckCircle className="w-8 h-8 text-buy-muted-foreground" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       <div className="flex items-center gap-4">
-        <label className="text-sm font-medium text-slate-700">Filter by Finfluencer:</label>
+        <label className="text-sm font-medium text-subtle">Filter by Finfluencer:</label>
         <select
           value={selectedFinfluencer}
           onChange={(e) => setSelectedFinfluencer(e.target.value)}
-          className="px-3 py-2 text-sm border border-gray-300 rounded-md bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+          className="px-3 py-2 text-sm border border-border rounded-md bg-white hover:border-border focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
         >
           <option value="all">All Finfluencers</option>
           {safeFinfluencers.filter(f => f.status === 'approved').map(finfluencer => (
@@ -1201,39 +1201,39 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
                           </div>
                           <div className="grid grid-cols-2 gap-4 mt-3">
                             <div>
-                              <p className="text-xs text-slate-600">Requested Amount</p>
-                              <p className="text-xl font-bold text-purple-600">₹{(payout.requested_amount || 0).toLocaleString()}</p>
+                              <p className="text-xs text-subtle">Requested Amount</p>
+                              <p className="text-xl font-bold text-protocall-premium-text">₹{(payout.requested_amount || 0).toLocaleString()}</p>
                             </div>
                             <div>
-                              <p className="text-xs text-slate-600">Available Balance</p>
+                              <p className="text-xs text-subtle">Available Balance</p>
                               <p className="text-sm font-semibold">₹{(payout.available_balance || 0).toLocaleString()}</p>
                             </div>
                             <div>
-                              <p className="text-xs text-slate-600">Payout Method</p>
+                              <p className="text-xs text-subtle">Payout Method</p>
                               <p className="text-sm font-semibold capitalize">{payout.payout_method?.replace('_', ' ') || 'N/A'}</p>
                             </div>
                             <div>
-                              <p className="text-xs text-slate-600">Request Date</p>
+                              <p className="text-xs text-subtle">Request Date</p>
                               <p className="text-sm font-semibold">{format(new Date(payout.created_date), 'MMM d, yyyy')}</p>
                             </div>
                           </div>
                           {payout.admin_notes && (
-                            <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-                              <p className="text-xs text-blue-600 font-medium">Admin Notes:</p>
-                              <p className="text-sm text-slate-700">{payout.admin_notes}</p>
+                            <div className="mt-3 p-3 bg-premium-muted rounded-lg">
+                              <p className="text-xs text-protocall-blue font-medium">Admin Notes:</p>
+                              <p className="text-sm text-subtle">{payout.admin_notes}</p>
                             </div>
                           )}
                           {payout.processed_date && (
-                            <p className="text-xs text-slate-500 mt-2">
+                            <p className="text-xs text-muted-foreground mt-2">
                               Processed on: {format(new Date(payout.processed_date), 'MMM d, yyyy h:mm a')}
                             </p>
                           )}
                         </div>
                         
                         <div className="ml-4 text-right">
-                          <div className="bg-slate-50 p-3 rounded-lg">
-                            <p className="text-xs text-slate-600">Total Earnings</p>
-                            <p className="text-lg font-bold text-slate-900">₹{(stats.totalEarnings || 0).toLocaleString()}</p>
+                          <div className="bg-surface-2 p-3 rounded-lg">
+                            <p className="text-xs text-subtle">Total Earnings</p>
+                            <p className="text-lg font-bold text-foreground">₹{(stats.totalEarnings || 0).toLocaleString()}</p>
                           </div>
                         </div>
                       </div>
@@ -1244,8 +1244,8 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
             </div>
           ) : (
             <div className="text-center p-12">
-              <Wallet className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500">
+              <Wallet className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">
                 {selectedFinfluencer === 'all' 
                   ? 'No payout requests found' 
                   : 'No payout requests for this finfluencer'}

@@ -123,10 +123,10 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-blue-600" />
+              <Users className="w-5 h-5 text-protocall-blue" />
               <div>
-                <p className="text-sm text-gray-600">Total RSVPs</p>
-                <p className="text-2xl font-bold text-gray-900">{rsvpStats.total}</p>
+                <p className="text-sm text-subtle">Total RSVPs</p>
+                <p className="text-2xl font-bold text-foreground">{rsvpStats.total}</p>
               </div>
             </div>
           </CardContent>
@@ -135,10 +135,10 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-600" />
+              <CheckCircle className="w-5 h-5 text-buy-muted-foreground" />
               <div>
-                <p className="text-sm text-gray-600">Yes Responses</p>
-                <p className="text-2xl font-bold text-green-800">{rsvpStats.yes}</p>
+                <p className="text-sm text-subtle">Yes Responses</p>
+                <p className="text-2xl font-bold text-buy-muted-foreground">{rsvpStats.yes}</p>
               </div>
             </div>
           </CardContent>
@@ -147,10 +147,10 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-yellow-600" />
+              <Clock className="w-5 h-5 text-hold-muted-foreground" />
               <div>
-                <p className="text-sm text-gray-600">Maybe Responses</p>
-                <p className="text-2xl font-bold text-yellow-800">{rsvpStats.maybe}</p>
+                <p className="text-sm text-subtle">Maybe Responses</p>
+                <p className="text-2xl font-bold text-hold-muted-foreground">{rsvpStats.maybe}</p>
               </div>
             </div>
           </CardContent>
@@ -159,10 +159,10 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <XCircle className="w-5 h-5 text-red-600" />
+              <XCircle className="w-5 h-5 text-sell-muted-foreground" />
               <div>
-                <p className="text-sm text-gray-600">No Responses</p>
-                <p className="text-2xl font-bold text-red-800">{rsvpStats.no}</p>
+                <p className="text-sm text-subtle">No Responses</p>
+                <p className="text-2xl font-bold text-sell-muted-foreground">{rsvpStats.no}</p>
               </div>
             </div>
           </CardContent>
@@ -171,10 +171,10 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-purple-600" />
+              <TrendingUp className="w-5 h-5 text-protocall-premium-text" />
               <div>
-                <p className="text-sm text-gray-600">Conversion Rate</p>
-                <p className="text-2xl font-bold text-purple-800">{rsvpStats.conversionRate}%</p>
+                <p className="text-sm text-subtle">Conversion Rate</p>
+                <p className="text-2xl font-bold text-protocall-premium-text">{rsvpStats.conversionRate}%</p>
               </div>
             </div>
           </CardContent>
@@ -187,7 +187,7 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
           <div className="flex justify-between items-center">
             <CardTitle>Event RSVP Analytics</CardTitle>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Search events..."
                 value={searchTerm}
@@ -200,7 +200,7 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50">
+              <thead className="bg-surface-2">
                 <tr>
                   <th className="text-left p-3 font-semibold">Event</th>
                   <th className="text-left p-3 font-semibold">Date</th>
@@ -214,36 +214,36 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
               </thead>
               <tbody>
                 {filteredEvents.map(event => (
-                  <tr key={event.id} className="border-t hover:bg-gray-50">
+                  <tr key={event.id} className="border-t hover:bg-surface-2">
                     <td className="p-3">
                       <div>
-                        <p className="font-medium text-gray-900 line-clamp-1">{event.title}</p>
-                        <p className="text-xs text-gray-500">by {event.organizer_name}</p>
+                        <p className="font-medium text-foreground line-clamp-1">{event.title}</p>
+                        <p className="text-xs text-muted-foreground">by {event.organizer_name}</p>
                         {event.is_premium && (
-                          <Badge className="mt-1 text-xs bg-purple-100 text-purple-800">
+                          <Badge className="mt-1 text-xs bg-premium-muted text-protocall-premium-text">
                             Premium
                           </Badge>
                         )}
                       </div>
                     </td>
-                    <td className="p-3 text-gray-600">
+                    <td className="p-3 text-subtle">
                       <div className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
                         {new Date(event.event_date).toLocaleDateString()}
                       </div>
                     </td>
                     <td className="p-3 text-center">
-                      <Badge className="bg-green-100 text-green-800">
+                      <Badge className="bg-buy-muted text-buy-muted-foreground">
                         {event.rsvpCounts.yes}
                       </Badge>
                     </td>
                     <td className="p-3 text-center">
-                      <Badge className="bg-yellow-100 text-yellow-800">
+                      <Badge className="bg-hold-muted text-hold-muted-foreground">
                         {event.rsvpCounts.maybe}
                       </Badge>
                     </td>
                     <td className="p-3 text-center">
-                      <Badge className="bg-red-100 text-red-800">
+                      <Badge className="bg-sell-muted text-sell-muted-foreground">
                         {event.rsvpCounts.no}
                       </Badge>
                     </td>
@@ -255,12 +255,12 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
                         <div className="text-xs">
                           {event.capacityUsed}% 
                           <br />
-                          <span className="text-gray-500">
+                          <span className="text-muted-foreground">
                             ({event.rsvpCounts.yes}/{event.capacity})
                           </span>
                         </div>
                       ) : (
-                        <span className="text-gray-400">Unlimited</span>
+                        <span className="text-muted-foreground">Unlimited</span>
                       )}
                     </td>
                     <td className="p-3 text-right">
@@ -269,7 +269,7 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
                           variant="ghost"
                           size="sm"
                           onClick={() => onViewDetails ? onViewDetails(event) : openEventDetails(event)}
-                          className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-xl transition-all duration-300"
+                          className="text-protocall-blue hover:text-protocall-blue hover:bg-premium-muted rounded-xl transition-all duration-300"
                         >
                           <Eye className="w-4 h-4 mr-1" />
                           Details
@@ -280,7 +280,7 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
                             variant="ghost"
                             size="sm"
                             onClick={() => onCancelEvent(event)}
-                            className="text-red-600 hover:text-red-800 hover:bg-red-50 rounded-xl transition-all duration-300"
+                            className="text-sell-muted-foreground hover:text-sell-muted-foreground hover:bg-sell-muted rounded-xl transition-all duration-300"
                           >
                             <AlertTriangle className="w-4 h-4 mr-1" />
                             Cancel
@@ -296,9 +296,9 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
 
           {filteredEvents.length === 0 && (
             <div className="text-center py-8">
-              <Users className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No events found</h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <Users className="mx-auto h-12 w-12 text-muted-foreground" />
+              <h3 className="mt-2 text-sm font-medium text-foreground">No events found</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
                 {searchTerm ? 'Try adjusting your search criteria.' : 'No events have been created yet.'}
               </p>
             </div>
@@ -316,23 +316,23 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
             
             <div className="space-y-6">
               {/* Event Summary */}
-              <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="bg-surface-2 p-4 rounded-lg">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
-                    <p className="font-semibold text-gray-700">Total RSVPs</p>
+                    <p className="font-semibold text-subtle">Total RSVPs</p>
                     <p className="text-xl font-bold">{selectedEvent.rsvpCounts.total}</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-green-700">Yes</p>
-                    <p className="text-xl font-bold text-green-800">{selectedEvent.rsvpCounts.yes}</p>
+                    <p className="font-semibold text-buy-muted-foreground">Yes</p>
+                    <p className="text-xl font-bold text-buy-muted-foreground">{selectedEvent.rsvpCounts.yes}</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-yellow-700">Maybe</p>
-                    <p className="text-xl font-bold text-yellow-800">{selectedEvent.rsvpCounts.maybe}</p>
+                    <p className="font-semibold text-hold-muted-foreground">Maybe</p>
+                    <p className="text-xl font-bold text-hold-muted-foreground">{selectedEvent.rsvpCounts.maybe}</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-red-700">No</p>
-                    <p className="text-xl font-bold text-red-800">{selectedEvent.rsvpCounts.no}</p>
+                    <p className="font-semibold text-sell-muted-foreground">No</p>
+                    <p className="text-xl font-bold text-sell-muted-foreground">{selectedEvent.rsvpCounts.no}</p>
                   </div>
                 </div>
               </div>
@@ -352,7 +352,7 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
                 
                 <div className="border rounded-lg overflow-hidden">
                   <table className="w-full text-sm">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-surface-2">
                       <tr>
                         <th className="text-left p-3">User</th>
                         <th className="text-center p-3">RSVP</th>
@@ -365,7 +365,7 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
                         <tr key={attendee.id} className="border-t">
                           <td className="p-3">
                             <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-xs font-medium">
+                              <div className="w-6 h-6 bg-border rounded-full flex items-center justify-center text-xs font-medium">
                                 {(attendee.user_name || 'U').charAt(0).toUpperCase()}
                               </div>
                               <span>{attendee.user_name || 'Unknown User'}</span>
@@ -374,9 +374,9 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
                           <td className="p-3 text-center">
                             <Badge 
                               className={
-                                attendee.rsvp_status === 'yes' ? 'bg-green-100 text-green-800' :
-                                attendee.rsvp_status === 'maybe' ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-red-100 text-red-800'
+                                attendee.rsvp_status === 'yes' ? 'bg-buy-muted text-buy-muted-foreground' :
+                                attendee.rsvp_status === 'maybe' ? 'bg-hold-muted text-hold-muted-foreground' :
+                                'bg-sell-muted text-sell-muted-foreground'
                               }
                             >
                               {attendee.rsvp_status.toUpperCase()}
@@ -384,12 +384,12 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
                           </td>
                           <td className="p-3 text-center">
                             {attendee.confirmed ? (
-                              <CheckCircle className="w-4 h-4 text-green-600 mx-auto" />
+                              <CheckCircle className="w-4 h-4 text-buy-muted-foreground mx-auto" />
                             ) : (
-                              <Clock className="w-4 h-4 text-gray-400 mx-auto" />
+                              <Clock className="w-4 h-4 text-muted-foreground mx-auto" />
                             )}
                           </td>
-                          <td className="p-3 text-right text-gray-600">
+                          <td className="p-3 text-right text-subtle">
                             {new Date(attendee.created_date).toLocaleDateString()}
                           </td>
                         </tr>

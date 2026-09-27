@@ -82,7 +82,7 @@ const UserEditModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div>
-            <Label htmlFor="displayName" className="block text-sm font-medium text-slate-700 mb-2">
+            <Label htmlFor="displayName" className="block text-sm font-medium text-subtle mb-2">
               Display Name
             </Label>
             <Input
@@ -93,7 +93,7 @@ const UserEditModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
             />
           </div>
           <div>
-            <Label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
+            <Label htmlFor="email" className="block text-sm font-medium text-subtle mb-2">
               Email
             </Label>
             <Input
@@ -105,7 +105,7 @@ const UserEditModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
             />
           </div>
           <div>
-            <Label htmlFor="mobileNumber" className="block text-sm font-medium text-slate-700 mb-2">
+            <Label htmlFor="mobileNumber" className="block text-sm font-medium text-subtle mb-2">
               Mobile Number
             </Label>
             <Input
@@ -477,7 +477,7 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
 
       <div className="flex flex-col md:flex-row gap-4 mt-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             placeholder="Search by name or email..."
             value={searchTerm}
@@ -518,33 +518,33 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
         
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-divider">
+            <thead className="bg-surface-2">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   User
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Roles
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Trust Score
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Registered
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-divider">
               {paginatedUsers.length > 0 ? (
                 paginatedUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
+                  <tr key={user.id} className="hover:bg-surface-2">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
@@ -555,18 +555,18 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
                               alt=""
                             />
                           ) : (
-                            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+                            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-protocall-deep to-protocall-blue flex items-center justify-center text-white font-semibold">
                               {user.display_name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || 'U'}
                             </div>
                           )}
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-foreground">
                             {user.display_name || 'No Name'}
                           </div>
-                          <div className="text-sm text-gray-500">{user.email}</div>
+                          <div className="text-sm text-muted-foreground">{user.email}</div>
                           {user.mobile_number && (
-                            <div className="text-xs text-gray-400">{user.mobile_number}</div>
+                            <div className="text-xs text-muted-foreground">{user.mobile_number}</div>
                           )}
                         </div>
                       </div>
@@ -579,12 +579,12 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {user.is_deactivated ? (
-                        <Badge className="bg-red-100 text-red-800">Deactivated</Badge>
+                        <Badge className="bg-sell-muted text-sell-muted-foreground">Deactivated</Badge>
                       ) : (
-                        <Badge className="bg-green-100 text-green-800">Active</Badge>
+                        <Badge className="bg-buy-muted text-buy-muted-foreground">Active</Badge>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                       {new Date(user.created_date).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -629,7 +629,7 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
                           {canDeleteUser(user) && (
                             <DropdownMenuItem 
                               onClick={() => handleDeleteUser(user)}
-                              className="text-red-600"
+                              className="text-sell-muted-foreground"
                             >
                               <Trash className="w-4 h-4 mr-2" />
                               Delete User
@@ -639,13 +639,13 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
                             (!canModifyTrustScores && !canManageUsers && user.id !== currentAdmin?.id) ||
                             (user.id === currentAdmin?.id && !canModifyTrustScores && !canManageUsers)
                             && (
-                              <DropdownMenuItem disabled className="text-xs text-slate-400">
+                              <DropdownMenuItem disabled className="text-xs text-muted-foreground">
                                 No actions available
                               </DropdownMenuItem>
                             )
                           }
                           {user.id === currentAdmin?.id && (
-                            <DropdownMenuItem disabled className="text-xs bg-blue-50 text-blue-700">
+                            <DropdownMenuItem disabled className="text-xs bg-premium-muted text-protocall-blue">
                               You (Cannot manage yourself)
                             </DropdownMenuItem>
                           )}
@@ -657,7 +657,7 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
               ) : (
                 <tr>
                   <td colSpan="6" className="text-center py-8">
-                    <div className="flex flex-col items-center justify-center text-slate-500">
+                    <div className="flex flex-col items-center justify-center text-muted-foreground">
                       <Search className="h-10 w-10 mb-2" />
                       <p className="text-lg">No users found.</p>
                       <p className="text-sm">Try adjusting your search or filter criteria.</p>
@@ -672,7 +672,7 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
 
       <div className="flex justify-between items-center mt-4">
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-700">Rows per page:</span>
+          <span className="text-sm text-subtle">Rows per page:</span>
           <Select value={String(itemsPerPage)} onValueChange={handleItemsPerPageChange}>
             <SelectTrigger className="w-[80px]">
               <SelectValue />
@@ -686,7 +686,7 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
           </Select>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-700">
+          <span className="text-sm text-subtle">
             Page {currentPage} of {totalPages === 0 ? 1 : totalPages}
           </span>
           <Button
@@ -729,21 +729,21 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="text-center">
-                <p className="text-sm text-slate-600">Current Trust Score</p>
+                <p className="text-sm text-subtle">Current Trust Score</p>
                 <p className="text-5xl font-bold my-2">
                   {(selectedUser.trust_score || 50).toFixed(2)}
                 </p>
                 <div className="flex items-center justify-center gap-2">
                   <span className={`text-xl font-semibold ${
-                    scoreChange >= 0 ? 'text-green-600' : 'text-red-600'
+                    scoreChange >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'
                   }`}>
                     {scoreChange >= 0 ? `+${scoreChange}` : scoreChange}
                   </span>
-                  <p className="text-gray-500">New Score: {((selectedUser.trust_score || 50) + scoreChange).toFixed(2)}</p>
+                  <p className="text-muted-foreground">New Score: {((selectedUser.trust_score || 50) + scoreChange).toFixed(2)}</p>
                 </div>
                 
-                <div className="mt-3 p-2 bg-blue-50 rounded-lg">
-                  <p className="text-xs text-blue-600">
+                <div className="mt-3 p-2 bg-premium-muted rounded-lg">
+                  <p className="text-xs text-protocall-blue">
                     Valid Range: 0.00 - 100.00 | 
                     Max Increase: +{(100 - (selectedUser.trust_score || 50)).toFixed(2)} | 
                     Max Decrease: -{((selectedUser.trust_score || 50)).toFixed(2)}
@@ -752,7 +752,7 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
               </div>
 
               <div>
-                <Label htmlFor="scoreChange" className="block text-sm font-medium text-slate-700 mb-2">
+                <Label htmlFor="scoreChange" className="block text-sm font-medium text-subtle mb-2">
                   Score Adjustment
                 </Label>
                 <Input
@@ -768,40 +768,40 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
                 />
                 
                 <div className="flex flex-wrap gap-2 mt-3">
-                  <p className="text-xs text-slate-500 w-full mb-1">Quick Actions:</p>
+                  <p className="text-xs text-muted-foreground w-full mb-1">Quick Actions:</p>
                   
                   {(selectedUser.trust_score || 50) >= 20 && (
-                    <Button variant="outline" size="sm" className="text-red-600" onClick={() => handleTrustScoreChange(-20)}>-20</Button>
+                    <Button variant="outline" size="sm" className="text-sell-muted-foreground" onClick={() => handleTrustScoreChange(-20)}>-20</Button>
                   )}
                   {(selectedUser.trust_score || 50) >= 10 && (
-                    <Button variant="outline" size="sm" className="text-red-600" onClick={() => handleTrustScoreChange(-10)}>-10</Button>
+                    <Button variant="outline" size="sm" className="text-sell-muted-foreground" onClick={() => handleTrustScoreChange(-10)}>-10</Button>
                   )}
                   {(selectedUser.trust_score || 50) >= 5 && (
-                    <Button variant="outline" size="sm" className="text-red-600" onClick={() => handleTrustScoreChange(-5)}>-5</Button>
+                    <Button variant="outline" size="sm" className="text-sell-muted-foreground" onClick={() => handleTrustScoreChange(-5)}>-5</Button>
                   )}
                   
                   <Button variant="outline" size="sm" onClick={() => handleTrustScoreChange(0)}>Reset</Button>
                   
                   {(100 - (selectedUser.trust_score || 50)) >= 5 && (
-                    <Button variant="outline" size="sm" className="text-green-600" onClick={() => handleTrustScoreChange(5)}>+5</Button>
+                    <Button variant="outline" size="sm" className="text-buy-muted-foreground" onClick={() => handleTrustScoreChange(5)}>+5</Button>
                   )}
                   {(100 - (selectedUser.trust_score || 50)) >= 10 && (
-                    <Button variant="outline" size="sm" className="text-green-600" onClick={() => handleTrustScoreChange(10)}>+10</Button>
+                    <Button variant="outline" size="sm" className="text-buy-muted-foreground" onClick={() => handleTrustScoreChange(10)}>+10</Button>
                   )}
                   {(100 - (selectedUser.trust_score || 50)) >= 20 && (
-                    <Button variant="outline" size="sm" className="text-green-600" onClick={() => handleTrustScoreChange(20)}>+20</Button>
+                    <Button variant="outline" size="sm" className="text-buy-muted-foreground" onClick={() => handleTrustScoreChange(20)}>+20</Button>
                   )}
                   {(100 - (selectedUser.trust_score || 50)) >= 50 && (
-                    <Button variant="outline" size="sm" className="text-green-600" onClick={() => handleTrustScoreChange(50)}>+50</Button>
+                    <Button variant="outline" size="sm" className="text-buy-muted-foreground" onClick={() => handleTrustScoreChange(50)}>+50</Button>
                   )}
                   
                   {(100 - (selectedUser.trust_score || 50)) > 0 && (
-                    <Button variant="outline" size="sm" className="text-blue-600 font-semibold" onClick={() => handleTrustScoreChange(100 - (selectedUser.trust_score || 50))}>
+                    <Button variant="outline" size="sm" className="text-protocall-blue font-semibold" onClick={() => handleTrustScoreChange(100 - (selectedUser.trust_score || 50))}>
                       MAX (+{(100 - (selectedUser.trust_score || 50)).toFixed(0)})
                     </Button>
                   )}
                   {(selectedUser.trust_score || 50) > 0 && (
-                    <Button variant="outline" size="sm" className="text-red-600 font-semibold" onClick={() => handleTrustScoreChange(-(selectedUser.trust_score || 50))}>
+                    <Button variant="outline" size="sm" className="text-sell-muted-foreground font-semibold" onClick={() => handleTrustScoreChange(-(selectedUser.trust_score || 50))}>
                       MIN (-{((selectedUser.trust_score || 50)).toFixed(0)})
                     </Button>
                   )}
@@ -809,8 +809,8 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
               </div>
 
               <div>
-                <Label htmlFor="reason" className="block text-sm font-medium text-slate-700 mb-2">
-                  Reason for Change <span className="text-red-500">*</span>
+                <Label htmlFor="reason" className="block text-sm font-medium text-subtle mb-2">
+                  Reason for Change <span className="text-sell">*</span>
                 </Label>
                 <Textarea
                   id="reason"
@@ -829,7 +829,7 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
               <Button 
                 onClick={handleSaveTrustScore} 
                 disabled={!adjustmentReason.trim() || scoreChange === 0 || isLoading}
-                className={scoreChange > 0 ? 'bg-green-600 hover:bg-green-700' : (scoreChange < 0 ? 'bg-red-600 hover:bg-red-700' : 'bg-gray-400')}
+                className={scoreChange > 0 ? 'bg-buy hover:bg-buy' : (scoreChange < 0 ? 'bg-sell hover:bg-sell' : 'bg-muted-foreground')}
               >
                 {isLoading ? 'Saving...' : (scoreChange > 0 ? 'Increase' : (scoreChange < 0 ? 'Decrease' : 'Update'))} Trust Score
               </Button>
@@ -871,7 +871,7 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
               </Select>
             </div>
 
-            <div className="text-center text-sm text-slate-500">— OR —</div>
+            <div className="text-center text-sm text-muted-foreground">— OR —</div>
 
             <div>
               <Label htmlFor="role-template" className="text-sm font-medium mb-2 block">
@@ -897,8 +897,8 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
             </div>
 
             {selectedTemplate && (
-              <div className="bg-slate-50 p-3 rounded-lg">
-                <p className="text-sm text-slate-600">
+              <div className="bg-surface-2 p-3 rounded-lg">
+                <p className="text-sm text-subtle">
                   {roleTemplates.find(t => t.id === selectedTemplate)?.description}
                 </p>
               </div>
@@ -935,7 +935,7 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
             <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleSuspendUser}
-              className={selectedUser?.is_deactivated ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}
+              className={selectedUser?.is_deactivated ? 'bg-buy hover:bg-buy' : 'bg-sell hover:bg-sell'}
               disabled={isLoading}
             >
               {isLoading ? 'Processing...' : (selectedUser?.is_deactivated ? 'Re-activate User' : 'Deactivate User')}
@@ -956,7 +956,7 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteUserConfirmed} className="bg-red-600 hover:bg-red-700" disabled={isLoading}>
+            <AlertDialogAction onClick={handleDeleteUserConfirmed} className="bg-sell hover:bg-sell" disabled={isLoading}>
               {isLoading ? 'Deleting...' : 'Delete User'}
             </AlertDialogAction>
           </AlertDialogFooter>

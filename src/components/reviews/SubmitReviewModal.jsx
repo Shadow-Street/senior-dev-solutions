@@ -151,15 +151,15 @@ export default function SubmitReviewModal({ open, onClose }) {
                     size={32}
                     className={
                       star <= (hoverRating || rating)
-                        ? 'text-yellow-400 fill-yellow-400'
-                        : 'text-gray-300'
+                        ? 'text-hold fill-hold'
+                        : 'text-muted-foreground'
                     }
                   />
                 </button>
               ))}
             </div>
             {rating > 0 && (
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-subtle mt-1">
                 {rating === 5 && 'Excellent! 🎉'}
                 {rating === 4 && 'Great! 👍'}
                 {rating === 3 && 'Good! 👌'}
@@ -179,7 +179,7 @@ export default function SubmitReviewModal({ open, onClose }) {
               rows={5}
               maxLength={500}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {reviewText.length}/500 characters
             </p>
           </div>
@@ -228,7 +228,7 @@ export default function SubmitReviewModal({ open, onClose }) {
               placeholder="https://facebook.com/your-review-link"
               type="url"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Link to your review on social media (if applicable)
             </p>
           </div>
@@ -237,7 +237,7 @@ export default function SubmitReviewModal({ open, onClose }) {
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting || rating === 0 || !reviewText.trim()}
-            className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+            className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
           >
             {isSubmitting ? (
               <>

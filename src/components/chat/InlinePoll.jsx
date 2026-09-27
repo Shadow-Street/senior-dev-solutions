@@ -175,9 +175,9 @@ export default function InlinePoll({ chatRoomId, stockSymbol, onPollUpdate }) {
       <Card className="shadow-lg border-0 bg-white">
         <CardContent className="p-4">
           <div className="animate-pulse space-y-3">
-            <div className="h-4 bg-slate-200 rounded w-3/4"></div>
-            <div className="h-2 bg-slate-200 rounded"></div>
-            <div className="h-2 bg-slate-200 rounded"></div>
+            <div className="h-4 bg-border rounded w-3/4"></div>
+            <div className="h-2 bg-border rounded"></div>
+            <div className="h-2 bg-border rounded"></div>
           </div>
         </CardContent>
       </Card>
@@ -205,14 +205,14 @@ export default function InlinePoll({ chatRoomId, stockSymbol, onPollUpdate }) {
         <CardHeader className="pb-3 border-b">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-sm">
-              <Target className="w-4 h-4 text-purple-600" />
+              <Target className="w-4 h-4 text-protocall-premium-text" />
               Today's Market Decision
             </CardTitle>
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="text-xs">
                 {stockSymbol}
               </Badge>
-              <Badge className="bg-purple-100 text-purple-800 text-xs">
+              <Badge className="bg-premium-muted text-protocall-premium-text text-xs">
                 <Clock className="w-3 h-3 mr-1" />
                 Live
               </Badge>
@@ -226,62 +226,62 @@ export default function InlinePoll({ chatRoomId, stockSymbol, onPollUpdate }) {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-green-600" />
-                  <span className="text-sm font-medium text-green-700">Buy</span>
+                  <TrendingUp className="w-4 h-4 text-buy-muted-foreground" />
+                  <span className="text-sm font-medium text-buy-muted-foreground">Buy</span>
                 </div>
-                <span className="text-xs text-slate-600 font-semibold">
+                <span className="text-xs text-subtle font-semibold">
                   {poll.buy_votes || 0} votes ({buyPercent.toFixed(1)}%)
                 </span>
               </div>
               <Progress value={buyPercent} className="h-3">
-                <div className="bg-green-500 h-full rounded-full transition-all duration-300" style={{ width: `${buyPercent}%` }} />
+                <div className="bg-buy h-full rounded-full transition-all duration-300" style={{ width: `${buyPercent}%` }} />
               </Progress>
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-2">
-                  <TrendingDown className="w-4 h-4 text-red-600" />
-                  <span className="text-sm font-medium text-red-700">Sell</span>
+                  <TrendingDown className="w-4 h-4 text-sell-muted-foreground" />
+                  <span className="text-sm font-medium text-sell-muted-foreground">Sell</span>
                 </div>
-                <span className="text-xs text-slate-600 font-semibold">
+                <span className="text-xs text-subtle font-semibold">
                   {poll.sell_votes || 0} votes ({sellPercent.toFixed(1)}%)
                 </span>
               </div>
               <Progress value={sellPercent} className="h-3">
-                <div className="bg-red-500 h-full rounded-full transition-all duration-300" style={{ width: `${sellPercent}%` }} />
+                <div className="bg-sell h-full rounded-full transition-all duration-300" style={{ width: `${sellPercent}%` }} />
               </Progress>
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-2">
-                  <Minus className="w-4 h-4 text-orange-600" />
-                  <span className="text-sm font-medium text-orange-700">Hold</span>
+                  <Minus className="w-4 h-4 text-hold-muted-foreground" />
+                  <span className="text-sm font-medium text-hold-muted-foreground">Hold</span>
                 </div>
-                <span className="text-xs text-slate-600 font-semibold">
+                <span className="text-xs text-subtle font-semibold">
                   {poll.hold_votes || 0} votes ({holdPercent.toFixed(1)}%)
                 </span>
               </div>
               <Progress value={holdPercent} className="h-3">
-                <div className="bg-orange-500 h-full rounded-full transition-all duration-300" style={{ width: `${holdPercent}%` }} />
+                <div className="bg-hold h-full rounded-full transition-all duration-300" style={{ width: `${holdPercent}%` }} />
               </Progress>
             </div>
           </div>
 
           {/* Community Consensus */}
-          <div className="p-3 bg-slate-50 rounded-lg">
+          <div className="p-3 bg-surface-2 rounded-lg">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-sm text-slate-600">Community Consensus:</span>
+              <span className="text-sm text-subtle">Community Consensus:</span>
               <Badge className={`${
-                winningOption.type === 'buy' ? 'bg-green-100 text-green-800' :
-                winningOption.type === 'sell' ? 'bg-red-100 text-red-800' :
-                'bg-orange-100 text-orange-800'
+                winningOption.type === 'buy' ? 'bg-buy-muted text-buy-muted-foreground' :
+                winningOption.type === 'sell' ? 'bg-sell-muted text-sell-muted-foreground' :
+                'bg-hold-muted text-hold-muted-foreground'
               }`}>
                 {winningOption.type.toUpperCase()} {winningOption.percent.toFixed(0)}%
               </Badge>
             </div>
-            <div className="flex items-center gap-2 text-xs text-slate-500">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Users className="w-3 h-3" />
               <span>{poll.total_votes || 0} premium members voted</span>
             </div>
@@ -289,31 +289,31 @@ export default function InlinePoll({ chatRoomId, stockSymbol, onPollUpdate }) {
 
           {/* Voting Actions */}
           {!isPremium ? (
-            <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg text-center">
-              <Lock className="w-6 h-6 text-purple-600 mx-auto mb-2" />
-              <h4 className="font-semibold text-purple-900 mb-1">Premium Feature</h4>
-              <p className="text-sm text-purple-700 mb-3">
+            <div className="p-4 bg-premium-muted border border-protocall-premium-light rounded-lg text-center">
+              <Lock className="w-6 h-6 text-protocall-premium-text mx-auto mb-2" />
+              <h4 className="font-semibold text-protocall-premium-text mb-1">Premium Feature</h4>
+              <p className="text-sm text-protocall-premium-text mb-3">
                 Upgrade to Premium to vote and make market commitments
               </p>
-              <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+              <Button size="sm" className="bg-primary hover:bg-primary">
                 <Crown className="w-4 h-4 mr-2" />
                 Upgrade Now
               </Button>
             </div>
           ) : userVote ? (
             <div className="space-y-3">
-              <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-center">
-                <CheckCircle className="w-5 h-5 text-green-600 mx-auto mb-1" />
-                <p className="text-sm font-semibold text-green-800">
+              <div className="p-3 bg-buy-muted border border-buy/30 rounded-lg text-center">
+                <CheckCircle className="w-5 h-5 text-buy-muted-foreground mx-auto mb-1" />
+                <p className="text-sm font-semibold text-buy-muted-foreground">
                   You voted: {userVote.vote.toUpperCase()}
                 </p>
-                <p className="text-xs text-green-600">
+                <p className="text-xs text-buy-muted-foreground">
                   Voted at {format(new Date(userVote.created_date || new Date()), 'h:mm a')}
                 </p>
               </div>
               <Button 
                 onClick={() => setShowPledgeModal(true)}
-                className="w-full bg-purple-600 hover:bg-purple-700"
+                className="w-full bg-primary hover:bg-primary"
               >
                 <Target className="w-4 h-4 mr-2" />
                 Make Pledge Commitment
@@ -321,12 +321,12 @@ export default function InlinePoll({ chatRoomId, stockSymbol, onPollUpdate }) {
             </div>
           ) : (
             <div className="space-y-2">
-              <p className="text-xs text-slate-600 text-center mb-3">Cast your vote for today's session:</p>
+              <p className="text-xs text-subtle text-center mb-3">Cast your vote for today's session:</p>
               <div className="grid grid-cols-1 gap-2">
                 <Button 
                   size="sm" 
                   onClick={() => handleVote('buy')}
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="bg-buy hover:bg-buy text-buy-foreground"
                 >
                   <TrendingUp className="w-4 h-4 mr-2" />
                   Buy
@@ -334,7 +334,7 @@ export default function InlinePoll({ chatRoomId, stockSymbol, onPollUpdate }) {
                 <Button 
                   size="sm" 
                   onClick={() => handleVote('sell')}
-                  className="bg-red-600 hover:bg-red-700 text-white"
+                  className="bg-protocall-sell-text hover:bg-sell text-white"
                 >
                   <TrendingDown className="w-4 h-4 mr-2" />
                   Sell
@@ -342,7 +342,7 @@ export default function InlinePoll({ chatRoomId, stockSymbol, onPollUpdate }) {
                 <Button 
                   size="sm" 
                   onClick={() => handleVote('hold')}
-                  className="bg-orange-600 hover:bg-orange-700 text-white"
+                  className="bg-hold hover:bg-hold text-hold-foreground"
                 >
                   <Minus className="w-4 h-4 mr-2" />
                   Hold

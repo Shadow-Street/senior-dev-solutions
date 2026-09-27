@@ -84,16 +84,16 @@ export default function CancelEventModal({ event, onClose, onSuccess, currentUse
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-red-600">
+          <DialogTitle className="flex items-center gap-2 text-sell-muted-foreground">
             <AlertTriangle className="w-5 h-5" />
             Cancel Event
           </DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4 py-4">
-          <div className="bg-red-50 p-4 rounded-lg">
-            <h4 className="font-medium text-red-800 mb-2">Event: {event.title}</h4>
-            <p className="text-sm text-red-700">
+          <div className="bg-sell-muted p-4 rounded-lg">
+            <h4 className="font-medium text-sell-muted-foreground mb-2">Event: {event.title}</h4>
+            <p className="text-sm text-sell-muted-foreground">
               This action cannot be undone. All attendees who have RSVP'd will be notified of the cancellation and full refunds will be initiated.
             </p>
           </div>
@@ -122,7 +122,7 @@ export default function CancelEventModal({ event, onClose, onSuccess, currentUse
           <Button 
             onClick={handleCancel} // Calls the updated handleCancel function
             disabled={isSubmitting}
-            className="bg-red-600 hover:bg-red-700"
+            className="bg-sell hover:bg-sell"
           >
             {isSubmitting ? (
               <>

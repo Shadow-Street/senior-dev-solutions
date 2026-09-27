@@ -28,9 +28,9 @@ export default function ConfirmDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {variant === 'destructive' ? (
-              <AlertTriangle className="w-6 h-6 text-red-500" />
+              <AlertTriangle className="w-6 h-6 text-sell" />
             ) : (
-              <Info className="w-6 h-6 text-blue-500" />
+              <Info className="w-6 h-6 text-protocall-premium-light" />
             )}
             {title}
           </DialogTitle>

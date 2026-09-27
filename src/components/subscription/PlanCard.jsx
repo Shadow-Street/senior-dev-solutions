@@ -57,20 +57,21 @@ const getPlanBackgroundColor = (planName) => {
   const normalized = planName.toLowerCase().trim();
 
   if (normalized === 'basic' || normalized === 'free') {
-    return 'bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-100';
+    return 'bg-surface-2';
   }
   if (normalized === 'premium') {
-    return 'bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100';
+    return 'bg-surface-2';
   }
   if (normalized === 'vip' || normalized === 'elite') {
-    return 'bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-100';
+    return 'bg-gradient-to-br from-surface-2 via-hold to-hold-muted';
   }
 
   return 'bg-white'; // Default fallback
 };
 
-export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelect, user, allPlans = [] }) {
-  const [selectedCycle, setSelectedCycle] = React.useState('monthly');
+export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelect, user, allPlans = [], cycle = 'monthly' }) {
+  // The billing cycle is owned by the Subscription page so every card agrees.
+  const selectedCycle = cycle === 'annually' ? 'annually' : 'monthly';
   const [promoCode, setPromoCode] = React.useState('');
   const [appliedPromo, setAppliedPromo] = React.useState(null);
   const [isValidatingPromo, setIsValidatingPromo] = React.useState(false);
@@ -89,20 +90,20 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
   const getPlanColor = () => {
     const planName = plan.name.toLowerCase();
     if (planName.includes('vip') || planName.includes('elite')) {
-      return 'text-yellow-600';
+      return 'text-hold-muted-foreground';
     }
     if (planName.includes('premium')) {
-      return 'text-purple-600';
+      return 'text-protocall-premium-text';
     }
-    return 'text-blue-600';
+    return 'text-protocall-blue';
   };
 
   const monthlyPrice = plan.price_monthly || 0;
   const annualPrice = plan.price_annually || 0;
 
   // Calculate final amount with promo
-  const calculateFinalAmount = (cycle) => {
-    const baseAmount = cycle === 'monthly' ? monthlyPrice : annualPrice;
+  const calculateFinalAmount = (forCycle) => {
+    const baseAmount = forCycle === 'monthly' ? monthlyPrice : annualPrice;
 
     if (!appliedPromo) return baseAmount;
 
@@ -125,6 +126,7 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
     : 0;
 
   const isFree = monthlyPrice === 0 && annualPrice === 0;
+  const isAnnual = selectedCycle === 'annually';
 
   const currentTierInfo = planTierHierarchy[currentPlanTier?.toLowerCase()?.trim()] || { order: 0 };
   const thisTierInfo = planTierHierarchy[plan.name.toLowerCase().trim()] || { order: 0 };
@@ -220,7 +222,7 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
   };
 
   return (
-    <Card className={`relative overflow-hidden border-2 border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 ${cardBackground}`}>
+    <Card className={`relative overflow-hidden border-2 border-border shadow-md hover:shadow-xl transition-all duration-300 ${cardBackground}`}>
       <CardContent className="p-6">
         {/* Plan Name and Status */}
         <div className="flex items-center justify-between mb-4">
@@ -228,12 +230,12 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
             <span className={getPlanColor()}>
               {getPlanIcon()}
             </span>
-            <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
+            <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-xs">System</Badge>
             {isCurrentPlan && (
-              <Badge className="bg-gray-900 text-white text-xs">Active</Badge>
+              <Badge className="bg-protocall-ink text-white text-xs">Active</Badge>
             )}
           </div>
         </div>
@@ -243,48 +245,67 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
           {isFree ? (
             <>
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold text-gray-900">₹0</span>
-                <span className="text-gray-500">/month</span>
+                <span className="text-4xl font-bold text-foreground">₹0</span>
+                <span className="text-muted-foreground">/month</span>
               </div>
-              <p className="text-sm text-gray-500 mt-1">Basic platform access</p>
+              <p className="text-sm text-muted-foreground mt-1">Basic platform access</p>
             </>
           ) : (
             <>
-              {/* Monthly Price */}
+              {/* Headline price for the selected billing cycle */}
               <div className="flex items-baseline gap-2">
-                {hasMonthlyDiscount && (
-                  <span className="text-2xl font-semibold text-gray-400 line-through">
-                    ₹{monthlyPrice}
-                  </span>
-                )}
-                <span className="text-4xl font-bold text-gray-900">
-                  ₹{Math.round(monthlyFinalPrice)}
+                {isAnnual
+                  ? hasAnnualDiscount && (
+                      <span className="text-2xl font-semibold text-muted-foreground line-through">
+                        ₹{annualPrice}
+                      </span>
+                    )
+                  : hasMonthlyDiscount && (
+                      <span className="text-2xl font-semibold text-muted-foreground line-through">
+                        ₹{monthlyPrice}
+                      </span>
+                    )}
+                <span className="text-4xl font-bold text-foreground">
+                  ₹{Math.round(isAnnual ? annualFinalPrice : monthlyFinalPrice)}
                 </span>
-                <span className="text-gray-500">/month</span>
+                <span className="text-muted-foreground">{isAnnual ? '/year' : '/month'}</span>
               </div>
 
-              {/* Annual Price Option */}
-              {annualPrice > 0 && (
-                <div className="flex items-center gap-2 mt-1">
-                  <p className="text-sm text-gray-600">
-                    or ₹{Math.round(hasAnnualDiscount ? annualFinalPrice : annualPrice)}/year
-                  </p>
-                  {monthlySavings > 0 && (
-                    <Badge className="bg-green-100 text-green-700 text-xs border-0">
-                      Save {monthlySavings}%
-                    </Badge>
+              {/* The other cycle, shown as the alternative */}
+              {isAnnual
+                ? monthlyPrice > 0 && (
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-sm text-subtle">
+                        or ₹{Math.round(hasMonthlyDiscount ? monthlyFinalPrice : monthlyPrice)}/month
+                      </p>
+                      {monthlySavings > 0 && (
+                        <Badge className="bg-buy-muted text-buy-muted-foreground text-xs border-0">
+                          Save {monthlySavings}% yearly
+                        </Badge>
+                      )}
+                    </div>
+                  )
+                : annualPrice > 0 && (
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-sm text-subtle">
+                        or ₹{Math.round(hasAnnualDiscount ? annualFinalPrice : annualPrice)}/year
+                      </p>
+                      {monthlySavings > 0 && (
+                        <Badge className="bg-buy-muted text-buy-muted-foreground text-xs border-0">
+                          Save {monthlySavings}%
+                        </Badge>
+                      )}
+                    </div>
                   )}
-                </div>
-              )}
 
               {/* Promo Discount Badge */}
               {(hasMonthlyDiscount || hasAnnualDiscount) && (
-                <Badge className="mt-2 bg-green-100 text-green-700 border-green-300">
-                  Promo Applied: Save ₹{Math.round(monthlyPrice - monthlyFinalPrice)}/mo
+                <Badge className="mt-2 bg-buy-muted text-buy-muted-foreground border-buy/30">
+                  Promo Applied: Save ₹{Math.round(isAnnual ? annualPrice - annualFinalPrice : monthlyPrice - monthlyFinalPrice)}{isAnnual ? '/yr' : '/mo'}
                 </Badge>
               )}
 
-              <p className="text-sm text-gray-500 mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 {plan.description || 'Access to premium features'}
               </p>
             </>
@@ -293,10 +314,10 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
 
         {/* Promo Code Section - Only for paid plans */}
         {!isFree && (
-          <div className="mb-4 p-3 bg-white/60 rounded-lg border border-gray-200">
+          <div className="mb-4 p-3 bg-white/60 rounded-lg border border-border">
             <div className="flex items-center gap-2 mb-2">
-              <Tag className="w-4 h-4 text-gray-600" />
-              <span className="text-xs font-semibold text-gray-700">Have a Promo Code?</span>
+              <Tag className="w-4 h-4 text-subtle" />
+              <span className="text-xs font-semibold text-subtle">Have a Promo Code?</span>
             </div>
             <div className="flex gap-2">
               <Input
@@ -331,7 +352,7 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
               )}
             </div>
             {!user && (
-              <p className="text-xs text-amber-600 mt-1">Login to use promo codes</p>
+              <p className="text-xs text-hold-muted-foreground mt-1">Login to use promo codes</p>
             )}
           </div>
         )}
@@ -340,9 +361,9 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
         <div className="mb-6">
           {/* Parent Plan Inclusion */}
           {parentPlanName && (
-            <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg mb-3 border border-blue-100">
-              <Shield className="w-4 h-4 text-blue-600 flex-shrink-0" />
-              <span className="text-sm font-medium text-blue-900">
+            <div className="flex items-center gap-2 p-3 bg-premium-muted rounded-lg mb-3 border border-protocall-premium-light">
+              <Shield className="w-4 h-4 text-protocall-blue flex-shrink-0" />
+              <span className="text-sm font-medium text-protocall-blue">
                 Includes All {parentPlanName} Features
               </span>
             </div>
@@ -351,7 +372,7 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
           {/* Additional Features Header */}
           {plan.features && plan.features.length > 0 && (
             <div className="mb-3">
-              <h4 className="text-sm font-semibold text-gray-900">
+              <h4 className="text-sm font-semibold text-foreground">
                 {parentPlanName ? `Additional ${plan.name} Features:` : 'Features:'}
               </h4>
             </div>
@@ -378,14 +399,14 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
 
                 if (featuresList.length === 0) {
                   return parentPlanName ? (
-                    <p className="text-sm text-gray-500 italic">No additional unique features</p>
+                    <p className="text-sm text-muted-foreground italic">No additional unique features</p>
                   ) : null;
                 }
 
                 return featuresList.map((feature, index) => (
                   <div key={index} className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-gray-700">
+                    <Check className="w-4 h-4 text-positive flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-subtle">
                       {getFeatureName(feature)}
                     </span>
                   </div>
@@ -401,12 +422,12 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
           disabled={isCurrentPlan || isIncluded}
           variant="outline"
           className={`w-full ${buttonState === 'current'
-              ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 cursor-not-allowed hover:from-green-500 hover:to-emerald-500'
+              ? 'bg-buy-soft text-buy-foreground border-0 cursor-not-allowed hover:from-buy hover:to-buy-soft'
               : buttonState === 'included'
-                ? 'bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0 cursor-not-allowed hover:from-gray-400 hover:to-gray-500'
+                ? 'bg-gradient-to-r from-surface-2 to-protocall-sidebar-bg text-white border-0 cursor-not-allowed hover:from-surface-2 hover:to-protocall-sidebar-bg'
                 : buttonState === 'upgrade'
-                  ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0 hover:from-purple-600 hover:to-blue-600 shadow-lg'
-                  : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white border-0 hover:from-blue-600 hover:to-purple-700 shadow-lg'
+                  ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white border-0 hover:from-protocall-deep hover:to-protocall-blue shadow-lg'
+                  : 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white border-0 hover:from-protocall-deep hover:to-protocall-blue shadow-lg'
             }`}
         >
           {buttonState === 'current' ? (

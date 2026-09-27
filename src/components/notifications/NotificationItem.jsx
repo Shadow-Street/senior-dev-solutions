@@ -49,26 +49,26 @@ const getNotificationIcon = (category) => {
 };
 
 const getNotificationColor = (category, priority) => {
-  if (priority === 'critical') return 'text-red-600 bg-red-50';
-  if (priority === 'important') return 'text-blue-600 bg-blue-50';
+  if (priority === 'critical') return 'text-sell-muted-foreground bg-sell-muted';
+  if (priority === 'important') return 'text-protocall-blue bg-premium-muted';
   
   switch (category) {
     case 'security':
-      return 'text-red-600 bg-red-50';
+      return 'text-sell-muted-foreground bg-sell-muted';
     case 'admin_pick':
-      return 'text-purple-600 bg-purple-50';
+      return 'text-protocall-premium-text bg-premium-muted';
     case 'advisor_post':
-      return 'text-green-600 bg-green-50';
+      return 'text-buy-muted-foreground bg-buy-muted';
     case 'price_alert':
-      return 'text-blue-600 bg-blue-50';
+      return 'text-protocall-blue bg-premium-muted';
     case 'profit_alert':
-      return 'text-green-600 bg-green-50';
+      return 'text-buy-muted-foreground bg-buy-muted';
     case 'loss_alert':
-      return 'text-red-600 bg-red-50';
+      return 'text-sell-muted-foreground bg-sell-muted';
     case 'consensus_alert':
-      return 'text-purple-600 bg-purple-50';
+      return 'text-protocall-premium-text bg-premium-muted';
     default:
-      return 'text-slate-600 bg-slate-50';
+      return 'text-subtle bg-surface-2';
   }
 };
 
@@ -92,8 +92,8 @@ export default function NotificationItem({ notification, onMarkAsRead }) {
       onClick={handleClick}
       className={`p-3 rounded-lg border cursor-pointer transition-all hover:shadow-sm ${
         notification.is_read 
-          ? 'bg-white border-slate-200' 
-          : 'bg-blue-50 border-blue-200 shadow-sm'
+          ? 'bg-white border-border' 
+          : 'bg-premium-muted border-protocall-premium-light shadow-sm'
       }`}
     >
       <div className="flex items-start gap-3">
@@ -104,33 +104,33 @@ export default function NotificationItem({ notification, onMarkAsRead }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
             <h4 className={`text-sm font-medium truncate ${
-              notification.is_read ? 'text-slate-700' : 'text-slate-900'
+              notification.is_read ? 'text-subtle' : 'text-foreground'
             }`}>
               {notification.title}
             </h4>
             
             {!notification.is_read && (
-              <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />
+              <div className="w-2 h-2 bg-protocall-blue rounded-full flex-shrink-0" />
             )}
           </div>
           
           <p className={`text-xs mt-1 line-clamp-2 ${
-            notification.is_read ? 'text-slate-500' : 'text-slate-600'
+            notification.is_read ? 'text-muted-foreground' : 'text-subtle'
           }`}>
             {notification.message}
           </p>
           
           <div className="flex items-center justify-between mt-2">
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-muted-foreground">
               {format(new Date(notification.created_date), 'MMM d, h:mm a')}
             </p>
             
             <Badge 
               variant="outline" 
               className={`text-xs capitalize ${
-                notification.priority === 'critical' ? 'border-red-200 text-red-700' :
-                notification.priority === 'important' ? 'border-blue-200 text-blue-700' :
-                'border-slate-200 text-slate-600'
+                notification.priority === 'critical' ? 'border-sell/30 text-sell-muted-foreground' :
+                notification.priority === 'important' ? 'border-protocall-premium-light text-protocall-blue' :
+                'border-border text-subtle'
               }`}
             >
               {notification.category.replace('_', ' ')}

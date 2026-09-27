@@ -12,11 +12,11 @@ const iconMap = {
 };
 
 const platformColors = {
-  facebook: 'hover:text-blue-600',
-  linkedin: 'hover:text-blue-700',
-  twitter: 'hover:text-blue-400',
-  instagram: 'hover:text-pink-600',
-  youtube: 'hover:text-red-600',
+  facebook: 'hover:text-protocall-blue',
+  linkedin: 'hover:text-protocall-blue',
+  twitter: 'hover:text-protocall-premium-light',
+  instagram: 'hover:text-protocall-premium-text',
+  youtube: 'hover:text-sell-muted-foreground',
 };
 
 // Static sample reviews - NO DATABASE CALLS

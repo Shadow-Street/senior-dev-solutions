@@ -175,29 +175,29 @@ export default function TypingIndicator({ roomId, currentUserId }) {
     : `${typingUsers[0].user_name} and ${typingUsers.length - 1} others are typing`;
 
   return (
-    <div className="px-4 py-2 border-t bg-slate-50">
+    <div className="px-4 py-2 border-t bg-surface-2">
       <AnimatePresence>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
-          className="flex items-center gap-2 text-sm text-slate-600"
+          className="flex items-center gap-2 text-sm text-subtle"
         >
           <div className="flex gap-1">
             <motion.span
               animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ duration: 1.5, repeat: Infinity, delay: 0 }}
-              className="w-2 h-2 bg-blue-500 rounded-full"
+              className="w-2 h-2 bg-protocall-blue rounded-full"
             />
             <motion.span
               animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
-              className="w-2 h-2 bg-blue-500 rounded-full"
+              className="w-2 h-2 bg-protocall-blue rounded-full"
             />
             <motion.span
               animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
-              className="w-2 h-2 bg-blue-500 rounded-full"
+              className="w-2 h-2 bg-protocall-blue rounded-full"
             />
           </div>
           <span className="italic">{typingText}</span>

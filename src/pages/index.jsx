@@ -9,7 +9,6 @@ import Dashboard from "./Dashboard";
 import ChatRooms from "./ChatRooms";
 import Subscription from "./Subscription";
 import Polls from "./Polls";
-import Events from "./Events";
 import AdminPanel from "./AdminPanel";
 import AdminLogin from "./admin/AdminLogin";
 import SuperAdminDashboard from "./admin/SuperAdminDashboard";
@@ -26,9 +25,6 @@ import Feedback from "./Feedback";
 import SuperAdmin from "./SuperAdmin";
 import Educators from "./Educators";
 import EntityDashboard from "./EntityDashboard";
-import FinfluencerDashboard from "./FinfluencerDashboard";
-import AdvisorDashboard from "./AdvisorDashboard";
-import EventsManagement from "./EventsManagement";
 import PledgePool from "./PledgePool";
 import ApiExecutions from "./ApiExecutions";
 import AdManagement from "./AdManagement";
@@ -43,9 +39,6 @@ import FundManager_Allocations from "./FundManager_Allocations";
 import FundManager_Reports from "./FundManager_Reports";
 import FeatureHub from "./FeatureHub";
 import MyPortfolio from "./MyPortfolio";
-import BecomeOrganizer from "./BecomeOrganizer";
-import OrganizerDashboard from "./OrganizerDashboard";
-import MyEvents from "./MyEvents";
 import FixSidebarOrder from "./FixSidebarOrder";
 import SubscriptionTest from "./SubscriptionTest";
 import Landing from "./Landing";
@@ -56,15 +49,13 @@ import Privacy from "./Privacy";
 import Cookies from "./Cookies";
 import RiskDisclosure from "./RiskDisclosure";
 import ContactSupport from "./ContactSupport";
-import AdvisorPledgeManagement from "./AdvisorPledgeManagement";
-import PortfolioManagerDashboard from "./PortfolioManagerDashboard";
 import PMRegistration from "./PMRegistration";
 import PortfolioManagers from "./PortfolioManagers";
 import MyPMInvestments from "./MyPMInvestments";
 import MySubscriptions from "./MySubscriptions";
 
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 const PAGES = {
     Login,
@@ -76,7 +67,6 @@ const PAGES = {
     ChatRooms,
     Subscription,
     Polls,
-    Events,
     AdminPanel,
     AdminLogin,
     SuperAdminDashboard,
@@ -93,9 +83,6 @@ const PAGES = {
     SuperAdmin,
     Educators,
     EntityDashboard,
-    FinfluencerDashboard,
-    AdvisorDashboard,
-    EventsManagement,
     PledgePool,
     ApiExecutions,
     AdManagement,
@@ -110,9 +97,6 @@ const PAGES = {
     FundManager_Reports,
     FeatureHub,
     MyPortfolio,
-    BecomeOrganizer,
-    OrganizerDashboard,
-    MyEvents,
     FixSidebarOrder,
     SubscriptionTest,
     Landing,
@@ -123,8 +107,6 @@ const PAGES = {
     Cookies,
     RiskDisclosure,
     ContactSupport,
-    AdvisorPledgeManagement,
-    PortfolioManagerDashboard,
     PMRegistration,
     PortfolioManagers,
     MyPMInvestments,
@@ -176,7 +158,6 @@ export default function Pages() {
                             <Route path="/ChatRooms" element={<ChatRooms />} />
                             <Route path="/Subscription" element={<Subscription />} />
                             <Route path="/Polls" element={<Polls />} />
-                            <Route path="/Events" element={<Events />} />
                             <Route path="/AdminPanel" element={<AdminPanel />} />
                             <Route path="/admin/dashboard" element={<SuperAdminDashboard />} />
                             <Route path="/Profile" element={<Profile />} />
@@ -192,9 +173,6 @@ export default function Pages() {
                             <Route path="/SuperAdmin" element={<SuperAdmin />} />
                             <Route path="/Educators" element={<Educators />} />
                             <Route path="/EntityDashboard" element={<EntityDashboard />} />
-                            <Route path="/FinfluencerDashboard" element={<FinfluencerDashboard />} />
-                            <Route path="/AdvisorDashboard" element={<AdvisorDashboard />} />
-                            <Route path="/EventsManagement" element={<EventsManagement />} />
                             <Route path="/PledgePool" element={<PledgePool />} />
                             <Route path="/ApiExecutions" element={<ApiExecutions />} />
                             <Route path="/AdManagement" element={<AdManagement />} />
@@ -209,17 +187,14 @@ export default function Pages() {
                             <Route path="/FundManager_Reports" element={<FundManager_Reports />} />
                             <Route path="/FeatureHub" element={<FeatureHub />} />
                             <Route path="/MyPortfolio" element={<MyPortfolio />} />
-                            <Route path="/BecomeOrganizer" element={<BecomeOrganizer />} />
-                            <Route path="/OrganizerDashboard" element={<OrganizerDashboard />} />
-                            <Route path="/MyEvents" element={<MyEvents />} />
                             <Route path="/FixSidebarOrder" element={<FixSidebarOrder />} />
                             <Route path="/SubscriptionTest" element={<SubscriptionTest />} />
-                            <Route path="/AdvisorPledgeManagement" element={<AdvisorPledgeManagement />} />
-                            <Route path="/PortfolioManagerDashboard" element={<PortfolioManagerDashboard />} />
                             <Route path="/PMRegistration" element={<PMRegistration />} />
                             <Route path="/PortfolioManagers" element={<PortfolioManagers />} />
                             <Route path="/MyPMInvestments" element={<MyPMInvestments />} />
                             <Route path="/plans-access" element={<MySubscriptions />} />
+                            {/* Retired sections and unknown paths fall back to the Dashboard. */}
+                            <Route path="*" element={<Navigate to="/Dashboard" replace />} />
                         </Routes>
                     </Layout>
                 </ProtectedRoute>

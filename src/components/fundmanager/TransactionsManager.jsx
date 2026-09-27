@@ -41,29 +41,29 @@ export default function TransactionsManager({ onUpdate }) {
 
   const getStatusBadge = (status) => {
     const colors = {
-      completed: 'bg-green-100 text-green-800',
-      pending: 'bg-yellow-100 text-yellow-800',
-      failed: 'bg-red-100 text-red-800',
-      cancelled: 'bg-gray-100 text-gray-800',
-      processing: 'bg-blue-100 text-blue-800',
+      completed: 'bg-buy-muted text-buy-muted-foreground',
+      pending: 'bg-hold-muted text-hold-muted-foreground',
+      failed: 'bg-sell-muted text-sell-muted-foreground',
+      cancelled: 'bg-surface-2 text-foreground',
+      processing: 'bg-premium-muted text-protocall-blue',
     };
-    return <Badge className={colors[status] || 'bg-gray-100'}>{status}</Badge>;
+    return <Badge className={colors[status] || 'bg-surface-2'}>{status}</Badge>;
   };
   
   const getTypeBadge = (type) => {
     const colors = {
-      wallet_deposit: 'bg-blue-100 text-blue-800',
-      purchase: 'bg-green-100 text-green-800',
-      redemption: 'bg-orange-100 text-orange-800',
-      profit_payout: 'bg-purple-100 text-purple-800',
-      wallet_withdrawal: 'bg-red-100 text-red-800',
-      management_fee: 'bg-slate-100 text-slate-800',
+      wallet_deposit: 'bg-premium-muted text-protocall-blue',
+      purchase: 'bg-buy-muted text-buy-muted-foreground',
+      redemption: 'bg-hold-muted text-hold-muted-foreground',
+      profit_payout: 'bg-premium-muted text-protocall-premium-text',
+      wallet_withdrawal: 'bg-sell-muted text-sell-muted-foreground',
+      management_fee: 'bg-surface-2 text-foreground',
     };
-    return <Badge className={`${colors[type] || 'bg-gray-100'} capitalize`}>{type.replace(/_/g, ' ')}</Badge>;
+    return <Badge className={`${colors[type] || 'bg-surface-2'} capitalize`}>{type.replace(/_/g, ' ')}</Badge>;
   }
 
   if (isLoading) {
-    return <div className="flex justify-center items-center p-12"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /><p className="ml-4">Loading Transactions...</p></div>;
+    return <div className="flex justify-center items-center p-12"><Loader2 className="w-8 h-8 animate-spin text-protocall-blue" /><p className="ml-4">Loading Transactions...</p></div>;
   }
 
   return (
@@ -71,14 +71,14 @@ export default function TransactionsManager({ onUpdate }) {
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Activity className="w-6 h-6 text-slate-700" />
+            <Activity className="w-6 h-6 text-subtle" />
             All Fund Transactions
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+              <thead className="text-xs text-subtle uppercase bg-surface-2">
                 <tr>
                   <th scope="col" className="px-6 py-3">Date</th>
                   <th scope="col" className="px-6 py-3">Investor</th>
@@ -91,7 +91,7 @@ export default function TransactionsManager({ onUpdate }) {
               <tbody>
                 {transactions.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="text-center py-12 text-slate-500">
+                    <td colSpan="6" className="text-center py-12 text-muted-foreground">
                       No transactions found.
                     </td>
                   </tr>
@@ -100,13 +100,13 @@ export default function TransactionsManager({ onUpdate }) {
                     const investor = investors[txn.investor_id];
                     const plan = fundPlans[txn.fund_plan_id];
                     return (
-                      <tr key={txn.id} className="bg-white border-b hover:bg-slate-50">
+                      <tr key={txn.id} className="bg-white border-b hover:bg-surface-2">
                         <td className="px-6 py-4">{new Date(txn.transaction_date).toLocaleString()}</td>
                         <td className="px-6 py-4 font-medium">
                           {investor ? (
                             <div>
                                 <p>{investor.full_name}</p>
-                                <p className="text-xs text-slate-500">{investor.investor_code}</p>
+                                <p className="text-xs text-muted-foreground">{investor.investor_code}</p>
                             </div>
                           ) : 'N/A'}
                         </td>

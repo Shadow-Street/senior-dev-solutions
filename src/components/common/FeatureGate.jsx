@@ -31,7 +31,7 @@ export default function FeatureGate({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-protocall-blue"></div>
       </div>
     );
   }
@@ -49,16 +49,16 @@ export default function FeatureGate({
   // Show locked state based on variant
   if (variant === 'inline') {
     return (
-      <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-200">
-        <div className="p-2 bg-purple-100 rounded-lg">
-          <Lock className="w-5 h-5 text-purple-600" />
+      <div className="flex items-center gap-3 p-4 bg-surface-2 rounded-lg border border-protocall-premium-light">
+        <div className="p-2 bg-premium-muted rounded-lg">
+          <Lock className="w-5 h-5 text-protocall-premium-text" />
         </div>
         <div className="flex-1">
-          <p className="text-sm font-semibold text-gray-900">{title || 'Premium Feature'}</p>
-          <p className="text-xs text-gray-600">{description || `Upgrade to ${requiredPlan} to unlock`}</p>
+          <p className="text-sm font-semibold text-foreground">{title || 'Premium Feature'}</p>
+          <p className="text-xs text-subtle">{description || `Upgrade to ${requiredPlan} to unlock`}</p>
         </div>
         <Link to={createPageUrl('Subscription')}>
-          <Button size="sm" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+          <Button size="sm" className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
             <Crown className="w-3 h-3 mr-1" />
             Upgrade
           </Button>
@@ -74,20 +74,20 @@ export default function FeatureGate({
           {children}
         </div>
         <div className="absolute inset-0 flex items-center justify-center">
-          <Card className="max-w-md bg-white/95 backdrop-blur-sm shadow-2xl border-2 border-purple-200">
+          <Card className="max-w-md bg-white/95 backdrop-blur-sm shadow-2xl border-2 border-protocall-premium-light">
             <CardContent className="p-6 text-center">
-              <div className="inline-flex p-4 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full mb-4">
-                <Lock className="w-8 h-8 text-purple-600" />
+              <div className="inline-flex p-4 bg-surface-2 rounded-full mb-4">
+                <Lock className="w-8 h-8 text-protocall-premium-text" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">{title || 'Premium Feature Locked'}</h3>
-              <p className="text-sm text-gray-600 mb-4">
+              <h3 className="text-xl font-bold text-foreground mb-2">{title || 'Premium Feature Locked'}</h3>
+              <p className="text-sm text-subtle mb-4">
                 {description || `This feature requires a ${requiredPlan} subscription`}
               </p>
-              <Badge className="mb-4 bg-purple-100 text-purple-700 border-purple-200">
+              <Badge className="mb-4 bg-premium-muted text-protocall-premium-text border-protocall-premium-light">
                 Your Plan: {userPlan} → Required: {requiredPlan}
               </Badge>
               <Link to={createPageUrl('Subscription')}>
-                <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+                <Button className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
                   <Crown className="w-4 h-4 mr-2" />
                   Upgrade to {requiredPlan}
                   <ArrowRight className="w-4 h-4 ml-2" />
@@ -102,17 +102,17 @@ export default function FeatureGate({
 
   // Default: full card variant
   return (
-    <Card className="bg-gradient-to-br from-purple-50 via-blue-50 to-purple-50 border-2 border-purple-200 shadow-lg">
+    <Card className="bg-surface-2 border-2 border-protocall-premium-light shadow-lg">
       <CardContent className="p-8 text-center">
-        <div className="inline-flex p-6 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full mb-6">
-          <Lock className="w-12 h-12 text-purple-600" />
+        <div className="inline-flex p-6 bg-surface-2 rounded-full mb-6">
+          <Lock className="w-12 h-12 text-protocall-premium-text" />
         </div>
         
-        <h3 className="text-2xl font-bold text-gray-900 mb-3">
+        <h3 className="text-2xl font-bold text-foreground mb-3">
           {title || 'Premium Feature'}
         </h3>
         
-        <p className="text-gray-600 mb-6 max-w-md mx-auto">
+        <p className="text-subtle mb-6 max-w-md mx-auto">
           {description || `Unlock this exclusive feature by upgrading to ${requiredPlan} plan`}
         </p>
 
@@ -120,15 +120,15 @@ export default function FeatureGate({
           <Badge variant="outline" className="text-sm px-4 py-2">
             Current: {userPlan}
           </Badge>
-          <ArrowRight className="w-4 h-4 text-gray-400" />
-          <Badge className="text-sm px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+          <ArrowRight className="w-4 h-4 text-muted-foreground" />
+          <Badge className="text-sm px-4 py-2 bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
             Required: {requiredPlan}
           </Badge>
         </div>
 
         <div className="space-y-3">
           <Link to={createPageUrl('Subscription')}>
-            <Button size="lg" className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all">
+            <Button size="lg" className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white shadow-lg hover:shadow-xl transition-all">
               <Crown className="w-5 h-5 mr-2" />
               Upgrade to {requiredPlan}
               <Sparkles className="w-5 h-5 ml-2" />

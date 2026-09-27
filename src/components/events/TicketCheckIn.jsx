@@ -152,14 +152,14 @@ export default function TicketCheckIn({ event, open, onClose, onUpdate }) {
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl">
-            <QrCode className="w-6 h-6 text-blue-600" />
+            <QrCode className="w-6 h-6 text-protocall-blue" />
             Ticket Check-In: {event.title}
           </DialogTitle>
         </DialogHeader>
 
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
           </div>
         ) : (
           <div className="space-y-6">
@@ -167,55 +167,55 @@ export default function TicketCheckIn({ event, open, onClose, onUpdate }) {
             <div className="grid grid-cols-4 gap-4">
               <Card>
                 <CardContent className="p-4 text-center">
-                  <Users className="w-5 h-5 mx-auto mb-2 text-blue-600" />
-                  <p className="text-2xl font-bold text-slate-900">{stats.totalRSVPs}</p>
-                  <p className="text-xs text-slate-600">Total RSVPs</p>
+                  <Users className="w-5 h-5 mx-auto mb-2 text-protocall-blue" />
+                  <p className="text-2xl font-bold text-foreground">{stats.totalRSVPs}</p>
+                  <p className="text-xs text-subtle">Total RSVPs</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardContent className="p-4 text-center">
-                  <CheckCircle className="w-5 h-5 mx-auto mb-2 text-green-600" />
-                  <p className="text-2xl font-bold text-green-600">{stats.checkedIn}</p>
-                  <p className="text-xs text-slate-600">Checked In</p>
+                  <CheckCircle className="w-5 h-5 mx-auto mb-2 text-buy-muted-foreground" />
+                  <p className="text-2xl font-bold text-buy-muted-foreground">{stats.checkedIn}</p>
+                  <p className="text-xs text-subtle">Checked In</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardContent className="p-4 text-center">
-                  <Clock className="w-5 h-5 mx-auto mb-2 text-orange-600" />
-                  <p className="text-2xl font-bold text-orange-600">{stats.pending}</p>
-                  <p className="text-xs text-slate-600">Pending</p>
+                  <Clock className="w-5 h-5 mx-auto mb-2 text-hold-muted-foreground" />
+                  <p className="text-2xl font-bold text-hold-muted-foreground">{stats.pending}</p>
+                  <p className="text-xs text-subtle">Pending</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardContent className="p-4 text-center">
-                  <QrCode className="w-5 h-5 mx-auto mb-2 text-purple-600" />
-                  <p className="text-2xl font-bold text-purple-600">{stats.rate}%</p>
-                  <p className="text-xs text-slate-600">Attendance Rate</p>
+                  <QrCode className="w-5 h-5 mx-auto mb-2 text-protocall-premium-text" />
+                  <p className="text-2xl font-bold text-protocall-premium-text">{stats.rate}%</p>
+                  <p className="text-xs text-subtle">Attendance Rate</p>
                 </CardContent>
               </Card>
             </div>
 
             <Tabs defaultValue="manual" className="w-full">
               <TabsList className="grid w-full grid-cols-3 gap-2 bg-transparent p-0">
-                <TabsTrigger value="manual" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white rounded-xl">
+                <TabsTrigger value="manual" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white rounded-xl">
                   Manual Check-In
                 </TabsTrigger>
-                <TabsTrigger value="scanner" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white rounded-xl">
+                <TabsTrigger value="scanner" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white rounded-xl">
                   QR Scanner
                 </TabsTrigger>
-                <TabsTrigger value="list" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white rounded-xl">
+                <TabsTrigger value="list" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white rounded-xl">
                   Attendance List
                 </TabsTrigger>
               </TabsList>
 
               {/* Manual Check-In */}
               <TabsContent value="manual" className="space-y-4 mt-4">
-                <Card className="bg-gradient-to-r from-blue-50 to-purple-50">
+                <Card className="bg-surface-2">
                   <CardContent className="p-6">
-                    <label className="text-sm font-medium mb-2 block text-slate-700">
+                    <label className="text-sm font-medium mb-2 block text-subtle">
                       Enter Ticket ID (last 8 characters)
                     </label>
                     <div className="flex gap-2">
@@ -230,7 +230,7 @@ export default function TicketCheckIn({ event, open, onClose, onUpdate }) {
                       <Button
                         onClick={handleCheckIn}
                         disabled={isChecking}
-                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                        className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
                       >
                         <Search className="w-4 h-4 mr-2" />
                         Check In
@@ -241,48 +241,48 @@ export default function TicketCheckIn({ event, open, onClose, onUpdate }) {
 
                 {/* Ticket Information Display */}
                 {ticketInfo && (
-                  <Card className={`${ticketInfo.error ? 'bg-red-50 border-red-200' :
-                    ticketInfo.alreadyUsed ? 'bg-yellow-50 border-yellow-200' :
-                      ticketInfo.invalidStatus ? 'bg-orange-50 border-orange-200' :
-                        'bg-green-50 border-green-200'
+                  <Card className={`${ticketInfo.error ? 'bg-sell-muted border-sell/30' :
+                    ticketInfo.alreadyUsed ? 'bg-hold-muted border-hold/30' :
+                      ticketInfo.invalidStatus ? 'bg-hold-muted border-hold/30' :
+                        'bg-buy-muted border-buy/30'
                     }`}>
                     <CardContent className="p-6">
                       {ticketInfo.error ? (
-                        <div className="flex items-center gap-2 text-red-700">
+                        <div className="flex items-center gap-2 text-sell-muted-foreground">
                           <XCircle className="w-5 h-5" />
                           <span className="font-semibold">{ticketInfo.error}</span>
                         </div>
                       ) : ticketInfo.alreadyUsed ? (
                         <div>
-                          <div className="flex items-center gap-2 text-yellow-700 mb-2">
+                          <div className="flex items-center gap-2 text-hold-muted-foreground mb-2">
                             <XCircle className="w-5 h-5" />
                             <span className="font-semibold">Already Checked In</span>
                           </div>
-                          <p className="text-sm text-yellow-600">
+                          <p className="text-sm text-hold-muted-foreground">
                             Ticket ID: {ticketInfo.id.slice(-8).toUpperCase()}
                           </p>
                         </div>
                       ) : ticketInfo.invalidStatus ? (
                         <div>
-                          <div className="flex items-center gap-2 text-orange-700 mb-2">
+                          <div className="flex items-center gap-2 text-hold-muted-foreground mb-2">
                             <XCircle className="w-5 h-5" />
                             <span className="font-semibold">Invalid Ticket Status</span>
                           </div>
-                          <p className="text-sm text-orange-600">
+                          <p className="text-sm text-hold-muted-foreground">
                             Status: {ticketInfo.status}
                           </p>
                         </div>
                       ) : (
                         <div>
-                          <div className="flex items-center gap-2 text-green-700 mb-3">
+                          <div className="flex items-center gap-2 text-buy-muted-foreground mb-3">
                             <CheckCircle className="w-5 h-5" />
                             <span className="font-semibold">Check-In Successful!</span>
                           </div>
-                          <div className="space-y-1 text-sm text-green-700">
+                          <div className="space-y-1 text-sm text-buy-muted-foreground">
                             <p>Ticket ID: {ticketInfo.id.slice(-8).toUpperCase()}</p>
                             <p>Amount Paid: ₹{ticketInfo.ticket_price?.toLocaleString()}</p>
                             <p>Purchase Date: {format(new Date(ticketInfo.purchased_date || ticketInfo.created_date), 'dd/MM/yyyy')}</p>
-                            <p className="font-semibold text-green-800 mt-2">✓ Attendee has been marked as checked in</p>
+                            <p className="font-semibold text-buy-muted-foreground mt-2">✓ Attendee has been marked as checked in</p>
                           </div>
                         </div>
                       )}
@@ -295,19 +295,19 @@ export default function TicketCheckIn({ event, open, onClose, onUpdate }) {
               <TabsContent value="scanner" className="space-y-4 mt-4">
                 <Card>
                   <CardContent className="p-12 text-center">
-                    <QrCode className="w-24 h-24 mx-auto mb-4 text-slate-300" />
-                    <h3 className="text-lg font-semibold text-slate-900 mb-2">QR Code Scanner</h3>
-                    <p className="text-slate-600 mb-6">
+                    <QrCode className="w-24 h-24 mx-auto mb-4 text-muted-foreground" />
+                    <h3 className="text-lg font-semibold text-foreground mb-2">QR Code Scanner</h3>
+                    <p className="text-subtle mb-6">
                       Scan ticket QR codes for instant check-in
                     </p>
                     <Button
                       onClick={() => toast.info('QR Scanner functionality coming soon!')}
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                      className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
                     >
                       <QrCode className="w-4 h-4 mr-2" />
                       Activate Scanner
                     </Button>
-                    <p className="text-xs text-slate-500 mt-4">
+                    <p className="text-xs text-muted-foreground mt-4">
                       Requires camera access for QR code scanning
                     </p>
                   </CardContent>
@@ -317,12 +317,12 @@ export default function TicketCheckIn({ event, open, onClose, onUpdate }) {
               {/* Attendance List */}
               <TabsContent value="list" className="space-y-4 mt-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-slate-900">Real-Time Attendance</h3>
+                  <h3 className="text-lg font-semibold text-foreground">Real-Time Attendance</h3>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={exportAttendanceCSV}
-                    className="border-blue-300 text-blue-700 hover:bg-blue-50"
+                    className="border-protocall-premium-light text-protocall-blue hover:bg-premium-muted"
                   >
                     <Download className="w-4 h-4 mr-2" />
                     Export Report
@@ -333,36 +333,36 @@ export default function TicketCheckIn({ event, open, onClose, onUpdate }) {
                   {attendees.length === 0 ? (
                     <Card>
                       <CardContent className="p-12 text-center">
-                        <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                        <p className="text-slate-500">No attendees yet</p>
+                        <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                        <p className="text-muted-foreground">No attendees yet</p>
                       </CardContent>
                     </Card>
                   ) : (
                     attendees.map((attendee) => {
                       const ticket = tickets.find(t => t.user_id === attendee.user_id);
                       return (
-                        <Card key={attendee.id} className={attendee.confirmed ? 'border-green-200 bg-green-50' : ''}>
+                        <Card key={attendee.id} className={attendee.confirmed ? 'border-buy/30 bg-buy-muted' : ''}>
                           <CardContent className="p-4">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center text-white font-semibold">
                                   {(attendee.user_name || 'U')[0].toUpperCase()}
                                 </div>
                                 <div>
-                                  <p className="font-medium text-slate-900">{attendee.user_name || 'Unknown'}</p>
-                                  <p className="text-xs text-slate-500">
+                                  <p className="font-medium text-foreground">{attendee.user_name || 'Unknown'}</p>
+                                  <p className="text-xs text-muted-foreground">
                                     {ticket ? `Ticket: ${ticket.id.slice(-8).toUpperCase()}` : 'No ticket'}
                                   </p>
                                 </div>
                               </div>
                               <div className="flex items-center gap-3">
                                 {attendee.confirmed ? (
-                                  <Badge className="bg-green-100 text-green-700">
+                                  <Badge className="bg-buy-muted text-buy-muted-foreground">
                                     <CheckCircle className="w-3 h-3 mr-1" />
                                     Checked In
                                   </Badge>
                                 ) : (
-                                  <Badge variant="outline" className="text-orange-600 border-orange-300">
+                                  <Badge variant="outline" className="text-hold-muted-foreground border-hold/30">
                                     <Clock className="w-3 h-3 mr-1" />
                                     Pending
                                   </Badge>

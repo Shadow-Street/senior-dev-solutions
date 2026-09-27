@@ -13,16 +13,16 @@ export default function EmptyState({
             <Card className="max-w-md w-full">
                 <CardContent className="flex flex-col items-center text-center p-12 space-y-4">
                     {Icon && (
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                            <Icon className="w-8 h-8 text-purple-600" />
+                        <div className="w-16 h-16 rounded-full bg-surface-2 flex items-center justify-center">
+                            <Icon className="w-8 h-8 text-protocall-premium-text" />
                         </div>
                     )}
 
                     <div className="space-y-2">
-                        <h3 className="text-xl font-semibold text-slate-900">
+                        <h3 className="text-xl font-semibold text-foreground">
                             {title}
                         </h3>
-                        <p className="text-sm text-slate-600">
+                        <p className="text-sm text-subtle">
                             {description}
                         </p>
                     </div>
@@ -30,7 +30,7 @@ export default function EmptyState({
                     {action && (
                         <Button
                             onClick={action.onClick}
-                            className="mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                            className="mt-4 bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
                         >
                             {action.label}
                         </Button>

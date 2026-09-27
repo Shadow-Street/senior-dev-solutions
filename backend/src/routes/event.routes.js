@@ -8,10 +8,7 @@ const { authMiddleware } = require("../middleware/auth");
 const eventController = createCrudController(db.Event);
 // Main Events CRUD - Manual Route Definition for Auth Control
 router.get('/', eventController.list);
-router.get('/:id', eventController.get);
 router.post('/', authMiddleware, eventController.create);
-router.put('/:id', authMiddleware, eventController.update);
-router.delete('/:id', authMiddleware, eventController.delete);
 // createCrudRoutes(router, eventController); // Removed automatic generation to allow custom middleware
 
 // Event Tickets
@@ -73,5 +70,11 @@ const organizerRouter = express.Router();
 const organizerController = createCrudController(db.EventOrganizer);
 createCrudRoutes(organizerRouter, organizerController);
 router.use('/organizers', organizerRouter);
+
+// Parameterised routes LAST: '/:id' would otherwise swallow '/tickets',
+// '/attendees', '/refunds' and every other sub-router mounted above.
+router.get('/:id', eventController.get);
+router.put('/:id', authMiddleware, eventController.update);
+router.delete('/:id', authMiddleware, eventController.delete);
 
 module.exports = router;

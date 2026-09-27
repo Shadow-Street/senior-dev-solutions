@@ -84,13 +84,13 @@ export default function PromoCodeManager({ event, events, organizerId, onUpdate 
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-xl font-bold text-slate-800">Promo Codes</h3>
-          <p className="text-sm text-slate-600">
+          <h3 className="text-xl font-bold text-foreground">Promo Codes</h3>
+          <p className="text-sm text-subtle">
             {event ? `Manage discount codes for ${event.title}` : 'Manage discount codes for all your events'}
           </p>
         </div>
         {event ? (
-          <Button onClick={() => openCreateModal()} className="bg-gradient-to-r from-purple-600 to-blue-600">
+          <Button onClick={() => openCreateModal()} className="bg-gradient-to-r from-protocall-deep to-protocall-blue">
             <Plus className="w-4 h-4 mr-2" />
             Create Code
           </Button>
@@ -124,19 +124,19 @@ export default function PromoCodeManager({ event, events, organizerId, onUpdate 
                   {/* Show event name if in dashboard mode */}
                   {!event && eventDetails && (
                     <div className="mb-3 pb-3 border-b">
-                      <p className="text-xs text-slate-500">Event</p>
-                      <p className="text-sm font-semibold text-slate-800">{eventDetails.title}</p>
+                      <p className="text-xs text-muted-foreground">Event</p>
+                      <p className="text-sm font-semibold text-foreground">{eventDetails.title}</p>
                     </div>
                   )}
 
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-purple-100 rounded-lg">
-                        <Ticket className="w-5 h-5 text-purple-600" />
+                      <div className="p-2 bg-premium-muted rounded-lg">
+                        <Ticket className="w-5 h-5 text-protocall-premium-text" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <code className="text-lg font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded">
+                          <code className="text-lg font-bold text-protocall-premium-text bg-premium-muted px-3 py-1 rounded">
                             {promo.code}
                           </code>
                           <Button
@@ -148,38 +148,38 @@ export default function PromoCodeManager({ event, events, organizerId, onUpdate 
                             <Copy className="w-3 h-3" />
                           </Button>
                         </div>
-                        <p className="text-xs text-slate-500 mt-1">{promo.description}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{promo.description}</p>
                       </div>
                     </div>
-                    <Badge className={promo.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                    <Badge className={promo.is_active ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-surface-2 text-foreground'}>
                       {promo.is_active ? 'Active' : 'Inactive'}
                     </Badge>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 mb-4">
-                    <div className="bg-blue-50 p-3 rounded-lg">
+                    <div className="bg-premium-muted p-3 rounded-lg">
                       <div className="flex items-center gap-2 mb-1">
                         {promo.discount_type === 'percentage' ? (
-                          <Percent className="w-4 h-4 text-blue-600" />
+                          <Percent className="w-4 h-4 text-protocall-blue" />
                         ) : (
-                          <DollarSign className="w-4 h-4 text-blue-600" />
+                          <DollarSign className="w-4 h-4 text-protocall-blue" />
                         )}
-                        <p className="text-xs text-blue-600 font-medium">Discount</p>
+                        <p className="text-xs text-protocall-blue font-medium">Discount</p>
                       </div>
-                      <p className="text-xl font-bold text-blue-900">
+                      <p className="text-xl font-bold text-protocall-blue">
                         {promo.discount_type === 'percentage' ? `${promo.discount_value}%` : `₹${promo.discount_value}`}
                       </p>
                     </div>
 
-                    <div className="bg-green-50 p-3 rounded-lg">
-                      <p className="text-xs text-green-600 font-medium mb-1">Usage</p>
-                      <p className="text-xl font-bold text-green-900">
+                    <div className="bg-buy-muted p-3 rounded-lg">
+                      <p className="text-xs text-buy-muted-foreground font-medium mb-1">Usage</p>
+                      <p className="text-xl font-bold text-buy-muted-foreground">
                         {promo.current_uses} / {promo.max_uses || '∞'}
                       </p>
                     </div>
                   </div>
 
-                  <div className="text-xs text-slate-600 space-y-1 mb-4">
+                  <div className="text-xs text-subtle space-y-1 mb-4">
                     <p>Valid: {format(new Date(promo.valid_from), 'MMM d, yyyy')} - {format(new Date(promo.valid_until), 'MMM d, yyyy')}</p>
                     {promo.minimum_tickets > 1 && (
                       <p>Min tickets: {promo.minimum_tickets}</p>
@@ -190,7 +190,7 @@ export default function PromoCodeManager({ event, events, organizerId, onUpdate 
                     size="sm"
                     variant="outline"
                     onClick={() => handleDelete(promo.id)}
-                    className="w-full text-red-600 hover:bg-red-50 border-red-200"
+                    className="w-full text-sell-muted-foreground hover:bg-sell-muted border-sell/30"
                   >
                     <Trash2 className="w-3 h-3 mr-2" />
                     Delete Code
@@ -203,16 +203,16 @@ export default function PromoCodeManager({ event, events, organizerId, onUpdate 
       ) : (
         <Card>
           <CardContent className="p-12 text-center">
-            <Ticket className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-            <p className="text-slate-600">No promo codes created yet</p>
+            <Ticket className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <p className="text-subtle">No promo codes created yet</p>
             {event ? (
               <Button onClick={() => openCreateModal()} className="mt-4">
                 Create Your First Code
               </Button>
             ) : events && events.length > 0 ? (
-              <p className="text-sm text-slate-500 mt-2">Select an event above to create a promo code</p>
+              <p className="text-sm text-muted-foreground mt-2">Select an event above to create a promo code</p>
             ) : (
-              <p className="text-sm text-slate-500 mt-2">Create an event first to add promo codes</p>
+              <p className="text-sm text-muted-foreground mt-2">Create an event first to add promo codes</p>
             )}
           </CardContent>
         </Card>
@@ -281,7 +281,7 @@ function CreatePromoCodeModal({ event, onClose, onSuccess }) {
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Ticket className="w-5 h-5 text-purple-600" />
+            <Ticket className="w-5 h-5 text-protocall-premium-text" />
             Create Promo Code
           </DialogTitle>
         </DialogHeader>
@@ -385,7 +385,7 @@ function CreatePromoCodeModal({ event, onClose, onSuccess }) {
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting} className="bg-purple-600 hover:bg-purple-700">
+            <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary">
               {isSubmitting ? 'Creating...' : 'Create Code'}
             </Button>
           </div>

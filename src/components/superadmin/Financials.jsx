@@ -33,14 +33,14 @@ import CommissionAnalytics from './financials/CommissionAnalytics';
 import RefundAnalytics from './financials/RefundAnalytics'; // ADDED: New component
 
 const tabs = [
-  { id: 'overview', name: 'Overview', icon: BarChart3, gradient: 'from-blue-500 to-blue-600' },
-  { id: 'commission-analytics', name: 'Commission Analytics', icon: Percent, gradient: 'from-emerald-500 to-emerald-600' },
-  { id: 'subscription', name: 'Subscription Revenue', icon: CreditCard, gradient: 'from-green-500 to-green-600' },
-  { id: 'refunds', name: 'Refunds', icon: RotateCcw, gradient: 'from-orange-500 to-orange-600' }, // ADDED: Refunds tab
-  { id: 'payouts', name: 'Payouts', icon: HandCoins, gradient: 'from-purple-500 to-purple-600' },
-  { id: 'expenses', name: 'Expenses', icon: Receipt, gradient: 'from-orange-500 to-orange-600' },
-  { id: 'reports', name: 'Reports', icon: FileText, gradient: 'from-teal-500 to-teal-600' },
-  { id: 'audit', name: 'Audit Log', icon: ShieldCheck, gradient: 'from-red-500 to-red-600' }
+  { id: 'overview', name: 'Overview', icon: BarChart3, gradient: 'from-protocall-deep to-protocall-blue' },
+  { id: 'commission-analytics', name: 'Commission Analytics', icon: Percent, gradient: 'from-buy to-buy-soft' },
+  { id: 'subscription', name: 'Subscription Revenue', icon: CreditCard, gradient: 'from-buy to-buy-soft' },
+  { id: 'refunds', name: 'Refunds', icon: RotateCcw, gradient: 'from-hold to-hold' }, // ADDED: Refunds tab
+  { id: 'payouts', name: 'Payouts', icon: HandCoins, gradient: 'from-protocall-deep to-protocall-blue' },
+  { id: 'expenses', name: 'Expenses', icon: Receipt, gradient: 'from-hold to-hold' },
+  { id: 'reports', name: 'Reports', icon: FileText, gradient: 'from-buy to-buy-soft' },
+  { id: 'audit', name: 'Audit Log', icon: ShieldCheck, gradient: 'from-sell to-sell' }
 ];
 
 export default function Financials() {
@@ -424,20 +424,20 @@ export default function Financials() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-buy to-protocall-blue rounded-xl flex items-center justify-center">
                 <DollarSign className="w-6 h-6 text-white" />
               </div>
               <div>
-                <CardTitle className="text-2xl bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                <CardTitle className="text-2xl bg-gradient-to-r from-protocall-ink to-protocall-sidebar-bg bg-clip-text text-transparent">
                   Financial Management Suite
                 </CardTitle>
-                <p className="text-sm text-slate-600 mt-1">
+                <p className="text-sm text-subtle mt-1">
                   Complete financial oversight with subscription analytics and promo tracking
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2 text-sm text-slate-600">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="flex items-center gap-2 text-sm text-subtle">
+              <div className="w-2 h-2 bg-buy rounded-full animate-pulse"></div>
               <span>Real-time Data</span>
             </div>
           </div>
@@ -451,7 +451,7 @@ export default function Financials() {
                 <Button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg"
+                  className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
                   variant="ghost"
                   style={isActive ? {
                     background: 'linear-gradient(to right, rgb(59 130 246), rgb(147 51 234))',
@@ -459,7 +459,7 @@ export default function Financials() {
                     boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
                   } : {}}
                 >
-                  <tab.icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-blue-700'}`} />
+                  <tab.icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-protocall-blue'}`} />
                   <span className="text-sm">{tab.name}</span>
                 </Button>
               );

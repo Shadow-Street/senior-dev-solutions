@@ -162,7 +162,7 @@ export default function BecomeOrganizerPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
       </div>
     );
   }
@@ -173,7 +173,7 @@ export default function BecomeOrganizerPage() {
     window.location.href = createPageUrl('OrganizerDashboard');
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
       </div>
     );
   }
@@ -185,22 +185,22 @@ export default function BecomeOrganizerPage() {
       window.location.href = createPageUrl('OrganizerDashboard');
       return (
         <div className="min-h-screen flex items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
         </div>
       );
     }
 
     // Show pending/rejected status
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 p-6">
+      <div className="min-h-screen bg-surface-2 p-6">
         <div className="max-w-2xl mx-auto">
           <Card className="shadow-lg">
             <CardHeader className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-premium-muted rounded-full flex items-center justify-center mx-auto mb-4">
                 {existingOrganizer.status === 'pending_approval' ? (
-                  <Clock className="w-10 h-10 text-yellow-600" />
+                  <Clock className="w-10 h-10 text-hold-muted-foreground" />
                 ) : (
-                  <AlertCircle className="w-10 h-10 text-red-600" />
+                  <AlertCircle className="w-10 h-10 text-sell-muted-foreground" />
                 )}
               </div>
               <CardTitle className="text-2xl">
@@ -211,19 +211,19 @@ export default function BecomeOrganizerPage() {
             <CardContent className="space-y-4">
               {existingOrganizer.status === 'pending_approval' && (
                 <>
-                  <p className="text-center text-slate-600">
+                  <p className="text-center text-subtle">
                     Your organizer profile is being reviewed. You can still create events using your {user.app_role} account.
                   </p>
-                  <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                    <p className="text-sm text-green-800 font-semibold mb-2">
+                  <div className="bg-buy-muted p-4 rounded-lg border border-buy/30">
+                    <p className="text-sm text-buy-muted-foreground font-semibold mb-2">
                       ✅ You already have access!
                     </p>
-                    <p className="text-sm text-green-700 mb-3">
+                    <p className="text-sm text-buy-muted-foreground mb-3">
                       As a verified {user.app_role}, you can create and manage events right now while waiting for your custom organizer profile to be approved.
                     </p>
                     <Button 
                       onClick={() => window.location.href = createPageUrl('OrganizerDashboard')}
-                      className="w-full bg-green-600 hover:bg-green-700"
+                      className="w-full bg-buy hover:bg-buy"
                     >
                       Go to Organizer Dashboard
                     </Button>
@@ -233,27 +233,27 @@ export default function BecomeOrganizerPage() {
               
               {existingOrganizer.status === 'rejected' && (
                 <>
-                  <p className="text-center text-slate-600">
+                  <p className="text-center text-subtle">
                     Your organizer profile application was not approved.
                   </p>
                   {existingOrganizer.rejection_reason && (
-                    <div className="bg-red-50 p-4 rounded-lg">
-                      <p className="text-sm text-red-800">
+                    <div className="bg-sell-muted p-4 rounded-lg">
+                      <p className="text-sm text-sell-muted-foreground">
                         <strong>Reason:</strong> {existingOrganizer.rejection_reason}
                       </p>
                     </div>
                   )}
                   {hasRoleAccess && (
-                    <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                      <p className="text-sm text-green-800 font-semibold mb-2">
+                    <div className="bg-buy-muted p-4 rounded-lg border border-buy/30">
+                      <p className="text-sm text-buy-muted-foreground font-semibold mb-2">
                         ✅ You still have access!
                       </p>
-                      <p className="text-sm text-green-700 mb-3">
+                      <p className="text-sm text-buy-muted-foreground mb-3">
                         Despite the profile rejection, you can still organize events using your {user.app_role} account.
                       </p>
                       <Button 
                         onClick={() => window.location.href = createPageUrl('OrganizerDashboard')}
-                        className="w-full bg-green-600 hover:bg-green-700"
+                        className="w-full bg-buy hover:bg-buy"
                       >
                         Go to Organizer Dashboard
                       </Button>
@@ -270,46 +270,46 @@ export default function BecomeOrganizerPage() {
 
   // Show registration form
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 p-6">
+    <div className="min-h-screen bg-surface-2 p-6">
       <div className="max-w-4xl mx-auto">
         {/* Hero Section */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-20 h-20 bg-gradient-to-br from-protocall-deep to-protocall-blue rounded-full flex items-center justify-center mx-auto mb-4">
             <Calendar className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">Become an Event Organizer</h1>
-          <p className="text-lg text-slate-600">Host events, build your community, and earn revenue</p>
+          <h1 className="text-4xl font-bold text-foreground mb-2">Become an Event Organizer</h1>
+          <p className="text-lg text-subtle">Host events, build your community, and earn revenue</p>
         </div>
 
         {/* Benefits Section */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <Card className="text-center">
             <CardContent className="pt-6">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-6 h-6 text-blue-600" />
+              <div className="w-12 h-12 bg-premium-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="w-6 h-6 text-protocall-blue" />
               </div>
-              <h3 className="font-semibold text-slate-900 mb-2">Reach Thousands</h3>
-              <p className="text-sm text-slate-600">Connect with our active community of traders and investors</p>
+              <h3 className="font-semibold text-foreground mb-2">Reach Thousands</h3>
+              <p className="text-sm text-subtle">Connect with our active community of traders and investors</p>
             </CardContent>
           </Card>
           
           <Card className="text-center">
             <CardContent className="pt-6">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Award className="w-6 h-6 text-green-600" />
+              <div className="w-12 h-12 bg-buy-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Award className="w-6 h-6 text-buy-muted-foreground" />
               </div>
-              <h3 className="font-semibold text-slate-900 mb-2">Earn Revenue</h3>
-              <p className="text-sm text-slate-600">Monetize your events with ticket sales (80% revenue share)</p>
+              <h3 className="font-semibold text-foreground mb-2">Earn Revenue</h3>
+              <p className="text-sm text-subtle">Monetize your events with ticket sales (80% revenue share)</p>
             </CardContent>
           </Card>
           
           <Card className="text-center">
             <CardContent className="pt-6">
-              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Star className="w-6 h-6 text-purple-600" />
+              <div className="w-12 h-12 bg-premium-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Star className="w-6 h-6 text-protocall-premium-text" />
               </div>
-              <h3 className="font-semibold text-slate-900 mb-2">Build Authority</h3>
-              <p className="text-sm text-slate-600">Establish yourself as a thought leader in finance</p>
+              <h3 className="font-semibold text-foreground mb-2">Build Authority</h3>
+              <p className="text-sm text-subtle">Establish yourself as a thought leader in finance</p>
             </CardContent>
           </Card>
         </div>
@@ -323,7 +323,7 @@ export default function BecomeOrganizerPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Basic Information */}
               <div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-4">Basic Information</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">Basic Information</h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="display_name">Display Name *</Label>
@@ -358,12 +358,12 @@ export default function BecomeOrganizerPage() {
                   rows={4}
                   required
                 />
-                <p className="text-xs text-slate-500 mt-1">Minimum 100 characters</p>
+                <p className="text-xs text-muted-foreground mt-1">Minimum 100 characters</p>
               </div>
 
               {/* Contact Information */}
               <div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-4">Contact Information</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">Contact Information</h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="contact_email">Business Email *</Label>
@@ -413,7 +413,7 @@ export default function BecomeOrganizerPage() {
 
               {/* Social Links */}
               <div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-4">Online Presence (Optional)</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">Online Presence (Optional)</h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="website">Website</Label>
@@ -437,11 +437,11 @@ export default function BecomeOrganizerPage() {
               </div>
 
               {/* Terms */}
-              <div className="bg-slate-50 p-4 rounded-lg">
-                <p className="text-sm text-slate-600 mb-2">
+              <div className="bg-surface-2 p-4 rounded-lg">
+                <p className="text-sm text-subtle mb-2">
                   <strong>By submitting this application, you agree to:</strong>
                 </p>
-                <ul className="text-sm text-slate-600 space-y-1 ml-4 list-disc">
+                <ul className="text-sm text-subtle space-y-1 ml-4 list-disc">
                   <li>Follow Protocol's community guidelines</li>
                   <li>20% platform commission on ticket sales</li>
                   <li>Maintain professional conduct at all events</li>
@@ -462,7 +462,7 @@ export default function BecomeOrganizerPage() {
                 <Button 
                   type="submit" 
                   disabled={isSubmitting}
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600"
+                  className="flex-1 bg-gradient-to-r from-protocall-deep to-protocall-blue"
                 >
                   {isSubmitting ? (
                     <>

@@ -63,11 +63,11 @@ export default function AdvisorPledgeExecutionPanel({ user, advisorProfile, acce
 
   const getStatusBadge = (status) => {
     const config = {
-      'approved': { color: 'bg-blue-100 text-blue-800', text: 'Approved - Ready to Start' },
-      'active': { color: 'bg-green-100 text-green-800', text: 'Active - Accepting Pledges' },
-      'executing': { color: 'bg-purple-100 text-purple-800', text: 'Executing Trades' },
-      'awaiting_sell_execution': { color: 'bg-orange-100 text-orange-800', text: 'Awaiting Sell Execution' },
-      'completed': { color: 'bg-gray-100 text-gray-800', text: 'Completed' }
+      'approved': { color: 'bg-premium-muted text-protocall-blue', text: 'Approved - Ready to Start' },
+      'active': { color: 'bg-buy-muted text-buy-muted-foreground', text: 'Active - Accepting Pledges' },
+      'executing': { color: 'bg-premium-muted text-protocall-premium-text', text: 'Executing Trades' },
+      'awaiting_sell_execution': { color: 'bg-hold-muted text-hold-muted-foreground', text: 'Awaiting Sell Execution' },
+      'completed': { color: 'bg-surface-2 text-foreground', text: 'Completed' }
     };
     const { color, text } = config[status] || config['approved'];
     return <Badge className={color}>{text}</Badge>;
@@ -76,16 +76,16 @@ export default function AdvisorPledgeExecutionPanel({ user, advisorProfile, acce
   if (isLoading) {
     return (
       <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto"></div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <Alert className="bg-blue-50 border-blue-200">
-        <AlertCircle className="h-4 w-4 text-blue-600" />
-        <AlertDescription className="text-blue-800">
+      <Alert className="bg-premium-muted border-protocall-premium-light">
+        <AlertCircle className="h-4 w-4 text-protocall-blue" />
+        <AlertDescription className="text-protocall-blue">
           <strong>Execution Authority:</strong> Only SuperAdmin can execute trades.
           Once SuperAdmin approves and executes your sessions, you'll earn your commission automatically.
         </AlertDescription>
@@ -94,9 +94,9 @@ export default function AdvisorPledgeExecutionPanel({ user, advisorProfile, acce
       {sessions.length === 0 ? (
         <Card>
           <CardContent className="text-center py-12">
-            <Clock className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No Approved Sessions Yet</h3>
-            <p className="text-gray-600">Once your sessions are approved by SuperAdmin, they'll appear here.</p>
+            <Clock className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-foreground mb-2">No Approved Sessions Yet</h3>
+            <p className="text-subtle">Once your sessions are approved by SuperAdmin, they'll appear here.</p>
           </CardContent>
         </Card>
       ) : (
@@ -111,7 +111,7 @@ export default function AdvisorPledgeExecutionPanel({ user, advisorProfile, acce
                   <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="text-xl">{session.stock_symbol}</CardTitle>
-                      <p className="text-gray-600 text-sm mt-1">{session.stock_name}</p>
+                      <p className="text-subtle text-sm mt-1">{session.stock_name}</p>
                     </div>
                     {getStatusBadge(session.status)}
                   </div>
@@ -119,26 +119,26 @@ export default function AdvisorPledgeExecutionPanel({ user, advisorProfile, acce
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
-                      <p className="text-sm text-gray-600">Total Pledges</p>
+                      <p className="text-sm text-subtle">Total Pledges</p>
                       <p className="font-semibold text-lg">{session.total_pledges || 0}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Pledge Value</p>
+                      <p className="text-sm text-subtle">Pledge Value</p>
                       <p className="font-semibold text-lg">₹{(session.total_pledge_value || 0).toLocaleString()}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Executions</p>
+                      <p className="text-sm text-subtle">Executions</p>
                       <p className="font-semibold text-lg">{sessionExecutions.length}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Execution Value</p>
+                      <p className="text-sm text-subtle">Execution Value</p>
                       <p className="font-semibold text-lg">₹{totalExecutionValue.toLocaleString()}</p>
                     </div>
                   </div>
 
                   {session.status === 'approved' && (
-                    <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                      <p className="text-sm text-blue-800">
+                    <div className="mt-4 p-3 bg-premium-muted border border-protocall-premium-light rounded-lg">
+                      <p className="text-sm text-protocall-blue">
                         ✅ Session approved! SuperAdmin will execute when market conditions are optimal.
                       </p>
                     </div>
@@ -146,13 +146,13 @@ export default function AdvisorPledgeExecutionPanel({ user, advisorProfile, acce
 
                   {sessionExecutions.length > 0 && (
                     <div className="mt-4">
-                      <h4 className="font-semibold text-sm text-gray-700 mb-2">Recent Executions</h4>
+                      <h4 className="font-semibold text-sm text-subtle mb-2">Recent Executions</h4>
                       <div className="space-y-2">
                         {sessionExecutions.slice(0, 3).map((exec) => (
-                          <div key={exec.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                          <div key={exec.id} className="flex items-center justify-between p-2 bg-surface-2 rounded">
                             <div>
                               <p className="text-sm font-medium">{exec.side.toUpperCase()} - {exec.executed_qty} shares</p>
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-muted-foreground">
                                 @ ₹{exec.executed_price} on {new Date(exec.executed_at).toLocaleDateString()}
                               </p>
                             </div>

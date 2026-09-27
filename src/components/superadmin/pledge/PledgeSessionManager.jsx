@@ -79,45 +79,45 @@ export default function PledgeSessionManager({ user }) { // Kept user prop for a
   const getStatusInfo = (status) => {
     switch (status) {
       case 'draft':
-        return { text: 'Draft', icon: FileText, color: 'text-gray-500' };
+        return { text: 'Draft', icon: FileText, color: 'text-muted-foreground' };
       case 'pending_approval':
-        return { text: 'Pending Approval', icon: HelpCircle, color: 'text-yellow-600' };
+        return { text: 'Pending Approval', icon: HelpCircle, color: 'text-hold-muted-foreground' };
       case 'approved':
-        return { text: 'Approved', icon: CheckCircle, color: 'text-green-500' };
+        return { text: 'Approved', icon: CheckCircle, color: 'text-positive' };
       case 'active':
-        return { text: 'Active', icon: Activity, color: 'text-green-600' };
+        return { text: 'Active', icon: Activity, color: 'text-buy-muted-foreground' };
       case 'closed':
-        return { text: 'Closed', icon: XCircle, color: 'text-orange-600' };
+        return { text: 'Closed', icon: XCircle, color: 'text-hold-muted-foreground' };
       case 'executing':
-        return { text: 'Executing', icon: Zap, color: 'text-indigo-600' };
+        return { text: 'Executing', icon: Zap, color: 'text-protocall-blue' };
       case 'awaiting_sell_execution':
-        return { text: 'Awaiting Sell', icon: Repeat, color: 'text-blue-600' };
+        return { text: 'Awaiting Sell', icon: Repeat, color: 'text-protocall-blue' };
       case 'completed':
-        return { text: 'Completed', icon: CheckCircle, color: 'text-green-700' };
+        return { text: 'Completed', icon: CheckCircle, color: 'text-buy-muted-foreground' };
       case 'cancelled':
-        return { text: 'Cancelled', icon: Ban, color: 'text-red-600' };
+        return { text: 'Cancelled', icon: Ban, color: 'text-sell-muted-foreground' };
       case 'rejected':
-        return { text: 'Rejected', icon: Ban, color: 'text-red-500' };
+        return { text: 'Rejected', icon: Ban, color: 'text-sell' };
       default:
-        return { text: 'Unknown', icon: HelpCircle, color: 'text-gray-500' };
+        return { text: 'Unknown', icon: HelpCircle, color: 'text-muted-foreground' };
     }
   };
 
   const getStatusBadge = (status) => {
     const statusClassMap = {
-      'draft': 'bg-gray-100 text-gray-800 border-gray-200',
-      'pending_approval': 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      'approved': 'bg-green-100 text-green-800 border-green-200',
-      'active': 'bg-green-100 text-green-800 border-green-200',
-      'closed': 'bg-orange-100 text-orange-800 border-orange-200',
-      'executing': 'bg-indigo-100 text-indigo-800 border-indigo-200',
-      'awaiting_sell_execution': 'bg-blue-100 text-blue-800 border-blue-200',
-      'completed': 'bg-green-100 text-green-800 border-green-200',
-      'cancelled': 'bg-red-100 text-red-800 border-red-200',
-      'rejected': 'bg-red-100 text-red-800 border-red-200',
+      'draft': 'bg-surface-2 text-foreground border-border',
+      'pending_approval': 'bg-hold-muted text-hold-muted-foreground border-hold/30',
+      'approved': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
+      'active': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
+      'closed': 'bg-hold-muted text-hold-muted-foreground border-hold/30',
+      'executing': 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+      'awaiting_sell_execution': 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+      'completed': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
+      'cancelled': 'bg-sell-muted text-sell-muted-foreground border-sell/30',
+      'rejected': 'bg-sell-muted text-sell-muted-foreground border-sell/30',
     };
     const info = getStatusInfo(status);
-    const classes = statusClassMap[status] || 'bg-gray-100 text-gray-800 border-gray-200';
+    const classes = statusClassMap[status] || 'bg-surface-2 text-foreground border-border';
     return (
       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${classes}`}>
         {info.icon && React.createElement(info.icon, { className: 'w-3 h-3 mr-1' })}
@@ -681,12 +681,12 @@ export default function PledgeSessionManager({ user }) { // Kept user prop for a
       {/* Top Header with Title, Search, and Create Button */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex-grow">
-          <h2 className="text-2xl font-bold text-gray-900">Pledge Sessions</h2>
-          <p className="text-gray-600">Manage all pledge trading sessions</p>
+          <h2 className="text-2xl font-bold text-foreground">Pledge Sessions</h2>
+          <p className="text-subtle">Manage all pledge trading sessions</p>
         </div>
         <div className="flex items-center gap-3 mt-4 md:mt-0 flex-wrap sm:flex-nowrap">
           <div className="relative w-full sm:w-auto"> {/* Added w-full for small screens */}
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               placeholder="Search stock symbol, name or description..."
               value={searchTerm}
@@ -700,7 +700,7 @@ export default function PledgeSessionManager({ user }) { // Kept user prop for a
                 setEditingSession(null);
                 setShowCreateModal(true);
               }}
-              className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto" // Added w-full for small screens
+              className="bg-protocall-blue hover:bg-protocall-blue w-full sm:w-auto" // Added w-full for small screens
               disabled={isCreating}
             >
               {isCreating ? 'Creating...' : <> <Plus className="w-4 h-4 mr-2" /> Create Session </>}
@@ -725,14 +725,14 @@ export default function PledgeSessionManager({ user }) { // Kept user prop for a
 
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
         </div>
       ) : (filteredSessions || []).length === 0 ? (
         <Card>
           <CardContent className="text-center py-12">
-            <TrendingUp className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <TrendingUp className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">No Sessions Found</h3>
-            <p className="text-gray-600">Create a new session to get started</p>
+            <p className="text-subtle">Create a new session to get started</p>
             {canCreateSessions && (
               <Button 
                 onClick={() => {
@@ -758,19 +758,19 @@ export default function PledgeSessionManager({ user }) { // Kept user prop for a
                       <CardTitle className="text-xl">{session.stock_symbol}</CardTitle>
                       {getStatusBadge(session.status)}
                       {session.created_by_advisor_id && (
-                        <Badge className="bg-purple-100 text-purple-800">
+                        <Badge className="bg-premium-muted text-protocall-premium-text">
                           <Shield className="w-3 h-3 mr-1" />
                           Advisor Created
                         </Badge>
                       )}
                     </div>
-                    <p className="text-gray-600 text-sm">{session.stock_name}</p>
+                    <p className="text-subtle text-sm">{session.stock_name}</p>
                     {session.description && (
-                      <p className="text-gray-600 text-sm mt-2">{session.description}</p>
+                      <p className="text-subtle text-sm mt-2">{session.description}</p>
                     )}
                     {session.execution_reason && (
-                      <div className="mt-2 p-2 bg-blue-50 rounded text-sm">
-                        <strong className="text-blue-800">Reason:</strong> {session.execution_reason}
+                      <div className="mt-2 p-2 bg-premium-muted rounded text-sm">
+                        <strong className="text-protocall-blue">Reason:</strong> {session.execution_reason}
                       </div>
                     )}
                   </div>
@@ -796,7 +796,7 @@ export default function PledgeSessionManager({ user }) { // Kept user prop for a
                               const reason = prompt('Reason for rejection:');
                               if (reason) handleRejectSession(session, reason);
                             }}
-                            className="text-red-600"
+                            className="text-sell-muted-foreground"
                           >
                             <XCircle className="w-4 h-4 mr-2" />
                             Reject
@@ -837,7 +837,7 @@ export default function PledgeSessionManager({ user }) { // Kept user prop for a
                       </DropdownMenuItem>
                       <DropdownMenuItem 
                         onClick={() => handleDeleteSession(session)}
-                        className="text-red-600"
+                        className="text-sell-muted-foreground"
                       >
                         <Trash2 className="w-4 h-4 mr-2" />
                         Delete
@@ -849,19 +849,19 @@ export default function PledgeSessionManager({ user }) { // Kept user prop for a
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600">Session Mode</p>
+                    <p className="text-sm text-subtle">Session Mode</p>
                     <p className="font-semibold">{session.session_mode?.replace(/_/g, ' ').toUpperCase()}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Total Pledges</p>
+                    <p className="text-sm text-subtle">Total Pledges</p>
                     <p className="font-semibold">{session.total_pledges || 0}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Total Value</p>
+                    <p className="text-sm text-subtle">Total Value</p>
                     <p className="font-semibold">₹{(session.total_pledge_value || 0).toLocaleString()}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Fee</p>
+                    <p className="text-sm text-subtle">Fee</p>
                     <p className="font-semibold">
                       {session.convenience_fee_type === 'flat' 
                         ? `₹${session.convenience_fee_amount}` 
@@ -871,20 +871,20 @@ export default function PledgeSessionManager({ user }) { // Kept user prop for a
                 </div>
 
                 {session.status === 'rejected' && session.rejected_reason && (
-                  <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-sm text-red-800">
+                  <div className="mt-4 p-3 bg-sell-muted border border-sell/30 rounded-lg">
+                    <p className="text-sm text-sell-muted-foreground">
                       <strong>Rejection Reason:</strong> {session.rejected_reason}
                     </p>
                   </div>
                 )}
 
                 {session.approved_by && (
-                  <div className="mt-4 text-xs text-gray-500">
+                  <div className="mt-4 text-xs text-muted-foreground">
                     Approved on {new Date(session.approved_at).toLocaleString()} by {session.approved_by}
                   </div>
                 )}
                 {session.created_date && (
-                  <div className="mt-2 text-xs text-gray-500">
+                  <div className="mt-2 text-xs text-muted-foreground">
                     Created on {new Date(session.created_date).toLocaleString()}
                   </div>
                 )}

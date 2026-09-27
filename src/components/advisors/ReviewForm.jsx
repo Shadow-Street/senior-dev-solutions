@@ -35,7 +35,7 @@ export default function ReviewForm({ onSubmit, existingReview, advisorName }) {
                                 <button
                                     key={star}
                                     type="button"
-                                    className="p-1 rounded-lg hover:bg-slate-100 transition-colors"
+                                    className="p-1 rounded-lg hover:bg-surface-2 transition-colors"
                                     onMouseEnter={() => setHoveredRating(star)}
                                     onMouseLeave={() => setHoveredRating(0)}
                                     onClick={() => setRating(star)}
@@ -43,14 +43,14 @@ export default function ReviewForm({ onSubmit, existingReview, advisorName }) {
                                     <Star
                                         className={`w-8 h-8 transition-colors ${
                                             star <= (hoveredRating || rating)
-                                                ? 'text-yellow-500 fill-current'
-                                                : 'text-gray-300'
+                                                ? 'text-hold fill-current'
+                                                : 'text-muted-foreground'
                                         }`}
                                     />
                                 </button>
                             ))}
                         </div>
-                        <p className="text-xs text-slate-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                             {rating > 0 ? `You rated ${rating} out of 5 stars` : 'Click to rate'}
                         </p>
                     </div>
@@ -65,7 +65,7 @@ export default function ReviewForm({ onSubmit, existingReview, advisorName }) {
                             maxLength={500}
                             className="rounded-xl"
                         />
-                        <p className="text-xs text-slate-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                             {reviewText.length}/500 characters
                         </p>
                     </div>

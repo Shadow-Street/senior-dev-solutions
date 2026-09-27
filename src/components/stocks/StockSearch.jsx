@@ -60,15 +60,15 @@ export default function StockSearch({ onStockSelect, placeholder = "Search stock
   };
 
   const getPriceColor = (changePercent) => {
-    if (changePercent > 0) return "text-green-600";
-    if (changePercent < 0) return "text-red-600";
-    return "text-orange-600";
+    if (changePercent > 0) return "text-buy-muted-foreground";
+    if (changePercent < 0) return "text-sell-muted-foreground";
+    return "text-hold-muted-foreground";
   };
 
   return (
     <div className="relative">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
         <Input
           placeholder={placeholder}
           value={query}
@@ -78,7 +78,7 @@ export default function StockSearch({ onStockSelect, placeholder = "Search stock
           onBlur={() => setTimeout(() => setShowResults(false), 200)}
         />
         {isSearching && (
-          <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 animate-spin" />
+          <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 animate-spin" />
         )}
       </div>
 
@@ -89,14 +89,14 @@ export default function StockSearch({ onStockSelect, placeholder = "Search stock
             return (
               <div
                 key={stock.symbol}
-                className="flex items-center justify-between p-3 hover:bg-slate-50 cursor-pointer border-b last:border-b-0"
+                className="flex items-center justify-between p-3 hover:bg-surface-2 cursor-pointer border-b last:border-b-0"
                 onClick={() => handleStockSelect(stock)}
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
                     <div>
-                      <h4 className="font-semibold text-slate-900">{stock.symbol}</h4>
-                      <p className="text-sm text-slate-500 truncate">{stock.company_name}</p>
+                      <h4 className="font-semibold text-foreground">{stock.symbol}</h4>
+                      <p className="text-sm text-muted-foreground truncate">{stock.company_name}</p>
                     </div>
                     <div className="flex gap-2">
                       <Badge variant="outline" className="text-xs">
@@ -126,7 +126,7 @@ export default function StockSearch({ onStockSelect, placeholder = "Search stock
 
       {showResults && results.length === 0 && !isSearching && query.length >= 2 && (
         <Card className="absolute top-full left-0 right-0 z-50 mt-1 border shadow-lg bg-white">
-          <div className="p-4 text-center text-slate-500">
+          <div className="p-4 text-center text-muted-foreground">
             No stocks found for "{query}"
           </div>
         </Card>

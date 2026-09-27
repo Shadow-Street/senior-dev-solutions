@@ -244,21 +244,21 @@ export default function PagesInitializer() {
   };
 
   return (
-    <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-purple-50">
+    <Card className="border-2 border-protocall-premium-light bg-surface-2">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <FileText className="w-5 h-5 text-blue-600" />
+          <FileText className="w-5 h-5 text-protocall-blue" />
           Pages Auto-Initialization
         </CardTitle>
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-subtle">
           Automatically populate existing application pages into the Product Lifecycle Manager
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <div className="bg-hold-muted border border-hold/30 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-yellow-800">
+            <AlertCircle className="w-5 h-5 text-hold-muted-foreground mt-0.5 flex-shrink-0" />
+            <div className="text-sm text-hold-muted-foreground">
               <p className="font-semibold mb-1">What this does:</p>
               <ul className="list-disc list-inside space-y-1">
                 <li>Scans all {defaultPages.length} existing pages in the application</li>
@@ -273,7 +273,7 @@ export default function PagesInitializer() {
         <Button
           onClick={initializePages}
           disabled={isInitializing}
-          className="w-full bg-blue-600 hover:bg-blue-700"
+          className="w-full bg-protocall-blue hover:bg-protocall-blue"
           size="lg"
         >
           {isInitializing ? (
@@ -292,22 +292,22 @@ export default function PagesInitializer() {
         {initResult && (
           <div className={`p-4 rounded-lg border ${
             initResult.success 
-              ? 'bg-green-50 border-green-200' 
-              : 'bg-red-50 border-red-200'
+              ? 'bg-buy-muted border-buy/30' 
+              : 'bg-sell-muted border-sell/30'
           }`}>
             <div className="flex items-start gap-3">
               {initResult.success ? (
-                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+                <CheckCircle className="w-5 h-5 text-buy-muted-foreground flex-shrink-0" />
               ) : (
-                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                <AlertCircle className="w-5 h-5 text-sell-muted-foreground flex-shrink-0" />
               )}
               <div className="flex-1">
                 {initResult.success ? (
                   <>
-                    <p className="font-semibold text-green-900 mb-2">
+                    <p className="font-semibold text-buy-muted-foreground mb-2">
                       Initialization Complete!
                     </p>
-                    <div className="text-sm text-green-800 space-y-2">
+                    <div className="text-sm text-buy-muted-foreground space-y-2">
                       <p>✅ Created: {initResult.created} pages</p>
                       <p>⏭️ Skipped: {initResult.skipped} pages (already exist)</p>
                       
@@ -325,8 +325,8 @@ export default function PagesInitializer() {
                   </>
                 ) : (
                   <>
-                    <p className="font-semibold text-red-900 mb-2">Initialization Failed</p>
-                    <p className="text-sm text-red-800">{initResult.error}</p>
+                    <p className="font-semibold text-sell-muted-foreground mb-2">Initialization Failed</p>
+                    <p className="text-sm text-sell-muted-foreground">{initResult.error}</p>
                   </>
                 )}
               </div>

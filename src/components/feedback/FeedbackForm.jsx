@@ -87,16 +87,16 @@ export default function FeedbackForm() {
   if (isSubmitted) {
     return (
         <Card className="shadow-lg border-0 bg-white text-center p-8">
-            <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-slate-800 mb-2">Thank you for your feedback!</h2>
-            <p className="text-slate-600">We appreciate your input and will use it to make Protocol even better.</p>
+            <CheckCircle className="w-16 h-16 text-positive mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-foreground mb-2">Thank you for your feedback!</h2>
+            <p className="text-subtle">We appreciate your input and will use it to make Protocol even better.</p>
         </Card>
     );
   }
 
   return (
     <Card className="shadow-lg border-0 bg-white">
-      <CardHeader className="bg-gradient-to-r from-slate-50 to-purple-50">
+      <CardHeader className="bg-surface-2">
         <CardTitle>Feedback Form</CardTitle>
         <CardDescription>Let us know how we can improve.</CardDescription>
       </CardHeader>
@@ -131,7 +131,7 @@ export default function FeedbackForm() {
             <Label htmlFor="feedback_text">Feedback</Label>
             <Textarea id="feedback_text" name="feedback_text" value={formData.feedback_text} onChange={handleChange} placeholder="What would you like to see improved?" required rows={6} />
           </div>
-          <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700" disabled={isSubmitting}>
+          <Button type="submit" className="w-full bg-primary hover:bg-primary" disabled={isSubmitting}>
             {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
             Submit Feedback
           </Button>

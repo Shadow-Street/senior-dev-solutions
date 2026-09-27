@@ -30,7 +30,7 @@ export default function DeleteMessageModal({ open, onClose, onConfirm }) {
     <AlertDialog open={open} onOpenChange={onClose}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle className="flex items-center gap-2 text-red-600">
+          <AlertDialogTitle className="flex items-center gap-2 text-sell-muted-foreground">
             <Trash2 className="w-5 h-5" />
             Delete Message?
           </AlertDialogTitle>
@@ -43,7 +43,7 @@ export default function DeleteMessageModal({ open, onClose, onConfirm }) {
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={isDeleting}
-            className="bg-red-600 hover:bg-red-700"
+            className="bg-sell hover:bg-sell"
           >
             {isDeleting ? (
               <>

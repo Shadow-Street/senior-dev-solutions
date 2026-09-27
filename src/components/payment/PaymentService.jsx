@@ -182,7 +182,7 @@ class PaymentService {
         contact: customerInfo.phone || ''
       },
       theme: {
-        color: '#3b82f6'
+        color: 'hsl(var(--chart-1))'
       },
       handler: function (response) {
         onSuccess(response);

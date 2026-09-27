@@ -30,15 +30,15 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
   if (!stockSymbol) {
     return (
       <Card className="shadow-lg border-0 bg-white">
-        <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
-          <CardTitle className="flex items-center gap-2 text-slate-900">
-            <BarChart3 className="w-5 h-5 text-blue-600" />
+        <CardHeader className="border-b bg-surface-2">
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <BarChart3 className="w-5 h-5 text-protocall-blue" />
             Community Sentiment
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4">
-          <div className="text-center py-8 text-slate-500">
-            <BarChart3 className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+          <div className="text-center py-8 text-muted-foreground">
+            <BarChart3 className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
             <p className="text-sm">No stock specified for this room</p>
           </div>
         </CardContent>
@@ -49,23 +49,23 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
   if (!pollData) {
     return (
       <Card className="shadow-lg border-0 bg-white">
-        <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
-          <CardTitle className="flex items-center gap-2 text-slate-900">
-            <BarChart3 className="w-5 h-5 text-blue-600" />
+        <CardHeader className="border-b bg-surface-2">
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <BarChart3 className="w-5 h-5 text-protocall-blue" />
             Community Sentiment
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4">
-          <div className="text-center py-8 text-slate-500">
-            <BarChart3 className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+          <div className="text-center py-8 text-muted-foreground">
+            <BarChart3 className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
             <p className="text-sm font-medium">No active polls yet for {stockSymbol}</p>
-            <p className="text-xs mt-1 text-slate-400">Create a poll in Community section to see sentiment</p>
+            <p className="text-xs mt-1 text-muted-foreground">Create a poll in Community section to see sentiment</p>
             
             {/* Add Create Poll Button */}
             {user && (
               <div className="mt-4">
                 <Link to={createPageUrl("Polls")}>
-                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                  <Button size="sm" className="bg-protocall-blue hover:bg-protocall-blue">
                     <Plus className="w-4 h-4 mr-1" />
                     Create Poll
                   </Button>
@@ -82,15 +82,15 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
   if (!pollData.is_active) {
     return (
       <Card className="shadow-lg border-0 bg-white">
-        <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-red-50">
-          <CardTitle className="flex items-center gap-2 text-slate-900">
-            <BarChart3 className="w-5 h-5 text-red-600" />
+        <CardHeader className="border-b bg-gradient-to-r from-surface-2 to-sell-muted">
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <BarChart3 className="w-5 h-5 text-sell-muted-foreground" />
             Community Sentiment
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4">
-          <div className="text-center py-8 text-red-500">
-            <BarChart3 className="w-12 h-12 mx-auto mb-3 text-red-300" />
+          <div className="text-center py-8 text-sell">
+            <BarChart3 className="w-12 h-12 mx-auto mb-3 text-sell" />
             <p className="text-sm font-medium">Poll Suspended</p>
             <p className="text-xs mt-1">This poll has been disabled by admin</p>
           </div>
@@ -113,25 +113,25 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
         count: bullishVotes,
         percentage: totalVotes > 0 ? (bullishVotes / totalVotes) * 100 : 0,
         icon: TrendingUp,
-        color: 'text-green-600',
-        progressBg: 'bg-green-100',
-        progressBar: 'bg-green-600'
+        color: 'text-buy-muted-foreground',
+        progressBg: 'bg-buy-muted',
+        progressBar: 'bg-buy'
       },
       bearish: {
         count: bearishVotes,
         percentage: totalVotes > 0 ? (bearishVotes / totalVotes) * 100 : 0,
         icon: TrendingDown,
-        color: 'text-red-600',
-        progressBg: 'bg-red-100',
-        progressBar: 'bg-red-600'
+        color: 'text-sell-muted-foreground',
+        progressBg: 'bg-sell-muted',
+        progressBar: 'bg-sell'
       },
       neutral: {
         count: neutralVotes,
         percentage: totalVotes > 0 ? (neutralVotes / totalVotes) * 100 : 0,
         icon: Minus,
-        color: 'text-orange-600',
-        progressBg: 'bg-orange-100',
-        progressBar: 'bg-orange-600'
+        color: 'text-hold-muted-foreground',
+        progressBg: 'bg-hold-muted',
+        progressBar: 'bg-hold'
       }
     };
   } else if (pollData.poll_type === 'price_target') {
@@ -143,17 +143,17 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
         count: yesVotes,
         percentage: totalVotes > 0 ? (yesVotes / totalVotes) * 100 : 0,
         icon: TrendingUp,
-        color: 'text-green-600',
-        progressBg: 'bg-green-100',
-        progressBar: 'bg-green-600'
+        color: 'text-buy-muted-foreground',
+        progressBg: 'bg-buy-muted',
+        progressBar: 'bg-buy'
       },
       no: {
         count: noVotes,
         percentage: totalVotes > 0 ? (noVotes / totalVotes) * 100 : 0,
         icon: TrendingDown,
-        color: 'text-red-600',
-        progressBg: 'bg-red-100',
-        progressBar: 'bg-red-600'
+        color: 'text-sell-muted-foreground',
+        progressBg: 'bg-sell-muted',
+        progressBar: 'bg-sell'
       }
     };
   } else {
@@ -167,32 +167,32 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
         count: buyVotes,
         percentage: totalVotes > 0 ? (buyVotes / totalVotes) * 100 : 0,
         icon: TrendingUp,
-        color: 'text-green-600',
-        progressBg: 'bg-green-100',
-        progressBar: 'bg-green-600'
+        color: 'text-buy-muted-foreground',
+        progressBg: 'bg-buy-muted',
+        progressBar: 'bg-buy'
       },
       sell: {
         count: sellVotes,
         percentage: totalVotes > 0 ? (sellVotes / totalVotes) * 100 : 0,
         icon: TrendingDown,
-        color: 'text-red-600',
-        progressBg: 'bg-red-100',
-        progressBar: 'bg-red-600'
+        color: 'text-sell-muted-foreground',
+        progressBg: 'bg-sell-muted',
+        progressBar: 'bg-sell'
       },
       hold: {
         count: holdVotes,
         percentage: totalVotes > 0 ? (holdVotes / totalVotes) * 100 : 0,
         icon: Minus,
-        color: 'text-orange-600',
-        progressBg: 'bg-orange-100',
-        progressBar: 'bg-orange-600'
+        color: 'text-hold-muted-foreground',
+        progressBg: 'bg-hold-muted',
+        progressBar: 'bg-hold'
       }
     };
   }
 
   // Determine sentiment based on poll type and results
   let sentiment = 'Neutral';
-  let sentimentColor = 'bg-gray-100 text-gray-700';
+  let sentimentColor = 'bg-surface-2 text-subtle';
   
   const sortedVotes = Object.entries(voteData).sort((a, b) => b[1].percentage - a[1].percentage);
   const topVote = sortedVotes[0];
@@ -201,10 +201,10 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
     const voteType = topVote[0];
     if (['buy', 'bullish', 'yes'].includes(voteType)) {
       sentiment = pollData.poll_type === 'sentiment' ? 'Bullish' : pollData.poll_type === 'price_target' ? 'Positive' : 'Bullish';
-      sentimentColor = 'bg-green-100 text-green-700';
+      sentimentColor = 'bg-buy-muted text-buy-muted-foreground';
     } else if (['sell', 'bearish', 'no'].includes(voteType)) {
       sentiment = pollData.poll_type === 'sentiment' ? 'Bearish' : pollData.poll_type === 'price_target' ? 'Negative' : 'Bearish';
-      sentimentColor = 'bg-red-100 text-red-700';
+      sentimentColor = 'bg-sell-muted text-sell-muted-foreground';
     }
   }
 
@@ -215,14 +215,14 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
   if (isRoleBasedLocked) {
     return (
       <Card className="shadow-lg border-0 bg-white relative overflow-hidden">
-        <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
+        <CardHeader className="border-b bg-surface-2">
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-slate-900">
-              <BarChart3 className="w-5 h-5 text-blue-600" />
+            <CardTitle className="flex items-center gap-2 text-foreground">
+              <BarChart3 className="w-5 h-5 text-protocall-blue" />
               Community Sentiment
-              <Crown className="w-4 h-4 text-purple-600" />
+              <Crown className="w-4 h-4 text-protocall-premium-text" />
             </CardTitle>
-            <Badge className="bg-purple-100 text-purple-700 text-xs">
+            <Badge className="bg-premium-muted text-protocall-premium-text text-xs">
               Premium Only
             </Badge>
           </div>
@@ -240,7 +240,7 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
                       <data.icon className={`w-4 h-4 ${data.color}`} />
                       <span className="text-sm font-medium capitalize">{voteType}</span>
                     </div>
-                    <span className="text-sm font-semibold text-slate-700">
+                    <span className="text-sm font-semibold text-subtle">
                       {data.count} ({data.percentage.toFixed(1)}%)
                     </span>
                   </div>
@@ -255,7 +255,7 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
             </div>
 
             {/* Total Votes */}
-            <div className="flex items-center justify-center gap-1 text-sm text-slate-500 pt-2 border-t">
+            <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground pt-2 border-t">
               <Users className="w-4 h-4" />
               <span>Total Votes: {totalVotes}</span>
             </div>
@@ -265,13 +265,13 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
         {/* Premium Overlay */}
         <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
           <div className="text-center p-4">
-            <div className="inline-flex items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full p-3 mb-3">
+            <div className="inline-flex items-center justify-center bg-gradient-to-r from-protocall-deep to-protocall-blue text-white rounded-full p-3 mb-3">
               <Crown className="w-6 h-6" />
             </div>
-            <h3 className="font-bold text-gray-900 mb-2">Expert Insights</h3>
-            <p className="text-sm text-gray-600 mb-4">Unlock admin recommendations and sentiment analysis</p>
+            <h3 className="font-bold text-foreground mb-2">Expert Insights</h3>
+            <p className="text-sm text-subtle mb-4">Unlock admin recommendations and sentiment analysis</p>
             <Link to={createPageUrl("Subscription")}>
-              <Button size="sm" className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
+              <Button size="sm" className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
                 <Crown className="w-4 h-4 mr-2" />
                 Upgrade to Premium
               </Button>
@@ -292,13 +292,13 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
 
   return (
     <Card className="shadow-lg border-0 bg-white">
-      <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
+      <CardHeader className="border-b bg-surface-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-slate-900">
-            <BarChart3 className="w-5 h-5 text-blue-600" />
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <BarChart3 className="w-5 h-5 text-protocall-blue" />
             Community Sentiment
             {isPremiumPoll && ( // This refers to polls explicitly marked as is_premium
-              <Crown className="w-4 h-4 text-purple-600" />
+              <Crown className="w-4 h-4 text-protocall-premium-text" />
             )}
           </CardTitle>
           <Badge className={`text-xs font-semibold ${sentimentColor}`}>
@@ -306,9 +306,9 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
           </Badge>
         </div>
         <div className="flex items-center justify-between">
-          <p className="text-sm text-slate-600">{pollData.title}</p>
+          <p className="text-sm text-subtle">{pollData.title}</p>
           {isPremiumPoll && (
-            <Badge className="bg-purple-100 text-purple-700 text-xs">
+            <Badge className="bg-premium-muted text-protocall-premium-text text-xs">
               Premium
             </Badge>
           )}
@@ -325,7 +325,7 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
                   <data.icon className={`w-4 h-4 ${data.color}`} />
                   <span className="text-sm font-medium capitalize">{voteType}</span>
                 </div>
-                <span className="text-sm font-semibold text-slate-700">
+                <span className="text-sm font-semibold text-subtle">
                   {data.count} ({data.percentage.toFixed(1)}%)
                 </span>
               </div>
@@ -340,7 +340,7 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
         </div>
 
         {/* Total Votes */}
-        <div className="flex items-center justify-center gap-1 text-sm text-slate-500 pt-2 border-t">
+        <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground pt-2 border-t">
           <Users className="w-4 h-4" />
           <span>Total Votes: {totalVotes}</span>
         </div>
@@ -348,15 +348,15 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
         {/* Voting Buttons or Results */}
         {!user ? (
           <div className="text-center py-2">
-            <p className="text-sm text-slate-500">Please log in to vote</p>
+            <p className="text-sm text-muted-foreground">Please log in to vote</p>
           </div>
         ) : isLockedForUser ? ( // This handles polls explicitly marked as is_premium for voting
-          <div className="text-center py-4 border-2 border-dashed border-purple-200 rounded-lg bg-purple-50">
-            <Lock className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-            <p className="text-sm font-semibold text-purple-900">Premium Poll</p>
-            <p className="text-xs text-purple-700 mb-3">Upgrade to vote on premium content</p>
+          <div className="text-center py-4 border-2 border-dashed border-protocall-premium-light rounded-lg bg-premium-muted">
+            <Lock className="w-8 h-8 text-protocall-premium-text mx-auto mb-2" />
+            <p className="text-sm font-semibold text-protocall-premium-text">Premium Poll</p>
+            <p className="text-xs text-protocall-premium-text mb-3">Upgrade to vote on premium content</p>
             <Link to={createPageUrl("Subscription")}>
-              <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+              <Button size="sm" className="bg-primary hover:bg-primary">
                 <Crown className="w-4 h-4 mr-1" />
                 Upgrade Now
               </Button>
@@ -364,14 +364,14 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
           </div>
         ) : hasVoted ? (
           <div className="text-center py-2">
-            <Badge className="bg-green-100 text-green-800 flex items-center gap-2 justify-center py-2 px-4">
+            <Badge className="bg-buy-muted text-buy-muted-foreground flex items-center gap-2 justify-center py-2 px-4">
               <CheckCircle className="w-4 h-4" />
               You voted: {userVote.vote.toUpperCase()}
             </Badge>
           </div>
         ) : (
           <div>
-            <p className="text-sm font-medium text-slate-700 mb-3">Cast your vote:</p>
+            <p className="text-sm font-medium text-subtle mb-3">Cast your vote:</p>
             <div className={`flex gap-2 ${Object.keys(voteData).length === 2 ? 'grid-cols-2' : 'grid-cols-3'} grid`}>
               {Object.entries(voteData).map(([voteType, data]) => (
                 <Button 
@@ -379,9 +379,9 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
                   size="sm" 
                   onClick={() => onVote(voteType)}
                   className={`flex-1 ${
-                    ['buy', 'bullish', 'yes'].includes(voteType) ? 'bg-green-600 hover:bg-green-700' :
-                    ['sell', 'bearish', 'no'].includes(voteType) ? 'bg-red-600 hover:bg-red-700' :
-                    'bg-orange-600 hover:bg-orange-700'
+                    ['buy', 'bullish', 'yes'].includes(voteType) ? 'bg-buy hover:bg-buy' :
+                    ['sell', 'bearish', 'no'].includes(voteType) ? 'bg-sell hover:bg-sell' :
+                    'bg-hold hover:bg-hold'
                   } text-white`}
                 >
                   <data.icon className="w-4 h-4 mr-1" />
@@ -394,7 +394,7 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
 
         {/* Community Consensus */}
         <div className="text-center pt-2 border-t">
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground">
             Community is <span className="font-semibold">{sentiment.toLowerCase()}</span> on {stockSymbol}
           </p>
         </div>

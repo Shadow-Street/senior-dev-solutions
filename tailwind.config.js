@@ -73,6 +73,15 @@ export default {
   			buy: {
   				DEFAULT: 'hsl(var(--buy))',
   				foreground: 'hsl(var(--buy-foreground))',
+  				soft: 'hsl(var(--buy-soft))',
+  				muted: 'hsl(var(--buy-muted))',
+  				'muted-foreground': 'hsl(var(--buy-muted-foreground))'
+  			},
+  			/* alias: same tokens under a green name for readability */
+  			green: {
+  				DEFAULT: 'hsl(var(--buy))',
+  				foreground: 'hsl(var(--buy-foreground))',
+  				soft: 'hsl(var(--buy-soft))',
   				muted: 'hsl(var(--buy-muted))',
   				'muted-foreground': 'hsl(var(--buy-muted-foreground))'
   			},
@@ -136,10 +145,14 @@ export default {
   				text: '#202030',
   				muted: '#5E5E6A',
   				subtle: '#8B8D9A',
-  				/* BUY / positive / growth / live / progress */
-  				buy: '#D7FF00',
+  				/* BUY / positive / growth / live / progress — green system */
+  				green: '#56E11B',          /* Primary Bright Green   */
+  				'green-soft': '#63E52E',   /* Secondary Green        */
+  				'green-bg': '#EAFBDD',     /* green tint surface     */
+  				'green-text': '#276B10',   /* green text on light    */
+  				buy: '#56E11B',
   				'buy-foreground': '#101018',
-  				'buy-text': '#193B20',
+  				'buy-text': '#276B10',
   				/* HOLD / caution / pending */
   				hold: '#F75C03',
   				'hold-bg': '#FFF0E6',

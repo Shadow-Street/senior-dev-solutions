@@ -141,7 +141,7 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
       <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Video className="w-5 h-5 text-purple-600" />
+            <Video className="w-5 h-5 text-protocall-premium-text" />
             Create Content
           </DialogTitle>
           <DialogDescription>
@@ -209,7 +209,7 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
                 placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
                 required
               />
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Supported: YouTube, Vimeo, Dailymotion, or any video URL
               </p>
             </div>
@@ -250,7 +250,7 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
                   <img
                     src={formData.thumbnail_url}
                     alt="Thumbnail preview"
-                    className="w-full h-48 object-cover rounded-lg border-2 border-purple-200"
+                    className="w-full h-48 object-cover rounded-lg border-2 border-protocall-premium-light"
                   />
                   <Button
                     type="button"
@@ -263,13 +263,13 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
                   </Button>
                 </div>
               ) : (
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-purple-400 transition-colors">
-                  <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary transition-colors">
+                  <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
                   <Label htmlFor="thumbnail-upload" className="cursor-pointer">
-                    <span className="text-purple-600 font-semibold hover:text-purple-700">
+                    <span className="text-protocall-premium-text font-semibold hover:text-protocall-premium-text">
                       Click to upload thumbnail
                     </span>
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       PNG, JPG up to 5MB (Recommended: 1280x720px)
                     </p>
                   </Label>
@@ -285,7 +285,7 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
                     disabled={isUploadingThumbnail}
                   />
                   {isUploadingThumbnail && (
-                    <p className="text-sm text-purple-600 mt-2">Uploading...</p>
+                    <p className="text-sm text-protocall-premium-text mt-2">Uploading...</p>
                   )}
                 </div>
               )}
@@ -314,10 +314,10 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
             {formData.stock_mentions.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-3">
                 {formData.stock_mentions.map((stock, idx) => (
-                  <Badge key={idx} className="bg-blue-100 text-blue-800 border-blue-200 flex items-center gap-1">
+                  <Badge key={idx} className="bg-premium-muted text-protocall-blue border-protocall-premium-light flex items-center gap-1">
                     {stock}
                     <X
-                      className="w-3 h-3 cursor-pointer hover:text-blue-900"
+                      className="w-3 h-3 cursor-pointer hover:text-protocall-blue"
                       onClick={() => removeStock(stock)}
                     />
                   </Badge>
@@ -348,10 +348,10 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
             {formData.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-3">
                 {formData.tags.map((tag, idx) => (
-                  <Badge key={idx} className="bg-purple-100 text-purple-800 border-purple-200 flex items-center gap-1">
+                  <Badge key={idx} className="bg-premium-muted text-protocall-premium-text border-protocall-premium-light flex items-center gap-1">
                     {tag}
                     <X
-                      className="w-3 h-3 cursor-pointer hover:text-purple-900"
+                      className="w-3 h-3 cursor-pointer hover:text-protocall-premium-text"
                       onClick={() => removeTag(tag)}
                     />
                   </Badge>
@@ -361,12 +361,12 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
           </div>
 
           {/* Premium Content Toggle */}
-          <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg border border-purple-200">
+          <div className="flex items-center justify-between p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
             <div className="flex items-center gap-3">
-              <Sparkles className="w-5 h-5 text-purple-600" />
+              <Sparkles className="w-5 h-5 text-protocall-premium-text" />
               <div>
                 <Label htmlFor="is_premium" className="cursor-pointer">Premium Content</Label>
-                <p className="text-xs text-slate-600">Only your subscribers can access this content</p>
+                <p className="text-xs text-subtle">Only your subscribers can access this content</p>
               </div>
             </div>
             <Switch
@@ -377,12 +377,12 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
           </div>
 
           {/* Content Guidelines */}
-          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-            <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+          <div className="bg-premium-muted p-4 rounded-lg border border-protocall-premium-light">
+            <h4 className="font-semibold text-protocall-blue mb-2 flex items-center gap-2">
               <FileText className="w-4 h-4" />
               Content Publishing Guidelines
             </h4>
-            <ul className="text-sm text-blue-700 space-y-1">
+            <ul className="text-sm text-protocall-blue space-y-1">
               <li>• Videos: Use YouTube, Vimeo, or any embed-compatible link</li>
               <li>• Thumbnails: Upload eye-catching images (1280x720px recommended)</li>
               <li>• Stock mentions: Tag relevant stocks for better discoverability</li>
@@ -399,7 +399,7 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
             <Button
               type="submit"
               disabled={isSubmitting || isUploadingThumbnail}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-primary hover:bg-primary"
             >
               {isSubmitting ? 'Publishing...' : 'Publish Content'}
             </Button>

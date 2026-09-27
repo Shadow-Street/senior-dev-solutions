@@ -68,11 +68,11 @@ export default function ProfileReferralSection({ user, referrals, badges }) {
   const activeMembers = referrals.filter(r => r.is_active_member).length;
 
   const getBadgeProgress = () => {
-    if (activeMembers >= 10) return { current: "Community Champion", progress: 100, next: null, color: "from-yellow-400 to-orange-500" };
-    if (activeMembers >= 5) return { current: "Community Leader", progress: 100, next: "Community Champion (10 referrals)", color: "from-purple-400 to-blue-500" };
-    if (activeMembers >= 1) return { current: "Community Builder", progress: 100, next: "Community Leader (5 referrals)", color: "from-green-400 to-blue-500" };
+    if (activeMembers >= 10) return { current: "Community Champion", progress: 100, next: null, color: "from-hold to-hold" };
+    if (activeMembers >= 5) return { current: "Community Leader", progress: 100, next: "Community Champion (10 referrals)", color: "from-protocall-grape to-protocall-blue" };
+    if (activeMembers >= 1) return { current: "Community Builder", progress: 100, next: "Community Leader (5 referrals)", color: "from-buy to-protocall-blue" };
     
-    return { current: null, progress: 0, next: "Community Builder (1 referral)", color: "from-slate-300 to-slate-400" };
+    return { current: null, progress: 0, next: "Community Builder (1 referral)", color: "from-surface-2 to-surface-2" };
   };
 
   const badgeProgress = getBadgeProgress();
@@ -81,21 +81,21 @@ export default function ProfileReferralSection({ user, referrals, badges }) {
     <div className="space-y-6">
       {/* Referral Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-gradient-to-r from-blue-500 to-purple-600 text-white border-0">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white border-0">
           <CardContent className="p-4 text-center">
             <Users className="w-8 h-8 mx-auto mb-2" />
             <div className="text-2xl font-bold">{referrals.length}</div>
             <div className="text-xs opacity-90">Total Invites</div>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-r from-green-500 to-blue-500 text-white border-0">
+        <Card className="bg-gradient-to-r from-buy to-protocall-blue text-white border-0">
           <CardContent className="p-4 text-center">
             <Star className="w-8 h-8 mx-auto mb-2" />
             <div className="text-2xl font-bold">{successfulReferrals}</div>
             <div className="text-xs opacity-90">Successful Signups</div>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0">
+        <Card className="bg-gradient-to-r from-hold to-sell text-white border-0">
           <CardContent className="p-4 text-center">
             <Award className="w-8 h-8 mx-auto mb-2" />
             <div className="text-2xl font-bold">{activeMembers}</div>
@@ -105,9 +105,9 @@ export default function ProfileReferralSection({ user, referrals, badges }) {
       </div>
 
       {/* Badge Progress */}
-      <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-purple-200">
+      <Card className="bg-surface-2 border-protocall-premium-light">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-purple-900">
+          <CardTitle className="flex items-center gap-2 text-protocall-premium-text">
             <Crown className="w-5 h-5" />
             Badge Progress
           </CardTitle>
@@ -115,25 +115,25 @@ export default function ProfileReferralSection({ user, referrals, badges }) {
         <CardContent className="space-y-4">
           {badgeProgress.current ? (
             <div className="flex items-center gap-3">
-              <Award className="w-8 h-8 text-yellow-600" />
+              <Award className="w-8 h-8 text-hold-muted-foreground" />
               <div>
-                <p className="font-semibold text-lg text-slate-900">Current Badge: {badgeProgress.current}</p>
-                <p className="text-sm text-slate-600">Congratulations on your achievement!</p>
+                <p className="font-semibold text-lg text-foreground">Current Badge: {badgeProgress.current}</p>
+                <p className="text-sm text-subtle">Congratulations on your achievement!</p>
               </div>
             </div>
           ) : (
-            <p className="text-slate-600">No badges earned yet. Make your first referral to get started!</p>
+            <p className="text-subtle">No badges earned yet. Make your first referral to get started!</p>
           )}
           
           {badgeProgress.next && (
             <div>
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-medium text-slate-700">Next: {badgeProgress.next}</p>
-                <span className="text-xs text-slate-500">{activeMembers}/10</span>
+                <p className="text-sm font-medium text-subtle">Next: {badgeProgress.next}</p>
+                <span className="text-xs text-muted-foreground">{activeMembers}/10</span>
               </div>
-              <div className="relative h-2 bg-slate-200 rounded-full overflow-hidden">
+              <div className="relative h-2 bg-border rounded-full overflow-hidden">
                 <div 
-                  className="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full transition-all duration-500"
+                  className="absolute inset-y-0 left-0 bg-gradient-to-r from-protocall-deep to-protocall-blue rounded-full transition-all duration-500"
                   style={{ width: `${(activeMembers / 10) * 100}%` }}
                 />
               </div>
@@ -144,13 +144,13 @@ export default function ProfileReferralSection({ user, referrals, badges }) {
 
       {/* Referral Link */}
       <Card>
-        <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100">
-          <CardTitle className="flex items-center gap-2 text-green-800">
+        <CardHeader className="bg-surface-2">
+          <CardTitle className="flex items-center gap-2 text-buy-muted-foreground">
             <Share2 className="w-5 h-5" />
             Your Referral Link
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6 space-y-4 bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 rounded-b-lg">
+        <CardContent className="p-6 space-y-4 bg-gradient-to-r from-surface-2 to-buy-muted border-buy/30 rounded-b-lg">
           <div className="flex gap-2">
             <Input 
               value={referralLink}
@@ -160,7 +160,7 @@ export default function ProfileReferralSection({ user, referrals, badges }) {
             <Button 
               onClick={copyReferralLink} 
               variant="outline"
-              className="text-slate-900 border-slate-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-300 transition-all duration-300"
+              className="text-foreground border-border hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-protocall-premium-light transition-all duration-300"
             >
               <Copy className="w-4 h-4 mr-2" />
               Copy
@@ -170,7 +170,7 @@ export default function ProfileReferralSection({ user, referrals, badges }) {
           <div className="flex gap-3">
             <Button 
               onClick={shareViaWhatsApp} 
-              className="bg-green-600 hover:bg-green-700 flex-1"
+              className="bg-buy hover:bg-buy flex-1"
             >
               <MessageSquare className="w-4 h-4 mr-2" />
               WhatsApp
@@ -178,7 +178,7 @@ export default function ProfileReferralSection({ user, referrals, badges }) {
             <Button 
               onClick={shareViaEmail} 
               variant="outline" 
-              className="flex-1 text-slate-900 border-slate-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-300 transition-all duration-300"
+              className="flex-1 text-foreground border-border hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-protocall-premium-light transition-all duration-300"
             >
               <Mail className="w-4 h-4 mr-2" />
               Email

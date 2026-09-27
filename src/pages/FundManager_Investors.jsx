@@ -155,28 +155,28 @@ export default function FundManager_Investors() {
     switch (status) {
       case 'verified':
         return (
-          <Badge className="bg-green-100 text-green-800 border-green-200">
+          <Badge className="bg-buy-muted text-buy-muted-foreground border-buy/30">
             <CheckCircle className="w-3 h-3 mr-1" />
             Verified
           </Badge>
         );
       case 'pending':
         return (
-          <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
+          <Badge className="bg-hold-muted text-hold-muted-foreground border-hold/30">
             <Clock className="w-3 h-3 mr-1" />
             Pending
           </Badge>
         );
       case 'failed':
         return (
-          <Badge className="bg-red-100 text-red-800 border-red-200">
+          <Badge className="bg-sell-muted text-sell-muted-foreground border-sell/30">
             <XCircle className="w-3 h-3 mr-1" />
             Rejected
           </Badge>
         );
       default:
         return (
-          <Badge className="bg-gray-100 text-gray-800 border-gray-200">
+          <Badge className="bg-surface-2 text-foreground border-border">
             <Clock className="w-3 h-3 mr-1" />
             Unknown
           </Badge>
@@ -208,32 +208,32 @@ export default function FundManager_Investors() {
               <CardTitle className="text-xl font-semibold">All Investors</CardTitle>
             </CardHeader>
             <CardContent>
-              {error && <div className="text-red-500 text-center py-4">{error}</div>}
+              {error && <div className="text-sell text-center py-4">{error}</div>}
               {isLoading ? (
                 <div className="flex items-center justify-center py-12">
-                  <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                  <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
                 </div>
               ) : investors.length === 0 ? (
-                <div className="py-12 text-center text-slate-500">
-                  <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                <div className="py-12 text-center text-muted-foreground">
+                  <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                   <p>No investors found</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-slate-200">
-                    <thead className="bg-slate-50">
+                  <table className="min-w-full divide-y divide-divider">
+                    <thead className="bg-surface-2">
                       <tr>
-                        <th className="text-left py-3 px-4 text-sm font-semibold text-slate-600">Investor</th>
-                        <th className="text-left py-3 px-4 text-sm font-semibold text-slate-600">Contact</th>
-                        <th className="text-center py-3 px-4 text-sm font-semibold text-slate-600">Status</th>
-                        <th className="text-center py-3 px-4 text-sm font-semibold text-slate-600">KYC Status</th>
-                        <th className="text-right py-3 px-4 text-sm font-semibold text-slate-600">Total Invested</th>
-                        <th className="text-right py-3 px-4 text-sm font-semibold text-slate-600">Current Value</th>
-                        <th className="text-right py-3 px-4 text-sm font-semibold text-slate-600">P&L</th>
-                        <th className="text-center py-3 px-4 text-sm font-semibold text-slate-600">Actions</th>
+                        <th className="text-left py-3 px-4 text-sm font-semibold text-subtle">Investor</th>
+                        <th className="text-left py-3 px-4 text-sm font-semibold text-subtle">Contact</th>
+                        <th className="text-center py-3 px-4 text-sm font-semibold text-subtle">Status</th>
+                        <th className="text-center py-3 px-4 text-sm font-semibold text-subtle">KYC Status</th>
+                        <th className="text-right py-3 px-4 text-sm font-semibold text-subtle">Total Invested</th>
+                        <th className="text-right py-3 px-4 text-sm font-semibold text-subtle">Current Value</th>
+                        <th className="text-right py-3 px-4 text-sm font-semibold text-subtle">P&L</th>
+                        <th className="text-center py-3 px-4 text-sm font-semibold text-subtle">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-slate-100">
+                    <tbody className="bg-white divide-y divide-divider">
                       {investors.map((investor) => {
                         const profitLoss = (investor.current_value || 0) - (investor.total_invested || 0);
                         const profitLossPercent = investor.total_invested > 0
@@ -241,24 +241,24 @@ export default function FundManager_Investors() {
                           : 0;
 
                         return (
-                          <tr key={investor.id} className="hover:bg-slate-50">
+                          <tr key={investor.id} className="hover:bg-surface-2">
                             <td className="py-4 px-4 whitespace-nowrap">
                               <div>
-                                <p className="font-medium text-sm text-slate-800">{investor.full_name}</p>
-                                <p className="text-xs text-slate-500">{investor.investor_code}</p>
+                                <p className="font-medium text-sm text-foreground">{investor.full_name}</p>
+                                <p className="text-xs text-muted-foreground">{investor.investor_code}</p>
                               </div>
                             </td>
                             <td className="py-4 px-4 whitespace-nowrap">
                               <div className="text-sm">
-                                <p className="text-slate-700">{investor.email}</p>
-                                <p className="text-slate-500">{investor.mobile_number}</p>
+                                <p className="text-subtle">{investor.email}</p>
+                                <p className="text-muted-foreground">{investor.mobile_number}</p>
                               </div>
                             </td>
                             <td className="py-4 px-4 text-center whitespace-nowrap">
                               <Badge className={
                                 investor.status === 'active'
-                                  ? 'bg-green-100 text-green-800 border-green-200'
-                                  : 'bg-gray-100 text-gray-800 border-gray-200'
+                                  ? 'bg-buy-muted text-buy-muted-foreground border-buy/30'
+                                  : 'bg-surface-2 text-foreground border-border'
                               }>
                                 {investor.status}
                               </Badge>
@@ -267,17 +267,17 @@ export default function FundManager_Investors() {
                               {getKYCStatusBadge(investor.kyc_status)}
                             </td>
                             <td className="py-4 px-4 text-right whitespace-nowrap">
-                              <p className="font-semibold text-sm text-slate-800">
+                              <p className="font-semibold text-sm text-foreground">
                                 ₹{(investor.total_invested || 0).toLocaleString('en-IN')}
                               </p>
                             </td>
                             <td className="py-4 px-4 text-right whitespace-nowrap">
-                              <p className="font-semibold text-sm text-slate-800">
+                              <p className="font-semibold text-sm text-foreground">
                                 ₹{(investor.current_value || 0).toLocaleString('en-IN')}
                               </p>
                             </td>
                             <td className="py-4 px-4 text-right whitespace-nowrap">
-                              <div className={profitLoss >= 0 ? 'text-green-600' : 'text-red-600'}>
+                              <div className={profitLoss >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}>
                                 <p className="font-bold text-sm">
                                   {profitLoss >= 0 ? '+' : ''}₹{profitLoss.toLocaleString('en-IN')}
                                 </p>
@@ -292,7 +292,7 @@ export default function FundManager_Investors() {
                                   size="sm"
                                   variant="outline"
                                   onClick={() => handleReviewKYC(investor)}
-                                  className="border-2 border-purple-300 text-purple-600 hover:bg-purple-50"
+                                  className="border-2 border-protocall-premium-light text-protocall-premium-text hover:bg-premium-muted"
                                 >
                                   <FileText className="w-4 h-4 mr-1" />
                                   Review KYC
@@ -301,7 +301,7 @@ export default function FundManager_Investors() {
                                   size="sm"
                                   variant="outline"
                                   onClick={() => handleViewDetails(investor)}
-                                  className="border-2 border-blue-300 text-blue-600 hover:bg-blue-50"
+                                  className="border-2 border-protocall-premium-light text-protocall-blue hover:bg-premium-muted"
                                 >
                                   <Eye className="w-4 h-4" />
                                 </Button>

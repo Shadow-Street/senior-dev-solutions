@@ -52,9 +52,9 @@ export default function PollDetailsModal({ open, poll, users, votes, onClose, on
     const holdVotes = poll.hold_votes || 0;
 
     const voteDistribution = [
-      { name: 'Buy', value: buyVotes, color: '#10B981', percentage: totalVotes > 0 ? (buyVotes / totalVotes) * 100 : 0 },
-      { name: 'Sell', value: sellVotes, color: '#EF4444', percentage: totalVotes > 0 ? (sellVotes / totalVotes) * 100 : 0 },
-      { name: 'Hold', value: holdVotes, color: '#6B7280', percentage: totalVotes > 0 ? (holdVotes / totalVotes) * 100 : 0 }
+      { name: 'Buy', value: buyVotes, color: 'hsl(var(--chart-2))', percentage: totalVotes > 0 ? (buyVotes / totalVotes) * 100 : 0 },
+      { name: 'Sell', value: sellVotes, color: 'hsl(var(--chart-3))', percentage: totalVotes > 0 ? (sellVotes / totalVotes) * 100 : 0 },
+      { name: 'Hold', value: holdVotes, color: 'hsl(var(--chart-4))', percentage: totalVotes > 0 ? (holdVotes / totalVotes) * 100 : 0 }
     ];
 
     const isActive = poll.is_active;
@@ -113,13 +113,13 @@ export default function PollDetailsModal({ open, poll, users, votes, onClose, on
                 <DialogTitle className="text-xl mb-2">{pollData.title}</DialogTitle>
                 <DialogDescription className="flex items-center gap-2">
                   <Badge variant="outline">{pollData.stock_symbol}</Badge>
-                  <Badge className={pollData.is_premium ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}>
+                  <Badge className={pollData.is_premium ? 'bg-premium-muted text-protocall-premium-text' : 'bg-premium-muted text-protocall-blue'}>
                     {pollData.is_premium ? 'Premium' : 'General'}
                   </Badge>
                   <Badge className={
-                    pollData.status === 'Active' ? 'bg-green-100 text-green-800' :
-                    pollData.status === 'Suspended' ? 'bg-red-100 text-red-800' :
-                    'bg-gray-100 text-gray-800'
+                    pollData.status === 'Active' ? 'bg-buy-muted text-buy-muted-foreground' :
+                    pollData.status === 'Suspended' ? 'bg-sell-muted text-sell-muted-foreground' :
+                    'bg-surface-2 text-foreground'
                   }>
                     {pollData.status}
                   </Badge>
@@ -131,7 +131,7 @@ export default function PollDetailsModal({ open, poll, users, votes, onClose, on
                     variant="outline"
                     size="sm"
                     onClick={handleSuspendClick}
-                    className={pollData.isActive ? 'text-orange-600 hover:text-orange-800' : 'text-green-600 hover:text-green-800'}
+                    className={pollData.isActive ? 'text-hold-muted-foreground hover:text-hold-muted-foreground' : 'text-buy-muted-foreground hover:text-buy-muted-foreground'}
                   >
                     {pollData.isActive ? <Ban className="w-4 h-4 mr-2" /> : <Play className="w-4 h-4 mr-2" />}
                     {pollData.isActive ? 'Suspend' : 'Reactivate'}
@@ -142,7 +142,7 @@ export default function PollDetailsModal({ open, poll, users, votes, onClose, on
                     variant="outline"
                     size="sm"
                     onClick={handleDeleteClick}
-                    className="text-red-600 hover:text-red-800"
+                    className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Delete
@@ -156,11 +156,11 @@ export default function PollDetailsModal({ open, poll, users, votes, onClose, on
             {/* Poll Information */}
             <div className="lg:col-span-2 space-y-6">
               {/* Basic Info */}
-              <div className="bg-slate-50 p-4 rounded-lg">
+              <div className="bg-surface-2 p-4 rounded-lg">
                 <h3 className="font-semibold mb-3">Poll Information</h3>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-slate-600">Created by</p>
+                    <p className="text-subtle">Created by</p>
                     <div className="flex items-center gap-2 mt-1">
                       <img 
                         src={pollData.creator?.profile_image_url || `https://avatar.vercel.sh/${pollData.creator?.email}.png`} 
@@ -171,31 +171,31 @@ export default function PollDetailsModal({ open, poll, users, votes, onClose, on
                     </div>
                   </div>
                   <div>
-                    <p className="text-slate-600">Created on</p>
+                    <p className="text-subtle">Created on</p>
                     <p className="font-medium">{format(new Date(pollData.created_date), 'PPP')}</p>
                   </div>
                   <div>
-                    <p className="text-slate-600">Poll Type</p>
+                    <p className="text-subtle">Poll Type</p>
                     <p className="font-medium">{pollData.poll_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
                   </div>
                   <div>
-                    <p className="text-slate-600">Expires</p>
+                    <p className="text-subtle">Expires</p>
                     <p className="font-medium">
                       {pollData.expires_at ? format(new Date(pollData.expires_at), 'PPP') : 'Never'}
                     </p>
                   </div>
                   {pollData.target_price && (
                     <div>
-                      <p className="text-slate-600">Target Price</p>
+                      <p className="text-subtle">Target Price</p>
                       <p className="font-medium">₹{pollData.target_price.toLocaleString()}</p>
                     </div>
                   )}
                   {pollData.confidence_score && (
                     <div>
-                      <p className="text-slate-600">Confidence Level</p>
+                      <p className="text-subtle">Confidence Level</p>
                       <div className="flex items-center gap-1">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={`w-3 h-3 ${i < pollData.confidence_score ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+                          <Star key={i} className={`w-3 h-3 ${i < pollData.confidence_score ? 'fill-hold text-hold' : 'text-muted-foreground'}`} />
                         ))}
                         <span className="ml-1 text-xs">({pollData.confidence_score}/5)</span>
                       </div>
@@ -204,7 +204,7 @@ export default function PollDetailsModal({ open, poll, users, votes, onClose, on
                 </div>
                 {pollData.description && (
                   <div className="mt-4">
-                    <p className="text-slate-600 text-sm">Description</p>
+                    <p className="text-subtle text-sm">Description</p>
                     <p className="text-sm mt-1">{pollData.description}</p>
                   </div>
                 )}
@@ -222,12 +222,12 @@ export default function PollDetailsModal({ open, poll, users, votes, onClose, on
                     const Icon = item.name === 'Buy' ? TrendingUp : item.name === 'Sell' ? TrendingDown : Minus;
                     return (
                       <div key={index} className="flex items-center gap-3">
-                        <Icon className={`w-4 h-4 ${item.name === 'Buy' ? 'text-green-500' : item.name === 'Sell' ? 'text-red-500' : 'text-gray-500'}`} />
+                        <Icon className={`w-4 h-4 ${item.name === 'Buy' ? 'text-positive' : item.name === 'Sell' ? 'text-sell' : 'text-muted-foreground'}`} />
                         <span className="w-12 text-sm font-medium">{item.name}</span>
                         <Progress 
                           value={item.percentage} 
                           className="flex-1 h-2"
-                          indicatorClassName={item.name === 'Buy' ? 'bg-green-500' : item.name === 'Sell' ? 'bg-red-500' : 'bg-gray-500'}
+                          indicatorClassName={item.name === 'Buy' ? 'bg-buy' : item.name === 'Sell' ? 'bg-sell' : 'bg-muted-foreground'}
                         />
                         <span className="w-16 text-right text-sm">
                           {item.value} ({Math.round(item.percentage)}%)
@@ -247,7 +247,7 @@ export default function PollDetailsModal({ open, poll, users, votes, onClose, on
                   </h3>
                   <div className="max-h-48 overflow-y-auto space-y-2">
                     {voterDetails.slice(0, 20).map((vote, index) => (
-                      <div key={index} className="flex items-center justify-between text-sm py-2 px-3 bg-slate-50 rounded">
+                      <div key={index} className="flex items-center justify-between text-sm py-2 px-3 bg-surface-2 rounded">
                         <div className="flex items-center gap-2">
                           <img 
                             src={vote.user?.profile_image_url || `https://avatar.vercel.sh/${vote.user?.email}.png`} 
@@ -259,9 +259,9 @@ export default function PollDetailsModal({ open, poll, users, votes, onClose, on
                         <Badge 
                           variant="outline"
                           className={
-                            vote.vote === 'buy' ? 'bg-green-50 text-green-700 border-green-200' :
-                            vote.vote === 'sell' ? 'bg-red-50 text-red-700 border-red-200' :
-                            'bg-gray-50 text-gray-700 border-gray-200'
+                            vote.vote === 'buy' ? 'bg-buy-muted text-buy-muted-foreground border-buy/30' :
+                            vote.vote === 'sell' ? 'bg-sell-muted text-sell-muted-foreground border-sell/30' :
+                            'bg-surface-2 text-subtle border-border'
                           }
                         >
                           {vote.vote.toUpperCase()}
@@ -269,7 +269,7 @@ export default function PollDetailsModal({ open, poll, users, votes, onClose, on
                       </div>
                     ))}
                     {voterDetails.length > 20 && (
-                      <p className="text-center text-sm text-slate-500 py-2">
+                      <p className="text-center text-sm text-muted-foreground py-2">
                         +{voterDetails.length - 20} more voters
                       </p>
                     )}
@@ -308,23 +308,23 @@ export default function PollDetailsModal({ open, poll, users, votes, onClose, on
                 <h3 className="font-semibold mb-4">Quick Stats</h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Total Participants</span>
+                    <span className="text-subtle">Total Participants</span>
                     <span className="font-medium">{pollData.totalVotes}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Winning Decision</span>
+                    <span className="text-subtle">Winning Decision</span>
                     <span className="font-medium">
                       {pollData.voteDistribution.reduce((max, item) => max.value > item.value ? max : item, pollData.voteDistribution[0])?.name || 'Tie'}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Consensus Strength</span>
+                    <span className="text-subtle">Consensus Strength</span>
                     <span className="font-medium">
                       {Math.round(pollData.voteDistribution.reduce((max, item) => max.value > item.value ? max : item, pollData.voteDistribution[0])?.percentage || 0)}%
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Days Active</span>
+                    <span className="text-subtle">Days Active</span>
                     <span className="font-medium">
                       {Math.max(1, Math.ceil((new Date() - new Date(pollData.created_date)) / (1000 * 60 * 60 * 24)))}
                     </span>
@@ -348,7 +348,7 @@ export default function PollDetailsModal({ open, poll, users, votes, onClose, on
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction onClick={handleConfirmDelete} className="bg-sell hover:bg-sell">
               Delete Poll & Votes
             </AlertDialogAction>
           </AlertDialogFooter>

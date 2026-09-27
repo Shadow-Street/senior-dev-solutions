@@ -91,12 +91,12 @@ export default function ManageMonetization({ settings, onChange, onSaveSpecificS
   return (
     <div className="space-y-6">
       {/* Info Banner */}
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+      <div className="bg-premium-muted border border-protocall-premium-light rounded-xl p-4">
         <div className="flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+          <AlertCircle className="w-5 h-5 text-protocall-blue mt-0.5 flex-shrink-0" />
           <div>
-            <h4 className="font-semibold text-blue-800">Global Monetization Settings</h4>
-            <p className="text-sm text-blue-700 mt-1">
+            <h4 className="font-semibold text-protocall-blue">Global Monetization Settings</h4>
+            <p className="text-sm text-protocall-blue mt-1">
               These settings apply globally across Events, Finfluencers, Advisors, and Ad Campaigns. Individual modules can have custom rates.
             </p>
           </div>
@@ -107,7 +107,7 @@ export default function ManageMonetization({ settings, onChange, onSaveSpecificS
       <Card className="shadow-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Percent className="w-5 h-5 text-green-600" />
+            <Percent className="w-5 h-5 text-buy-muted-foreground" />
             Creator Commission & Payouts
           </CardTitle>
           <CardDescription>
@@ -149,7 +149,7 @@ export default function ManageMonetization({ settings, onChange, onSaveSpecificS
       <Card className="shadow-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Megaphone className="w-5 h-5 text-purple-600" />
+            <Megaphone className="w-5 h-5 text-protocall-premium-text" />
             Ad Campaign Pricing
           </CardTitle>
           <CardDescription>
@@ -200,21 +200,21 @@ export default function ManageMonetization({ settings, onChange, onSaveSpecificS
       </Card>
 
       {/* Refund Settings Section */}
-      <Card className="border-orange-200 bg-orange-50">
+      <Card className="border-hold/30 bg-hold-muted">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-orange-800">
+          <CardTitle className="flex items-center gap-2 text-hold-muted-foreground">
             <RotateCcw className="w-5 h-5" />
             Refund Settings
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-orange-200">
+          <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-hold/30">
             <div>
-              <Label className="text-sm font-semibold text-gray-800">Enable Subscription Refunds</Label>
-              <p className="text-xs text-gray-500 mt-1">
+              <Label className="text-sm font-semibold text-foreground">Enable Subscription Refunds</Label>
+              <p className="text-xs text-muted-foreground mt-1">
                 Allow users to request refunds for subscription plans. When disabled, the "Request Refund" button will be hidden on Subscription page only.
               </p>
-              <p className="text-xs text-orange-600 mt-1 font-medium">
+              <p className="text-xs text-hold-muted-foreground mt-1 font-medium">
                 Note: Event, Course, and Advisor subscription refunds remain unaffected.
               </p>
             </div>
@@ -226,16 +226,16 @@ export default function ManageMonetization({ settings, onChange, onSaveSpecificS
                   checked={settings.subscription_refund_enabled === 'true' || settings.subscription_refund_enabled === true}
                   onChange={(e) => handleRefundToggle(e.target.checked)}
                 />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
+                <div className="w-11 h-6 bg-border peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-hold/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-hold"></div>
               </label>
             </div>
           </div>
 
           {(settings.subscription_refund_enabled === 'false' || settings.subscription_refund_enabled === false) && (
-            <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div className="p-3 bg-hold-muted border border-hold/30 rounded-lg">
               <div className="flex items-start gap-2">
-                <AlertCircle className="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" />
-                <div className="text-xs text-yellow-800">
+                <AlertCircle className="w-4 h-4 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
+                <div className="text-xs text-hold-muted-foreground">
                   <p className="font-semibold">Subscription refunds are currently disabled</p>
                   <p className="mt-1">Users cannot request refunds for subscription plans. Enable this to show the "Request Refund" button.</p>
                 </div>
@@ -250,7 +250,7 @@ export default function ManageMonetization({ settings, onChange, onSaveSpecificS
         <Button 
           onClick={handleSave} 
           disabled={isSaving}
-          className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+          className="bg-gradient-to-r from-buy to-protocall-blue hover:from-buy hover:to-protocall-blue"
         >
           {isSaving ? 'Saving...' : 'Save Monetization Settings'}
         </Button>

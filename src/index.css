@@ -104,7 +104,15 @@ button:focus-visible {
     --secondary: 228 45.5% 97.8%;          /* #F7F8FC  Secondary Card Bg       */
     --secondary-foreground: 240 20% 15.7%; /* #202030                          */
     --muted: 230 42.9% 97.3%;              /* #F5F6FB  Input Background        */
-    --muted-foreground: 232 6.9% 57.5%;    /* #8B8D9A  Muted Text              */
+    /* Muted Text. The spec's #8B8D9A is 3.29:1 on white and 3.12:1 on the
+       cream page — below WCAG AA for body text, and it is used almost
+       entirely for small copy. Darkened along the same hue/sat to clear AA
+       (4.97:1 white, 4.71:1 cream). Swap back to 232 6.9% 57.5% if the
+       brand team wants the exact original value. */
+    --muted-foreground: 232.9 7.2% 44%;   /* #686A78  Muted Text (AA on all   */
+                                          /*          spec surfaces: 5.36 on  */
+                                          /*          white, 5.08 cream,      */
+                                          /*          4.76 on #F1F0FF)        */
     --subtle-foreground: 240 6% 39.2%;     /* #5E5E6A  Secondary Text          */
     /* --accent is shadcn's generic hover/highlight surface (dropdowns, ghost
        buttons, calendar, command). It is deliberately NEUTRAL: Neon Lime is
@@ -115,12 +123,16 @@ button:focus-visible {
     --input: 230 42.9% 97.3%;              /* #F5F6FB  Input Background        */
     --ring: 263.4 70% 50.4%;               /* #6D28D9  Cyber Grape             */
 
-    /* --- BUY / Positive / Growth / Live / Progress --------------------- */
-    --buy: 69.4 100% 50%;                  /* #D7FF00  Neon Lime               */
-    --buy-foreground: 240 20% 7.8%;        /* #101018  Text on Lime  (16.4:1)  */
-    --buy-muted: 70.8 100% 88%;            /* #F4FFC2  tinted lime surface     */
-    --buy-muted-foreground: 132.4 40.5% 16.5%; /* #193B20 Positive Text        */
-    --positive-foreground: 132.4 40.5% 16.5%;  /* #193B20 lime-safe on white   */
+    /* --- BUY / Positive / Growth / Live / Progress ---------------------
+       PROTOCALL green system. One hue family (102-105deg) so there is never
+       a stray second green. #56E11B is a BACKGROUND colour only: as text on
+       white it is 1.72:1, so text-on-light uses --positive-foreground.      */
+    --buy: 102.1 78.6% 49.4%;              /* #56E11B  Primary Bright Green    */
+    --buy-foreground: 240 20% 7.8%;        /* #101018  ink on green (10.98:1)  */
+    --buy-soft: 102.6 77.9% 53.9%;         /* #63E52E  Secondary Green         */
+    --buy-muted: 94 78.9% 92.5%;           /* #EAFBDD  tinted green surface    */
+    --buy-muted-foreground: 104.8 74% 24.1%;   /* #276B10  (6.05:1 on tint)    */
+    --positive-foreground: 104.8 74% 24.1%;    /* #276B10  green text on light */
 
     /* --- HOLD / Neutral / Caution / Pending ---------------------------- */
     --hold: 21.9 97.6% 49%;                /* #F75C03                          */
@@ -145,7 +157,7 @@ button:focus-visible {
 
     /* --- Charts & Market Data ----------------------------------------- */
     --chart-1: 244.8 100% 60.8%;           /* #4737FF  Primary Chart           */
-    --chart-2: 69.4 100% 50%;              /* #D7FF00  Positive Chart          */
+    --chart-2: 102.1 78.6% 49.4%;          /* #56E11B  Positive Chart          */
     --chart-3: 0 84.2% 60.2%;              /* #EF4444  Negative Chart          */
     --chart-4: 240 6% 39.2%;               /* #5E5E6A  Neutral Chart           */
     --chart-5: 21.9 97.6% 49%;             /* #F75C03  Caution Chart           */
@@ -199,12 +211,13 @@ button:focus-visible {
     --input: 225 33.3% 16.5%;              /* #1C2338                          */
     --ring: 244.7 100% 82.4%;              /* #ACA5FF  visible focus on dark   */
 
-    /* --- BUY / Positive (same lime) ----------------------------------- */
-    --buy: 69.4 100% 50%;                  /* #D7FF00                          */
+    /* --- BUY / Positive (same green) ----------------------------------- */
+    --buy: 102.1 78.6% 49.4%;              /* #56E11B                          */
     --buy-foreground: 240 20% 7.8%;        /* #101018                          */
-    --buy-muted: 72.6 79.2% 9.4%;          /* #232B05  deep lime surface       */
-    --buy-muted-foreground: 69.4 100% 50%; /* #D7FF00  (12.82:1)               */
-    --positive-foreground: 69.4 100% 50%;  /* #D7FF00  lime reads on dark      */
+    --buy-soft: 102.6 77.9% 53.9%;         /* #63E52E                          */
+    --buy-muted: 103.8 78.7% 9.2%;         /* #0F2A05  deep green surface      */
+    --buy-muted-foreground: 102.1 78.6% 49.4%; /* #56E11B  (reads on dark)     */
+    --positive-foreground: 102.1 78.6% 49.4%;  /* #56E11B  green reads on dark */
 
     /* --- HOLD (same orange) ------------------------------------------- */
     --hold: 21.9 97.6% 49%;                /* #F75C03                          */
@@ -229,7 +242,7 @@ button:focus-visible {
 
     /* --- Charts (same series colours) --------------------------------- */
     --chart-1: 244.8 100% 60.8%;           /* #4737FF                          */
-    --chart-2: 69.4 100% 50%;              /* #D7FF00                          */
+    --chart-2: 102.1 78.6% 49.4%;          /* #56E11B                          */
     --chart-3: 0 84.2% 60.2%;              /* #EF4444                          */
     --chart-4: 226.5 22% 72.4%;            /* #A9B0C8  neutral, lifted         */
     --chart-5: 21.9 97.6% 49%;             /* #F75C03                          */

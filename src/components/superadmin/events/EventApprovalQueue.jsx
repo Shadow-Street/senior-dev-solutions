@@ -111,11 +111,11 @@ export default function EventApprovalQueue({ events, onUpdate, permissions }) {
     return (
       <Card className="shadow-lg border-0 bg-white">
         <CardContent className="p-12 text-center">
-          <CheckCircle className="mx-auto h-16 w-16 text-green-500 mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <CheckCircle className="mx-auto h-16 w-16 text-positive mb-4" />
+          <h3 className="text-xl font-semibold text-foreground mb-2">
             All Caught Up!
           </h3>
-          <p className="text-gray-500">
+          <p className="text-muted-foreground">
             No events are currently waiting for approval.
           </p>
         </CardContent>
@@ -129,10 +129,10 @@ export default function EventApprovalQueue({ events, onUpdate, permissions }) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-orange-600" />
+              <Clock className="w-5 h-5 text-hold-muted-foreground" />
               Pending Approvals
             </CardTitle>
-            <Badge className="bg-orange-100 text-orange-800 border-0">
+            <Badge className="bg-hold-muted text-hold-muted-foreground border-0">
               {pendingEvents.length} Pending
             </Badge>
           </div>
@@ -140,7 +140,7 @@ export default function EventApprovalQueue({ events, onUpdate, permissions }) {
         <CardContent>
           <div className="space-y-4">
             {pendingEvents.map(event => (
-              <Card key={event.id} className="border-2 border-orange-200 bg-orange-50/50">
+              <Card key={event.id} className="border-2 border-hold/30 bg-hold-muted/50">
                 <CardContent className="p-4">
                   <div className="flex flex-col md:flex-row gap-4">
                     {/* Event Image */}
@@ -158,24 +158,24 @@ export default function EventApprovalQueue({ events, onUpdate, permissions }) {
                     <div className="flex-1 space-y-3">
                       <div>
                         <div className="flex items-start justify-between gap-2">
-                          <h4 className="text-lg font-semibold text-gray-900">
+                          <h4 className="text-lg font-semibold text-foreground">
                             {event.title}
                           </h4>
                           {event.is_premium && (
-                            <Badge className="bg-purple-100 text-purple-800 border-0">
+                            <Badge className="bg-premium-muted text-protocall-premium-text border-0">
                               <Crown className="w-3 h-3 mr-1" />
                               Premium
                             </Badge>
                           )}
                         </div>
-                        <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                        <p className="text-sm text-subtle mt-1 line-clamp-2">
                           {event.description}
                         </p>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                        <div className="flex items-center gap-2 text-gray-700">
-                          <Calendar className="w-4 h-4 text-blue-600" />
+                        <div className="flex items-center gap-2 text-subtle">
+                          <Calendar className="w-4 h-4 text-protocall-blue" />
                           {new Date(event.event_date).toLocaleDateString('en-IN', {
                             weekday: 'short',
                             month: 'short',
@@ -183,25 +183,25 @@ export default function EventApprovalQueue({ events, onUpdate, permissions }) {
                             year: 'numeric'
                           })}
                         </div>
-                        <div className="flex items-center gap-2 text-gray-700">
-                          <MapPin className="w-4 h-4 text-red-500" />
+                        <div className="flex items-center gap-2 text-subtle">
+                          <MapPin className="w-4 h-4 text-sell" />
                           {event.location}
                         </div>
-                        <div className="flex items-center gap-2 text-gray-700">
-                          <Users className="w-4 h-4 text-purple-600" />
+                        <div className="flex items-center gap-2 text-subtle">
+                          <Users className="w-4 h-4 text-protocall-premium-text" />
                           Organizer: {event.organizer_name || 'Unknown'}
                         </div>
                         {event.capacity && (
-                          <div className="flex items-center gap-2 text-gray-700">
-                            <AlertCircle className="w-4 h-4 text-orange-600" />
+                          <div className="flex items-center gap-2 text-subtle">
+                            <AlertCircle className="w-4 h-4 text-hold-muted-foreground" />
                             Capacity: {event.capacity}
                           </div>
                         )}
                       </div>
 
                       {event.ticket_price && event.ticket_price > 0 && (
-                        <div className="bg-yellow-100 border border-yellow-300 rounded-lg px-3 py-1.5 inline-block">
-                          <span className="text-sm font-semibold text-yellow-900">
+                        <div className="bg-hold-muted border border-hold/30 rounded-lg px-3 py-1.5 inline-block">
+                          <span className="text-sm font-semibold text-hold-muted-foreground">
                             Ticket Price: ₹{event.ticket_price}
                           </span>
                         </div>
@@ -223,7 +223,7 @@ export default function EventApprovalQueue({ events, onUpdate, permissions }) {
                         size="sm"
                         onClick={() => handleApprove(event)}
                         disabled={isProcessing}
-                        className="flex-1 md:flex-none bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
+                        className="flex-1 md:flex-none bg-buy-soft hover:from-buy hover:to-buy text-buy-foreground"
                       >
                         <CheckCircle className="w-4 h-4 mr-1" />
                         Approve
@@ -242,8 +242,8 @@ export default function EventApprovalQueue({ events, onUpdate, permissions }) {
                   </div>
 
                   {event.admin_notes && (
-                    <div className="mt-3 p-3 bg-gray-100 rounded-lg">
-                      <p className="text-xs text-gray-600">
+                    <div className="mt-3 p-3 bg-surface-2 rounded-lg">
+                      <p className="text-xs text-subtle">
                         <strong>Admin Notes:</strong> {event.admin_notes}
                       </p>
                     </div>
@@ -281,16 +281,16 @@ export default function EventApprovalQueue({ events, onUpdate, permissions }) {
               {/* Event Details */}
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-xl font-bold text-foreground mb-2">
                     {selectedEvent.title}
                   </h3>
-                  <p className="text-gray-600">{selectedEvent.description}</p>
+                  <p className="text-subtle">{selectedEvent.description}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-gray-500 mb-1">Date & Time</p>
-                    <p className="font-medium text-gray-900">
+                    <p className="text-muted-foreground mb-1">Date & Time</p>
+                    <p className="font-medium text-foreground">
                       {new Date(selectedEvent.event_date).toLocaleString('en-IN', {
                         weekday: 'long',
                         year: 'numeric',
@@ -302,32 +302,32 @@ export default function EventApprovalQueue({ events, onUpdate, permissions }) {
                     </p>
                   </div>
                   <div>
-                    <p className="text-gray-500 mb-1">Location</p>
-                    <p className="font-medium text-gray-900">{selectedEvent.location}</p>
+                    <p className="text-muted-foreground mb-1">Location</p>
+                    <p className="font-medium text-foreground">{selectedEvent.location}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500 mb-1">Organizer</p>
-                    <p className="font-medium text-gray-900">
+                    <p className="text-muted-foreground mb-1">Organizer</p>
+                    <p className="font-medium text-foreground">
                       {selectedEvent.organizer_name || 'Not specified'}
                     </p>
                   </div>
                   <div>
-                    <p className="text-gray-500 mb-1">Capacity</p>
-                    <p className="font-medium text-gray-900">
+                    <p className="text-muted-foreground mb-1">Capacity</p>
+                    <p className="font-medium text-foreground">
                       {selectedEvent.capacity || 'Unlimited'}
                     </p>
                   </div>
                   {selectedEvent.is_premium && (
                     <div>
-                      <p className="text-gray-500 mb-1">Ticket Price</p>
-                      <p className="font-medium text-purple-900">
+                      <p className="text-muted-foreground mb-1">Ticket Price</p>
+                      <p className="font-medium text-protocall-premium-text">
                         ₹{selectedEvent.ticket_price || 0}
                       </p>
                     </div>
                   )}
                   <div>
-                    <p className="text-gray-500 mb-1">Event Type</p>
-                    <Badge className={selectedEvent.is_premium ? "bg-purple-100 text-purple-800" : "bg-green-100 text-green-800"}>
+                    <p className="text-muted-foreground mb-1">Event Type</p>
+                    <Badge className={selectedEvent.is_premium ? "bg-premium-muted text-protocall-premium-text" : "bg-buy-muted text-buy-muted-foreground"}>
                       {selectedEvent.is_premium ? 'Premium' : 'Free'}
                     </Badge>
                   </div>
@@ -336,7 +336,7 @@ export default function EventApprovalQueue({ events, onUpdate, permissions }) {
 
               {/* Admin Notes */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">
+                <label className="text-sm font-medium text-subtle mb-2 block">
                   Admin Notes (Optional)
                 </label>
                 <Textarea
@@ -368,7 +368,7 @@ export default function EventApprovalQueue({ events, onUpdate, permissions }) {
                 <Button
                   onClick={() => handleApprove(selectedEvent, adminNotes)}
                   disabled={isProcessing}
-                  className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
+                  className="bg-buy-soft hover:from-buy hover:to-buy text-buy-foreground"
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
                   Approve Event

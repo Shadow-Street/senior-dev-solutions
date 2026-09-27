@@ -58,19 +58,19 @@ export default function AnimatedStats() {
       icon: Users,
       value: `${traders.toLocaleString()}+`,
       label: "Active Traders",
-      color: "from-green-500 to-emerald-600"
+      color: "from-buy to-buy-soft"
     },
     {
       icon: Star,
       value: rating.toFixed(1),
       label: "Average Rating",
-      color: "from-yellow-500 to-orange-600"
+      color: "from-hold to-hold"
     },
     {
       icon: TrendingUp,
       value: `${stocks.toLocaleString()}+`,
       label: "Stocks Tracked",
-      color: "from-blue-500 to-purple-600"
+      color: "from-protocall-deep to-protocall-blue"
     }
   ];
 
@@ -84,7 +84,7 @@ export default function AnimatedStats() {
           transition={{ duration: 0.5, delay: index * 0.1 }}
           className="relative group"
         >
-          <div className="bg-white rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100">
+          <div className="bg-white rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-divider">
             {/* Icon */}
             <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform duration-300`}>
               <stat.icon className="w-8 h-8 text-white" />
@@ -92,10 +92,10 @@ export default function AnimatedStats() {
 
             {/* Value */}
             <div className="text-center">
-              <div className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-2">
+              <div className="text-4xl font-bold bg-gradient-to-r from-protocall-ink to-protocall-sidebar-bg bg-clip-text text-transparent mb-2">
                 {stat.value}
               </div>
-              <div className="text-gray-600 font-medium">
+              <div className="text-subtle font-medium">
                 {stat.label}
               </div>
             </div>

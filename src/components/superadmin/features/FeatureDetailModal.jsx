@@ -17,11 +17,11 @@ export default function FeatureDetailModal({ feature, onClose, onEdit }) {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'live': return 'bg-green-100 text-green-800';
-      case 'partial': return 'bg-yellow-100 text-yellow-800';
-      case 'placeholder': return 'bg-purple-100 text-purple-800';
-      case 'deprecated': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'live': return 'bg-buy-muted text-buy-muted-foreground';
+      case 'partial': return 'bg-hold-muted text-hold-muted-foreground';
+      case 'placeholder': return 'bg-premium-muted text-protocall-premium-text';
+      case 'deprecated': return 'bg-sell-muted text-sell-muted-foreground';
+      default: return 'bg-surface-2 text-foreground';
     }
   };
 
@@ -31,8 +31,8 @@ export default function FeatureDetailModal({ feature, onClose, onEdit }) {
         <DialogHeader>
           <div className="flex items-start gap-4">
             {IconComponent && (
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                <IconComponent className="w-8 h-8 text-purple-600" />
+              <div className="w-16 h-16 bg-surface-2 rounded-xl flex items-center justify-center flex-shrink-0">
+                <IconComponent className="w-8 h-8 text-protocall-premium-text" />
               </div>
             )}
             <div className="flex-1">
@@ -53,18 +53,18 @@ export default function FeatureDetailModal({ feature, onClose, onEdit }) {
                feature.status === 'placeholder' ? 'Coming Soon' :
                'Deprecated'}
             </Badge>
-            <Badge variant="outline" className="bg-slate-100">
+            <Badge variant="outline" className="bg-surface-2">
               {feature.tier === 'basic' ? 'Basic' :
                feature.tier === 'premium' ? 'Premium' :
                'VIP Elite'}
             </Badge>
             {feature.visible_to_users ? (
-              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300">
+              <Badge variant="outline" className="bg-premium-muted text-protocall-blue border-protocall-premium-light">
                 <Eye className="w-3 h-3 mr-1" />
                 Visible to Users
               </Badge>
             ) : (
-              <Badge variant="outline" className="bg-gray-50 text-gray-700">
+              <Badge variant="outline" className="bg-surface-2 text-subtle">
                 <EyeOff className="w-3 h-3 mr-1" />
                 Hidden from Users
               </Badge>
@@ -73,7 +73,7 @@ export default function FeatureDetailModal({ feature, onClose, onEdit }) {
 
           {/* Release Info */}
           {(feature.release_quarter || feature.release_date) && (
-            <div className="flex items-center gap-2 text-sm text-slate-600">
+            <div className="flex items-center gap-2 text-sm text-subtle">
               <Calendar className="w-4 h-4" />
               <span>Release: {feature.release_quarter || feature.release_date}</span>
             </div>
@@ -81,7 +81,7 @@ export default function FeatureDetailModal({ feature, onClose, onEdit }) {
 
           {/* Priority */}
           {feature.priority > 0 && (
-            <div className="flex items-center gap-2 text-sm text-orange-600">
+            <div className="flex items-center gap-2 text-sm text-hold-muted-foreground">
               <Flag className="w-4 h-4" />
               <span>Priority: {feature.priority}</span>
             </div>
@@ -89,15 +89,15 @@ export default function FeatureDetailModal({ feature, onClose, onEdit }) {
 
           {/* URLs */}
           {feature.page_url && (
-            <div className="flex items-center gap-2 text-sm text-slate-600">
+            <div className="flex items-center gap-2 text-sm text-subtle">
               <ExternalLink className="w-4 h-4" />
               <span>Page URL: </span>
-              <code className="px-2 py-1 bg-slate-100 rounded text-xs">{feature.page_url}</code>
+              <code className="px-2 py-1 bg-surface-2 rounded text-xs">{feature.page_url}</code>
             </div>
           )}
 
           {feature.documentation_url && (
-            <div className="flex items-center gap-2 text-sm text-blue-600">
+            <div className="flex items-center gap-2 text-sm text-protocall-blue">
               <FileText className="w-4 h-4" />
               <a href={feature.documentation_url} target="_blank" rel="noopener noreferrer" className="hover:underline">
                 View Documentation
@@ -107,9 +107,9 @@ export default function FeatureDetailModal({ feature, onClose, onEdit }) {
 
           {/* Developer Notes */}
           {feature.developer_notes && (
-            <div className="p-4 bg-slate-50 rounded-lg">
-              <h4 className="text-sm font-semibold text-slate-700 mb-2">Developer Notes</h4>
-              <p className="text-sm text-slate-600 whitespace-pre-wrap">{feature.developer_notes}</p>
+            <div className="p-4 bg-surface-2 rounded-lg">
+              <h4 className="text-sm font-semibold text-subtle mb-2">Developer Notes</h4>
+              <p className="text-sm text-subtle whitespace-pre-wrap">{feature.developer_notes}</p>
             </div>
           )}
         </div>

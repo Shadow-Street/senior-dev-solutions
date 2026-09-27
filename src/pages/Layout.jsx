@@ -1,5 +1,4 @@
 
-import React, { useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
@@ -11,217 +10,171 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
+  SidebarTrigger,
   SidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { LayoutDashboard, MessageSquare, BarChart3, CalendarDays, Shield, Star, Sparkles, Wallet, Crown, Edit3, Home, Briefcase, CreditCard } from "lucide-react";
+import {
+  LayoutDashboard,
+  BarChart3,
+  Briefcase,
+  MessageSquare,
+  Shield,
+  Star,
+  Sparkles,
+  Wallet,
+  Edit3,
+  Bell,
+  ChevronDown,
+  UserRound,
+} from "lucide-react";
 import { Toaster } from "sonner";
 
 import { useAuth } from "@/components/context/AuthContext";
+import { useSubscription } from "@/components/hooks/useSubscription";
+import DashboardSearch from "@/components/dashboard/DashboardSearch";
+
+// Single source of truth for the primary navigation.
+// `comingSoon` items render a badge and do not navigate.
+const NAV_ITEMS = [
+  { key: "dashboard", title: "Dashboard", url: createPageUrl("Dashboard"), icon: LayoutDashboard },
+  { key: "my_portfolio", title: "My Portfolio", url: createPageUrl("MyPortfolio"), icon: Briefcase },
+  { key: "chat_rooms", title: "Stock Chat Rooms", url: createPageUrl("ChatRooms"), icon: MessageSquare },
+  { key: "pledge_pool", title: "Pledge Pool", url: createPageUrl("PledgePool"), icon: Wallet, comingSoon: true },
+  { key: "community_poll", title: "Community Poll", url: createPageUrl("Polls"), icon: BarChart3 },
+  { key: "advisors", title: "Advisors", url: createPageUrl("Advisors"), icon: Shield, comingSoon: true },
+  { key: "influencers", title: "Influencers", url: createPageUrl("Finfluencers"), icon: Star, comingSoon: true },
+  { key: "subscription", title: "Subscription Plans", url: createPageUrl("Subscription"), icon: Sparkles },
+  { key: "profile", title: "My Profile", url: createPageUrl("Profile"), icon: UserRound },
+];
+
+const COMING_SOON_BADGE =
+  "ml-auto shrink-0 border-transparent bg-protocall-premium-light px-1.5 text-[10px] font-semibold uppercase tracking-tight text-protocall-premium-text";
+
+// Render helper (not a component) so it follows the codebase's no-propTypes style.
+const renderComingSoonItem = (item) => {
+  const Icon = item.icon;
+  return (
+    <SidebarMenuItem key={item.key}>
+      <div
+        aria-disabled="true"
+        title={`${item.title} — coming soon`}
+        className="flex w-full cursor-not-allowed items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-sidebar-foreground/60"
+      >
+        <Icon className="h-4 w-4 shrink-0" />
+        <span className="truncate">{item.title}</span>
+        <Badge variant="outline" className={COMING_SOON_BADGE}>
+          Soon
+        </Badge>
+      </div>
+    </SidebarMenuItem>
+  );
+};
 
 function InnerLayout({ children, currentPageName }) {
   const location = useLocation();
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
+  const { subscription } = useSubscription();
 
-  const mockUser = user || {
+  // Shown under the name in the sidebar footer, e.g. "Premium Member".
+  const planName = subscription?.plan_type || subscription?.plan || "";
+  const planLabel = planName
+    ? `${planName.charAt(0).toUpperCase()}${planName.slice(1)} Member`
+    : "Free Member";
+
+  const displayUser = user || {
     id: "guest",
     display_name: "Guest",
     email: "",
     app_role: "guest",
     roles: [],
-    profile_image_url: null
+    profile_image_url: null,
   };
 
-  // Check if current page should show without sidebar
+  // Pages that render their own full-page chrome and must not get the app shell.
   const isLandingPage =
-    location.pathname === createPageUrl('Landing') ||
-    location.pathname.toLowerCase() === '/landing' ||
-    currentPageName === 'Landing';
+    location.pathname === createPageUrl("Landing") ||
+    location.pathname.toLowerCase() === "/landing" ||
+    currentPageName === "Landing";
 
-  const isPublicContentPage =
-    location.pathname === createPageUrl('Blogs') ||
-    currentPageName === 'Blogs' ||
-    location.pathname === createPageUrl('BlogArticle') ||
-    currentPageName === 'BlogArticle' ||
-    location.pathname === createPageUrl('News') ||
-    currentPageName === 'News' ||
-    location.pathname === createPageUrl('Contact') ||
-    currentPageName === 'Contact' ||
-    location.pathname === createPageUrl('ContactSupport') ||
-    currentPageName === 'ContactSupport' ||
-    location.pathname === createPageUrl('Privacy') ||
-    currentPageName === 'Privacy' ||
-    location.pathname === createPageUrl('Terms') ||
-    currentPageName === 'Terms' ||
-    location.pathname === createPageUrl('Cookies') ||
-    currentPageName === 'Cookies' ||
-    location.pathname === createPageUrl('RiskDisclosure') ||
-    currentPageName === 'RiskDisclosure';
+  const PUBLIC_CONTENT_PAGES = [
+    "Blogs",
+    "BlogArticle",
+    "News",
+    "Contact",
+    "ContactSupport",
+    "Privacy",
+    "Terms",
+    "Cookies",
+    "RiskDisclosure",
+  ];
+  const isPublicContentPage = PUBLIC_CONTENT_PAGES.some(
+    (page) => location.pathname === createPageUrl(page) || currentPageName === page
+  );
 
-  const isSuperAdminPage = location.pathname === createPageUrl('SuperAdmin') || currentPageName === 'SuperAdmin';
+  const isSuperAdminPage =
+    location.pathname === createPageUrl("SuperAdmin") || currentPageName === "SuperAdmin";
 
-  const isAdvisorPortalPage =
-    location.pathname === createPageUrl('AdvisorDashboard') ||
-    currentPageName === 'AdvisorDashboard' ||
-    location.pathname === createPageUrl('AdvisorPledgeManagement') ||
-    currentPageName === 'AdvisorPledgeManagement' ||
-    location.pathname === createPageUrl('OrganizerDashboard') ||
-    currentPageName === 'OrganizerDashboard';
-
-  const isFinfluencerPortalPage =
-    location.pathname === createPageUrl('FinfluencerDashboard') ||
-    currentPageName === 'FinfluencerDashboard';
-
-  const isPMPortalPage =
-    location.pathname === createPageUrl('PortfolioManagerDashboard') ||
-    currentPageName === 'PortfolioManagerDashboard';
-
-  const displayNavigationItems = useMemo(() => {
-    const hardcodedOrder = [
-      { key: 'dashboard', title: 'Dashboard', url: createPageUrl('Dashboard'), icon: LayoutDashboard, badge: null },
-      { key: 'my_portfolio', title: 'My Portfolio', url: createPageUrl('MyPortfolio'), icon: Wallet, badge: null },
-      { key: 'chat_rooms', title: 'Chat Rooms', url: createPageUrl('ChatRooms'), icon: MessageSquare, badge: null },
-      { key: 'polls', title: 'Community Polls', url: createPageUrl('Polls'), icon: BarChart3, badge: null },
-      { key: 'pledge_pool', title: 'Pledge Pool', url: createPageUrl('PledgePool'), icon: Crown, badge: null },
-      { key: 'events', title: 'Events', url: createPageUrl('Events'), icon: CalendarDays, badge: null },
-      { key: 'advisors', title: 'Advisors', url: createPageUrl('Advisors'), icon: Shield, badge: null },
-      { key: 'finfluencers', title: 'Finfluencers', url: createPageUrl('Finfluencers'), icon: Star, badge: null },
-      { key: 'subscription', title: 'Subscription', url: createPageUrl('Subscription'), icon: Sparkles, badge: null },
-      { key: 'my_plans_access', title: 'My Plans & Access', url: '/plans-access', icon: CreditCard, badge: { text: 'Pro', color: 'bg-protocall-premium-light text-protocall-premium-text border-transparent' } },
-      { key: 'feedback', title: 'Feedback', url: createPageUrl('Feedback'), icon: MessageSquare, badge: null },
-    ];
-
-    const allItems = [...hardcodedOrder];
-
-    const eventsIndex = allItems.findIndex(item => item.key === 'events');
-    if (eventsIndex !== -1) {
-      allItems.splice(eventsIndex + 1, 0, {
-        key: 'organize_events',
-        title: 'Organize Events',
-        url: createPageUrl('OrganizerDashboard'),
-        icon: CalendarDays,
-        badge: { text: 'Portal', color: 'bg-protocall-premium-light text-protocall-premium-text border-transparent' }
-      });
-    }
-
-    const advisorsIndex = allItems.findIndex(item => item.key === 'advisors');
-    if (advisorsIndex !== -1) {
-      allItems.splice(advisorsIndex + 1, 0, {
-        key: 'advisor_dashboard',
-        title: 'Advisor Dashboard',
-        url: createPageUrl('AdvisorDashboard'),
-        icon: Shield,
-        badge: { text: 'Portal', color: 'bg-protocall-premium-light text-protocall-premium-text border-transparent' }
-      });
-
-      allItems.splice(advisorsIndex + 2, 0, {
-        key: 'advisor_pledge_management',
-        title: 'Pledge Management',
-        url: createPageUrl('AdvisorPledgeManagement'),
-        icon: Crown,
-        badge: { text: 'Portal', color: 'bg-protocall-premium-light text-protocall-premium-text border-transparent' }
-      });
-    }
-
-    const finfluencersIndex = allItems.findIndex(item => item.key === 'finfluencers');
-    if (finfluencersIndex !== -1) {
-      allItems.splice(finfluencersIndex + 1, 0, {
-        key: 'finfluencer_dashboard',
-        title: 'Finfluencer Dashboard',
-        url: createPageUrl('FinfluencerDashboard'),
-        icon: Star,
-        badge: { text: 'Portal', color: 'bg-protocall-premium-light text-protocall-premium-text border-transparent' }
-      });
-    }
-
-    if (advisorsIndex !== -1) {
-      allItems.splice(advisorsIndex + 1, 0, {
-        key: 'pm_dashboard',
-        title: 'PM Dashboard',
-        url: createPageUrl('PortfolioManagerDashboard'),
-        icon: Briefcase,
-        badge: { text: 'Portal', color: 'bg-protocall-premium-light text-protocall-premium-text border-transparent' }
-      });
-    }
-
-    return allItems;
-  }, []);
-
-  // Show pages without sidebar
-  if (isLandingPage || isPublicContentPage) {
+  if (isLandingPage || isPublicContentPage || isSuperAdminPage) {
     return <>{children}</>;
   }
 
-  // Show portal pages without main sidebar
-  if (isSuperAdminPage || isAdvisorPortalPage || isFinfluencerPortalPage || isPMPortalPage) {
-    return <>{children}</>;
-  }
-
-  // Show all other pages with sidebar
   return (
     <>
       <Toaster
         position="top-right"
         toastOptions={{
           duration: 4000,
-          className: 'sonner-toast',
+          className: "sonner-toast",
           style: {
-            borderRadius: '12px',
-            padding: '16px',
-            fontSize: '14px',
-            fontWeight: '500',
-            boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
-            border: 'none',
+            borderRadius: "12px",
+            padding: "16px",
+            fontSize: "14px",
+            fontWeight: "500",
+            boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
+            border: "none",
           },
         }}
         richColors={false}
       />
 
-      <style>{`
-        .sidebar-logo {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 0;
-          min-height: 140px;
-          background: #0B1024;
-          width: 100%;
-        }
-        .sidebar-logo img {
-          width: 100%;
-          height: 100%;
-          min-height: 140px;
-          object-fit: cover;
-          object-position: center;
-        }
-      `}</style>
-
       <SidebarProvider defaultOpen={true}>
-        <div className="flex h-screen w-full bg-background">
+        {/*
+          Layout contract (fixes the zoom / resize drift):
+          - The shell is the ONLY element that owns viewport height (h-dvh).
+          - Exactly one scroll container: <main>. Nothing inside may use
+            h-screen/min-h-screen, which previously produced nested scrollers.
+          - The content column is min-w-0 so a wide child (table, ticker) shrinks
+            instead of pushing the sidebar off-screen.
+        */}
+        <div className="flex h-dvh w-full overflow-hidden bg-background">
           <Sidebar className="border-r border-sidebar-border">
             <SidebarHeader className="p-0">
-              <div className="flex flex-col items-center justify-center p-4 bg-sidebar-dark text-sidebar-foreground min-h-[140px]">
-                <Shield className="w-10 h-10 mb-2" />
-                <div className="text-2xl font-bold tracking-tighter">PROTOCOL</div>
-                <div className="text-xs text-sidebar-muted-foreground tracking-widest uppercase">Financial Networking</div>
+              <div className="flex min-h-[112px] flex-col items-center justify-center gap-1 bg-sidebar-dark p-4 text-sidebar-foreground">
+                <Shield className="h-9 w-9" />
+                <div className="text-xl font-bold tracking-tighter">PROTOCALL</div>
+                <div className="text-[10px] uppercase tracking-widest text-sidebar-muted-foreground">
+                  Financial Networking
+                </div>
               </div>
             </SidebarHeader>
 
-            <SidebarContent className="flex-1 flex flex-col gap-2 overflow-y-auto p-3">
-              <div className="mb-4">
+            <SidebarContent className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-3">
+              <div className="mb-2">
                 <Link to={createPageUrl("Profile")} className="block">
-                  <div className="p-3 bg-sidebar-dark rounded-lg shadow-md hover:bg-sidebar-accent transition-all duration-200 cursor-pointer text-sidebar-foreground relative group">
+                  <div className="group relative cursor-pointer rounded-lg bg-sidebar-dark p-3 text-sidebar-foreground shadow-md transition-all duration-200 hover:bg-sidebar-accent">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-semibold text-sm flex-shrink-0">
-                        {mockUser.display_name?.charAt(0)?.toUpperCase() || 'U'}
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sidebar-primary text-sm font-semibold text-sidebar-primary-foreground">
+                        {displayUser.display_name?.charAt(0)?.toUpperCase() || "U"}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sidebar-foreground truncate text-sm">{mockUser.display_name || 'Trader'}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-sidebar-foreground">
+                          {displayUser.display_name || "Trader"}
+                        </p>
                       </div>
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <Edit3 className="w-4 h-4 text-sidebar-foreground" />
+                      <div className="opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                        <Edit3 className="h-4 w-4 text-sidebar-foreground" />
                       </div>
                     </div>
                   </div>
@@ -229,64 +182,96 @@ function InnerLayout({ children, currentPageName }) {
               </div>
 
               <SidebarGroup>
-                <SidebarGroupLabel className="text-xs font-semibold text-sidebar-muted-foreground uppercase tracking-wider px-2 py-2">
+                <SidebarGroupLabel className="px-2 py-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted-foreground">
                   Trading Hub
                 </SidebarGroupLabel>
                 <SidebarMenu>
-                  {displayNavigationItems.map((item) => (
-                    <SidebarMenuItem key={item.key}>
-                      <SidebarMenuButton
-                        asChild
-                        className={`text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 rounded-xl mb-1 ${location.pathname === item.url ? 'bg-sidebar-primary text-sidebar-primary-foreground font-semibold shadow-md' : ''
+                  {NAV_ITEMS.map((item) =>
+                    item.comingSoon ? (
+                      renderComingSoonItem(item)
+                    ) : (
+                      <SidebarMenuItem key={item.key}>
+                        <SidebarMenuButton
+                          asChild
+                          className={`mb-1 rounded-xl text-sidebar-foreground transition-all duration-200 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground ${
+                            location.pathname === item.url
+                              ? "bg-sidebar-primary font-semibold text-sidebar-primary-foreground shadow-md"
+                              : ""
                           }`}
-                      >
-                        <Link to={item.url} className="flex items-center gap-3 px-3 py-2.5">
-                          <item.icon className="w-4 h-4" />
-                          <span>{item.title}</span>
-                          {item.badge && (
-                            <Badge variant="outline" className={`ml-auto text-xs ${item.badge.color}`}>
-                              {item.badge.text}
-                            </Badge>
-                          )}
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
+                        >
+                          <Link to={item.url} className="flex items-center gap-3 px-3 py-2.5">
+                            <item.icon className="h-4 w-4 shrink-0" />
+                            <span className="truncate">{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )
+                  )}
                 </SidebarMenu>
               </SidebarGroup>
             </SidebarContent>
 
             <SidebarFooter className="border-t border-sidebar-border p-3">
-              <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-sidebar-dark">
-                <div className="w-8 h-8 rounded-full bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-semibold text-xs">
-                  {mockUser.display_name?.charAt(0)?.toUpperCase() || 'U'}
+              <Link
+                to={createPageUrl("Profile")}
+                className="flex items-center gap-3 rounded-lg bg-sidebar-dark px-3 py-2 transition-colors hover:bg-sidebar-accent"
+              >
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sidebar-primary text-xs font-semibold text-sidebar-primary-foreground">
+                  {displayUser.display_name?.charAt(0)?.toUpperCase() || "U"}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-sidebar-foreground truncate">{mockUser.display_name || 'User'}</p>
-                  <p className="text-xs text-sidebar-muted-foreground truncate">{mockUser.email}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-sidebar-foreground">
+                    {displayUser.display_name || "User"}
+                  </p>
+                  <p className="truncate text-xs text-sidebar-muted-foreground">
+                    {planLabel}
+                  </p>
                 </div>
-              </div>
+                <ChevronDown className="h-4 w-4 shrink-0 text-sidebar-muted-foreground" />
+              </Link>
             </SidebarFooter>
           </Sidebar>
 
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <header className="bg-card border-b border-border relative flex-shrink-0">
-              <div className="px-6 py-4 flex items-center justify-between">
-                <h1 className="text-xl font-semibold text-foreground">{currentPageName || 'Protocall'}</h1>
-                <div className="flex items-center gap-4">
-                  <Link to={createPageUrl('Landing')}>
-                    <Button variant="outline" className="flex items-center gap-2 hover:bg-protocall-premium-bg hover:text-protocall-blue transition-colors">
-                      <Home className="w-4 h-4" />
-                      Back to Home
-                    </Button>
+          <div className="flex min-w-0 flex-1 flex-col">
+            <header className="shrink-0 border-b border-border bg-card">
+              <div className="flex flex-wrap items-center gap-3 px-4 py-3 sm:flex-nowrap sm:px-6">
+                <SidebarTrigger className="shrink-0 text-foreground md:hidden" />
+
+                <DashboardSearch className="order-last w-full min-w-0 sm:order-none sm:max-w-md" />
+
+                <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
+                  <button
+                    type="button"
+                    aria-label="Notifications"
+                    className="relative rounded-full p-2 text-subtle transition-colors hover:bg-surface-2 hover:text-foreground"
+                  >
+                    <Bell className="h-5 w-5" />
+                    <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-protocall-sell-text px-1 text-[10px] font-bold leading-none text-white">
+                      3
+                    </span>
+                  </button>
+
+                  <span className="hidden items-center gap-1.5 rounded-full border border-border bg-surface-2 px-3 py-1.5 text-xs font-medium text-foreground lg:inline-flex">
+                    <span className="h-2 w-2 rounded-full bg-buy" />
+                    Live Market
+                    <ChevronDown className="h-3 w-3 text-muted-foreground" />
+                  </span>
+
+                  <Link
+                    to={createPageUrl("Profile")}
+                    className="flex items-center gap-2 rounded-full p-0.5 transition-colors hover:bg-surface-2"
+                    aria-label="Open profile"
+                  >
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+                      {displayUser.display_name?.charAt(0)?.toUpperCase() || "U"}
+                    </span>
+                    <ChevronDown className="hidden h-4 w-4 text-muted-foreground sm:block" />
                   </Link>
                 </div>
               </div>
             </header>
 
-            <main className="flex-1 overflow-y-auto bg-background">
-              {children}
-            </main>
+            <main className="min-h-0 flex-1 overflow-y-auto bg-background">{children}</main>
           </div>
         </div>
       </SidebarProvider>

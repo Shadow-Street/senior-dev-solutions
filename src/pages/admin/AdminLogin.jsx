@@ -48,31 +48,31 @@ const AdminLogin = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#0f172a] text-white p-4 relative overflow-hidden">
+        <div className="min-h-screen flex items-center justify-center bg-protocall-sidebar-bg text-white p-4 relative overflow-hidden">
             {/* Background Effects */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[100px]"></div>
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[100px]"></div>
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-protocall-blue/20 rounded-full blur-[100px]"></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[100px]"></div>
             </div>
 
             <Card className="w-full max-w-md bg-white/10 backdrop-blur-xl border-white/10 text-white z-10 shadow-2xl">
                 <CardHeader className="space-y-1">
                     <div className="flex justify-center mb-6">
-                        <div className="p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg ring-1 ring-white/20">
+                        <div className="p-4 bg-gradient-to-br from-protocall-deep to-protocall-blue rounded-2xl shadow-lg ring-1 ring-white/20">
                             <ShieldCheck className="h-10 w-10 text-white" />
                         </div>
                     </div>
-                    <CardTitle className="text-3xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+                    <CardTitle className="text-3xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-protocall-blue to-protocall-grape">
                         Super Admin
                     </CardTitle>
-                    <CardDescription className="text-center text-gray-400 text-base">
+                    <CardDescription className="text-center text-muted-foreground text-base">
                         Authenticate to access system controls
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleLogin} className="space-y-5">
                         <div className="space-y-2">
-                            <Label htmlFor="email" className="text-gray-300">Email Address</Label>
+                            <Label htmlFor="email" className="text-muted-foreground">Email Address</Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -80,23 +80,23 @@ const AdminLogin = () => {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                className="bg-gray-900/50 border-gray-700/50 focus:border-blue-500/50 focus:ring-blue-500/20 text-white placeholder:text-gray-600 h-10"
+                                className="bg-protocall-ink/50 border-protocall-ink/50 focus:border-protocall-blue/50 focus:ring-ring/20 text-white placeholder:text-subtle h-10"
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="password" classname="text-gray-300">Password</Label>
+                            <Label htmlFor="password" classname="text-muted-foreground">Password</Label>
                             <Input
                                 id="password"
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                className="bg-gray-900/50 border-gray-700/50 focus:border-blue-500/50 focus:ring-blue-500/20 text-white h-10"
+                                className="bg-protocall-ink/50 border-protocall-ink/50 focus:border-protocall-blue/50 focus:ring-ring/20 text-white h-10"
                             />
                         </div>
                         <Button
                             type="submit"
-                            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold h-11 shadow-lg shadow-blue-900/20 border border-white/10"
+                            className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white font-semibold h-11 shadow-lg shadow-protocall-deep/30/20 border border-white/10"
                             disabled={loading}
                         >
                             {loading ? (
@@ -108,7 +108,7 @@ const AdminLogin = () => {
                         </Button>
                     </form>
                 </CardContent>
-                <CardFooter className="text-center text-xs text-gray-500 justify-center">
+                <CardFooter className="text-center text-xs text-muted-foreground justify-center">
                     Authorized Personnel Only • Secure Connection
                 </CardFooter>
             </Card>

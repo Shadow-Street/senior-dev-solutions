@@ -139,11 +139,11 @@ export default function ProcessRefundModal({ refund, currentUser, onClose, onSuc
           {/* User Info */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label className="text-sm text-slate-500">User Name</Label>
+              <Label className="text-sm text-muted-foreground">User Name</Label>
               <Input value={refund.user_name || 'N/A'} readOnly className="mt-1" />
             </div>
             <div>
-              <Label className="text-sm text-slate-500">Email</Label>
+              <Label className="text-sm text-muted-foreground">Email</Label>
               <Input value={refund.user_email || 'N/A'} readOnly className="mt-1" />
             </div>
           </div>
@@ -151,11 +151,11 @@ export default function ProcessRefundModal({ refund, currentUser, onClose, onSuc
           {/* Transaction Info */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label className="text-sm text-slate-500">Transaction ID</Label>
+              <Label className="text-sm text-muted-foreground">Transaction ID</Label>
               <Input value={refund.original_transaction_id} readOnly className="mt-1" />
             </div>
             <div>
-              <Label className="text-sm text-slate-500">Transaction Type</Label>
+              <Label className="text-sm text-muted-foreground">Transaction Type</Label>
               <Input value={refund.transaction_type} readOnly className="mt-1" />
             </div>
           </div>
@@ -163,7 +163,7 @@ export default function ProcessRefundModal({ refund, currentUser, onClose, onSuc
           {/* Amount Info */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label className="text-sm text-slate-500">Original Amount</Label>
+              <Label className="text-sm text-muted-foreground">Original Amount</Label>
               <Input 
                 value={`₹${(refund.original_amount || 0).toLocaleString('en-IN')}`} 
                 readOnly 
@@ -171,7 +171,7 @@ export default function ProcessRefundModal({ refund, currentUser, onClose, onSuc
               />
             </div>
             <div>
-              <Label className="text-sm text-slate-500">Refund Amount *</Label>
+              <Label className="text-sm text-muted-foreground">Refund Amount *</Label>
               <Input
                 type="number"
                 value={refundAmount}
@@ -180,7 +180,7 @@ export default function ProcessRefundModal({ refund, currentUser, onClose, onSuc
                 className="mt-1"
               />
               {parseFloat(refundAmount) > refund.original_amount && (
-                <p className="text-xs text-red-600 mt-1">
+                <p className="text-xs text-sell-muted-foreground mt-1">
                   Cannot exceed original amount
                 </p>
               )}
@@ -189,7 +189,7 @@ export default function ProcessRefundModal({ refund, currentUser, onClose, onSuc
 
           {/* User's Request Reason */}
           <div>
-            <Label className="text-sm text-slate-500">User's Reason</Label>
+            <Label className="text-sm text-muted-foreground">User's Reason</Label>
             <Textarea 
               value={refund.request_reason || 'No reason provided'} 
               readOnly 
@@ -199,7 +199,7 @@ export default function ProcessRefundModal({ refund, currentUser, onClose, onSuc
 
           {/* Admin Notes */}
           <div>
-            <Label className="text-sm text-slate-500">Admin Notes / Processing Reason *</Label>
+            <Label className="text-sm text-muted-foreground">Admin Notes / Processing Reason *</Label>
             <Textarea
               value={adminNotes}
               onChange={(e) => setAdminNotes(e.target.value)}
@@ -249,7 +249,7 @@ export default function ProcessRefundModal({ refund, currentUser, onClose, onSuc
               parseFloat(refundAmount) <= 0 || 
               parseFloat(refundAmount) > refund.original_amount
             }
-            className="bg-green-600 hover:bg-green-700"
+            className="bg-buy hover:bg-buy"
           >
             {isProcessing && action === 'approve' ? (
               <>

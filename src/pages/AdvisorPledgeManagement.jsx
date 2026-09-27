@@ -115,10 +115,10 @@ export default function AdvisorPledgeManagementPage() {
   if (isLoading) {
     return (
       <AdvisorLayout user={user}>
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+        <div className="flex items-center justify-center min-h-screen bg-surface-2">
           <div className="text-center">
-            <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
-            <p className="text-slate-600">Loading Pledge Management...</p>
+            <Loader2 className="w-12 h-12 animate-spin text-protocall-blue mx-auto mb-4" />
+            <p className="text-subtle">Loading Pledge Management...</p>
           </div>
         </div>
       </AdvisorLayout>
@@ -128,11 +128,11 @@ export default function AdvisorPledgeManagementPage() {
   if (!advisorProfile) {
     return (
       <AdvisorLayout user={user}>
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+        <div className="flex items-center justify-center min-h-screen bg-surface-2">
           <div className="max-w-md p-6 text-center bg-white rounded-xl shadow-lg">
-            <Lock className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Advisor Profile Required</h2>
-            <p className="text-gray-600">You need an approved advisor profile to access pledge management features.</p>
+            <Lock className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+            <h2 className="text-2xl font-bold text-foreground mb-2">Advisor Profile Required</h2>
+            <p className="text-subtle">You need an approved advisor profile to access pledge management features.</p>
           </div>
         </div>
       </AdvisorLayout>
@@ -209,7 +209,7 @@ export default function AdvisorPledgeManagementPage() {
 
   return (
     <AdvisorLayout user={user}>
-      <div className="p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 min-h-screen">
+      <div className="p-6 bg-surface-2 min-h-screen">
         {renderContent()}
       </div>
     </AdvisorLayout>

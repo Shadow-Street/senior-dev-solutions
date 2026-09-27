@@ -16,21 +16,21 @@ export default function ProfileCreditsSection({ user, referrals }) {
     amount: referralCredits,
     description: `${successfulReferrals} successful referrals × 100 credits`,
     icon: Award,
-    color: "text-blue-600"
+    color: "text-protocall-blue"
   },
   {
     title: "Trust Score Bonus",
     amount: bonusCredits,
     description: bonusCredits > 0 ? `High trust score (${Math.round(user.trust_score)}/100)` : "Earn more with higher trust score",
     icon: Star,
-    color: "text-purple-600"
+    color: "text-protocall-premium-text"
   }];
 
 
   return (
     <div className="space-y-6">
       {/* Total Credits */}
-      <Card className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 text-white border-0 shadow-lg">
+      <Card className="bg-gradient-to-r from-hold via-hold to-sell text-white border-0 shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-white">
             <Star className="w-6 h-6" />
@@ -47,7 +47,7 @@ export default function ProfileCreditsSection({ user, referrals }) {
 
       {/* Credit Sources */}
       <Card>
-        <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100">
+        <CardHeader className="bg-surface-2">
             <CardTitle>Credit Breakdown</CardTitle>
         </CardHeader>
         <CardContent className="pt-4">
@@ -56,16 +56,16 @@ export default function ProfileCreditsSection({ user, referrals }) {
             <Card key={index}>
                     <CardContent className="p-4">
                     <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-full bg-slate-100 ${source.color}`}>
+                        <div className={`p-2 rounded-full bg-surface-2 ${source.color}`}>
                         <source.icon className="w-5 h-5" />
                         </div>
                         <div className="flex-1">
                         <h4 className="font-semibold">{source.title}</h4>
-                        <p className="text-sm text-slate-600">{source.description}</p>
+                        <p className="text-sm text-subtle">{source.description}</p>
                         </div>
                         <div className="text-right">
                         <div className="text-xl font-bold">{source.amount.toLocaleString()}</div>
-                        <div className="text-xs text-slate-500">credits</div>
+                        <div className="text-xs text-muted-foreground">credits</div>
                         </div>
                     </div>
                     </CardContent>
@@ -77,34 +77,34 @@ export default function ProfileCreditsSection({ user, referrals }) {
       
 
       {/* How to Earn More */}
-      <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
-        <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 border-b">
+      <Card className="bg-surface-2 border-protocall-premium-light">
+        <CardHeader className="bg-surface-2 border-b">
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-blue-600" />
+            <TrendingUp className="w-5 h-5 text-protocall-blue" />
             Earn More Credits
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0 p-6">
           <div className="space-y-3">
             <div className="flex items-start gap-3">
-              <Gift className="w-5 h-5 text-green-600 mt-0.5" />
+              <Gift className="w-5 h-5 text-buy-muted-foreground mt-0.5" />
               <div>
                 <h4 className="font-semibold">Invite More Traders</h4>
-                <p className="text-sm text-slate-600">Earn 100 credits for each successful referral</p>
+                <p className="text-sm text-subtle">Earn 100 credits for each successful referral</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <Star className="w-5 h-5 text-purple-600 mt-0.5" />
+              <Star className="w-5 h-5 text-protocall-premium-text mt-0.5" />
               <div>
                 <h4 className="font-semibold">Increase Trust Score</h4>
-                <p className="text-sm text-slate-600">Higher trust scores unlock bonus credit multipliers</p>
+                <p className="text-sm text-subtle">Higher trust scores unlock bonus credit multipliers</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <Award className="w-5 h-5 text-orange-600 mt-0.5" />
+              <Award className="w-5 h-5 text-hold-muted-foreground mt-0.5" />
               <div>
                 <h4 className="font-semibold">Active Participation</h4>
-                <p className="text-sm text-slate-600">Engage in community discussions and events</p>
+                <p className="text-sm text-subtle">Engage in community discussions and events</p>
               </div>
             </div>
           </div>

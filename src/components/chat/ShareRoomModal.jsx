@@ -68,32 +68,32 @@ export default function ShareRoomModal({ open, onClose, room, shareLink: propSha
                 <div className="p-6 pt-2 space-y-6">
                     {/* Link Section */}
                     <div className="space-y-2">
-                        <label className="text-sm font-semibold text-slate-900">Share Link</label>
+                        <label className="text-sm font-semibold text-foreground">Share Link</label>
                         <div className="flex gap-2">
                             <Input
                                 value={shareLink}
                                 readOnly
-                                className="bg-slate-50 border-slate-200 text-slate-600 focus-visible:ring-blue-500"
+                                className="bg-surface-2 border-border text-subtle focus-visible:ring-ring"
                             />
                             <Button
                                 variant="outline"
                                 size="icon"
                                 onClick={handleCopy}
-                                className="border-slate-200 hover:bg-slate-50 shrink-0"
+                                className="border-border hover:bg-surface-2 shrink-0"
                             >
-                                {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4 text-slate-500" />}
+                                {copied ? <Check className="w-4 h-4 text-buy-muted-foreground" /> : <Copy className="w-4 h-4 text-muted-foreground" />}
                             </Button>
                         </div>
                     </div>
 
                     {/* Social Media Section */}
                     <div className="space-y-3">
-                        <label className="text-sm font-semibold text-slate-900">Share on Social Media</label>
+                        <label className="text-sm font-semibold text-foreground">Share on Social Media</label>
                         <div className="grid grid-cols-1 gap-3">
                             {/* Instagram - Gradient */}
                             <Button
                                 onClick={() => handleSocialShare('instagram')}
-                                className="w-full bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 hover:opacity-90 text-white font-semibold h-11 border-0"
+                                className="w-full bg-gradient-to-r from-protocall-deep via-protocall-grape to-hold hover:opacity-90 text-white font-semibold h-11 border-0"
                             >
                                 <Instagram className="w-5 h-5 mr-2" />
                                 Instagram
@@ -120,9 +120,9 @@ export default function ShareRoomModal({ open, onClose, room, shareLink: propSha
                     </div>
 
                     {/* Instagram Instructions - Blue Box */}
-                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                        <h4 className="font-semibold text-blue-900 mb-2 text-sm">How to share on Instagram:</h4>
-                        <ol className="text-sm text-blue-700 space-y-1 list-decimal list-inside">
+                    <div className="bg-premium-muted rounded-xl p-4 border border-protocall-premium-light">
+                        <h4 className="font-semibold text-protocall-blue mb-2 text-sm">How to share on Instagram:</h4>
+                        <ol className="text-sm text-protocall-blue space-y-1 list-decimal list-inside">
                             <li>Click "Instagram" button above to copy the link</li>
                             <li>Open Instagram and create a new Story or Post</li>
                             <li>Add text and paste the link</li>

@@ -28,8 +28,8 @@ export default function ReadReceiptIndicator({
     // Message sent but not read by anyone
     return (
       <div className="flex items-center gap-1 mt-1">
-        <Check className="w-3 h-3 text-slate-400" />
-        <span className="text-[10px] text-slate-400">Sent</span>
+        <Check className="w-3 h-3 text-muted-foreground" />
+        <span className="text-[10px] text-muted-foreground">Sent</span>
       </div>
     );
   }
@@ -39,12 +39,12 @@ export default function ReadReceiptIndicator({
       <Tooltip>
         <TooltipTrigger asChild>
           <div className="flex items-center gap-1 mt-1 cursor-pointer">
-            <CheckCheck className="w-3 h-3 text-blue-500" />
+            <CheckCheck className="w-3 h-3 text-protocall-premium-light" />
             <div className="flex -space-x-1.5">
               {displayReaders.map((reader, idx) => (
                 <Avatar key={reader.id || idx} className="h-4 w-4 border border-white">
                   <AvatarFallback 
-                    className="text-[8px] bg-slate-200 text-slate-600"
+                    className="text-[8px] bg-border text-subtle"
                     style={{ backgroundColor: reader.profile_color }}
                   >
                     {reader.display_name?.charAt(0) || '?'}
@@ -52,12 +52,12 @@ export default function ReadReceiptIndicator({
                 </Avatar>
               ))}
               {remainingCount > 0 && (
-                <div className="h-4 w-4 rounded-full bg-slate-200 border border-white flex items-center justify-center">
-                  <span className="text-[8px] text-slate-600">+{remainingCount}</span>
+                <div className="h-4 w-4 rounded-full bg-border border border-white flex items-center justify-center">
+                  <span className="text-[8px] text-subtle">+{remainingCount}</span>
                 </div>
               )}
             </div>
-            <span className="text-[10px] text-blue-500">
+            <span className="text-[10px] text-protocall-premium-light">
               Seen by {readers.length}
             </span>
           </div>
@@ -68,7 +68,7 @@ export default function ReadReceiptIndicator({
             <ul className="space-y-0.5">
               {readers.map((reader, idx) => (
                 <li key={reader.id || idx} className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-protocall-blue" />
                   {reader.display_name || 'Unknown User'}
                 </li>
               ))}

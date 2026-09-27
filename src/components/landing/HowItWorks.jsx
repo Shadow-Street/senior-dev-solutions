@@ -10,28 +10,28 @@ export default function HowItWorks() {
       icon: UserPlus,
       title: "Sign Up Free",
       description: "Create your account in 2 minutes. No credit card required to start.",
-      color: "from-blue-500 to-blue-600",
+      color: "from-protocall-deep to-protocall-blue",
       delay: 0.1
     },
     {
       icon: Users,
       title: "Invest",
       description: "Invest smarter with the power of community. Join forces with thousands of retail traders sharing insights, strategies, and real-time market intelligence.",
-      color: "from-purple-500 to-purple-600",
+      color: "from-protocall-deep to-protocall-blue",
       delay: 0.2
     },
     {
       icon: TrendingUp,
       title: "Make Smart Trades",
       description: "Use community wisdom and expert advice to make informed investment decisions.",
-      color: "from-pink-500 to-pink-600",
+      color: "from-protocall-deep to-protocall-blue",
       delay: 0.3
     },
     {
       icon: LineChart,
       title: "Track & Grow",
       description: "Monitor your portfolio, track performance, and grow your wealth over time.",
-      color: "from-orange-500 to-orange-600",
+      color: "from-hold to-hold",
       delay: 0.4
     }
   ];
@@ -40,8 +40,8 @@ export default function HowItWorks() {
     <section className="py-20 px-6 bg-white relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-0 left-0 w-full h-full opacity-5">
-        <div className="absolute top-10 left-10 w-64 h-64 bg-blue-500 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 right-10 w-64 h-64 bg-purple-500 rounded-full blur-3xl"></div>
+        <div className="absolute top-10 left-10 w-64 h-64 bg-protocall-blue rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 right-10 w-64 h-64 bg-primary rounded-full blur-3xl"></div>
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -54,11 +54,11 @@ export default function HowItWorks() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-protocall-deep to-protocall-blue bg-clip-text text-transparent">
                 How It Works
               </span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-subtle max-w-3xl mx-auto">
               Start your trading journey in 4 simple steps
             </p>
           </motion.div>
@@ -77,8 +77,8 @@ export default function HowItWorks() {
             >
               <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 bg-white group">
                 {/* Step Number */}
-                <div className="absolute top-4 right-4 w-12 h-12 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                  <span className="text-2xl font-bold text-gray-400 group-hover:text-gray-600 transition-colors">
+                <div className="absolute top-4 right-4 w-12 h-12 rounded-full bg-surface-2 flex items-center justify-center">
+                  <span className="text-2xl font-bold text-muted-foreground group-hover:text-subtle transition-colors">
                     {index + 1}
                   </span>
                 </div>
@@ -90,16 +90,16 @@ export default function HowItWorks() {
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-protocall-blue transition-colors">
                     {step.title}
                   </h3>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-subtle leading-relaxed">
                     {step.description}
                   </p>
 
                   {/* Decorative Arrow (except last item) */}
                   {index < steps.length - 1 && (
-                    <div className="hidden lg:block absolute -right-4 top-1/2 transform -translate-y-1/2 text-gray-300">
+                    <div className="hidden lg:block absolute -right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>

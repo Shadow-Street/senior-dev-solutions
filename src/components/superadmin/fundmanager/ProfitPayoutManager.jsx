@@ -505,8 +505,8 @@ export default function ProfitPayoutManager({ onUpdate }) {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-12 space-y-4">
-        <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
-        <p className="text-slate-600">Loading profit payout data...</p>
+        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
+        <p className="text-subtle">Loading profit payout data...</p>
       </div>
     );
   }
@@ -514,7 +514,7 @@ export default function ProfitPayoutManager({ onUpdate }) {
   return (
     <div className="space-y-6">
       {/* 🔥 UNMISSABLE VERSION BANNER */}
-      <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white rounded-xl p-6 shadow-2xl border-4 border-yellow-400">
+      <div className="bg-gradient-to-r from-protocall-deep via-protocall-grape to-sell text-white rounded-xl p-6 shadow-2xl border-4 border-hold">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Zap className="w-12 h-12 animate-pulse" />
@@ -523,57 +523,57 @@ export default function ProfitPayoutManager({ onUpdate }) {
               <p className="text-sm opacity-90 mt-1">Sample Data Generator & Enhanced Debugging Enabled</p>
             </div>
           </div>
-          <Badge className="bg-yellow-400 text-black text-lg px-4 py-2 font-bold">
+          <Badge className="bg-hold text-black text-lg px-4 py-2 font-bold">
             LIVE NOW
           </Badge>
         </div>
       </div>
 
       {/* Quick Action Buttons - ALWAYS VISIBLE */}
-      <Card className="border-2 border-green-500 bg-gradient-to-r from-green-50 to-emerald-50">
+      <Card className="border-2 border-buy bg-gradient-to-r from-surface-2 to-buy-muted">
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-2">
-            <Database className="w-6 h-6 text-green-600" />
+            <Database className="w-6 h-6 text-buy-muted-foreground" />
             Quick Actions & Testing
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-white rounded-lg p-4 border-2 border-blue-200 shadow">
-              <p className="text-slate-600 text-sm font-semibold">Total Allocations</p>
-              <p className="text-3xl font-bold text-blue-900">{allocations.length}</p>
+            <div className="bg-white rounded-lg p-4 border-2 border-protocall-premium-light shadow">
+              <p className="text-subtle text-sm font-semibold">Total Allocations</p>
+              <p className="text-3xl font-bold text-protocall-blue">{allocations.length}</p>
             </div>
-            <div className="bg-white rounded-lg p-4 border-2 border-green-200 shadow">
-              <p className="text-slate-600 text-sm font-semibold">Active Allocations</p>
-              <p className="text-3xl font-bold text-green-900">
+            <div className="bg-white rounded-lg p-4 border-2 border-buy/30 shadow">
+              <p className="text-subtle text-sm font-semibold">Active Allocations</p>
+              <p className="text-3xl font-bold text-buy-muted-foreground">
                 {allocations.filter(a => a.status === 'active').length}
               </p>
             </div>
-            <div className="bg-white rounded-lg p-4 border-2 border-purple-200 shadow">
-              <p className="text-slate-600 text-sm font-semibold">Past Payouts</p>
-              <p className="text-3xl font-bold text-purple-900">{payoutTransactions.length}</p>
+            <div className="bg-white rounded-lg p-4 border-2 border-protocall-premium-light shadow">
+              <p className="text-subtle text-sm font-semibold">Past Payouts</p>
+              <p className="text-3xl font-bold text-protocall-premium-text">{payoutTransactions.length}</p>
             </div>
-            <div className="bg-white rounded-lg p-4 border-2 border-orange-200 shadow">
-              <p className="text-slate-600 text-sm font-semibold">Eligible Now</p>
-              <p className="text-3xl font-bold text-orange-900">{eligibleAllocations.length}</p>
+            <div className="bg-white rounded-lg p-4 border-2 border-hold/30 shadow">
+              <p className="text-subtle text-sm font-semibold">Eligible Now</p>
+              <p className="text-3xl font-bold text-hold-muted-foreground">{eligibleAllocations.length}</p>
             </div>
           </div>
 
           {/* Diagnostic Messages */}
           {allocations.length === 0 && (
-            <div className="bg-yellow-100 border-2 border-yellow-400 rounded-lg p-4">
-              <p className="text-yellow-900 font-bold text-base mb-2">⚠️ No allocations found in database</p>
-              <p className="text-yellow-800 text-sm">
+            <div className="bg-hold-muted border-2 border-hold rounded-lg p-4">
+              <p className="text-hold-muted-foreground font-bold text-base mb-2">⚠️ No allocations found in database</p>
+              <p className="text-hold-muted-foreground text-sm">
                 Click the button below to generate sample data for testing.
               </p>
             </div>
           )}
 
           {allocations.length > 0 && eligibleAllocations.length === 0 && allocations.filter(a => a.status === 'active').length > 0 && (
-            <div className="bg-orange-100 border-2 border-orange-400 rounded-lg p-4">
-              <p className="text-orange-900 font-bold text-base mb-2">⚠️ Active allocations have no distributable profit</p>
-              <p className="text-orange-800 text-sm">
+            <div className="bg-hold-muted border-2 border-hold rounded-lg p-4">
+              <p className="text-hold-muted-foreground font-bold text-base mb-2">⚠️ Active allocations have no distributable profit</p>
+              <p className="text-hold-muted-foreground text-sm">
                 This means all active allocations currently have:<br/>
                 • Current Value ≤ Total Invested (no profit), OR<br/>
                 • All profits have already been distributed
@@ -587,7 +587,7 @@ export default function ProfitPayoutManager({ onUpdate }) {
               onClick={generateSampleData}
               disabled={isGeneratingSampleData}
               size="lg"
-              className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-lg py-6 shadow-xl"
+              className="flex-1 bg-buy-soft hover:from-buy hover:to-buy text-buy-foreground font-bold text-lg py-6 shadow-xl"
             >
               {isGeneratingSampleData ? (
                 <>
@@ -606,7 +606,7 @@ export default function ProfitPayoutManager({ onUpdate }) {
               onClick={loadData}
               variant="outline"
               size="lg"
-              className="border-2 border-blue-500 text-blue-600 hover:bg-blue-50 font-semibold py-6"
+              className="border-2 border-protocall-blue text-protocall-blue hover:bg-premium-muted font-semibold py-6"
             >
               <RefreshCw className="w-5 h-5 mr-2" />
               Refresh Data
@@ -617,7 +617,7 @@ export default function ProfitPayoutManager({ onUpdate }) {
 
       {/* Rest of the content */}
       <Card className="shadow-lg border-0">
-        <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <CardHeader className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <div className="flex items-center justify-between">
             <CardTitle className="text-2xl flex items-center gap-2">
               <TrendingUp className="w-7 h-7" />
@@ -626,53 +626,53 @@ export default function ProfitPayoutManager({ onUpdate }) {
             <Button
               onClick={handleInitiatePayout}
               disabled={eligibleAllocations.length === 0}
-              className="bg-white text-blue-600 hover:bg-blue-50 font-semibold shadow-lg"
+              className="bg-white text-protocall-blue hover:bg-premium-muted font-semibold shadow-lg"
             >
               <Send className="w-5 h-5 mr-2" />
               Initiate New Profit Payout
             </Button>
           </div>
-          <p className="text-blue-100 mt-2">
+          <p className="text-protocall-blue mt-2">
             Distribute profits to investors from their active fund allocations
           </p>
         </CardHeader>
         <CardContent className="p-6">
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100">
+            <Card className="border-2 border-protocall-premium-light bg-surface-2">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-slate-600 text-sm font-semibold mb-1">Eligible Allocations</p>
-                    <p className="text-4xl font-bold text-blue-900">{eligibleAllocations.length}</p>
+                    <p className="text-subtle text-sm font-semibold mb-1">Eligible Allocations</p>
+                    <p className="text-4xl font-bold text-protocall-blue">{eligibleAllocations.length}</p>
                   </div>
-                  <Users className="w-12 h-12 text-blue-600 opacity-50" />
+                  <Users className="w-12 h-12 text-protocall-blue opacity-50" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-green-100">
+            <Card className="border-2 border-buy/30 bg-gradient-to-br from-surface-2 to-buy-muted">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-slate-600 text-sm font-semibold mb-1">Total Distributable Profit</p>
-                    <p className="text-3xl font-bold text-green-900">
+                    <p className="text-subtle text-sm font-semibold mb-1">Total Distributable Profit</p>
+                    <p className="text-3xl font-bold text-buy-muted-foreground">
                       ₹{totalDistributableProfit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </p>
                   </div>
-                  <DollarSign className="w-12 h-12 text-green-600 opacity-50" />
+                  <DollarSign className="w-12 h-12 text-buy-muted-foreground opacity-50" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100">
+            <Card className="border-2 border-protocall-premium-light bg-surface-2">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-slate-600 text-sm font-semibold mb-1">Past Payouts (All Time)</p>
-                    <p className="text-4xl font-bold text-purple-900">{payoutTransactions.length}</p>
+                    <p className="text-subtle text-sm font-semibold mb-1">Past Payouts (All Time)</p>
+                    <p className="text-4xl font-bold text-protocall-premium-text">{payoutTransactions.length}</p>
                   </div>
-                  <History className="w-12 h-12 text-purple-600 opacity-50" />
+                  <History className="w-12 h-12 text-protocall-premium-text opacity-50" />
                 </div>
               </CardContent>
             </Card>
@@ -681,20 +681,20 @@ export default function ProfitPayoutManager({ onUpdate }) {
           {/* Active Allocations with Distributable Profit */}
           {eligibleAllocations.length > 0 ? (
             <div>
-              <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+              <h3 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+                <TrendingUp className="w-6 h-6 text-buy-muted-foreground" />
                 Active Allocations with Distributable Profit
               </h3>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b-2 border-slate-300 bg-slate-50">
-                      <th className="text-left py-3 px-4 font-semibold text-slate-700">Investor</th>
-                      <th className="text-left py-3 px-4 font-semibold text-slate-700">Fund Plan</th>
-                      <th className="text-right py-3 px-4 font-semibold text-slate-700">Invested</th>
-                      <th className="text-right py-3 px-4 font-semibold text-slate-700">Current Value</th>
-                      <th className="text-right py-3 px-4 font-semibold text-slate-700">Distributable Profit</th>
-                      <th className="text-center py-3 px-4 font-semibold text-slate-700">Status</th>
+                    <tr className="border-b-2 border-border bg-surface-2">
+                      <th className="text-left py-3 px-4 font-semibold text-subtle">Investor</th>
+                      <th className="text-left py-3 px-4 font-semibold text-subtle">Fund Plan</th>
+                      <th className="text-right py-3 px-4 font-semibold text-subtle">Invested</th>
+                      <th className="text-right py-3 px-4 font-semibold text-subtle">Current Value</th>
+                      <th className="text-right py-3 px-4 font-semibold text-subtle">Distributable Profit</th>
+                      <th className="text-center py-3 px-4 font-semibold text-subtle">Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -704,32 +704,32 @@ export default function ProfitPayoutManager({ onUpdate }) {
                       const distributableProfit = calculateEffectiveProfit(alloc);
 
                       return (
-                        <tr key={alloc.id} className="border-b border-slate-200 hover:bg-slate-50">
+                        <tr key={alloc.id} className="border-b border-border hover:bg-surface-2">
                           <td className="py-4 px-4">
-                            <p className="font-medium text-slate-900">{investor?.full_name || 'Unknown'}</p>
-                            <p className="text-xs text-slate-500">{investor?.investor_code || 'N/A'}</p>
+                            <p className="font-medium text-foreground">{investor?.full_name || 'Unknown'}</p>
+                            <p className="text-xs text-muted-foreground">{investor?.investor_code || 'N/A'}</p>
                           </td>
                           <td className="py-4 px-4">
-                            <p className="font-medium text-slate-900">{fundPlan?.plan_name || 'N/A'}</p>
-                            <p className="text-xs text-slate-500">{fundPlan?.plan_code || 'Unknown'}</p>
+                            <p className="font-medium text-foreground">{fundPlan?.plan_name || 'N/A'}</p>
+                            <p className="text-xs text-muted-foreground">{fundPlan?.plan_code || 'Unknown'}</p>
                           </td>
                           <td className="py-4 px-4 text-right">
-                            <p className="font-semibold text-slate-900">
+                            <p className="font-semibold text-foreground">
                               ₹{(alloc.total_invested || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                             </p>
                           </td>
                           <td className="py-4 px-4 text-right">
-                            <p className="font-semibold text-blue-900">
+                            <p className="font-semibold text-protocall-blue">
                               ₹{(alloc.current_value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                             </p>
                           </td>
                           <td className="py-4 px-4 text-right">
-                            <p className="font-bold text-green-600 text-lg">
+                            <p className="font-bold text-buy-muted-foreground text-lg">
                               ₹{distributableProfit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                             </p>
                           </td>
                           <td className="py-4 px-4 text-center">
-                            <Badge className="bg-green-100 text-green-800 border border-green-300">
+                            <Badge className="bg-buy-muted text-buy-muted-foreground border border-buy/30">
                               Active
                             </Badge>
                           </td>
@@ -741,12 +741,12 @@ export default function ProfitPayoutManager({ onUpdate }) {
               </div>
             </div>
           ) : (
-            <div className="text-center py-12 bg-slate-50 rounded-lg border-2 border-dashed border-slate-300">
-              <DollarSign className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-slate-700 mb-2">
+            <div className="text-center py-12 bg-surface-2 rounded-lg border-2 border-dashed border-border">
+              <DollarSign className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-subtle mb-2">
                 No active allocations currently showing a distributable profit.
               </h3>
-              <p className="text-slate-500 max-w-2xl mx-auto">
+              <p className="text-muted-foreground max-w-2xl mx-auto">
                 Profits are calculated as (Current Value - Total Invested) minus any previously distributed profits for each allocation.
               </p>
             </div>
@@ -754,20 +754,20 @@ export default function ProfitPayoutManager({ onUpdate }) {
 
           {/* Profit Payout History */}
           <div className="mt-12">
-            <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <History className="w-6 h-6 text-purple-600" />
+            <h3 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+              <History className="w-6 h-6 text-protocall-premium-text" />
               Profit Payout History
             </h3>
             {payoutTransactions.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b-2 border-slate-300 bg-slate-50">
-                      <th className="text-left py-3 px-4 font-semibold text-slate-700">Date</th>
-                      <th className="text-left py-3 px-4 font-semibold text-slate-700">Investor</th>
-                      <th className="text-left py-3 px-4 font-semibold text-slate-700">Fund Plan</th>
-                      <th className="text-right py-3 px-4 font-semibold text-slate-700">Amount</th>
-                      <th className="text-center py-3 px-4 font-semibold text-slate-700">Status</th>
+                    <tr className="border-b-2 border-border bg-surface-2">
+                      <th className="text-left py-3 px-4 font-semibold text-subtle">Date</th>
+                      <th className="text-left py-3 px-4 font-semibold text-subtle">Investor</th>
+                      <th className="text-left py-3 px-4 font-semibold text-subtle">Fund Plan</th>
+                      <th className="text-right py-3 px-4 font-semibold text-subtle">Amount</th>
+                      <th className="text-center py-3 px-4 font-semibold text-subtle">Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -776,9 +776,9 @@ export default function ProfitPayoutManager({ onUpdate }) {
                       const fundPlan = fundPlans[txn.fund_plan_id];
 
                       return (
-                        <tr key={txn.id} className="border-b border-slate-200 hover:bg-slate-50">
+                        <tr key={txn.id} className="border-b border-border hover:bg-surface-2">
                           <td className="py-4 px-4">
-                            <p className="text-sm text-slate-700">
+                            <p className="text-sm text-subtle">
                               {new Date(txn.transaction_date).toLocaleDateString('en-IN', {
                                 day: 'numeric',
                                 month: 'short',
@@ -787,18 +787,18 @@ export default function ProfitPayoutManager({ onUpdate }) {
                             </p>
                           </td>
                           <td className="py-4 px-4">
-                            <p className="font-medium text-slate-900">{investor?.full_name || 'Unknown'}</p>
+                            <p className="font-medium text-foreground">{investor?.full_name || 'Unknown'}</p>
                           </td>
                           <td className="py-4 px-4">
-                            <p className="text-slate-900">{fundPlan?.plan_name || 'N/A'}</p>
+                            <p className="text-foreground">{fundPlan?.plan_name || 'N/A'}</p>
                           </td>
                           <td className="py-4 px-4 text-right">
-                            <p className="font-bold text-green-600">
+                            <p className="font-bold text-buy-muted-foreground">
                               ₹{(txn.amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                             </p>
                           </td>
                           <td className="py-4 px-4 text-center">
-                            <Badge className="bg-green-100 text-green-800 border border-green-300">
+                            <Badge className="bg-buy-muted text-buy-muted-foreground border border-buy/30">
                               {txn.status}
                             </Badge>
                           </td>
@@ -809,9 +809,9 @@ export default function ProfitPayoutManager({ onUpdate }) {
                 </table>
               </div>
             ) : (
-              <div className="text-center py-8 bg-slate-50 rounded-lg border-2 border-dashed border-slate-300">
-                <History className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-500">No profit payout transactions found.</p>
+              <div className="text-center py-8 bg-surface-2 rounded-lg border-2 border-dashed border-border">
+                <History className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                <p className="text-muted-foreground">No profit payout transactions found.</p>
               </div>
             )}
           </div>
@@ -829,15 +829,15 @@ export default function ProfitPayoutManager({ onUpdate }) {
           </DialogHeader>
 
           <div className="space-y-6 py-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-slate-600">Eligible Allocations:</p>
-                  <p className="text-xl font-bold text-blue-900">{eligibleAllocations.length}</p>
+                  <p className="text-subtle">Eligible Allocations:</p>
+                  <p className="text-xl font-bold text-protocall-blue">{eligibleAllocations.length}</p>
                 </div>
                 <div>
-                  <p className="text-slate-600">Total Distributable:</p>
-                  <p className="text-xl font-bold text-green-600">
+                  <p className="text-subtle">Total Distributable:</p>
+                  <p className="text-xl font-bold text-buy-muted-foreground">
                     ₹{totalDistributableProfit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
@@ -855,14 +855,14 @@ export default function ProfitPayoutManager({ onUpdate }) {
                 onChange={(e) => setPayoutPercentage(parseFloat(e.target.value) || 0)}
                 className="mt-1"
               />
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Enter percentage of distributable profit to pay out (1-100%)
               </p>
             </div>
 
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <p className="text-sm text-slate-700 mb-1">Amount to be Distributed:</p>
-              <p className="text-3xl font-bold text-green-600">
+            <div className="bg-buy-muted border border-buy/30 rounded-lg p-4">
+              <p className="text-sm text-subtle mb-1">Amount to be Distributed:</p>
+              <p className="text-3xl font-bold text-buy-muted-foreground">
                 ₹{totalAmountToPayout.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
               </p>
             </div>
@@ -879,9 +879,9 @@ export default function ProfitPayoutManager({ onUpdate }) {
               />
             </div>
 
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start gap-2">
-              <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-yellow-800">
+            <div className="bg-hold-muted border border-hold/30 rounded-lg p-3 flex items-start gap-2">
+              <AlertTriangle className="w-5 h-5 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-hold-muted-foreground">
                 This will credit the profit amount to each investor's wallet and create transaction records.
                 This action cannot be undone. Notifications and emails will be sent.
               </p>
@@ -895,7 +895,7 @@ export default function ProfitPayoutManager({ onUpdate }) {
             <Button
               onClick={handleConfirmInitiatePayout}
               disabled={isInitiating || payoutPercentage <= 0 || totalAmountToPayout <= 0}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
             >
               {isInitiating ? (
                 <>

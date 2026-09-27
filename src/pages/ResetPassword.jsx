@@ -120,8 +120,8 @@ const ResetPassword = () => {
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1 text-center">
-            <div className="mx-auto w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle className="h-6 w-6 text-green-600" />
+            <div className="mx-auto w-12 h-12 bg-buy-muted dark:bg-buy/20 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle className="h-6 w-6 text-buy-muted-foreground" />
             </div>
             <CardTitle className="text-2xl font-bold">Password Reset!</CardTitle>
             <CardDescription>

@@ -272,7 +272,7 @@ export default function FundManagerReports() {
     return (
       <FundManagerLayout currentView="reports">
         <div className="flex items-center justify-center h-full">
-          <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+          <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
         </div>
       </FundManagerLayout>
     );
@@ -284,8 +284,8 @@ export default function FundManagerReports() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Reports & Analytics</h1>
-            <p className="text-slate-600 mt-1">Generate detailed reports for analysis</p>
+            <h1 className="text-3xl font-bold text-foreground">Reports & Analytics</h1>
+            <p className="text-subtle mt-1">Generate detailed reports for analysis</p>
           </div>
           <Button
             variant="outline"
@@ -299,50 +299,50 @@ export default function FundManagerReports() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-0 shadow-lg">
+          <Card className="bg-surface-2 border-0 shadow-lg">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-blue-700 font-medium">Total Investors</p>
-                  <p className="text-3xl font-bold text-blue-900 mt-2">{stats.totalInvestors}</p>
+                  <p className="text-sm text-protocall-blue font-medium">Total Investors</p>
+                  <p className="text-3xl font-bold text-protocall-blue mt-2">{stats.totalInvestors}</p>
                 </div>
-                <Users className="w-12 h-12 text-blue-600 opacity-50" />
+                <Users className="w-12 h-12 text-protocall-blue opacity-50" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-0 shadow-lg">
+          <Card className="bg-gradient-to-br from-surface-2 to-buy-muted border-0 shadow-lg">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-green-700 font-medium">Total AUM</p>
-                  <p className="text-3xl font-bold text-green-900 mt-2">₹{(stats.totalAUM / 100000).toFixed(2)}L</p>
+                  <p className="text-sm text-buy-muted-foreground font-medium">Total AUM</p>
+                  <p className="text-3xl font-bold text-buy-muted-foreground mt-2">₹{(stats.totalAUM / 100000).toFixed(2)}L</p>
                 </div>
-                <DollarSign className="w-12 h-12 text-green-600 opacity-50" />
+                <DollarSign className="w-12 h-12 text-buy-muted-foreground opacity-50" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-0 shadow-lg">
+          <Card className="bg-surface-2 border-0 shadow-lg">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-purple-700 font-medium">Active Plans</p>
-                  <p className="text-3xl font-bold text-purple-900 mt-2">{stats.totalPlans}</p>
+                  <p className="text-sm text-protocall-premium-text font-medium">Active Plans</p>
+                  <p className="text-3xl font-bold text-protocall-premium-text mt-2">{stats.totalPlans}</p>
                 </div>
-                <TrendingUp className="w-12 h-12 text-purple-600 opacity-50" />
+                <TrendingUp className="w-12 h-12 text-protocall-premium-text opacity-50" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-0 shadow-lg">
+          <Card className="bg-gradient-to-br from-surface-2 to-hold-muted border-0 shadow-lg">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-orange-700 font-medium">Transactions</p>
-                  <p className="text-3xl font-bold text-orange-900 mt-2">{stats.totalTransactions}</p>
+                  <p className="text-sm text-hold-muted-foreground font-medium">Transactions</p>
+                  <p className="text-3xl font-bold text-hold-muted-foreground mt-2">{stats.totalTransactions}</p>
                 </div>
-                <FileText className="w-12 h-12 text-orange-600 opacity-50" />
+                <FileText className="w-12 h-12 text-hold-muted-foreground opacity-50" />
               </div>
             </CardContent>
           </Card>
@@ -350,7 +350,7 @@ export default function FundManagerReports() {
 
         {/* Report Generation Card */}
         <Card className="border-0 shadow-xl">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+          <CardHeader className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
             <CardTitle className="flex items-center gap-2">
               <FileText className="w-6 h-6" />
               Generate Report
@@ -443,7 +443,7 @@ export default function FundManagerReports() {
             <Button
               onClick={generateReport}
               disabled={isGenerating}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg py-6 shadow-lg"
+              className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white text-lg py-6 shadow-lg"
             >
               {isGenerating ? (
                 <>

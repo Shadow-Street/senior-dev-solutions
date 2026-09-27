@@ -11,22 +11,22 @@ export default function BadgeShowcase({ badges }) {
   };
 
   const badgeColors = {
-    community_builder: "bg-blue-100 text-blue-800 border-blue-200",
-    community_leader: "bg-purple-100 text-purple-800 border-purple-200",
-    community_champion: "bg-yellow-100 text-yellow-800 border-yellow-200"
+    community_builder: "bg-premium-muted text-protocall-blue border-protocall-premium-light",
+    community_leader: "bg-premium-muted text-protocall-premium-text border-protocall-premium-light",
+    community_champion: "bg-hold-muted text-hold-muted-foreground border-hold/30"
   };
 
   const badgeBackgrounds = {
-    community_builder: "bg-blue-500",
-    community_leader: "bg-purple-500",
-    community_champion: "bg-gradient-to-r from-yellow-400 to-orange-500"
+    community_builder: "bg-protocall-blue",
+    community_leader: "bg-primary",
+    community_champion: "bg-hold"
   };
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Star className="w-5 h-5 text-yellow-500" />
+          <Star className="w-5 h-5 text-hold" />
           Your Badges
         </CardTitle>
       </CardHeader>
@@ -36,13 +36,13 @@ export default function BadgeShowcase({ badges }) {
             {badges.map((badge) => {
               const IconComponent = badgeIcons[badge.badge_type];
               return (
-                <div key={badge.id} className="flex items-center gap-4 p-3 rounded-lg bg-slate-50">
+                <div key={badge.id} className="flex items-center gap-4 p-3 rounded-lg bg-surface-2">
                   <div className={`w-12 h-12 rounded-full ${badgeBackgrounds[badge.badge_type]} flex items-center justify-center text-white`}>
                     <IconComponent className="w-6 h-6" />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold">{badge.badge_name}</h3>
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm text-subtle">
                       Earned with {badge.referral_count} successful referrals
                     </p>
                     {badge.trust_score_bonus && (
@@ -60,9 +60,9 @@ export default function BadgeShowcase({ badges }) {
           </div>
         ) : (
           <div className="text-center py-8">
-            <Award className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-            <h3 className="font-semibold text-slate-700 mb-2">No badges earned yet</h3>
-            <p className="text-sm text-slate-600">Start inviting traders to earn your first badge!</p>
+            <Award className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="font-semibold text-subtle mb-2">No badges earned yet</h3>
+            <p className="text-sm text-subtle">Start inviting traders to earn your first badge!</p>
           </div>
         )}
       </CardContent>

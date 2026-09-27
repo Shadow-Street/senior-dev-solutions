@@ -48,14 +48,14 @@ export default function AnnouncementManagement() {
 
   // Gradient presets with previews
   const gradientPresets = [
-    { value: 'blue-purple', label: 'Blue → Purple (Info)', preview: 'bg-gradient-to-r from-blue-500 to-purple-600', use: 'General announcements' },
-    { value: 'green-emerald', label: 'Green → Emerald (Success)', preview: 'bg-gradient-to-r from-green-500 to-teal-600', use: 'Success messages' },
-    { value: 'orange-pink', label: 'Orange → Pink (Warning)', preview: 'bg-gradient-to-r from-orange-500 to-pink-600', use: 'Warnings' },
-    { value: 'red-purple', label: 'Red → Purple (Critical)', preview: 'bg-gradient-to-r from-red-600 to-purple-700', use: 'System downtime' },
-    { value: 'yellow-orange', label: 'Yellow → Orange (Alert)', preview: 'bg-gradient-to-r from-yellow-500 to-red-500', use: 'Urgent alerts' },
-    { value: 'purple-indigo', label: 'Purple → Indigo (Premium)', preview: 'bg-gradient-to-r from-purple-500 to-blue-600', use: 'Premium features' },
-    { value: 'pink-rose', label: 'Pink → Rose (Celebration)', preview: 'bg-gradient-to-r from-pink-500 to-red-500', use: 'Celebrations' },
-    { value: 'cyan-blue', label: 'Cyan → Blue (Cool)', preview: 'bg-gradient-to-r from-cyan-400 to-indigo-600', use: 'Updates' },
+    { value: 'blue-purple', label: 'Blue → Purple (Info)', preview: 'bg-gradient-to-r from-protocall-deep to-protocall-blue', use: 'General announcements' },
+    { value: 'green-emerald', label: 'Green → Emerald (Success)', preview: 'bg-buy-soft', use: 'Success messages' },
+    { value: 'orange-pink', label: 'Orange → Pink (Warning)', preview: 'bg-gradient-to-r from-hold to-protocall-blue', use: 'Warnings' },
+    { value: 'red-purple', label: 'Red → Purple (Critical)', preview: 'bg-gradient-to-r from-sell to-protocall-blue', use: 'System downtime' },
+    { value: 'yellow-orange', label: 'Yellow → Orange (Alert)', preview: 'bg-gradient-to-r from-hold to-sell', use: 'Urgent alerts' },
+    { value: 'purple-indigo', label: 'Purple → Indigo (Premium)', preview: 'bg-gradient-to-r from-protocall-deep to-protocall-blue', use: 'Premium features' },
+    { value: 'pink-rose', label: 'Pink → Rose (Celebration)', preview: 'bg-gradient-to-r from-protocall-deep to-sell', use: 'Celebrations' },
+    { value: 'cyan-blue', label: 'Cyan → Blue (Cool)', preview: 'bg-protocall-blue', use: 'Updates' },
   ];
 
   // Icon options
@@ -207,10 +207,10 @@ export default function AnnouncementManagement() {
 
   const getTypeColor = (type) => {
     switch (type) {
-      case 'success': return 'bg-green-100 text-green-800';
-      case 'warning': return 'bg-yellow-100 text-yellow-800';
-      case 'important': return 'bg-red-100 text-red-800';
-      default: return 'bg-blue-100 text-blue-800';
+      case 'success': return 'bg-buy-muted text-buy-muted-foreground';
+      case 'warning': return 'bg-hold-muted text-hold-muted-foreground';
+      case 'important': return 'bg-sell-muted text-sell-muted-foreground';
+      default: return 'bg-premium-muted text-protocall-blue';
     }
   };
 
@@ -219,7 +219,7 @@ export default function AnnouncementManagement() {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold">📢 Announcement Management</h2>
-          <p className="text-sm text-gray-600 mt-1">Create beautiful, animated announcements with custom styling</p>
+          <p className="text-sm text-subtle mt-1">Create beautiful, animated announcements with custom styling</p>
         </div>
         <Dialog open={showCreateModal || !!editingAnnouncement} onOpenChange={(open) => {
           if (!open) {
@@ -229,7 +229,7 @@ export default function AnnouncementManagement() {
           }
         }}>
           <DialogTrigger asChild>
-            <Button onClick={() => setShowCreateModal(true)} className="bg-gradient-to-r from-blue-600 to-purple-600">
+            <Button onClick={() => setShowCreateModal(true)} className="bg-gradient-to-r from-protocall-deep to-protocall-blue">
               <Plus className="w-4 h-4 mr-2" />
               Create Announcement
             </Button>
@@ -246,7 +246,7 @@ export default function AnnouncementManagement() {
               {/* Preview */}
               <div>
                 <label className="text-sm font-medium mb-2 block">Preview</label>
-                <div className={`${gradientPresets.find(g => g.value === formData.gradient)?.preview || 'bg-gradient-to-r from-blue-500 to-purple-600'} rounded-lg p-4 text-white relative overflow-hidden`}>
+                <div className={`${gradientPresets.find(g => g.value === formData.gradient)?.preview || 'bg-gradient-to-r from-protocall-deep to-protocall-blue'} rounded-lg p-4 text-white relative overflow-hidden`}>
                   <div className="flex items-center gap-3">
                     {React.createElement(iconOptions.find(i => i.value === formData.icon)?.component || Sparkles, { className: "w-5 h-5" })}
                     <div>
@@ -295,7 +295,7 @@ export default function AnnouncementManagement() {
                         <button
                           key={preset.value}
                           onClick={() => setFormData({ ...formData, gradient: preset.value })}
-                          className={`${preset.preview} rounded-lg p-3 text-white text-left transition-all ${formData.gradient === preset.value ? 'ring-2 ring-blue-600 ring-offset-2' : ''}`}
+                          className={`${preset.preview} rounded-lg p-3 text-white text-left transition-all ${formData.gradient === preset.value ? 'ring-2 ring-protocall-premium-light ring-offset-2' : ''}`}
                         >
                           <div className="font-semibold text-xs">{preset.label}</div>
                           <div className="text-xs opacity-80 mt-1">{preset.use}</div>
@@ -440,7 +440,7 @@ export default function AnnouncementManagement() {
               </Button>
               <Button
                 onClick={editingAnnouncement ? handleUpdate : handleCreate}
-                className="bg-gradient-to-r from-blue-600 to-purple-600"
+                className="bg-gradient-to-r from-protocall-deep to-protocall-blue"
               >
                 {editingAnnouncement ? 'Update' : 'Create'} Announcement
               </Button>
@@ -455,10 +455,10 @@ export default function AnnouncementManagement() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total</p>
+                <p className="text-sm text-subtle">Total</p>
                 <p className="text-2xl font-bold">{announcements.length}</p>
               </div>
-              <Sparkles className="w-8 h-8 text-blue-500" />
+              <Sparkles className="w-8 h-8 text-protocall-premium-light" />
             </div>
           </CardContent>
         </Card>
@@ -467,12 +467,12 @@ export default function AnnouncementManagement() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Active</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-sm text-subtle">Active</p>
+                <p className="text-2xl font-bold text-buy-muted-foreground">
                   {announcements.filter(a => a.is_active).length}
                 </p>
               </div>
-              <Eye className="w-8 h-8 text-green-500" />
+              <Eye className="w-8 h-8 text-positive" />
             </div>
           </CardContent>
         </Card>
@@ -481,12 +481,12 @@ export default function AnnouncementManagement() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Inactive</p>
-                <p className="text-2xl font-bold text-gray-600">
+                <p className="text-sm text-subtle">Inactive</p>
+                <p className="text-2xl font-bold text-subtle">
                   {announcements.filter(a => !a.is_active).length}
                 </p>
               </div>
-              <EyeOff className="w-8 h-8 text-gray-400" />
+              <EyeOff className="w-8 h-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -495,12 +495,12 @@ export default function AnnouncementManagement() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Scheduled</p>
-                <p className="text-2xl font-bold text-orange-600">
+                <p className="text-sm text-subtle">Scheduled</p>
+                <p className="text-2xl font-bold text-hold-muted-foreground">
                   {announcements.filter(a => a.start_date && new Date(a.start_date) > new Date()).length}
                 </p>
               </div>
-              <Calendar className="w-8 h-8 text-orange-500" />
+              <Calendar className="w-8 h-8 text-hold" />
             </div>
           </CardContent>
         </Card>
@@ -510,14 +510,14 @@ export default function AnnouncementManagement() {
       <div className="space-y-4">
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto"></div>
           </div>
         ) : announcements.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
-              <Sparkles className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No Announcements Yet</h3>
-              <p className="text-gray-600 mb-4">Create your first announcement to engage with users</p>
+              <Sparkles className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">No Announcements Yet</h3>
+              <p className="text-subtle mb-4">Create your first announcement to engage with users</p>
               <Button onClick={() => setShowCreateModal(true)}>
                 <Plus className="w-4 h-4 mr-2" />
                 Create Announcement
@@ -536,20 +536,20 @@ export default function AnnouncementManagement() {
                         {announcement.type}
                       </Badge>
                       {announcement.is_active ? (
-                        <Badge className="bg-green-100 text-green-800">Active</Badge>
+                        <Badge className="bg-buy-muted text-buy-muted-foreground">Active</Badge>
                       ) : (
                         <Badge variant="outline">Inactive</Badge>
                       )}
                       {announcement.priority > 0 && (
-                        <Badge className="bg-orange-100 text-orange-800">
+                        <Badge className="bg-hold-muted text-hold-muted-foreground">
                           Priority: {announcement.priority}
                         </Badge>
                       )}
                     </div>
 
-                    <p className="text-gray-600 mb-3">{announcement.message}</p>
+                    <p className="text-subtle mb-3">{announcement.message}</p>
 
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Users className="w-4 h-4" />
                         <span className="capitalize">{announcement.target_audience?.replace('_', ' ')}</span>
@@ -586,7 +586,7 @@ export default function AnnouncementManagement() {
                       variant="outline"
                       size="sm"
                       onClick={() => handleDelete(announcement.id)}
-                      className="text-red-600 hover:text-red-700"
+                      className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>

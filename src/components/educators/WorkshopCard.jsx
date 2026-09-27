@@ -27,16 +27,16 @@ export default function WorkshopCard({ workshop, educator, canAccessPremium }) {
 
   const getStatusBadge = () => {
     if (isLive) {
-      return <Badge className="bg-red-500 text-white animate-pulse">
+      return <Badge className="bg-protocall-sell-text text-white animate-pulse">
         <div className="w-2 h-2 bg-white rounded-full mr-1" />
         LIVE NOW
       </Badge>;
     } else if (isUpcoming) {
-      return <Badge className="bg-blue-500 text-white">
+      return <Badge className="bg-protocall-blue text-white">
         UPCOMING
       </Badge>;
     } else {
-      return <Badge className="bg-gray-500 text-white">
+      return <Badge className="bg-muted-foreground text-white">
         COMPLETED
       </Badge>;
     }
@@ -61,11 +61,11 @@ export default function WorkshopCard({ workshop, educator, canAccessPremium }) {
   return (
     <Card className="shadow-lg border-0 bg-white flex flex-col">
       {/* Workshop Header */}
-      <div className="relative bg-gradient-to-r from-purple-500 to-indigo-500 p-4 text-white">
+      <div className="relative bg-gradient-to-r from-protocall-deep to-protocall-blue p-4 text-white">
         <div className="flex items-center justify-between">
           {getStatusBadge()}
           <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 text-yellow-300" />
+            <Star className="w-4 h-4 text-hold" />
             <span className="font-medium">{workshop.rating}</span>
           </div>
         </div>
@@ -73,7 +73,7 @@ export default function WorkshopCard({ workshop, educator, canAccessPremium }) {
 
       <CardHeader className="pb-3">
         <div className="space-y-2">
-          <Badge variant="outline" className="border-purple-200 bg-purple-50 text-purple-700">
+          <Badge variant="outline" className="border-protocall-premium-light bg-premium-muted text-protocall-premium-text">
             LIVE WORKSHOP
           </Badge>
           <CardTitle className="text-lg leading-tight">{workshop.title}</CardTitle>
@@ -81,7 +81,7 @@ export default function WorkshopCard({ workshop, educator, canAccessPremium }) {
 
         {/* Educator */}
         {educator && (
-          <div className="flex items-center gap-2 text-sm text-slate-600">
+          <div className="flex items-center gap-2 text-sm text-subtle">
             <img
               src={educator.profile_image_url}
               alt={educator.display_name}
@@ -89,42 +89,42 @@ export default function WorkshopCard({ workshop, educator, canAccessPremium }) {
             />
             <span className="font-medium">{educator.display_name}</span>
             {educator.verified && (
-              <CheckCircle className="w-4 h-4 text-green-500" />
+              <CheckCircle className="w-4 h-4 text-positive" />
             )}
           </div>
         )}
       </CardHeader>
 
       <CardContent className="space-y-4 flex-1">
-        <p className="text-sm text-slate-600 line-clamp-2">{workshop.description}</p>
+        <p className="text-sm text-subtle line-clamp-2">{workshop.description}</p>
 
         {/* Workshop Schedule */}
-        <div className="bg-blue-50 p-3 rounded-lg">
-          <div className="flex items-center gap-2 text-blue-800 font-medium text-sm">
+        <div className="bg-premium-muted p-3 rounded-lg">
+          <div className="flex items-center gap-2 text-protocall-blue font-medium text-sm">
             <Calendar className="w-4 h-4" />
             <span>{format(workshopDate, 'MMM d, yyyy')}</span>
           </div>
-          <div className="flex items-center gap-2 text-blue-600 text-sm mt-1">
+          <div className="flex items-center gap-2 text-protocall-blue text-sm mt-1">
             <Clock className="w-4 h-4" />
             <span>{format(workshopDate, 'h:mm a')} - {format(workshopEndTime, 'h:mm a')}</span>
           </div>
-          <div className="text-xs text-blue-600 mt-1">
+          <div className="text-xs text-protocall-blue mt-1">
             Duration: {workshop.duration_hours} hours
           </div>
         </div>
 
         {/* Capacity Status */}
-        <div className="bg-slate-50 p-3 rounded-lg">
+        <div className="bg-surface-2 p-3 rounded-lg">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-600">Participants:</span>
-            <span className={`font-semibold ${isFull ? 'text-red-600' : 'text-slate-900'}`}>
+            <span className="text-subtle">Participants:</span>
+            <span className={`font-semibold ${isFull ? 'text-sell-muted-foreground' : 'text-foreground'}`}>
               {workshop.current_enrollments} / {workshop.max_participants}
             </span>
           </div>
-          <div className="mt-2 bg-slate-200 rounded-full h-2">
+          <div className="mt-2 bg-border rounded-full h-2">
             <div 
               className={`h-2 rounded-full transition-all duration-300 ${
-                isFull ? 'bg-red-500' : 'bg-purple-600'
+                isFull ? 'bg-sell' : 'bg-primary'
               }`}
               style={{ 
                 width: `${Math.min((workshop.current_enrollments / workshop.max_participants) * 100, 100)}%` 
@@ -132,7 +132,7 @@ export default function WorkshopCard({ workshop, educator, canAccessPremium }) {
             />
           </div>
           {isFull && (
-            <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
+            <div className="flex items-center gap-1 text-xs text-sell-muted-foreground mt-1">
               <AlertCircle className="w-3 h-3" />
               <span>Workshop is full</span>
             </div>
@@ -140,13 +140,13 @@ export default function WorkshopCard({ workshop, educator, canAccessPremium }) {
         </div>
 
         <div className="flex items-center justify-between mt-auto pt-4">
-          <p className="text-2xl font-bold text-slate-900">₹{workshop.price}</p>
+          <p className="text-2xl font-bold text-foreground">₹{workshop.price}</p>
           <Button 
             onClick={handleJoin}
             className={`${
               isLive 
-                ? 'bg-red-500 hover:bg-red-600 animate-pulse' 
-                : 'bg-gradient-to-r from-purple-600 to-indigo-600'
+                ? 'bg-sell hover:bg-sell animate-pulse' 
+                : 'bg-gradient-to-r from-protocall-deep to-protocall-blue'
             } text-white`}
             disabled={!canAccessPremium || (isFull && !isLive)}
           >

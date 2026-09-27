@@ -200,13 +200,13 @@ export default function BlogArticlePage() {
 
   const getCategoryColor = (category) => {
     switch(category) {
-      case 'education': return 'bg-blue-100 text-blue-800';
-      case 'strategy': return 'bg-purple-100 text-purple-800';
-      case 'technical': return 'bg-orange-100 text-orange-800';
-      case 'tax': return 'bg-green-100 text-green-800';
-      case 'wealth': return 'bg-yellow-100 text-yellow-800';
-      case 'comparison': return 'bg-pink-100 text-pink-800';
-      default: return 'bg-slate-100 text-slate-800';
+      case 'education': return 'bg-premium-muted text-protocall-blue';
+      case 'strategy': return 'bg-premium-muted text-protocall-premium-text';
+      case 'technical': return 'bg-hold-muted text-hold-muted-foreground';
+      case 'tax': return 'bg-buy-muted text-buy-muted-foreground';
+      case 'wealth': return 'bg-hold-muted text-hold-muted-foreground';
+      case 'comparison': return 'bg-premium-muted text-protocall-premium-text';
+      default: return 'bg-surface-2 text-foreground';
     }
   };
 
@@ -226,7 +226,7 @@ export default function BlogArticlePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-6">
+      <div className="min-h-screen bg-surface-2 p-6">
         <div className="max-w-4xl mx-auto space-y-6">
           <Skeleton className="h-96 w-full" />
           <Skeleton className="h-8 w-3/4" />
@@ -242,7 +242,7 @@ export default function BlogArticlePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+    <div className="min-h-screen bg-surface-2">
       <div className="max-w-4xl mx-auto p-6 space-y-8">
         {/* Back Button */}
         <Button
@@ -309,19 +309,19 @@ export default function BlogArticlePage() {
               {article.content.split('\n').map((paragraph, index) => {
                 if (paragraph.startsWith('# ')) {
                   return (
-                    <h1 key={index} className="text-3xl font-bold text-slate-900 mb-6 mt-8">
+                    <h1 key={index} className="text-3xl font-bold text-foreground mb-6 mt-8">
                       {paragraph.replace('# ', '')}
                     </h1>
                   );
                 } else if (paragraph.startsWith('## ')) {
                   return (
-                    <h2 key={index} className="text-2xl font-bold text-slate-900 mb-4 mt-6">
+                    <h2 key={index} className="text-2xl font-bold text-foreground mb-4 mt-6">
                       {paragraph.replace('## ', '')}
                     </h2>
                   );
                 } else if (paragraph.startsWith('### ')) {
                   return (
-                    <h3 key={index} className="text-xl font-bold text-slate-900 mb-3 mt-4">
+                    <h3 key={index} className="text-xl font-bold text-foreground mb-3 mt-4">
                       {paragraph.replace('### ', '')}
                     </h3>
                   );
@@ -329,7 +329,7 @@ export default function BlogArticlePage() {
                   return <div key={index} className="h-4"></div>;
                 } else {
                   return (
-                    <p key={index} className="text-slate-700 leading-relaxed mb-4">
+                    <p key={index} className="text-subtle leading-relaxed mb-4">
                       {paragraph}
                     </p>
                   );
@@ -351,15 +351,15 @@ export default function BlogArticlePage() {
         {/* Author Bio */}
         <Card className="bg-white shadow-xl border-0">
           <CardContent className="p-8">
-            <h3 className="text-xl font-bold text-slate-900 mb-4">About the Author</h3>
+            <h3 className="text-xl font-bold text-foreground mb-4">About the Author</h3>
             <div className="flex items-start gap-4">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
                 {article.author.charAt(0)}
               </div>
               <div>
-                <p className="font-semibold text-lg text-slate-900">{article.author}</p>
-                <p className="text-sm text-slate-500 mb-2">{article.author_role}</p>
-                <p className="text-slate-600 text-sm leading-relaxed">
+                <p className="font-semibold text-lg text-foreground">{article.author}</p>
+                <p className="text-sm text-muted-foreground mb-2">{article.author_role}</p>
+                <p className="text-subtle text-sm leading-relaxed">
                   {article.author_bio}
                 </p>
               </div>
@@ -368,16 +368,16 @@ export default function BlogArticlePage() {
         </Card>
 
         {/* More Articles CTA */}
-        <Card className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white border-0 shadow-2xl">
+        <Card className="bg-gradient-to-r from-protocall-deep via-protocall-grape to-protocall-blue text-white border-0 shadow-2xl">
           <CardContent className="p-8 text-center">
             <BookOpen className="w-12 h-12 mx-auto mb-4" />
             <h3 className="text-2xl font-bold mb-2">Explore More Articles</h3>
-            <p className="text-blue-100 mb-6">
+            <p className="text-white/80 mb-6">
               Discover more investment insights and trading strategies
             </p>
             <Button
               onClick={() => navigate(createPageUrl('Blogs'))}
-              className="bg-white text-blue-600 hover:bg-blue-50"
+              className="bg-white text-protocall-blue hover:bg-premium-muted"
             >
               View All Articles
             </Button>

@@ -35,23 +35,23 @@ export default function InfluencerCard({ influencer, canAccessPremium }) {
             className="w-20 h-20 rounded-full object-cover mx-auto mb-3" />
 
           {influencer.verified &&
-          <CheckCircle className="w-5 h-5 text-blue-500 absolute -bottom-1 -right-1 bg-white rounded-full" />
+          <CheckCircle className="w-5 h-5 text-protocall-premium-light absolute -bottom-1 -right-1 bg-white rounded-full" />
           }
         </div>
         
         <div className="space-y-2">
-          <h3 className="font-bold text-lg text-slate-900">{influencer.display_name}</h3>
-          <p className="text-sm text-slate-600">{influencer.bio}</p>
+          <h3 className="font-bold text-lg text-foreground">{influencer.display_name}</h3>
+          <p className="text-sm text-subtle">{influencer.bio}</p>
           
           <div className="flex flex-wrap gap-1 justify-center">
             {influencer.sebi_registered &&
-            <Badge className="bg-green-100 text-green-800 text-xs">
+            <Badge className="bg-buy-muted text-buy-muted-foreground text-xs">
                 <Shield className="w-3 h-3 mr-1" />
                 SEBI Registered
               </Badge>
             }
             {influencer.verified &&
-            <Badge className="bg-blue-100 text-blue-800 text-xs">
+            <Badge className="bg-premium-muted text-protocall-blue text-xs">
                 <CheckCircle className="w-3 h-3 mr-1" />
                 Verified
               </Badge>
@@ -79,19 +79,19 @@ export default function InfluencerCard({ influencer, canAccessPremium }) {
         <div className="grid grid-cols-2 gap-4 text-center">
           <div>
             <div className="flex items-center justify-center gap-1">
-              <Users className="w-4 h-4 text-slate-500" />
+              <Users className="w-4 h-4 text-muted-foreground" />
               <span className="font-semibold text-sm">
                 {(influencer.follower_count / 1000).toFixed(0)}K
               </span>
             </div>
-            <p className="text-xs text-slate-500">Followers</p>
+            <p className="text-xs text-muted-foreground">Followers</p>
           </div>
           <div>
             <div className="flex items-center justify-center gap-1">
-              <Star className="w-4 h-4 text-yellow-500" />
+              <Star className="w-4 h-4 text-hold" />
               <span className="font-semibold text-sm">{influencer.success_rate}%</span>
             </div>
-            <p className="text-xs text-slate-500">Success Rate</p>
+            <p className="text-xs text-muted-foreground">Success Rate</p>
           </div>
         </div>
 
@@ -109,7 +109,7 @@ export default function InfluencerCard({ influencer, canAccessPremium }) {
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 hover:text-slate-800 transition-colors">
+                className="w-8 h-8 bg-surface-2 hover:bg-border rounded-full flex items-center justify-center text-subtle hover:text-foreground transition-colors">
 
                   <Icon className="w-4 h-4" />
                 </a>);
@@ -122,8 +122,8 @@ export default function InfluencerCard({ influencer, canAccessPremium }) {
         <div className="space-y-2">
           <Link to={createPageUrl(`InfluencerProfile?id=${influencer.id}`)}>
             <Button variant="outline" className="peer/menu-button flex w-full items-center gap-2 overflow-hidden p-2 text-left outline-none ring-sidebar-ring focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 h-8 text-sm rounded-xl mb-1 font-semibold shadow-md flex items-center gap-3 px-3 py-2.5 transition-all duration-300 
-bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 
-hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg
+bg-surface-2 text-protocall-blue 
+hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg
 ">
               View Profile
             </Button>
@@ -131,12 +131,12 @@ hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white 
           
           {influencer.subscription_price &&
           <div className="text-center">
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-subtle">
                 Premium Content: ₹{influencer.subscription_price}/month
               </p>
               {!canAccessPremium &&
             <Link to={createPageUrl("Subscription")}>
-                  <Button className="w-full bg-purple-600 hover:bg-purple-700 mt-2">
+                  <Button className="w-full bg-primary hover:bg-primary mt-2">
                     Subscribe to View
                   </Button>
                 </Link>

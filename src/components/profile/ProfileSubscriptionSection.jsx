@@ -108,14 +108,14 @@ export default function ProfileSubscriptionSection({ subscription }) {
 
   if (!subscription) {
     return (
-      <Card className="bg-gradient-to-r from-slate-100 to-slate-200 border-slate-300">
+      <Card className="bg-surface-2 border-border">
         <CardHeader>
-          <CardTitle className="text-slate-700">No Active Subscription</CardTitle>
+          <CardTitle className="text-subtle">No Active Subscription</CardTitle>
         </CardHeader>
         <CardContent className="text-center space-y-4">
-          <p className="text-slate-600">You are currently on the free plan.</p>
+          <p className="text-subtle">You are currently on the free plan.</p>
           <Link to={createPageUrl("Subscription")}>
-            <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+            <Button className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
               <Crown className="w-4 h-4 mr-2" />
               Upgrade to Premium
             </Button>
@@ -127,9 +127,9 @@ export default function ProfileSubscriptionSection({ subscription }) {
 
   const getPlanGradient = (planType) => {
     switch(planType) {
-      case 'vip': return 'from-yellow-400 via-orange-500 to-red-500';
-      case 'premium': return 'from-purple-500 via-blue-600 to-indigo-600';
-      default: return 'from-blue-400 to-cyan-500';
+      case 'vip': return 'from-hold via-hold to-sell';
+      case 'premium': return 'from-protocall-deep via-protocall-grape to-protocall-blue';
+      default: return 'from-protocall-blue to-protocall-blue';
     }
   };
 
@@ -181,23 +181,23 @@ export default function ProfileSubscriptionSection({ subscription }) {
 
       {/* Plan Features */}
       <Card>
-        <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100">
+        <CardHeader className="bg-surface-2">
           <CardTitle>Plan Features</CardTitle>
         </CardHeader>
         <CardContent className="pt-4">
           {isLoadingFeatures ? (
-            <div className="text-center py-8 text-slate-500">
+            <div className="text-center py-8 text-muted-foreground">
               Loading features...
             </div>
           ) : (
             <div className="space-y-2">
               {/* Show Inheritance Summary First (if applicable) */}
               {parentPlanName && (
-                <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200 mb-4">
-                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center mt-0.5">
+                <div className="flex items-start gap-3 p-3 bg-premium-muted rounded-lg border border-protocall-premium-light mb-4">
+                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-protocall-blue flex items-center justify-center mt-0.5">
                     <Shield className="w-3 h-3 text-white" />
                   </div>
-                  <span className="text-sm text-blue-900 font-semibold leading-relaxed">
+                  <span className="text-sm text-protocall-blue font-semibold leading-relaxed">
                     Includes All {parentPlanName} Features
                   </span>
                 </div>
@@ -208,7 +208,7 @@ export default function ProfileSubscriptionSection({ subscription }) {
                 <div className="grid gap-2">
                   {planFeatures.map((feature, index) => (
                     <div key={index} className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-positive flex-shrink-0" />
                       <span className="text-sm flex items-center flex-wrap">
                         {formatFeatureName(feature)}
                       </span>
@@ -216,11 +216,11 @@ export default function ProfileSubscriptionSection({ subscription }) {
                   ))}
                 </div>
               ) : parentPlanName ? (
-                <div className="text-sm text-gray-500 italic text-center py-2">
+                <div className="text-sm text-muted-foreground italic text-center py-2">
                   No additional unique features
                 </div>
               ) : (
-                <div className="text-center py-8 text-slate-500">
+                <div className="text-center py-8 text-muted-foreground">
                   No features specified for this plan
                 </div>
               )}
@@ -231,12 +231,12 @@ export default function ProfileSubscriptionSection({ subscription }) {
 
       {/* Upgrade Option */}
       {subscription.plan_type !== 'vip' && (
-        <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
+        <Card className="bg-surface-2 border-protocall-premium-light">
           <CardContent className="p-6 text-center">
             <h3 className="font-semibold text-lg mb-2">Want More Features?</h3>
-            <p className="text-slate-600 mb-4">Upgrade to unlock advanced trading tools and exclusive content</p>
+            <p className="text-subtle mb-4">Upgrade to unlock advanced trading tools and exclusive content</p>
             <Link to={createPageUrl("Subscription")}>
-              <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+              <Button className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
                 <ArrowUp className="w-4 h-4 mr-2" />
                 Upgrade Plan
               </Button>

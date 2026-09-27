@@ -270,12 +270,12 @@ export default function ProfitDistribution({ onUpdate }) {
     if (!investor || !plan || profit <= 0) return null;
 
     return (
-      <tr className="bg-white border-b hover:bg-slate-50 transition-colors">
+      <tr className="bg-white border-b hover:bg-surface-2 transition-colors">
         <td className="px-6 py-4 font-medium">{investor.full_name}</td>
         <td className="px-6 py-4">{plan.plan_name}</td>
         <td className="px-6 py-4 text-right">₹{allocation.total_invested?.toLocaleString()}</td>
         <td className="px-6 py-4 text-right">₹{allocation.current_value?.toLocaleString()}</td>
-        <td className="px-6 py-4 text-right text-green-600 font-semibold">₹{profit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        <td className="px-6 py-4 text-right text-buy-muted-foreground font-semibold">₹{profit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
       </tr>
     );
   };
@@ -286,7 +286,7 @@ export default function ProfitDistribution({ onUpdate }) {
     if (!investor || !plan) return null;
 
     return (
-      <tr className="bg-white border-b hover:bg-slate-50">
+      <tr className="bg-white border-b hover:bg-surface-2">
         <td className="px-6 py-4">{new Date(transaction.created_date).toLocaleString()}</td>
         <td className="px-6 py-4">{investor.full_name}</td>
         <td className="px-6 py-4">{plan.plan_name}</td>
@@ -299,8 +299,8 @@ export default function ProfitDistribution({ onUpdate }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-        <p className="ml-4 text-slate-600">Loading Profit Distribution Data...</p>
+        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+        <p className="ml-4 text-subtle">Loading Profit Distribution Data...</p>
       </div>
     );
   }
@@ -308,14 +308,14 @@ export default function ProfitDistribution({ onUpdate }) {
   return (
     <div className="space-y-6">
       {/* UNMISSSABLE VISUAL CONFIRMATION BANNER */}
-      <div className="bg-gradient-to-r from-green-400 to-blue-500 text-white p-4 rounded-lg text-center font-bold text-lg shadow-xl">
+      <div className="bg-gradient-to-r from-buy to-protocall-blue text-white p-4 rounded-lg text-center font-bold text-lg shadow-xl">
         PROFIT DISTRIBUTION - VERSION 4.0 (WITH AUTOMATION) LOADED
       </div>
 
       {/* Debug and Actions Panel */}
-      <Card className="bg-blue-50 border-blue-200">
+      <Card className="bg-premium-muted border-protocall-premium-light">
         <CardHeader className="cursor-pointer" onClick={() => setShowDebug(!showDebug)}>
-          <CardTitle className="flex items-center gap-2 text-blue-800">
+          <CardTitle className="flex items-center gap-2 text-protocall-blue">
             <Bug className="w-5 h-5" />
             Debug Information & Quick Actions
             <Badge variant={showDebug ? "default" : "outline"}>{showDebug ? 'Hide' : 'Show'}</Badge>
@@ -324,7 +324,7 @@ export default function ProfitDistribution({ onUpdate }) {
         {showDebug && (
           <CardContent className="space-y-4 pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Button onClick={generateSampleData} disabled={isGeneratingSampleData || isClearingData} className="w-full bg-green-600 hover:bg-green-700">
+                <Button onClick={generateSampleData} disabled={isGeneratingSampleData || isClearingData} className="w-full bg-buy hover:bg-buy">
                   {isGeneratingSampleData ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Database className="w-4 h-4 mr-2" />}
                   Generate Sample Data Now
                 </Button>
@@ -333,12 +333,12 @@ export default function ProfitDistribution({ onUpdate }) {
                   Clear ALL Sample Data
                 </Button>
             </div>
-            <div className="bg-white p-4 rounded-lg border border-blue-300">
-                <h4 className="font-semibold text-blue-900 mb-2">New: Automated Payout Trigger</h4>
-                <p className="text-sm text-blue-800 mb-3">
+            <div className="bg-white p-4 rounded-lg border border-protocall-premium-light">
+                <h4 className="font-semibold text-protocall-blue mb-2">New: Automated Payout Trigger</h4>
+                <p className="text-sm text-protocall-blue mb-3">
                   Click this to run the "automatic" monthly profit distribution for all fund plans that have auto-payout enabled.
                 </p>
-                <Button onClick={triggerAutoPayout} disabled={isAutomating} className="w-full bg-blue-600 hover:bg-blue-700">
+                <Button onClick={triggerAutoPayout} disabled={isAutomating} className="w-full bg-protocall-blue hover:bg-protocall-blue">
                   {isAutomating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ChevronsRight className="w-4 h-4 mr-2" />}
                   Trigger Monthly Auto-Payout
                 </Button>
@@ -355,11 +355,11 @@ export default function ProfitDistribution({ onUpdate }) {
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader className="flex flex-row items-center justify-between">
           <div className="flex items-center gap-3">
-            <TrendingUp className="w-6 h-6 text-green-600" />
+            <TrendingUp className="w-6 h-6 text-buy-muted-foreground" />
             <div>
               <CardTitle>Active Allocations with Distributable Profit</CardTitle>
-              <p className="text-sm text-slate-500">
-                Total Distributable Profit: <span className="font-bold text-green-700">₹{totalDistributableProfit.toLocaleString()}</span>
+              <p className="text-sm text-muted-foreground">
+                Total Distributable Profit: <span className="font-bold text-buy-muted-foreground">₹{totalDistributableProfit.toLocaleString()}</span>
               </p>
             </div>
           </div>
@@ -371,7 +371,7 @@ export default function ProfitDistribution({ onUpdate }) {
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+              <thead className="text-xs text-subtle uppercase bg-surface-2">
                 <tr>
                   <th scope="col" className="px-6 py-3">Investor</th>
                   <th scope="col" className="px-6 py-3">Fund Plan</th>
@@ -384,9 +384,9 @@ export default function ProfitDistribution({ onUpdate }) {
                 {eligibleAllocations.length === 0 ? (
                   <tr>
                     <td colSpan="5" className="text-center py-12">
-                      <Users className="mx-auto h-12 w-12 text-slate-400" />
-                      <h3 className="mt-2 text-sm font-medium text-slate-900">No Active Allocations with Profit</h3>
-                      <p className="mt-1 text-sm text-slate-500">There are no investments currently showing a distributable profit.</p>
+                      <Users className="mx-auto h-12 w-12 text-muted-foreground" />
+                      <h3 className="mt-2 text-sm font-medium text-foreground">No Active Allocations with Profit</h3>
+                      <p className="mt-1 text-sm text-muted-foreground">There are no investments currently showing a distributable profit.</p>
                       <Button size="sm" className="mt-4" onClick={generateSampleData}>Generate Sample Data</Button>
                     </td>
                   </tr>
@@ -403,14 +403,14 @@ export default function ProfitDistribution({ onUpdate }) {
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <History className="w-5 h-5 text-slate-500" />
+            <History className="w-5 h-5 text-muted-foreground" />
             Profit Payout History
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
              <table className="w-full text-sm text-left">
-              <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+              <thead className="text-xs text-subtle uppercase bg-surface-2">
                 <tr>
                   <th scope="col" className="px-6 py-3">Date</th>
                   <th scope="col" className="px-6 py-3">Investor</th>
@@ -441,9 +441,9 @@ export default function ProfitDistribution({ onUpdate }) {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="p-4 bg-slate-100 rounded-lg text-center">
-              <p className="text-sm text-slate-600">Total Distributable Profit</p>
-              <p className="text-3xl font-bold text-slate-800">₹{totalDistributableProfit.toLocaleString()}</p>
+            <div className="p-4 bg-surface-2 rounded-lg text-center">
+              <p className="text-sm text-subtle">Total Distributable Profit</p>
+              <p className="text-3xl font-bold text-foreground">₹{totalDistributableProfit.toLocaleString()}</p>
             </div>
             <div>
               <Label htmlFor="payout-percentage">Payout Percentage (%)</Label>
@@ -454,11 +454,11 @@ export default function ProfitDistribution({ onUpdate }) {
                 onChange={(e) => setPayoutPercentage(e.target.value)}
                 placeholder="e.g., 10"
               />
-              <p className="text-xs text-slate-500 mt-1">Enter a percentage of the profit to distribute (1-100).</p>
+              <p className="text-xs text-muted-foreground mt-1">Enter a percentage of the profit to distribute (1-100).</p>
             </div>
-             <div className="p-4 bg-green-100 rounded-lg text-center">
-              <p className="text-sm text-green-700">Total Amount to be Paid Out</p>
-              <p className="text-3xl font-bold text-green-800">₹{totalAmountToPayout.toLocaleString()}</p>
+             <div className="p-4 bg-buy-muted rounded-lg text-center">
+              <p className="text-sm text-buy-muted-foreground">Total Amount to be Paid Out</p>
+              <p className="text-3xl font-bold text-buy-muted-foreground">₹{totalAmountToPayout.toLocaleString()}</p>
             </div>
             <div>
               <Label htmlFor="admin-notes">Admin Notes (Optional)</Label>
@@ -469,9 +469,9 @@ export default function ProfitDistribution({ onUpdate }) {
                 placeholder="e.g., Q2 Profit Distribution"
               />
             </div>
-            <div className="flex items-start p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg">
-                <AlertTriangle className="w-5 h-5 text-yellow-600 mr-3 mt-1 flex-shrink-0" />
-                <p className="text-sm text-yellow-800">
+            <div className="flex items-start p-4 bg-hold-muted border-l-4 border-hold rounded-r-lg">
+                <AlertTriangle className="w-5 h-5 text-hold-muted-foreground mr-3 mt-1 flex-shrink-0" />
+                <p className="text-sm text-hold-muted-foreground">
                     This action is irreversible. It will create fund transactions and add the payout amount to each eligible investor's wallet.
                 </p>
             </div>

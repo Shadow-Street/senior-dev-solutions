@@ -151,7 +151,7 @@ export default function PlatformSettings({ refreshEntityConfigs }) {
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader className="flex flex-row items-center justify-between">
           <div className="flex items-center gap-3">
-            <Settings className="w-6 h-6 text-gray-600" />
+            <Settings className="w-6 h-6 text-subtle" />
             <CardTitle>Global Platform Settings</CardTitle>
           </div>
           <Button onClick={handleSave} disabled={isSaving || isLoading}>
@@ -160,12 +160,12 @@ export default function PlatformSettings({ refreshEntityConfigs }) {
           </Button>
         </CardHeader>
         <CardContent>
-          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg mb-6">
+          <div className="bg-hold-muted border-l-4 border-hold p-4 rounded-r-lg mb-6">
             <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-yellow-600 mt-1" />
+              <AlertCircle className="w-5 h-5 text-hold-muted-foreground mt-1" />
               <div>
-                <h4 className="font-semibold text-yellow-800">Master Control Panel</h4>
-                <p className="text-sm text-yellow-700">Changes made here affect the entire platform. API keys and payment settings are sensitive. Proceed with caution.</p>
+                <h4 className="font-semibold text-hold-muted-foreground">Master Control Panel</h4>
+                <p className="text-sm text-hold-muted-foreground">Changes made here affect the entire platform. API keys and payment settings are sensitive. Proceed with caution.</p>
               </div>
             </div>
           </div>
@@ -189,11 +189,11 @@ export default function PlatformSettings({ refreshEntityConfigs }) {
                     }}
                     className={`group flex items-center w-full px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
                       isActive ?
-                        'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md' :
-                        'hover:bg-slate-100 text-slate-700'}`
+                        'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-md' :
+                        'hover:bg-surface-2 text-subtle'}`
                     }>
 
-                    <Icon className={`w-5 h-5 mr-3 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                    <Icon className={`w-5 h-5 mr-3 ${isActive ? 'text-white' : 'text-muted-foreground'}`} />
                     <span className="text-right text-justify">{cat.name}</span>
                   </button>
                 );
@@ -219,9 +219,9 @@ export default function PlatformSettings({ refreshEntityConfigs }) {
                     onSaveSpecificSettings={handleSaveSettings} // Pass the new save function to children
                     refreshEntityConfigs={refreshEntityConfigs} /> :
                   <div className="p-8 text-center">
-                    <Database className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-slate-700">Component Not Found</h3>
-                    <p className="text-slate-600">The component for "{activeCategory}" could not be loaded.</p>
+                    <Database className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-subtle">Component Not Found</h3>
+                    <p className="text-subtle">The component for "{activeCategory}" could not be loaded.</p>
                   </div>
               }
             </CardContent>

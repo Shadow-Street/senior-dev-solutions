@@ -174,7 +174,7 @@ export default function CreateEventModal({ user, onClose, onSuccess }) {
           </div>
           
           {/* Paid Event Section */}
-          <div className="space-y-3 p-4 bg-slate-50 rounded-lg border">
+          <div className="space-y-3 p-4 bg-surface-2 rounded-lg border">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Checkbox 
@@ -190,12 +190,12 @@ export default function CreateEventModal({ user, onClose, onSuccess }) {
                   }}
                   disabled={!canCreatePaidEvent}
                 />
-                <Label htmlFor="is_premium" className={!canCreatePaidEvent ? 'text-slate-400' : ''}>
+                <Label htmlFor="is_premium" className={!canCreatePaidEvent ? 'text-muted-foreground' : ''}>
                   Premium Event (Paid Tickets)
                 </Label>
               </div>
               {!canCreatePaidEvent && (
-                <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                <Badge variant="outline" className="bg-premium-muted text-protocall-premium-text border-protocall-premium-light">
                   <Crown className="w-3 h-3 mr-1" />
                   Verified Only
                 </Badge>
@@ -203,9 +203,9 @@ export default function CreateEventModal({ user, onClose, onSuccess }) {
             </div>
             
             {!canCreatePaidEvent && (
-              <Alert className="bg-blue-50 border-blue-200">
-                <Info className="h-4 w-4 text-blue-600" />
-                <AlertDescription className="text-sm text-blue-800">
+              <Alert className="bg-premium-muted border-protocall-premium-light">
+                <Info className="h-4 w-4 text-protocall-blue" />
+                <AlertDescription className="text-sm text-protocall-blue">
                   <strong>Want to create paid events?</strong> Apply to become a verified organizer to unlock:
                   <ul className="list-disc list-inside mt-2 space-y-1">
                     <li>Create paid events with ticket sales</li>
@@ -215,7 +215,7 @@ export default function CreateEventModal({ user, onClose, onSuccess }) {
                   </ul>
                   <Button
                     variant="link"
-                    className="p-0 h-auto text-blue-600 font-semibold mt-2"
+                    className="p-0 h-auto text-protocall-blue font-semibold mt-2"
                     onClick={() => window.location.href = createPageUrl('BecomeOrganizer')}
                   >
                     Apply Now →
@@ -235,7 +235,7 @@ export default function CreateEventModal({ user, onClose, onSuccess }) {
                   onChange={(e) => setFormData({...formData, ticket_price: e.target.value})} 
                   placeholder="e.g., 299" 
                 />
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Platform takes 20% commission. You'll earn ₹{(formData.ticket_price * 0.8).toFixed(2)} per ticket.
                 </p>
               </div>
@@ -263,7 +263,7 @@ export default function CreateEventModal({ user, onClose, onSuccess }) {
             type="button"
             onClick={handleSubmit} 
             disabled={isSubmitting}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-protocall-blue hover:bg-protocall-blue"
           >
             {isSubmitting ? 'Creating...' : 'Submit for Approval'}
           </Button>

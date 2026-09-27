@@ -124,15 +124,15 @@ export default function AttendeeExport({ event, tickets, attendees, checkIns }) 
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <FileSpreadsheet className="w-5 h-5 text-green-600" />
+              <FileSpreadsheet className="w-5 h-5 text-buy-muted-foreground" />
               Export Attendees - Advanced Filters
             </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-6">
-            <Card className="bg-blue-50 border-blue-200">
+            <Card className="bg-premium-muted border-protocall-premium-light">
               <CardContent className="p-4">
-                <h4 className="font-semibold text-blue-900 mb-3">Include Data From:</h4>
+                <h4 className="font-semibold text-protocall-blue mb-3">Include Data From:</h4>
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <Checkbox
@@ -154,9 +154,9 @@ export default function AttendeeExport({ event, tickets, attendees, checkIns }) 
               </CardContent>
             </Card>
 
-            <Card className="bg-purple-50 border-purple-200">
+            <Card className="bg-premium-muted border-protocall-premium-light">
               <CardContent className="p-4">
-                <h4 className="font-semibold text-purple-900 mb-3">Filter By Status:</h4>
+                <h4 className="font-semibold text-protocall-premium-text mb-3">Filter By Status:</h4>
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <Checkbox
@@ -178,9 +178,9 @@ export default function AttendeeExport({ event, tickets, attendees, checkIns }) 
               </CardContent>
             </Card>
 
-            <Card className="bg-green-50 border-green-200">
+            <Card className="bg-buy-muted border-buy/30">
               <CardContent className="p-4">
-                <h4 className="font-semibold text-green-900 mb-3">Include Fields:</h4>
+                <h4 className="font-semibold text-buy-muted-foreground mb-3">Include Fields:</h4>
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <Checkbox
@@ -214,7 +214,7 @@ export default function AttendeeExport({ event, tickets, attendees, checkIns }) 
               <Button type="button" variant="outline" onClick={() => setShowExportModal(false)}>
                 Cancel
               </Button>
-              <Button onClick={exportToCSV} className="bg-green-600 hover:bg-green-700">
+              <Button onClick={exportToCSV} className="bg-buy hover:bg-buy">
                 <Download className="w-4 h-4 mr-2" />
                 Export to CSV
               </Button>

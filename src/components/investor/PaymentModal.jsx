@@ -171,24 +171,24 @@ export default function PaymentModal({ isOpen, onClose, amount, investor, wallet
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-green-500" />
+              <Shield className="w-5 h-5 text-positive" />
               Complete Payment
             </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-6">
             {/* Amount Summary */}
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 border border-blue-200">
+            <div className="bg-surface-2 rounded-lg p-4 border border-protocall-premium-light">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold text-lg text-slate-900">
+                <h3 className="font-semibold text-lg text-foreground">
                   {purpose === 'wallet_deposit' ? 'Add to Wallet' : 'Investment Amount'}
                 </h3>
-                <Badge className="bg-blue-600">
+                <Badge className="bg-protocall-blue">
                   {purpose === 'wallet_deposit' ? 'Wallet Top-up' : 'Fund Investment'}
                 </Badge>
               </div>
-              <div className="text-3xl font-bold text-blue-900">₹{paymentAmount.toLocaleString('en-IN')}</div>
-              <p className="text-sm text-slate-600 mt-1">
+              <div className="text-3xl font-bold text-protocall-blue">₹{paymentAmount.toLocaleString('en-IN')}</div>
+              <p className="text-sm text-subtle mt-1">
                 {purpose === 'wallet_deposit' ? 'Instant credit to your wallet' : 'One-time payment'}
               </p>
             </div>
@@ -289,7 +289,7 @@ export default function PaymentModal({ isOpen, onClose, amount, investor, wallet
                     onChange={(e) => setPaymentData({...paymentData, upiId: e.target.value})}
                     required
                   />
-                  <p className="text-xs text-slate-500 mt-2">
+                  <p className="text-xs text-muted-foreground mt-2">
                     💡 Enter your UPI ID or scan QR code in your UPI app
                   </p>
                 </div>
@@ -297,8 +297,8 @@ export default function PaymentModal({ isOpen, onClose, amount, investor, wallet
 
               {paymentMethod === 'netbanking' && (
                 <div className="text-center py-4">
-                  <Building className="w-12 h-12 text-slate-400 mx-auto mb-2" />
-                  <p className="text-slate-600 text-sm">You will be redirected to your bank's website</p>
+                  <Building className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-subtle text-sm">You will be redirected to your bank's website</p>
                 </div>
               )}
 
@@ -306,9 +306,9 @@ export default function PaymentModal({ isOpen, onClose, amount, investor, wallet
                 <div className="space-y-3">
                   <Skeleton className="h-12 w-full" />
                   <div className="text-center">
-                    <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-2" />
-                    <p className="text-sm text-slate-600">Processing your payment...</p>
-                    <p className="text-xs text-slate-500 mt-1">Please do not close this window</p>
+                    <Loader2 className="w-8 h-8 animate-spin text-protocall-blue mx-auto mb-2" />
+                    <p className="text-sm text-subtle">Processing your payment...</p>
+                    <p className="text-xs text-muted-foreground mt-1">Please do not close this window</p>
                   </div>
                 </div>
               ) : (
@@ -316,7 +316,7 @@ export default function PaymentModal({ isOpen, onClose, amount, investor, wallet
                   <Button type="button" variant="outline" onClick={onClose} className="flex-1">
                     Cancel
                   </Button>
-                  <Button type="submit" className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600">
+                  <Button type="submit" className="flex-1 bg-gradient-to-r from-protocall-deep to-protocall-blue">
                     <Check className="w-4 h-4 mr-2" />
                     Pay ₹{paymentAmount.toLocaleString('en-IN')}
                   </Button>
@@ -325,12 +325,12 @@ export default function PaymentModal({ isOpen, onClose, amount, investor, wallet
             </form>
 
             {/* Security Notice */}
-            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-              <div className="flex items-center gap-2 text-green-800">
+            <div className="bg-buy-muted border border-buy/30 rounded-lg p-3">
+              <div className="flex items-center gap-2 text-buy-muted-foreground">
                 <Shield className="w-4 h-4" />
                 <span className="text-sm font-medium">Secure Payment</span>
               </div>
-              <p className="text-xs text-green-700 mt-1">
+              <p className="text-xs text-buy-muted-foreground mt-1">
                 Your payment information is encrypted and secure. Powered by Razorpay.
               </p>
             </div>

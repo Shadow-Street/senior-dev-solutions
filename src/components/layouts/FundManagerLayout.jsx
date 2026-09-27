@@ -79,7 +79,7 @@ export default function FundManagerLayout({ children, activePage }) {
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
-        <Loader2 className="w-12 h-12 animate-spin text-indigo-600" />
+        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
       </div>
     );
   }
@@ -127,8 +127,8 @@ export default function FundManagerLayout({ children, activePage }) {
             <span className="text-sm font-medium">Back to Admin Panel</span>
           </button>
 
-          <div className="text-center p-4 bg-sidebar-dark rounded-lg border border-slate-100">
-            <Shield className="w-8 h-8 mx-auto text-indigo-600 mb-2" />
+          <div className="text-center p-4 bg-sidebar-dark rounded-lg border border-divider">
+            <Shield className="w-8 h-8 mx-auto text-protocall-blue mb-2" />
             <h3 className="font-bold text-sidebar-foreground">Protocol</h3>
             <p className="text-xs text-sidebar-muted-foreground">Fund Management System</p>
           </div>
@@ -141,14 +141,14 @@ export default function FundManagerLayout({ children, activePage }) {
         <header className="h-20 bg-card border-b border-border flex items-center justify-between px-8 shadow-sm">
           <div>
             <h1 className="text-2xl font-bold text-foreground">Fund Management System</h1>
-            <p className="text-sm text-slate-500">Manage investment funds and investors</p>
+            <p className="text-sm text-muted-foreground">Manage investment funds and investors</p>
           </div>
 
           <div className="flex items-center gap-4">
             {/* SuperAdmin Profile */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-100 transition-all">
+                <button className="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-2 transition-all">
                   <Avatar className="w-10 h-10">
                     <AvatarImage src={user?.profile_image_url} alt={user?.display_name} />
                     <AvatarFallback className="bg-primary text-primary-foreground">
@@ -157,9 +157,9 @@ export default function FundManagerLayout({ children, activePage }) {
                   </Avatar>
                   <div className="text-left hidden md:block">
                     <p className="text-sm font-semibold text-foreground">{user?.display_name}</p>
-                    <p className="text-xs text-slate-500 uppercase">{user?.app_role}</p>
+                    <p className="text-xs text-muted-foreground uppercase">{user?.app_role}</p>
                   </div>
-                  <ChevronDown className="w-4 h-4 text-slate-400" />
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-64">
@@ -168,23 +168,23 @@ export default function FundManagerLayout({ children, activePage }) {
 
                 <div className="px-2 py-3 space-y-2">
                   <div>
-                    <p className="text-xs text-slate-500">Name</p>
+                    <p className="text-xs text-muted-foreground">Name</p>
                     <p className="font-medium text-sm">{user?.display_name}</p>
                   </div>
 
                   <div>
-                    <p className="text-xs text-slate-500">Email</p>
+                    <p className="text-xs text-muted-foreground">Email</p>
                     <p className="font-medium text-sm">{user?.email}</p>
                   </div>
 
                   <div>
-                    <p className="text-xs text-slate-500">Role</p>
+                    <p className="text-xs text-muted-foreground">Role</p>
                     <p className="font-medium text-sm uppercase">{user?.app_role}</p>
                   </div>
                 </div>
 
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+                <DropdownMenuItem onClick={handleLogout} className="text-sell-muted-foreground">
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
                 </DropdownMenuItem>

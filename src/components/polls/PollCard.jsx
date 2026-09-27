@@ -132,21 +132,21 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
   };
 
   const colorMap = {
-    'Buy': { color: 'text-green-600', bgColor: 'bg-green-500' },
-    'Sell': { color: 'text-red-600', bgColor: 'bg-red-500' },
-    'Hold': { color: 'text-yellow-600', bgColor: 'bg-yellow-500' },
-    'Bullish': { color: 'text-green-600', bgColor: 'bg-green-500' },
-    'Bearish': { color: 'text-red-600', bgColor: 'bg-red-500' },
-    'Neutral': { color: 'text-yellow-600', bgColor: 'bg-yellow-500' },
-    'Yes': { color: 'text-green-600', bgColor: 'bg-green-500' },
-    'No': { color: 'text-red-600', bgColor: 'bg-red-500' }
+    'Buy': { color: 'text-buy-muted-foreground', bgColor: 'bg-buy' },
+    'Sell': { color: 'text-sell-muted-foreground', bgColor: 'bg-sell' },
+    'Hold': { color: 'text-hold-muted-foreground', bgColor: 'bg-hold' },
+    'Bullish': { color: 'text-buy-muted-foreground', bgColor: 'bg-buy' },
+    'Bearish': { color: 'text-sell-muted-foreground', bgColor: 'bg-sell' },
+    'Neutral': { color: 'text-hold-muted-foreground', bgColor: 'bg-hold' },
+    'Yes': { color: 'text-buy-muted-foreground', bgColor: 'bg-buy' },
+    'No': { color: 'text-sell-muted-foreground', bgColor: 'bg-sell' }
   };
 
   let voteData = {};
   if (pollOptions.length > 0) {
     pollOptions.forEach((option, index) => {
       const voteCount = pollVotes[index] || 0;
-      const colors = colorMap[option] || { color: 'text-blue-600', bgColor: 'bg-blue-500' };
+      const colors = colorMap[option] || { color: 'text-protocall-blue', bgColor: 'bg-protocall-blue' };
       voteData[index] = {
         icon: iconMap[option] || Star,
         ...colors,
@@ -291,15 +291,15 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
 
   if (!poll.is_active) {
     return (
-      <Card className="border-2 border-dashed border-slate-300 bg-slate-100/50 relative p-6">
-        <div className="absolute inset-0 bg-slate-200/70 flex items-center justify-center z-10">
+      <Card className="border-2 border-dashed border-border bg-surface-2/50 relative p-6">
+        <div className="absolute inset-0 bg-border/70 flex items-center justify-center z-10">
           <div className="text-center">
-            <Ban className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-            <h3 className="font-semibold text-slate-800">Poll Suspended</h3>
+            <Ban className="w-8 h-8 text-subtle mx-auto mb-2" />
+            <h3 className="font-semibold text-foreground">Poll Suspended</h3>
           </div>
         </div>
         <div className="opacity-50 space-y-4">
-          <h3 className="font-bold text-slate-700">{poll.stock_symbol}</h3>
+          <h3 className="font-bold text-subtle">{poll.stock_symbol}</h3>
           {/* Show grayed out results */}
           <div className="space-y-3">
             {Object.entries(voteData).map(([voteType, data]) => (
@@ -308,7 +308,7 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
                   <span>{data.label}</span>
                   <span>{data.count}</span>
                 </div>
-                <div className="h-2 bg-slate-300 rounded-full w-full"></div>
+                <div className="h-2 bg-border rounded-full w-full"></div>
               </div>
             ))}
           </div>
@@ -327,8 +327,8 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
       )}
 
       <TooltipProvider>
-        <Card className={`transition-all duration-300 border-0 relative group ${isBoosted ? 'ring-2 ring-yellow-400 shadow-xl' : ''
-          } ${isPremiumDesign ? "overflow-hidden shadow-lg bg-gradient-to-br from-white to-purple-50 hover:shadow-xl transform hover:-translate-y-1" : "bg-white hover:shadow-lg"} ${isLocked ? 'locked-poll-card' : ''}`}>
+        <Card className={`transition-all duration-300 border-0 relative group ${isBoosted ? 'ring-2 ring-hold shadow-xl' : ''
+          } ${isPremiumDesign ? "overflow-hidden shadow-lg bg-gradient-to-br from-white to-surface-2 hover:shadow-xl transform hover:-translate-y-1" : "bg-white hover:shadow-lg"} ${isLocked ? 'locked-poll-card' : ''}`}>
 
           {poll.is_premium && !canAccessPollContent && !isAdmin && (
             <PremiumAccessOverlay
@@ -338,11 +338,11 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
           )}
 
           {isBoosted && (
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400 opacity-20 animate-pulse z-0"></div>
+            <div className="absolute inset-0 bg-hold opacity-20 animate-pulse z-0"></div>
           )}
 
           {poll.is_premium && (
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400 to-indigo-500 opacity-10 rounded-full transform translate-x-16 -translate-y-16 z-0"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-protocall-grape to-protocall-blue opacity-10 rounded-full transform translate-x-16 -translate-y-16 z-0"></div>
           )}
 
           <div className="relative z-10 p-4 space-y-4">
@@ -350,11 +350,11 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <CardTitle className="text-lg font-bold text-slate-900 leading-tight">
+                  <CardTitle className="text-lg font-bold text-foreground leading-tight">
                     {poll.stock_symbol}
                   </CardTitle>
                   {isBoosted && (
-                    <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0 shadow-md animate-pulse">
+                    <Badge className="bg-hold text-hold-foreground border-0 shadow-md animate-pulse">
                       <Flame className="w-3 h-3 mr-1" />
                       Boosted
                     </Badge>
@@ -364,19 +364,19 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
 
               <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
                 {poll.is_premium ? (
-                  <Badge className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white border-0 shadow-md">
+                  <Badge className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white border-0 shadow-md">
                     <Crown className="w-3 h-3 mr-1" />
                     Premium
                   </Badge>
                 ) : isAdvisorPoll && (
-                  <Badge className="bg-purple-100 text-purple-800 border border-purple-200 text-xs">
+                  <Badge className="bg-premium-muted text-protocall-premium-text border border-protocall-premium-light text-xs">
                     <Shield className="w-3 h-3 mr-1" />
                     Advisor
                   </Badge>
                 )}
 
                 {timeRemaining && !isExpired && (
-                  <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+                  <Badge variant="outline" className="bg-hold-muted text-hold-muted-foreground border-hold/30 text-xs">
                     <Clock className="w-3 h-3 mr-1" />
                     {timeRemaining}
                   </Badge>
@@ -392,22 +392,22 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
                     <DropdownMenuContent align="end">
                       {canBoost && !isBoosted && (
                         <DropdownMenuItem onClick={handleBoostPoll} disabled={isBoosting}>
-                          <Zap className="w-4 h-4 mr-2 text-yellow-600" />
+                          <Zap className="w-4 h-4 mr-2 text-hold-muted-foreground" />
                           {isBoosting ? 'Boosting...' : 'Boost Poll (24h)'}
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem onClick={handleSharePoll}>
-                        <Share2 className="w-4 h-4 mr-2 text-blue-600" />
+                        <Share2 className="w-4 h-4 mr-2 text-protocall-blue" />
                         Share Poll
                       </DropdownMenuItem>
                       {canEditDelete && onEdit && (
                         <DropdownMenuItem onClick={() => onEdit(poll)}>
-                          <Edit className="w-4 h-4 mr-2 text-blue-600" />
+                          <Edit className="w-4 h-4 mr-2 text-protocall-blue" />
                           Edit Poll
                         </DropdownMenuItem>
                       )}
                       {canEditDelete && (
-                        <DropdownMenuItem onClick={() => onDelete(poll)} className="text-red-600">
+                        <DropdownMenuItem onClick={() => onDelete(poll)} className="text-sell-muted-foreground">
                           <Trash2 className="w-4 h-4 mr-2" />
                           Delete Poll
                         </DropdownMenuItem>
@@ -418,12 +418,12 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
               </div>
             </div>
 
-            <p className="text-sm text-slate-700 font-semibold mt-2 leading-relaxed">
+            <p className="text-sm text-subtle font-semibold mt-2 leading-relaxed">
               {poll.title}
             </p>
 
             {localPollData.image_url && (
-              <div className="mt-3 rounded-lg overflow-hidden border border-slate-200">
+              <div className="mt-3 rounded-lg overflow-hidden border border-border">
                 <img
                   src={localPollData.image_url}
                   alt="Poll visual"
@@ -437,7 +437,7 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
               {poll.confidence_score && (
                 <div className="flex items-center gap-1">
                   {Array(5).fill(0).map((_, i) => (
-                    <Star key={i} className={`w-3.5 h-3.5 ${i < poll.confidence_score ? 'text-yellow-400 fill-yellow-400' : 'text-slate-300'}`} />
+                    <Star key={i} className={`w-3.5 h-3.5 ${i < poll.confidence_score ? 'text-hold fill-hold' : 'text-muted-foreground'}`} />
                   ))}
                 </div>
               )}
@@ -450,11 +450,11 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
                   <div className="flex items-center justify-between text-sm mb-1.5">
                     <div className="flex items-center gap-2">
                       <data.icon className={`w-4 h-4 ${data.color}`} />
-                      <span className="font-medium text-slate-700">{data.label}</span>
+                      <span className="font-medium text-subtle">{data.label}</span>
                     </div>
-                    <span className="font-semibold text-slate-800">{data.count} ({!isNaN(data.percentage) ? data.percentage.toFixed(1) : 0}%)</span>
+                    <span className="font-semibold text-foreground">{data.count} ({!isNaN(data.percentage) ? data.percentage.toFixed(1) : 0}%)</span>
                   </div>
-                  <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                  <div className="w-full bg-surface-2 rounded-full h-2 overflow-hidden">
                     <div
                       className={`${data.bgColor} h-2 rounded-full transition-all duration-500 ease-out`}
                       style={{ width: `${!isNaN(data.percentage) ? data.percentage : 0}%` }}
@@ -465,7 +465,7 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
             </div>
 
             {/* Poll Stats Footer */}
-            <div className="flex items-center justify-between text-sm text-slate-500 border-t border-slate-100 pt-3">
+            <div className="flex items-center justify-between text-sm text-muted-foreground border-t border-divider pt-3">
               <div className="flex items-center gap-1.5">
                 <Users className="w-4 h-4" />
                 <span>{totalVotes} votes</span>
@@ -474,7 +474,7 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
                 <span className="font-semibold capitalize">{winningVote.type} {winningVote.percentage.toFixed(0)}%</span>
               )}
               {/* Share button in footer if Dropdown not used (optional, but requested in screenshot to have Share on card) */}
-              <Button variant="ghost" size="sm" onClick={handleSharePoll} className="text-slate-500 hover:text-slate-800">
+              <Button variant="ghost" size="sm" onClick={handleSharePoll} className="text-muted-foreground hover:text-foreground">
                 <Share2 className="w-4 h-4 mr-1.5" />
                 Share
               </Button>
@@ -483,12 +483,12 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
             {/* Action Buttons */}
             <div className="mt-4">
               {isExpired ? (
-                <div className="text-center p-4 bg-slate-100 rounded-lg">
-                  <Badge className="bg-slate-600 text-white text-sm px-3 py-1">
+                <div className="text-center p-4 bg-surface-2 rounded-lg">
+                  <Badge className="bg-muted-foreground text-white text-sm px-3 py-1">
                     <Clock className="w-3 h-3 mr-1" />
                     Poll Expired
                   </Badge>
-                  <p className="text-xs text-slate-600 mt-2">
+                  <p className="text-xs text-subtle mt-2">
                     Voting closed on {format(new Date(localPollData.expires_at), 'PPP')}
                   </p>
                 </div>
@@ -505,20 +505,20 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
                         if (!data) {
                           // Fallback if data is missing (e.g. data mismatch)
                           return (
-                            <Button disabled className="w-full bg-slate-500 text-white">
+                            <Button disabled className="w-full bg-muted-foreground text-white">
                               You Voted (Option {optionIndex})
                             </Button>
                           );
                         }
 
                         const voteType = data.label.toLowerCase();
-                        let votedClass = 'bg-blue-600';
+                        let votedClass = 'bg-protocall-blue';
                         if (voteType.includes('buy') || voteType.includes('bullish') || voteType.includes('yes')) {
-                          votedClass = 'bg-green-600 hover:bg-green-700';
+                          votedClass = 'bg-buy hover:bg-buy';
                         } else if (voteType.includes('sell') || voteType.includes('bearish') || voteType.includes('no')) {
-                          votedClass = 'bg-red-600 hover:bg-red-700';
+                          votedClass = 'bg-sell hover:bg-sell';
                         } else {
-                          votedClass = 'bg-yellow-500 hover:bg-yellow-600';
+                          votedClass = 'bg-hold hover:bg-hold';
                         }
 
                         return (
@@ -537,13 +537,13 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
                     <div className={`grid gap-2 ${Object.keys(voteData).length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
                       {Object.entries(voteData).map(([optionIndex, data]) => {
                         const voteType = data.label.toLowerCase();
-                        let baseColorClass = 'bg-slate-50 text-slate-600 hover:bg-slate-100';
+                        let baseColorClass = 'bg-surface-2 text-subtle hover:bg-surface-2';
                         if (voteType.includes('buy') || voteType.includes('bullish') || voteType.includes('yes')) {
-                          baseColorClass = 'bg-green-50 text-green-700 hover:bg-green-100 border border-green-200';
+                          baseColorClass = 'bg-buy-muted text-buy-muted-foreground hover:bg-buy-muted border border-buy/30';
                         } else if (voteType.includes('sell') || voteType.includes('bearish') || voteType.includes('no')) {
-                          baseColorClass = 'bg-red-50 text-red-700 hover:bg-red-100 border border-red-200';
+                          baseColorClass = 'bg-sell-muted text-sell-muted-foreground hover:bg-sell-muted border border-sell/30';
                         } else {
-                          baseColorClass = 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100 border border-yellow-200';
+                          baseColorClass = 'bg-hold-muted text-hold-muted-foreground hover:bg-hold-muted border border-hold/30';
                         }
 
                         return (
@@ -564,14 +564,14 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
 
                   {userPledge && (
                     <div className="mt-2">
-                      <Button disabled className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold">
+                      <Button disabled className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue text-white font-semibold">
                         PLEDGED: ₹{userPledge.amount_committed?.toLocaleString() || 'N/A'}
                       </Button>
                     </div>
                   )}
 
                   {poll.poll_type === 'pledge_poll' && !settingsLoading && !settings.pledgeEnabled && (
-                    <div className="flex items-center justify-center gap-2 text-xs text-slate-500 bg-slate-50 p-2 rounded-lg mt-2">
+                    <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground bg-surface-2 p-2 rounded-lg mt-2">
                       <AlertCircle className="w-3 h-3" />
                       <span>Pledge system currently disabled by admin.</span>
                     </div>

@@ -184,7 +184,7 @@ router.get('/room/:roomId', async (req, res) => {
 });
 
 // CRUD routes
-createCrudRoutes(router, pollController, [authMiddleware]);
+// CRUD routes are registered at the bottom so '/:id' cannot shadow '/votes'.
 
 // Poll Votes sub-routes
 const voteRouter = express.Router();
@@ -192,11 +192,12 @@ const voteController = createCrudController(db.PollVote, {
   defaultOrderBy: 'created_at',
   defaultOrder: 'DESC',
   customFilters: (rawFilters, req) => {
-    const isAdmin = ['admin', 'super_admin'].includes(req.user.app_role);
+    const isAdmin = ['admin', 'super_admin'].includes(req.user?.app_role);
     const where = {};
 
     if (!isAdmin) {
-      where.user_id = req.user.id; // Force normal users to only see their own votes
+      // Force non-admins (and any caller without a user) to their own votes only.
+      where.user_id = req.user?.id ?? null;
     }
 
     Object.keys(rawFilters).forEach(key => {
@@ -438,7 +439,12 @@ voteRouter.get('/me', authMiddleware, async (req, res) => {
   }
 });
 
-createCrudRoutes(voteRouter, voteController);
+// Auth is required: customFilters scopes rows to the caller, so an
+// unauthenticated request would both crash and bypass that scoping.
+createCrudRoutes(voteRouter, voteController, [authMiddleware]);
 router.use('/votes', voteRouter);
+
+// CRUD LAST — '/:id' must not shadow the sub-routers mounted above.
+createCrudRoutes(router, pollController, [authMiddleware]);
 
 module.exports = router;

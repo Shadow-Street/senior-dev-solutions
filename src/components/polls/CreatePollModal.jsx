@@ -228,7 +228,7 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
               disabled={!!room?.stock_symbol}
             />
             {room?.stock_symbol && (
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Stock symbol is set from the chat room
               </p>
             )}
@@ -264,7 +264,7 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
               placeholder="Auto-generated based on stock and poll type..."
               required
             />
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               This will appear as the poll description below the stock symbol
             </p>
           </div>
@@ -284,12 +284,12 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
           {/* Image Upload */}
           <div>
             <Label htmlFor="image_upload">Poll Image/Chart (Optional)</Label>
-            <p className="text-xs text-slate-500 mb-2">
+            <p className="text-xs text-muted-foreground mb-2">
               Add visual context with charts, graphs, or relevant images
             </p>
 
             {!imagePreview ? (
-              <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:border-purple-400 transition-colors">
+              <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary transition-colors">
                 <input
                   type="file"
                   id="image_upload"
@@ -302,16 +302,16 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
                   <div className="flex flex-col items-center gap-2">
                     {isUploadingImage ? (
                       <>
-                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600"></div>
-                        <span className="text-sm text-slate-600">Uploading...</span>
+                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+                        <span className="text-sm text-subtle">Uploading...</span>
                       </>
                     ) : (
                       <>
-                        <Upload className="w-10 h-10 text-slate-400" />
-                        <span className="text-sm text-slate-600">
+                        <Upload className="w-10 h-10 text-muted-foreground" />
+                        <span className="text-sm text-subtle">
                           Click to upload image (max 5MB)
                         </span>
-                        <span className="text-xs text-slate-400">
+                        <span className="text-xs text-muted-foreground">
                           PNG, JPG, GIF up to 5MB
                         </span>
                       </>
@@ -320,7 +320,7 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
                 </label>
               </div>
             ) : (
-              <div className="relative border border-slate-300 rounded-lg overflow-hidden">
+              <div className="relative border border-border rounded-lg overflow-hidden">
                 <img
                   src={imagePreview}
                   alt="Poll preview"
@@ -377,7 +377,7 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
           {/* Expiry Date */}
           <div>
             <Label>Poll Expires (Optional)</Label>
-            <p className="text-xs text-slate-500 mb-2">
+            <p className="text-xs text-muted-foreground mb-2">
               Set when voting should automatically close
             </p>
             <Popover>
@@ -400,11 +400,11 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
 
           {/* Premium Poll Toggle */}
           {canCreatePremiumPolls && (
-            <div className="flex items-center justify-between p-4 border rounded-lg bg-gradient-to-r from-purple-50 to-pink-50">
+            <div className="flex items-center justify-between p-4 border rounded-lg bg-surface-2">
               <div className="flex items-center space-x-2">
-                <Crown className="w-4 h-4 text-purple-600" />
+                <Crown className="w-4 h-4 text-protocall-premium-text" />
                 <Label htmlFor="is_premium" className="font-medium">Premium Poll</Label>
-                <Badge variant="outline" className="bg-purple-100 text-purple-700">
+                <Badge variant="outline" className="bg-premium-muted text-protocall-premium-text">
                   <Shield className="w-3 h-3 mr-1" />
                   Premium Feature
                 </Badge>
@@ -415,7 +415,7 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
                   checked={formData.is_premium}
                   onCheckedChange={(checked) => setFormData({ ...formData, is_premium: checked })}
                 />
-                <p className="text-xs text-slate-500 mt-1">Only visible to Premium/VIP members</p>
+                <p className="text-xs text-muted-foreground mt-1">Only visible to Premium/VIP members</p>
               </div>
             </div>
           )}
@@ -425,14 +425,14 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
               type="button"
               variant="outline"
               onClick={onClose}
-              className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-300 transition-all duration-300"
+              className="hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-protocall-premium-light transition-all duration-300"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting || isUploadingImage}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-primary hover:bg-primary"
             >
               {isSubmitting ? "Creating..." : "Create Poll"}
             </Button>

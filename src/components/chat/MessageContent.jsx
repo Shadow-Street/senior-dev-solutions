@@ -236,7 +236,7 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
     // Show deleted message placeholder
     if (message.is_deleted) {
       return (
-        <div className="flex items-center gap-2 text-slate-400 italic text-sm py-2">
+        <div className="flex items-center gap-2 text-muted-foreground italic text-sm py-2">
           <Trash2 className="w-4 h-4" />
           <span>This message was deleted</span>
         </div>
@@ -266,13 +266,13 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
             href={message.file_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 p-3 bg-slate-100 rounded-lg mt-1 hover:bg-slate-200 transition-all duration-200 shadow-sm hover:shadow-md"
+            className="flex items-center gap-2 p-3 bg-surface-2 rounded-lg mt-1 hover:bg-border transition-all duration-200 shadow-sm hover:shadow-md"
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.2 }}
           >
-            <File className="w-5 h-5 text-slate-600 flex-shrink-0" />
-            <span className="text-sm text-slate-800 truncate flex-1 font-medium">{message.file_name || 'Attached File'}</span>
-            <Download className="w-4 h-4 text-slate-500" />
+            <File className="w-5 h-5 text-subtle flex-shrink-0" />
+            <span className="text-sm text-foreground truncate flex-1 font-medium">{message.file_name || 'Attached File'}</span>
+            <Download className="w-4 h-4 text-muted-foreground" />
           </motion.a>
         );
       default:
@@ -281,17 +281,17 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
             {/* Reply Thread Preview */}
             {message.reply_to_message_id && (
               <motion.div
-                className="bg-slate-100 border-l-4 border-blue-500 pl-3 py-2 mb-2 rounded-r text-xs"
+                className="bg-surface-2 border-l-4 border-protocall-blue pl-3 py-2 mb-2 rounded-r text-xs"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <p className="font-semibold text-slate-700 flex items-center gap-1">
+                <p className="font-semibold text-subtle flex items-center gap-1">
                   <Reply className="w-3 h-3" />
                   {message.reply_to_user_name}
                 </p>
                 <div
-                  className="text-slate-600"
+                  className="text-subtle"
                   style={{
                     display: '-webkit-box',
                     WebkitLineClamp: 1,
@@ -322,7 +322,7 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
 
             {/* Edited Indicator */}
             {message.is_edited && !message.is_deleted && (
-              <p className="text-xs text-slate-400 mt-1 italic">
+              <p className="text-xs text-muted-foreground mt-1 italic">
                 (edited {formatDistanceToNow(new Date(message.edited_at), { addSuffix: true })})
               </p>
             )}
@@ -365,8 +365,8 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
               key={emoji}
               onClick={() => handleReaction(emoji)}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${userReaction === emoji
-                  ? 'bg-blue-500 text-white shadow-md scale-105'
-                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 hover:border-slate-300'
+                  ? 'bg-protocall-blue text-white shadow-md scale-105'
+                  : 'bg-surface-2 hover:bg-border text-subtle border border-border hover:border-border'
                 }`}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}

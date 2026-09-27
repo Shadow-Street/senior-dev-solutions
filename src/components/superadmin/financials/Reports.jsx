@@ -251,8 +251,8 @@ Generated on: ${format(new Date(), 'PPpp')}
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-gray-600">Loading financial data...</p>
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-protocall-blue" />
+          <p className="text-subtle">Loading financial data...</p>
         </div>
       </div>
     );
@@ -261,8 +261,8 @@ Generated on: ${format(new Date(), 'PPpp')}
   if (!reportData) {
     return (
       <div className="text-center py-12">
-        <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-        <p className="text-gray-600">No financial data available</p>
+        <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+        <p className="text-subtle">No financial data available</p>
       </div>
     );
   }
@@ -273,7 +273,7 @@ Generated on: ${format(new Date(), 'PPpp')}
       <Card className="border-0 shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-blue-600" />
+            <FileText className="w-5 h-5 text-protocall-blue" />
             Financial Reports
           </CardTitle>
           <CardDescription>
@@ -317,7 +317,7 @@ Generated on: ${format(new Date(), 'PPpp')}
               <Button 
                 onClick={handleGenerateReport}
                 disabled={isGenerating}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white"
               >
                 {isGenerating ? (
                   <>
@@ -338,64 +338,64 @@ Generated on: ${format(new Date(), 'PPpp')}
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100">
+        <Card className="border-0 shadow-lg bg-surface-2">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-blue-600">Gross Revenue</p>
-                <p className="text-2xl font-bold text-blue-900 mt-1">
+                <p className="text-sm font-medium text-protocall-blue">Gross Revenue</p>
+                <p className="text-2xl font-bold text-protocall-blue mt-1">
                   ₹{(reportData.summary.totalGrossRevenue / 1000).toFixed(1)}k
                 </p>
               </div>
-              <div className="p-3 bg-blue-500 rounded-lg">
+              <div className="p-3 bg-protocall-blue rounded-lg">
                 <DollarSign className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100">
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-surface-2 to-buy-muted">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-green-600">Net Profit</p>
-                <p className="text-2xl font-bold text-green-900 mt-1">
+                <p className="text-sm font-medium text-buy-muted-foreground">Net Profit</p>
+                <p className="text-2xl font-bold text-buy-muted-foreground mt-1">
                   ₹{(reportData.summary.netProfit / 1000).toFixed(1)}k
                 </p>
               </div>
-              <div className="p-3 bg-green-500 rounded-lg">
+              <div className="p-3 bg-buy rounded-lg">
                 <TrendingUp className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100">
+        <Card className="border-0 shadow-lg bg-surface-2">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-purple-600">Profit Margin</p>
-                <p className="text-2xl font-bold text-purple-900 mt-1">
+                <p className="text-sm font-medium text-protocall-premium-text">Profit Margin</p>
+                <p className="text-2xl font-bold text-protocall-premium-text mt-1">
                   {reportData.summary.profitMargin}%
                 </p>
               </div>
-              <div className="p-3 bg-purple-500 rounded-lg">
+              <div className="p-3 bg-primary rounded-lg">
                 <BarChart3 className="w-6 h-6 text-white" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-orange-100">
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-surface-2 to-hold-muted">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-orange-600">New Users</p>
-                <p className="text-2xl font-bold text-orange-900 mt-1">
+                <p className="text-sm font-medium text-hold-muted-foreground">New Users</p>
+                <p className="text-2xl font-bold text-hold-muted-foreground mt-1">
                   {reportData.users.newUsers}
                 </p>
               </div>
-              <div className="p-3 bg-orange-500 rounded-lg">
+              <div className="p-3 bg-hold rounded-lg">
                 <Users className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -448,7 +448,7 @@ Generated on: ${format(new Date(), 'PPpp')}
                 <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 12 }} tickFormatter={(value) => `₹${value / 1000}k`} />
                 <Tooltip formatter={(value) => `₹${value.toLocaleString()}`} />
-                <Bar dataKey="value" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="value" fill="hsl(var(--chart-3))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -463,54 +463,54 @@ Generated on: ${format(new Date(), 'PPpp')}
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <h4 className="font-semibold text-gray-700 mb-3">Revenue Sources</h4>
+              <h4 className="font-semibold text-subtle mb-3">Revenue Sources</h4>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Subscriptions:</span>
+                  <span className="text-subtle">Subscriptions:</span>
                   <span className="font-medium">₹{reportData.revenue.subscriptions.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Course Revenue:</span>
+                  <span className="text-subtle">Course Revenue:</span>
                   <span className="font-medium">₹{reportData.revenue.courses.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Ad Revenue:</span>
+                  <span className="text-subtle">Ad Revenue:</span>
                   <span className="font-medium">₹{reportData.revenue.ads.toLocaleString()}</span>
                 </div>
               </div>
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-700 mb-3">Commission Earned</h4>
+              <h4 className="font-semibold text-subtle mb-3">Commission Earned</h4>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Advisor Commissions:</span>
+                  <span className="text-subtle">Advisor Commissions:</span>
                   <span className="font-medium">₹{reportData.commissions.advisor.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Event Commissions:</span>
+                  <span className="text-subtle">Event Commissions:</span>
                   <span className="font-medium">₹{reportData.commissions.event.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm font-semibold">
-                  <span className="text-gray-700">Total:</span>
+                  <span className="text-subtle">Total:</span>
                   <span>₹{reportData.commissions.total.toLocaleString()}</span>
                 </div>
               </div>
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-700 mb-3">Transaction Volume</h4>
+              <h4 className="font-semibold text-subtle mb-3">Transaction Volume</h4>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Subscriptions:</span>
+                  <span className="text-subtle">Subscriptions:</span>
                   <span className="font-medium">{reportData.transactions.subscriptionCount}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Course Enrollments:</span>
+                  <span className="text-subtle">Course Enrollments:</span>
                   <span className="font-medium">{reportData.transactions.courseCount}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Ad Transactions:</span>
+                  <span className="text-subtle">Ad Transactions:</span>
                   <span className="font-medium">{reportData.transactions.adCount}</span>
                 </div>
               </div>

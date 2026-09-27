@@ -8,9 +8,9 @@ export default function ProfileTrustScore({ user }) {
   const trustScore = user.trust_score || 50;
 
   const getScoreColor = (score) => {
-    if (score >= 80) return { color: 'text-green-600', bg: 'from-green-500 to-emerald-600', ring: 'ring-green-500' };
-    if (score >= 40) return { color: 'text-orange-600', bg: 'from-orange-500 to-yellow-500', ring: 'ring-orange-500' };
-    return { color: 'text-red-600', bg: 'from-red-500 to-rose-600', ring: 'ring-red-500' };
+    if (score >= 80) return { color: 'text-buy-muted-foreground', bg: 'from-buy to-buy-soft', ring: 'ring-buy' };
+    if (score >= 40) return { color: 'text-hold-muted-foreground', bg: 'from-hold to-hold', ring: 'ring-hold' };
+    return { color: 'text-sell-muted-foreground', bg: 'from-sell to-sell', ring: 'ring-sell' };
   };
 
   const getScoreLevel = (score) => {
@@ -51,54 +51,54 @@ export default function ProfileTrustScore({ user }) {
 
       {/* Score Breakdown */}
       <Card>
-        <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100">
+        <CardHeader className="bg-surface-2">
           <CardTitle>How Trust Score Works</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4">
-            <div className="bg-blue-50 my-1 p-3 flex items-start gap-3 rounded-lg">
-              <Users className="w-5 h-5 text-blue-600 mt-0.5" />
+            <div className="bg-premium-muted my-1 p-3 flex items-start gap-3 rounded-lg">
+              <Users className="w-5 h-5 text-protocall-blue mt-0.5" />
               <div>
-                <h4 className="font-semibold text-blue-900">Community Participation</h4>
-                <p className="text-sm text-blue-700">Active engagement in chat rooms and polls increases your score</p>
+                <h4 className="font-semibold text-protocall-blue">Community Participation</h4>
+                <p className="text-sm text-protocall-blue">Active engagement in chat rooms and polls increases your score</p>
               </div>
             </div>
             
-            <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
-              <TrendingUp className="w-5 h-5 text-green-600 mt-0.5" />
+            <div className="flex items-start gap-3 p-3 bg-buy-muted rounded-lg">
+              <TrendingUp className="w-5 h-5 text-buy-muted-foreground mt-0.5" />
               <div>
-                <h4 className="font-semibold text-green-900">Successful Referrals</h4>
-                <p className="text-sm text-green-700">Inviting quality members to the community boosts your trust</p>
+                <h4 className="font-semibold text-buy-muted-foreground">Successful Referrals</h4>
+                <p className="text-sm text-buy-muted-foreground">Inviting quality members to the community boosts your trust</p>
               </div>
             </div>
             
-            <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
-              <Award className="w-5 h-5 text-purple-600 mt-0.5" />
+            <div className="flex items-start gap-3 p-3 bg-premium-muted rounded-lg">
+              <Award className="w-5 h-5 text-protocall-premium-text mt-0.5" />
               <div>
-                <h4 className="font-semibold text-purple-900">Quality Contributions</h4>
-                <p className="text-sm text-purple-700">Helpful advice and positive community behavior</p>
+                <h4 className="font-semibold text-protocall-premium-text">Quality Contributions</h4>
+                <p className="text-sm text-protocall-premium-text">Helpful advice and positive community behavior</p>
               </div>
             </div>
           </div>
 
-          <div className="mt-6 p-4 bg-slate-50 rounded-lg">
+          <div className="mt-6 p-4 bg-surface-2 rounded-lg">
             <h4 className="font-semibold mb-2">Trust Score Ranges:</h4>
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
                 <span>0-39: New Member</span>
-                <span className="text-red-600">●</span>
+                <span className="text-sell-muted-foreground">●</span>
               </div>
               <div className="flex justify-between">
                 <span>40-59: Growing Trader</span>
-                <span className="text-orange-600">●</span>
+                <span className="text-hold-muted-foreground">●</span>
               </div>
               <div className="flex justify-between">
                 <span>60-79: Reliable Member</span>
-                <span className="text-orange-600">●</span>
+                <span className="text-hold-muted-foreground">●</span>
               </div>
               <div className="flex justify-between">
                 <span>80-100: Trusted Trader</span>
-                <span className="text-green-600">●</span>
+                <span className="text-buy-muted-foreground">●</span>
               </div>
             </div>
           </div>

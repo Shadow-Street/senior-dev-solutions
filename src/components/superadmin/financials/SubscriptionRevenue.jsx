@@ -72,9 +72,9 @@ export default function SubscriptionRevenue({ subscriptionTransactions, subscrip
                 <YAxis />
                 <Tooltip formatter={(value) => `₹${value.toLocaleString()}`} />
                 <Legend />
-                <Bar dataKey="gross" fill="#3B82F6" name="Gross" />
-                <Bar dataKey="discounts" fill="#EF4444" name="Discounts" />
-                <Bar dataKey="net" fill="#10B981" name="Net" />
+                <Bar dataKey="gross" fill="hsl(var(--chart-1))" name="Gross" />
+                <Bar dataKey="discounts" fill="hsl(var(--chart-3))" name="Discounts" />
+                <Bar dataKey="net" fill="hsl(var(--chart-2))" name="Net" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

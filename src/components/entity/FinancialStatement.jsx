@@ -531,8 +531,8 @@ export default function FinancialStatement({ entityType, entityId, entityName })
     return (
       <Card className="shadow-lg">
         <CardContent className="p-8 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading financial statement...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <p className="text-subtle">Loading financial statement...</p>
         </CardContent>
       </Card>
     );
@@ -542,8 +542,8 @@ export default function FinancialStatement({ entityType, entityId, entityName })
     return (
       <Card className="shadow-lg">
         <CardContent className="p-8 text-center">
-          <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-          <p className="text-slate-600">No financial data available</p>
+          <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+          <p className="text-subtle">No financial data available</p>
         </CardContent>
       </Card>
     );
@@ -559,10 +559,10 @@ export default function FinancialStatement({ entityType, entityId, entityName })
           <div className="flex justify-between items-center">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <Receipt className="w-6 h-6 text-blue-600" />
+                <Receipt className="w-6 h-6 text-protocall-blue" />
                 Financial Statement
               </CardTitle>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 {format(dateRange.startDate, 'MMM dd, yyyy')} - {format(dateRange.endDate, 'MMM dd, yyyy')}
               </p>
             </div>
@@ -583,7 +583,7 @@ export default function FinancialStatement({ entityType, entityId, entityName })
                 <Download className="w-4 h-4" />
                 CSV
               </Button>
-              <Button onClick={() => downloadStatement('pdf')} className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600">
+              <Button onClick={() => downloadStatement('pdf')} className="gap-2 bg-gradient-to-r from-protocall-deep to-protocall-blue">
                 <Download className="w-4 h-4" />
                 PDF
               </Button>
@@ -598,13 +598,13 @@ export default function FinancialStatement({ entityType, entityId, entityName })
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Gross Revenue</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">
+                <p className="text-sm text-muted-foreground">Gross Revenue</p>
+                <p className="text-2xl font-bold text-foreground mt-1">
                   ₹{summary.grossRevenue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </p>
               </div>
-              <div className="p-3 bg-green-100 rounded-xl">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+              <div className="p-3 bg-buy-muted rounded-xl">
+                <TrendingUp className="w-6 h-6 text-buy-muted-foreground" />
               </div>
             </div>
           </CardContent>
@@ -614,13 +614,13 @@ export default function FinancialStatement({ entityType, entityId, entityName })
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Platform Commission</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">
+                <p className="text-sm text-muted-foreground">Platform Commission</p>
+                <p className="text-2xl font-bold text-foreground mt-1">
                   ₹{summary.platformCommission.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </p>
               </div>
-              <div className="p-3 bg-orange-100 rounded-xl">
-                <Receipt className="w-6 h-6 text-orange-600" />
+              <div className="p-3 bg-hold-muted rounded-xl">
+                <Receipt className="w-6 h-6 text-hold-muted-foreground" />
               </div>
             </div>
           </CardContent>
@@ -630,13 +630,13 @@ export default function FinancialStatement({ entityType, entityId, entityName })
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Net Earnings</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">
+                <p className="text-sm text-muted-foreground">Net Earnings</p>
+                <p className="text-2xl font-bold text-foreground mt-1">
                   ₹{summary.netEarnings.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </p>
               </div>
-              <div className="p-3 bg-blue-100 rounded-xl">
-                <DollarSign className="w-6 h-6 text-blue-600" />
+              <div className="p-3 bg-premium-muted rounded-xl">
+                <DollarSign className="w-6 h-6 text-protocall-blue" />
               </div>
             </div>
           </CardContent>
@@ -646,13 +646,13 @@ export default function FinancialStatement({ entityType, entityId, entityName })
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Total Payouts</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">
+                <p className="text-sm text-muted-foreground">Total Payouts</p>
+                <p className="text-2xl font-bold text-foreground mt-1">
                   ₹{summary.totalPayouts.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </p>
               </div>
-              <div className="p-3 bg-purple-100 rounded-xl">
-                <CheckCircle className="w-6 h-6 text-purple-600" />
+              <div className="p-3 bg-premium-muted rounded-xl">
+                <CheckCircle className="w-6 h-6 text-protocall-premium-text" />
               </div>
             </div>
           </CardContent>
@@ -662,29 +662,29 @@ export default function FinancialStatement({ entityType, entityId, entityName })
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Pending Payouts</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">
+                <p className="text-sm text-muted-foreground">Pending Payouts</p>
+                <p className="text-2xl font-bold text-foreground mt-1">
                   ₹{summary.pendingPayouts.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </p>
               </div>
-              <div className="p-3 bg-yellow-100 rounded-xl">
-                <Clock className="w-6 h-6 text-yellow-600" />
+              <div className="p-3 bg-hold-muted rounded-xl">
+                <Clock className="w-6 h-6 text-hold-muted-foreground" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200">
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-surface-2 to-buy-muted border-buy/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-emerald-700 font-medium">Available Balance</p>
-                <p className="text-2xl font-bold text-emerald-900 mt-1">
+                <p className="text-sm text-buy-muted-foreground font-medium">Available Balance</p>
+                <p className="text-2xl font-bold text-buy-muted-foreground mt-1">
                   ₹{summary.availableBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </p>
               </div>
-              <div className="p-3 bg-emerald-200 rounded-xl">
-                <Wallet className="w-6 h-6 text-emerald-700" />
+              <div className="p-3 bg-buy-muted rounded-xl">
+                <Wallet className="w-6 h-6 text-buy-muted-foreground" />
               </div>
             </div>
           </CardContent>
@@ -700,42 +700,42 @@ export default function FinancialStatement({ entityType, entityId, entityName })
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-200">
-                  <th className="text-left p-3 text-sm font-semibold text-slate-600">Date</th>
-                  <th className="text-left p-3 text-sm font-semibold text-slate-600">Description</th>
-                  <th className="text-left p-3 text-sm font-semibold text-slate-600">Type</th>
-                  <th className="text-right p-3 text-sm font-semibold text-slate-600">Gross</th>
-                  <th className="text-right p-3 text-sm font-semibold text-slate-600">Commission</th>
-                  <th className="text-right p-3 text-sm font-semibold text-slate-600">Net</th>
+                <tr className="border-b border-border">
+                  <th className="text-left p-3 text-sm font-semibold text-subtle">Date</th>
+                  <th className="text-left p-3 text-sm font-semibold text-subtle">Description</th>
+                  <th className="text-left p-3 text-sm font-semibold text-subtle">Type</th>
+                  <th className="text-right p-3 text-sm font-semibold text-subtle">Gross</th>
+                  <th className="text-right p-3 text-sm font-semibold text-subtle">Commission</th>
+                  <th className="text-right p-3 text-sm font-semibold text-subtle">Net</th>
                 </tr>
               </thead>
               <tbody>
                 {earnings.length > 0 ? (
                   earnings.map((earning, idx) => (
-                    <tr key={idx} className="border-b border-slate-100 hover:bg-slate-50">
-                      <td className="p-3 text-sm text-slate-600">
+                    <tr key={idx} className="border-b border-divider hover:bg-surface-2">
+                      <td className="p-3 text-sm text-subtle">
                         {format(new Date(earning.date), 'MMM dd, yyyy')}
                       </td>
-                      <td className="p-3 text-sm text-slate-900">{earning.description}</td>
+                      <td className="p-3 text-sm text-foreground">{earning.description}</td>
                       <td className="p-3">
-                        <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700">
+                        <span className="px-2 py-1 text-xs rounded-full bg-premium-muted text-protocall-blue">
                           {earning.type}
                         </span>
                       </td>
-                      <td className="p-3 text-sm text-right text-slate-900">
+                      <td className="p-3 text-sm text-right text-foreground">
                         ₹{earning.grossAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                       </td>
-                      <td className="p-3 text-sm text-right text-orange-600">
+                      <td className="p-3 text-sm text-right text-hold-muted-foreground">
                         ₹{earning.commission.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                       </td>
-                      <td className="p-3 text-sm text-right font-semibold text-green-600">
+                      <td className="p-3 text-sm text-right font-semibold text-buy-muted-foreground">
                         ₹{earning.netAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6} className="p-8 text-center text-slate-500">
+                    <td colSpan={6} className="p-8 text-center text-muted-foreground">
                       No earnings in this period
                     </td>
                   </tr>
@@ -755,45 +755,45 @@ export default function FinancialStatement({ entityType, entityId, entityName })
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-200">
-                  <th className="text-left p-3 text-sm font-semibold text-slate-600">Date</th>
-                  <th className="text-right p-3 text-sm font-semibold text-slate-600">Amount</th>
-                  <th className="text-left p-3 text-sm font-semibold text-slate-600">Status</th>
-                  <th className="text-left p-3 text-sm font-semibold text-slate-600">Method</th>
-                  <th className="text-left p-3 text-sm font-semibold text-slate-600">Processed</th>
-                  <th className="text-left p-3 text-sm font-semibold text-slate-600">Reference</th>
+                <tr className="border-b border-border">
+                  <th className="text-left p-3 text-sm font-semibold text-subtle">Date</th>
+                  <th className="text-right p-3 text-sm font-semibold text-subtle">Amount</th>
+                  <th className="text-left p-3 text-sm font-semibold text-subtle">Status</th>
+                  <th className="text-left p-3 text-sm font-semibold text-subtle">Method</th>
+                  <th className="text-left p-3 text-sm font-semibold text-subtle">Processed</th>
+                  <th className="text-left p-3 text-sm font-semibold text-subtle">Reference</th>
                 </tr>
               </thead>
               <tbody>
                 {payouts.length > 0 ? (
                   payouts.map((payout, idx) => (
-                    <tr key={idx} className="border-b border-slate-100 hover:bg-slate-50">
-                      <td className="p-3 text-sm text-slate-600">
+                    <tr key={idx} className="border-b border-divider hover:bg-surface-2">
+                      <td className="p-3 text-sm text-subtle">
                         {format(new Date(payout.date), 'MMM dd, yyyy')}
                       </td>
-                      <td className="p-3 text-sm text-right font-semibold text-slate-900">
+                      <td className="p-3 text-sm text-right font-semibold text-foreground">
                         ₹{payout.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                       </td>
                       <td className="p-3">
                         <span className={`px-2 py-1 text-xs rounded-full font-semibold ${
-                          payout.status === 'processed' ? 'bg-green-100 text-green-700' :
-                          payout.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                          payout.status === 'approved' ? 'bg-blue-100 text-blue-700' :
-                          'bg-red-100 text-red-700'
+                          payout.status === 'processed' ? 'bg-buy-muted text-buy-muted-foreground' :
+                          payout.status === 'pending' ? 'bg-hold-muted text-hold-muted-foreground' :
+                          payout.status === 'approved' ? 'bg-premium-muted text-protocall-blue' :
+                          'bg-sell-muted text-sell-muted-foreground'
                         }`}>
                           {payout.status.toUpperCase()}
                         </span>
                       </td>
-                      <td className="p-3 text-sm text-slate-600">{payout.method || 'N/A'}</td>
-                      <td className="p-3 text-sm text-slate-600">
+                      <td className="p-3 text-sm text-subtle">{payout.method || 'N/A'}</td>
+                      <td className="p-3 text-sm text-subtle">
                         {payout.processedDate ? format(new Date(payout.processedDate), 'MMM dd, yyyy') : 'N/A'}
                       </td>
-                      <td className="p-3 text-sm text-slate-600">{payout.reference || 'N/A'}</td>
+                      <td className="p-3 text-sm text-subtle">{payout.reference || 'N/A'}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6} className="p-8 text-center text-slate-500">
+                    <td colSpan={6} className="p-8 text-center text-muted-foreground">
                       No payouts in this period
                     </td>
                   </tr>

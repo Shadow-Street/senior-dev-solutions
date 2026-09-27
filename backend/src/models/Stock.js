@@ -24,6 +24,14 @@ module.exports = (sequelize) => {
       current_price: {
         type: DataTypes.DECIMAL(15, 2),
       },
+      // Persisted so a cached quote still reports the day's move. Without
+      // these, every DB-served quote read back as 0.00%.
+      change: {
+        type: DataTypes.DECIMAL(15, 4),
+      },
+      change_percent: {
+        type: DataTypes.DECIMAL(10, 4),
+      },
       market_cap: {
         type: DataTypes.DECIMAL(20, 2),
       },

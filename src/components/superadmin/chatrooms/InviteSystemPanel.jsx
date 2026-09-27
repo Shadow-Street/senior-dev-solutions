@@ -191,8 +191,8 @@ export default function InviteSystemPanel({ adminUser }) {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 font-medium">Loading Invite System...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <p className="text-lg text-subtle font-medium">Loading Invite System...</p>
         </div>
       </div>
     );
@@ -206,7 +206,7 @@ export default function InviteSystemPanel({ adminUser }) {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold">Invite System</h3>
-              <p className="text-sm text-slate-600">Manage invite links for your chat rooms</p>
+              <p className="text-sm text-subtle">Manage invite links for your chat rooms</p>
             </div>
             <div className="flex items-center gap-3">
               <Button variant="outline" size="sm" onClick={exportInvites}>
@@ -224,7 +224,7 @@ export default function InviteSystemPanel({ adminUser }) {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -236,7 +236,7 @@ export default function InviteSystemPanel({ adminUser }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white">
+        <Card className="bg-buy-soft text-buy-foreground">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -248,7 +248,7 @@ export default function InviteSystemPanel({ adminUser }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -260,7 +260,7 @@ export default function InviteSystemPanel({ adminUser }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+        <Card className="bg-hold text-hold-foreground">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -282,9 +282,9 @@ export default function InviteSystemPanel({ adminUser }) {
           <div className="space-y-3">
             {invites.length === 0 ? (
               <div className="text-center py-12">
-                <Link2 className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                <p className="text-slate-600 font-medium">No invites created yet</p>
-                <p className="text-slate-500 text-sm mt-1">Create your first invite link</p>
+                <Link2 className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <p className="text-subtle font-medium">No invites created yet</p>
+                <p className="text-muted-foreground text-sm mt-1">Create your first invite link</p>
               </div>
             ) : (
               invites.map(invite => {
@@ -293,33 +293,33 @@ export default function InviteSystemPanel({ adminUser }) {
                 const usagePercent = invite.max_uses ? (invite.current_uses / invite.max_uses) * 100 : 0;
 
                 return (
-                  <div key={invite.id} className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                  <div key={invite.id} className="flex items-center gap-4 p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <p className="font-medium text-slate-900">{room?.name || 'Unknown Room'}</p>
+                        <p className="font-medium text-foreground">{room?.name || 'Unknown Room'}</p>
                         <Badge variant="outline" className="text-xs">
                           {invite.invite_code}
                         </Badge>
                         <Badge className={`text-xs ${
-                          invite.invite_type === 'single_use' ? 'bg-blue-100 text-blue-800' :
-                          invite.invite_type === 'multi_use' ? 'bg-purple-100 text-purple-800' :
-                          'bg-green-100 text-green-800'
+                          invite.invite_type === 'single_use' ? 'bg-premium-muted text-protocall-blue' :
+                          invite.invite_type === 'multi_use' ? 'bg-premium-muted text-protocall-premium-text' :
+                          'bg-buy-muted text-buy-muted-foreground'
                         }`}>
                           {invite.invite_type.replace('_', ' ')}
                         </Badge>
                         {invite.is_active && !isExpired ? (
-                          <Badge className="bg-green-100 text-green-800 text-xs">Active</Badge>
+                          <Badge className="bg-buy-muted text-buy-muted-foreground text-xs">Active</Badge>
                         ) : (
-                          <Badge className="bg-gray-100 text-gray-800 text-xs">
+                          <Badge className="bg-surface-2 text-foreground text-xs">
                             {isExpired ? 'Expired' : 'Inactive'}
                           </Badge>
                         )}
                         {invite.assigned_role === 'moderator' && (
-                          <Badge className="bg-indigo-100 text-indigo-800 text-xs">Moderator</Badge>
+                          <Badge className="bg-premium-muted text-protocall-blue text-xs">Moderator</Badge>
                         )}
                       </div>
 
-                      <div className="flex items-center gap-4 text-sm text-slate-600">
+                      <div className="flex items-center gap-4 text-sm text-subtle">
                         <span className="flex items-center gap-1">
                           <Users className="w-4 h-4" />
                           {invite.current_uses} / {invite.max_uses || '∞'} uses
@@ -334,9 +334,9 @@ export default function InviteSystemPanel({ adminUser }) {
 
                       {invite.max_uses && (
                         <div className="mt-2">
-                          <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                          <div className="w-full bg-border rounded-full h-2 overflow-hidden">
                             <div
-                              className={`h-full ${usagePercent >= 100 ? 'bg-red-500' : usagePercent >= 80 ? 'bg-orange-500' : 'bg-green-500'}`}
+                              className={`h-full ${usagePercent >= 100 ? 'bg-sell' : usagePercent >= 80 ? 'bg-hold' : 'bg-buy'}`}
                               style={{ width: `${Math.min(usagePercent, 100)}%` }}
                             ></div>
                           </div>
@@ -366,16 +366,16 @@ export default function InviteSystemPanel({ adminUser }) {
                         onClick={() => handleToggleActive(invite)}
                       >
                         {invite.is_active ? (
-                          <XCircle className="w-4 h-4 text-orange-600" />
+                          <XCircle className="w-4 h-4 text-hold-muted-foreground" />
                         ) : (
-                          <CheckCircle className="w-4 h-4 text-green-600" />
+                          <CheckCircle className="w-4 h-4 text-buy-muted-foreground" />
                         )}
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDelete(invite.id)}
-                        className="text-red-600 hover:text-red-800"
+                        className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>

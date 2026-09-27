@@ -75,9 +75,9 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
           <DialogTitle>Create New Pledge Session</DialogTitle>
         </DialogHeader>
 
-        <Alert className="bg-blue-50 border-blue-200">
-          <AlertCircle className="h-4 w-4 text-blue-600" />
-          <AlertDescription className="text-blue-800">
+        <Alert className="bg-premium-muted border-protocall-premium-light">
+          <AlertCircle className="h-4 w-4 text-protocall-blue" />
+          <AlertDescription className="text-protocall-blue">
             <strong>Note:</strong> Your session will be submitted for SuperAdmin approval before going live.
             You'll be notified once it's approved.
           </AlertDescription>
@@ -236,8 +236,8 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
             </div>
           </div>
 
-          <Alert className="bg-yellow-50 border-yellow-200">
-            <AlertDescription className="text-yellow-800 text-sm">
+          <Alert className="bg-hold-muted border-hold/30">
+            <AlertDescription className="text-hold-muted-foreground text-sm">
               <strong>Your Commission Rate:</strong> {accessRequest?.approved_commission_rate || 0}%
               <br />
               You'll earn commission on convenience fees and trading profits once this session is executed.
@@ -251,7 +251,7 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
             >
               {isSubmitting ? (
                 <>

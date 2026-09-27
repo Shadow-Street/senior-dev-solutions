@@ -96,12 +96,12 @@ export default function MyEventsPage() {
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      pending_approval: { color: 'bg-yellow-100 text-yellow-800 border-yellow-200', label: 'Pending Approval' },
-      approved: { color: 'bg-green-100 text-green-800 border-green-200', label: 'Approved' },
-      rejected: { color: 'bg-red-100 text-red-800 border-red-200', label: 'Rejected' },
-      scheduled: { color: 'bg-blue-100 text-blue-800 border-blue-200', label: 'Scheduled' },
-      completed: { color: 'bg-gray-100 text-gray-800 border-gray-200', label: 'Completed' },
-      cancelled: { color: 'bg-red-100 text-red-800 border-red-200', label: 'Cancelled' }
+      pending_approval: { color: 'bg-hold-muted text-hold-muted-foreground border-hold/30', label: 'Pending Approval' },
+      approved: { color: 'bg-buy-muted text-buy-muted-foreground border-buy/30', label: 'Approved' },
+      rejected: { color: 'bg-sell-muted text-sell-muted-foreground border-sell/30', label: 'Rejected' },
+      scheduled: { color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light', label: 'Scheduled' },
+      completed: { color: 'bg-surface-2 text-foreground border-border', label: 'Completed' },
+      cancelled: { color: 'bg-sell-muted text-sell-muted-foreground border-sell/30', label: 'Cancelled' }
     };
     const config = statusConfig[status] || statusConfig.pending_approval;
     return <Badge className={`${config.color} border`}>{config.label}</Badge>;
@@ -110,7 +110,7 @@ export default function MyEventsPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
       </div>
     );
   }
@@ -124,19 +124,19 @@ export default function MyEventsPage() {
   const pendingEvents = myEvents.filter(e => e.status === 'pending_approval');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-6">
+    <div className="min-h-screen bg-surface-2 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">My Events</h1>
-              <p className="text-slate-600">Manage your events and track attendance</p>
+              <h1 className="text-3xl font-bold text-foreground mb-2">My Events</h1>
+              <p className="text-subtle">Manage your events and track attendance</p>
             </div>
             <div className="flex gap-3 mt-4 md:mt-0">
               <Button
                 onClick={() => setShowCreateModal(true)}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-protocall-blue hover:bg-protocall-blue"
               >
                 <Plus className="w-5 h-5 mr-2" />
                 Create Event
@@ -146,7 +146,7 @@ export default function MyEventsPage() {
 
           {/* Upgrade to Professional Organizer Banner */}
           {!organizerProfile && (
-            <Card className="bg-gradient-to-r from-purple-500 to-blue-600 text-white border-0 shadow-lg">
+            <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white border-0 shadow-lg">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -155,14 +155,14 @@ export default function MyEventsPage() {
                     </div>
                     <div>
                       <h3 className="text-xl font-bold mb-1">Become a Professional Organizer</h3>
-                      <p className="text-purple-100">
+                      <p className="text-white/80">
                         Get verified status, dedicated dashboard, analytics, and earn 80% revenue from ticket sales
                       </p>
                     </div>
                   </div>
                   <Button
                     onClick={() => window.location.href = createPageUrl('BecomeOrganizer')}
-                    className="bg-white text-purple-600 hover:bg-purple-50"
+                    className="bg-white text-protocall-premium-text hover:bg-premium-muted"
                   >
                     Apply Now
                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -175,19 +175,19 @@ export default function MyEventsPage() {
           {/* Organizer Application Status */}
           {organizerProfile && organizerProfile.status !== 'approved' && (
             <Card className={
-              organizerProfile.status === 'pending_approval' ? 'bg-yellow-50 border-yellow-200' :
-              organizerProfile.status === 'rejected' ? 'bg-red-50 border-red-200' : 'bg-gray-50'
+              organizerProfile.status === 'pending_approval' ? 'bg-hold-muted border-hold/30' :
+              organizerProfile.status === 'rejected' ? 'bg-sell-muted border-sell/30' : 'bg-surface-2'
             }>
               <CardContent className="p-6">
                 <div className="flex items-center gap-3">
-                  {organizerProfile.status === 'pending_approval' && <Clock className="w-6 h-6 text-yellow-600" />}
-                  {organizerProfile.status === 'rejected' && <XCircle className="w-6 h-6 text-red-600" />}
+                  {organizerProfile.status === 'pending_approval' && <Clock className="w-6 h-6 text-hold-muted-foreground" />}
+                  {organizerProfile.status === 'rejected' && <XCircle className="w-6 h-6 text-sell-muted-foreground" />}
                   <div>
-                    <h3 className="font-semibold text-slate-900">
+                    <h3 className="font-semibold text-foreground">
                       {organizerProfile.status === 'pending_approval' && 'Organizer Application Under Review'}
                       {organizerProfile.status === 'rejected' && 'Organizer Application Rejected'}
                     </h3>
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm text-subtle">
                       {organizerProfile.status === 'pending_approval' && 'Your application is being reviewed by our team. You\'ll be notified once approved.'}
                       {organizerProfile.status === 'rejected' && organizerProfile.rejection_reason}
                     </p>
@@ -204,25 +204,11 @@ export default function MyEventsPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600 mb-1">Total Events</p>
-                  <p className="text-3xl font-bold text-slate-900">{myEvents.length}</p>
+                  <p className="text-sm text-subtle mb-1">Total Events</p>
+                  <p className="text-3xl font-bold text-foreground">{myEvents.length}</p>
                 </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <CalendarIcon className="w-6 h-6 text-blue-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-600 mb-1">Upcoming</p>
-                  <p className="text-3xl font-bold text-slate-900">{upcomingEvents.length}</p>
-                </div>
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6 text-green-600" />
+                <div className="w-12 h-12 bg-premium-muted rounded-full flex items-center justify-center">
+                  <CalendarIcon className="w-6 h-6 text-protocall-blue" />
                 </div>
               </div>
             </CardContent>
@@ -232,11 +218,11 @@ export default function MyEventsPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600 mb-1">Completed</p>
-                  <p className="text-3xl font-bold text-slate-900">{pastEvents.length}</p>
+                  <p className="text-sm text-subtle mb-1">Upcoming</p>
+                  <p className="text-3xl font-bold text-foreground">{upcomingEvents.length}</p>
                 </div>
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Ticket className="w-6 h-6 text-purple-600" />
+                <div className="w-12 h-12 bg-buy-muted rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-buy-muted-foreground" />
                 </div>
               </div>
             </CardContent>
@@ -246,11 +232,25 @@ export default function MyEventsPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600 mb-1">Pending Review</p>
-                  <p className="text-3xl font-bold text-slate-900">{pendingEvents.length}</p>
+                  <p className="text-sm text-subtle mb-1">Completed</p>
+                  <p className="text-3xl font-bold text-foreground">{pastEvents.length}</p>
                 </div>
-                <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-yellow-600" />
+                <div className="w-12 h-12 bg-premium-muted rounded-full flex items-center justify-center">
+                  <Ticket className="w-6 h-6 text-protocall-premium-text" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-subtle mb-1">Pending Review</p>
+                  <p className="text-3xl font-bold text-foreground">{pendingEvents.length}</p>
+                </div>
+                <div className="w-12 h-12 bg-hold-muted rounded-full flex items-center justify-center">
+                  <Clock className="w-6 h-6 text-hold-muted-foreground" />
                 </div>
               </div>
             </CardContent>
@@ -274,17 +274,17 @@ export default function MyEventsPage() {
                       <div className="flex flex-col h-full">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2 flex-wrap">
-                            <h3 className="text-lg font-semibold text-slate-900">{event.title}</h3>
+                            <h3 className="text-lg font-semibold text-foreground">{event.title}</h3>
                             {getStatusBadge(event.status)}
                             {event.is_premium && (
-                              <Badge className="bg-purple-100 text-purple-800 border border-purple-200">
+                              <Badge className="bg-premium-muted text-protocall-premium-text border border-protocall-premium-light">
                                 <Crown className="w-3 h-3 mr-1" />
                                 Premium
                               </Badge>
                             )}
                           </div>
                           
-                          <div className="space-y-2 text-sm text-slate-600 mb-4">
+                          <div className="space-y-2 text-sm text-subtle mb-4">
                             <div className="flex items-center gap-2">
                               <CalendarIcon className="w-4 h-4" />
                               <span>{format(new Date(event.event_date), 'PPP p')}</span>
@@ -467,17 +467,17 @@ function EventListItem({ event, onEdit, onViewAttendees, getStatusBadge, isPast 
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h3 className="text-lg font-semibold text-slate-900">{event.title}</h3>
+              <h3 className="text-lg font-semibold text-foreground">{event.title}</h3>
               {getStatusBadge(event.status)}
               {event.is_premium && (
-                <Badge className="bg-purple-100 text-purple-800 border border-purple-200">
+                <Badge className="bg-premium-muted text-protocall-premium-text border border-protocall-premium-light">
                   <Crown className="w-3 h-3 mr-1" />
                   Premium
                 </Badge>
               )}
             </div>
             
-            <div className="space-y-2 text-sm text-slate-600">
+            <div className="space-y-2 text-sm text-subtle">
               <div className="flex items-center gap-2">
                 <CalendarIcon className="w-4 h-4" />
                 <span>{format(new Date(event.event_date), 'PPP p')}</span>
@@ -521,11 +521,11 @@ function EventListItem({ event, onEdit, onViewAttendees, getStatusBadge, isPast 
 function EmptyState({ icon: Icon, title, description, actionLabel, onAction }) {
   return (
     <div className="text-center py-12">
-      <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <Icon className="w-8 h-8 text-slate-400" />
+      <div className="w-16 h-16 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-4">
+        <Icon className="w-8 h-8 text-muted-foreground" />
       </div>
-      <h3 className="text-lg font-semibold text-slate-900 mb-2">{title}</h3>
-      <p className="text-slate-600 mb-6">{description}</p>
+      <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
+      <p className="text-subtle mb-6">{description}</p>
       {actionLabel && onAction && (
         <Button onClick={onAction}>
           <Plus className="w-4 h-4 mr-2" />

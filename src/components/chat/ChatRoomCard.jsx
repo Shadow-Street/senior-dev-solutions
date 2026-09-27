@@ -74,13 +74,13 @@ export default function ChatRoomCard({ room, onDelete, onEdit, user, onRoomClick
     const getCardGradient = () => {
         if (isPremium && isAdminRoom) {
             // Premium Admin - Purple gradient
-            return "bg-gradient-to-br from-white to-purple-50";
+            return "bg-gradient-to-br from-white to-surface-2";
         } else if (isAdminRoom) {
             // Admin Only - Blue gradient (DIFFERENT from premium)
-            return "bg-gradient-to-br from-white to-blue-50";
+            return "bg-gradient-to-br from-white to-surface-2";
         } else if (isPremium) {
             // Premium - Purple gradient
-            return "bg-gradient-to-br from-white to-purple-50";
+            return "bg-gradient-to-br from-white to-surface-2";
         }
         return "bg-white";
     };
@@ -88,13 +88,13 @@ export default function ChatRoomCard({ room, onDelete, onEdit, user, onRoomClick
     // Different decorative corner colors for Admin vs Premium
     const getCornerGradient = () => {
         if (isPremium && !isAdminRoom) {
-            return "from-purple-400 to-pink-500"; // Premium: Purple-Pink
+            return "from-protocall-grape to-protocall-blue"; // Premium: Purple-Pink
         } else if (isAdminRoom && !isPremium) {
-            return "from-blue-400 to-cyan-500"; // Admin: Blue-Cyan
+            return "from-protocall-blue to-protocall-blue"; // Admin: Blue-Cyan
         } else if (isPremium && isAdminRoom) {
-            return "from-purple-400 to-indigo-500"; // Both: Purple-Indigo
+            return "from-protocall-grape to-protocall-blue"; // Both: Purple-Indigo
         }
-        return "from-purple-400 to-indigo-500"; // Default for non-special or if logic needs default
+        return "from-protocall-grape to-protocall-blue"; // Default for non-special or if logic needs default
     };
 
     return (
@@ -116,7 +116,7 @@ export default function ChatRoomCard({ room, onDelete, onEdit, user, onRoomClick
 
             <CardHeader className="relative pb-3 flex-none">
                 {isLocked && (
-                    <div className="absolute top-4 right-4 p-2 bg-purple-600 rounded-full z-10">
+                    <div className="absolute top-4 right-4 p-2 bg-primary rounded-full z-10">
                         <Lock className="w-4 h-4 text-white" />
                     </div>
                 )}
@@ -133,11 +133,11 @@ export default function ChatRoomCard({ room, onDelete, onEdit, user, onRoomClick
                             <DropdownMenuContent align="end">
                                 {onEdit && (
                                     <DropdownMenuItem onClick={handleEditClick}>
-                                        <Edit className="w-4 h-4 mr-2 text-blue-600" />
+                                        <Edit className="w-4 h-4 mr-2 text-protocall-blue" />
                                         Edit Room
                                     </DropdownMenuItem>
                                 )}
-                                <DropdownMenuItem onClick={handleDeleteClick} className="text-red-600">
+                                <DropdownMenuItem onClick={handleDeleteClick} className="text-sell-muted-foreground">
                                     <Trash2 className="w-4 h-4 mr-2" />
                                     Delete Room
                                 </DropdownMenuItem>
@@ -149,7 +149,7 @@ export default function ChatRoomCard({ room, onDelete, onEdit, user, onRoomClick
                 <div className="flex flex-wrap gap-2 mb-3">
                     {/* Premium Badge */}
                     {isPremium && (
-                        <Badge className="bg-purple-600 hover:bg-purple-700 text-white border-0">
+                        <Badge className="bg-primary hover:bg-primary text-white border-0">
                             <Crown className="w-3 h-3 mr-1" />
                             Premium
                         </Badge>
@@ -157,7 +157,7 @@ export default function ChatRoomCard({ room, onDelete, onEdit, user, onRoomClick
 
                     {/* Admin Badge */}
                     {isAdminRoom && (
-                        <Badge className="bg-blue-600 hover:bg-blue-700 text-white border-0">
+                        <Badge className="bg-protocall-blue hover:bg-protocall-blue text-white border-0">
                             <Shield className="w-3 h-3 mr-1" />
                             Admin Only
                         </Badge>
@@ -165,7 +165,7 @@ export default function ChatRoomCard({ room, onDelete, onEdit, user, onRoomClick
 
                     {/* Live Badge */}
                     {onlineNow > 0 && (
-                        <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border-0">
+                        <Badge className="bg-buy-muted text-buy-muted-foreground hover:bg-buy-muted border-0">
                             <Circle className="w-2 h-2 mr-1 fill-current" />
                             {onlineNow} Live
                         </Badge>
@@ -173,7 +173,7 @@ export default function ChatRoomCard({ room, onDelete, onEdit, user, onRoomClick
 
                     {/* Stock Symbol Badge - Only show if NOT redundant */}
                     {room.stock_symbol && !isStockSymbolRedundant && (
-                        <Badge variant="secondary" className="bg-slate-100 text-slate-700">
+                        <Badge variant="secondary" className="bg-surface-2 text-subtle">
                             {room.stock_symbol}
                         </Badge>
                     )}
@@ -181,16 +181,16 @@ export default function ChatRoomCard({ room, onDelete, onEdit, user, onRoomClick
 
                 {/* Room Name */}
                 {isStockSpecific ? (
-                    <h3 className="text-xl font-bold text-slate-900 line-clamp-1 mb-1">
+                    <h3 className="text-xl font-bold text-foreground line-clamp-1 mb-1">
                         {room.name}
                     </h3>
                 ) : (
-                    <h3 className="text-xl font-bold text-slate-900 line-clamp-1 mb-1">{room.name}</h3>
+                    <h3 className="text-xl font-bold text-foreground line-clamp-1 mb-1">{room.name}</h3>
                 )}
 
                 {/* Subheading */}
                 {subheading && (
-                    <p className="text-sm font-medium text-slate-500">{subheading}</p>
+                    <p className="text-sm font-medium text-muted-foreground">{subheading}</p>
                 )}
             </CardHeader>
 
@@ -198,13 +198,13 @@ export default function ChatRoomCard({ room, onDelete, onEdit, user, onRoomClick
                 {/* Description */}
                 <div>
                     {room.description && (
-                        <p className="text-slate-600 text-sm line-clamp-3 leading-relaxed mb-4">
+                        <p className="text-subtle text-sm line-clamp-3 leading-relaxed mb-4">
                             {room.description}
                         </p>
                     )}
 
                     {/* Stats */}
-                    <div className="flex items-center justify-between text-sm text-slate-500 mb-4">
+                    <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
                         <div className="flex items-center gap-1.5">
                             <Users className="w-4 h-4" />
                             <span>{room.participant_count || 0} members</span>
@@ -220,7 +220,7 @@ export default function ChatRoomCard({ room, onDelete, onEdit, user, onRoomClick
 
                     {/* Created Date */}
                     {room.created_at && (
-                        <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                             <Calendar className="w-3 h-3" />
                             <span>Created {format(new Date(room.created_at), 'MMM d, yyyy')}</span>
                         </div>
@@ -228,9 +228,9 @@ export default function ChatRoomCard({ room, onDelete, onEdit, user, onRoomClick
                 </div>
 
                 {/* Buttons */}
-                <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-slate-100">
+                <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-divider">
                     <Button
-                        className="w-full bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 border-0 rounded-xl font-semibold shadow-none h-10"
+                        className="w-full bg-premium-muted text-protocall-blue hover:bg-premium-muted hover:text-protocall-blue border-0 rounded-xl font-semibold shadow-none h-10"
                         onClick={(e) => {
                             e.stopPropagation();
                             if (!isLocked) onRoomClick(room);
@@ -243,7 +243,7 @@ export default function ChatRoomCard({ room, onDelete, onEdit, user, onRoomClick
 
                     <Button
                         variant="outline"
-                        className="w-full border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium h-10"
+                        className="w-full border-border text-subtle hover:bg-surface-2 hover:text-foreground rounded-xl font-medium h-10"
                         onClick={(e) => {
                             e.stopPropagation();
                             if (onShare) {

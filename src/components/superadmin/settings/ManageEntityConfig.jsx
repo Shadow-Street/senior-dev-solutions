@@ -17,8 +17,8 @@ const AVAILABLE_ICONS = [
 ];
 
 const AVAILABLE_COLORS = [
-  'text-blue-600', 'text-green-600', 'text-purple-600', 'text-red-600', 
-  'text-yellow-600', 'text-indigo-600', 'text-pink-600', 'text-cyan-600'
+  'text-protocall-blue', 'text-buy-muted-foreground', 'text-protocall-premium-text', 'text-sell-muted-foreground', 
+  'text-hold-muted-foreground', 'text-protocall-blue', 'text-protocall-premium-text', 'text-protocall-blue'
 ];
 
 export default function ManageEntityConfig({ settings, onChange, refreshEntityConfigs }) {
@@ -28,7 +28,7 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
       display_name: 'Advisors',
       description: 'SEBI registered investment advisors',
       icon_name: 'ShieldCheck',
-      color: 'text-purple-600',
+      color: 'text-protocall-premium-text',
       enabled: true,
       user_visible: true,
       admin_visible: true,
@@ -42,7 +42,7 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
       display_name: 'Finfluencers',
       description: 'Financial content creators and influencers',
       icon_name: 'Star',
-      color: 'text-yellow-600',
+      color: 'text-hold-muted-foreground',
       enabled: true,
       user_visible: true,
       admin_visible: true,
@@ -56,7 +56,7 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
       display_name: 'Educators',
       description: 'Financial education specialists',
       icon_name: 'GraduationCap',
-      color: 'text-blue-600',
+      color: 'text-protocall-blue',
       enabled: true,
       user_visible: true,
       admin_visible: true,
@@ -76,7 +76,7 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
     display_name: '',
     description: '',
     icon_name: 'Shield',
-    color: 'text-blue-600',
+    color: 'text-protocall-blue',
     enabled: true,
     user_visible: false,
     admin_visible: true,
@@ -108,7 +108,7 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
       display_name: '',
       description: '',
       icon_name: 'Shield',
-      color: 'text-blue-600',
+      color: 'text-protocall-blue',
       enabled: true,
       user_visible: false,
       admin_visible: true,
@@ -195,14 +195,14 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <Database className="w-5 h-5 text-purple-600" />
+                <Database className="w-5 h-5 text-protocall-premium-text" />
                 Dynamic Entity Configuration
               </CardTitle>
-              <p className="text-sm text-slate-600 mt-2">
+              <p className="text-sm text-subtle mt-2">
                 Configure which entities appear in user and admin sidebars. Control visibility, management access, and display settings.
               </p>
             </div>
-            <Button onClick={() => handleOpenModal()} className="bg-purple-600 hover:bg-purple-700">
+            <Button onClick={() => handleOpenModal()} className="bg-primary hover:bg-primary">
               <PlusCircle className="w-4 h-4 mr-2" />
               Add Entity
             </Button>
@@ -215,27 +215,27 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
           ) : (
             <div className="space-y-4">
               {entities.map(entity => (
-                <div key={entity.id} className="bg-slate-50 p-4 rounded-lg border">
+                <div key={entity.id} className="bg-surface-2 p-4 rounded-lg border">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-slate-800">{entity.display_name}</h3>
+                        <h3 className="text-lg font-semibold text-foreground">{entity.display_name}</h3>
                         <div className="flex gap-2">
-                          <Badge className={entity.enabled ? 'bg-green-100 text-green-800 border-green-200' : 'bg-red-100 text-red-800 border-red-200'}>
+                          <Badge className={entity.enabled ? 'bg-buy-muted text-buy-muted-foreground border-buy/30' : 'bg-sell-muted text-sell-muted-foreground border-sell/30'}>
                             {entity.enabled ? 'Enabled' : 'Disabled'}
                           </Badge>
                           {entity.user_visible && (
-                            <Badge className="bg-blue-100 text-blue-800 border-blue-200">
+                            <Badge className="bg-premium-muted text-protocall-blue border-protocall-premium-light">
                               User Visible
                             </Badge>
                           )}
                           {entity.admin_visible && (
-                            <Badge className="bg-purple-100 text-purple-800 border-purple-200">
+                            <Badge className="bg-premium-muted text-protocall-premium-text border-protocall-premium-light">
                               Admin Visible
                             </Badge>
                           )}
                           {entity.management_enabled && (
-                            <Badge className="bg-orange-100 text-orange-800 border-orange-200">
+                            <Badge className="bg-hold-muted text-hold-muted-foreground border-hold/30">
                               Management Enabled
                             </Badge>
                           )}
@@ -244,20 +244,20 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
                       
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                         <div>
-                          <span className="text-slate-600">Entity:</span>
-                          <span className="ml-2 font-medium text-slate-800">{entity.entity_name}</span>
+                          <span className="text-subtle">Entity:</span>
+                          <span className="ml-2 font-medium text-foreground">{entity.entity_name}</span>
                         </div>
                         <div>
-                          <span className="text-slate-600">Icon:</span>
-                          <span className="ml-2 font-medium text-slate-800">{entity.icon_name}</span>
+                          <span className="text-subtle">Icon:</span>
+                          <span className="ml-2 font-medium text-foreground">{entity.icon_name}</span>
                         </div>
                         <div>
-                          <span className="text-slate-600">Sort Order:</span>
-                          <span className="ml-2 font-medium text-slate-800">{entity.sort_order || 0}</span>
+                          <span className="text-subtle">Sort Order:</span>
+                          <span className="ml-2 font-medium text-foreground">{entity.sort_order || 0}</span>
                         </div>
                       </div>
                       
-                      <p className="text-sm text-slate-600 mt-2">{entity.description}</p>
+                      <p className="text-sm text-subtle mt-2">{entity.description}</p>
                     </div>
 
                     <div className="flex gap-2">
@@ -265,7 +265,7 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
                         variant="ghost"
                         size="sm"
                         onClick={() => handleOpenModal(entity)}
-                        className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                        className="text-protocall-blue hover:text-protocall-blue hover:bg-premium-muted"
                       >
                         <Edit className="w-4 h-4" />
                       </Button>
@@ -273,7 +273,7 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDelete(entity.id)}
-                        className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                        className="text-sell-muted-foreground hover:text-sell-muted-foreground hover:bg-sell-muted"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -284,10 +284,10 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
               
               {entities.length === 0 && (
                 <div className="text-center py-12">
-                  <Database className="mx-auto h-12 w-12 text-slate-400 mb-4" />
-                  <h3 className="text-lg font-medium text-slate-900 mb-2">No Entity Configurations</h3>
-                  <p className="text-slate-500 mb-4">Create your first entity configuration to get started.</p>
-                  <Button onClick={() => handleOpenModal()} className="bg-purple-600 hover:bg-purple-700">
+                  <Database className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium text-foreground mb-2">No Entity Configurations</h3>
+                  <p className="text-muted-foreground mb-4">Create your first entity configuration to get started.</p>
+                  <Button onClick={() => handleOpenModal()} className="bg-primary hover:bg-primary">
                     <PlusCircle className="w-4 h-4 mr-2" />
                     Add First Entity
                   </Button>
@@ -314,7 +314,7 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
               <div>
                 <label className="text-sm font-medium">Entity Name</label>
                 <Input name="entity_name" value={formData.entity_name} onChange={handleInputChange} placeholder="e.g., Educator" required />
-                <p className="text-xs text-slate-500 mt-1">Must match the entity schema name exactly.</p>
+                <p className="text-xs text-muted-foreground mt-1">Must match the entity schema name exactly.</p>
               </div>
               <div>
                 <label className="text-sm font-medium">Display Name</label>
@@ -348,7 +348,7 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-center bg-slate-50 p-3 rounded-lg">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-center bg-surface-2 p-3 rounded-lg">
                 <div className="flex items-center gap-2">
                     <Switch id="enabled" name="enabled" checked={formData.enabled} onCheckedChange={(c) => handleSwitchChange('enabled', c)} />
                     <label htmlFor="enabled" className="text-sm font-medium">Enabled</label>

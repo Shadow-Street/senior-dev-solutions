@@ -171,7 +171,7 @@ export default function WithdrawalRequestModal({ investor, wallet, allocations, 
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent>
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
           </div>
         </DialogContent>
       </Dialog>
@@ -196,10 +196,10 @@ export default function WithdrawalRequestModal({ investor, wallet, allocations, 
           <div className="space-y-4 py-4">
             {/* Withdrawals Disabled Warning */}
             {!withdrawalsEnabled && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="bg-sell-muted border border-sell/30 rounded-lg p-4">
                 <div className="flex items-start gap-2">
-                  <Ban className="w-5 h-5 text-red-600 mt-0.5" />
-                  <div className="text-sm text-red-800">
+                  <Ban className="w-5 h-5 text-sell-muted-foreground mt-0.5" />
+                  <div className="text-sm text-sell-muted-foreground">
                     <p className="font-semibold">Withdrawals Currently Disabled</p>
                     <p className="mt-1">The fund manager has temporarily disabled withdrawal requests. Please try again later.</p>
                   </div>
@@ -209,10 +209,10 @@ export default function WithdrawalRequestModal({ investor, wallet, allocations, 
 
             {/* Empty State */}
             {activeAllocations.length === 0 ? (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
-                <AlertTriangle className="w-12 h-12 text-yellow-600 mx-auto mb-3" />
-                <p className="font-semibold text-yellow-900">No Active Investments</p>
-                <p className="text-sm text-yellow-800 mt-1">You don't have any active investments to withdraw from.</p>
+              <div className="bg-hold-muted border border-hold/30 rounded-lg p-4 text-center">
+                <AlertTriangle className="w-12 h-12 text-hold-muted-foreground mx-auto mb-3" />
+                <p className="font-semibold text-hold-muted-foreground">No Active Investments</p>
+                <p className="text-sm text-hold-muted-foreground mt-1">You don't have any active investments to withdraw from.</p>
               </div>
             ) : (
               <>
@@ -238,23 +238,23 @@ export default function WithdrawalRequestModal({ investor, wallet, allocations, 
 
                 {/* Selected Allocation Info */}
                 {selectedAllocation && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
-                        <p className="text-slate-600">Total Invested</p>
-                        <p className="font-bold text-blue-900">₹{selectedAllocation.total_invested.toLocaleString('en-IN')}</p>
+                        <p className="text-subtle">Total Invested</p>
+                        <p className="font-bold text-protocall-blue">₹{selectedAllocation.total_invested.toLocaleString('en-IN')}</p>
                       </div>
                       <div>
-                        <p className="text-slate-600">Current Value</p>
-                        <p className="font-bold text-green-900">₹{selectedAllocation.current_value.toLocaleString('en-IN')}</p>
+                        <p className="text-subtle">Current Value</p>
+                        <p className="font-bold text-buy-muted-foreground">₹{selectedAllocation.current_value.toLocaleString('en-IN')}</p>
                       </div>
                       <div>
-                        <p className="text-slate-600">Units Held</p>
-                        <p className="font-bold text-slate-900">{selectedAllocation.units_held.toFixed(4)}</p>
+                        <p className="text-subtle">Units Held</p>
+                        <p className="font-bold text-foreground">{selectedAllocation.units_held.toFixed(4)}</p>
                       </div>
                       <div>
-                        <p className="text-slate-600">Notice Period</p>
-                        <p className="font-bold text-slate-900">{selectedPlan?.notice_period_days || noticePeriodDays} days</p>
+                        <p className="text-subtle">Notice Period</p>
+                        <p className="font-bold text-foreground">{selectedPlan?.notice_period_days || noticePeriodDays} days</p>
                       </div>
                     </div>
                   </div>
@@ -317,7 +317,7 @@ export default function WithdrawalRequestModal({ investor, wallet, allocations, 
                 </div>
 
                 {/* Notice Period Info */}
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs text-yellow-800">
+                <div className="bg-hold-muted border border-hold/30 rounded-lg p-3 text-xs text-hold-muted-foreground">
                   <p className="font-semibold mb-1">⏱️ Processing Timeline:</p>
                   <p>Your withdrawal will be processed after a {noticePeriodDays}-day notice period. Expected completion: <strong>{new Date(Date.now() + noticePeriodDays * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN')}</strong></p>
                 </div>
@@ -332,7 +332,7 @@ export default function WithdrawalRequestModal({ investor, wallet, allocations, 
             <Button
               onClick={handleSubmit}
               disabled={isProcessing || !withdrawalsEnabled || activeAllocations.length === 0 || !selectedAllocationId}
-              className="bg-gradient-to-r from-red-500 to-orange-600"
+              className="bg-gradient-to-r from-sell to-hold"
             >
               {isProcessing ? (
                 <>

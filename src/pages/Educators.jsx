@@ -235,7 +235,7 @@ export default function Educators() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
+      <div className="min-h-screen bg-surface-2 p-6">
         <div className="max-w-7xl mx-auto space-y-6">
           <Skeleton className="h-20 w-full" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -249,24 +249,24 @@ export default function Educators() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
+    <div className="min-h-screen bg-surface-2 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <GraduationCap className="w-8 h-8 text-indigo-600" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
+            <GraduationCap className="w-8 h-8 text-protocall-blue" />
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-protocall-deep to-protocall-blue bg-clip-text text-transparent">
               Financial Educators
             </h1>
           </div>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+          <p className="text-xl text-subtle max-w-3xl mx-auto">
             Learn from certified financial educators, join structured courses, and master financial planning
           </p>
 
           {/* Search and Filters */}
           <div className="flex flex-col md:flex-row gap-4 items-center justify-center max-w-2xl mx-auto">
             <div className="relative flex-1 w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Search educators..."
                 value={searchTerm}
@@ -277,7 +277,7 @@ export default function Educators() {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-2 rounded-lg border border-slate-300 bg-white text-sm"
+              className="px-4 py-2 rounded-lg border border-border bg-white text-sm"
             >
               <option value="all">All Specializations</option>
               <option value="financial">Financial Planning</option>
@@ -355,15 +355,15 @@ export default function Educators() {
         </Tabs>
 
         {/* Educational Disclaimer */}
-        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 mt-12">
+        <Card className="bg-surface-2 border-protocall-premium-light mt-12">
           <CardContent className="p-6">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <Award className="w-4 h-4 text-blue-600" />
+              <div className="w-8 h-8 bg-premium-muted rounded-full flex items-center justify-center flex-shrink-0">
+                <Award className="w-4 h-4 text-protocall-blue" />
               </div>
               <div>
-                <h3 className="font-semibold text-blue-800 mb-2">Educational Excellence</h3>
-                <p className="text-sm text-blue-700">
+                <h3 className="font-semibold text-protocall-blue mb-2">Educational Excellence</h3>
+                <p className="text-sm text-protocall-blue">
                   All educators are verified professionals with relevant certifications and teaching experience.
                   Courses are designed for educational purposes and skill development. Please verify credentials
                   and choose courses that match your learning objectives and experience level.

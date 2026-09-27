@@ -174,8 +174,8 @@ export default function CommissionAnalytics({
     return (
       <div className="flex items-center justify-center p-12">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600">Loading Commission Analytics...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-buy mx-auto mb-4"></div>
+          <p className="text-lg text-subtle">Loading Commission Analytics...</p>
         </div>
       </div>
     );
@@ -186,10 +186,10 @@ export default function CommissionAnalytics({
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">Commission Analytics</h2>
-          <p className="text-gray-600">Track commission earnings across all revenue streams</p>
+          <h2 className="text-2xl font-bold text-foreground">Commission Analytics</h2>
+          <p className="text-subtle">Track commission earnings across all revenue streams</p>
         </div>
-        <Button onClick={exportData} className="bg-emerald-600 hover:bg-emerald-700">
+        <Button onClick={exportData} className="bg-buy hover:bg-buy">
           <Download className="w-4 h-4 mr-2" />
           Export Report
         </Button>
@@ -197,50 +197,50 @@ export default function CommissionAnalytics({
 
       {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="shadow-lg border-0 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white">
+        <Card className="shadow-lg border-0 bg-buy-soft text-buy-foreground">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-emerald-100 text-sm font-medium">Total Commission</p>
+                <p className="text-protocall-ink/75 text-sm font-medium">Total Commission</p>
                 <p className="text-3xl font-bold">₹{(analytics.total / 1000).toFixed(1)}k</p>
               </div>
-              <DollarSign className="w-8 h-8 text-emerald-200" />
+              <DollarSign className="w-8 h-8 text-protocall-ink/75" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+        <Card className="shadow-lg border-0 bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-100 text-sm font-medium">Finfluencer Commission</p>
+                <p className="text-white/80 text-sm font-medium">Finfluencer Commission</p>
                 <p className="text-3xl font-bold">₹{(analytics.finfluencer.commission / 1000).toFixed(1)}k</p>
               </div>
-              <Star className="w-8 h-8 text-blue-200" />
+              <Star className="w-8 h-8 text-white/80" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+        <Card className="shadow-lg border-0 bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-purple-100 text-sm font-medium">Advisor Commission</p>
+                <p className="text-white/80 text-sm font-medium">Advisor Commission</p>
                 <p className="text-3xl font-bold">₹{(analytics.advisor.commission / 1000).toFixed(1)}k</p>
               </div>
-              <Users className="w-8 h-8 text-purple-200" />
+              <Users className="w-8 h-8 text-white/80" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+        <Card className="shadow-lg border-0 bg-hold text-hold-foreground">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-orange-100 text-sm font-medium">Event Commission</p>
+                <p className="text-protocall-ink/75 text-sm font-medium">Event Commission</p>
                 <p className="text-3xl font-bold">₹{(analytics.event.commission / 1000).toFixed(1)}k</p>
               </div>
-              <Calendar className="w-8 h-8 text-orange-200" />
+              <Calendar className="w-8 h-8 text-protocall-ink/75" />
             </div>
           </CardContent>
         </Card>
@@ -252,7 +252,7 @@ export default function CommissionAnalytics({
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-emerald-600" />
+              <TrendingUp className="w-5 h-5 text-buy-muted-foreground" />
               Monthly Commission Trends
             </CardTitle>
           </CardHeader>
@@ -276,7 +276,7 @@ export default function CommissionAnalytics({
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Percent className="w-5 h-5 text-emerald-600" />
+              <Percent className="w-5 h-5 text-buy-muted-foreground" />
               Commission Breakdown
             </CardTitle>
           </CardHeader>
@@ -308,21 +308,21 @@ export default function CommissionAnalytics({
         <TabsList className="grid w-full grid-cols-3 bg-transparent p-1 rounded-xl gap-2">
           <TabsTrigger 
             value="finfluencers"
-            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg"
+            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
           >
             <Star className="w-4 h-4 mr-2" />
             Finfluencers
           </TabsTrigger>
           <TabsTrigger 
             value="advisors"
-            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg"
+            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
           >
             <Users className="w-4 h-4 mr-2" />
             Advisors
           </TabsTrigger>
           <TabsTrigger 
             value="events"
-            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg"
+            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
           >
             <Calendar className="w-4 h-4 mr-2" />
             Events
@@ -336,21 +336,21 @@ export default function CommissionAnalytics({
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-blue-800">Gross Revenue</h3>
-                  <p className="text-2xl font-bold text-blue-900">₹{analytics.finfluencer.gross.toLocaleString()}</p>
+                <div className="bg-premium-muted p-4 rounded-lg">
+                  <h3 className="font-semibold text-protocall-blue">Gross Revenue</h3>
+                  <p className="text-2xl font-bold text-protocall-blue">₹{analytics.finfluencer.gross.toLocaleString()}</p>
                 </div>
-                <div className="bg-red-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-red-800">Platform Commission</h3>
-                  <p className="text-2xl font-bold text-red-900">₹{analytics.finfluencer.commission.toLocaleString()}</p>
+                <div className="bg-sell-muted p-4 rounded-lg">
+                  <h3 className="font-semibold text-sell-muted-foreground">Platform Commission</h3>
+                  <p className="text-2xl font-bold text-sell-muted-foreground">₹{analytics.finfluencer.commission.toLocaleString()}</p>
                 </div>
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-green-800">Net to Finfluencers</h3>
-                  <p className="text-2xl font-bold text-green-900">₹{analytics.finfluencer.net.toLocaleString()}</p>
+                <div className="bg-buy-muted p-4 rounded-lg">
+                  <h3 className="font-semibold text-buy-muted-foreground">Net to Finfluencers</h3>
+                  <p className="text-2xl font-bold text-buy-muted-foreground">₹{analytics.finfluencer.net.toLocaleString()}</p>
                 </div>
               </div>
               <div className="text-center">
-                <Badge className="bg-blue-100 text-blue-700">
+                <Badge className="bg-premium-muted text-protocall-blue">
                   Default Rate: {commissionSettings.finfluencer?.default_rate || 25}%
                 </Badge>
               </div>
@@ -365,21 +365,21 @@ export default function CommissionAnalytics({
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div className="bg-purple-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-purple-800">Gross Revenue</h3>
-                  <p className="text-2xl font-bold text-purple-900">₹{analytics.advisor.gross.toLocaleString()}</p>
+                <div className="bg-premium-muted p-4 rounded-lg">
+                  <h3 className="font-semibold text-protocall-premium-text">Gross Revenue</h3>
+                  <p className="text-2xl font-bold text-protocall-premium-text">₹{analytics.advisor.gross.toLocaleString()}</p>
                 </div>
-                <div className="bg-red-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-red-800">Platform Commission</h3>
-                  <p className="text-2xl font-bold text-red-900">₹{analytics.advisor.commission.toLocaleString()}</p>
+                <div className="bg-sell-muted p-4 rounded-lg">
+                  <h3 className="font-semibold text-sell-muted-foreground">Platform Commission</h3>
+                  <p className="text-2xl font-bold text-sell-muted-foreground">₹{analytics.advisor.commission.toLocaleString()}</p>
                 </div>
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-green-800">Net to Advisors</h3>
-                  <p className="text-2xl font-bold text-green-900">₹{analytics.advisor.net.toLocaleString()}</p>
+                <div className="bg-buy-muted p-4 rounded-lg">
+                  <h3 className="font-semibold text-buy-muted-foreground">Net to Advisors</h3>
+                  <p className="text-2xl font-bold text-buy-muted-foreground">₹{analytics.advisor.net.toLocaleString()}</p>
                 </div>
               </div>
               <div className="text-center">
-                <Badge className="bg-purple-100 text-purple-700">
+                <Badge className="bg-premium-muted text-protocall-premium-text">
                   Default Rate: {commissionSettings.advisor?.default_rate || 20}%
                 </Badge>
               </div>
@@ -394,21 +394,21 @@ export default function CommissionAnalytics({
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div className="bg-orange-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-orange-800">Gross Revenue</h3>
-                  <p className="text-2xl font-bold text-orange-900">₹{analytics.event.gross.toLocaleString()}</p>
+                <div className="bg-hold-muted p-4 rounded-lg">
+                  <h3 className="font-semibold text-hold-muted-foreground">Gross Revenue</h3>
+                  <p className="text-2xl font-bold text-hold-muted-foreground">₹{analytics.event.gross.toLocaleString()}</p>
                 </div>
-                <div className="bg-red-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-red-800">Platform Commission</h3>
-                  <p className="text-2xl font-bold text-red-900">₹{analytics.event.commission.toLocaleString()}</p>
+                <div className="bg-sell-muted p-4 rounded-lg">
+                  <h3 className="font-semibold text-sell-muted-foreground">Platform Commission</h3>
+                  <p className="text-2xl font-bold text-sell-muted-foreground">₹{analytics.event.commission.toLocaleString()}</p>
                 </div>
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-green-800">Net to Organizers</h3>
-                  <p className="text-2xl font-bold text-green-900">₹{analytics.event.net.toLocaleString()}</p>
+                <div className="bg-buy-muted p-4 rounded-lg">
+                  <h3 className="font-semibold text-buy-muted-foreground">Net to Organizers</h3>
+                  <p className="text-2xl font-bold text-buy-muted-foreground">₹{analytics.event.net.toLocaleString()}</p>
                 </div>
               </div>
               <div className="text-center">
-                <Badge className="bg-orange-100 text-orange-700">
+                <Badge className="bg-hold-muted text-hold-muted-foreground">
                   Default Rate: {commissionSettings.event?.default_rate || 20}%
                 </Badge>
               </div>

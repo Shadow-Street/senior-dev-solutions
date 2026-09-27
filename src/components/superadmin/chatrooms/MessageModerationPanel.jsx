@@ -53,7 +53,7 @@ export default function MessageModerationPanel({ room, messages, users, onClose,
         <div className="space-y-4 flex-1 overflow-hidden flex flex-col">
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               placeholder="Search messages..."
               value={searchTerm}
@@ -65,7 +65,7 @@ export default function MessageModerationPanel({ room, messages, users, onClose,
           {/* Message Count */}
           <div className="flex items-center justify-between">
             <Badge variant="outline">{filteredMessages.length} messages</Badge>
-            <Badge className="bg-blue-100 text-blue-800">
+            <Badge className="bg-premium-muted text-protocall-blue">
               {room.participant_count || 0} participants
             </Badge>
           </div>
@@ -74,32 +74,32 @@ export default function MessageModerationPanel({ room, messages, users, onClose,
           <div className="flex-1 overflow-y-auto space-y-3 pr-2">
             {filteredMessages.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-slate-500">No messages found</p>
+                <p className="text-muted-foreground">No messages found</p>
               </div>
             ) : (
               filteredMessages.map(msg => (
-                <div key={msg.id} className="bg-slate-50 rounded-lg p-4 hover:bg-slate-100 transition-colors">
+                <div key={msg.id} className="bg-surface-2 rounded-lg p-4 hover:bg-surface-2 transition-colors">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="font-semibold text-slate-900">{getUserName(msg.user_id)}</span>
+                        <span className="font-semibold text-foreground">{getUserName(msg.user_id)}</span>
                         {msg.is_bot && (
-                          <Badge className="bg-purple-100 text-purple-800 text-xs">Bot</Badge>
+                          <Badge className="bg-premium-muted text-protocall-premium-text text-xs">Bot</Badge>
                         )}
                         {msg.message_type !== 'text' && (
                           <Badge variant="outline" className="text-xs">
                             {msg.message_type?.replace('_', ' ')}
                           </Badge>
                         )}
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs text-muted-foreground">
                           {new Date(msg.created_date).toLocaleString()}
                         </span>
                       </div>
                       
-                      <p className="text-sm text-slate-700 whitespace-pre-wrap">{msg.content}</p>
+                      <p className="text-sm text-subtle whitespace-pre-wrap">{msg.content}</p>
                       
                       {msg.file_url && (
-                        <div className="mt-2 flex items-center gap-2 text-xs text-blue-600">
+                        <div className="mt-2 flex items-center gap-2 text-xs text-protocall-blue">
                           {msg.file_url.match(/\.(jpg|jpeg|png|gif)$/i) ? (
                             <ImageIcon className="w-4 h-4" />
                           ) : (
@@ -122,7 +122,7 @@ export default function MessageModerationPanel({ room, messages, users, onClose,
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDeleteMessage(msg.id)}
-                      className="text-red-600 hover:text-red-800"
+                      className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>

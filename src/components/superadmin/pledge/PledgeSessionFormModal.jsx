@@ -267,12 +267,12 @@ export default function PledgeSessionFormModal({ open, onClose, onSuccess, sessi
 
         {/* Show error banner if submission failed */}
         {submitError && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+          <div className="bg-sell-muted border-l-4 border-sell p-4 rounded-lg">
             <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-sell-muted-foreground flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm font-medium text-red-800">Save Failed</p>
-                <p className="text-sm text-red-700 mt-1">{submitError}</p>
+                <p className="text-sm font-medium text-sell-muted-foreground">Save Failed</p>
+                <p className="text-sm text-sell-muted-foreground mt-1">{submitError}</p>
               </div>
             </div>
           </div>
@@ -349,7 +349,7 @@ export default function PledgeSessionFormModal({ open, onClose, onSuccess, sessi
                   </PopoverContent>
                 </Popover>
                 <div className="relative">
-                  <Clock className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Clock className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="time"
                     value={startTime}
@@ -379,7 +379,7 @@ export default function PledgeSessionFormModal({ open, onClose, onSuccess, sessi
                   </PopoverContent>
                 </Popover>
                 <div className="relative">
-                  <Clock className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Clock className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="time"
                     value={endTime}
@@ -447,14 +447,14 @@ export default function PledgeSessionFormModal({ open, onClose, onSuccess, sessi
                   <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
               </Select>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Set to "Active" to allow users to create pledges
               </p>
             </div>
 
             <div>
               <Label htmlFor="allow_amo" className="flex items-center gap-2">
-                <Moon className="w-4 h-4 text-indigo-600" />
+                <Moon className="w-4 h-4 text-protocall-blue" />
                 Allow AMO (After Market Orders)
               </Label>
               <div className="flex items-center gap-3 mt-2">
@@ -463,11 +463,11 @@ export default function PledgeSessionFormModal({ open, onClose, onSuccess, sessi
                   checked={formData.allow_amo}
                   onCheckedChange={(checked) => setFormData({ ...formData, allow_amo: checked })}
                 />
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-subtle">
                   {formData.allow_amo ? 'Enabled' : 'Disabled'}
                 </span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Orders placed outside market hours will execute at next market open
               </p>
             </div>
@@ -548,7 +548,7 @@ export default function PledgeSessionFormModal({ open, onClose, onSuccess, sessi
                   checked={formData.is_advisor_recommended}
                   onCheckedChange={(checked) => setFormData({ ...formData, is_advisor_recommended: checked })}
                 />
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-subtle">
                   {formData.is_advisor_recommended ? 'Enabled' : 'Disabled'}
                 </span>
               </div>
@@ -561,7 +561,7 @@ export default function PledgeSessionFormModal({ open, onClose, onSuccess, sessi
                   checked={formData.is_analyst_certified}
                   onCheckedChange={(checked) => setFormData({ ...formData, is_analyst_certified: checked })}
                 />
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-subtle">
                   {formData.is_analyst_certified ? 'Enabled' : 'Disabled'}
                 </span>
               </div>
@@ -583,7 +583,7 @@ export default function PledgeSessionFormModal({ open, onClose, onSuccess, sessi
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white min-w-[140px]"
+              className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white min-w-[140px]"
             >
               {isSubmitting ? (
                 <>
@@ -602,7 +602,7 @@ export default function PledgeSessionFormModal({ open, onClose, onSuccess, sessi
           {/* Show saving status message */}
           {isSubmitting && (
             <div className="text-center py-2">
-              <p className="text-sm text-gray-600 animate-pulse">
+              <p className="text-sm text-subtle animate-pulse">
                 Saving session... This may take up to 15 seconds.
               </p>
             </div>

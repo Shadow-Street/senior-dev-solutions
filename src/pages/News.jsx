@@ -69,27 +69,27 @@ export default function NewsPage() {
 
   const getSentimentIcon = (sentiment) => {
     switch(sentiment) {
-      case 'positive': return <TrendingUp className="w-4 h-4 text-green-500" />;
-      case 'negative': return <TrendingDown className="w-4 h-4 text-red-500" />;
-      default: return <Clock className="w-4 h-4 text-slate-500" />;
+      case 'positive': return <TrendingUp className="w-4 h-4 text-positive" />;
+      case 'negative': return <TrendingDown className="w-4 h-4 text-sell" />;
+      default: return <Clock className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
   const getSentimentColor = (sentiment) => {
     switch(sentiment) {
-      case 'positive': return 'bg-green-100 text-green-800 border-green-200';
-      case 'negative': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-slate-100 text-slate-800 border-slate-200';
+      case 'positive': return 'bg-buy-muted text-buy-muted-foreground border-buy/30';
+      case 'negative': return 'bg-sell-muted text-sell-muted-foreground border-sell/30';
+      default: return 'bg-surface-2 text-foreground border-border';
     }
   };
 
   const getCategoryColor = (category) => {
     switch(category) {
-      case 'earnings': return 'bg-blue-100 text-blue-800';
-      case 'regulation': return 'bg-purple-100 text-purple-800';
-      case 'sector': return 'bg-orange-100 text-orange-800';
-      case 'market': return 'bg-green-100 text-green-800';
-      default: return 'bg-slate-100 text-slate-800';
+      case 'earnings': return 'bg-premium-muted text-protocall-blue';
+      case 'regulation': return 'bg-premium-muted text-protocall-premium-text';
+      case 'sector': return 'bg-hold-muted text-hold-muted-foreground';
+      case 'market': return 'bg-buy-muted text-buy-muted-foreground';
+      default: return 'bg-surface-2 text-foreground';
     }
   };
 
@@ -101,23 +101,23 @@ export default function NewsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-6">
+    <div className="min-h-screen bg-surface-2 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Newspaper className="w-8 h-8 text-blue-600" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <Newspaper className="w-8 h-8 text-protocall-blue" />
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-protocall-deep to-protocall-blue bg-clip-text text-transparent">
               Market News
             </h1>
           </div>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+          <p className="text-xl text-subtle max-w-3xl mx-auto">
             Stay updated with the latest market news and updates
           </p>
         </div>
 
         <div className="flex flex-col md:flex-row gap-4 items-center justify-center max-w-2xl mx-auto">
           <div className="relative flex-1 w-full">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               placeholder="Search news..."
               value={searchTerm}
@@ -128,7 +128,7 @@ export default function NewsPage() {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 rounded-xl border border-slate-300 bg-white"
+            className="px-4 py-2 rounded-xl border border-border bg-white"
           >
             <option value="all">All Categories</option>
             <option value="market">Market</option>
@@ -148,7 +148,7 @@ export default function NewsPage() {
                   className="w-full h-48 object-cover"
                 />
                 {article.is_breaking && (
-                  <Badge className="absolute top-2 left-2 bg-red-500 text-white text-xs">
+                  <Badge className="absolute top-2 left-2 bg-protocall-sell-text text-white text-xs">
                     BREAKING
                   </Badge>
                 )}
@@ -156,11 +156,11 @@ export default function NewsPage() {
 
               <CardContent className="p-6">
                 <div className="flex items-start justify-between gap-2 mb-3">
-                  <h3 className="font-bold text-lg text-slate-900 line-clamp-2">{article.title}</h3>
+                  <h3 className="font-bold text-lg text-foreground line-clamp-2">{article.title}</h3>
                   {getSentimentIcon(article.sentiment)}
                 </div>
 
-                <p className="text-sm text-slate-600 mb-4 line-clamp-3">{article.summary}</p>
+                <p className="text-sm text-subtle mb-4 line-clamp-3">{article.summary}</p>
 
                 <div className="flex flex-wrap gap-2 mb-4">
                   <Badge variant="outline" className={`text-xs ${getCategoryColor(article.category)}`}>
@@ -181,7 +181,7 @@ export default function NewsPage() {
                   </div>
                 )}
 
-                <div className="flex items-center justify-between text-xs text-slate-500">
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span className="font-medium">{article.source}</span>
                   <div className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />

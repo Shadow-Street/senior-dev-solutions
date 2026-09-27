@@ -48,8 +48,8 @@ export default function CurrentSubscriptionCard({ subscription, onRenew, onCance
     const isVip = planName.toLowerCase() === 'vip';
 
     // Styles based on status
-    const cardBorder = isExpired ? 'border-red-200' : 'border-purple-200';
-    const iconBg = isExpired ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600';
+    const cardBorder = isExpired ? 'border-sell/30' : 'border-protocall-premium-light';
+    const iconBg = isExpired ? 'bg-sell-muted text-sell-muted-foreground' : 'bg-hold-muted text-hold-muted-foreground';
 
     return (
         <Card className={`mb-8 border-2 ${cardBorder} shadow-sm bg-white overflow-hidden`}>
@@ -59,27 +59,27 @@ export default function CurrentSubscriptionCard({ subscription, onRenew, onCance
                     {/* Header Row */}
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div className="flex items-center gap-4">
-                            <div className={`p-3 rounded-xl ${isVip ? 'bg-orange-100' : 'bg-purple-100'}`}>
-                                <Crown className={`w-8 h-8 ${isVip ? 'text-orange-600' : 'text-purple-600'}`} />
+                            <div className={`p-3 rounded-xl ${isVip ? 'bg-hold-muted' : 'bg-premium-muted'}`}>
+                                <Crown className={`w-8 h-8 ${isVip ? 'text-hold-muted-foreground' : 'text-protocall-premium-text'}`} />
                             </div>
                             <div>
-                                <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                                <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
                                     {planName} Plan
                                     {isExpired ? (
                                         <Badge variant="destructive" className="rounded-md px-2 py-0.5 text-xs font-semibold uppercase tracking-wide">
                                             Expired
                                         </Badge>
                                     ) : (
-                                        <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-0 rounded-md px-2 py-0.5 text-xs font-semibold uppercase tracking-wide">
+                                        <Badge className="bg-buy-muted text-buy-muted-foreground hover:bg-buy-muted border-0 rounded-md px-2 py-0.5 text-xs font-semibold uppercase tracking-wide">
                                             Active
                                         </Badge>
                                     )}
                                 </h2>
-                                <div className="flex flex-col gap-1 text-sm text-gray-500 mt-1 font-medium">
+                                <div className="flex flex-col gap-1 text-sm text-muted-foreground mt-1 font-medium">
                                     <span>Renews on {formatDate(subscription.end_date)}</span>
                                     {!isExpired && (
-                                        <span className={`flex items-center gap-2 ${subscription.auto_renew ? 'text-green-600' : 'text-amber-600'}`}>
-                                            <div className={`w-2 h-2 rounded-full ${subscription.auto_renew ? 'bg-green-500' : 'bg-amber-500'}`}></div>
+                                        <span className={`flex items-center gap-2 ${subscription.auto_renew ? 'text-buy-muted-foreground' : 'text-hold-muted-foreground'}`}>
+                                            <div className={`w-2 h-2 rounded-full ${subscription.auto_renew ? 'bg-buy' : 'bg-hold'}`}></div>
                                             Auto-pay: {subscription.auto_renew ? 'ON' : 'OFF'}
                                         </span>
                                     )}
@@ -88,36 +88,36 @@ export default function CurrentSubscriptionCard({ subscription, onRenew, onCance
                         </div>
 
                         <div className="text-right hidden md:block">
-                            <span className="text-2xl font-bold text-gray-900">₹{subscription.SubscriptionPlan?.price_monthly || subscription.amount || '0'}</span>
-                            <span className="text-gray-500 text-sm font-medium">/{subscription.billing_cycle || 'month'}</span>
+                            <span className="text-2xl font-bold text-foreground">₹{subscription.SubscriptionPlan?.price_monthly || subscription.amount || '0'}</span>
+                            <span className="text-muted-foreground text-sm font-medium">/{subscription.billing_cycle || 'month'}</span>
                         </div>
                     </div>
 
                     {/* Progress Section */}
                     <div className="space-y-3">
                         <div className="flex justify-between items-center text-sm font-medium">
-                            <span className={isExpired ? 'text-red-600' : 'text-gray-600'}>
+                            <span className={isExpired ? 'text-sell-muted-foreground' : 'text-subtle'}>
                                 {isExpired ? 'Subscription Expired' : `${daysRemaining} days remaining`}
                             </span>
-                            <span className="text-gray-400">
+                            <span className="text-muted-foreground">
                                 {isExpired ? '0 of 30 days' : `${30 - daysRemaining} of 30 days`}
                             </span>
                         </div>
 
                         <Progress
                             value={isExpired ? 100 : progress}
-                            className={`h-2.5 rounded-full ${isExpired ? 'bg-red-100' : 'bg-gray-100'}`}
-                            indicatorClassName={isExpired ? 'bg-red-500' : isVip ? 'bg-orange-500' : 'bg-purple-600'}
+                            className={`h-2.5 rounded-full ${isExpired ? 'bg-sell-muted' : 'bg-surface-2'}`}
+                            indicatorClassName={isExpired ? 'bg-sell' : isVip ? 'bg-hold' : 'bg-primary'}
                         />
                     </div>
 
                     {/* Alert Box (Only if Expired) */}
                     {isExpired && (
-                        <div className="bg-red-50 border border-red-100 rounded-lg p-4 flex items-start gap-3">
-                            <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                        <div className="bg-sell-muted border border-sell/30 rounded-lg p-4 flex items-start gap-3">
+                            <AlertTriangle className="w-5 h-5 text-sell-muted-foreground flex-shrink-0 mt-0.5" />
                             <div>
-                                <h4 className="text-sm font-bold text-red-800">Subscription Expired</h4>
-                                <p className="text-sm text-red-600 mt-0.5">
+                                <h4 className="text-sm font-bold text-sell-muted-foreground">Subscription Expired</h4>
+                                <p className="text-sm text-sell-muted-foreground mt-0.5">
                                     Your subscription has expired. Renew now to regain access to premium features.
                                 </p>
                             </div>
@@ -129,7 +129,7 @@ export default function CurrentSubscriptionCard({ subscription, onRenew, onCance
                         {isExpired ? (
                             <Button
                                 onClick={onRenew}
-                                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-6 text-md shadow-md transition-all rounded-xl"
+                                className="flex-1 bg-protocall-blue hover:bg-protocall-blue text-white font-semibold py-6 text-md shadow-md transition-all rounded-xl"
                             >
                                 Renew Subscription
                                 <CheckCircle2 className="ml-2 w-5 h-5" />
@@ -139,7 +139,7 @@ export default function CurrentSubscriptionCard({ subscription, onRenew, onCance
                                 <Button
                                     variant="outline"
                                     onClick={onCancel}
-                                    className="flex-1 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                    className="flex-1 border-sell/30 text-sell-muted-foreground hover:bg-sell-muted hover:text-sell-muted-foreground"
                                 >
                                     Cancel Subscription
                                 </Button>

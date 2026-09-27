@@ -22,18 +22,18 @@ export default function CapacityChecker({ event, attendeeCount }) {
           Sold Out
         </Badge>
       ) : isAlmostFull ? (
-        <Badge variant="warning" className="bg-yellow-100 text-yellow-800 flex items-center gap-1">
+        <Badge variant="warning" className="bg-hold-muted text-hold-muted-foreground flex items-center gap-1">
           <AlertCircle className="w-3 h-3" />
           Only {spotsLeft} spots left!
         </Badge>
       ) : (
-        <Badge variant="outline" className="text-green-700 border-green-300 flex items-center gap-1">
+        <Badge variant="outline" className="text-buy-muted-foreground border-buy/30 flex items-center gap-1">
           <CheckCircle className="w-3 h-3" />
           {spotsLeft} spots available
         </Badge>
       )}
       
-      <span className="text-xs text-gray-500">
+      <span className="text-xs text-muted-foreground">
         <Users className="w-3 h-3 inline mr-1" />
         {attendeeCount}/{event.capacity}
       </span>

@@ -48,9 +48,9 @@ export default function LiveStockTicker({ stockSymbol, onPriceUpdate }) {
   }, [stockSymbol, onPriceUpdate, loadStockData]);
 
   const getPriceColor = (changePercent) => {
-    if (changePercent > 0) return "text-green-600 bg-green-50 border-green-200";
-    if (changePercent < 0) return "text-red-600 bg-red-50 border-red-200";
-    return "text-orange-600 bg-orange-50 border-orange-200";
+    if (changePercent > 0) return "text-buy-muted-foreground bg-buy-muted border-buy/30";
+    if (changePercent < 0) return "text-sell-muted-foreground bg-sell-muted border-sell/30";
+    return "text-hold-muted-foreground bg-hold-muted border-hold/30";
   };
 
   const getPriceIcon = (changePercent) => {
@@ -61,11 +61,11 @@ export default function LiveStockTicker({ stockSymbol, onPriceUpdate }) {
 
   if (isLoading) {
     return (
-      <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-0">
+      <Card className="bg-surface-2 border-0">
         <CardContent className="p-4">
           <div className="flex items-center justify-center">
-            <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
-            <span className="ml-2 text-sm text-slate-600">Loading {stockSymbol} price...</span>
+            <RefreshCw className="w-5 h-5 animate-spin text-protocall-blue" />
+            <span className="ml-2 text-sm text-subtle">Loading {stockSymbol} price...</span>
           </div>
         </CardContent>
       </Card>
@@ -74,9 +74,9 @@ export default function LiveStockTicker({ stockSymbol, onPriceUpdate }) {
 
   if (!stockData) {
     return (
-      <Card className="bg-gradient-to-r from-red-50 to-orange-50 border-0">
+      <Card className="bg-gradient-to-r from-surface-2 to-hold-muted border-0">
         <CardContent className="p-4">
-          <div className="text-center text-sm text-slate-600">
+          <div className="text-center text-sm text-subtle">
             Unable to load price data for {stockSymbol}
           </div>
         </CardContent>
@@ -91,14 +91,14 @@ export default function LiveStockTicker({ stockSymbol, onPriceUpdate }) {
           <div className="flex items-center gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-xl font-bold text-slate-900">{stockSymbol}</h2>
+                <h2 className="text-xl font-bold text-foreground">{stockSymbol}</h2>
                 {stockData.isFallback && (
-                  <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-200" title="Live data limit reached. Showing simulated price.">
+                  <Badge variant="outline" className="bg-hold-muted text-hold-muted-foreground border-hold/30" title="Live data limit reached. Showing simulated price.">
                     Simulated
                   </Badge>
                 )}
               </div>
-              <div className="flex items-center gap-2 text-sm text-slate-600">
+              <div className="flex items-center gap-2 text-sm text-subtle">
                 <span>NSE</span>
                 <span>•</span>
                 <span>{lastUpdate?.toLocaleTimeString()}</span>
@@ -106,7 +106,7 @@ export default function LiveStockTicker({ stockSymbol, onPriceUpdate }) {
             </div>
             
             <div className="text-right">
-              <div className="text-2xl font-bold text-slate-900">
+              <div className="text-2xl font-bold text-foreground">
                 ₹{stockData.current_price?.toFixed(2)}
               </div>
               <Badge 
@@ -127,15 +127,15 @@ export default function LiveStockTicker({ stockSymbol, onPriceUpdate }) {
 
           <div className="grid grid-cols-3 gap-4 text-sm">
             <div className="text-center">
-              <div className="text-slate-500">High</div>
+              <div className="text-muted-foreground">High</div>
               <div className="font-semibold">₹{stockData.day_high?.toFixed(2)}</div>
             </div>
             <div className="text-center">
-              <div className="text-slate-500">Low</div>
+              <div className="text-muted-foreground">Low</div>
               <div className="font-semibold">₹{stockData.day_low?.toFixed(2)}</div>
             </div>
             <div className="text-center">
-              <div className="text-slate-500">Volume</div>
+              <div className="text-muted-foreground">Volume</div>
               <div className="font-semibold">{(stockData.volume / 1000).toFixed(0)}K</div>
             </div>
           </div>

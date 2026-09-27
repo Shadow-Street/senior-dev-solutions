@@ -48,13 +48,13 @@ const AlertsTable = ({ alerts, onViewDetails, isLoading, severityConfig, statusC
     }
 
     if (!alerts || alerts.length === 0) {
-        return <div className="text-center p-8 text-gray-500">{emptyMessage}</div>;
+        return <div className="text-center p-8 text-muted-foreground">{emptyMessage}</div>;
     }
 
     return (
         <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-                <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+                <thead className="text-xs text-subtle uppercase bg-surface-2">
                     <tr>
                         <th className="px-6 py-3">Alert Details</th>
                         <th className="px-6 py-3">Type & Entity</th>
@@ -70,12 +70,12 @@ const AlertsTable = ({ alerts, onViewDetails, isLoading, severityConfig, statusC
                         const StatusIcon = statusConfig[alert.status]?.icon || Clock;
                         
                         return (
-                            <tr key={alert.id} className="bg-white border-b hover:bg-slate-50">
+                            <tr key={alert.id} className="bg-white border-b hover:bg-surface-2">
                                 <td className="px-6 py-4">
                                     <div>
                                         <div className="font-semibold">{alert.title}</div>
-                                        <div className="text-xs text-slate-500 mt-1">{alert.stock_symbol}</div>
-                                        <div className="text-xs text-slate-600 mt-1 max-w-xs">
+                                        <div className="text-xs text-muted-foreground mt-1">{alert.stock_symbol}</div>
+                                        <div className="text-xs text-subtle mt-1 max-w-xs">
                                             {alert.message.substring(0, 100)}{alert.message.length > 100 ? '...' : ''}
                                         </div>
                                     </div>
@@ -85,7 +85,7 @@ const AlertsTable = ({ alerts, onViewDetails, isLoading, severityConfig, statusC
                                     <Badge variant="outline" className="mr-2">
                                         {alert.entity_type}
                                     </Badge>
-                                    <div className="text-xs text-slate-500 mt-1">
+                                    <div className="text-xs text-muted-foreground mt-1">
                                         {alertTypeLabels[alert.alert_type]}
                                     </div>
                                 </td>
@@ -97,13 +97,13 @@ const AlertsTable = ({ alerts, onViewDetails, isLoading, severityConfig, statusC
                                 </td>
                                 
                                 <td className="px-6 py-4">
-                                    <Badge className={statusConfig[alert.status]?.color || 'bg-gray-100'}>
+                                    <Badge className={statusConfig[alert.status]?.color || 'bg-surface-2'}>
                                         <StatusIcon className="w-3 h-3 mr-1" />
                                         {alert.status}
                                     </Badge>
                                 </td>
                                 
-                                <td className="px-6 py-4 text-slate-500">
+                                <td className="px-6 py-4 text-muted-foreground">
                                     {new Date(alert.created_date).toLocaleDateString()}
                                     <div className="text-xs">
                                         {new Date(alert.created_date).toLocaleTimeString()}
@@ -305,16 +305,16 @@ export default function AlertsManagement({ user }) {
   };
 
   const severityConfig = {
-    info: { color: 'bg-blue-100 text-blue-800', icon: '🔵' },
-    warning: { color: 'bg-yellow-100 text-yellow-800', icon: '⚠️' },
-    critical: { color: 'bg-red-100 text-red-800', icon: '🔴' }
+    info: { color: 'bg-premium-muted text-protocall-blue', icon: '🔵' },
+    warning: { color: 'bg-hold-muted text-hold-muted-foreground', icon: '⚠️' },
+    critical: { color: 'bg-sell-muted text-sell-muted-foreground', icon: '🔴' }
   };
 
   const statusConfig = {
-    pending: { color: 'bg-orange-100 text-orange-800', icon: Clock },
-    acknowledged: { color: 'bg-blue-100 text-blue-800', icon: Eye },
-    resolved: { color: 'bg-green-100 text-green-800', icon: CheckCircle },
-    dismissed: { color: 'bg-gray-100 text-gray-800', icon: X }
+    pending: { color: 'bg-hold-muted text-hold-muted-foreground', icon: Clock },
+    acknowledged: { color: 'bg-premium-muted text-protocall-blue', icon: Eye },
+    resolved: { color: 'bg-buy-muted text-buy-muted-foreground', icon: CheckCircle },
+    dismissed: { color: 'bg-surface-2 text-foreground', icon: X }
   };
 
   const alertsByType = Object.entries(
@@ -347,10 +347,10 @@ export default function AlertsManagement({ user }) {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2 text-2xl">
-                <AlertTriangle className="w-6 h-6 text-orange-600" />
+                <AlertTriangle className="w-6 h-6 text-hold-muted-foreground" />
                 System Alert Center
               </CardTitle>
-              <p className="text-sm text-slate-600 mt-1">
+              <p className="text-sm text-subtle mt-1">
                 Monitor and manage automated system alerts and configurations.
               </p>
             </div>
@@ -363,21 +363,21 @@ export default function AlertsManagement({ user }) {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <p className="text-sm text-blue-600">Total Alerts</p>
-              <p className="text-2xl font-bold text-blue-800">{stats.total}</p>
+            <div className="bg-premium-muted p-4 rounded-lg">
+              <p className="text-sm text-protocall-blue">Total Alerts</p>
+              <p className="text-2xl font-bold text-protocall-blue">{stats.total}</p>
             </div>
-            <div className="bg-orange-50 p-4 rounded-lg">
-              <p className="text-sm text-orange-600">Pending</p>
-              <p className="text-2xl font-bold text-orange-800">{stats.pending}</p>
+            <div className="bg-hold-muted p-4 rounded-lg">
+              <p className="text-sm text-hold-muted-foreground">Pending</p>
+              <p className="text-2xl font-bold text-hold-muted-foreground">{stats.pending}</p>
             </div>
-            <div className="bg-red-50 p-4 rounded-lg">
-              <p className="text-sm text-red-600">Critical</p>
-              <p className="text-2xl font-bold text-red-800">{stats.critical}</p>
+            <div className="bg-sell-muted p-4 rounded-lg">
+              <p className="text-sm text-sell-muted-foreground">Critical</p>
+              <p className="text-2xl font-bold text-sell-muted-foreground">{stats.critical}</p>
             </div>
-            <div className="bg-green-50 p-4 rounded-lg">
-              <p className="text-sm text-green-600">Resolved</p>
-              <p className="text-2xl font-bold text-green-800">{stats.resolved}</p>
+            <div className="bg-buy-muted p-4 rounded-lg">
+              <p className="text-sm text-buy-muted-foreground">Resolved</p>
+              <p className="text-2xl font-bold text-buy-muted-foreground">{stats.resolved}</p>
             </div>
           </div>
         </CardHeader>
@@ -437,7 +437,7 @@ export default function AlertsManagement({ user }) {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="count" fill="#3B82F6" />
+                <Bar dataKey="count" fill="hsl(var(--chart-1))" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -472,10 +472,10 @@ export default function AlertsManagement({ user }) {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-2 bg-transparent p-1 rounded-xl gap-2">
-          <TabsTrigger value="active" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md">
+          <TabsTrigger value="active" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md">
             <BellRing className="w-4 h-4" /> Active Alerts ({stats.pending})
           </TabsTrigger>
-          <TabsTrigger value="history" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md">
+          <TabsTrigger value="history" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md">
             <History className="w-4 h-4" /> Alert History ({stats.resolved})
           </TabsTrigger>
         </TabsList>
@@ -531,9 +531,9 @@ export default function AlertsManagement({ user }) {
           
           {selectedAlert && (
             <div className="space-y-4">
-              <div className="bg-slate-50 p-4 rounded-lg">
+              <div className="bg-surface-2 p-4 rounded-lg">
                 <h3 className="font-semibold mb-2">{selectedAlert.title}</h3>
-                <p className="text-sm text-slate-600 mb-2">{selectedAlert.message}</p>
+                <p className="text-sm text-subtle mb-2">{selectedAlert.message}</p>
                 <div className="flex gap-2 text-xs">
                   <Badge className={severityConfig[selectedAlert.severity]?.color}>
                     {selectedAlert.severity}
@@ -592,20 +592,20 @@ export default function AlertsManagement({ user }) {
                     </Button>
                     <Button
                       variant="ghost"
-                      className="text-gray-600"
+                      className="text-subtle"
                       onClick={() => handleResolveAlert(selectedAlert.id, 'dismissed')}
                     >
                       Dismiss
                     </Button>
                     <Button
                       variant="ghost"
-                      className="text-blue-600"
+                      className="text-protocall-blue"
                       onClick={() => handleResolveAlert(selectedAlert.id, 'acknowledged')}
                     >
                       Acknowledge
                     </Button>
                     <Button
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-buy hover:bg-buy"
                       onClick={() => handleResolveAlert(selectedAlert.id, 'resolved')}
                     >
                       <CheckCircle className="w-4 h-4 mr-2" />
@@ -627,7 +627,7 @@ export default function AlertsManagement({ user }) {
               This is a placeholder for the alert configuration settings.
             </DialogDescription>
           </DialogHeader>
-          <div className="p-4 text-center text-gray-500">
+          <div className="p-4 text-center text-muted-foreground">
             Alert configuration settings will be managed here.
           </div>
           <div className="flex justify-end">

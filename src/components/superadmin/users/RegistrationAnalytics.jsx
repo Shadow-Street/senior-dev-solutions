@@ -17,10 +17,10 @@ export default function RegistrationAnalytics({ users, invites, isLoading }) {
       });
     }
     return [
-      { name: 'Public Signup', value: counts.public, color: '#0088FE' },
-      { name: 'Admin Invite', value: counts.invite, color: '#00C49F' },
-      { name: 'Direct Creation', value: counts.direct_admin_creation, color: '#FFBB28' },
-      { name: 'System', value: counts.system, color: '#FF8042' },
+      { name: 'Public Signup', value: counts.public, color: 'hsl(var(--chart-1))' },
+      { name: 'Admin Invite', value: counts.invite, color: 'hsl(var(--chart-2))' },
+      { name: 'Direct Creation', value: counts.direct_admin_creation, color: 'hsl(var(--chart-5))' },
+      { name: 'System', value: counts.system, color: 'hsl(var(--chart-5))' },
     ].filter(d => d.value > 0);
   }, [users]);
 
@@ -95,7 +95,7 @@ export default function RegistrationAnalytics({ users, invites, isLoading }) {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><BarChart2 className="w-5 h-5 text-blue-600" /> Registrations by Method</CardTitle>
+            <CardTitle className="flex items-center gap-2"><BarChart2 className="w-5 h-5 text-protocall-blue" /> Registrations by Method</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -113,7 +113,7 @@ export default function RegistrationAnalytics({ users, invites, isLoading }) {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><BarChart2 className="w-5 h-5 text-green-600" /> Registrations by Role</CardTitle>
+            <CardTitle className="flex items-center gap-2"><BarChart2 className="w-5 h-5 text-buy-muted-foreground" /> Registrations by Role</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -131,7 +131,7 @@ export default function RegistrationAnalytics({ users, invites, isLoading }) {
       </div>
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><BarChart2 className="w-5 h-5 text-purple-600" /> Daily Registrations (Last 30 Days)</CardTitle>
+          <CardTitle className="flex items-center gap-2"><BarChart2 className="w-5 h-5 text-protocall-premium-text" /> Daily Registrations (Last 30 Days)</CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>

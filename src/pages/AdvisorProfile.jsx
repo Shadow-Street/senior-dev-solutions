@@ -358,7 +358,7 @@ export default function AdvisorProfile() {
   const getPostPlanBadge = (postPlanId) => {
     if (!postPlanId) {
       return (
-        <Badge className="bg-blue-100 text-blue-800 text-xs">
+        <Badge className="bg-premium-muted text-protocall-blue text-xs">
           <Users className="w-3 h-3 mr-1" />
           All Subscribers
         </Badge>
@@ -372,8 +372,8 @@ export default function AdvisorProfile() {
 
     return (
       <Badge className={`text - xs flex items - center gap - 1 ${isHighTier
-        ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white'
-        : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
+        ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white'
+        : 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white'
         } `}>
         {isHighTier ? <Crown className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
         {plan.name} Exclusive
@@ -385,10 +385,10 @@ export default function AdvisorProfile() {
     if (!post.recommendation_status || post.recommendation_status === 'active') return null;
 
     const config = {
-      target_hit: { color: 'bg-green-100 text-green-800 border-green-300', label: '🎯 Target Hit', icon: '✅' },
-      stop_loss_hit: { color: 'bg-red-100 text-red-800 border-red-300', label: '⚠️ Stop Loss', icon: '🛑' },
-      expired: { color: 'bg-gray-100 text-gray-800 border-gray-300', label: 'Expired', icon: '⏰' },
-      closed: { color: 'bg-blue-100 text-blue-800 border-blue-300', label: 'Closed', icon: '✓' }
+      target_hit: { color: 'bg-buy-muted text-buy-muted-foreground border-buy/30', label: '🎯 Target Hit', icon: '✅' },
+      stop_loss_hit: { color: 'bg-sell-muted text-sell-muted-foreground border-sell/30', label: '⚠️ Stop Loss', icon: '🛑' },
+      expired: { color: 'bg-surface-2 text-foreground border-border', label: 'Expired', icon: '⏰' },
+      closed: { color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light', label: 'Closed', icon: '✓' }
     };
 
     const status = config[post.recommendation_status];
@@ -407,15 +407,15 @@ export default function AdvisorProfile() {
   const getPlanColor = (planName) => {
     const name = planName?.toLowerCase();
     if (name?.includes('vip') || name?.includes('diamond') || name?.includes('gold')) {
-      return 'from-amber-500 to-orange-600';
+      return 'from-hold to-hold';
     }
     if (name?.includes('premium') || name?.includes('pro') || name?.includes('plus')) {
-      return 'from-purple-500 to-pink-600';
+      return 'from-protocall-deep to-protocall-blue';
     }
     if (name?.includes('basic') || name?.includes('starter') || name?.includes('momentum')) {
-      return 'from-blue-500 to-cyan-600';
+      return 'from-protocall-deep to-protocall-blue';
     }
-    return 'from-indigo-500 to-purple-600';
+    return 'from-protocall-deep to-protocall-blue';
   };
 
   const getPlanIcon = (planName) => {
@@ -434,7 +434,7 @@ export default function AdvisorProfile() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-2 p-6 flex items-center justify-center">
         <LoadingSpinner size="lg" text="Loading advisor profile..." />
       </div>
     );
@@ -442,7 +442,7 @@ export default function AdvisorProfile() {
 
   if (error || !advisor) {
     return (
-      <div className="min-h-screen bg-slate-50 p-6">
+      <div className="min-h-screen bg-surface-2 p-6">
         <div className="max-w-4xl mx-auto">
           <Link to={createPageUrl("Advisors")}>
             <Button variant="outline" className="mb-4 flex items-center gap-2">
@@ -450,15 +450,15 @@ export default function AdvisorProfile() {
               Back to Advisors
             </Button>
           </Link>
-          <Card className="border-red-200">
+          <Card className="border-sell/30">
             <CardContent className="p-12 text-center">
-              <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-8 h-8 text-red-600" />
+              <div className="w-16 h-16 rounded-full bg-sell-muted flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-8 h-8 text-sell-muted-foreground" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-800 mb-2">
+              <h2 className="text-2xl font-bold text-foreground mb-2">
                 {error || 'Advisor Not Found'}
               </h2>
-              <p className="text-slate-600 mb-6">
+              <p className="text-subtle mb-6">
                 The advisor you're looking for could not be loaded. Please try again or contact support.
               </p>
               <div className="flex gap-3 justify-center">
@@ -478,10 +478,10 @@ export default function AdvisorProfile() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-slate-50 p-6">
+      <div className="min-h-screen bg-surface-2 p-6">
         <div className="max-w-7xl mx-auto space-y-8">
           <Link to={createPageUrl("Advisors")}>
-            <Button variant="outline" className="mb-4 flex items-center gap-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50">
+            <Button variant="outline" className="mb-4 flex items-center gap-2 hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2">
               <ArrowLeft className="w-4 h-4" />
               Back to Advisors
             </Button>
@@ -489,7 +489,7 @@ export default function AdvisorProfile() {
 
           {/* PROFILE HEADER WITH RATING SUMMARY */}
           <Card className="overflow-hidden border-0 shadow-xl rounded-xl">
-            <div className="bg-gradient-to-r from-blue-500 via-blue-600 to-purple-600 h-32 rounded-t-xl" />
+            <div className="bg-gradient-to-r from-protocall-deep via-protocall-grape to-protocall-blue h-32 rounded-t-xl" />
             <div className="p-8 flex flex-col md:flex-row items-start gap-8 -mt-16">
               <img
                 src={advisor.profile_image_url || `https://avatar.vercel.sh/${advisor.display_name}.png`}
@@ -498,19 +498,19 @@ export default function AdvisorProfile() {
               />
               <div className="pt-16 flex-1">
                 <div className="flex flex-wrap items-center gap-3 mb-3">
-                  <h1 className="text-3xl font-bold text-slate-800">{advisor.display_name}</h1>
-                  <Badge className="bg-green-500 hover:bg-green-600 text-white font-medium px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-md">
+                  <h1 className="text-3xl font-bold text-foreground">{advisor.display_name}</h1>
+                  <Badge className="bg-buy hover:bg-buy text-buy-foreground font-medium px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-md">
                     <Shield className="w-4 h-4" />
                     SEBI Verified
                   </Badge>
                   {averageRating > 0 && (
-                    <Badge variant="outline" className="bg-amber-50 border-amber-200 text-amber-800 font-bold px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-sm">
-                      <Star className="w-4 h-4 fill-current text-amber-500" />
+                    <Badge variant="outline" className="bg-hold-muted border-hold/30 text-hold-muted-foreground font-bold px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-sm">
+                      <Star className="w-4 h-4 fill-current text-hold" />
                       {averageRating}/5 ({reviews.length} reviews)
                     </Badge>
                   )}
                 </div>
-                <div className="flex items-center gap-6 mb-4 text-sm text-slate-600">
+                <div className="flex items-center gap-6 mb-4 text-sm text-subtle">
                   <div className="flex items-center gap-1">
                     <Users className="w-4 h-4" />
                     <span>{advisor.follower_count || 0} Subscribers</span>
@@ -520,10 +520,10 @@ export default function AdvisorProfile() {
                     <span>{advisor.success_rate || 'N/A'}% Success Rate</span>
                   </div>
                 </div>
-                <p className="text-slate-600 leading-relaxed mb-4">{advisor.bio}</p>
+                <p className="text-subtle leading-relaxed mb-4">{advisor.bio}</p>
                 <div className="flex flex-wrap gap-2">
                   {advisor.specialization?.map((spec) => (
-                    <Badge key={spec} variant="secondary" className="bg-blue-100 text-blue-700 rounded-lg px-3 py-1">
+                    <Badge key={spec} variant="secondary" className="bg-premium-muted text-protocall-blue rounded-lg px-3 py-1">
                       {spec}
                     </Badge>
                   ))}
@@ -534,9 +534,9 @@ export default function AdvisorProfile() {
 
           {/* SUBSCRIPTION PLANS - NEW DESIGN */}
           < Card className="rounded-xl shadow-lg" >
-            <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
+            <CardHeader className="border-b bg-surface-2">
               <CardTitle className="text-2xl">Choose Your Plan</CardTitle>
-              <p className="text-sm text-slate-600 mt-1">
+              <p className="text-sm text-subtle mt-1">
                 Select a subscription plan to access exclusive advisory content
               </p>
             </CardHeader>
@@ -547,7 +547,7 @@ export default function AdvisorProfile() {
                     const activeSubs = 0; // You can calculate this if needed
 
                     return (
-                      <Card key={plan.id} className={`relative overflow-hidden hover:shadow-2xl transition-all duration-300 ${plan.is_active ? 'border-2 border-purple-200' : 'border-2 border-gray-200 opacity-75'
+                      <Card key={plan.id} className={`relative overflow-hidden hover:shadow-2xl transition-all duration-300 ${plan.is_active ? 'border-2 border-protocall-premium-light' : 'border-2 border-border opacity-75'
                         }`}>
                         <div className={`p-6 text-center bg-gradient-to-br ${getPlanColor(plan.name)}`}>
                           <div className="text-4xl mb-2">
@@ -566,15 +566,15 @@ export default function AdvisorProfile() {
 
                         <CardContent className="p-6">
                           {plan.description && (
-                            <p className="text-sm text-slate-600 mb-4 text-center leading-relaxed">
+                            <p className="text-sm text-subtle mb-4 text-center leading-relaxed">
                               {plan.description}
                             </p>
                           )}
 
                           {plan.monthly_post_limit && (
-                            <div className="bg-blue-50 rounded-lg p-3 mb-4 border border-blue-200">
-                              <p className="text-xs text-slate-600 mb-1 text-center">Monthly Post Limit</p>
-                              <p className="text-lg font-bold text-blue-600 text-center">
+                            <div className="bg-premium-muted rounded-lg p-3 mb-4 border border-protocall-premium-light">
+                              <p className="text-xs text-subtle mb-1 text-center">Monthly Post Limit</p>
+                              <p className="text-lg font-bold text-protocall-blue text-center">
                                 {plan.monthly_post_limit} Posts/Month
                               </p>
                             </div>
@@ -582,11 +582,11 @@ export default function AdvisorProfile() {
 
                           {plan.features && plan.features.length > 0 && (
                             <div className="space-y-3 mb-6">
-                              <p className="text-xs font-semibold text-slate-700 text-center uppercase tracking-wide">What's Included</p>
+                              <p className="text-xs font-semibold text-subtle text-center uppercase tracking-wide">What's Included</p>
                               <ul className="space-y-2">
                                 {plan.features.map((feature, idx) => (
-                                  <li key={idx} className="flex items-start gap-2 text-sm text-slate-700">
-                                    <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                                  <li key={idx} className="flex items-start gap-2 text-sm text-subtle">
+                                    <CheckCircle className="w-4 h-4 text-buy-muted-foreground flex-shrink-0 mt-0.5" />
                                     <span>{feature}</span>
                                   </li>
                                 ))}
@@ -600,7 +600,7 @@ export default function AdvisorProfile() {
                                 Currently Subscribed
                               </Button>
                             ) : (
-                              <Button onClick={() => handlePlanSelect(plan)} className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                              <Button onClick={() => handlePlanSelect(plan)} className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
                                 Subscribe to {plan.name}
                               </Button>
                             )}
@@ -611,7 +611,7 @@ export default function AdvisorProfile() {
                   })}
                 </div>
               ) : (
-                <div className="text-center p-8 text-slate-600">
+                <div className="text-center p-8 text-subtle">
                   No subscription plans available yet.
                 </div>
               )}
@@ -620,7 +620,7 @@ export default function AdvisorProfile() {
 
           {/* ADVISORY POSTS */}
           < Card className="rounded-xl shadow-lg" >
-            <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 border-b">
+            <CardHeader className="bg-surface-2 border-b">
               <CardTitle>Recent Advisory Posts</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
@@ -628,7 +628,7 @@ export default function AdvisorProfile() {
                 posts.length > 0 ? (
                   <div className="space-y-4">
                     {posts.map((post) => (
-                      <div key={post.id} className="p-4 border-2 border-slate-200 rounded-xl bg-white hover:shadow-md transition-shadow">
+                      <div key={post.id} className="p-4 border-2 border-border rounded-xl bg-white hover:shadow-md transition-shadow">
                         <div className="flex items-start justify-between mb-2">
                           <h4 className="font-semibold text-lg">{post.title}</h4>
                           <div className="flex items-center gap-2">
@@ -644,7 +644,7 @@ export default function AdvisorProfile() {
 
                         {getRecommendationBadge(post)}
 
-                        <p className="text-sm text-slate-600 mt-2 mb-3">{post.content}</p>
+                        <p className="text-sm text-subtle mt-2 mb-3">{post.content}</p>
                         <div className="flex items-center gap-3 flex-wrap">
                           {post.stock_symbol && (
                             <Badge variant="outline" className="rounded-lg font-semibold">
@@ -653,9 +653,9 @@ export default function AdvisorProfile() {
                           )}
                           {post.recommendation_type && (
                             <Badge className={
-                              post.recommendation_type === 'buy' ? 'bg-green-100 text-green-800' :
-                                post.recommendation_type === 'sell' ? 'bg-red-100 text-red-800' :
-                                  'bg-yellow-100 text-yellow-800'
+                              post.recommendation_type === 'buy' ? 'bg-buy-muted text-buy-muted-foreground' :
+                                post.recommendation_type === 'sell' ? 'bg-sell-muted text-sell-muted-foreground' :
+                                  'bg-hold-muted text-hold-muted-foreground'
                             }>
                               {post.recommendation_type.toUpperCase()}
                             </Badge>
@@ -666,25 +666,25 @@ export default function AdvisorProfile() {
                             </Badge>
                           )}
                           {post.current_price && (
-                            <Badge variant="outline" className="bg-blue-50">
+                            <Badge variant="outline" className="bg-premium-muted">
                               Current: ₹{post.current_price.toFixed(2)}
                             </Badge>
                           )}
                         </div>
-                        <p className="text-xs text-slate-400 mt-3">
+                        <p className="text-xs text-muted-foreground mt-3">
                           Posted {format(new Date(post.created_date), 'MMM d, yyyy h:mm a')}
                         </p>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-slate-500 text-center py-8">No posts available for your subscription plan yet.</p>
+                  <p className="text-muted-foreground text-center py-8">No posts available for your subscription plan yet.</p>
                 )
               ) : (
-                <div className="text-center p-8 bg-slate-100 rounded-xl">
-                  <Lock className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+                <div className="text-center p-8 bg-surface-2 rounded-xl">
+                  <Lock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="font-semibold text-lg">Content Locked</h3>
-                  <p className="text-slate-600 mb-4">
+                  <p className="text-subtle mb-4">
                     Subscribe to one of the plans above to view exclusive advisory posts.
                   </p>
                 </div>
@@ -694,9 +694,9 @@ export default function AdvisorProfile() {
 
           {/* REVIEWS AT BOTTOM */}
           < Card className="rounded-xl shadow-lg" >
-            <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 border-b">
+            <CardHeader className="bg-surface-2 border-b">
               <CardTitle className="flex items-center gap-2">
-                <Star className="w-5 h-5 text-yellow-500" />
+                <Star className="w-5 h-5 text-hold" />
                 Reviews & Ratings
               </CardTitle>
             </CardHeader>
@@ -705,16 +705,16 @@ export default function AdvisorProfile() {
               {reviews.length > 0 && (
                 <div className="grid md:grid-cols-2 gap-8 pb-6 border-b">
                   <div className="text-center">
-                    <div className="text-6xl font-bold text-slate-800 mb-2">{averageRating}</div>
+                    <div className="text-6xl font-bold text-foreground mb-2">{averageRating}</div>
                     <div className="flex justify-center mb-2">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <Star
                           key={star}
-                          className={`w-6 h-6 ${star <= Math.round(averageRating) ? 'text-yellow-500 fill-current' : 'text-gray-300'}`}
+                          className={`w-6 h-6 ${star <= Math.round(averageRating) ? 'text-hold fill-current' : 'text-muted-foreground'}`}
                         />
                       ))}
                     </div>
-                    <p className="text-slate-600">Based on {reviews.length} reviews</p>
+                    <p className="text-subtle">Based on {reviews.length} reviews</p>
                   </div>
                   <div className="space-y-2">
                     {[5, 4, 3, 2, 1].map((rating) => (
@@ -724,7 +724,7 @@ export default function AdvisorProfile() {
                           value={reviews.length > 0 ? (ratingDistribution[rating - 1] / reviews.length) * 100 : 0}
                           className="flex-1 h-2"
                         />
-                        <span className="text-sm w-8 text-slate-600 text-right">
+                        <span className="text-sm w-8 text-subtle text-right">
                           {ratingDistribution[rating - 1]}
                         </span>
                       </div>

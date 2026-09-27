@@ -66,7 +66,7 @@ export default function CreatePostModal({ open, onClose, onSubmit }) {
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-blue-600" />
+            <FileText className="w-5 h-5 text-protocall-blue" />
             Create Advisory Post
           </DialogTitle>
           <DialogDescription>
@@ -183,12 +183,12 @@ export default function CreatePostModal({ open, onClose, onSubmit }) {
             />
           </div>
 
-          <div className="bg-blue-50 p-4 rounded-lg">
+          <div className="bg-premium-muted p-4 rounded-lg">
             <div className="flex items-start gap-3">
-              <TrendingUp className="w-5 h-5 text-blue-600 mt-1" />
+              <TrendingUp className="w-5 h-5 text-protocall-blue mt-1" />
               <div>
-                <h4 className="font-semibold text-blue-800 mb-1">Publishing Guidelines</h4>
-                <ul className="text-sm text-blue-700 space-y-1">
+                <h4 className="font-semibold text-protocall-blue mb-1">Publishing Guidelines</h4>
+                <ul className="text-sm text-protocall-blue space-y-1">
                   <li>• Provide clear rationale for your recommendations</li>
                   <li>• Include relevant technical and fundamental analysis</li>
                   <li>• Always mention risk factors and disclaimers</li>
@@ -205,7 +205,7 @@ export default function CreatePostModal({ open, onClose, onSubmit }) {
             <Button 
               type="submit" 
               disabled={isSubmitting}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-protocall-blue hover:bg-protocall-blue"
             >
               {isSubmitting ? 'Publishing...' : 'Publish Post'}
             </Button>

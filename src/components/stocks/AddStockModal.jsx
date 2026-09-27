@@ -71,7 +71,7 @@ export default function AddStockModal({ open, onClose, watchlist, onAddStock }) 
         <div className="space-y-4 flex-1 overflow-hidden flex flex-col">
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               placeholder="Search stocks by name or symbol..."
               value={searchTerm}
@@ -86,24 +86,24 @@ export default function AddStockModal({ open, onClose, watchlist, onAddStock }) 
             {isSearching ? (
               <div className="text-center py-8">
                 <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
-                <p className="text-slate-500">Searching...</p>
+                <p className="text-muted-foreground">Searching...</p>
               </div>
             ) : searchTerm.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-slate-500">Type at least 2 characters to search stocks</p>
+                <p className="text-muted-foreground">Type at least 2 characters to search stocks</p>
               </div>
             ) : searchedStocks.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-slate-500">No stocks found matching your search</p>
+                <p className="text-muted-foreground">No stocks found matching your search</p>
               </div>
             ) : (
               searchedStocks.map((stock, index) => (
-                <div key={stock.symbol || index} className="flex items-center justify-between p-3 rounded-lg border hover:bg-slate-50">
+                <div key={stock.symbol || index} className="flex items-center justify-between p-3 rounded-lg border hover:bg-surface-2">
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
                       <div>
                         <h4 className="font-semibold">{stock.symbol}</h4>
-                        <p className="text-sm text-slate-500">{stock.name}</p>
+                        <p className="text-sm text-muted-foreground">{stock.name}</p>
                       </div>
                       {stock.exchange && <Badge variant="outline" className="text-xs">
                         {stock.exchange}
@@ -114,7 +114,7 @@ export default function AddStockModal({ open, onClose, watchlist, onAddStock }) 
                   <Button
                     size="sm"
                     onClick={() => onAddStock(stock)}
-                    className="bg-green-600 hover:bg-green-700"
+                    className="bg-buy hover:bg-buy"
                   >
                     <Plus className="w-4 h-4 mr-1" />
                     Add

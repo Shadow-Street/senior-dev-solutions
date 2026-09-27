@@ -88,11 +88,11 @@ export default function PMTradeConsole({ pmProfile }) {
 
   const getStatusBadge = (status) => {
     const config = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' },
-      placed: { color: 'bg-blue-100 text-blue-800', label: 'Placed' },
-      executed: { color: 'bg-green-100 text-green-800', label: 'Executed' },
-      cancelled: { color: 'bg-red-100 text-red-800', label: 'Cancelled' },
-      rejected: { color: 'bg-red-100 text-red-800', label: 'Rejected' }
+      pending: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending' },
+      placed: { color: 'bg-premium-muted text-protocall-blue', label: 'Placed' },
+      executed: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Executed' },
+      cancelled: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Cancelled' },
+      rejected: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Rejected' }
     };
     const { color, label } = config[status] || config.pending;
     return <Badge className={color}>{label}</Badge>;
@@ -105,17 +105,17 @@ export default function PMTradeConsole({ pmProfile }) {
   return (
     <div className="space-y-6">
       {/* Trade Form */}
-      <Card className="bg-gradient-to-br from-blue-50 to-purple-50">
+      <Card className="bg-surface-2">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <ShoppingCart className="w-5 h-5 text-blue-600" />
+            <ShoppingCart className="w-5 h-5 text-protocall-blue" />
             Place Trade Order
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">Select Client</label>
+              <label className="text-sm font-medium text-subtle mb-2 block">Select Client</label>
               <Select value={tradeForm.client_id} onValueChange={(value) => setTradeForm({ ...tradeForm, client_id: value })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Choose client" />
@@ -131,7 +131,7 @@ export default function PMTradeConsole({ pmProfile }) {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">Stock Symbol</label>
+              <label className="text-sm font-medium text-subtle mb-2 block">Stock Symbol</label>
               <Input
                 placeholder="e.g., RELIANCE"
                 value={tradeForm.stock_symbol}
@@ -141,7 +141,7 @@ export default function PMTradeConsole({ pmProfile }) {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">Transaction Type</label>
+              <label className="text-sm font-medium text-subtle mb-2 block">Transaction Type</label>
               <Select value={tradeForm.transaction_type} onValueChange={(value) => setTradeForm({ ...tradeForm, transaction_type: value })}>
                 <SelectTrigger>
                   <SelectValue />
@@ -154,7 +154,7 @@ export default function PMTradeConsole({ pmProfile }) {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">Order Type</label>
+              <label className="text-sm font-medium text-subtle mb-2 block">Order Type</label>
               <Select value={tradeForm.order_type} onValueChange={(value) => setTradeForm({ ...tradeForm, order_type: value })}>
                 <SelectTrigger>
                   <SelectValue />
@@ -168,7 +168,7 @@ export default function PMTradeConsole({ pmProfile }) {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">Quantity</label>
+              <label className="text-sm font-medium text-subtle mb-2 block">Quantity</label>
               <Input
                 type="number"
                 placeholder="Number of shares"
@@ -178,7 +178,7 @@ export default function PMTradeConsole({ pmProfile }) {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">Price</label>
+              <label className="text-sm font-medium text-subtle mb-2 block">Price</label>
               <Input
                 type="number"
                 placeholder="Price per share"
@@ -189,7 +189,7 @@ export default function PMTradeConsole({ pmProfile }) {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-2 block">Order Reason</label>
+            <label className="text-sm font-medium text-subtle mb-2 block">Order Reason</label>
             <Input
               placeholder="Why are you placing this trade?"
               value={tradeForm.order_reason}
@@ -210,7 +210,7 @@ export default function PMTradeConsole({ pmProfile }) {
               Clear
             </Button>
             <Button
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-protocall-blue hover:bg-protocall-blue"
               onClick={handlePlaceOrder}
             >
               Place Order
@@ -226,30 +226,30 @@ export default function PMTradeConsole({ pmProfile }) {
         </CardHeader>
         <CardContent>
           {orders.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">No orders yet</div>
+            <div className="text-center py-8 text-muted-foreground">No orders yet</div>
           ) : (
             <div className="space-y-3">
               {orders.map(order => {
                 const client = clients.find(c => c.id === order.client_id);
                 return (
-                  <div key={order.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div key={order.id} className="flex items-center justify-between p-4 bg-surface-2 rounded-lg">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-1">
-                        <span className="font-bold text-gray-900">{order.stock_symbol}</span>
-                        <Badge className={order.transaction_type === 'buy' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                        <span className="font-bold text-foreground">{order.stock_symbol}</span>
+                        <Badge className={order.transaction_type === 'buy' ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-sell-muted text-sell-muted-foreground'}>
                           {order.transaction_type.toUpperCase()}
                         </Badge>
                         {getStatusBadge(order.status)}
                       </div>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-subtle">
                         {client?.client_name} • {order.quantity} shares @ ₹{order.price}
                       </p>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         {new Date(order.created_date).toLocaleString()}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-gray-900">₹{order.order_value?.toLocaleString()}</p>
+                      <p className="font-bold text-foreground">₹{order.order_value?.toLocaleString()}</p>
                     </div>
                   </div>
                 );

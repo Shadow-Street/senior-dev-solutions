@@ -120,20 +120,20 @@ export default function PledgeManagement({ user }) {
   return (
     <div className="space-y-6">
       {/* Feature Toggle Card */}
-      <Card className="shadow-lg border-0 bg-gradient-to-r from-purple-50 to-indigo-50">
+      <Card className="shadow-lg border-0 bg-surface-2">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Settings className="w-5 h-5 text-purple-600" />
+            <Settings className="w-5 h-5 text-protocall-premium-text" />
             Advisor Pledge Management Feature Control
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between p-4 bg-white rounded-lg border-2 border-purple-200">
+          <div className="flex items-center justify-between p-4 bg-white rounded-lg border-2 border-protocall-premium-light">
             <div className="flex-1">
-              <Label htmlFor="advisor-pledge-toggle" className="text-base font-semibold text-gray-900 cursor-pointer">
+              <Label htmlFor="advisor-pledge-toggle" className="text-base font-semibold text-foreground cursor-pointer">
                 Enable Advisor Pledge Management
               </Label>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-subtle mt-1">
                 When enabled, approved advisors with pledge access will see "Pledge Management" in their dashboard sidebar
               </p>
             </div>
@@ -146,15 +146,15 @@ export default function PledgeManagement({ user }) {
             />
           </div>
           {advisorPledgeEnabled && (
-            <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-sm text-green-800">
+            <div className="mt-3 p-3 bg-buy-muted border border-buy/30 rounded-lg">
+              <p className="text-sm text-buy-muted-foreground">
                 ✓ Advisor Pledge Management is currently <strong>enabled</strong>. Advisors can access pledge features from their dashboard.
               </p>
             </div>
           )}
           {!advisorPledgeEnabled && !isLoadingSettings && (
-            <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-              <p className="text-sm text-orange-800">
+            <div className="mt-3 p-3 bg-hold-muted border border-hold/30 rounded-lg">
+              <p className="text-sm text-hold-muted-foreground">
                 ⚠ Advisor Pledge Management is currently <strong>disabled</strong>. Advisors cannot see or access pledge management features.
               </p>
             </div>
@@ -166,10 +166,10 @@ export default function PledgeManagement({ user }) {
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Target className="w-5 h-5 text-purple-600" />
+            <Target className="w-5 h-5 text-protocall-premium-text" />
             Pledge Pool Management
           </CardTitle>
-          <p className="text-sm text-slate-500">Manage pledge sessions, executions, and user access</p>
+          <p className="text-sm text-muted-foreground">Manage pledge sessions, executions, and user access</p>
         </CardHeader>
       </Card>
 
@@ -181,8 +181,8 @@ export default function PledgeManagement({ user }) {
           >
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'sessions'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
-                : 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md'
+                ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
+                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">
@@ -199,8 +199,8 @@ export default function PledgeManagement({ user }) {
           >
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'access'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
-                : 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md'
+                ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
+                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">
@@ -217,8 +217,8 @@ export default function PledgeManagement({ user }) {
           >
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'advisor-access'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
-                : 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md'
+                ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
+                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">
@@ -235,8 +235,8 @@ export default function PledgeManagement({ user }) {
           >
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'executions'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
-                : 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md'
+                ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
+                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">
@@ -253,8 +253,8 @@ export default function PledgeManagement({ user }) {
           >
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'analytics'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
-                : 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md'
+                ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
+                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">

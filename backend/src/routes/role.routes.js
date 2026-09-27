@@ -22,7 +22,24 @@ router.get('/all', async (req, res) => {
   }
 });
 
-// CRUD routes
+// Role templates
+const templateRouter = express.Router();
+createCrudRoutes(templateRouter, createCrudController(db.RoleTemplate, {
+  defaultOrderBy: 'created_at', defaultOrder: 'DESC'
+}), [authMiddleware]);
+router.use('/templates', templateRouter);
+
+// Template -> permission mappings
+const templatePermRouter = express.Router();
+createCrudRoutes(templatePermRouter, createCrudController(db.RoleTemplatePermission), [authMiddleware]);
+router.use('/template-permissions', templatePermRouter);
+
+// Role -> permission mappings
+const rolePermRouter = express.Router();
+createCrudRoutes(rolePermRouter, createCrudController(db.RolePermission), [authMiddleware]);
+router.use('/permissions', rolePermRouter);
+
+// CRUD LAST — '/:id' must not shadow the sub-routers above.
 createCrudRoutes(router, roleController);
 
 module.exports = router;

@@ -103,7 +103,7 @@ export default function PageModuleModal({ page, user, onClose, onSave }) {
                 required
                 disabled={!!page}
               />
-              <p className="text-xs text-slate-500 mt-1">Unique identifier (lowercase, underscores)</p>
+              <p className="text-xs text-muted-foreground mt-1">Unique identifier (lowercase, underscores)</p>
             </div>
 
             <div>
@@ -135,7 +135,7 @@ export default function PageModuleModal({ page, user, onClose, onSave }) {
                 onChange={(e) => setFormData({ ...formData, route_path: e.target.value })}
                 placeholder="/PledgePool"
               />
-              <p className="text-xs text-slate-500 mt-1">URL path for the page</p>
+              <p className="text-xs text-muted-foreground mt-1">URL path for the page</p>
             </div>
 
             <div>
@@ -145,7 +145,7 @@ export default function PageModuleModal({ page, user, onClose, onSave }) {
                 onChange={(e) => setFormData({ ...formData, icon_name: e.target.value })}
                 placeholder="FileText"
               />
-              <p className="text-xs text-slate-500 mt-1">Lucide icon name</p>
+              <p className="text-xs text-muted-foreground mt-1">Lucide icon name</p>
             </div>
           </div>
 
@@ -228,14 +228,14 @@ export default function PageModuleModal({ page, user, onClose, onSave }) {
               rows={2}
               required
             />
-            <p className="text-xs text-slate-500 mt-1">This will be logged in the audit trail</p>
+            <p className="text-xs text-muted-foreground mt-1">This will be logged in the audit trail</p>
           </div>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+            <Button type="submit" className="bg-protocall-blue hover:bg-protocall-blue">
               {page ? 'Update Page' : 'Create Page'}
             </Button>
           </DialogFooter>

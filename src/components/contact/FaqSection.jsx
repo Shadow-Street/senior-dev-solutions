@@ -43,12 +43,12 @@ export default function FaqSection() {
     <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg h-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <HelpCircle className="w-6 h-6 text-slate-700" />
+          <HelpCircle className="w-6 h-6 text-subtle" />
           Frequently Asked Questions
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-slate-600 mb-6">
+        <p className="text-subtle mb-6">
           Before contacting us, you may find your answer here:
         </p>
         <Accordion type="single" collapsible className="w-full">
@@ -57,7 +57,7 @@ export default function FaqSection() {
               <AccordionTrigger>{faq.question}</AccordionTrigger>
               <AccordionContent className="space-y-3">
                 <p>{faq.answer}</p>
-                <Link to={faq.link} className="text-blue-600 hover:underline text-sm font-semibold">
+                <Link to={faq.link} className="text-protocall-blue hover:underline text-sm font-semibold">
                   Go to page →
                 </Link>
               </AccordionContent>

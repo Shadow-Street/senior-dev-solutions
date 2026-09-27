@@ -13,6 +13,7 @@ const stockController = createCrudController(db.Stock, {
 router.get('/market-data', MarketController.getMarketData); // New endpoint for overall market view
 router.get('/search-live', MarketController.search); // Live search using Yahoo Finance
 router.get('/:symbol/price', MarketController.getStockPrice); // New endpoint for specific stock
+router.get('/:symbol/candles', MarketController.getCandles); // Intraday OHLC for charts
 
 // Custom Search (can optionally be moved to controller later)
 router.get('/search', async (req, res) => {

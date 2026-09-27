@@ -1,218 +1,151 @@
+import apiClient from '@/lib/apiClient';
+
+/**
+ * Browser-side market data client.
+ *
+ * Every request is proxied through this application's own backend
+ * (`/api/stocks/*`), which talks to Finnhub server-side. The provider key lives
+ * in FINNHUB_API_KEY on the server and is never shipped to the browser.
+ *
+ * The public surface (getStockPrice, getMultipleStocks, searchStocks,
+ * subscribe, getTrendingStocks, getMarketStatus) is unchanged, so existing
+ * callers keep working.
+ */
 class LiveStockAPI {
   constructor() {
     this.cache = new Map();
-    this.cacheTimeout = 300000; // 5 minutes cache to reduce API calls
-    this.apiKey = "ac64de7fe95c4f90ba42d449a51c2c7d";
-    this.baseUrl = "https://api.twelvedata.com";
+    this.cacheTimeout = 60_000; // 1 minute — the backend caches upstream too
     this.subscribers = new Map();
-    this.requestQueue = [];
-    this.isProcessingQueue = false;
-    this.requestCount = 0;
-    this.requestResetTime = Date.now() + 60000; // Reset every minute
-    this.maxRequestsPerMinute = 6; // Conservative limit (leave 2 buffer)
   }
 
-  // Rate limiting management
-  canMakeRequest() {
-    const now = Date.now();
-    
-    // Reset counter every minute
-    if (now >= this.requestResetTime) {
-      this.requestCount = 0;
-      this.requestResetTime = now + 60000;
-    }
-    
-    return this.requestCount < this.maxRequestsPerMinute;
-  }
-
-  incrementRequestCount() {
-    this.requestCount++;
-  }
-
-  // Get market status
+  /** Indian markets trade 09:15–15:30 IST, Mon–Fri. */
   getMarketStatus() {
     const now = new Date();
-    const day = now.getUTCDay();
-    const hours = now.getUTCHours();
-    
+    // IST is UTC+5:30; derive it without pulling in a date library.
+    const ist = new Date(now.getTime() + (5.5 * 60 - now.getTimezoneOffset()) * 60_000);
+    const day = ist.getDay();
+    const minutes = ist.getHours() * 60 + ist.getMinutes();
+
     const isWeekday = day >= 1 && day <= 5;
-    const isMarketTime = hours >= 4 && hours < 10;
-    
-    return { 
-      isOpen: isWeekday && isMarketTime,
-      status: isWeekday && isMarketTime ? "Market Open" : "Market Closed"
-    };
+    const isSession = minutes >= 9 * 60 + 15 && minutes <= 15 * 60 + 30;
+    const isOpen = isWeekday && isSession;
+
+    return { isOpen, status: isOpen ? 'Market Open' : 'Market Closed' };
   }
 
-  // Get trending stocks
+  /**
+   * Default watchlist. The authoritative list lives on the server
+   * (MARKET_SYMBOLS); this is only the seed used before the first response
+   * arrives. Prefer getTrendingStocksLive() where an await is possible.
+   */
   getTrendingStocks() {
-    return ['RELIANCE', 'TCS', 'HDFCBANK', 'INFY', 'ICICIBANK', 'BHARTIARTL'];
+    return ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'NVDA', 'META'];
   }
 
-  // Generate fallback data when API fails
-  generateFallbackData(symbol) {
-    const basePrices = {
-      'RELIANCE': 2456.75,
-      'TCS': 3842.50,
-      'HDFCBANK': 1654.30,
-      'INFY': 1567.25,
-      'ICICIBANK': 956.40,
-      'BHARTIARTL': 1234.80,
-      'SBIN': 542.30,
-      'ITC': 458.90
-    };
-
-    const basePrice = basePrices[symbol] || 1000;
-    const changePercent = (Math.random() - 0.5) * 4; // -2% to +2%
-    const currentPrice = basePrice * (1 + changePercent / 100);
-    const changeAmount = currentPrice - basePrice;
-
-    return {
-      symbol,
-      company_name: `${symbol} Limited`,
-      current_price: Math.round(currentPrice * 100) / 100,
-      change_percent: Math.round(changePercent * 100) / 100,
-      change_amount: Math.round(changeAmount * 100) / 100,
-      day_high: Math.round(currentPrice * 1.02 * 100) / 100,
-      day_low: Math.round(currentPrice * 0.98 * 100) / 100,
-      previous_close: basePrice,
-      volume: Math.floor(Math.random() * 1000000) + 500000,
-      exchange: 'NSE',
-      last_updated: new Date().toISOString(),
-      isFallback: true
-    };
+  /** Server-resolved watchlist symbols. */
+  async getTrendingStocksLive() {
+    const market = await this.getMarketData();
+    const symbols = (market?.stocks || []).map(s => s.symbol);
+    return symbols.length ? symbols : this.getTrendingStocks();
   }
 
-  // Process request queue with rate limiting
-  async processRequestQueue() {
-    if (this.isProcessingQueue || this.requestQueue.length === 0) return;
-    
-    this.isProcessingQueue = true;
-    
-    while (this.requestQueue.length > 0 && this.canMakeRequest()) {
-      const { symbol, resolve, reject } = this.requestQueue.shift();
-      
-      try {
-        const data = await this.fetchStockFromAPI(symbol);
-        resolve(data);
-      } catch (error) {
-        // Use fallback data instead of rejecting
-        const fallbackData = this.generateFallbackData(symbol);
-        this.cache.set(symbol, { ...fallbackData, timestamp: Date.now() });
-        resolve(fallbackData);
-      }
-      
-      // Wait 10 seconds between API calls to be extra safe
-      if (this.requestQueue.length > 0) {
-        await new Promise(resolve => setTimeout(resolve, 10000));
-      }
-    }
-    
-    this.isProcessingQueue = false;
-    
-    // Process remaining requests with fallback data
-    while (this.requestQueue.length > 0) {
-      const { symbol, resolve } = this.requestQueue.shift();
-      const fallbackData = this.generateFallbackData(symbol);
-      this.cache.set(symbol, { ...fallbackData, timestamp: Date.now() });
-      resolve(fallbackData);
-    }
+  _cached(key) {
+    const hit = this.cache.get(key);
+    if (hit && Date.now() - hit.at < this.cacheTimeout) return hit.value;
+    return undefined;
   }
 
-  // Actual API fetch method
-  async fetchStockFromAPI(symbol) {
-    this.incrementRequestCount();
-    
-    const response = await fetch(
-      `${this.baseUrl}/quote?symbol=${symbol}&exchange=NSE&apikey=${this.apiKey}`
-    );
-    
-    const data = await response.json();
-
-    if (data.status === "error" || !data.symbol) {
-      throw new Error(data.message || `No data for ${symbol}`);
-    }
-
-    return this.formatApiResponse(data);
+  _store(key, value) {
+    this.cache.set(key, { value, at: Date.now() });
+    return value;
   }
 
-  // Format API response
-  formatApiResponse(data) {
-    return {
-      symbol: data.symbol,
-      company_name: data.name,
-      current_price: parseFloat(data.close) || 0,
-      change_percent: parseFloat(data.percent_change) || 0,
-      change_amount: parseFloat(data.change) || 0,
-      day_high: parseFloat(data.high) || 0,
-      day_low: parseFloat(data.low) || 0,
-      previous_close: parseFloat(data.previous_close) || 0,
-      volume: parseInt(data.volume, 10) || 0,
-      exchange: data.exchange,
-      last_updated: data.datetime,
-      isFallback: false
-    };
+  /**
+   * Dashboard aggregate: { stocks, gainers, losers, indices, meta }.
+   * Throws on failure so callers can render a real error state rather than
+   * silently displaying invented numbers.
+   */
+  async getMarketData() {
+    const cached = this._cached('market-data');
+    if (cached) return cached;
+
+    const { data } = await apiClient.get('/stocks/market-data');
+    return this._store('market-data', data);
   }
 
-  // Main method to get stock price
+  /** Single quote. Returns null when the symbol has no data. */
   async getStockPrice(symbol) {
     if (!symbol) return null;
+    const key = `quote:${symbol}`;
+    const cached = this._cached(key);
+    if (cached !== undefined) return cached;
 
-    // Check cache first (5 minute cache)
-    const cached = this.cache.get(symbol);
-    if (cached && (Date.now() - cached.timestamp) < this.cacheTimeout) {
-      return cached;
+    try {
+      const { data } = await apiClient.get(`/stocks/${encodeURIComponent(symbol)}/price`);
+      return this._store(key, data);
+    } catch (error) {
+      if (error?.response?.status === 404) return this._store(key, null);
+      throw error;
     }
-
-    // If rate limit exceeded, return cached data or fallback
-    if (!this.canMakeRequest()) {
-      if (cached) {
-        return cached; // Return stale cache
-      } else {
-        const fallbackData = this.generateFallbackData(symbol);
-        this.cache.set(symbol, { ...fallbackData, timestamp: Date.now() });
-        return fallbackData;
-      }
-    }
-
-    // Add to request queue
-    return new Promise((resolve, reject) => {
-      this.requestQueue.push({ symbol, resolve, reject });
-      this.processRequestQueue();
-    });
   }
 
-  // Fetch multiple stocks with proper queuing
-  async getMultipleStocks(symbols) {
-    const promises = symbols.map(symbol => this.getStockPrice(symbol));
-    const results = await Promise.all(promises);
-    return results.filter(r => r !== null);
+  /** Quotes for several symbols; failures are dropped, not thrown. */
+  async getMultipleStocks(symbols = []) {
+    const results = await Promise.allSettled(symbols.map(s => this.getStockPrice(s)));
+    return results
+      .filter(r => r.status === 'fulfilled' && r.value)
+      .map(r => r.value);
   }
 
-  // Subscribe to updates (much less frequent)
-  subscribe(symbol, callback) {
+  /** Intraday OHLC series for charts. */
+  async getCandles(symbol, resolution = '5') {
+    const key = `candles:${symbol}:${resolution}`;
+    const cached = this._cached(key);
+    if (cached) return cached;
+
+    const { data } = await apiClient.get(
+      `/stocks/${encodeURIComponent(symbol)}/candles`,
+      { params: { resolution } }
+    );
+    return this._store(key, data?.series || []);
+  }
+
+  /** Symbol lookup. */
+  async searchStocks(query) {
+    if (!query || query.trim().length < 1) return [];
+    const { data } = await apiClient.get('/stocks/search-live', { params: { q: query.trim() } });
+    return Array.isArray(data) ? data : [];
+  }
+
+  /**
+   * Poll a symbol. Returns an unsubscribe function.
+   * The interval is cleared once the last subscriber for the symbol leaves.
+   */
+  subscribe(symbol, callback, intervalMs = 60_000) {
     if (!this.subscribers.has(symbol)) {
-      this.subscribers.set(symbol, []);
+      this.subscribers.set(symbol, { callbacks: [], timer: null });
     }
-    this.subscribers.get(symbol).push(callback);
+    const entry = this.subscribers.get(symbol);
+    entry.callbacks.push(callback);
 
-    // Start periodic updates (every 2 minutes to respect limits)
-    const updateInterval = setInterval(async () => {
-      const data = await this.getStockPrice(symbol);
-      if (data && this.subscribers.has(symbol)) {
-        this.subscribers.get(symbol).forEach(cb => cb(data));
-      }
-    }, 120000); // 2 minutes
-
-    // Return unsubscribe function
-    return () => {
-      clearInterval(updateInterval);
-      const symbolSubscribers = this.subscribers.get(symbol);
-      if (symbolSubscribers) {
-        const index = symbolSubscribers.indexOf(callback);
-        if (index > -1) {
-          symbolSubscribers.splice(index, 1);
+    if (!entry.timer) {
+      entry.timer = setInterval(async () => {
+        try {
+          const data = await this.getStockPrice(symbol);
+          if (data) entry.callbacks.forEach(cb => cb(data));
+        } catch {
+          // A transient poll failure must not tear down the subscription.
         }
+      }, intervalMs);
+    }
+
+    return () => {
+      const index = entry.callbacks.indexOf(callback);
+      if (index > -1) entry.callbacks.splice(index, 1);
+      if (entry.callbacks.length === 0 && entry.timer) {
+        clearInterval(entry.timer);
+        entry.timer = null;
+        this.subscribers.delete(symbol);
       }
     };
   }
@@ -220,3 +153,4 @@ class LiveStockAPI {
 
 // Export singleton instance
 export const stockAPI = new LiveStockAPI();
+export default stockAPI;

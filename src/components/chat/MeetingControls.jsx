@@ -103,14 +103,14 @@ export default function MeetingControls({ chatRoomId, stockSymbol, onMeetingStar
   return (
     <>
       {activeMeeting ? (
-        <Card className="bg-gradient-to-r from-green-500 to-blue-600 text-white border-0">
+        <Card className="bg-gradient-to-r from-buy to-protocall-blue text-white border-0">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                <div className="w-3 h-3 bg-sell rounded-full animate-pulse"></div>
                 <div>
                   <p className="font-semibold">Meeting Active</p>
-                  <p className="text-xs text-green-100 line-clamp-1 max-w-[200px]">
+                  <p className="text-xs text-buy-muted-foreground line-clamp-1 max-w-[200px]">
                     {activeMeeting.meeting_url}
                   </p>
                 </div>
@@ -131,7 +131,7 @@ export default function MeetingControls({ chatRoomId, stockSymbol, onMeetingStar
                   size="sm"
                   variant="secondary"
                   onClick={() => window.open(activeMeeting.meeting_url, '_blank')}
-                  className="bg-white text-blue-600 hover:bg-blue-50"
+                  className="bg-white text-protocall-blue hover:bg-premium-muted"
                 >
                   <Video className="w-4 h-4 mr-2" />
                   Join
@@ -149,14 +149,14 @@ export default function MeetingControls({ chatRoomId, stockSymbol, onMeetingStar
           </CardContent>
         </Card>
       ) : (
-        <Card className="border-dashed border-2 border-slate-200 bg-slate-50">
+        <Card className="border-dashed border-2 border-border bg-surface-2">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Video className="w-5 h-5 text-slate-400" />
+                <Video className="w-5 h-5 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium text-slate-700">Start Live Meeting</p>
-                  <p className="text-xs text-slate-500">Video call with room members</p>
+                  <p className="text-sm font-medium text-subtle">Start Live Meeting</p>
+                  <p className="text-xs text-muted-foreground">Video call with room members</p>
                 </div>
               </div>
               <Button
@@ -166,7 +166,7 @@ export default function MeetingControls({ chatRoomId, stockSymbol, onMeetingStar
                 }}
                 disabled={isLoading}
                 size="sm"
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-protocall-blue hover:bg-protocall-blue"
               >
                 <Video className="w-4 h-4 mr-2" />
                 Start
@@ -189,7 +189,7 @@ export default function MeetingControls({ chatRoomId, stockSymbol, onMeetingStar
               onChange={(e) => setCustomMeetingUrl(e.target.value)}
               className="mt-2"
             />
-            <p className="text-xs text-slate-500 mt-2">
+            <p className="text-xs text-muted-foreground mt-2">
               Paste your Google Meet, Zoom, or Teams link here. If empty, a random link will be generated.
             </p>
           </div>

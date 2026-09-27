@@ -298,62 +298,62 @@ export default function ParticipantManagementModal({ open, onClose, room, curren
           <button
             onClick={() => setFilter('all')}
             className={`p-3 rounded-lg border transition-colors ${
-              filter === 'all' ? 'bg-blue-50 border-blue-300' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+              filter === 'all' ? 'bg-premium-muted border-protocall-premium-light' : 'bg-surface-2 border-border hover:bg-surface-2'
             }`}
           >
-            <Users className="w-5 h-5 text-blue-600 mx-auto mb-1" />
-            <p className="text-2xl font-bold text-slate-900">{stats.total}</p>
-            <p className="text-xs text-slate-600">Total</p>
+            <Users className="w-5 h-5 text-protocall-blue mx-auto mb-1" />
+            <p className="text-2xl font-bold text-foreground">{stats.total}</p>
+            <p className="text-xs text-subtle">Total</p>
           </button>
 
           <button
             onClick={() => setFilter('online')}
             className={`p-3 rounded-lg border transition-colors ${
-              filter === 'online' ? 'bg-green-50 border-green-300' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+              filter === 'online' ? 'bg-buy-muted border-buy/30' : 'bg-surface-2 border-border hover:bg-surface-2'
             }`}
           >
-            <div className="w-3 h-3 bg-green-500 rounded-full mx-auto mb-2 animate-pulse"></div>
-            <p className="text-2xl font-bold text-slate-900">{stats.online}</p>
-            <p className="text-xs text-slate-600">Online</p>
+            <div className="w-3 h-3 bg-buy rounded-full mx-auto mb-2 animate-pulse"></div>
+            <p className="text-2xl font-bold text-foreground">{stats.online}</p>
+            <p className="text-xs text-subtle">Online</p>
           </button>
 
           <button
             onClick={() => setFilter('moderators')}
             className={`p-3 rounded-lg border transition-colors ${
-              filter === 'moderators' ? 'bg-purple-50 border-purple-300' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+              filter === 'moderators' ? 'bg-premium-muted border-protocall-premium-light' : 'bg-surface-2 border-border hover:bg-surface-2'
             }`}
           >
-            <Shield className="w-5 h-5 text-purple-600 mx-auto mb-1" />
-            <p className="text-2xl font-bold text-slate-900">{stats.moderators}</p>
-            <p className="text-xs text-slate-600">Moderators</p>
+            <Shield className="w-5 h-5 text-protocall-premium-text mx-auto mb-1" />
+            <p className="text-2xl font-bold text-foreground">{stats.moderators}</p>
+            <p className="text-xs text-subtle">Moderators</p>
           </button>
 
           <button
             onClick={() => setFilter('muted')}
             className={`p-3 rounded-lg border transition-colors ${
-              filter === 'muted' ? 'bg-orange-50 border-orange-300' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+              filter === 'muted' ? 'bg-hold-muted border-hold/30' : 'bg-surface-2 border-border hover:bg-surface-2'
             }`}
           >
-            <Ban className="w-5 h-5 text-orange-600 mx-auto mb-1" />
-            <p className="text-2xl font-bold text-slate-900">{stats.muted}</p>
-            <p className="text-xs text-slate-600">Muted</p>
+            <Ban className="w-5 h-5 text-hold-muted-foreground mx-auto mb-1" />
+            <p className="text-2xl font-bold text-foreground">{stats.muted}</p>
+            <p className="text-xs text-subtle">Muted</p>
           </button>
 
           <button
             onClick={() => setFilter('banned')}
             className={`p-3 rounded-lg border transition-colors ${
-              filter === 'banned' ? 'bg-red-50 border-red-300' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+              filter === 'banned' ? 'bg-sell-muted border-sell/30' : 'bg-surface-2 border-border hover:bg-surface-2'
             }`}
           >
-            <UserX className="w-5 h-5 text-red-600 mx-auto mb-1" />
-            <p className="text-2xl font-bold text-slate-900">{stats.banned}</p>
-            <p className="text-xs text-slate-600">Banned</p>
+            <UserX className="w-5 h-5 text-sell-muted-foreground mx-auto mb-1" />
+            <p className="text-2xl font-bold text-foreground">{stats.banned}</p>
+            <p className="text-xs text-subtle">Banned</p>
           </button>
         </div>
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <Input
             placeholder="Search participants..."
             value={searchTerm}
@@ -366,12 +366,12 @@ export default function ParticipantManagementModal({ open, onClose, room, curren
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {isLoading ? (
             <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-protocall-blue mx-auto"></div>
             </div>
           ) : filteredParticipants.length === 0 ? (
             <div className="text-center py-8">
-              <Users className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-              <p className="text-slate-600">No participants found</p>
+              <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+              <p className="text-subtle">No participants found</p>
             </div>
           ) : (
             filteredParticipants.map(participant => {
@@ -383,7 +383,7 @@ export default function ParticipantManagementModal({ open, onClose, room, curren
               const isBanned = participant.is_banned;
 
               return (
-                <div key={participant.id} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                <div key={participant.id} className="flex items-center gap-3 p-3 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
                   <div className="relative">
                     <Avatar className="h-10 w-10">
                       <AvatarFallback style={{ backgroundColor: user.profile_color || '#3B82F6', color: 'white' }}>
@@ -391,44 +391,44 @@ export default function ParticipantManagementModal({ open, onClose, room, curren
                       </AvatarFallback>
                     </Avatar>
                     {participant.is_online && (
-                      <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                      <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-buy rounded-full border-2 border-white"></div>
                     )}
                   </div>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="font-medium text-slate-900 truncate">{user.display_name || user.email}</p>
+                      <p className="font-medium text-foreground truncate">{user.display_name || user.email}</p>
                       
                       {participant.role === 'moderator' && (
-                        <Badge className="bg-purple-100 text-purple-800">
+                        <Badge className="bg-premium-muted text-protocall-premium-text">
                           <Shield className="w-3 h-3 mr-1" />
                           Moderator
                         </Badge>
                       )}
                       
                       {participant.role === 'admin' && (
-                        <Badge className="bg-blue-100 text-blue-800">
+                        <Badge className="bg-premium-muted text-protocall-blue">
                           <Crown className="w-3 h-3 mr-1" />
                           Admin
                         </Badge>
                       )}
                       
                       {isMuted && (
-                        <Badge className="bg-orange-100 text-orange-800">
+                        <Badge className="bg-hold-muted text-hold-muted-foreground">
                           <Ban className="w-3 h-3 mr-1" />
                           Muted
                         </Badge>
                       )}
                       
                       {isBanned && (
-                        <Badge className="bg-red-100 text-red-800">
+                        <Badge className="bg-sell-muted text-sell-muted-foreground">
                           <UserX className="w-3 h-3 mr-1" />
                           Banned
                         </Badge>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-3 text-xs text-slate-600 mt-1">
+                    <div className="flex items-center gap-3 text-xs text-subtle mt-1">
                       {participant.message_count > 0 && (
                         <span className="flex items-center gap-1">
                           <MessageSquare className="w-3 h-3" />
@@ -442,7 +442,7 @@ export default function ParticipantManagementModal({ open, onClose, room, curren
                         </span>
                       )}
                       {isMuted && participant.muted_until && (
-                        <span className="flex items-center gap-1 text-orange-600">
+                        <span className="flex items-center gap-1 text-hold-muted-foreground">
                           <AlertTriangle className="w-3 h-3" />
                           Until {new Date(participant.muted_until).toLocaleTimeString()}
                         </span>
@@ -460,7 +460,7 @@ export default function ParticipantManagementModal({ open, onClose, room, curren
                               size="sm"
                               variant="outline"
                               onClick={() => handleUnmute(participant)}
-                              className="text-green-600 hover:text-green-800"
+                              className="text-buy-muted-foreground hover:text-buy-muted-foreground"
                             >
                               Unmute
                             </Button>
@@ -469,7 +469,7 @@ export default function ParticipantManagementModal({ open, onClose, room, curren
                               size="sm"
                               variant="outline"
                               onClick={() => handleMute(participant)}
-                              className="text-orange-600 hover:text-orange-800"
+                              className="text-hold-muted-foreground hover:text-hold-muted-foreground"
                             >
                               Mute
                             </Button>
@@ -497,7 +497,7 @@ export default function ParticipantManagementModal({ open, onClose, room, curren
                             size="sm"
                             variant="outline"
                             onClick={() => handleKick(participant)}
-                            className="text-blue-600 hover:text-blue-800"
+                            className="text-protocall-blue hover:text-protocall-blue"
                           >
                             Kick
                           </Button>
@@ -506,7 +506,7 @@ export default function ParticipantManagementModal({ open, onClose, room, curren
                             size="sm"
                             variant="outline"
                             onClick={() => handleBan(participant)}
-                            className="text-red-600 hover:text-red-800"
+                            className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                           >
                             Ban
                           </Button>
@@ -518,7 +518,7 @@ export default function ParticipantManagementModal({ open, onClose, room, curren
                           size="sm"
                           variant="outline"
                           onClick={() => handleUnban(participant)}
-                          className="text-green-600 hover:text-green-800"
+                          className="text-buy-muted-foreground hover:text-buy-muted-foreground"
                         >
                           Unban
                         </Button>

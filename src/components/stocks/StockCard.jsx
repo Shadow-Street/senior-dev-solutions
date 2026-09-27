@@ -131,10 +131,10 @@ export default function StockCard({ stock, onRemove, onSell, showRemove = false,
 
   const getAdviceColor = (advice) => {
     switch (advice) {
-      case 'buy': return 'bg-green-50 border-green-200 text-green-800';
-      case 'sell': return 'bg-red-50 border-red-200 text-red-800';
-      case 'hold': return 'bg-amber-50 border-amber-200 text-amber-800';
-      default: return 'bg-gray-50 border-gray-200 text-gray-800';
+      case 'buy': return 'bg-buy-muted border-buy/30 text-buy-muted-foreground';
+      case 'sell': return 'bg-sell-muted border-sell/30 text-sell-muted-foreground';
+      case 'hold': return 'bg-hold-muted border-hold/30 text-hold-muted-foreground';
+      default: return 'bg-surface-2 border-border text-foreground';
     }
   };
 
@@ -171,10 +171,10 @@ export default function StockCard({ stock, onRemove, onSell, showRemove = false,
           <div className="flex items-start justify-between">
             <div>
               <CardTitle className="text-lg">{stock.symbol}</CardTitle>
-              <p className="text-xs text-slate-500 truncate">{stock.company_name}</p>
+              <p className="text-xs text-muted-foreground truncate">{stock.company_name}</p>
             </div>
             {stock.is_trending &&
-              <Badge className="bg-orange-100 text-orange-800 text-xs">
+              <Badge className="bg-hold-muted text-hold-muted-foreground text-xs">
                 Trending
               </Badge>
             }
@@ -186,9 +186,9 @@ export default function StockCard({ stock, onRemove, onSell, showRemove = false,
             {/* Price Section */}
             <div className="space-y-2 mb-4">
               <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold text-slate-900">₹{stock.current_price?.toFixed(2)}</span>
+                <span className="text-2xl font-bold text-foreground">₹{stock.current_price?.toFixed(2)}</span>
                 <Badge
-                  variant="outline" className={`${isPositive ? "bg-green-100 text-green-800 border-green-200" : "bg-red-100 text-red-800 border-red-200"}`}>
+                  variant="outline" className={`${isPositive ? "bg-buy-muted text-buy-muted-foreground border-buy/30" : "bg-sell-muted text-sell-muted-foreground border-sell/30"}`}>
                   {isPositive ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
                   {isPositive ? '+' : ''}{stock.change_percent?.toFixed(2)}%
                 </Badge>
@@ -196,20 +196,20 @@ export default function StockCard({ stock, onRemove, onSell, showRemove = false,
 
               {/* User Investment & Profit/Loss */}
               {!isLoading &&
-                <div className="bg-slate-50 rounded-lg p-3">
+                <div className="bg-surface-2 rounded-lg p-3">
                   {userInvestment && profitLossData ?
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-slate-600">Avg. Buy Price</span>
+                        <span className="text-sm text-subtle">Avg. Buy Price</span>
                         <span className="text-sm font-medium">₹{userInvestment.avg_buy_price?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-slate-600">Quantity</span>
+                        <span className="text-sm text-subtle">Quantity</span>
                         <span className="text-sm font-medium">{userInvestment.quantity}</span>
                       </div>
                       <div className="flex justify-between items-center border-t pt-2 mt-2">
-                        <span className="text-sm text-slate-600">P&L</span>
-                        <span className={`text-sm font-bold ${profitLossData.profitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <span className="text-sm text-subtle">P&L</span>
+                        <span className={`text-sm font-bold ${profitLossData.profitLoss >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
                           {profitLossData.profitLoss >= 0 ? '+' : ''}₹{profitLossData.profitLoss?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           ({profitLossData.profitLoss >= 0 ? '+' : ''}{profitLossData.profitLossPercent?.toFixed(1)}%)
                         </span>
@@ -217,7 +217,7 @@ export default function StockCard({ stock, onRemove, onSell, showRemove = false,
                     </div> :
 
                     <div className="text-center">
-                      <span className="text-sm text-slate-400">No investment data</span>
+                      <span className="text-sm text-muted-foreground">No investment data</span>
                     </div>
                   }
                 </div>
@@ -227,8 +227,8 @@ export default function StockCard({ stock, onRemove, onSell, showRemove = false,
             {/* Premium Advice Section */}
             {!isLoading && isPremium && communityAdvice &&
               <div className="space-y-2 mb-4">
-                <h4 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                  <Crown className="w-4 h-4 text-purple-500" />
+                <h4 className="text-sm font-semibold text-subtle flex items-center gap-2">
+                  <Crown className="w-4 h-4 text-protocall-premium-light" />
                   Community & Advisor Insights
                 </h4>
                 <div className={`rounded-lg p-3 border ${getAdviceColor(communityAdvice.consensus)}`}>
@@ -260,13 +260,13 @@ export default function StockCard({ stock, onRemove, onSell, showRemove = false,
             {/* Navigation Buttons */}
             <div className="grid grid-cols-2 gap-2 mb-3">
               <Link to={createPageUrl("ChatRooms", { stockSymbol: stock.symbol })}>
-                <Button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg">
+                <Button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg">
                   <MessageSquare className="w-3 h-3" />
                   Chat
                 </Button>
               </Link>
               <Link to={createPageUrl("Polls", { stockSymbol: stock.symbol })}>
-                <Button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg">
+                <Button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg">
                   <BarChart3 className="w-3 h-3" />
                   Poll
                 </Button>
@@ -278,7 +278,7 @@ export default function StockCard({ stock, onRemove, onSell, showRemove = false,
               <div className="grid grid-cols-2 gap-2">
                 <Button
                   onClick={() => onSell(stock)}
-                  className="w-full bg-red-500 hover:bg-red-600 text-white"
+                  className="w-full bg-protocall-sell-text hover:bg-sell text-white"
                 >
                   <TrendingDown className="w-4 h-4 mr-2" />
                   Sell
@@ -286,7 +286,7 @@ export default function StockCard({ stock, onRemove, onSell, showRemove = false,
                 <Button
                   onClick={() => setShowAlertModal(true)}
                   variant="outline"
-                  className="w-full hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50">
+                  className="w-full hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2">
                   <Bell className="w-4 h-4 mr-2" />
                   Set Alert
                 </Button>
@@ -296,7 +296,7 @@ export default function StockCard({ stock, onRemove, onSell, showRemove = false,
                 <Button
                   onClick={() => setShowAlertModal(true)}
                   variant="outline"
-                  className="w-full hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50">
+                  className="w-full hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2">
                   <Bell className="w-4 h-4 mr-2" />
                   Set Alert
                 </Button>

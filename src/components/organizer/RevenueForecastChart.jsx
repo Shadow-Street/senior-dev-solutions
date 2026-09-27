@@ -80,26 +80,26 @@ export default function RevenueForecastChart({ events, tickets, stats }) {
     <div className="space-y-6">
       {/* Forecast Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+        <Card className="bg-gradient-to-br from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-5">
             <TrendingUp className="w-8 h-8 mb-2 text-white/80" />
-            <p className="text-sm text-blue-100">Projected Annual Revenue</p>
+            <p className="text-sm text-protocall-blue">Projected Annual Revenue</p>
             <p className="text-3xl font-bold mt-1">₹{(projectedAnnualRevenue / 1000).toFixed(1)}k</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white">
+        <Card className="bg-buy-soft text-buy-foreground">
           <CardContent className="p-5">
             <Target className="w-8 h-8 mb-2 text-white/80" />
-            <p className="text-sm text-green-100">Expected Growth</p>
+            <p className="text-sm text-buy-muted-foreground">Expected Growth</p>
             <p className="text-3xl font-bold mt-1">+{expectedGrowth.toFixed(1)}%</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+        <Card className="bg-gradient-to-br from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-5">
             <DollarSign className="w-8 h-8 mb-2 text-white/80" />
-            <p className="text-sm text-purple-100">Next Month Forecast</p>
+            <p className="text-sm text-protocall-premium-text">Next Month Forecast</p>
             <p className="text-3xl font-bold mt-1">
               ₹{((forecastData.find(d => !d.isHistorical)?.forecast || 0) / 1000).toFixed(1)}k
             </p>
@@ -111,10 +111,10 @@ export default function RevenueForecastChart({ events, tickets, stats }) {
       <Card className="shadow-lg border-0">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-blue-600" />
+            <TrendingUp className="w-5 h-5 text-protocall-blue" />
             Revenue Forecast (12 Months)
           </CardTitle>
-          <p className="text-sm text-slate-600">Historical data + AI-powered forecast based on your trends</p>
+          <p className="text-sm text-subtle">Historical data + AI-powered forecast based on your trends</p>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={400}>
@@ -142,7 +142,7 @@ export default function RevenueForecastChart({ events, tickets, stats }) {
               <Area 
                 type="monotone" 
                 dataKey="actual" 
-                stroke="#10B981" 
+                stroke="hsl(var(--chart-2))" 
                 fill="url(#colorActual)" 
                 name="Actual Revenue"
                 strokeWidth={3}
@@ -150,7 +150,7 @@ export default function RevenueForecastChart({ events, tickets, stats }) {
               <Area 
                 type="monotone" 
                 dataKey="forecast" 
-                stroke="#3B82F6" 
+                stroke="hsl(var(--chart-1))" 
                 fill="url(#colorForecast)" 
                 name="Forecasted Revenue"
                 strokeDasharray="5 5"
@@ -159,8 +159,8 @@ export default function RevenueForecastChart({ events, tickets, stats }) {
             </AreaChart>
           </ResponsiveContainer>
 
-          <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-sm text-blue-900">
+          <div className="mt-4 p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
+            <p className="text-sm text-protocall-blue">
               <strong>💡 Forecast Insights:</strong> Based on your current growth trend (+{expectedGrowth.toFixed(1)}% month-over-month), 
               you're projected to earn ₹{(projectedAnnualRevenue / 1000).toFixed(1)}k in the next 12 months. 
               Keep creating quality events to maintain this trajectory!

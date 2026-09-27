@@ -23,12 +23,12 @@ export default function LiveSessionStats({ session, stats }) {
       {/* Live Countdown Timer */}
       {countdown && !countdown.expired && (
         <div className="flex items-center gap-2 text-sm">
-          <Clock className="w-4 h-4 text-orange-500 animate-pulse" />
-          <span className="font-medium text-gray-700">
-            Ends in: <span className="text-orange-600 font-semibold">{countdown.display}</span>
+          <Clock className="w-4 h-4 text-hold animate-pulse" />
+          <span className="font-medium text-subtle">
+            Ends in: <span className="text-hold-muted-foreground font-semibold">{countdown.display}</span>
           </span>
           {countdown.totalSeconds < 3600 && (
-            <Badge className="bg-orange-100 text-orange-700 border-orange-200 animate-pulse">
+            <Badge className="bg-hold-muted text-hold-muted-foreground border-hold/30 animate-pulse">
               Ending Soon!
             </Badge>
           )}
@@ -36,7 +36,7 @@ export default function LiveSessionStats({ session, stats }) {
       )}
 
       {countdown?.expired && (
-        <Badge className="bg-red-100 text-red-700 border-red-200">
+        <Badge className="bg-sell-muted text-sell-muted-foreground border-sell/30">
           <Clock className="w-3 h-3 mr-1" />
           Expired
         </Badge>
@@ -45,34 +45,34 @@ export default function LiveSessionStats({ session, stats }) {
       {/* Live Stats */}
       <div className="grid grid-cols-3 gap-4 mt-3">
         <div className="flex items-center gap-2">
-          <Users className="w-4 h-4 text-blue-600" />
+          <Users className="w-4 h-4 text-protocall-blue" />
           <div>
-            <p className="text-xs text-gray-500">Pledgers</p>
-            <p className="text-sm font-semibold text-gray-900">
+            <p className="text-xs text-muted-foreground">Pledgers</p>
+            <p className="text-sm font-semibold text-foreground">
               {displayStats.unique_pledgers_count}
-              {stats && <Activity className="w-3 h-3 inline ml-1 text-green-500 animate-pulse" />}
+              {stats && <Activity className="w-3 h-3 inline ml-1 text-positive animate-pulse" />}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-purple-600" />
+          <TrendingUp className="w-4 h-4 text-protocall-premium-text" />
           <div>
-            <p className="text-xs text-gray-500">Total Pledges</p>
-            <p className="text-sm font-semibold text-gray-900">
+            <p className="text-xs text-muted-foreground">Total Pledges</p>
+            <p className="text-sm font-semibold text-foreground">
               {displayStats.total_pledges}
-              {stats && <Activity className="w-3 h-3 inline ml-1 text-green-500 animate-pulse" />}
+              {stats && <Activity className="w-3 h-3 inline ml-1 text-positive animate-pulse" />}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <DollarSign className="w-4 h-4 text-green-600" />
+          <DollarSign className="w-4 h-4 text-buy-muted-foreground" />
           <div>
-            <p className="text-xs text-gray-500">Total Value</p>
-            <p className="text-sm font-semibold text-gray-900">
+            <p className="text-xs text-muted-foreground">Total Value</p>
+            <p className="text-sm font-semibold text-foreground">
               ₹{(displayStats.total_pledge_value / 1000).toFixed(1)}K
-              {stats && <Activity className="w-3 h-3 inline ml-1 text-green-500 animate-pulse" />}
+              {stats && <Activity className="w-3 h-3 inline ml-1 text-positive animate-pulse" />}
             </p>
           </div>
         </div>
@@ -85,30 +85,30 @@ export default function LiveSessionStats({ session, stats }) {
             const fillPercentage = (displayStats.total_pledges / session.capacity) * 100;
             return (
               <div className="space-y-1">
-                <div className="flex justify-between text-xs text-gray-600">
+                <div className="flex justify-between text-xs text-subtle">
                   <span>Capacity</span>
-                  <span className={fillPercentage >= 90 ? 'text-red-600 font-semibold' : ''}>
+                  <span className={fillPercentage >= 90 ? 'text-sell-muted-foreground font-semibold' : ''}>
                     {displayStats.total_pledges} / {session.capacity}
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-border rounded-full h-2">
                   <div
                     className={`h-2 rounded-full transition-all duration-500 ${
-                      fillPercentage >= 100 ? 'bg-red-500' :
-                      fillPercentage >= 80 ? 'bg-orange-500 animate-pulse' :
-                      fillPercentage >= 50 ? 'bg-yellow-500' :
-                      'bg-green-500'
+                      fillPercentage >= 100 ? 'bg-sell' :
+                      fillPercentage >= 80 ? 'bg-hold animate-pulse' :
+                      fillPercentage >= 50 ? 'bg-hold' :
+                      'bg-buy'
                     }`}
                     style={{ width: `${Math.min(fillPercentage, 100)}%` }}
                   ></div>
                 </div>
                 {fillPercentage >= 80 && fillPercentage < 100 && (
-                  <p className="text-xs text-orange-600 font-medium animate-pulse">
+                  <p className="text-xs text-hold-muted-foreground font-medium animate-pulse">
                     ⚠️ Filling up fast! Only {session.capacity - displayStats.total_pledges} spots left
                   </p>
                 )}
                 {fillPercentage >= 100 && (
-                  <p className="text-xs text-red-600 font-semibold">
+                  <p className="text-xs text-sell-muted-foreground font-semibold">
                     🔴 Session Full - No more pledges accepted
                   </p>
                 )}

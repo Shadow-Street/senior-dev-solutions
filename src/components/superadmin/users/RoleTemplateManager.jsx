@@ -271,10 +271,10 @@ export default function RoleTemplateManager({ currentAdmin }) {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <Settings className="w-5 h-5 text-purple-600" />
+                <Settings className="w-5 h-5 text-protocall-premium-text" />
                 Role Template Management
               </CardTitle>
-              <p className="text-sm text-slate-600 mt-1">
+              <p className="text-sm text-subtle mt-1">
                 Create and manage role templates with predefined permissions for easy user assignment.
               </p>
             </div>
@@ -284,7 +284,7 @@ export default function RoleTemplateManager({ currentAdmin }) {
                 Export Report
               </Button>
               {canManageTemplates && (
-                <Button onClick={() => openModal()} className="bg-purple-600 hover:bg-purple-700">
+                <Button onClick={() => openModal()} className="bg-primary hover:bg-primary">
                   <PlusCircle className="w-4 h-4 mr-2" />
                   Create Template
                 </Button>
@@ -303,21 +303,21 @@ export default function RoleTemplateManager({ currentAdmin }) {
                 const templatePerms = permissions.filter(p => templatePermIds.includes(p.id));
                 
                 return (
-                  <div key={template.id} className="bg-slate-50 p-4 rounded-lg border">
+                  <div key={template.id} className="bg-surface-2 p-4 rounded-lg border">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-semibold text-slate-800">{template.name}</h3>
-                          <Badge className={template.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                          <h3 className="text-lg font-semibold text-foreground">{template.name}</h3>
+                          <Badge className={template.is_active ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-surface-2 text-foreground'}>
                             {template.is_active ? 'Active' : 'Inactive'}
                           </Badge>
-                          <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                          <Badge variant="outline" className="bg-premium-muted text-protocall-blue">
                             <Users className="w-3 h-3 mr-1" />
                             {template.user_count} users
                           </Badge>
                         </div>
                         
-                        <p className="text-sm text-slate-600 mb-3">{template.description}</p>
+                        <p className="text-sm text-subtle mb-3">{template.description}</p>
                         
                         <div className="flex flex-wrap gap-1 mb-2">
                           {templatePerms.slice(0, 5).map(perm => (
@@ -332,7 +332,7 @@ export default function RoleTemplateManager({ currentAdmin }) {
                           )}
                         </div>
                         
-                        <div className="text-xs text-slate-500">
+                        <div className="text-xs text-muted-foreground">
                           Created by {template.created_by_name} on {new Date(template.created_date).toLocaleDateString()}
                         </div>
                       </div>
@@ -353,7 +353,7 @@ export default function RoleTemplateManager({ currentAdmin }) {
                                 setDeletingTemplate(template);
                                 setShowDeleteDialog(true);
                               }}
-                              className="text-red-600 hover:text-red-800"
+                              className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -367,9 +367,9 @@ export default function RoleTemplateManager({ currentAdmin }) {
               
               {templates.length === 0 && (
                 <div className="text-center py-12">
-                  <Settings className="mx-auto h-12 w-12 text-slate-400" />
-                  <h3 className="mt-2 text-sm font-medium text-slate-900">No templates found</h3>
-                  <p className="mt-1 text-sm text-slate-500">Create your first role template to get started.</p>
+                  <Settings className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <h3 className="mt-2 text-sm font-medium text-foreground">No templates found</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">Create your first role template to get started.</p>
                 </div>
               )}
             </div>
@@ -417,8 +417,8 @@ export default function RoleTemplateManager({ currentAdmin }) {
               <h4 className="text-lg font-semibold mb-4">Permissions</h4>
               <div className="space-y-4">
                 {Object.entries(permissionsByCategory).map(([category, categoryPerms]) => (
-                  <div key={category} className="bg-slate-50 p-4 rounded-lg">
-                    <h5 className="font-medium mb-3 text-slate-800">{category}</h5>
+                  <div key={category} className="bg-surface-2 p-4 rounded-lg">
+                    <h5 className="font-medium mb-3 text-foreground">{category}</h5>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       {categoryPerms.map(permission => (
                         <div key={permission.id} className="flex items-center space-x-2">
@@ -426,7 +426,7 @@ export default function RoleTemplateManager({ currentAdmin }) {
                             checked={formData.selectedPermissions.includes(permission.id)}
                             onCheckedChange={() => handlePermissionToggle(permission.id)}
                           />
-                          <label className="text-sm text-slate-700">{permission.description}</label>
+                          <label className="text-sm text-subtle">{permission.description}</label>
                         </div>
                       ))}
                     </div>
@@ -439,7 +439,7 @@ export default function RoleTemplateManager({ currentAdmin }) {
               <Button variant="outline" onClick={() => setShowModal(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleSave} className="bg-purple-600 hover:bg-purple-700">
+              <Button onClick={handleSave} className="bg-primary hover:bg-primary">
                 {editingTemplate ? 'Update Template' : 'Create Template'}
               </Button>
             </div>
@@ -459,7 +459,7 @@ export default function RoleTemplateManager({ currentAdmin }) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction onClick={handleDelete} className="bg-sell hover:bg-sell">
               Delete Template
             </AlertDialogAction>
           </AlertDialogFooter>

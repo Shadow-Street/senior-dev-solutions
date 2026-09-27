@@ -66,12 +66,12 @@ export default function ManageSite({ settings, onChange }) {
       <DisableContentCreatorsPage />
 
       {/* Info Banner */}
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+      <div className="bg-premium-muted border border-protocall-premium-light rounded-xl p-4">
         <div className="flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+          <AlertCircle className="w-5 h-5 text-protocall-blue mt-0.5 flex-shrink-0" />
           <div>
-            <h4 className="font-semibold text-blue-800">Site Configuration</h4>
-            <p className="text-sm text-blue-700 mt-1">
+            <h4 className="font-semibold text-protocall-blue">Site Configuration</h4>
+            <p className="text-sm text-protocall-blue mt-1">
               Configure your platform's basic information and social media presence. These settings appear across your application.
             </p>
           </div>
@@ -80,28 +80,28 @@ export default function ManageSite({ settings, onChange }) {
 
       {/* Combined Site Settings Card */}
       <Card className="shadow-lg border-0 bg-white">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b"> {/* Retaining original header style */}
+        <CardHeader className="bg-surface-2 border-b"> {/* Retaining original header style */}
           <CardTitle className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg">
+            <div className="p-2 bg-gradient-to-r from-protocall-deep to-protocall-blue rounded-lg">
               <Globe className="w-5 h-5 text-white" /> {/* Outline specified Globe icon */}
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-gray-800">Site Settings</h3> {/* Outline specified Site Settings title */}
-              <p className="text-sm text-gray-600 mt-1">Manage your platform's core details and online presence</p>
+              <h3 className="text-xl font-semibold text-foreground">Site Settings</h3> {/* Outline specified Site Settings title */}
+              <p className="text-sm text-subtle mt-1">Manage your platform's core details and online presence</p>
             </div>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-8"> {/* Increased space-y for sections */}
           {/* Basic Information Section */}
           <div>
-            <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-              <Building className="w-5 h-5 text-indigo-600" />
+            <h4 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+              <Building className="w-5 h-5 text-protocall-blue" />
               Platform Details
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="site_name" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-blue-600" />
+                <Label htmlFor="site_name" className="text-sm font-semibold text-subtle flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-protocall-blue" />
                   Platform Name
                 </Label>
                 <Input
@@ -109,13 +109,13 @@ export default function ManageSite({ settings, onChange }) {
                   value={localSettings.site_name}
                   onChange={(e) => handleInputChange('site_name', e.target.value)}
                   placeholder="Enter platform name"
-                  className="border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg"
+                  className="border-border focus:border-protocall-blue focus:ring-2 focus:ring-protocall-premium-light rounded-lg"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="contact_email" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-green-600" />
+                <Label htmlFor="contact_email" className="text-sm font-semibold text-subtle flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-buy-muted-foreground" />
                   Contact Email
                 </Label>
                 <Input
@@ -124,13 +124,13 @@ export default function ManageSite({ settings, onChange }) {
                   value={localSettings.contact_email}
                   onChange={(e) => handleInputChange('contact_email', e.target.value)}
                   placeholder="support@yourplatform.com"
-                  className="border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 rounded-lg"
+                  className="border-border focus:border-buy focus:ring-2 focus:ring-buy/30 rounded-lg"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="contact_phone" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-purple-600" />
+                <Label htmlFor="contact_phone" className="text-sm font-semibold text-subtle flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-protocall-premium-text" />
                   Contact Phone
                 </Label>
                 <Input
@@ -138,13 +138,13 @@ export default function ManageSite({ settings, onChange }) {
                   value={localSettings.contact_phone}
                   onChange={(e) => handleInputChange('contact_phone', e.target.value)}
                   placeholder="+91 98765 43210"
-                  className="border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 rounded-lg"
+                  className="border-border focus:border-primary focus:ring-2 focus:ring-protocall-premium-light rounded-lg"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="company_address" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-red-600" />
+                <Label htmlFor="company_address" className="text-sm font-semibold text-subtle flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-sell-muted-foreground" />
                   Company Address
                 </Label>
                 <Input
@@ -152,14 +152,14 @@ export default function ManageSite({ settings, onChange }) {
                   value={localSettings.company_address}
                   onChange={(e) => handleInputChange('company_address', e.target.value)}
                   placeholder="Mumbai, India"
-                  className="border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200 rounded-lg"
+                  className="border-border focus:border-sell focus:ring-2 focus:ring-sell/30 rounded-lg"
                 />
               </div>
             </div>
 
             <div className="space-y-2 mt-6"> {/* Added top margin for description to separate from other inputs */}
-              <Label htmlFor="site_description" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <Building className="w-4 h-4 text-indigo-600" />
+              <Label htmlFor="site_description" className="text-sm font-semibold text-subtle flex items-center gap-2">
+                <Building className="w-4 h-4 text-protocall-blue" />
                 Platform Description
               </Label>
               <Textarea
@@ -168,21 +168,21 @@ export default function ManageSite({ settings, onChange }) {
                 onChange={(e) => handleInputChange('site_description', e.target.value)}
                 placeholder="Brief description of your platform"
                 rows={3}
-                className="border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 rounded-lg resize-none"
+                className="border-border focus:border-protocall-blue focus:ring-2 focus:ring-protocall-premium-light rounded-lg resize-none"
               />
             </div>
           </div>
 
           {/* Social Media Links Section */}
-          <div className="pt-6 border-t border-gray-100"> {/* Added top border for visual separation */}
-            <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-              <Globe className="w-5 h-5 text-purple-600" />
+          <div className="pt-6 border-t border-divider"> {/* Added top border for visual separation */}
+            <h4 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+              <Globe className="w-5 h-5 text-protocall-premium-text" />
               Social Media Presence
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="facebook_url" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Facebook className="w-4 h-4 text-blue-600" />
+                <Label htmlFor="facebook_url" className="text-sm font-semibold text-subtle flex items-center gap-2">
+                  <Facebook className="w-4 h-4 text-protocall-blue" />
                   Facebook Page
                 </Label>
                 <Input
@@ -190,13 +190,13 @@ export default function ManageSite({ settings, onChange }) {
                   value={localSettings.facebook_url}
                   onChange={(e) => handleInputChange('facebook_url', e.target.value)}
                   placeholder="https://facebook.com/yourpage"
-                  className="border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg"
+                  className="border-border focus:border-protocall-blue focus:ring-2 focus:ring-protocall-premium-light rounded-lg"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="twitter_url" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Twitter className="w-4 h-4 text-sky-500" />
+                <Label htmlFor="twitter_url" className="text-sm font-semibold text-subtle flex items-center gap-2">
+                  <Twitter className="w-4 h-4 text-protocall-premium-light" />
                   Twitter/X Profile
                 </Label>
                 <Input
@@ -204,13 +204,13 @@ export default function ManageSite({ settings, onChange }) {
                   value={localSettings.twitter_url}
                   onChange={(e) => handleInputChange('twitter_url', e.target.value)}
                   placeholder="https://twitter.com/yourhandle"
-                  className="border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-200 rounded-lg"
+                  className="border-border focus:border-protocall-blue focus:ring-2 focus:ring-protocall-premium-light rounded-lg"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="instagram_url" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Instagram className="w-4 h-4 text-pink-600" />
+                <Label htmlFor="instagram_url" className="text-sm font-semibold text-subtle flex items-center gap-2">
+                  <Instagram className="w-4 h-4 text-protocall-premium-text" />
                   Instagram Profile
                 </Label>
                 <Input
@@ -218,13 +218,13 @@ export default function ManageSite({ settings, onChange }) {
                   value={localSettings.instagram_url}
                   onChange={(e) => handleInputChange('instagram_url', e.target.value)}
                   placeholder="https://instagram.com/yourhandle"
-                  className="border-gray-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 rounded-lg"
+                  className="border-border focus:border-primary focus:ring-2 focus:ring-protocall-premium-light rounded-lg"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="linkedin_url" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Linkedin className="w-4 h-4 text-blue-700" />
+                <Label htmlFor="linkedin_url" className="text-sm font-semibold text-subtle flex items-center gap-2">
+                  <Linkedin className="w-4 h-4 text-protocall-blue" />
                   LinkedIn Company Page
                 </Label>
                 <Input
@@ -232,13 +232,13 @@ export default function ManageSite({ settings, onChange }) {
                   value={localSettings.linkedin_url}
                   onChange={(e) => handleInputChange('linkedin_url', e.target.value)}
                   placeholder="https://linkedin.com/company/yourcompany"
-                  className="border-gray-200 focus:border-blue-700 focus:ring-2 focus:ring-blue-200 rounded-lg"
+                  className="border-border focus:border-protocall-blue focus:ring-2 focus:ring-protocall-premium-light rounded-lg"
                 />
               </div>
 
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="youtube_url" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Youtube className="w-4 h-4 text-red-600" />
+                <Label htmlFor="youtube_url" className="text-sm font-semibold text-subtle flex items-center gap-2">
+                  <Youtube className="w-4 h-4 text-sell-muted-foreground" />
                   YouTube Channel
                 </Label>
                 <Input
@@ -246,7 +246,7 @@ export default function ManageSite({ settings, onChange }) {
                   value={localSettings.youtube_url}
                   onChange={(e) => handleInputChange('youtube_url', e.target.value)}
                   placeholder="https://youtube.com/channel/yourchannelid"
-                  className="border-gray-200 focus:border-red-500 focus:ring-2 focus:ring-red-200 rounded-lg"
+                  className="border-border focus:border-sell focus:ring-2 focus:ring-sell/30 rounded-lg"
                 />
               </div>
             </div>
@@ -259,7 +259,7 @@ export default function ManageSite({ settings, onChange }) {
         <Button 
           onClick={handleSave} 
           disabled={isSaving}
-          className="px-8 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+          className="px-8 py-2 bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
         >
           {isSaving ? 'Saving...' : 'Save Site Settings'}
         </Button>

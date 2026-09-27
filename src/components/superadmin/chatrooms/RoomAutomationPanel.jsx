@@ -162,19 +162,19 @@ export default function RoomAutomationPanel({ adminUser }) {
   };
 
   const scheduleTypeConfig = {
-    announcement: { icon: MessageSquare, color: 'text-blue-600', label: 'Announcement' },
-    meeting: { icon: Video, color: 'text-purple-600', label: 'Meeting' },
-    open_close: { icon: Clock, color: 'text-green-600', label: 'Open/Close' },
-    read_only_toggle: { icon: Edit, color: 'text-orange-600', label: 'Read-Only Toggle' },
-    cleanup: { icon: Trash2, color: 'text-red-600', label: 'Cleanup' }
+    announcement: { icon: MessageSquare, color: 'text-protocall-blue', label: 'Announcement' },
+    meeting: { icon: Video, color: 'text-protocall-premium-text', label: 'Meeting' },
+    open_close: { icon: Clock, color: 'text-buy-muted-foreground', label: 'Open/Close' },
+    read_only_toggle: { icon: Edit, color: 'text-hold-muted-foreground', label: 'Read-Only Toggle' },
+    cleanup: { icon: Trash2, color: 'text-sell-muted-foreground', label: 'Cleanup' }
   };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 font-medium">Loading Automation...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <p className="text-lg text-subtle font-medium">Loading Automation...</p>
         </div>
       </div>
     );
@@ -188,7 +188,7 @@ export default function RoomAutomationPanel({ adminUser }) {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold">Room Automation & Scheduling</h3>
-              <p className="text-sm text-slate-600">Automate room actions and schedule recurring tasks</p>
+              <p className="text-sm text-subtle">Automate room actions and schedule recurring tasks</p>
             </div>
             <Button onClick={() => { resetForm(); setShowCreateModal(true); }}>
               <Plus className="w-4 h-4 mr-2" />
@@ -200,7 +200,7 @@ export default function RoomAutomationPanel({ adminUser }) {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -212,7 +212,7 @@ export default function RoomAutomationPanel({ adminUser }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white">
+        <Card className="bg-buy-soft text-buy-foreground">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -224,7 +224,7 @@ export default function RoomAutomationPanel({ adminUser }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -236,7 +236,7 @@ export default function RoomAutomationPanel({ adminUser }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+        <Card className="bg-hold text-hold-foreground">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -258,9 +258,9 @@ export default function RoomAutomationPanel({ adminUser }) {
           <div className="space-y-3">
             {schedules.length === 0 ? (
               <div className="text-center py-12">
-                <Clock className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                <p className="text-slate-600 font-medium">No schedules created yet</p>
-                <p className="text-slate-500 text-sm mt-1">Create your first automated schedule</p>
+                <Clock className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <p className="text-subtle font-medium">No schedules created yet</p>
+                <p className="text-muted-foreground text-sm mt-1">Create your first automated schedule</p>
               </div>
             ) : (
               schedules.map(schedule => {
@@ -269,39 +269,39 @@ export default function RoomAutomationPanel({ adminUser }) {
                 const Icon = config.icon;
 
                 return (
-                  <div key={schedule.id} className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                  <div key={schedule.id} className="flex items-center gap-4 p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
                     <div className={`w-12 h-12 rounded-full bg-white flex items-center justify-center ${config.color}`}>
                       <Icon className="w-6 h-6" />
                     </div>
 
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <p className="font-medium text-slate-900">{room?.name || 'Unknown Room'}</p>
+                        <p className="font-medium text-foreground">{room?.name || 'Unknown Room'}</p>
                         <Badge variant="outline" className={config.color}>
                           {config.label}
                         </Badge>
                         {schedule.recurrence !== 'once' && (
-                          <Badge variant="outline" className="text-purple-600">
+                          <Badge variant="outline" className="text-protocall-premium-text">
                             {schedule.recurrence}
                           </Badge>
                         )}
                         {schedule.is_active ? (
-                          <Badge className="bg-green-100 text-green-800">Active</Badge>
+                          <Badge className="bg-buy-muted text-buy-muted-foreground">Active</Badge>
                         ) : (
-                          <Badge className="bg-gray-100 text-gray-800">Inactive</Badge>
+                          <Badge className="bg-surface-2 text-foreground">Inactive</Badge>
                         )}
                       </div>
-                      <p className="text-sm text-slate-600">
+                      <p className="text-sm text-subtle">
                         {schedule.action.replace(/_/g, ' ')} • 
                         Next: {new Date(schedule.next_execution || schedule.scheduled_time).toLocaleString()}
                       </p>
                       {schedule.message_content && (
-                        <p className="text-xs text-slate-500 mt-1 truncate">
+                        <p className="text-xs text-muted-foreground mt-1 truncate">
                           Message: "{schedule.message_content}"
                         </p>
                       )}
                       {schedule.execution_count > 0 && (
-                        <p className="text-xs text-slate-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           Executed {schedule.execution_count} time(s)
                         </p>
                       )}
@@ -330,7 +330,7 @@ export default function RoomAutomationPanel({ adminUser }) {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDelete(schedule.id)}
-                        className="text-red-600 hover:text-red-800"
+                        className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>

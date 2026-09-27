@@ -217,8 +217,8 @@ export default function ChatRoomManagement({ user }) {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 font-medium">Loading Chat Room Management...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <p className="text-lg text-subtle font-medium">Loading Chat Room Management...</p>
         </div>
       </div>
     );
@@ -228,15 +228,15 @@ export default function ChatRoomManagement({ user }) {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Chat Room Management</h2>
-          <p className="text-slate-600">Manage all chat rooms, participants, and messages</p>
+          <h2 className="text-2xl font-bold text-foreground">Chat Room Management</h2>
+          <p className="text-subtle">Manage all chat rooms, participants, and messages</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
             onClick={handleRefresh} 
             variant="outline"
             disabled={isRefreshing}
-            className="bg-white hover:bg-slate-50"
+            className="bg-white hover:bg-surface-2"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
             Refresh
@@ -245,7 +245,7 @@ export default function ChatRoomManagement({ user }) {
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
-          <Button onClick={() => setShowCreateModal(true)} className="bg-cyan-600 hover:bg-cyan-700">
+          <Button onClick={() => setShowCreateModal(true)} className="bg-protocall-blue hover:bg-protocall-blue">
             <Plus className="w-4 h-4 mr-2" />
             Create Room
           </Button>
@@ -253,7 +253,7 @@ export default function ChatRoomManagement({ user }) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-        <Card className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <MessageSquare className="w-8 h-8" />
@@ -265,7 +265,7 @@ export default function ChatRoomManagement({ user }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
+        <Card className="bg-buy-soft text-buy-foreground">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <Activity className="w-8 h-8" />
@@ -277,7 +277,7 @@ export default function ChatRoomManagement({ user }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-purple-500 to-violet-500 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <Badge className="bg-white/20 text-white p-2">
@@ -291,7 +291,7 @@ export default function ChatRoomManagement({ user }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <UsersIcon className="w-8 h-8" />
@@ -303,7 +303,7 @@ export default function ChatRoomManagement({ user }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-orange-500 to-amber-500 text-white">
+        <Card className="bg-hold text-hold-foreground">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <MessageSquare className="w-8 h-8" />
@@ -315,7 +315,7 @@ export default function ChatRoomManagement({ user }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-pink-500 to-rose-500 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-sell text-white">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <BarChart3 className="w-8 h-8" />
@@ -330,43 +330,43 @@ export default function ChatRoomManagement({ user }) {
 
       <Tabs defaultValue="rooms" className="space-y-6">
         <TabsList className="grid grid-cols-10 bg-transparent rounded-lg p-1 gap-2">
-          <TabsTrigger value="rooms" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-xs">
+          <TabsTrigger value="rooms" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white text-xs">
             <MessageSquare className="w-4 h-4 mr-1" />
             Rooms
           </TabsTrigger>
-          <TabsTrigger value="premium" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white text-xs">
+          <TabsTrigger value="premium" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white text-xs">
             <Crown className="w-4 h-4 mr-1" />
             Premium
           </TabsTrigger>
-          <TabsTrigger value="access" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-cyan-600 data-[state=active]:text-white text-xs">
+          <TabsTrigger value="access" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white text-xs">
             <Shield className="w-4 h-4 mr-1" />
             Access
           </TabsTrigger>
-          <TabsTrigger value="vip" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-500 data-[state=active]:to-orange-500 data-[state=active]:text-white text-xs">
+          <TabsTrigger value="vip" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-hold data-[state=active]:to-hold data-[state=active]:text-white text-xs">
             <Star className="w-4 h-4 mr-1" />
             VIP
           </TabsTrigger>
-          <TabsTrigger value="bulk" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-xs">
+          <TabsTrigger value="bulk" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white text-xs">
             <Settings className="w-4 h-4 mr-1" />
             Bulk
           </TabsTrigger>
-          <TabsTrigger value="activity" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-xs">
+          <TabsTrigger value="activity" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white text-xs">
             <Activity className="w-4 h-4 mr-1" />
             Live
           </TabsTrigger>
-          <TabsTrigger value="analytics" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-xs">
+          <TabsTrigger value="analytics" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white text-xs">
             <BarChart3 className="w-4 h-4 mr-1" />
             Analytics
           </TabsTrigger>
-          <TabsTrigger value="automation" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-xs">
+          <TabsTrigger value="automation" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white text-xs">
             <Clock className="w-4 h-4 mr-1" />
             Automation
           </TabsTrigger>
-          <TabsTrigger value="moderation" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-xs">
+          <TabsTrigger value="moderation" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white text-xs">
             <Shield className="w-4 h-4 mr-1" />
             Rules
           </TabsTrigger>
-          <TabsTrigger value="invites" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-xs">
+          <TabsTrigger value="invites" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white text-xs">
             <Link2 className="w-4 h-4 mr-1" />
             Invites
           </TabsTrigger>

@@ -8,29 +8,29 @@ export default function ReferralStats({ stats }) {
       title: "Total Invites Sent",
       value: stats.totalInvites,
       icon: Users,
-      color: "bg-blue-500 text-blue-100",
-      bgColor: "bg-blue-50"
+      color: "bg-protocall-blue text-white",
+      bgColor: "bg-premium-muted"
     },
     {
       title: "Successful Signups",
       value: stats.successfulSignups,
       icon: UserCheck,
-      color: "bg-green-500 text-green-100",
-      bgColor: "bg-green-50"
+      color: "bg-buy text-buy-foreground",
+      bgColor: "bg-buy-muted"
     },
     {
       title: "Active Members",
       value: stats.activeMembers,
       icon: Target,
-      color: "bg-purple-500 text-purple-100",
-      bgColor: "bg-purple-50"
+      color: "bg-primary text-primary-foreground",
+      bgColor: "bg-premium-muted"
     },
     {
       title: "Conversion Rate",
       value: `${stats.conversionRate}%`,
       icon: TrendingUp,
-      color: "bg-orange-500 text-orange-100",
-      bgColor: "bg-orange-50"
+      color: "bg-hold text-hold-foreground",
+      bgColor: "bg-hold-muted"
     }
   ];
 
@@ -41,8 +41,8 @@ export default function ReferralStats({ stats }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-600 font-medium">{stat.title}</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">{stat.value}</p>
+                <p className="text-sm text-subtle font-medium">{stat.title}</p>
+                <p className="text-2xl font-bold text-foreground mt-1">{stat.value}</p>
               </div>
               <div className={`w-12 h-12 rounded-full ${stat.color} flex items-center justify-center`}>
                 <stat.icon className="w-6 h-6" />

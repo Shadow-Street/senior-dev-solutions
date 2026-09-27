@@ -23,7 +23,7 @@ export default function PaginationControls({
 
   return (
     <div className="flex items-center justify-between bg-white px-4 py-3 border-t">
-      <div className="flex items-center gap-2 text-sm text-gray-700">
+      <div className="flex items-center gap-2 text-sm text-subtle">
         <span>Showing {startItem} to {endItem} of {totalItems} results</span>
         <select 
           value={itemsPerPage} 
@@ -62,7 +62,7 @@ export default function PaginationControls({
             variant={currentPage === pageNum ? "default" : "outline"}
             size="sm"
             onClick={() => onPageChange(pageNum)}
-            className={currentPage === pageNum ? "bg-blue-600 text-white" : ""}
+            className={currentPage === pageNum ? "bg-protocall-blue text-white" : ""}
           >
             {pageNum}
           </Button>

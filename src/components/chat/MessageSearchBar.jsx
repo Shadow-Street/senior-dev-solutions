@@ -68,12 +68,12 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
       {/* Search Bar with enhanced design */}
       <div className="flex gap-2">
         <div className="relative flex-1 group">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 group-focus-within:text-blue-600 transition-colors" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 group-focus-within:text-protocall-blue transition-colors" />
           <Input
             placeholder="Search messages..."
             value={searchTerm}
             onChange={(e) => handleSearch(e.target.value)}
-            className="pl-10 pr-10 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+            className="pl-10 pr-10 focus:ring-2 focus:ring-ring focus:border-transparent transition-all duration-200"
           />
           <AnimatePresence>
             {searchTerm && (
@@ -83,7 +83,7 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.2 }}
                 onClick={() => handleSearch('')}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full p-1 transition-all"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-subtle hover:bg-surface-2 rounded-full p-1 transition-all"
               >
                 <X className="w-4 h-4" />
               </motion.button>
@@ -95,7 +95,7 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
           <PopoverTrigger asChild>
             <Button 
               variant="outline" 
-              className="relative hover:bg-blue-50 hover:border-blue-300 transition-all duration-200"
+              className="relative hover:bg-premium-muted hover:border-protocall-premium-light transition-all duration-200"
             >
               <Filter className="w-4 h-4 mr-2" />
               Filters
@@ -107,7 +107,7 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
                     exit={{ scale: 0 }}
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   >
-                    <Badge className="ml-2 bg-blue-600 text-white h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs shadow-md">
+                    <Badge className="ml-2 bg-protocall-blue text-white h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs shadow-md">
                       {activeFilterCount}
                     </Badge>
                   </motion.div>
@@ -115,7 +115,7 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
               </AnimatePresence>
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-80 shadow-xl border-2 border-slate-200" align="end">
+          <PopoverContent className="w-80 shadow-xl border-2 border-border" align="end">
             <motion.div 
               className="space-y-4"
               initial={{ opacity: 0, y: -10 }}
@@ -123,13 +123,13 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
               transition={{ duration: 0.2 }}
             >
               <div className="flex items-center justify-between">
-                <h4 className="font-semibold text-sm text-slate-900">Filter Messages</h4>
+                <h4 className="font-semibold text-sm text-foreground">Filter Messages</h4>
                 {activeFilterCount > 0 && (
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={clearFilters}
-                    className="text-xs hover:bg-red-50 hover:text-red-600 transition-colors"
+                    className="text-xs hover:bg-sell-muted hover:text-sell-muted-foreground transition-colors"
                   >
                     Clear All
                   </Button>
@@ -138,7 +138,7 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
 
               {/* Filter by User */}
               <div>
-                <label className="text-xs font-medium text-slate-600 mb-2 flex items-center gap-1">
+                <label className="text-xs font-medium text-subtle mb-2 flex items-center gap-1">
                   <User className="w-3 h-3" />
                   Filter by User
                 </label>
@@ -146,7 +146,7 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
                   value={filters.userId}
                   onValueChange={(value) => handleFilterChange('userId', value)}
                 >
-                  <SelectTrigger className="hover:border-blue-300 transition-colors">
+                  <SelectTrigger className="hover:border-protocall-premium-light transition-colors">
                     <SelectValue placeholder="All Users" />
                   </SelectTrigger>
                   <SelectContent>
@@ -162,7 +162,7 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
 
               {/* Filter by Message Type */}
               <div>
-                <label className="text-xs font-medium text-slate-600 mb-2 flex items-center gap-1">
+                <label className="text-xs font-medium text-subtle mb-2 flex items-center gap-1">
                   <FileText className="w-3 h-3" />
                   Message Type
                 </label>
@@ -170,7 +170,7 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
                   value={filters.messageType}
                   onValueChange={(value) => handleFilterChange('messageType', value)}
                 >
-                  <SelectTrigger className="hover:border-blue-300 transition-colors">
+                  <SelectTrigger className="hover:border-protocall-premium-light transition-colors">
                     <SelectValue placeholder="All Types" />
                   </SelectTrigger>
                   <SelectContent>
@@ -185,14 +185,14 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
 
               {/* Date Range */}
               <div>
-                <label className="text-xs font-medium text-slate-600 mb-2 flex items-center gap-1">
+                <label className="text-xs font-medium text-subtle mb-2 flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
                   Date Range
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <Popover>
                     <PopoverTrigger asChild>
-                      <Button variant="outline" size="sm" className="justify-start text-left font-normal hover:border-blue-300 transition-colors">
+                      <Button variant="outline" size="sm" className="justify-start text-left font-normal hover:border-protocall-premium-light transition-colors">
                         {filters.dateFrom ? format(filters.dateFrom, 'MMM d') : 'From'}
                       </Button>
                     </PopoverTrigger>
@@ -207,7 +207,7 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
 
                   <Popover>
                     <PopoverTrigger asChild>
-                      <Button variant="outline" size="sm" className="justify-start text-left font-normal hover:border-blue-300 transition-colors">
+                      <Button variant="outline" size="sm" className="justify-start text-left font-normal hover:border-protocall-premium-light transition-colors">
                         {filters.dateTo ? format(filters.dateTo, 'MMM d') : 'To'}
                       </Button>
                     </PopoverTrigger>
@@ -248,7 +248,7 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
                   {users.find(u => u.id === filters.userId)?.display_name || 'User'}
                   <button
                     onClick={() => handleFilterChange('userId', 'all')}
-                    className="ml-1 hover:bg-red-100 hover:text-red-600 rounded-full p-0.5 transition-colors"
+                    className="ml-1 hover:bg-sell-muted hover:text-sell-muted-foreground rounded-full p-0.5 transition-colors"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -268,7 +268,7 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
                   {filters.messageType}
                   <button
                     onClick={() => handleFilterChange('messageType', 'all')}
-                    className="ml-1 hover:bg-red-100 hover:text-red-600 rounded-full p-0.5 transition-colors"
+                    className="ml-1 hover:bg-sell-muted hover:text-sell-muted-foreground rounded-full p-0.5 transition-colors"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -293,7 +293,7 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
                       handleFilterChange('dateFrom', null);
                       handleFilterChange('dateTo', null);
                     }}
-                    className="ml-1 hover:bg-red-100 hover:text-red-600 rounded-full p-0.5 transition-colors"
+                    className="ml-1 hover:bg-sell-muted hover:text-sell-muted-foreground rounded-full p-0.5 transition-colors"
                   >
                     <X className="w-3 h-3" />
                   </button>

@@ -68,14 +68,14 @@ export default function EditMessageModal({ open, onClose, message, onSave }) {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-2 mt-2 text-red-600 text-sm"
+              className="flex items-center gap-2 mt-2 text-sell-muted-foreground text-sm"
             >
               <AlertCircle className="w-4 h-4" />
               {error}
             </motion.div>
           )}
 
-          <p className="text-xs text-slate-500 mt-2">
+          <p className="text-xs text-muted-foreground mt-2">
             {editedContent.length} / 2000 characters
           </p>
         </div>
@@ -91,7 +91,7 @@ export default function EditMessageModal({ open, onClose, message, onSave }) {
           <Button
             onClick={handleSave}
             disabled={isSaving || !editedContent.trim() || editedContent.length > 2000}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-protocall-blue hover:bg-protocall-blue"
           >
             {isSaving ? (
               <>

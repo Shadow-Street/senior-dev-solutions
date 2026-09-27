@@ -92,7 +92,7 @@ export default function EventReviewModal({ open, onClose, event, user, onSuccess
         <div className="space-y-6 py-4">
           {/* Star Rating */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
+            <label className="text-sm font-medium text-subtle">
               Your Rating *
             </label>
             <div className="flex gap-2">
@@ -108,14 +108,14 @@ export default function EventReviewModal({ open, onClose, event, user, onSuccess
                   <Star
                     className={`w-10 h-10 ${
                       star <= (hoverRating || rating)
-                        ? 'fill-yellow-400 text-yellow-400'
-                        : 'text-gray-300'
+                        ? 'fill-hold text-hold'
+                        : 'text-muted-foreground'
                     }`}
                   />
                 </button>
               ))}
             </div>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               {rating === 0 ? 'Click to rate' :
                rating === 1 ? 'Poor' :
                rating === 2 ? 'Fair' :
@@ -127,7 +127,7 @@ export default function EventReviewModal({ open, onClose, event, user, onSuccess
 
           {/* Review Text */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
+            <label className="text-sm font-medium text-subtle">
               Your Review (Optional)
             </label>
             <Textarea
@@ -138,7 +138,7 @@ export default function EventReviewModal({ open, onClose, event, user, onSuccess
               maxLength={500}
               className="resize-none"
             />
-            <p className="text-xs text-gray-500 text-right">
+            <p className="text-xs text-muted-foreground text-right">
               {reviewText.length}/500 characters
             </p>
           </div>
@@ -155,7 +155,7 @@ export default function EventReviewModal({ open, onClose, event, user, onSuccess
             <Button
               onClick={handleSubmit}
               disabled={isSubmitting || rating === 0}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
+              className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white"
             >
               {isSubmitting ? 'Submitting...' : 'Submit Review'}
             </Button>

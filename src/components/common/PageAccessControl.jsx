@@ -24,45 +24,45 @@ export default function PageAccessControl({ pageConfig, user, isSubscribed, reas
   const configs = {
     coming_soon: {
       icon: Clock,
-      iconColor: 'text-purple-600',
-      bgColor: 'from-purple-50 to-blue-50',
+      iconColor: 'text-protocall-premium-text',
+      bgColor: 'from-surface-2 to-surface-2',
       title: 'Coming Soon',
       subtitle: pageConfig?.feature_name || 'This Feature',
       description: pageConfig?.description || 'This page is currently under development and will be available soon.',
-      badge: { text: 'In Development', color: 'bg-purple-100 text-purple-800' }
+      badge: { text: 'In Development', color: 'bg-premium-muted text-protocall-premium-text' }
     },
     under_construction: {
       icon: Sparkles,
-      iconColor: 'text-yellow-600',
-      bgColor: 'from-yellow-50 to-orange-50',
+      iconColor: 'text-hold-muted-foreground',
+      bgColor: 'from-surface-2 to-hold-muted',
       title: 'Under Construction',
       subtitle: pageConfig?.feature_name || 'This Feature',
       description: 'This page is partially implemented. Some features may not work as expected.',
-      badge: { text: 'Partial', color: 'bg-yellow-100 text-yellow-800' }
+      badge: { text: 'Partial', color: 'bg-hold-muted text-hold-muted-foreground' }
     },
     disabled: {
       icon: Lock,
-      iconColor: 'text-red-600',
-      bgColor: 'from-red-50 to-pink-50',
+      iconColor: 'text-sell-muted-foreground',
+      bgColor: 'from-surface-2 to-surface-2',
       title: 'Page Unavailable',
       subtitle: pageConfig?.feature_name || 'This Page',
       description: 'This page is currently unavailable. Please check back later.',
-      badge: { text: 'Disabled', color: 'bg-red-100 text-red-800' }
+      badge: { text: 'Disabled', color: 'bg-sell-muted text-sell-muted-foreground' }
     },
     subscription_required: {
       icon: Crown,
-      iconColor: 'text-yellow-600',
-      bgColor: 'from-yellow-50 to-orange-50',
+      iconColor: 'text-hold-muted-foreground',
+      bgColor: 'from-surface-2 to-hold-muted',
       title: 'Premium Feature',
       subtitle: pageConfig?.feature_name || 'This Feature',
       description: `This page requires a ${pageConfig?.tier || 'premium'} subscription to access.`,
-      badge: { text: `${(pageConfig?.tier || 'premium').toUpperCase()} Required`, color: 'bg-yellow-100 text-yellow-800' },
+      badge: { text: `${(pageConfig?.tier || 'premium').toUpperCase()} Required`, color: 'bg-hold-muted text-hold-muted-foreground' },
       action: { text: 'Upgrade Now', url: '/Subscription', icon: Crown }
     },
     login_required: {
       icon: Lock,
-      iconColor: 'text-blue-600',
-      bgColor: 'from-blue-50 to-purple-50',
+      iconColor: 'text-protocall-blue',
+      bgColor: 'from-surface-2 to-surface-2',
       title: 'Login Required',
       subtitle: 'Authentication Needed',
       description: 'You need to be logged in to access this page.',
@@ -70,17 +70,17 @@ export default function PageAccessControl({ pageConfig, user, isSubscribed, reas
     },
     admin_only: {
       icon: Lock,
-      iconColor: 'text-red-600',
-      bgColor: 'from-red-50 to-pink-50',
+      iconColor: 'text-sell-muted-foreground',
+      bgColor: 'from-surface-2 to-surface-2',
       title: 'Access Denied',
       subtitle: 'Administrator Access Only',
       description: 'This page is restricted to administrators only.',
-      badge: { text: 'Admin Only', color: 'bg-red-100 text-red-800' }
+      badge: { text: 'Admin Only', color: 'bg-sell-muted text-sell-muted-foreground' }
     },
     not_found: {
       icon: AlertCircle,
-      iconColor: 'text-gray-600',
-      bgColor: 'from-gray-50 to-slate-50',
+      iconColor: 'text-subtle',
+      bgColor: 'from-surface-2 to-surface-2',
       title: 'Page Not Found',
       subtitle: 'Unknown Page',
       description: 'The page you are looking for could not be found.',
@@ -88,8 +88,8 @@ export default function PageAccessControl({ pageConfig, user, isSubscribed, reas
     },
     access_denied: {
       icon: Lock,
-      iconColor: 'text-red-600',
-      bgColor: 'from-red-50 to-pink-50',
+      iconColor: 'text-sell-muted-foreground',
+      bgColor: 'from-surface-2 to-surface-2',
       title: 'Access Denied',
       subtitle: 'Insufficient Permissions',
       description: 'You do not have permission to access this page.',
@@ -115,12 +115,12 @@ export default function PageAccessControl({ pageConfig, user, isSubscribed, reas
               </Badge>
             )}
             
-            <h1 className="text-4xl font-bold text-slate-900 mb-2">{config.title}</h1>
-            <h2 className="text-2xl font-semibold text-slate-600 mb-4">{config.subtitle}</h2>
-            <p className="text-slate-600 text-lg mb-8 max-w-md mx-auto">{config.description}</p>
+            <h1 className="text-4xl font-bold text-foreground mb-2">{config.title}</h1>
+            <h2 className="text-2xl font-semibold text-subtle mb-4">{config.subtitle}</h2>
+            <p className="text-subtle text-lg mb-8 max-w-md mx-auto">{config.description}</p>
             
             {pageConfig?.release_quarter && (
-              <p className="text-sm text-slate-500 mb-6">
+              <p className="text-sm text-muted-foreground mb-6">
                 Expected Release: <span className="font-semibold">{pageConfig.release_quarter}</span>
               </p>
             )}
@@ -129,7 +129,7 @@ export default function PageAccessControl({ pageConfig, user, isSubscribed, reas
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             {config.action && (
               <Link to={createPageUrl(config.action.url.replace('/', ''))}>
-                <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                <Button size="lg" className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
                   {config.action.icon && <config.action.icon className="w-5 h-5 mr-2" />}
                   {config.action.text}
                 </Button>
@@ -145,8 +145,8 @@ export default function PageAccessControl({ pageConfig, user, isSubscribed, reas
 
           {/* Additional Info for Coming Soon */}
           {accessType === 'coming_soon' && pageConfig?.developer_notes && (
-            <div className="mt-8 p-4 bg-white rounded-lg border border-slate-200">
-              <p className="text-sm text-slate-600">
+            <div className="mt-8 p-4 bg-white rounded-lg border border-border">
+              <p className="text-sm text-subtle">
                 <span className="font-semibold">Development Note: </span>
                 {pageConfig.developer_notes}
               </p>

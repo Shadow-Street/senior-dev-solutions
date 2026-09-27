@@ -115,8 +115,8 @@ const FundPlanForm = ({ plan, onSave, onCancel }) => {
     <form onSubmit={handleSubmit} className="space-y-6 py-4">
       {/* Basic Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-          <FileText className="w-5 h-5 text-blue-600" />
+        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+          <FileText className="w-5 h-5 text-protocall-blue" />
           Basic Information
         </h3>
         
@@ -161,8 +161,8 @@ const FundPlanForm = ({ plan, onSave, onCancel }) => {
 
       {/* Fund Characteristics */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-green-600" />
+        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+          <TrendingUp className="w-5 h-5 text-buy-muted-foreground" />
           Fund Characteristics
         </h3>
         
@@ -222,8 +222,8 @@ const FundPlanForm = ({ plan, onSave, onCancel }) => {
 
       {/* Investment Terms */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-          <Calendar className="w-5 h-5 text-purple-600" />
+        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+          <Calendar className="w-5 h-5 text-protocall-premium-text" />
           Investment Terms
         </h3>
         
@@ -317,8 +317,8 @@ const FundPlanForm = ({ plan, onSave, onCancel }) => {
 
       {/* Fees & Charges */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-          <DollarSign className="w-5 h-5 text-orange-600" />
+        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+          <DollarSign className="w-5 h-5 text-hold-muted-foreground" />
           Fees & Charges
         </h3>
         
@@ -363,8 +363,8 @@ const FundPlanForm = ({ plan, onSave, onCancel }) => {
 
       {/* Status & Automation */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-          <Info className="w-5 h-5 text-indigo-600" />
+        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+          <Info className="w-5 h-5 text-protocall-blue" />
           Status & Automation
         </h3>
         
@@ -378,7 +378,7 @@ const FundPlanForm = ({ plan, onSave, onCancel }) => {
           <Label htmlFor="is_active">Plan is active and accepts new investments</Label>
         </div>
 
-        <div className="flex items-center space-x-2 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="flex items-center space-x-2 p-4 bg-premium-muted border border-protocall-premium-light rounded-lg">
           <Checkbox 
             id="auto_payout_enabled" 
             name="auto_payout_enabled" 
@@ -386,8 +386,8 @@ const FundPlanForm = ({ plan, onSave, onCancel }) => {
             onCheckedChange={(checked) => handleCheckboxChange('auto_payout_enabled', checked)} 
           />
           <div className="grid gap-1.5 leading-none">
-            <Label htmlFor="auto_payout_enabled" className="text-blue-900 font-semibold">Enable Automatic Monthly Profit Payouts</Label>
-            <p className="text-sm text-blue-700">
+            <Label htmlFor="auto_payout_enabled" className="text-protocall-blue font-semibold">Enable Automatic Monthly Profit Payouts</Label>
+            <p className="text-sm text-protocall-blue">
               If checked, profits for this plan will be calculated and paid out automatically based on the 'Expected Monthly Return'.
             </p>
           </div>
@@ -396,7 +396,7 @@ const FundPlanForm = ({ plan, onSave, onCancel }) => {
       
       <DialogFooter className="mt-6">
         <Button variant="outline" onClick={onCancel} type="button">Cancel</Button>
-        <Button type="submit" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg">
+        <Button type="submit" className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white shadow-lg">
           {plan ? 'Update Plan' : 'Create Plan'}
         </Button>
       </DialogFooter>
@@ -515,7 +515,7 @@ export default function FundPlansManager({ onUpdate }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
       </div>
     );
   }
@@ -525,15 +525,15 @@ export default function FundPlansManager({ onUpdate }) {
       {/* Header with Create Button */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Fund Plans Management</h2>
-          <p className="text-slate-600 mt-1">Create and manage investment fund plans</p>
+          <h2 className="text-2xl font-bold text-foreground">Fund Plans Management</h2>
+          <p className="text-subtle mt-1">Create and manage investment fund plans</p>
         </div>
         <Button
           onClick={() => {
             setSelectedPlan(null); // Ensure no plan is selected for creation
             setShowCreateModal(true);
           }}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
+          className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white shadow-lg"
         >
           <Plus className="w-5 h-5 mr-2" />
           Create Fund Plan
@@ -544,14 +544,14 @@ export default function FundPlansManager({ onUpdate }) {
       {fundPlans.length === 0 ? (
         <Card className="border-0 shadow-lg">
           <CardContent className="py-12 text-center">
-            <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <p className="text-slate-500">No fund plans created yet</p>
+            <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <p className="text-muted-foreground">No fund plans created yet</p>
             <Button
               onClick={() => {
                 setSelectedPlan(null);
                 setShowCreateModal(true);
               }}
-              className="mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="mt-4 bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
               variant="outline"
             >
               Create Your First Plan
@@ -561,13 +561,13 @@ export default function FundPlansManager({ onUpdate }) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {fundPlans.map((plan) => (
-            <Card key={plan.id} className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30">
+            <Card key={plan.id} className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden bg-gradient-to-br from-white via-surface-2/30 to-surface-2/30">
               {/* Gradient Header */}
-              <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 p-6 text-white">
+              <div className="bg-gradient-to-r from-protocall-deep via-protocall-grape to-protocall-blue p-6 text-white">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <h3 className="text-2xl font-bold mb-2">{plan.plan_name}</h3>
-                    <Badge className={plan.is_active ? 'bg-green-400 text-green-900' : 'bg-gray-300 text-gray-700'}>
+                    <Badge className={plan.is_active ? 'bg-buy text-buy-foreground' : 'bg-border text-subtle'}>
                       {plan.is_active ? (
                         <>
                           <CheckCircle className="w-3 h-3 mr-1" />
@@ -581,7 +581,7 @@ export default function FundPlansManager({ onUpdate }) {
                       )}
                     </Badge>
                     {plan.auto_payout_enabled && (
-                      <Badge className="ml-2 bg-indigo-400 text-indigo-900">
+                      <Badge className="ml-2 bg-protocall-blue text-white">
                         <DollarSign className="w-3 h-3 mr-1" />
                         Auto-Payout
                       </Badge>
@@ -591,16 +591,16 @@ export default function FundPlansManager({ onUpdate }) {
                 
                 <div className="flex items-center gap-6 mt-4">
                   <div className="flex items-center gap-2">
-                    <Users className="w-5 h-5 text-blue-200" />
+                    <Users className="w-5 h-5 text-protocall-premium-light" />
                     <div>
-                      <p className="text-xs text-blue-200">Investors</p>
+                      <p className="text-xs text-protocall-premium-light">Investors</p>
                       <p className="text-lg font-bold">{plan.total_investors || 0}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <DollarSign className="w-5 h-5 text-blue-200" />
+                    <DollarSign className="w-5 h-5 text-protocall-premium-light" />
                     <div>
-                      <p className="text-xs text-blue-200">AUM</p>
+                      <p className="text-xs text-protocall-premium-light">AUM</p>
                       <p className="text-lg font-bold">₹{((plan.total_aum || 0) / 100000).toFixed(2)}L</p>
                     </div>
                   </div>
@@ -609,50 +609,50 @@ export default function FundPlansManager({ onUpdate }) {
 
               <CardContent className="p-6 space-y-4">
                 {plan.description && (
-                  <p className="text-sm text-slate-600 line-clamp-2">{plan.description}</p>
+                  <p className="text-sm text-subtle line-clamp-2">{plan.description}</p>
                 )}
 
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-100">
-                    <div className="flex items-center gap-2 text-slate-700">
-                      <TrendingUp className="w-4 h-4 text-green-600" />
+                  <div className="flex items-center justify-between p-3 bg-gradient-to-r from-surface-2 to-buy-muted rounded-lg border border-buy/30">
+                    <div className="flex items-center gap-2 text-subtle">
+                      <TrendingUp className="w-4 h-4 text-buy-muted-foreground" />
                       <span className="text-sm font-medium">Expected Return</span>
                     </div>
-                    <span className="text-lg font-bold text-green-600">{plan.expected_return_percent}% /mo</span>
+                    <span className="text-lg font-bold text-buy-muted-foreground">{plan.expected_return_percent}% /mo</span>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-100">
-                    <div className="flex items-center gap-2 text-slate-700">
-                      <DollarSign className="w-4 h-4 text-blue-600" />
+                  <div className="flex items-center justify-between p-3 bg-surface-2 rounded-lg border border-protocall-premium-light">
+                    <div className="flex items-center gap-2 text-subtle">
+                      <DollarSign className="w-4 h-4 text-protocall-blue" />
                       <span className="text-sm font-medium">Min. Investment</span>
                     </div>
-                    <span className="text-sm font-bold text-blue-600">₹{(plan.minimum_investment || 0).toLocaleString('en-IN')}</span>
+                    <span className="text-sm font-bold text-protocall-blue">₹{(plan.minimum_investment || 0).toLocaleString('en-IN')}</span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-lg border border-purple-100">
-                      <div className="flex items-center gap-2 text-slate-600 mb-1">
-                        <Calendar className="w-4 h-4 text-purple-600" />
+                    <div className="p-3 bg-surface-2 rounded-lg border border-protocall-premium-light">
+                      <div className="flex items-center gap-2 text-subtle mb-1">
+                        <Calendar className="w-4 h-4 text-protocall-premium-text" />
                         <span className="text-xs font-medium">Period</span>
                       </div>
-                      <p className="text-sm font-bold text-purple-700 capitalize">{plan.investment_period?.replace('_', ' ')}</p>
+                      <p className="text-sm font-bold text-protocall-premium-text capitalize">{plan.investment_period?.replace('_', ' ')}</p>
                     </div>
 
-                    <div className="p-3 bg-gradient-to-br from-orange-50 to-yellow-50 rounded-lg border border-orange-100">
-                      <div className="flex items-center gap-2 text-slate-600 mb-1">
-                        <Calendar className="w-4 h-4 text-orange-600" />
+                    <div className="p-3 bg-gradient-to-br from-surface-2 to-hold-muted rounded-lg border border-hold/30">
+                      <div className="flex items-center gap-2 text-subtle mb-1">
+                        <Calendar className="w-4 h-4 text-hold-muted-foreground" />
                         <span className="text-xs font-medium">Payout</span>
                       </div>
-                      <p className="text-sm font-bold text-orange-700 capitalize">{plan.profit_payout_frequency}</p>
+                      <p className="text-sm font-bold text-hold-muted-foreground capitalize">{plan.profit_payout_frequency}</p>
                     </div>
                   </div>
 
-                  <div className="p-3 bg-gradient-to-r from-slate-50 to-gray-50 rounded-lg border border-slate-200">
-                    <div className="flex items-center gap-2 text-slate-600 mb-1">
-                      <Clock className="w-4 h-4 text-slate-600" />
+                  <div className="p-3 bg-surface-2 rounded-lg border border-border">
+                    <div className="flex items-center gap-2 text-subtle mb-1">
+                      <Clock className="w-4 h-4 text-subtle" />
                       <span className="text-xs font-medium">Notice Period</span>
                     </div>
-                    <p className="text-sm font-bold text-slate-700">{plan.notice_period_days} days</p>
+                    <p className="text-sm font-bold text-subtle">{plan.notice_period_days} days</p>
                   </div>
                 </div>
 
@@ -670,7 +670,7 @@ export default function FundPlansManager({ onUpdate }) {
                     size="sm"
                     variant="outline"
                     onClick={() => openEditModal(plan)}
-                    className="border-2 border-blue-300 text-blue-600 hover:bg-blue-50"
+                    className="border-2 border-protocall-premium-light text-protocall-blue hover:bg-premium-muted"
                   >
                     <Edit className="w-4 h-4" />
                   </Button>
@@ -678,7 +678,7 @@ export default function FundPlansManager({ onUpdate }) {
                     size="sm"
                     variant="outline"
                     onClick={() => handleDelete(plan)}
-                    className="border-2 border-red-300 text-red-600 hover:bg-red-50"
+                    className="border-2 border-sell/30 text-sell-muted-foreground hover:bg-sell-muted"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
@@ -693,7 +693,7 @@ export default function FundPlansManager({ onUpdate }) {
       <Dialog open={showCreateModal || showEditModal} onOpenChange={handleModalClose}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-protocall-deep to-protocall-blue bg-clip-text text-transparent">
               {showEditModal ? 'Edit Fund Plan' : 'Create New Fund Plan'}
             </DialogTitle>
             <DialogDescription>

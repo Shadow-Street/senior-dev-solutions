@@ -135,7 +135,7 @@ export default function FeatureEditModal({ feature, onClose, onSave }) {
                 ))}
               </SelectContent>
             </Select>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               If this feature is part of another module/page, select its parent
             </p>
           </div>
@@ -259,12 +259,12 @@ export default function FeatureEditModal({ feature, onClose, onSave }) {
           </div>
 
           {/* Visibility */}
-          <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+          <div className="flex items-center justify-between p-4 bg-premium-muted rounded-lg">
             <div>
               <Label htmlFor="visible_to_users" className="text-sm font-semibold">
                 Visible to Users
               </Label>
-              <p className="text-xs text-slate-600">
+              <p className="text-xs text-subtle">
                 Show this feature in user-facing Feature Hub
               </p>
             </div>

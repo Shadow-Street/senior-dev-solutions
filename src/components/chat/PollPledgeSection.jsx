@@ -273,14 +273,14 @@ export default function PollPledgeSection({ chatRoomId, stockSymbol, user, onPol
   // Refactored PollBar component based on new CSS outline
   const PollBar = ({ label, value, percentage, barFillColorClass, indicatorColorClass }) => (
     <div className="mb-2.5">
-      <div className="flex items-center text-sm mb-1.5 text-gray-600">
+      <div className="flex items-center text-sm mb-1.5 text-subtle">
         <div className={`w-3 h-3 rounded-full mr-2 flex-shrink-0 ${indicatorColorClass}`}></div>
         <span className="font-medium">{label}</span>
-        <span className="ml-auto text-xs text-slate-500">{value} ({percentage}%)</span>
+        <span className="ml-auto text-xs text-muted-foreground">{value} ({percentage}%)</span>
       </div>
       <Progress
         value={percentage}
-        className={`h-2 rounded-lg bg-gray-200 [&>div]:rounded-lg [&>div]:${barFillColorClass}`}
+        className={`h-2 rounded-lg bg-border [&>div]:rounded-lg [&>div]:${barFillColorClass}`}
       />
     </div>
   );
@@ -292,17 +292,17 @@ export default function PollPledgeSection({ chatRoomId, stockSymbol, user, onPol
           <div className="flex items-center justify-between">
             {/* Updated CardTitle styles from outline */}
             <CardTitle className="text-base font-semibold flex items-center gap-2">
-              <Target className="w-4 h-4 text-blue-600" /> {/* Changed icon color from outline */}
+              <Target className="w-4 h-4 text-protocall-blue" /> {/* Changed icon color from outline */}
               Daily Poll & Pledge
             </CardTitle>
-            {poll?.is_premium && <Badge className="text-xs bg-purple-100 text-purple-700 border-0">Premium</Badge>} {/* Added from outline */}
+            {poll?.is_premium && <Badge className="text-xs bg-premium-muted text-protocall-premium-text border-0">Premium</Badge>} {/* Added from outline */}
             {!pledgesEnabled && ( // Kept original pledgesEnabled logic
-              <Badge variant="outline" className="bg-orange-100 text-orange-800 border-orange-200 text-xs">
+              <Badge variant="outline" className="bg-hold-muted text-hold-muted-foreground border-hold/30 text-xs">
                 Pledges Disabled
               </Badge>
             )}
           </div>
-          {poll && <p className="text-sm text-slate-600 line-clamp-2">{poll.title}</p>} {/* Added from outline */}
+          {poll && <p className="text-sm text-subtle line-clamp-2">{poll.title}</p>} {/* Added from outline */}
         </CardHeader>
 
         <CardContent className="p-6 space-y-4">
@@ -315,7 +315,7 @@ export default function PollPledgeSection({ chatRoomId, stockSymbol, user, onPol
               <Skeleton className="h-8 w-full" />
             </div>
           ) : !poll ? (
-            <div className="text-center text-slate-500">
+            <div className="text-center text-muted-foreground">
               <Target className="w-12 h-12 mx-auto mb-2" />
               <p>No active poll for {stockSymbol}</p>
             </div>
@@ -326,39 +326,39 @@ export default function PollPledgeSection({ chatRoomId, stockSymbol, user, onPol
                   label="Buy"
                   value={poll.buy_votes || 0}
                   percentage={buyPercent}
-                  barFillColorClass="bg-green-500"
-                  indicatorColorClass="bg-green-500"
+                  barFillColorClass="bg-buy"
+                  indicatorColorClass="bg-buy"
                 />
                 <PollBar
                   label="Sell"
                   value={poll.sell_votes || 0}
                   percentage={sellPercent}
-                  barFillColorClass="bg-red-500"
-                  indicatorColorClass="bg-red-500"
+                  barFillColorClass="bg-sell"
+                  indicatorColorClass="bg-sell"
                 />
                 <PollBar
                   label="Hold"
                   value={poll.hold_votes || 0}
                   percentage={holdPercent}
-                  barFillColorClass="bg-orange-500"
-                  indicatorColorClass="bg-orange-500"
+                  barFillColorClass="bg-hold"
+                  indicatorColorClass="bg-hold"
                 />
               </div>
 
-              <div className="text-xs text-slate-500 pt-2 border-t">
+              <div className="text-xs text-muted-foreground pt-2 border-t">
                 Total Votes: {totalVotes}
               </div>
 
               {/* Updated Voting Buttons section from outline */}
               {user && (
-                <div className="pt-2 border-t border-slate-100">
-                  <p className="text-xs text-slate-500 mb-2 font-medium">Cast your vote:</p>
+                <div className="pt-2 border-t border-divider">
+                  <p className="text-xs text-muted-foreground mb-2 font-medium">Cast your vote:</p>
                   <div className="grid grid-cols-3 gap-2">
                     <Button
                       onClick={() => handleVote('buy')}
                       size="sm"
                       disabled={!user}
-                      className={cn("text-white text-xs px-2 py-1 transition-all", userVote?.vote === 'buy' ? "bg-green-700 ring-2 ring-green-400 ring-offset-1" : "bg-green-500 hover:bg-green-600")}
+                      className={cn("text-white text-xs px-2 py-1 transition-all", userVote?.vote === 'buy' ? "bg-buy ring-2 ring-buy ring-offset-1" : "bg-buy hover:bg-buy")}
                     >
                       {userVote?.vote === 'buy' && <CheckCircle className="w-3 h-3 mr-1" />}
                       Buy
@@ -367,7 +367,7 @@ export default function PollPledgeSection({ chatRoomId, stockSymbol, user, onPol
                       onClick={() => handleVote('sell')}
                       size="sm"
                       disabled={!user}
-                      className={cn("text-white text-xs px-2 py-1 transition-all", userVote?.vote === 'sell' ? "bg-red-700 ring-2 ring-red-400 ring-offset-1" : "bg-red-500 hover:bg-red-600")}
+                      className={cn("text-white text-xs px-2 py-1 transition-all", userVote?.vote === 'sell' ? "bg-sell ring-2 ring-sell/30 ring-offset-1" : "bg-sell hover:bg-sell")}
                     >
                       {userVote?.vote === 'sell' && <CheckCircle className="w-3 h-3 mr-1" />}
                       Sell
@@ -376,7 +376,7 @@ export default function PollPledgeSection({ chatRoomId, stockSymbol, user, onPol
                       onClick={() => handleVote('hold')}
                       size="sm"
                       disabled={!user}
-                      className={cn("text-white text-xs px-2 py-1 transition-all", userVote?.vote === 'hold' ? "bg-yellow-600 ring-2 ring-yellow-400 ring-offset-1" : "bg-yellow-500 hover:bg-yellow-600")}
+                      className={cn("text-white text-xs px-2 py-1 transition-all", userVote?.vote === 'hold' ? "bg-hold ring-2 ring-hold/30 ring-offset-1" : "bg-hold hover:bg-hold")}
                     >
                       {userVote?.vote === 'hold' && <CheckCircle className="w-3 h-3 mr-1" />}
                       Hold
@@ -388,7 +388,7 @@ export default function PollPledgeSection({ chatRoomId, stockSymbol, user, onPol
               {!!userPledge ? (
                 <Button 
                   disabled 
-                  className="w-full py-2 rounded-xl px-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold shadow-md hover:from-blue-600 hover:to-purple-700 transition-all duration-300"
+                  className="w-full py-2 rounded-xl px-4 bg-gradient-to-r from-protocall-deep to-protocall-blue text-white font-semibold shadow-md hover:from-protocall-deep hover:to-protocall-blue transition-all duration-300"
                 >
                   PLEDGED: ₹{userPledge.amount_committed?.toLocaleString() || 'N/A'}
                 </Button>
@@ -396,7 +396,7 @@ export default function PollPledgeSection({ chatRoomId, stockSymbol, user, onPol
                 <Button 
                   onClick={handlePledgeClick}
                   disabled={!user || !pledgesEnabled}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-md transition-all duration-300"
+                  className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white font-semibold rounded-xl shadow-md transition-all duration-300"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Make Pledge
@@ -404,7 +404,7 @@ export default function PollPledgeSection({ chatRoomId, stockSymbol, user, onPol
               )}
 
               {!pledgesEnabled && (
-                <div className="text-xs text-orange-600 text-center bg-orange-50 p-2 rounded-lg">
+                <div className="text-xs text-hold-muted-foreground text-center bg-hold-muted p-2 rounded-lg">
                   Pledges are currently disabled by administrators.
                 </div>
               )}
@@ -426,25 +426,25 @@ export default function PollPledgeSection({ chatRoomId, stockSymbol, user, onPol
           <Card className="max-w-md w-full">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Crown className="w-5 h-5 text-purple-600" />
+                <Crown className="w-5 h-5 text-protocall-premium-text" />
                 Premium Feature
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-slate-600">
+              <p className="text-subtle">
                 Pledging is available for Premium and VIP members only. Upgrade your subscription to:
               </p>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-2">
-                  <Target className="w-4 h-4 text-purple-600" />
+                  <Target className="w-4 h-4 text-protocall-premium-text" />
                   Make investment pledges with the community
                 </li>
                 <li className="flex items-center gap-2">
-                  <Crown className="w-4 h-4 text-purple-600" />
+                  <Crown className="w-4 h-4 text-protocall-premium-text" />
                   Access premium chat rooms and admin insights
                 </li>
                 <li className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-purple-600" />
+                  <Users className="w-4 h-4 text-protocall-premium-text" />
                   Join exclusive trading events and webinars
                 </li>
               </ul>
@@ -457,7 +457,7 @@ export default function PollPledgeSection({ chatRoomId, stockSymbol, user, onPol
                   Cancel
                 </Button>
                 <Link to={createPageUrl("Subscription")} className="flex-1">
-                  <Button className="w-full bg-purple-600 hover:bg-purple-700">
+                  <Button className="w-full bg-primary hover:bg-primary">
                     <ArrowRight className="w-4 h-4 mr-2" />
                     Upgrade Now
                   </Button>

@@ -295,10 +295,10 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
   };
 
   const statusColors = {
-    pending: 'bg-yellow-100 text-yellow-800',
-    approved: 'bg-blue-100 text-blue-800',
-    rejected: 'bg-red-100 text-red-800',
-    processed: 'bg-green-100 text-green-800'
+    pending: 'bg-hold-muted text-hold-muted-foreground',
+    approved: 'bg-premium-muted text-protocall-blue',
+    rejected: 'bg-sell-muted text-sell-muted-foreground',
+    processed: 'bg-buy-muted text-buy-muted-foreground'
   };
 
   return (
@@ -307,7 +307,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <DollarSign className="w-6 h-6 text-green-600" />
+              <DollarSign className="w-6 h-6 text-buy-muted-foreground" />
               Payout Request Details
             </DialogTitle>
           </DialogHeader>
@@ -318,48 +318,48 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
               <Badge className={`${statusColors[request.status]} text-sm px-3 py-1`}>
                 {request.status.toUpperCase()}
               </Badge>
-              <span className="text-sm text-slate-500">
+              <span className="text-sm text-muted-foreground">
                 Request ID: {request.id?.slice(-8)}
               </span>
             </div>
 
             {/* Creator Info */}
-            <div className="bg-slate-50 rounded-lg p-4">
-              <h3 className="font-semibold text-slate-900 mb-3">Creator Information</h3>
+            <div className="bg-surface-2 rounded-lg p-4">
+              <h3 className="font-semibold text-foreground mb-3">Creator Information</h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-slate-600">Name</p>
+                  <p className="text-subtle">Name</p>
                   <p className="font-medium">{request.userName || 'N/A'}</p>
                 </div>
                 <div>
-                  <p className="text-slate-600">Entity Type</p>
+                  <p className="text-subtle">Entity Type</p>
                   <p className="font-medium capitalize">{request.entity_type}</p>
                 </div>
               </div>
             </div>
 
             {/* Amount Details */}
-            <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+            <div className="bg-buy-muted rounded-lg p-4 border border-buy/30">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-600 text-sm">Requested Amount</p>
-                  <p className="text-3xl font-bold text-green-900">
+                  <p className="text-buy-muted-foreground text-sm">Requested Amount</p>
+                  <p className="text-3xl font-bold text-buy-muted-foreground">
                     ₹{request.requested_amount.toLocaleString('en-IN')}
                   </p>
                 </div>
-                <DollarSign className="w-12 h-12 text-green-600" />
+                <DollarSign className="w-12 h-12 text-buy-muted-foreground" />
               </div>
-              <div className="mt-3 pt-3 border-t border-green-200">
+              <div className="mt-3 pt-3 border-t border-buy/30">
                 <div className="flex justify-between text-sm">
-                  <span className="text-green-700">Available Balance</span>
+                  <span className="text-buy-muted-foreground">Available Balance</span>
                   <span className="font-semibold">₹{request.available_balance.toLocaleString('en-IN')}</span>
                 </div>
               </div>
             </div>
 
             {/* Bank Details */}
-            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-              <h3 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+            <div className="bg-premium-muted rounded-lg p-4 border border-protocall-premium-light">
+              <h3 className="font-semibold text-protocall-blue mb-3 flex items-center gap-2">
                 <Building className="w-5 h-5" />
                 Bank Account Details
               </h3>
@@ -367,44 +367,44 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
                 {request.payout_method === 'bank_transfer' && request.bank_details ? (
                   <>
                     <div className="flex justify-between">
-                      <span className="text-blue-700">Account Holder</span>
+                      <span className="text-protocall-blue">Account Holder</span>
                       <span className="font-medium">{request.bank_details.account_holder_name}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-blue-700">Account Number</span>
+                      <span className="text-protocall-blue">Account Number</span>
                       <span className="font-mono font-medium">{request.bank_details.account_number}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-blue-700">IFSC Code</span>
+                      <span className="text-protocall-blue">IFSC Code</span>
                       <span className="font-mono font-medium">{request.bank_details.ifsc_code}</span>
                     </div>
                   </>
                 ) : request.payout_method === 'upi' ? (
                   <div className="flex justify-between">
-                    <span className="text-blue-700">UPI ID</span>
+                    <span className="text-protocall-blue">UPI ID</span>
                     <span className="font-medium">{request.upi_id}</span>
                   </div>
                 ) : (
-                  <p className="text-slate-500">No payment details available</p>
+                  <p className="text-muted-foreground">No payment details available</p>
                 )}
               </div>
             </div>
 
             {/* Request Date */}
-            <div className="flex items-center gap-2 text-sm text-slate-600">
+            <div className="flex items-center gap-2 text-sm text-subtle">
               <Calendar className="w-4 h-4" />
               <span>Requested on {new Date(request.created_date).toLocaleString('en-IN')}</span>
             </div>
 
             {/* Transaction Reference (if processed) */}
             {request.status === 'processed' && request.transaction_reference && (
-              <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-                <h3 className="font-semibold text-purple-900 mb-2 flex items-center gap-2">
+              <div className="bg-premium-muted rounded-lg p-4 border border-protocall-premium-light">
+                <h3 className="font-semibold text-protocall-premium-text mb-2 flex items-center gap-2">
                   <CreditCard className="w-5 h-5" />
                   Transaction Reference
                 </h3>
-                <p className="font-mono text-lg font-bold text-purple-900">{request.transaction_reference}</p>
-                <p className="text-xs text-purple-700 mt-1">
+                <p className="font-mono text-lg font-bold text-protocall-premium-text">{request.transaction_reference}</p>
+                <p className="text-xs text-protocall-premium-text mt-1">
                   {request.transaction_reference.startsWith('payout_') || request.transaction_reference.startsWith('tr_') 
                     ? 'Payment Gateway Reference' 
                     : 'Bank UTR Number'}
@@ -414,9 +414,9 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
 
             {/* Admin Notes */}
             {request.admin_notes && (
-              <div className="bg-slate-50 rounded-lg p-4">
-                <h3 className="font-semibold text-slate-900 mb-2">Admin Notes</h3>
-                <p className="text-sm text-slate-700">{request.admin_notes}</p>
+              <div className="bg-surface-2 rounded-lg p-4">
+                <h3 className="font-semibold text-foreground mb-2">Admin Notes</h3>
+                <p className="text-sm text-subtle">{request.admin_notes}</p>
               </div>
             )}
           </div>
@@ -427,14 +427,14 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
                 <Button
                   variant="outline"
                   onClick={() => setShowRejectConfirm(true)}
-                  className="border-red-200 text-red-600 hover:bg-red-50"
+                  className="border-sell/30 text-sell-muted-foreground hover:bg-sell-muted"
                 >
                   <XCircle className="w-4 h-4 mr-2" />
                   Reject
                 </Button>
                 <Button
                   onClick={() => setShowApproveConfirm(true)}
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-buy hover:bg-buy"
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
                   Approve
@@ -452,7 +452,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
                 </Button>
                 <Button
                   onClick={() => setShowProcessConfirm(true)}
-                  className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+                  className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
                 >
                   <Zap className="w-4 h-4 mr-2" />
                   Process Payout
@@ -476,7 +476,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
             <DialogTitle>Approve Payout Request</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-subtle">
               Confirm approval of ₹{request.requested_amount.toLocaleString('en-IN')} payout to {request.userName}?
             </p>
             <div>
@@ -489,8 +489,8 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
                 rows={3}
               />
             </div>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <p className="text-sm text-blue-800 flex items-start gap-2">
+            <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-3">
+              <p className="text-sm text-protocall-blue flex items-start gap-2">
                 <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 After approval, you can process the payout either automatically through payment gateway or manually via bank transfer.
               </p>
@@ -514,7 +514,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
             <DialogTitle>Reject Payout Request</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-subtle">
               Are you sure you want to reject this payout request?
             </p>
             <div>
@@ -536,7 +536,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
             <Button
               onClick={handleReject}
               disabled={isProcessing}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-sell hover:bg-sell"
             >
               {isProcessing ? 'Rejecting...' : 'Confirm Rejection'}
             </Button>
@@ -559,30 +559,30 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
                   onClick={() => setProcessingMethod('automated')}
                   className={`p-4 rounded-lg border-2 transition-all ${
                     processingMethod === 'automated'
-                      ? 'border-purple-600 bg-purple-50'
-                      : 'border-slate-200 hover:border-purple-300'
+                      ? 'border-primary bg-premium-muted'
+                      : 'border-border hover:border-protocall-premium-light'
                   }`}
                 >
                   <div className="flex items-center gap-3 mb-2">
-                    <Zap className={`w-6 h-6 ${processingMethod === 'automated' ? 'text-purple-600' : 'text-slate-400'}`} />
+                    <Zap className={`w-6 h-6 ${processingMethod === 'automated' ? 'text-protocall-premium-text' : 'text-muted-foreground'}`} />
                     <span className="font-semibold">Automated</span>
                   </div>
-                  <p className="text-xs text-slate-600">Process via payment gateway API</p>
+                  <p className="text-xs text-subtle">Process via payment gateway API</p>
                 </button>
 
                 <button
                   onClick={() => setProcessingMethod('manual')}
                   className={`p-4 rounded-lg border-2 transition-all ${
                     processingMethod === 'manual'
-                      ? 'border-blue-600 bg-blue-50'
-                      : 'border-slate-200 hover:border-blue-300'
+                      ? 'border-protocall-blue bg-premium-muted'
+                      : 'border-border hover:border-protocall-premium-light'
                   }`}
                 >
                   <div className="flex items-center gap-3 mb-2">
-                    <CreditCard className={`w-6 h-6 ${processingMethod === 'manual' ? 'text-blue-600' : 'text-slate-400'}`} />
+                    <CreditCard className={`w-6 h-6 ${processingMethod === 'manual' ? 'text-protocall-blue' : 'text-muted-foreground'}`} />
                     <span className="font-semibold">Manual</span>
                   </div>
-                  <p className="text-xs text-slate-600">Enter bank transfer UTR</p>
+                  <p className="text-xs text-subtle">Enter bank transfer UTR</p>
                 </button>
               </div>
             </div>
@@ -590,10 +590,10 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
             {/* Automated Processing Options */}
             {processingMethod === 'automated' && (
               <>
-                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
                   <div className="flex items-start gap-2">
-                    <Zap className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-purple-800">
+                    <Zap className="w-5 h-5 text-protocall-premium-text flex-shrink-0 mt-0.5" />
+                    <div className="text-sm text-protocall-premium-text">
                       <p className="font-semibold mb-1">Automated Payout Processing</p>
                       <p className="text-xs">
                         The system will automatically process the payout through your configured payment gateway.
@@ -609,7 +609,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
                     id="gateway"
                     value={paymentGateway}
                     onChange={(e) => setPaymentGateway(e.target.value)}
-                    className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full mt-1 px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-protocall-premium-light focus:border-transparent"
                   >
                     <option value="razorpay">Razorpay Payouts</option>
                     <option value="stripe">Stripe Transfers</option>
@@ -633,10 +633,10 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
             {/* Manual Processing Options */}
             {processingMethod === 'manual' && (
               <>
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div className="bg-hold-muted border border-hold/30 rounded-lg p-4">
                   <div className="flex items-start gap-2">
-                    <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-yellow-800">
+                    <AlertTriangle className="w-5 h-5 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
+                    <div className="text-sm text-hold-muted-foreground">
                       <p className="font-semibold mb-1">Manual Bank Transfer Required</p>
                       <ol className="list-decimal list-inside space-y-1 text-xs">
                         <li>Process the bank transfer of ₹{request.requested_amount.toLocaleString('en-IN')}</li>
@@ -657,7 +657,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
                     className="mt-1 font-mono"
                     required
                   />
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     The UTR number is provided by your bank after the transfer
                   </p>
                 </div>
@@ -675,8 +675,8 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
               </>
             )}
 
-            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-              <p className="text-sm text-green-800 flex items-start gap-2">
+            <div className="bg-buy-muted border border-buy/30 rounded-lg p-3">
+              <p className="text-sm text-buy-muted-foreground flex items-start gap-2">
                 <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 Creator will be notified with the transaction reference for tracking
               </p>
@@ -693,8 +693,8 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
                 (processingMethod === 'manual' && !utrNumber.trim())
               }
               className={processingMethod === 'automated' 
-                ? "bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
-                : "bg-blue-600 hover:bg-blue-700"
+                ? "bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
+                : "bg-protocall-blue hover:bg-protocall-blue"
               }
             >
               {isProcessing ? (

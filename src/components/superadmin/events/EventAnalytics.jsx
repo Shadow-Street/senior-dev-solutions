@@ -445,9 +445,9 @@ export default function EventAnalytics({ permissions, events: propEvents, ticket
     return (
       <div className="flex items-center justify-center p-12">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600">Loading Events Reports...</p>
-          <p className="text-sm text-gray-500 mt-2">Analyzing ticket data and calculating revenue...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <p className="text-lg text-subtle">Loading Events Reports...</p>
+          <p className="text-sm text-muted-foreground mt-2">Analyzing ticket data and calculating revenue...</p>
         </div>
       </div>
     );
@@ -457,7 +457,7 @@ export default function EventAnalytics({ permissions, events: propEvents, ticket
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-800">Events Reports & Analytics</h2>
+        <h2 className="text-2xl font-bold text-foreground">Events Reports & Analytics</h2>
         <div className="flex items-center gap-3">
           <Button onClick={handleRefresh} variant="outline" size="sm">
             <RefreshCw className="w-4 h-4 mr-2" />
@@ -472,15 +472,15 @@ export default function EventAnalytics({ permissions, events: propEvents, ticket
 
       {/* Error/Warning Alerts */}
       {debugInfo.errors?.length > 0 && (
-        <Card className="border-red-200 bg-red-50">
+        <Card className="border-sell/30 bg-sell-muted">
           <CardHeader>
-            <CardTitle className="text-red-700 text-sm flex items-center">
+            <CardTitle className="text-white/80 text-sm flex items-center">
               <AlertTriangle className="w-4 h-4 mr-2" />
               Data Loading Errors
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="text-sm text-red-600 space-y-1">
+            <ul className="text-sm text-sell-muted-foreground space-y-1">
               {debugInfo.errors.map((error, index) => (
                 <li key={index}>• {error}</li>
               ))}
@@ -491,31 +491,31 @@ export default function EventAnalytics({ permissions, events: propEvents, ticket
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+        <Card className="bg-gradient-to-br from-surface-2 to-buy-muted border-buy/30">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-green-600">Gross Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium text-buy-muted-foreground">Gross Revenue</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <DollarSign className="w-8 h-8 text-green-500 mr-2" />
+              <DollarSign className="w-8 h-8 text-positive mr-2" />
               <div>
-                <p className="text-2xl font-bold text-green-700">₹{kpis.grossRevenue.toLocaleString()}</p>
-                <p className="text-xs text-green-600">From {kpis.ticketsSold} successful tickets</p>
+                <p className="text-2xl font-bold text-buy-muted-foreground">₹{kpis.grossRevenue.toLocaleString()}</p>
+                <p className="text-xs text-buy-muted-foreground">From {kpis.ticketsSold} successful tickets</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200">
+        <Card className="bg-surface-2 border-protocall-premium-light">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-blue-600">Platform Commission</CardTitle>
+            <CardTitle className="text-sm font-medium text-protocall-blue">Platform Commission</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <TrendingUp className="w-8 h-8 text-blue-500 mr-2" />
+              <TrendingUp className="w-8 h-8 text-protocall-premium-light mr-2" />
               <div>
-                <p className="text-2xl font-bold text-blue-700">₹{kpis.platformCommission.toLocaleString()}</p>
-                <p className="text-xs text-blue-600">
+                <p className="text-2xl font-bold text-protocall-blue">₹{kpis.platformCommission.toLocaleString()}</p>
+                <p className="text-xs text-protocall-blue">
                   {((kpis.platformCommission / (kpis.grossRevenue || 1)) * 100).toFixed(1)}% of gross
                 </p>
               </div>
@@ -523,31 +523,31 @@ export default function EventAnalytics({ permissions, events: propEvents, ticket
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
+        <Card className="bg-surface-2 border-protocall-premium-light">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-purple-600">Organizer Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium text-protocall-premium-text">Organizer Revenue</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <Users className="w-8 h-8 text-purple-500 mr-2" />
+              <Users className="w-8 h-8 text-protocall-premium-light mr-2" />
               <div>
-                <p className="text-2xl font-bold text-purple-700">₹{kpis.organizerRevenue.toLocaleString()}</p>
-                <p className="text-xs text-purple-600">Net to organizers</p>
+                <p className="text-2xl font-bold text-protocall-premium-text">₹{kpis.organizerRevenue.toLocaleString()}</p>
+                <p className="text-xs text-protocall-premium-text">Net to organizers</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-orange-50 to-yellow-50 border-orange-200">
+        <Card className="bg-gradient-to-br from-surface-2 to-hold-muted border-hold/30">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-orange-600">Tickets Sold</CardTitle>
+            <CardTitle className="text-sm font-medium text-hold-muted-foreground">Tickets Sold</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <Ticket className="w-8 h-8 text-orange-500 mr-2" />
+              <Ticket className="w-8 h-8 text-hold mr-2" />
               <div>
-                <p className="text-2xl font-bold text-orange-700">{kpis.ticketsSold.toLocaleString()}</p>
-                <p className="text-xs text-orange-600">Successful purchases</p>
+                <p className="text-2xl font-bold text-hold-muted-foreground">{kpis.ticketsSold.toLocaleString()}</p>
+                <p className="text-xs text-hold-muted-foreground">Successful purchases</p>
               </div>
             </div>
           </CardContent>
@@ -558,7 +558,7 @@ export default function EventAnalytics({ permissions, events: propEvents, ticket
       <Card className="p-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               placeholder="Search events or users..."
               value={searchTerm}
@@ -611,7 +611,7 @@ export default function EventAnalytics({ permissions, events: propEvents, ticket
                 <YAxis />
                 <Tooltip formatter={(value) => [`₹${value.toLocaleString()}`, 'Revenue']} />
                 <Legend />
-                <Bar dataKey="revenue" fill="#3B82F6" />
+                <Bar dataKey="revenue" fill="hsl(var(--chart-1))" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -641,40 +641,40 @@ export default function EventAnalytics({ permissions, events: propEvents, ticket
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle>Advanced Event Metrics</CardTitle>
-          <p className="text-sm text-slate-600">Deep insights into event performance</p>
+          <p className="text-sm text-subtle">Deep insights into event performance</p>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-              <p className="text-sm text-green-700 font-medium mb-1">Attendance Rate</p>
-              <p className="text-3xl font-bold text-green-900">
+            <div className="p-4 bg-buy-muted rounded-lg border border-buy/30">
+              <p className="text-sm text-buy-muted-foreground font-medium mb-1">Attendance Rate</p>
+              <p className="text-3xl font-bold text-buy-muted-foreground">
                 {enrichedTickets.length > 0 ? Math.round((propCheckIns.length / enrichedTickets.length) * 100) : 0}%
               </p>
-              <p className="text-xs text-green-600 mt-1">
+              <p className="text-xs text-buy-muted-foreground mt-1">
                 {propCheckIns.length} of {enrichedTickets.length} checked in
               </p>
             </div>
 
-            <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-sm text-blue-700 font-medium mb-1">Ticket Conversion</p>
-              <p className="text-3xl font-bold text-blue-900">
+            <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
+              <p className="text-sm text-protocall-blue font-medium mb-1">Ticket Conversion</p>
+              <p className="text-3xl font-bold text-protocall-blue">
                 {propAttendees.length > 0 && propAttendees.filter(a => a.rsvp_status?.toLowerCase() === 'yes').length > 0
                   ? Math.round((enrichedTickets.length / propAttendees.filter(a => a.rsvp_status?.toLowerCase() === 'yes').length) * 100)
                   : 0}%
               </p>
-              <p className="text-xs text-blue-600 mt-1">
+              <p className="text-xs text-protocall-blue mt-1">
                 RSVP to paid tickets (based on 'yes' RSVPs)
               </p>
             </div>
 
-            <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-              <p className="text-sm text-purple-700 font-medium mb-1">Revenue Per Attendee</p>
-              <p className="text-3xl font-bold text-purple-900">
+            <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
+              <p className="text-sm text-protocall-premium-text font-medium mb-1">Revenue Per Attendee</p>
+              <p className="text-3xl font-bold text-protocall-premium-text">
                 ₹{propCheckIns.length > 0 
                   ? Math.round(enrichedTickets.reduce((sum, t) => sum + (t.normalizedAmount || 0), 0) / propCheckIns.length)
                   : 0}
               </p>
-              <p className="text-xs text-purple-600 mt-1">
+              <p className="text-xs text-protocall-premium-text mt-1">
                 Based on actual attendance
               </p>
             </div>
@@ -696,7 +696,7 @@ export default function EventAnalytics({ permissions, events: propEvents, ticket
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b bg-gray-50">
+                <tr className="border-b bg-surface-2">
                   <th className="text-left p-3 font-medium">Event</th>
                   <th className="text-left p-3 font-medium">User</th>
                   <th className="text-left p-3 font-medium">Amount</th>
@@ -708,24 +708,24 @@ export default function EventAnalytics({ permissions, events: propEvents, ticket
               <tbody>
                 {filteredTransactions.length > 0 ? (
                   filteredTransactions.map((ticket) => (
-                    <tr key={ticket.id} className="border-b hover:bg-gray-50">
+                    <tr key={ticket.id} className="border-b hover:bg-surface-2">
                       <td className="p-3">
                         <div>
                           <p className="font-medium">{ticket.event?.title || 'Unknown Event'}</p>
-                          <p className="text-xs text-gray-500">ID: {ticket.event_id}</p>
+                          <p className="text-xs text-muted-foreground">ID: {ticket.event_id}</p>
                         </div>
                       </td>
                       <td className="p-3">
                         <div>
                           <p className="font-medium">{ticket.user?.display_name || 'Unknown User'}</p>
-                          <p className="text-xs text-gray-500">{ticket.user?.email}</p>
+                          <p className="text-xs text-muted-foreground">{ticket.user?.email}</p>
                         </div>
                       </td>
                       <td className="p-3">
                         <div>
                           <p className="font-semibold">₹{(ticket.normalizedAmount || 0).toLocaleString()}</p>
                           {ticket.detectedAmount !== ticket.normalizedAmount && (
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-muted-foreground">
                               Raw: {ticket.detectedAmount}
                             </p>
                           )}
@@ -750,7 +750,7 @@ export default function EventAnalytics({ permissions, events: propEvents, ticket
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="p-8 text-center text-gray-500">
+                    <td colSpan="6" className="p-8 text-center text-muted-foreground">
                       No transactions found
                     </td>
                   </tr>
@@ -762,10 +762,10 @@ export default function EventAnalytics({ permissions, events: propEvents, ticket
       </Card>
 
       {/* Enhanced Debug Panel */}
-      <Card className="bg-gray-50 border-gray-200">
+      <Card className="bg-surface-2 border-border">
         <CardHeader>
           <CardTitle className="text-sm flex items-center">
-            <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
+            <CheckCircle className="w-4 h-4 mr-2 text-positive" />
             Debug Information & Data Analysis
           </CardTitle>
         </CardHeader>

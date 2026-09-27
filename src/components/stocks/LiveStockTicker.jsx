@@ -5,36 +5,62 @@ import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Activity, Play, Pause } from "lucide-react";
 import { stockAPI } from "./LiveStockAPI";
 
+// Price formatting follows the quote's own currency; the symbol universe is
+// configurable server-side, so it is not always INR.
+const formatPrice = (stock) => {
+  const value = Number(stock?.current_price || 0);
+  try {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: stock?.currency || 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value);
+  } catch {
+    return value.toFixed(2);
+  }
+};
+
 export default function LiveStockTicker({ className = "" }) {
   const [stocks, setStocks] = useState([]);
+  const [status, setStatus] = useState('loading'); // loading | ready | empty | error
   const [isPlaying, setIsPlaying] = useState(true);
+  const [marketOpen, setMarketOpen] = useState(() => stockAPI.getMarketStatus().isOpen);
 
   useEffect(() => {
+    let cancelled = false;
+
+    // Live quotes from the backend (Finnhub server-side). No sample fallback:
+    // showing invented prices on a trading dashboard is worse than showing none.
     const loadStocks = async () => {
       try {
-        const trendingSymbols = stockAPI.getTrendingStocks();
-        // Correctly wait for all API calls to resolve
-        const stockDataPromises = trendingSymbols.map(symbol => stockAPI.getStockPrice(symbol));
-        const resolvedStockData = await Promise.all(stockDataPromises);
-        
-        // Filter out any potential nulls or undefined stocks to prevent errors
-        const validStocks = resolvedStockData.filter(stock => stock && typeof stock.current_price !== 'undefined');
+        const market = await stockAPI.getMarketData();
+        if (cancelled) return;
 
+        const live = (market?.stocks || []).filter(
+          s => s && Number.isFinite(Number(s.current_price)) && Number(s.current_price) > 0
+        );
+
+        if (live.length === 0) {
+          setStocks([]);
+          setStatus('empty');
+          return;
+        }
         // Duplicate the array for a seamless scrolling effect
-        setStocks([...validStocks, ...validStocks]);
+        setStocks([...live, ...live]);
+        setStatus('ready');
       } catch (error) {
-        console.error("Error loading ticker stocks:", error);
-        const sampleData = [
-            { symbol: 'RELIANCE', current_price: 2439.61, change_percent: -0.70 },
-            { symbol: 'TCS', current_price: 3893.20, change_percent: 1.32 },
-            { symbol: 'HDFCBANK', current_price: 1671.67, change_percent: 1.05 },
-            { symbol: 'INFY', current_price: 1509.70, change_percent: -1.49 },
-            { symbol: 'ICICIBANK', current_price: 962.57, change_percent: 0.65 },
-        ];
-        setStocks([...sampleData, ...sampleData]);
+        if (cancelled) return;
+        console.error('Error loading ticker stocks:', error);
+        setStocks([]);
+        setStatus('error');
       }
     };
+
     loadStocks();
+    setMarketOpen(stockAPI.getMarketStatus().isOpen);
+    const refresh = setInterval(loadStocks, 60000);
+    return () => { cancelled = true; clearInterval(refresh); };
   }, []);
 
   const PriceChange = ({ change }) => {
@@ -69,15 +95,32 @@ export default function LiveStockTicker({ className = "" }) {
             <div className="flex items-center gap-2">
               <Activity className="w-5 h-5 text-protocall-blue" />
               <h3 className="text-sm font-semibold text-foreground">Live Market</h3>
-              <Badge variant="outline" className="bg-buy text-buy-foreground border-transparent">
-                Market Open
+              <Badge
+                variant="outline"
+                className={marketOpen
+                  ? 'bg-buy text-buy-foreground border-transparent'
+                  : 'bg-surface-2 text-subtle border-border'}
+              >
+                {marketOpen ? 'Market Open' : 'Market Closed'}
               </Badge>
             </div>
             <button onClick={() => setIsPlaying(!isPlaying)} className="text-muted-foreground hover:text-foreground">
               {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
             </button>
           </div>
-          <div className="relative flex overflow-x-hidden">
+          {status !== 'ready' && (
+            <div className="px-4 py-3 text-sm text-muted-foreground">
+              {status === 'loading' && 'Loading live market data…'}
+              {status === 'empty' && 'No live quotes available right now.'}
+              {status === 'error' && (
+                <span className="text-sell-muted-foreground">
+                  Live market data is unavailable.
+                </span>
+              )}
+            </div>
+          )}
+
+          <div className={`relative flex overflow-x-hidden ${status === 'ready' ? '' : 'hidden'}`}>
             <div 
               className="py-3 flex animate-marquee whitespace-nowrap"
               style={{ animationPlayState: isPlaying ? 'running' : 'paused' }}
@@ -85,7 +128,7 @@ export default function LiveStockTicker({ className = "" }) {
               {stocks.map((stock, index) => (
                 <div key={index} className="flex items-center mx-4 flex-shrink-0">
                   <span className="font-semibold text-foreground text-sm">{stock.symbol}</span>
-                  <span className="ml-2 text-subtle text-sm">₹{stock.current_price.toFixed(2)}</span>
+                  <span className="ml-2 text-subtle text-sm">{formatPrice(stock)}</span>
                   <span className="ml-2"><PriceChange change={stock.change_percent} /></span>
                   <span className="text-muted-foreground/50 mx-4">*</span>
                 </div>

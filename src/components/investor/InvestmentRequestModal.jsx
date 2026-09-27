@@ -127,8 +127,8 @@ export default function InvestmentRequestModal({ investor, fundPlan, wallet, isO
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent>
           <div className="flex items-center justify-center py-8">
-            <AlertTriangle className="w-8 h-8 text-yellow-600 mr-2" />
-            <p className="text-lg text-slate-700">No Fund Plan selected.</p>
+            <AlertTriangle className="w-8 h-8 text-hold-muted-foreground mr-2" />
+            <p className="text-lg text-subtle">No Fund Plan selected.</p>
           </div>
         </DialogContent>
       </Dialog>
@@ -140,7 +140,7 @@ export default function InvestmentRequestModal({ investor, fundPlan, wallet, isO
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Briefcase className="w-5 h-5 text-blue-600" />
+            <Briefcase className="w-5 h-5 text-protocall-blue" />
             Investment Request
           </DialogTitle>
           <DialogDescription>
@@ -150,12 +150,12 @@ export default function InvestmentRequestModal({ investor, fundPlan, wallet, isO
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Wallet Balance Display */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-blue-700 font-medium">Available Wallet Balance</span>
-              <WalletIcon className="w-4 h-4 text-blue-600" />
+              <span className="text-sm text-protocall-blue font-medium">Available Wallet Balance</span>
+              <WalletIcon className="w-4 h-4 text-protocall-blue" />
             </div>
-            <p className="text-2xl font-bold text-blue-900">₹{availableBalance.toLocaleString('en-IN')}</p>
+            <p className="text-2xl font-bold text-protocall-blue">₹{availableBalance.toLocaleString('en-IN')}</p>
           </div>
 
           {/* Investment Amount */}
@@ -174,7 +174,7 @@ export default function InvestmentRequestModal({ investor, fundPlan, wallet, isO
               className="mt-1"
               required
             />
-            <div className="flex items-center justify-between mt-2 text-xs text-slate-500">
+            <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
               <span>Min: ₹{minimumInvestment.toLocaleString('en-IN')}</span>
               <span>Max: ₹{(maximumInvestment ? Math.min(maximumInvestment, availableBalance) : availableBalance).toLocaleString('en-IN')}</span>
             </div>
@@ -215,26 +215,26 @@ export default function InvestmentRequestModal({ investor, fundPlan, wallet, isO
           </div>
 
           {/* Fund Details */}
-          <div className="bg-slate-50 rounded-lg p-4 space-y-2 text-sm">
+          <div className="bg-surface-2 rounded-lg p-4 space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-slate-600">Fund Plan:</span>
-              <span className="font-semibold text-slate-900">{fundPlan?.plan_name}</span>
+              <span className="text-subtle">Fund Plan:</span>
+              <span className="font-semibold text-foreground">{fundPlan?.plan_name}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-600">Expected Return:</span>
-              <span className="font-semibold text-green-700">{fundPlan?.expected_return_percent || 'Variable'}% /mo</span>
+              <span className="text-subtle">Expected Return:</span>
+              <span className="font-semibold text-buy-muted-foreground">{fundPlan?.expected_return_percent || 'Variable'}% /mo</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-600">Investment Period:</span>
-              <span className="font-semibold text-slate-900">{fundPlan?.investment_period?.replace('_', ' ') || 'Flexible'}</span>
+              <span className="text-subtle">Investment Period:</span>
+              <span className="font-semibold text-foreground">{fundPlan?.investment_period?.replace('_', ' ') || 'Flexible'}</span>
             </div>
           </div>
 
           {/* Warning if amount exceeds balance */}
           {investmentAmount && parseFloat(investmentAmount) > availableBalance && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
-              <div className="text-xs text-red-800">
+            <div className="bg-sell-muted border border-sell/30 rounded-lg p-3 flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-sell-muted-foreground flex-shrink-0 mt-0.5" />
+              <div className="text-xs text-sell-muted-foreground">
                 <p className="font-semibold">Insufficient Balance</p>
                 <p>Please add ₹{(parseFloat(investmentAmount) - availableBalance).toLocaleString('en-IN')} to your wallet or reduce the investment amount.</p>
               </div>
@@ -242,9 +242,9 @@ export default function InvestmentRequestModal({ investor, fundPlan, wallet, isO
           )}
 
           {/* Important Note */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start gap-2">
-            <AlertTriangle className="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" />
-            <p className="text-xs text-yellow-800">
+          <div className="bg-hold-muted border border-hold/30 rounded-lg p-3 flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-hold-muted-foreground">
               <strong>Note:</strong> The requested amount will be locked in your wallet until the fund manager processes your request.
             </p>
           </div>
@@ -264,7 +264,7 @@ export default function InvestmentRequestModal({ investor, fundPlan, wallet, isO
                 parseFloat(investmentAmount) < minimumInvestment ||
                 (maximumInvestment && parseFloat(investmentAmount) > maximumInvestment)
               }
-              className="bg-gradient-to-r from-blue-600 to-purple-600"
+              className="bg-gradient-to-r from-protocall-deep to-protocall-blue"
             >
               {isSubmitting ? (
                 <>

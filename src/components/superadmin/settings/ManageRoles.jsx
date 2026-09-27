@@ -117,7 +117,7 @@ export default function ManageRoles({ settings, onChange }) {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold">Role Management</h3>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-subtle">
             Define user roles and their permissions in the system.
           </p>
         </div>
@@ -135,20 +135,20 @@ export default function ManageRoles({ settings, onChange }) {
             <Card key={role.id} className="shadow-sm">
               <CardContent className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-4">
-                  <div className="p-2 rounded-lg bg-slate-100">
-                    <Shield className="w-5 h-5 text-blue-600" />
+                  <div className="p-2 rounded-lg bg-surface-2">
+                    <Shield className="w-5 h-5 text-protocall-blue" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <h4 className="font-semibold">{role.name}</h4>
                       {role.is_system_role && (
-                        <Badge className="bg-red-100 text-red-800 flex items-center gap-1">
+                        <Badge className="bg-sell-muted text-sell-muted-foreground flex items-center gap-1">
                           <Lock className="w-3 h-3" />
                           System
                         </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-slate-600">{role.description}</p>
+                    <p className="text-sm text-subtle">{role.description}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -167,7 +167,7 @@ export default function ManageRoles({ settings, onChange }) {
                       setDeleteRole(role);
                       setShowDeleteDialog(true);
                     }}
-                    className="text-red-600"
+                    className="text-sell-muted-foreground"
                     disabled={role.is_system_role}
                   >
                     <Trash2 className="w-4 h-4" />
@@ -178,7 +178,7 @@ export default function ManageRoles({ settings, onChange }) {
           ))}
           
           {roles.length === 0 && (
-            <div className="text-center p-8 text-slate-600">
+            <div className="text-center p-8 text-subtle">
               No roles found. Click "Add Role" to create one.
             </div>
           )}
@@ -221,7 +221,7 @@ export default function ManageRoles({ settings, onChange }) {
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="is_system_role">System Role</Label>
-                <p className="text-xs text-slate-600">System roles cannot be deleted or renamed</p>
+                <p className="text-xs text-subtle">System roles cannot be deleted or renamed</p>
               </div>
               <Switch
                 id="is_system_role"
@@ -254,7 +254,7 @@ export default function ManageRoles({ settings, onChange }) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction onClick={handleDelete} className="bg-sell hover:bg-sell">
               Delete Role
             </AlertDialogAction>
           </AlertDialogFooter>

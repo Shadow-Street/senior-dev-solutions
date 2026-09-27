@@ -54,37 +54,37 @@ export default function LockedPledgeTab({ onOpenModal, accessRequest }) {
     if (accessRequest?.status === 'pending') {
       return {
         icon: Clock,
-        iconColor: 'text-blue-600',
-        bgColor: 'from-blue-50 to-indigo-50',
-        borderColor: 'border-blue-200',
+        iconColor: 'text-protocall-blue',
+        bgColor: 'from-surface-2 to-surface-2',
+        borderColor: 'border-protocall-premium-light',
         title: 'Your Application is Under Review',
         description: 'We are verifying your details and will notify you upon approval.',
         badgeText: 'Status: Pending',
-        badgeColor: 'bg-blue-500 text-white',
+        badgeColor: 'bg-protocall-blue text-white',
       };
     }
     if (accessRequest?.status === 'rejected') {
       return {
         icon: AlertTriangle,
-        iconColor: 'text-red-600',
-        bgColor: 'from-red-50 to-orange-50',
-        borderColor: 'border-red-200',
+        iconColor: 'text-sell-muted-foreground',
+        bgColor: 'from-surface-2 to-hold-muted',
+        borderColor: 'border-sell/30',
         title: 'Access Request Rejected',
         description: 'Please review the details and resubmit your application.',
         badgeText: 'Action Required',
-        badgeColor: 'bg-red-600 text-white',
+        badgeColor: 'bg-protocall-sell-text text-white',
       };
     }
     // Default state
     return {
       icon: Lock,
-      iconColor: 'text-purple-600',
-      bgColor: 'from-purple-50 to-blue-50',
-      borderColor: 'border-purple-200',
+      iconColor: 'text-protocall-premium-text',
+      bgColor: 'from-surface-2 to-surface-2',
+      borderColor: 'border-protocall-premium-light',
       title: 'Pledge Portfolio',
       description: 'Professional trading execution through your demat account',
       badgeText: 'Activation Required',
-      badgeColor: 'bg-red-600 text-white',
+      badgeColor: 'bg-protocall-sell-text text-white',
     };
   };
 
@@ -114,14 +114,14 @@ export default function LockedPledgeTab({ onOpenModal, accessRequest }) {
                   <banner.icon className={`w-10 h-10 ${banner.iconColor}`} />
                 </div>
                 <div>
-                  <h2 className="text-3xl font-bold text-gray-800">{banner.title}</h2>
-                  <p className="text-gray-600 mt-2 text-lg">{banner.description}</p>
+                  <h2 className="text-3xl font-bold text-foreground">{banner.title}</h2>
+                  <p className="text-subtle mt-2 text-lg">{banner.description}</p>
                    {accessRequest?.status === 'pending' && (
                     <div className="mt-4 max-w-md">
-                      <div className="relative w-full bg-blue-200 rounded-full h-2 overflow-hidden">
-                        <div className="absolute top-0 bottom-0 bg-blue-500 rounded-full indeterminate-bar w-1/4"></div>
+                      <div className="relative w-full bg-protocall-blue rounded-full h-2 overflow-hidden">
+                        <div className="absolute top-0 bottom-0 bg-protocall-blue rounded-full indeterminate-bar w-1/4"></div>
                       </div>
-                      <p className="text-xs text-blue-700 mt-1.5 font-medium">Verification in progress... (Typically 24-48 hours)</p>
+                      <p className="text-xs text-protocall-blue mt-1.5 font-medium">Verification in progress... (Typically 24-48 hours)</p>
                     </div>
                   )}
                 </div>
@@ -136,24 +136,24 @@ export default function LockedPledgeTab({ onOpenModal, accessRequest }) {
         {/* Benefits Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {benefits.map((benefit, index) => (
-            <Card key={index} className="text-center border-2 border-gray-200 hover:border-purple-300 hover:shadow-lg transition-all duration-300 opacity-75 rounded-2xl">
+            <Card key={index} className="text-center border-2 border-border hover:border-protocall-premium-light hover:shadow-lg transition-all duration-300 opacity-75 rounded-2xl">
               <CardContent className="p-6">
-                <benefit.icon className="w-10 h-10 text-purple-600 mx-auto mb-4" />
-                <h3 className="font-bold text-gray-800 mb-2 text-lg">{benefit.title}</h3>
-                <p className="text-sm text-gray-600">{benefit.desc}</p>
+                <benefit.icon className="w-10 h-10 text-protocall-premium-text mx-auto mb-4" />
+                <h3 className="font-bold text-foreground mb-2 text-lg">{benefit.title}</h3>
+                <p className="text-sm text-subtle">{benefit.desc}</p>
               </CardContent>
             </Card>
           ))}
         </div>
 
         {/* Feature Info Card */}
-        <Card className="border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl shadow-lg">
+        <Card className="border-2 border-hold/30 bg-gradient-to-r from-surface-2 to-hold-muted rounded-2xl shadow-lg">
           <CardContent className="p-8">
             <div className="flex items-start gap-6">
-              <AlertTriangle className="w-8 h-8 text-amber-600 mt-1 flex-shrink-0" />
+              <AlertTriangle className="w-8 h-8 text-hold-muted-foreground mt-1 flex-shrink-0" />
               <div className="flex-1">
-                <h3 className="font-bold text-amber-800 mb-3 text-xl">Pledge Feature Access Required</h3>
-                <p className="text-amber-700 mb-6 text-lg leading-relaxed">
+                <h3 className="font-bold text-hold-muted-foreground mb-3 text-xl">Pledge Feature Access Required</h3>
+                <p className="text-hold-muted-foreground mb-6 text-lg leading-relaxed">
                   {accessRequest?.status === 'pending'
                     ? "Your request is being reviewed by our team. This usually takes 24-48 hours. You will be notified upon approval and can check the status here."
                     : "The Pledge feature is available by request only. This ensures all users understand the mechanics and risks involved."
@@ -162,7 +162,7 @@ export default function LockedPledgeTab({ onOpenModal, accessRequest }) {
                 <div className="flex gap-4">
                   <Button 
                     onClick={onOpenModal}
-                    className="bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white border-0 rounded-lg shadow-lg px-8 py-3 font-semibold transition-all duration-300"
+                    className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white border-0 rounded-lg shadow-lg px-8 py-3 font-semibold transition-all duration-300"
                     size="lg"
                     disabled={accessRequest?.status === 'pending'}
                   >
@@ -173,7 +173,7 @@ export default function LockedPledgeTab({ onOpenModal, accessRequest }) {
                     <DialogTrigger asChild>
                       <Button 
                         variant="outline" 
-                        className="bg-gradient-to-r from-amber-100 to-orange-100 hover:from-amber-200 hover:to-orange-200 border-2 border-amber-300 text-amber-800 rounded-lg px-8 py-3 font-semibold transition-all duration-300"
+                        className="bg-gradient-to-r from-surface-2 to-hold-muted hover:from-hold hover:to-hold border-2 border-hold/30 text-hold-muted-foreground rounded-lg px-8 py-3 font-semibold transition-all duration-300"
                         size="lg"
                       >
                         <HelpCircle className="w-5 h-5 mr-2" />
@@ -192,17 +192,17 @@ export default function LockedPledgeTab({ onOpenModal, accessRequest }) {
                       </DialogHeader>
                       <div className="space-y-8 mt-6">
                         {faqs.map((faq, index) => (
-                          <div key={index} className="border-l-4 border-purple-200 pl-6 py-4">
-                            <h4 className="font-bold text-gray-900 mb-3 text-lg">{faq.question}</h4>
-                            <p className="text-gray-700 leading-relaxed">{faq.answer}</p>
+                          <div key={index} className="border-l-4 border-protocall-premium-light pl-6 py-4">
+                            <h4 className="font-bold text-foreground mb-3 text-lg">{faq.question}</h4>
+                            <p className="text-subtle leading-relaxed">{faq.answer}</p>
                           </div>
                         ))}
-                        <div className="bg-red-50 border-2 border-red-200 rounded-lg p-6">
-                          <h4 className="font-bold text-red-800 mb-3 flex items-center gap-2 text-lg">
+                        <div className="bg-sell-muted border-2 border-sell/30 rounded-lg p-6">
+                          <h4 className="font-bold text-sell-muted-foreground mb-3 flex items-center gap-2 text-lg">
                             <AlertTriangle className="w-5 h-5" />
                             Important Disclaimer
                           </h4>
-                          <p className="text-red-700 leading-relaxed">
+                          <p className="text-sell-muted-foreground leading-relaxed">
                             Trading in securities involves risks. Past performance is not indicative of future results. 
                             Please ensure you understand the risks and consult with financial advisors if needed. 
                             The platform facilitates execution but does not provide investment advice.
@@ -225,32 +225,32 @@ export default function LockedPledgeTab({ onOpenModal, accessRequest }) {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               <div className="text-center opacity-75">
-                <div className="w-16 h-16 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-purple-600 font-bold text-xl">1</span>
+                <div className="w-16 h-16 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-protocall-premium-text font-bold text-xl">1</span>
                 </div>
                 <h4 className="font-bold mb-3 text-lg">Request Access</h4>
-                <p className="text-sm text-gray-600">Submit application and get approved by our team</p>
+                <p className="text-sm text-subtle">Submit application and get approved by our team</p>
               </div>
               <div className="text-center opacity-75">
-                <div className="w-16 h-16 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-purple-600 font-bold text-xl">2</span>
+                <div className="w-16 h-16 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-protocall-premium-text font-bold text-xl">2</span>
                 </div>
                 <h4 className="font-bold mb-3 text-lg">Link Demat Account</h4>
-                <p className="text-sm text-gray-600">Securely connect your existing broker account</p>
+                <p className="text-sm text-subtle">Securely connect your existing broker account</p>
               </div>
               <div className="text-center opacity-75">
-                <div className="w-16 h-16 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-purple-600 font-bold text-xl">3</span>
+                <div className="w-16 h-16 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-protocall-premium-text font-bold text-xl">3</span>
                 </div>
                 <h4 className="font-bold mb-3 text-lg">Submit Pledges</h4>
-                <p className="text-sm text-gray-600">Choose stocks, quantities and pay convenience fee</p>
+                <p className="text-sm text-subtle">Choose stocks, quantities and pay convenience fee</p>
               </div>
               <div className="text-center opacity-75">
-                <div className="w-16 h-16 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-purple-600 font-bold text-xl">4</span>
+                <div className="w-16 h-16 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-protocall-premium-text font-bold text-xl">4</span>
                 </div>
                 <h4 className="font-bold mb-3 text-lg">Track Executions</h4>
-                <p className="text-sm text-gray-600">Monitor real-time execution and P&L in portfolio</p>
+                <p className="text-sm text-subtle">Monitor real-time execution and P&L in portfolio</p>
               </div>
             </div>
           </CardContent>

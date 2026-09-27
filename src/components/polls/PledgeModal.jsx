@@ -130,7 +130,7 @@ export default function PledgeModal({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-            <Target className="w-6 h-6 text-blue-600" />
+            <Target className="w-6 h-6 text-protocall-blue" />
             Make a Pledge - {session.stock_symbol}
           </DialogTitle>
           <DialogDescription>
@@ -139,11 +139,11 @@ export default function PledgeModal({
         </DialogHeader>
 
         {/* Session Info Banner */}
-        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 border border-blue-200">
+        <div className="bg-surface-2 rounded-lg p-4 border border-protocall-premium-light">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div>
               <Badge className={`${
-                isPurchaseMode ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                isPurchaseMode ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-sell-muted text-sell-muted-foreground'
               } mb-2`}>
                 {isPurchaseMode && <TrendingUp className="w-3 h-3 mr-1" />}
                 {isSellMode && <TrendingDown className="w-3 h-3 mr-1" />}
@@ -151,15 +151,15 @@ export default function PledgeModal({
                 {session.session_mode === 'sell_only' && 'Sell Only'}
                 {session.session_mode === 'buy_sell_cycle' && 'Buy & Sell Cycle'}
               </Badge>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-subtle">
                 <Info className="w-4 h-4 inline mr-1" />
                 {isPurchaseMode && 'You can only place buy orders in this session'}
                 {isSellMode && 'You can only place sell orders in this session'}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-gray-500">Session ends</p>
-              <p className="text-sm font-semibold text-gray-900">
+              <p className="text-xs text-muted-foreground">Session ends</p>
+              <p className="text-sm font-semibold text-foreground">
                 {new Date(session.session_end).toLocaleString()}
               </p>
             </div>
@@ -170,7 +170,7 @@ export default function PledgeModal({
           {/* Quantity Input */}
           <div>
             <Label htmlFor="quantity" className="text-base font-semibold">
-              Quantity <span className="text-red-500">*</span>
+              Quantity <span className="text-sell">*</span>
             </Label>
             <Input
               id="quantity"
@@ -185,7 +185,7 @@ export default function PledgeModal({
               disabled={isProcessing}
               required
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {session.min_qty && `Min: ${session.min_qty}`}
               {session.min_qty && session.max_qty && ' | '}
               {session.max_qty && `Max: ${session.max_qty}`}
@@ -195,10 +195,10 @@ export default function PledgeModal({
           {/* Target Price Input */}
           <div>
             <Label htmlFor="price" className="text-base font-semibold">
-              Target Price (₹) <span className="text-red-500">*</span>
+              Target Price (₹) <span className="text-sell">*</span>
             </Label>
             <div className="relative mt-2">
-              <IndianRupee className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <IndianRupee className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
               <Input
                 id="price"
                 type="number"
@@ -212,34 +212,34 @@ export default function PledgeModal({
                 required
               />
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               The price at which you want to {isPurchaseMode ? 'buy' : 'sell'} this stock
             </p>
           </div>
 
           {/* Calculation Summary */}
           {quantity && targetPrice && (
-            <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-              <h4 className="font-semibold text-gray-900">Summary</h4>
+            <div className="bg-surface-2 rounded-lg p-4 space-y-3">
+              <h4 className="font-semibold text-foreground">Summary</h4>
               
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Pledge Value</span>
+                <span className="text-subtle">Pledge Value</span>
                 <span className="font-semibold">₹{totalValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
 
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">
+                <span className="text-subtle">
                   Convenience Fee 
                   {session.convenience_fee_type === 'percentage' && ` (${session.convenience_fee_amount}%)`}
                 </span>
-                <span className="font-semibold text-orange-600">
+                <span className="font-semibold text-hold-muted-foreground">
                   ₹{calculatedFee.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
 
               <div className="border-t pt-2 flex justify-between">
-                <span className="font-semibold text-gray-900">Total to Pay Now</span>
-                <span className="font-bold text-lg text-blue-600">
+                <span className="font-semibold text-foreground">Total to Pay Now</span>
+                <span className="font-bold text-lg text-protocall-blue">
                   ₹{calculatedFee.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
@@ -247,7 +247,7 @@ export default function PledgeModal({
           )}
 
           {/* Terms Checkbox */}
-          <div className="flex items-start gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <div className="flex items-start gap-3 p-4 bg-hold-muted border border-hold/30 rounded-lg">
             <input
               type="checkbox"
               id="terms"
@@ -256,7 +256,7 @@ export default function PledgeModal({
               disabled={isProcessing}
               className="mt-1 w-4 h-4 cursor-pointer"
             />
-            <label htmlFor="terms" className="text-sm text-gray-700 cursor-pointer">
+            <label htmlFor="terms" className="text-sm text-subtle cursor-pointer">
               <span className="font-semibold">I agree to the terms and conditions</span>
               <p className="mt-1 text-xs">
                 I authorize the platform to execute this pledge on my behalf through my linked demat account. 
@@ -266,9 +266,9 @@ export default function PledgeModal({
           </div>
 
           {/* Important Notice */}
-          <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-blue-900">
+          <div className="flex items-start gap-2 p-3 bg-premium-muted border border-protocall-premium-light rounded-lg">
+            <AlertCircle className="w-5 h-5 text-protocall-blue mt-0.5 flex-shrink-0" />
+            <div className="text-sm text-protocall-blue">
               <p className="font-semibold">Important:</p>
               <p className="mt-1">
                 After payment, your pledge will be marked as "Ready for Execution". 
@@ -292,7 +292,7 @@ export default function PledgeModal({
             <Button
               type="submit"
               disabled={isProcessing || !agreedToTerms || !quantity || !targetPrice}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8"
+              className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white px-8"
             >
               {isProcessing ? (
                 <>

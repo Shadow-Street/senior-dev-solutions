@@ -16,8 +16,13 @@ const NewsController = {
         try {
             const { limit = 20, category } = req.query;
 
+            // Finnhub only publishes: general | forex | crypto | merger.
+            // Callers asking for anything else (e.g. 'business') get general.
+            const FINNHUB_CATEGORIES = ['general', 'forex', 'crypto', 'merger'];
+            const resolvedCategory = FINNHUB_CATEGORIES.includes(category) ? category : 'general';
+
             // 1. Fetch from External API
-            const externalNews = await FinDataService.fetchLatestNews(category);
+            const externalNews = await FinDataService.fetchLatestNews(resolvedCategory);
 
             // 2. Save to DB (optional, but good for persistence/history)
             if (externalNews && externalNews.length > 0) {
@@ -29,8 +34,9 @@ const NewsController = {
                             title: article.title,
                             content: article.summary || '', // Fallback for content
                             summary: article.summary,
-                            category: article.category,
+                            category: resolvedCategory,
                             source: article.source,
+                            url: article.url,
                             image_url: article.image_url,
                             published_at: article.published_at,
                             status: 'published',
@@ -42,7 +48,7 @@ const NewsController = {
 
             // 3. Fetch from DB to return consistent format and include any manually added news
             const where = { status: 'published' };
-            if (category) {
+            if (category && FINNHUB_CATEGORIES.includes(category)) {
                 where.category = category;
             }
 

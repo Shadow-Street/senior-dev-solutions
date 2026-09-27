@@ -114,7 +114,7 @@ export default function GenericEntityManagement({
   if (!entityConfig) {
     return (
       <div className="text-center p-12">
-        <p className="text-slate-600">Entity configuration not found</p>
+        <p className="text-subtle">Entity configuration not found</p>
       </div>
     );
   }
@@ -129,32 +129,32 @@ export default function GenericEntityManagement({
           
           {/* Stats Overview */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4">
-            <div className="bg-blue-50 p-3 rounded-lg">
-              <p className="text-xs text-blue-600">Total</p>
-              <p className="text-xl font-bold text-blue-800">{stats.total}</p>
+            <div className="bg-premium-muted p-3 rounded-lg">
+              <p className="text-xs text-protocall-blue">Total</p>
+              <p className="text-xl font-bold text-protocall-blue">{stats.total}</p>
             </div>
-            <div className="bg-yellow-50 p-3 rounded-lg">
-              <p className="text-xs text-yellow-600">Pending</p>
-              <p className="text-xl font-bold text-yellow-800">{stats.pending}</p>
+            <div className="bg-hold-muted p-3 rounded-lg">
+              <p className="text-xs text-hold-muted-foreground">Pending</p>
+              <p className="text-xl font-bold text-hold-muted-foreground">{stats.pending}</p>
             </div>
-            <div className="bg-green-50 p-3 rounded-lg">
-              <p className="text-xs text-green-600">Active</p>
-              <p className="text-xl font-bold text-green-800">{stats.active}</p>
+            <div className="bg-buy-muted p-3 rounded-lg">
+              <p className="text-xs text-buy-muted-foreground">Active</p>
+              <p className="text-xl font-bold text-buy-muted-foreground">{stats.active}</p>
             </div>
-            <div className="bg-red-50 p-3 rounded-lg">
-              <p className="text-xs text-red-600">Rejected</p>
-              <p className="text-xl font-bold text-red-800">{stats.rejected}</p>
+            <div className="bg-sell-muted p-3 rounded-lg">
+              <p className="text-xs text-sell-muted-foreground">Rejected</p>
+              <p className="text-xl font-bold text-sell-muted-foreground">{stats.rejected}</p>
             </div>
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <p className="text-xs text-gray-600">Suspended</p>
-              <p className="text-xl font-bold text-gray-800">{stats.suspended}</p>
+            <div className="bg-surface-2 p-3 rounded-lg">
+              <p className="text-xs text-subtle">Suspended</p>
+              <p className="text-xl font-bold text-foreground">{stats.suspended}</p>
             </div>
           </div>
           
           {/* Filters and Search */}
           <div className="flex flex-col md:flex-row gap-4 mt-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder={`Search ${entityConfig.display_name.toLowerCase()}...`}
                 value={searchTerm}
@@ -203,8 +203,8 @@ export default function GenericEntityManagement({
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <div className="text-slate-400 mb-2">No {entityConfig.display_name.toLowerCase()} found</div>
-                  <p className="text-sm text-slate-500">Try adjusting your search or filter criteria.</p>
+                  <div className="text-muted-foreground mb-2">No {entityConfig.display_name.toLowerCase()} found</div>
+                  <p className="text-sm text-muted-foreground">Try adjusting your search or filter criteria.</p>
                 </div>
               )}
             </TabsContent>
@@ -212,7 +212,7 @@ export default function GenericEntityManagement({
             <TabsContent value="table" className="space-y-4">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left">
-                  <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+                  <thead className="text-xs text-subtle uppercase bg-surface-2">
                     <tr>
                       <th scope="col" className="px-6 py-3">Name</th>
                       <th scope="col" className="px-6 py-3">Status</th>
@@ -228,7 +228,7 @@ export default function GenericEntityManagement({
                       const status = entity[statusField] || 'unknown';
                       
                       return (
-                        <tr key={entity.id} className="bg-white border-b hover:bg-slate-50">
+                        <tr key={entity.id} className="bg-white border-b hover:bg-surface-2">
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
                               <img
@@ -238,21 +238,21 @@ export default function GenericEntityManagement({
                               />
                               <div>
                                 <div className="font-medium">{entity.display_name}</div>
-                                <div className="text-xs text-slate-500">{entity.user?.email}</div>
+                                <div className="text-xs text-muted-foreground">{entity.user?.email}</div>
                               </div>
                             </div>
                           </td>
                           <td className="px-6 py-4">
                             <Badge className={
-                              status === 'approved' || status === 'active' ? 'bg-green-100 text-green-800' :
-                              status === 'pending' || status === 'pending_approval' ? 'bg-yellow-100 text-yellow-800' :
-                              status === 'rejected' ? 'bg-red-100 text-red-800' :
-                              'bg-gray-100 text-gray-800'
+                              status === 'approved' || status === 'active' ? 'bg-buy-muted text-buy-muted-foreground' :
+                              status === 'pending' || status === 'pending_approval' ? 'bg-hold-muted text-hold-muted-foreground' :
+                              status === 'rejected' ? 'bg-sell-muted text-sell-muted-foreground' :
+                              'bg-surface-2 text-foreground'
                             }>
                               {status}
                             </Badge>
                           </td>
-                          <td className="px-6 py-4 text-slate-500">
+                          <td className="px-6 py-4 text-muted-foreground">
                             {new Date(entity.created_date).toLocaleDateString()}
                           </td>
                           <td className="px-6 py-4 text-right">

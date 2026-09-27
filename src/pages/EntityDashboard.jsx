@@ -55,7 +55,7 @@ export default function EntityDashboardPage() {
     return (
       <div className="p-6 text-center">
         <h2 className="text-2xl font-bold">Access Denied</h2>
-        <p className="text-slate-600">This dashboard is only available for approved content creators.</p>
+        <p className="text-subtle">This dashboard is only available for approved content creators.</p>
       </div>
     );
   }
@@ -64,17 +64,17 @@ export default function EntityDashboardPage() {
   const activeRole = isSuperAdmin ? viewAsRole : user.app_role;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
+    <div className="min-h-screen bg-surface-2">
       {/* SuperAdmin Role Switcher */}
       {isSuperAdmin && (
-        <div className="bg-yellow-50 border-b border-yellow-200 p-4">
+        <div className="bg-hold-muted border-b border-hold/30 p-4">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-yellow-800 font-semibold">🔑 SuperAdmin Mode</span>
-              <span className="text-yellow-700 text-sm">You have universal access to all dashboards</span>
+              <span className="text-hold-muted-foreground font-semibold">🔑 SuperAdmin Mode</span>
+              <span className="text-hold-muted-foreground text-sm">You have universal access to all dashboards</span>
             </div>
             <div className="flex items-center gap-3">
-              <label className="text-sm font-medium text-yellow-800">View as:</label>
+              <label className="text-sm font-medium text-hold-muted-foreground">View as:</label>
               <Select value={viewAsRole} onValueChange={setViewAsRole}>
                 <SelectTrigger className="w-48 bg-white">
                   <SelectValue />
@@ -96,7 +96,7 @@ export default function EntityDashboardPage() {
       {activeRole === 'educator' && (
         <div className="p-6 text-center">
           <h2 className="text-2xl font-bold">Educator Dashboard</h2>
-          <p className="text-slate-600">Coming soon...</p>
+          <p className="text-subtle">Coming soon...</p>
         </div>
       )}
     </div>

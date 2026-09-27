@@ -64,8 +64,8 @@ class ErrorBoundary extends React.Component {
         return (
           <div className="flex items-center justify-center min-h-[400px] p-6">
             <div className="text-center space-y-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="text-slate-600">Recovering from error... Attempt {errorCount}/2</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto"></div>
+              <p className="text-subtle">Recovering from error... Attempt {errorCount}/2</p>
             </div>
           </div>
         );
@@ -75,27 +75,27 @@ class ErrorBoundary extends React.Component {
       return (
         <div className="flex items-center justify-center min-h-[400px] p-6">
           <div className="max-w-2xl w-full">
-            <Alert variant="destructive" className="bg-red-50 border-red-200">
-              <AlertTriangle className="h-5 w-5 text-red-600" />
-              <AlertTitle className="text-red-900 font-bold text-lg">
+            <Alert variant="destructive" className="bg-sell-muted border-sell/30">
+              <AlertTriangle className="h-5 w-5 text-sell-muted-foreground" />
+              <AlertTitle className="text-sell-muted-foreground font-bold text-lg">
                 Something went wrong
               </AlertTitle>
               <AlertDescription className="space-y-4">
-                <p className="text-red-800">
+                <p className="text-sell-muted-foreground">
                   We're sorry, but something unexpected happened. The error has been logged and we'll look into it.
                 </p>
 
                 {showDetails && error && (
                   <details className="mt-4">
-                    <summary className="cursor-pointer text-sm font-medium text-red-900 hover:text-red-700">
+                    <summary className="cursor-pointer text-sm font-medium text-sell-muted-foreground hover:text-sell-muted-foreground">
                       Technical Details (Click to expand)
                     </summary>
-                    <div className="mt-2 p-3 bg-red-100 rounded-md overflow-auto max-h-48">
-                      <p className="text-xs font-mono text-red-900 whitespace-pre-wrap">
+                    <div className="mt-2 p-3 bg-sell-muted rounded-md overflow-auto max-h-48">
+                      <p className="text-xs font-mono text-sell-muted-foreground whitespace-pre-wrap">
                         {error.toString()}
                       </p>
                       {errorInfo && (
-                        <p className="text-xs font-mono text-red-800 mt-2 whitespace-pre-wrap">
+                        <p className="text-xs font-mono text-sell-muted-foreground mt-2 whitespace-pre-wrap">
                           {errorInfo.componentStack}
                         </p>
                       )}
@@ -106,7 +106,7 @@ class ErrorBoundary extends React.Component {
                 <div className="flex gap-3 mt-6">
                   <Button 
                     onClick={this.handleReset}
-                    className="flex-1 bg-red-600 hover:bg-red-700"
+                    className="flex-1 bg-sell hover:bg-sell"
                   >
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Try Again
@@ -114,7 +114,7 @@ class ErrorBoundary extends React.Component {
                   <Button 
                     onClick={this.handleGoHome}
                     variant="outline"
-                    className="flex-1 border-red-300 text-red-700 hover:bg-red-50"
+                    className="flex-1 border-sell/30 text-sell-muted-foreground hover:bg-sell-muted"
                   >
                     <Home className="w-4 h-4 mr-2" />
                     Go Home

@@ -70,7 +70,7 @@ export default function CancellationModal({ open, onClose, onConfirm, isLoading 
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-red-600">
+          <DialogTitle className="flex items-center gap-2 text-sell-muted-foreground">
             <AlertTriangle className="w-5 h-5" />
             Cancel Subscription
           </DialogTitle>
@@ -108,8 +108,8 @@ export default function CancellationModal({ open, onClose, onConfirm, isLoading 
             />
           </div>
 
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm">
-            <p className="text-amber-800">
+          <div className="bg-hold-muted border border-hold/30 rounded-lg p-4 text-sm">
+            <p className="text-hold-muted-foreground">
               <strong>Important:</strong> Your subscription will remain active until the end of your current billing period. 
               You can continue to use all premium features until then.
             </p>

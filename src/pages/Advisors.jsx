@@ -215,19 +215,19 @@ export default function Advisors() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-6">
+        <div className="w-full bg-background p-6">
             <div className="max-w-7xl mx-auto space-y-8">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
                         <div className="flex items-center gap-3 mb-2">
-                            <BookUser className="w-8 h-8 text-blue-600" />
-                            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                            <BookUser className="w-8 h-8 text-protocall-blue" />
+                            <h1 className="text-4xl font-bold bg-gradient-to-r from-protocall-deep to-protocall-blue bg-clip-text text-transparent">
                                 SEBI Registered Advisors
                             </h1>
                         </div>
-                        <p className="text-lg text-slate-600">Subscribe to verified professionals for expert stock advice.</p>
+                        <p className="text-lg text-subtle">Subscribe to verified professionals for expert stock advice.</p>
 
-                        <div className="flex items-center gap-4 mt-3 text-sm text-slate-500">
+                        <div className="flex items-center gap-4 mt-3 text-sm text-muted-foreground">
                             <span>✅ All advisors are SEBI verified</span>
                             <span>•</span>
                             <span>📊 {advisors.length} Expert Advisors</span>
@@ -245,7 +245,7 @@ export default function Advisors() {
 
                 <div className="flex flex-col md:flex-row gap-4 items-center">
                     <div className="relative flex-1">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                         <Input
                             placeholder="Search advisors by name or expertise..."
                             value={searchTerm}
@@ -254,7 +254,7 @@ export default function Advisors() {
                         />
                     </div>
                     <div className="flex items-center gap-2">
-                        <Filter className="w-4 h-4 text-slate-500" />
+                        <Filter className="w-4 h-4 text-muted-foreground" />
                         <Select value={specializationFilter} onValueChange={setSpecializationFilter}>
                             <SelectTrigger className="w-48 rounded-xl">
                                 <SelectValue placeholder="Filter by specialization" />
@@ -279,9 +279,9 @@ export default function Advisors() {
                 ) : filteredAdvisors.length === 0 ? (
                     <Card className="border-0 shadow-lg rounded-xl">
                         <CardContent className="p-12 text-center">
-                            <BookUser className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                            <h3 className="text-xl font-semibold text-slate-700">No Advisors Found</h3>
-                            <p className="text-slate-500 mt-2">
+                            <BookUser className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                            <h3 className="text-xl font-semibold text-subtle">No Advisors Found</h3>
+                            <p className="text-muted-foreground mt-2">
                                 {searchTerm || specializationFilter !== 'all'
                                     ? "Try adjusting your search or filter criteria."
                                     : "Check back soon for a list of verified stock advisors."}
@@ -302,15 +302,15 @@ export default function Advisors() {
                     </div>
                 )}
 
-                <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 border-0 shadow-lg rounded-xl">
+                <Card className="bg-background border-protocall-premium-light border-0 shadow-lg rounded-xl">
                     <CardContent className="p-6">
                         <div className="flex items-start gap-3">
-                            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                <BookUser className="w-4 h-4 text-blue-600" />
+                            <div className="w-8 h-8 bg-premium-muted rounded-full flex items-center justify-center flex-shrink-0">
+                                <BookUser className="w-4 h-4 text-protocall-blue" />
                             </div>
                             <div>
-                                <h3 className="font-semibold text-blue-800 mb-2">Trust & Verification</h3>
-                                <p className="text-sm text-blue-700 leading-relaxed">
+                                <h3 className="font-semibold text-protocall-blue mb-2">Trust & Verification</h3>
+                                <p className="text-sm text-protocall-blue leading-relaxed">
                                     All advisors listed here are SEBI registered and verified by our admin team.
                                     However, investments are subject to market risks. Past performance does not guarantee future results.
                                     Please consult with qualified financial advisors and make informed decisions based on your risk tolerance.

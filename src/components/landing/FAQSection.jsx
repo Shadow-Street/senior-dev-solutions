@@ -138,17 +138,17 @@ export default function FAQSection() {
   );
 
   return (
-    <div className="w-full py-16 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+    <div className="w-full py-16 bg-surface-2">
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <HelpCircle className="w-8 h-8 text-blue-600" />
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <HelpCircle className="w-8 h-8 text-protocall-blue" />
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-protocall-deep to-protocall-blue bg-clip-text text-transparent">
               Frequently Asked Questions
             </h2>
           </div>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+          <p className="text-xl text-subtle max-w-3xl mx-auto">
             Everything you need to know about Protocall and how to make the most of our platform
           </p>
         </div>
@@ -162,18 +162,18 @@ export default function FAQSection() {
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center flex-shrink-0">
                     <HelpCircle className="w-5 h-5 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-slate-900">
+                  <h3 className="text-2xl font-bold text-foreground">
                     View All Frequently Asked Questions
                   </h3>
                 </div>
                 <div className={`flex-shrink-0 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>
                   {isExpanded ? (
-                    <ChevronUp className="w-6 h-6 text-blue-600" />
+                    <ChevronUp className="w-6 h-6 text-protocall-blue" />
                   ) : (
-                    <ChevronDown className="w-6 h-6 text-slate-400" />
+                    <ChevronDown className="w-6 h-6 text-muted-foreground" />
                   )}
                 </div>
               </div>
@@ -186,8 +186,8 @@ export default function FAQSection() {
           <div className="space-y-8 animate-in fade-in duration-500">
             {faqs.map((category, categoryIndex) => (
               <div key={categoryIndex}>
-                <h3 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                  <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+                <h3 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+                  <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
                   {category.category}
                 </h3>
                 <div className="space-y-3">
@@ -196,10 +196,10 @@ export default function FAQSection() {
                       key={faqIndex}
                       className="overflow-hidden transition-all duration-300 hover:shadow-lg border-0 bg-white p-6"
                     >
-                      <h4 className="text-lg font-semibold text-slate-900 mb-3">
+                      <h4 className="text-lg font-semibold text-foreground mb-3">
                         {faq.question}
                       </h4>
-                      <p className="text-slate-600 leading-relaxed">
+                      <p className="text-subtle leading-relaxed">
                         {faq.answer}
                       </p>
                     </Card>
@@ -212,15 +212,15 @@ export default function FAQSection() {
 
         {/* Contact CTA */}
         <div className="mt-12 text-center">
-          <Card className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white border-0 shadow-2xl p-8 max-w-3xl mx-auto">
+          <Card className="bg-gradient-to-r from-protocall-deep via-protocall-grape to-protocall-blue text-white border-0 shadow-2xl p-8 max-w-3xl mx-auto">
             <h3 className="text-2xl font-bold mb-2">Still have questions?</h3>
-            <p className="text-blue-100 mb-6">
+            <p className="text-white/80 mb-6">
               Our support team is here to help you 24/7
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <a
                 href="mailto:support@protocall.in"
-                className="inline-flex items-center justify-center px-6 py-3 bg-white text-blue-600 font-semibold rounded-full hover:bg-blue-50 transition-colors w-full sm:w-auto"
+                className="inline-flex items-center justify-center px-6 py-3 bg-white text-protocall-blue font-semibold rounded-full hover:bg-premium-muted transition-colors w-full sm:w-auto"
               >
                 Email Support
               </a>

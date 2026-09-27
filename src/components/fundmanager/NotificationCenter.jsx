@@ -164,11 +164,11 @@ export default function NotificationCenter({ user, onSettingsClick }) {
     <div className="relative">
       <button
         onClick={() => setShowPanel(!showPanel)}
-        className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors"
+        className="relative p-2 hover:bg-surface-2 rounded-lg transition-colors"
       >
-        <Bell className="w-6 h-6 text-slate-700" />
+        <Bell className="w-6 h-6 text-subtle" />
         {unreadCount > 0 && (
-          <Badge className="absolute -top-1 -right-1 h-5 min-w-[20px] flex items-center justify-center bg-red-500 text-white text-xs px-1 animate-pulse">
+          <Badge className="absolute -top-1 -right-1 h-5 min-w-[20px] flex items-center justify-center bg-protocall-sell-text text-white text-xs px-1 animate-pulse">
             {unreadCount}
           </Badge>
         )}
@@ -176,13 +176,13 @@ export default function NotificationCenter({ user, onSettingsClick }) {
 
       {showPanel && (
         <Card className="absolute right-0 mt-2 w-[480px] max-h-[700px] shadow-2xl border-0 z-50 overflow-hidden">
-          <CardHeader className="border-b border-slate-200 pb-3 bg-gradient-to-r from-blue-50 to-purple-50">
+          <CardHeader className="border-b border-border pb-3 bg-surface-2">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Bell className="w-5 h-5 text-blue-600" />
+                <Bell className="w-5 h-5 text-protocall-blue" />
                 Notification Center
                 {unreadCount > 0 && (
-                  <Badge className="bg-red-500 text-white">{unreadCount} new</Badge>
+                  <Badge className="bg-protocall-sell-text text-white">{unreadCount} new</Badge>
                 )}
               </CardTitle>
               <div className="flex items-center gap-2">
@@ -221,7 +221,7 @@ export default function NotificationCenter({ user, onSettingsClick }) {
                   variant={activeFilter === filter.key ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setActiveFilter(filter.key)}
-                  className={activeFilter === filter.key ? 'bg-blue-600' : ''}
+                  className={activeFilter === filter.key ? 'bg-protocall-blue' : ''}
                 >
                   {filter.label}
                   {filter.count > 0 && (
@@ -237,15 +237,15 @@ export default function NotificationCenter({ user, onSettingsClick }) {
           <CardContent className="p-0 max-h-[550px] overflow-y-auto">
             {isLoading ? (
               <div className="flex items-center justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
               </div>
             ) : filteredNotifications.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-slate-500">
-                <Bell className="w-12 h-12 text-slate-300 mb-3" />
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <Bell className="w-12 h-12 text-muted-foreground mb-3" />
                 <p className="text-sm">No notifications</p>
               </div>
             ) : (
-              <div className="divide-y divide-slate-100">
+              <div className="divide-y divide-divider">
                 {filteredNotifications.map((notification) => {
                   const meta = notification.meta ? JSON.parse(notification.meta) : {};
                   const isUnread = notification.status === 'unread';
@@ -253,8 +253,8 @@ export default function NotificationCenter({ user, onSettingsClick }) {
                   return (
                     <div
                       key={notification.id}
-                      className={`p-4 hover:bg-slate-50 transition-colors ${
-                        isUnread ? 'bg-blue-50 border-l-4 border-blue-500' : ''
+                      className={`p-4 hover:bg-surface-2 transition-colors ${
+                        isUnread ? 'bg-premium-muted border-l-4 border-protocall-blue' : ''
                       }`}
                     >
                       <div className="flex items-start gap-3">
@@ -265,48 +265,48 @@ export default function NotificationCenter({ user, onSettingsClick }) {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1">
-                              <h4 className={`font-semibold text-sm ${isUnread ? 'text-blue-900' : 'text-slate-900'}`}>
+                              <h4 className={`font-semibold text-sm ${isUnread ? 'text-protocall-blue' : 'text-foreground'}`}>
                                 {notification.title}
                                 {isUnread && (
-                                  <Badge className="ml-2 bg-blue-500 text-white text-xs">New</Badge>
+                                  <Badge className="ml-2 bg-protocall-blue text-white text-xs">New</Badge>
                                 )}
                               </h4>
-                              <p className="text-sm text-slate-600 mt-1 leading-relaxed">
+                              <p className="text-sm text-subtle mt-1 leading-relaxed">
                                 {notification.message}
                               </p>
                               
                               {/* Action Details */}
                               {meta.action && (
-                                <div className="mt-2 p-2 bg-slate-100 rounded-lg text-xs">
+                                <div className="mt-2 p-2 bg-surface-2 rounded-lg text-xs">
                                   <div className="grid grid-cols-2 gap-2">
                                     {meta.investor_code && (
                                       <div>
-                                        <span className="text-slate-500">Investor:</span>
-                                        <span className="font-mono font-semibold text-slate-900 ml-1">
+                                        <span className="text-muted-foreground">Investor:</span>
+                                        <span className="font-mono font-semibold text-foreground ml-1">
                                           {meta.investor_code}
                                         </span>
                                       </div>
                                     )}
                                     {meta.amount && (
                                       <div>
-                                        <span className="text-slate-500">Amount:</span>
-                                        <span className="font-semibold text-green-600 ml-1">
+                                        <span className="text-muted-foreground">Amount:</span>
+                                        <span className="font-semibold text-buy-muted-foreground ml-1">
                                           ₹{meta.amount.toLocaleString('en-IN')}
                                         </span>
                                       </div>
                                     )}
                                     {meta.payment_method && (
                                       <div>
-                                        <span className="text-slate-500">Method:</span>
-                                        <span className="font-semibold text-slate-900 ml-1 uppercase">
+                                        <span className="text-muted-foreground">Method:</span>
+                                        <span className="font-semibold text-foreground ml-1 uppercase">
                                           {meta.payment_method}
                                         </span>
                                       </div>
                                     )}
                                     {meta.fund_plan_name && (
                                       <div className="col-span-2">
-                                        <span className="text-slate-500">Plan:</span>
-                                        <span className="font-semibold text-slate-900 ml-1">
+                                        <span className="text-muted-foreground">Plan:</span>
+                                        <span className="font-semibold text-foreground ml-1">
                                           {meta.fund_plan_name}
                                         </span>
                                       </div>
@@ -317,7 +317,7 @@ export default function NotificationCenter({ user, onSettingsClick }) {
                             </div>
                             
                             <div className="flex flex-col items-end gap-2">
-                              <span className="text-xs text-slate-400 whitespace-nowrap">
+                              <span className="text-xs text-muted-foreground whitespace-nowrap">
                                 🕐 {formatTimeAgo(notification.created_date)}
                               </span>
                               
@@ -330,7 +330,7 @@ export default function NotificationCenter({ user, onSettingsClick }) {
                                     onClick={() => handleMarkAsRead(notification.id)}
                                     title="Mark as read"
                                   >
-                                    <Check className="w-4 h-4 text-green-600" />
+                                    <Check className="w-4 h-4 text-buy-muted-foreground" />
                                   </Button>
                                 )}
                                 <Button
@@ -340,7 +340,7 @@ export default function NotificationCenter({ user, onSettingsClick }) {
                                   onClick={() => handleDeleteNotification(notification.id)}
                                   title="Delete"
                                 >
-                                  <Trash2 className="w-4 h-4 text-red-500" />
+                                  <Trash2 className="w-4 h-4 text-sell" />
                                 </Button>
                               </div>
                             </div>
@@ -354,12 +354,12 @@ export default function NotificationCenter({ user, onSettingsClick }) {
             )}
           </CardContent>
 
-          <div className="border-t border-slate-200 p-3 bg-slate-50 flex justify-between items-center">
+          <div className="border-t border-border p-3 bg-surface-2 flex justify-between items-center">
             <Button
               variant="ghost"
               size="sm"
               onClick={onSettingsClick}
-              className="text-xs text-slate-600"
+              className="text-xs text-subtle"
             >
               <Settings className="w-4 h-4 mr-1" />
               Notification Settings
@@ -368,7 +368,7 @@ export default function NotificationCenter({ user, onSettingsClick }) {
               variant="ghost"
               size="sm"
               onClick={loadNotifications}
-              className="text-xs text-blue-600"
+              className="text-xs text-protocall-blue"
             >
               Refresh
             </Button>

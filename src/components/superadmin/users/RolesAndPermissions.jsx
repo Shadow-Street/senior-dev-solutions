@@ -372,7 +372,7 @@ export default function RolesAndPermissions({ onDataChange, currentAdmin }) {
   const canManageRoles = currentAdmin?.app_role === 'super_admin';
   // const canAssignRoles = currentAdmin ? ['super_admin', 'admin'].includes(currentAdmin.app_role) : false; // This variable is not used anywhere, keeping for context but can be removed
 
-  const tabsTriggerClassName = "whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md";
+  const tabsTriggerClassName = "whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md";
 
   if (isLoading) {
     return (
@@ -430,7 +430,7 @@ export default function RolesAndPermissions({ onDataChange, currentAdmin }) {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-blue-600" />
+                    <ShieldCheck className="w-5 h-5 text-protocall-blue" />
                     Permissions Matrix
                   </CardTitle>
                   <CardDescription>
@@ -443,7 +443,7 @@ export default function RolesAndPermissions({ onDataChange, currentAdmin }) {
                     Export Matrix
                   </Button>
                   {canManageRoles &&
-                    <Button onClick={() => openModal()} className="bg-blue-600 hover:bg-blue-700">
+                    <Button onClick={() => openModal()} className="bg-protocall-blue hover:bg-protocall-blue">
                       <PlusCircle className="w-4 h-4 mr-2" />
                       Create Role
                     </Button>
@@ -455,11 +455,11 @@ export default function RolesAndPermissions({ onDataChange, currentAdmin }) {
             <CardContent>
               <div className="overflow-x-auto border rounded-lg">
                 <table className="w-full text-sm">
-                  <thead className="bg-slate-50">
+                  <thead className="bg-surface-2">
                     <tr>
-                      <th className="p-3 text-left font-semibold text-slate-700 sticky left-0 bg-slate-100 z-10 min-w-[250px]">Permission</th>
+                      <th className="p-3 text-left font-semibold text-subtle sticky left-0 bg-surface-2 z-10 min-w-[250px]">Permission</th>
                       {roles.map((role) =>
-                        <th key={role.id} className="p-3 text-center font-semibold text-slate-700 min-w-[150px]">
+                        <th key={role.id} className="p-3 text-center font-semibold text-subtle min-w-[150px]">
                           <div className="flex items-center justify-center gap-2">
                             <span>{role.name.replace(/_/g, ' ')}</span>
                             {canManageRoles &&
@@ -471,7 +471,7 @@ export default function RolesAndPermissions({ onDataChange, currentAdmin }) {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-6 w-6 text-red-500"
+                                    className="h-6 w-6 text-sell"
                                     onClick={() => {
                                       setDeletingRole(role);
                                       setShowDeleteDialog(true);
@@ -490,14 +490,14 @@ export default function RolesAndPermissions({ onDataChange, currentAdmin }) {
                   <tbody className="bg-white">
                     {Object.entries(permissionsByCategory).map(([category, categoryPerms]) =>
                       <React.Fragment key={category}>
-                        <tr className="bg-slate-100">
-                          <td className="p-3 font-semibold text-slate-800 sticky left-0 bg-slate-100 z-10" colSpan={roles.length + 1}>
+                        <tr className="bg-surface-2">
+                          <td className="p-3 font-semibold text-foreground sticky left-0 bg-surface-2 z-10" colSpan={roles.length + 1}>
                             {category}
                           </td>
                         </tr>
                         {categoryPerms.map((permission) =>
-                          <tr key={permission.id} className="border-b hover:bg-slate-50">
-                            <td className="p-3 text-slate-700 sticky left-0 bg-white z-10 border-r">
+                          <tr key={permission.id} className="border-b hover:bg-surface-2">
+                            <td className="p-3 text-subtle sticky left-0 bg-white z-10 border-r">
                               {permission.description}
                             </td>
                             {roles.map((role) =>
@@ -590,7 +590,7 @@ export default function RolesAndPermissions({ onDataChange, currentAdmin }) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteRole} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction onClick={handleDeleteRole} className="bg-sell hover:bg-sell">
               Delete Role
             </AlertDialogAction>
           </AlertDialogFooter>

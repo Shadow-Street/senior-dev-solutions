@@ -50,7 +50,7 @@ export default function PremiumRoomPanel({ adminUser }) {
     room_price: 99,
     vip_features_enabled: false,
     exclusive_content_enabled: false,
-    room_color: '#6366f1',
+    room_color: 'hsl(var(--chart-1))',
     room_icon: '👑'
   });
 
@@ -123,8 +123,8 @@ export default function PremiumRoomPanel({ adminUser }) {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 font-medium">Loading Premium Rooms...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-lg text-subtle font-medium">Loading Premium Rooms...</p>
         </div>
       </div>
     );
@@ -138,10 +138,10 @@ export default function PremiumRoomPanel({ adminUser }) {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Crown className="w-5 h-5 text-purple-600" />
+                <Crown className="w-5 h-5 text-protocall-premium-text" />
                 Premium Room Features
               </h3>
-              <p className="text-sm text-slate-600">Manage tiered access, paid rooms, and VIP features</p>
+              <p className="text-sm text-subtle">Manage tiered access, paid rooms, and VIP features</p>
             </div>
           </div>
         </CardContent>
@@ -149,7 +149,7 @@ export default function PremiumRoomPanel({ adminUser }) {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <Card className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -161,7 +161,7 @@ export default function PremiumRoomPanel({ adminUser }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -173,7 +173,7 @@ export default function PremiumRoomPanel({ adminUser }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-green-500 to-emerald-600 text-white">
+        <Card className="bg-buy-soft text-buy-foreground">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -185,7 +185,7 @@ export default function PremiumRoomPanel({ adminUser }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-orange-500 to-amber-600 text-white">
+        <Card className="bg-hold text-hold-foreground">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -197,7 +197,7 @@ export default function PremiumRoomPanel({ adminUser }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-pink-500 to-rose-600 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-sell text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -219,9 +219,9 @@ export default function PremiumRoomPanel({ adminUser }) {
           <div className="space-y-3">
             {rooms.length === 0 ? (
               <div className="text-center py-12">
-                <Crown className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                <p className="text-slate-600 font-medium">No premium rooms yet</p>
-                <p className="text-slate-500 text-sm mt-1">Convert existing rooms to premium</p>
+                <Crown className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <p className="text-subtle font-medium">No premium rooms yet</p>
+                <p className="text-muted-foreground text-sm mt-1">Convert existing rooms to premium</p>
               </div>
             ) : (
               rooms.map(room => {
@@ -229,45 +229,45 @@ export default function PremiumRoomPanel({ adminUser }) {
                 const monthlyRevenue = roomSubs.length * (room.room_price || 0);
 
                 return (
-                  <div key={room.id} className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                  <div key={room.id} className="flex items-center gap-4 p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
                     <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style={{ backgroundColor: room.room_color || '#6366f1' }}>
                       {room.room_icon || '💬'}
                     </div>
 
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <p className="font-medium text-slate-900">{room.name}</p>
+                        <p className="font-medium text-foreground">{room.name}</p>
                         
                         {room.is_premium && (
-                          <Badge className="bg-purple-100 text-purple-800">
+                          <Badge className="bg-premium-muted text-protocall-premium-text">
                             <Crown className="w-3 h-3 mr-1" />
                             {room.premium_tier}
                           </Badge>
                         )}
                         
                         {room.is_private && (
-                          <Badge className="bg-blue-100 text-blue-800">
+                          <Badge className="bg-premium-muted text-protocall-blue">
                             <Lock className="w-3 h-3 mr-1" />
                             Private
                           </Badge>
                         )}
                         
                         {room.is_paid && (
-                          <Badge className="bg-green-100 text-green-800">
+                          <Badge className="bg-buy-muted text-buy-muted-foreground">
                             <DollarSign className="w-3 h-3 mr-1" />
                             ₹{room.room_price}/mo
                           </Badge>
                         )}
                         
                         {room.vip_features_enabled && (
-                          <Badge className="bg-yellow-100 text-yellow-800">
+                          <Badge className="bg-hold-muted text-hold-muted-foreground">
                             <Star className="w-3 h-3 mr-1" />
                             VIP Features
                           </Badge>
                         )}
                       </div>
 
-                      <div className="flex items-center gap-4 text-sm text-slate-600">
+                      <div className="flex items-center gap-4 text-sm text-subtle">
                         <span className="flex items-center gap-1">
                           <Users className="w-4 h-4" />
                           {room.participant_count || 0} members
@@ -316,15 +316,15 @@ export default function PremiumRoomPanel({ adminUser }) {
           <div className="space-y-6">
             {/* Access Control */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-slate-900 flex items-center gap-2">
+              <h4 className="font-semibold text-foreground flex items-center gap-2">
                 <Shield className="w-4 h-4" />
                 Access Control
               </h4>
 
-              <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-premium-muted rounded-lg">
                 <div>
                   <Label className="font-medium">Premium Room</Label>
-                  <p className="text-sm text-slate-600">Require active subscription to access</p>
+                  <p className="text-sm text-subtle">Require active subscription to access</p>
                 </div>
                 <Switch
                   checked={formData.is_premium}
@@ -348,10 +348,10 @@ export default function PremiumRoomPanel({ adminUser }) {
                 </div>
               )}
 
-              <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-premium-muted rounded-lg">
                 <div>
                   <Label className="font-medium">Private Room</Label>
-                  <p className="text-sm text-slate-600">Invite-only access</p>
+                  <p className="text-sm text-subtle">Invite-only access</p>
                 </div>
                 <Switch
                   checked={formData.is_private}
@@ -362,15 +362,15 @@ export default function PremiumRoomPanel({ adminUser }) {
 
             {/* Monetization */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-slate-900 flex items-center gap-2">
+              <h4 className="font-semibold text-foreground flex items-center gap-2">
                 <DollarSign className="w-4 h-4" />
                 Monetization
               </h4>
 
-              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-buy-muted rounded-lg">
                 <div>
                   <Label className="font-medium">Paid Room</Label>
-                  <p className="text-sm text-slate-600">Require payment to access</p>
+                  <p className="text-sm text-subtle">Require payment to access</p>
                 </div>
                 <Switch
                   checked={formData.is_paid}
@@ -392,15 +392,15 @@ export default function PremiumRoomPanel({ adminUser }) {
 
             {/* VIP Features */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-slate-900 flex items-center gap-2">
+              <h4 className="font-semibold text-foreground flex items-center gap-2">
                 <Star className="w-4 h-4" />
                 VIP Features
               </h4>
 
-              <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-hold-muted rounded-lg">
                 <div>
                   <Label className="font-medium">Enable VIP Features</Label>
-                  <p className="text-sm text-slate-600">Custom emojis, badges, and colors</p>
+                  <p className="text-sm text-subtle">Custom emojis, badges, and colors</p>
                 </div>
                 <Switch
                   checked={formData.vip_features_enabled}
@@ -408,10 +408,10 @@ export default function PremiumRoomPanel({ adminUser }) {
                 />
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-indigo-50 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-premium-muted rounded-lg">
                 <div>
                   <Label className="font-medium">Exclusive Content</Label>
-                  <p className="text-sm text-slate-600">Premium-only announcements</p>
+                  <p className="text-sm text-subtle">Premium-only announcements</p>
                 </div>
                 <Switch
                   checked={formData.exclusive_content_enabled}
@@ -422,7 +422,7 @@ export default function PremiumRoomPanel({ adminUser }) {
 
             {/* Customization */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-slate-900 flex items-center gap-2">
+              <h4 className="font-semibold text-foreground flex items-center gap-2">
                 <Settings className="w-4 h-4" />
                 Customization
               </h4>
@@ -461,7 +461,7 @@ export default function PremiumRoomPanel({ adminUser }) {
               <Button variant="outline" onClick={() => setShowEditModal(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleSave} className="bg-purple-600 hover:bg-purple-700">
+              <Button onClick={handleSave} className="bg-primary hover:bg-primary">
                 Save Premium Settings
               </Button>
             </div>

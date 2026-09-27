@@ -37,6 +37,19 @@ const createCrudController = (Model, options = {}) => {
 
         const where = {};
 
+        // Only real columns may reach the WHERE clause. An unknown key used to
+        // reach Sequelize and throw a 500 whose message leaked the schema
+        // ("Unknown column 'x.y' in 'where clause'"); unknown keys are now
+        // ignored instead.
+        // Real columns only — VIRTUAL fields (created_date/updated_date) have
+        // no SQL counterpart and would break the query.
+        const columns = new Set(
+          Object.entries(Model.rawAttributes || {})
+            .filter(([, def]) => String(def?.type?.key || def?.type) !== 'VIRTUAL')
+            .map(([name]) => name)
+        );
+        const ignored = [];
+
         if (customFilters) {
           Object.assign(where, customFilters(rawFilters, req));
         } else {
@@ -44,14 +57,17 @@ const createCrudController = (Model, options = {}) => {
             const value = rawFilters[key];
 
             if (value === undefined || value === '') continue;
+            if (!columns.has(key)) { ignored.push(key); continue; }
 
             where[key] = parseValue(value);
           }
         }
 
-        // 🔍 DEBUG (keep while testing)
-        console.log('LIST FILTERS:', rawFilters);
-        console.log('WHERE CLAUSE:', where);
+        if (ignored.length) {
+          console.warn(
+            `[${Model.name}] ignoring unknown filter(s): ${ignored.join(', ')}`
+          );
+        }
 
         const records = await Model.findAll({
           where,

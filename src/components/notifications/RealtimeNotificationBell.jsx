@@ -31,13 +31,13 @@ export default function RealtimeNotificationBell({ userId, categories = [] }) {
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           {unreadCount > 0 ? (
-            <BellRing className="w-5 h-5 animate-pulse text-blue-600" />
+            <BellRing className="w-5 h-5 animate-pulse text-protocall-blue" />
           ) : (
             <Bell className="w-5 h-5" />
           )}
           
           {unreadCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-red-500 text-white text-[10px]">
+            <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-protocall-sell-text text-white text-[10px]">
               {unreadCount > 9 ? '9+' : unreadCount}
             </Badge>
           )}
@@ -56,7 +56,7 @@ export default function RealtimeNotificationBell({ userId, categories = [] }) {
 
         <ScrollArea className="h-[400px]">
           {notifications.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">
+            <div className="p-8 text-center text-muted-foreground">
               <Bell className="w-12 h-12 mx-auto mb-2 opacity-30" />
               <p className="text-sm">No new notifications</p>
             </div>
@@ -66,20 +66,20 @@ export default function RealtimeNotificationBell({ userId, categories = [] }) {
                 <div
                   key={notif.id}
                   onClick={() => markAsRead(notif.id)}
-                  className="p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors border border-gray-100"
+                  className="p-3 rounded-lg hover:bg-surface-2 cursor-pointer transition-colors border border-divider"
                 >
                   <div className="flex items-start gap-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2" />
+                    <div className="w-2 h-2 bg-protocall-blue rounded-full mt-2" />
                     <div className="flex-1 min-w-0">
                       {notif.title && (
-                        <h4 className="font-medium text-sm text-gray-900 truncate">
+                        <h4 className="font-medium text-sm text-foreground truncate">
                           {notif.title}
                         </h4>
                       )}
-                      <p className="text-sm text-gray-600 line-clamp-2 mt-1">
+                      <p className="text-sm text-subtle line-clamp-2 mt-1">
                         {notif.message}
                       </p>
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         {formatDistanceToNow(new Date(notif.created_date), { addSuffix: true })}
                       </p>
                     </div>

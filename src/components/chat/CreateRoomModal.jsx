@@ -112,7 +112,7 @@ export default function CreateRoomModal({ open, onClose, onCreateRoom }) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create New Chat Room</DialogTitle>
+          <DialogTitle>Create New Stock Chat Room</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -159,7 +159,7 @@ export default function CreateRoomModal({ open, onClose, onCreateRoom }) {
               required
             />
             {subheading && (
-              <p className="text-xs text-slate-500 mt-1.5 font-medium">
+              <p className="text-xs text-muted-foreground mt-1.5 font-medium">
                 {subheading}
               </p>
             )}
@@ -180,12 +180,12 @@ export default function CreateRoomModal({ open, onClose, onCreateRoom }) {
           {/* Premium Options */}
           {canCreatePremium && (
             <div className="space-y-4 pt-2">
-              <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg border border-purple-100">
+              <div className="flex items-center justify-between p-3 bg-premium-muted rounded-lg border border-protocall-premium-light">
                 <div className="flex items-center gap-2">
-                  <Crown className="w-4 h-4 text-purple-600" />
+                  <Crown className="w-4 h-4 text-protocall-premium-text" />
                   <div>
-                    <Label htmlFor="is_premium" className="font-semibold text-purple-900">Premium Room</Label>
-                    <p className="text-[10px] text-purple-600">Visible only to premium members</p>
+                    <Label htmlFor="is_premium" className="font-semibold text-protocall-premium-text">Premium Room</Label>
+                    <p className="text-[10px] text-protocall-premium-text">Visible only to premium members</p>
                   </div>
                 </div>
                 <Switch
@@ -221,11 +221,11 @@ export default function CreateRoomModal({ open, onClose, onCreateRoom }) {
               type="button"
               variant="outline"
               onClick={onClose}
-              className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-300 transition-all duration-300"
+              className="hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-protocall-premium-light transition-all duration-300"
             >
               Cancel
             </Button>
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+            <Button type="submit" className="bg-protocall-blue hover:bg-protocall-blue">
               Create Room
             </Button>
           </div>

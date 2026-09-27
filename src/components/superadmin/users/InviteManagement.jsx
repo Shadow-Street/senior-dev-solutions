@@ -10,10 +10,10 @@ import { toast } from 'sonner';
 export default function InviteManagement({ invites, isLoading, roles, onRefresh }) {
 
   const statusConfig = {
-    pending: { label: 'Pending', color: 'bg-yellow-100 text-yellow-800', icon: Clock },
-    accepted: { label: 'Accepted', color: 'bg-green-100 text-green-800', icon: Check },
-    expired: { label: 'Expired', color: 'bg-gray-100 text-gray-800', icon: AlertCircle },
-    revoked: { label: 'Revoked', color: 'bg-red-100 text-red-800', icon: X },
+    pending: { label: 'Pending', color: 'bg-hold-muted text-hold-muted-foreground', icon: Clock },
+    accepted: { label: 'Accepted', color: 'bg-buy-muted text-buy-muted-foreground', icon: Check },
+    expired: { label: 'Expired', color: 'bg-surface-2 text-foreground', icon: AlertCircle },
+    revoked: { label: 'Revoked', color: 'bg-sell-muted text-sell-muted-foreground', icon: X },
   };
 
   const copyInviteLink = (token) => {
@@ -67,7 +67,7 @@ export default function InviteManagement({ invites, isLoading, roles, onRefresh 
       <CardContent>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="text-left text-slate-500">
+            <thead className="text-left text-muted-foreground">
               <tr>
                 <th className="p-3">Email</th>
                 <th className="p-3">Role</th>
@@ -87,7 +87,7 @@ export default function InviteManagement({ invites, isLoading, roles, onRefresh 
                     <td className="p-3">
                       <Badge className={config.color}><Icon className="w-3 h-3 mr-1"/>{config.label}</Badge>
                     </td>
-                    <td className="p-3 text-slate-600">
+                    <td className="p-3 text-subtle">
                       {invite.status === 'pending' ? new Date(invite.expires_at).toLocaleDateString() : '-'}
                     </td>
                     <td className="p-3 text-right">
@@ -99,9 +99,9 @@ export default function InviteManagement({ invites, isLoading, roles, onRefresh 
                             <Button size="sm" variant="destructive" onClick={() => revokeInvite(invite.id)}><X className="w-3 h-3 mr-2"/>Revoke</Button>
                           </>
                         )}
-                        {invite.status === 'accepted' && <span className="text-sm text-green-600">User registered</span>}
+                        {invite.status === 'accepted' && <span className="text-sm text-buy-muted-foreground">User registered</span>}
                         {invite.status === 'expired' && <Button size="sm" variant="outline" onClick={() => resendInvite(invite.id)}><RefreshCw className="w-3 h-3 mr-2"/>Resend</Button>}
-                        {invite.status === 'revoked' && <span className="text-sm text-red-600">Invite revoked</span>}
+                        {invite.status === 'revoked' && <span className="text-sm text-sell-muted-foreground">Invite revoked</span>}
                       </div>
                     </td>
                   </tr>
@@ -110,7 +110,7 @@ export default function InviteManagement({ invites, isLoading, roles, onRefresh 
             </tbody>
           </table>
         </div>
-        {invites.length === 0 && <p className="text-center text-slate-500 py-8">No invitations have been sent yet.</p>}
+        {invites.length === 0 && <p className="text-center text-muted-foreground py-8">No invitations have been sent yet.</p>}
       </CardContent>
     </Card>
   );

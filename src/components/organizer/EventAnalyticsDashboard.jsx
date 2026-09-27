@@ -143,8 +143,8 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
   }, [filteredTickets, filteredEvents]);
 
   const eventTypeData = [
-    { name: 'Premium Events', value: analytics.premiumEvents, color: '#8B5CF6' },
-    { name: 'Free Events', value: analytics.freeEvents, color: '#10B981' }
+    { name: 'Premium Events', value: analytics.premiumEvents, color: 'hsl(var(--primary))' },
+    { name: 'Free Events', value: analytics.freeEvents, color: 'hsl(var(--chart-2))' }
   ];
 
   const topEventsByRevenue = useMemo(() => {
@@ -212,8 +212,8 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800">Analytics & Performance</h2>
-          <p className="text-sm text-slate-600 mt-1">Comprehensive insights into your event performance</p>
+          <h2 className="text-2xl font-bold text-foreground">Analytics & Performance</h2>
+          <p className="text-sm text-subtle mt-1">Comprehensive insights into your event performance</p>
         </div>
         <div className="flex items-center gap-4">
           <Select value={selectedEventFilter} onValueChange={setSelectedEventFilter}>
@@ -238,64 +238,64 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
 
       <Tabs defaultValue="performance" className="w-full">
         <TabsList className="grid w-full grid-cols-2 bg-white shadow-md">
-          <TabsTrigger value="performance" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white">
+          <TabsTrigger value="performance" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white">
             Performance Analytics
           </TabsTrigger>
-          <TabsTrigger value="audit" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white">
+          <TabsTrigger value="audit" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white">
             Audit Logs
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="performance" className="space-y-6 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-green-500 to-emerald-600 text-white">
+            <Card className="border-0 shadow-lg bg-buy-soft text-buy-foreground">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-green-100 text-sm">Total Revenue</p>
+                    <p className="text-protocall-ink/75 text-sm">Total Revenue</p>
                     <p className="text-4xl font-bold mt-2">₹{(analytics.totalRevenue / 1000).toFixed(1)}k</p>
-                    <p className="text-green-100 text-xs mt-1">Avg: ₹{Math.round(analytics.averageTicketPrice)}/ticket</p>
+                    <p className="text-protocall-ink/75 text-xs mt-1">Avg: ₹{Math.round(analytics.averageTicketPrice)}/ticket</p>
                   </div>
-                  <DollarSign className="w-12 h-12 text-green-200" />
+                  <DollarSign className="w-12 h-12 text-protocall-ink/75" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-protocall-deep to-protocall-blue text-white">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-blue-100 text-sm">Tickets Sold</p>
+                    <p className="text-white/80 text-sm">Tickets Sold</p>
                     <p className="text-4xl font-bold mt-2">{analytics.totalTicketsSold}</p>
-                    <p className="text-blue-100 text-xs mt-1">{analytics.totalAttendees} confirmed</p>
+                    <p className="text-white/80 text-xs mt-1">{analytics.totalAttendees} confirmed</p>
                   </div>
-                  <Ticket className="w-12 h-12 text-blue-200" />
+                  <Ticket className="w-12 h-12 text-white/80" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-protocall-deep to-protocall-blue text-white">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-purple-100 text-sm">Conversion Rate</p>
+                    <p className="text-white/80 text-sm">Conversion Rate</p>
                     <p className="text-4xl font-bold mt-2">{Math.round(analytics.conversionRate)}%</p>
-                    <p className="text-purple-100 text-xs mt-1">RSVPs to tickets</p>
+                    <p className="text-white/80 text-xs mt-1">RSVPs to tickets</p>
                   </div>
-                  <Target className="w-12 h-12 text-purple-200" />
+                  <Target className="w-12 h-12 text-white/80" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-500 to-orange-600 text-white">
+            <Card className="border-0 shadow-lg bg-hold text-hold-foreground">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-orange-100 text-sm">Avg Rating</p>
+                    <p className="text-protocall-ink/75 text-sm">Avg Rating</p>
                     <p className="text-4xl font-bold mt-2">{analytics.averageRating.toFixed(1)}⭐</p>
-                    <p className="text-orange-100 text-xs mt-1">{analytics.totalReviews} reviews</p>
+                    <p className="text-protocall-ink/75 text-xs mt-1">{analytics.totalReviews} reviews</p>
                   </div>
-                  <Star className="w-12 h-12 text-orange-200" />
+                  <Star className="w-12 h-12 text-protocall-ink/75" />
                 </div>
               </CardContent>
             </Card>
@@ -306,10 +306,10 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-600">Upcoming Events</p>
-                    <p className="text-2xl font-bold text-slate-900">{analytics.upcomingEvents}</p>
+                    <p className="text-sm text-subtle">Upcoming Events</p>
+                    <p className="text-2xl font-bold text-foreground">{analytics.upcomingEvents}</p>
                   </div>
-                  <Calendar className="w-8 h-8 text-blue-600" />
+                  <Calendar className="w-8 h-8 text-protocall-blue" />
                 </div>
               </CardContent>
             </Card>
@@ -318,10 +318,10 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-600">Completed Events</p>
-                    <p className="text-2xl font-bold text-slate-900">{analytics.completedEvents}</p>
+                    <p className="text-sm text-subtle">Completed Events</p>
+                    <p className="text-2xl font-bold text-foreground">{analytics.completedEvents}</p>
                   </div>
-                  <Award className="w-8 h-8 text-green-600" />
+                  <Award className="w-8 h-8 text-buy-muted-foreground" />
                 </div>
               </CardContent>
             </Card>
@@ -330,10 +330,10 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-600">Avg Attendance</p>
-                    <p className="text-2xl font-bold text-slate-900">{Math.round(analytics.averageAttendance)}</p>
+                    <p className="text-sm text-subtle">Avg Attendance</p>
+                    <p className="text-2xl font-bold text-foreground">{Math.round(analytics.averageAttendance)}</p>
                   </div>
-                  <Users className="w-8 h-8 text-purple-600" />
+                  <Users className="w-8 h-8 text-protocall-premium-text" />
                 </div>
               </CardContent>
             </Card>
@@ -342,10 +342,10 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-slate-600">Event Types</p>
-                    <p className="text-2xl font-bold text-slate-900">{analytics.premiumEvents}P / {analytics.freeEvents}F</p>
+                    <p className="text-sm text-subtle">Event Types</p>
+                    <p className="text-2xl font-bold text-foreground">{analytics.premiumEvents}P / {analytics.freeEvents}F</p>
                   </div>
-                  <Ticket className="w-8 h-8 text-orange-600" />
+                  <Ticket className="w-8 h-8 text-hold-muted-foreground" />
                 </div>
               </CardContent>
             </Card>
@@ -353,9 +353,9 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="shadow-lg border-0 bg-white">
-              <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
+              <CardHeader className="border-b bg-surface-2">
                 <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-green-600" />
+                  <TrendingUp className="w-5 h-5 text-buy-muted-foreground" />
                   Revenue Trend (6 Months)
                 </CardTitle>
               </CardHeader>
@@ -372,16 +372,16 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
                     <XAxis dataKey="month" />
                     <YAxis />
                     <Tooltip formatter={(value) => [`₹${value.toLocaleString()}`, 'Revenue']} />
-                    <Area type="monotone" dataKey="revenue" stroke="#10B981" fillOpacity={1} fill="url(#colorRevenue)" />
+                    <Area type="monotone" dataKey="revenue" stroke="hsl(var(--chart-2))" fillOpacity={1} fill="url(#colorRevenue)" />
                   </AreaChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
 
             <Card className="shadow-lg border-0 bg-white">
-              <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
+              <CardHeader className="border-b bg-surface-2">
                 <CardTitle className="flex items-center gap-2">
-                  <Ticket className="w-5 h-5 text-blue-600" />
+                  <Ticket className="w-5 h-5 text-protocall-blue" />
                   Ticket Sales Trend
                 </CardTitle>
               </CardHeader>
@@ -392,16 +392,16 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
                     <XAxis dataKey="month" />
                     <YAxis />
                     <Tooltip />
-                    <Bar dataKey="tickets" fill="#3B82F6" radius={[8, 8, 0, 0]} />
+                    <Bar dataKey="tickets" fill="hsl(var(--chart-1))" radius={[8, 8, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
 
             <Card className="shadow-lg border-0 bg-white">
-              <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
+              <CardHeader className="border-b bg-surface-2">
                 <CardTitle className="flex items-center gap-2">
-                  <Eye className="w-5 h-5 text-purple-600" />
+                  <Eye className="w-5 h-5 text-protocall-premium-text" />
                   Event Type Distribution
                 </CardTitle>
               </CardHeader>
@@ -429,9 +429,9 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
             </Card>
 
             <Card className="shadow-lg border-0 bg-white">
-              <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
+              <CardHeader className="border-b bg-surface-2">
                 <CardTitle className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-orange-600" />
+                  <Users className="w-5 h-5 text-hold-muted-foreground" />
                   Attendance Fill Rate
                 </CardTitle>
               </CardHeader>
@@ -443,7 +443,7 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="attendees" fill="#8B5CF6" name="Attendees" radius={[8, 8, 0, 0]} />
+                    <Bar dataKey="attendees" fill="hsl(var(--primary))" name="Attendees" radius={[8, 8, 0, 0]} />
                     <Bar dataKey="capacity" fill="#E5E7EB" name="Capacity" radius={[8, 8, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -453,28 +453,28 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="shadow-lg border-0 bg-white">
-              <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
+              <CardHeader className="border-b bg-surface-2">
                 <CardTitle className="flex items-center gap-2">
-                  <DollarSign className="w-5 h-5 text-green-600" />
+                  <DollarSign className="w-5 h-5 text-buy-muted-foreground" />
                   Top 5 Events by Revenue
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-3">
                   {topEventsByRevenue.map((event, index) => (
-                    <div key={event.id} className="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                    <div key={event.id} className="flex items-center justify-between p-3 bg-gradient-to-r from-surface-2 to-buy-muted rounded-lg border border-buy/30">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold">
+                        <div className="w-8 h-8 rounded-full bg-buy text-buy-foreground flex items-center justify-center font-bold">
                           {index + 1}
                         </div>
                         <div>
-                          <p className="font-semibold text-slate-800">{event.title}</p>
-                          <p className="text-xs text-slate-600">{format(new Date(event.event_date), 'MMM d, yyyy')}</p>
+                          <p className="font-semibold text-foreground">{event.title}</p>
+                          <p className="text-xs text-subtle">{format(new Date(event.event_date), 'MMM d, yyyy')}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-green-700 text-lg">₹{event.revenue.toLocaleString()}</p>
-                        <p className="text-xs text-slate-600">{event.ticketsSold} tickets</p>
+                        <p className="font-bold text-buy-muted-foreground text-lg">₹{event.revenue.toLocaleString()}</p>
+                        <p className="text-xs text-subtle">{event.ticketsSold} tickets</p>
                       </div>
                     </div>
                   ))}
@@ -483,28 +483,28 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
             </Card>
 
             <Card className="shadow-lg border-0 bg-white">
-              <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
+              <CardHeader className="border-b bg-surface-2">
                 <CardTitle className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-purple-600" />
+                  <Users className="w-5 h-5 text-protocall-premium-text" />
                   Top 5 Events by Attendance
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-3">
                   {topEventsByAttendance.map((event, index) => (
-                    <div key={event.id} className="flex items-center justify-between p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
+                    <div key={event.id} className="flex items-center justify-between p-3 bg-surface-2 rounded-lg border border-protocall-premium-light">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold">
+                        <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold">
                           {index + 1}
                         </div>
                         <div>
-                          <p className="font-semibold text-slate-800">{event.title}</p>
-                          <p className="text-xs text-slate-600">{format(new Date(event.event_date), 'MMM d, yyyy')}</p>
+                          <p className="font-semibold text-foreground">{event.title}</p>
+                          <p className="text-xs text-subtle">{format(new Date(event.event_date), 'MMM d, yyyy')}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-purple-700 text-lg">{event.attendeeCount}</p>
-                        <p className="text-xs text-slate-600">attendees</p>
+                        <p className="font-bold text-protocall-premium-text text-lg">{event.attendeeCount}</p>
+                        <p className="text-xs text-subtle">attendees</p>
                       </div>
                     </div>
                   ))}
@@ -513,10 +513,10 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
             </Card>
           </div>
 
-          <Card className="shadow-lg border-0 bg-gradient-to-r from-blue-50 to-purple-50">
+          <Card className="shadow-lg border-0 bg-surface-2">
             <CardHeader className="border-b">
               <CardTitle className="flex items-center gap-2">
-                <Award className="w-5 h-5 text-blue-600" />
+                <Award className="w-5 h-5 text-protocall-blue" />
                 Performance Insights
               </CardTitle>
             </CardHeader>
@@ -524,36 +524,36 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-white p-4 rounded-lg shadow-sm">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                      <TrendingUp className="w-5 h-5 text-green-600" />
+                    <div className="w-10 h-10 rounded-full bg-buy-muted flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-buy-muted-foreground" />
                     </div>
-                    <p className="font-semibold text-slate-800">Strong Performance</p>
+                    <p className="font-semibold text-foreground">Strong Performance</p>
                   </div>
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-subtle">
                     Your conversion rate of {Math.round(analytics.conversionRate)}% is {analytics.conversionRate > 50 ? 'above' : 'below'} industry average
                   </p>
                 </div>
 
                 <div className="bg-white p-4 rounded-lg shadow-sm">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                      <Users className="w-5 h-5 text-blue-600" />
+                    <div className="w-10 h-10 rounded-full bg-premium-muted flex items-center justify-center">
+                      <Users className="w-5 h-5 text-protocall-blue" />
                     </div>
-                    <p className="font-semibold text-slate-800">Audience Growth</p>
+                    <p className="font-semibold text-foreground">Audience Growth</p>
                   </div>
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-subtle">
                     Average {Math.round(analytics.averageAttendance)} attendees per event
                   </p>
                 </div>
 
                 <div className="bg-white p-4 rounded-lg shadow-sm">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-                      <Star className="w-5 h-5 text-orange-600" />
+                    <div className="w-10 h-10 rounded-full bg-hold-muted flex items-center justify-center">
+                      <Star className="w-5 h-5 text-hold-muted-foreground" />
                     </div>
-                    <p className="font-semibold text-slate-800">Customer Satisfaction</p>
+                    <p className="font-semibold text-foreground">Customer Satisfaction</p>
                   </div>
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-subtle">
                     {analytics.averageRating.toFixed(1)} star rating from {analytics.totalReviews} reviews
                   </p>
                 </div>
@@ -564,13 +564,13 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
 
         <TabsContent value="audit" className="space-y-6 mt-6">
           <Card className="shadow-lg border-0 bg-white">
-            <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
+            <CardHeader className="border-b bg-surface-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-blue-600" />
+                  <Activity className="w-5 h-5 text-protocall-blue" />
                   Event Activity & Audit Logs
                 </CardTitle>
-                <Badge variant="outline" className="text-slate-600">
+                <Badge variant="outline" className="text-subtle">
                   {auditLogs.length} actions logged
                 </Badge>
               </div>
@@ -578,26 +578,26 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
             <CardContent className="p-6">
               {isLoadingLogs ? (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                  <p className="text-slate-600">Loading audit logs...</p>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+                  <p className="text-subtle">Loading audit logs...</p>
                 </div>
               ) : auditLogs.length > 0 ? (
                 <div className="space-y-3">
                   {auditLogs.map((log) => (
-                    <div key={log.id} className="p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors border border-slate-200">
+                    <div key={log.id} className="p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors border border-border">
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <div className="p-2 bg-blue-100 rounded-lg">
-                            {log.action.includes('CREATE') && <CalendarPlus className="w-4 h-4 text-blue-600" />}
-                            {log.action.includes('UPDATE') && <Edit className="w-4 h-4 text-purple-600" />}
-                            {log.action.includes('DELETE') && <Trash2 className="w-4 h-4 text-red-600" />}
-                            {log.action.includes('APPROVE') && <CheckCircle className="w-4 h-4 text-green-600" />}
-                            {log.action.includes('REJECT') && <XCircle className="w-4 h-4 text-red-600" />}
-                            {!['CREATE', 'UPDATE', 'DELETE', 'APPROVE', 'REJECT'].some(a => log.action.includes(a)) && <Activity className="w-4 h-4 text-slate-600" />}
+                          <div className="p-2 bg-premium-muted rounded-lg">
+                            {log.action.includes('CREATE') && <CalendarPlus className="w-4 h-4 text-protocall-blue" />}
+                            {log.action.includes('UPDATE') && <Edit className="w-4 h-4 text-protocall-premium-text" />}
+                            {log.action.includes('DELETE') && <Trash2 className="w-4 h-4 text-sell-muted-foreground" />}
+                            {log.action.includes('APPROVE') && <CheckCircle className="w-4 h-4 text-buy-muted-foreground" />}
+                            {log.action.includes('REJECT') && <XCircle className="w-4 h-4 text-sell-muted-foreground" />}
+                            {!['CREATE', 'UPDATE', 'DELETE', 'APPROVE', 'REJECT'].some(a => log.action.includes(a)) && <Activity className="w-4 h-4 text-subtle" />}
                           </div>
                           <div>
-                            <p className="font-semibold text-slate-900">{log.action.replace(/_/g, ' ')}</p>
-                            <p className="text-sm text-slate-600 mt-1">{log.details}</p>
+                            <p className="font-semibold text-foreground">{log.action.replace(/_/g, ' ')}</p>
+                            <p className="text-sm text-subtle mt-1">{log.details}</p>
                           </div>
                         </div>
                         <Badge variant="outline" className="text-xs">
@@ -605,7 +605,7 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
                           {format(new Date(log.created_date), 'MMM d, HH:mm')}
                         </Badge>
                       </div>
-                      <div className="flex items-center gap-4 text-xs text-slate-500 mt-2 pl-10">
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground mt-2 pl-10">
                         <span>By: {log.admin_name}</span>
                         <span>•</span>
                         <span>Entity: {log.entity_type}</span>
@@ -615,9 +615,9 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <Activity className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                  <p className="text-slate-600">No audit logs available yet</p>
-                  <p className="text-sm text-slate-500 mt-2">Event activity will be tracked here</p>
+                  <Activity className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-subtle">No audit logs available yet</p>
+                  <p className="text-sm text-muted-foreground mt-2">Event activity will be tracked here</p>
                 </div>
               )}
             </CardContent>

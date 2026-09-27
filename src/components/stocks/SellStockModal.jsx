@@ -115,7 +115,7 @@ export default function SellStockModal({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <TrendingDown className="w-5 h-5 text-red-600" />
+            <TrendingDown className="w-5 h-5 text-sell-muted-foreground" />
             Sell {investment.stock_symbol}
           </DialogTitle>
           <DialogDescription>
@@ -125,17 +125,17 @@ export default function SellStockModal({
 
         <div className="space-y-4 py-4">
           {/* Current Position Info */}
-          <div className="bg-slate-50 rounded-lg p-3 space-y-2">
+          <div className="bg-surface-2 rounded-lg p-3 space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-slate-600">Current Position</span>
+              <span className="text-sm text-subtle">Current Position</span>
               <Badge variant="outline">{investment.quantity} shares</Badge>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-slate-600">Average Buy Price</span>
+              <span className="text-sm text-subtle">Average Buy Price</span>
               <span className="text-sm font-medium">₹{investment.avg_buy_price?.toFixed(2)}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-slate-600">Current Market Price</span>
+              <span className="text-sm text-subtle">Current Market Price</span>
               <span className="text-sm font-medium">₹{currentPrice?.toFixed(2)}</span>
             </div>
           </div>
@@ -149,9 +149,9 @@ export default function SellStockModal({
                 placeholder={`Max: ${investment.quantity}`}
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                className={errors.quantity ? "border-red-500" : ""}
+                className={errors.quantity ? "border-sell" : ""}
               />
-              {errors.quantity && <p className="text-xs text-red-500">{errors.quantity}</p>}
+              {errors.quantity && <p className="text-xs text-sell">{errors.quantity}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="sell-price">Sell Price per Share (₹)</Label>
@@ -160,9 +160,9 @@ export default function SellStockModal({
                 type="number"
                 value={sellPrice}
                 onChange={(e) => setSellPrice(e.target.value)}
-                className={errors.sellPrice ? "border-red-500" : ""}
+                className={errors.sellPrice ? "border-sell" : ""}
               />
-              {errors.sellPrice && <p className="text-xs text-red-500">{errors.sellPrice}</p>}
+              {errors.sellPrice && <p className="text-xs text-sell">{errors.sellPrice}</p>}
             </div>
           </div>
 
@@ -173,7 +173,7 @@ export default function SellStockModal({
                 <Button
                   id="sell-date"
                   variant={"outline"}
-                  className={`w-full justify-start text-left font-normal ${errors.sellDate ? "border-red-500" : ""}`}
+                  className={`w-full justify-start text-left font-normal ${errors.sellDate ? "border-sell" : ""}`}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {sellDate ? format(sellDate, "PPP") : <span>Pick a date</span>}
@@ -183,23 +183,23 @@ export default function SellStockModal({
                 <Calendar mode="single" selected={sellDate} onSelect={setSellDate} initialFocus />
               </PopoverContent>
             </Popover>
-            {errors.sellDate && <p className="text-xs text-red-500">{errors.sellDate}</p>}
+            {errors.sellDate && <p className="text-xs text-sell">{errors.sellDate}</p>}
           </div>
 
           {/* Profit/Loss Preview */}
           {profitLoss && (
-            <Alert className={profitLoss.realizedPL >= 0 ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}>
-              <AlertCircle className={`h-4 w-4 ${profitLoss.realizedPL >= 0 ? "text-green-600" : "text-red-600"}`} />
+            <Alert className={profitLoss.realizedPL >= 0 ? "bg-buy-muted border-buy/30" : "bg-sell-muted border-sell/30"}>
+              <AlertCircle className={`h-4 w-4 ${profitLoss.realizedPL >= 0 ? "text-buy-muted-foreground" : "text-sell-muted-foreground"}`} />
               <AlertDescription>
                 <div className="flex justify-between items-center text-sm">
                   <span>Estimated Realized P/L:</span>
-                  <span className={`font-bold ${profitLoss.realizedPL >= 0 ? "text-green-600" : "text-red-600"}`}>
+                  <span className={`font-bold ${profitLoss.realizedPL >= 0 ? "text-buy-muted-foreground" : "text-sell-muted-foreground"}`}>
                     {profitLoss.realizedPL >= 0 ? '+' : ''}₹{profitLoss.realizedPL.toFixed(2)}
                     ({profitLoss.realizedPL >= 0 ? '+' : ''}{profitLoss.realizedPLPercent.toFixed(1)}%)
                   </span>
                 </div>
                 {isFullSale && (
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     This will close your entire position in {investment.stock_symbol}.
                   </p>
                 )}

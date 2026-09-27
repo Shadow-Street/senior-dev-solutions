@@ -110,7 +110,7 @@ export default function PledgeManagementAccess({ user, advisorProfile }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
       </div>
     );
   }
@@ -120,19 +120,19 @@ export default function PledgeManagementAccess({ user, advisorProfile }) {
     const statusConfig = {
       pending: {
         icon: Clock,
-        color: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+        color: 'bg-hold-muted text-hold-muted-foreground border-hold/30',
         title: 'Request Pending Review',
         description: 'Your pledge management access request is being reviewed by our SuperAdmin team.'
       },
       approved: {
         icon: CheckCircle,
-        color: 'bg-green-100 text-green-800 border-green-200',
+        color: 'bg-buy-muted text-buy-muted-foreground border-buy/30',
         title: 'Access Approved!',
         description: 'Congratulations! You now have access to Pledge Management.'
       },
       rejected: {
         icon: XCircle,
-        color: 'bg-red-100 text-red-800 border-red-200',
+        color: 'bg-sell-muted text-sell-muted-foreground border-sell/30',
         title: 'Request Rejected',
         description: 'Your access request was not approved.'
       }
@@ -151,18 +151,18 @@ export default function PledgeManagementAccess({ user, advisorProfile }) {
               </div>
               <div>
                 <CardTitle>{config.title}</CardTitle>
-                <p className="text-sm text-gray-600 mt-1">{config.description}</p>
+                <p className="text-sm text-subtle mt-1">{config.description}</p>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+            <div className="grid grid-cols-2 gap-4 p-4 bg-surface-2 rounded-lg">
               <div>
-                <p className="text-sm text-gray-600">Submitted</p>
+                <p className="text-sm text-subtle">Submitted</p>
                 <p className="font-semibold">{new Date(accessRequest.created_date).toLocaleDateString()}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Status</p>
+                <p className="text-sm text-subtle">Status</p>
                 <Badge className={config.color}>
                   {accessRequest.status.toUpperCase()}
                 </Badge>
@@ -170,11 +170,11 @@ export default function PledgeManagementAccess({ user, advisorProfile }) {
               {accessRequest.status === 'approved' && (
                 <>
                   <div>
-                    <p className="text-sm text-gray-600">Approved Commission Rate</p>
-                    <p className="font-semibold text-green-600">{accessRequest.approved_commission_rate}%</p>
+                    <p className="text-sm text-subtle">Approved Commission Rate</p>
+                    <p className="font-semibold text-buy-muted-foreground">{accessRequest.approved_commission_rate}%</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Approved On</p>
+                    <p className="text-sm text-subtle">Approved On</p>
                     <p className="font-semibold">{new Date(accessRequest.reviewed_at).toLocaleDateString()}</p>
                   </div>
                 </>
@@ -182,9 +182,9 @@ export default function PledgeManagementAccess({ user, advisorProfile }) {
             </div>
 
             {accessRequest.status === 'rejected' && accessRequest.rejection_reason && (
-              <Alert className="bg-red-50 border-red-200">
-                <AlertCircle className="h-4 w-4 text-red-600" />
-                <AlertDescription className="text-red-800">
+              <Alert className="bg-sell-muted border-sell/30">
+                <AlertCircle className="h-4 w-4 text-sell-muted-foreground" />
+                <AlertDescription className="text-sell-muted-foreground">
                   <strong>Rejection Reason:</strong> {accessRequest.rejection_reason}
                 </AlertDescription>
               </Alert>
@@ -200,10 +200,10 @@ export default function PledgeManagementAccess({ user, advisorProfile }) {
 
             {accessRequest.status === 'approved' && (
               <div className="text-center pt-4">
-                <p className="text-green-600 font-semibold mb-2">
+                <p className="text-buy-muted-foreground font-semibold mb-2">
                   ✓ You can now access Pledge Management features
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-subtle">
                   Refresh the page to see Pledge Management in your sidebar
                 </p>
               </div>
@@ -217,24 +217,24 @@ export default function PledgeManagementAccess({ user, advisorProfile }) {
   // Show request form
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <Card className="border-2 border-blue-200 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50">
+      <Card className="border-2 border-protocall-premium-light shadow-lg">
+        <CardHeader className="bg-surface-2">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-blue-600 rounded-lg">
+            <div className="p-3 bg-protocall-blue rounded-lg">
               <TrendingUp className="w-6 h-6 text-white" />
             </div>
             <div>
               <CardTitle className="text-2xl">Request Pledge Management Access</CardTitle>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-subtle mt-1">
                 Enable pledge session creation and execution with commission earnings
               </p>
             </div>
           </div>
         </CardHeader>
         <CardContent className="pt-6">
-          <Alert className="mb-6 bg-blue-50 border-blue-200">
-            <Shield className="h-4 w-4 text-blue-600" />
-            <AlertDescription className="text-blue-800">
+          <Alert className="mb-6 bg-premium-muted border-protocall-premium-light">
+            <Shield className="h-4 w-4 text-protocall-blue" />
+            <AlertDescription className="text-protocall-blue">
               <strong>What you'll get:</strong>
               <ul className="list-disc ml-5 mt-2 space-y-1">
                 <li>Create and manage pledge sessions for your followers</li>
@@ -289,7 +289,7 @@ export default function PledgeManagementAccess({ user, advisorProfile }) {
                 value={formData.commission_rate_requested}
                 onChange={(e) => setFormData({...formData, commission_rate_requested: parseFloat(e.target.value)})}
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Typical range: 10-20%. Final rate will be determined by SuperAdmin.
               </p>
             </div>
@@ -310,7 +310,7 @@ export default function PledgeManagementAccess({ user, advisorProfile }) {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
               >
                 {isSubmitting ? (
                   <>

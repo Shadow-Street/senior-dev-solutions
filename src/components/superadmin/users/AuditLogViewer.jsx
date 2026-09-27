@@ -67,7 +67,7 @@ export default function AuditLogViewer() {
         ) : (
           <div className="overflow-x-auto max-h-[600px]">
             <table className="w-full text-sm text-left">
-              <thead className="text-xs text-slate-700 uppercase bg-slate-50 sticky top-0">
+              <thead className="text-xs text-subtle uppercase bg-surface-2 sticky top-0">
                 <tr>
                   <th scope="col" className="px-6 py-3">Timestamp</th>
                   <th scope="col" className="px-6 py-3">Admin</th>
@@ -77,17 +77,17 @@ export default function AuditLogViewer() {
               </thead>
               <tbody className="bg-white">
                 {logs.map(log => (
-                  <tr key={log.id} className="border-b hover:bg-slate-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-slate-500">
+                  <tr key={log.id} className="border-b hover:bg-surface-2">
+                    <td className="px-6 py-4 whitespace-nowrap text-muted-foreground">
                       {new Date(log.created_date).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 font-medium">{log.admin_name}</td>
                     <td className="px-6 py-4">
-                      <span className="px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded-full">
+                      <span className="px-2 py-1 text-xs font-semibold bg-premium-muted text-protocall-blue rounded-full">
                         {log.action}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-slate-600">{log.details}</td>
+                    <td className="px-6 py-4 text-subtle">{log.details}</td>
                   </tr>
                 ))}
               </tbody>

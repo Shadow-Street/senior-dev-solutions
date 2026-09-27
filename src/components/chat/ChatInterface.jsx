@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowLeft, Users, Settings, Send, Bot, MessageSquare, Paperclip, File, X, Loader2, ArrowDown, Plus, Reply, Pin, BarChart3, Wifi, WifiOff } from "lucide-react";
+import { ArrowLeft, Users, Settings, Send, Bot, MessageSquare, Paperclip, File, X, Loader2, ArrowDown, Plus, Reply, Pin, BarChart3, Wifi, WifiOff, Maximize2, Minimize2 } from "lucide-react";
 import { FileText, Download } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
@@ -56,6 +56,52 @@ const updateTrustScore = async (user, amount, reason, relatedEntityId = null) =>
 };
 
 export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscription }) {
+  const rootRef = useRef(null);
+  const [isEnlarged, setIsEnlarged] = useState(false);
+  // True only when the browser actually granted fullscreen; otherwise we fall
+  // back to a fixed-overlay class on the very same node (still no remount).
+  const [isNativeFullscreen, setIsNativeFullscreen] = useState(false);
+
+  useEffect(() => {
+    // Fires only when fullscreen was actually granted, so the CSS-overlay
+    // fallback is never cleared by this handler.
+    const onFullscreenChange = () => {
+      const active = document.fullscreenElement === rootRef.current;
+      setIsNativeFullscreen(active);
+      if (!active) setIsEnlarged(false); // Esc or browser chrome exited it
+    };
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
+  }, []);
+
+  const toggleEnlarge = useCallback(async () => {
+    const node = rootRef.current;
+    if (!node) return;
+
+    if (isEnlarged) {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen().catch(() => {});
+      }
+      setIsEnlarged(false);
+      return;
+    }
+
+    setIsEnlarged(true);
+    // Fullscreen can be refused (permissions policy, iframe). The CSS overlay
+    // still gives the user an enlarged view, so failure is non-fatal.
+    if (node.requestFullscreen) {
+      await node.requestFullscreen().catch(() => {});
+    }
+  }, [isEnlarged]);
+
+  // Escape exits the CSS-overlay fallback (native fullscreen handles its own).
+  useEffect(() => {
+    if (!isEnlarged || isNativeFullscreen) return;
+    const onKeyDown = (e) => e.key === "Escape" && setIsEnlarged(false);
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isEnlarged, isNativeFullscreen]);
+
   // Use WebSocket chat room hook for real-time messaging
   const {
     messages,
@@ -721,7 +767,12 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
 
 
   return (
-    <div className="h-full bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 overflow-hidden flex flex-col">
+    <div
+      ref={rootRef}
+      className={`flex flex-col overflow-hidden bg-background ${
+        isEnlarged ? "fixed inset-0 z-[60] h-screen w-screen" : "h-full"
+      }`}
+    >
       <div className="flex-1 flex flex-col max-w-7xl mx-auto w-full overflow-hidden">
         {/* Header Section */}
         <div className="flex-shrink-0 p-4 pb-2 space-y-2">
@@ -744,21 +795,21 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                 <Button
                   size="icon"
                   onClick={onBack}
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 h-10 w-10 flex-shrink-0 rounded-xl shadow-md transition-all duration-300 hover:scale-105"
+                  className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white hover:from-protocall-deep hover:to-protocall-blue h-10 w-10 flex-shrink-0 rounded-xl shadow-md transition-all duration-300 hover:scale-105"
                 >
                   <ArrowLeft className="w-4 h-4" />
                 </Button>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <h1 className="text-lg md:text-xl font-bold text-slate-900 truncate">
+                    <h1 className="text-lg md:text-xl font-bold text-foreground truncate">
                       {room.name}
                     </h1>
 
                     {/* Connection status indicator */}
                     <Badge
                       variant={isConnected ? "default" : "destructive"}
-                      className={`text-xs px-2 py-0.5 ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}
+                      className={`text-xs px-2 py-0.5 ${isConnected ? 'bg-buy' : 'bg-sell'}`}
                     >
                       {isConnected ? (
                         <><Wifi className="w-3 h-3 mr-1" /> Live</>
@@ -772,7 +823,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                       <Button
                         size="sm"
                         onClick={() => setShowCreatePollModal(true)}
-                        className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs px-2.5 py-1 h-6 rounded-full shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 whitespace-nowrap"
+                        className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white text-xs px-2.5 py-1 h-6 rounded-full shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 whitespace-nowrap"
                       >
                         <Plus className="w-3 h-3" />
                         <span className="hidden sm:inline">Create Poll</span>
@@ -780,13 +831,13 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                       </Button>
                     )}
                   </div>
-                  <p className="text-xs md:text-sm text-slate-600 truncate">
+                  <p className="text-xs md:text-sm text-subtle truncate">
                     {room.description}
                   </p>
                 </div>
 
                 <div className="hidden md:flex items-center gap-2 flex-shrink-0">
-                  <Badge variant="outline" className="bg-blue-50 text-blue-700 px-2 py-1">
+                  <Badge variant="outline" className="bg-premium-muted text-protocall-blue px-2 py-1">
                     <Users className="w-3 h-3 mr-1" />
                     <span className="text-xs">{room.participant_count || 0}</span>
                   </Badge>
@@ -797,7 +848,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                       size="icon"
                       variant="outline"
                       onClick={() => setShowParticipantModal(true)}
-                      className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-300 transition-all duration-300 h-9 w-9"
+                      className="hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-protocall-premium-light transition-all duration-300 h-9 w-9"
                       title="Manage Participants"
                     >
                       <Users className="w-4 h-4" />
@@ -808,17 +859,28 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                     size="icon"
                     variant="outline"
                     onClick={() => setShowSettingsModal(true)}
-                    className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-300 transition-all duration-300 h-9 w-9"
+                    className="h-9 w-9 transition-colors duration-200 hover:border-primary/40 hover:bg-protocall-premium-bg"
                     title="Chat Settings"
                   >
                     <Settings className="w-4 h-4" />
+                  </Button>
+
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={toggleEnlarge}
+                    className="h-9 w-9 transition-colors duration-200 hover:border-primary/40 hover:bg-protocall-premium-bg"
+                    title={isEnlarged ? "Exit full screen" : "Enlarge chat room"}
+                    aria-pressed={isEnlarged}
+                  >
+                    {isEnlarged ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
                   </Button>
                 </div>
               </div>
             </CardHeader>
 
             {/* Search Bar */}
-            <div className="flex-shrink-0 px-4 py-3 border-b bg-slate-50">
+            <div className="flex-shrink-0 px-4 py-3 border-b bg-surface-2">
               <MessageSearchBar
                 onSearch={handleSearch}
                 onFilterChange={handleFilterChange}
@@ -828,14 +890,14 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
 
             {/* Moderation Warning */}
             {moderationWarning && (
-              <div className="flex-shrink-0 mx-4 mt-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
+              <div className="flex-shrink-0 mx-4 mt-2 p-3 bg-sell-muted border border-sell/30 rounded-lg text-sell-muted-foreground text-sm">
                 {moderationWarning}
               </div>
             )}
 
             {/* Connection Error */}
             {connectionError && (
-              <div className="flex-shrink-0 mx-4 mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm flex items-center gap-2">
+              <div className="flex-shrink-0 mx-4 mt-2 p-3 bg-hold-muted border border-hold/30 rounded-lg text-hold-muted-foreground text-sm flex items-center gap-2">
                 <WifiOff className="w-4 h-4" />
                 Connection issue. Messages will sync when reconnected.
               </div>
@@ -866,7 +928,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                   ))}
                 </div>
               ) : filteredMessages.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-slate-500">
+                <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
                   <MessageSquare className="w-12 h-12 mb-4" />
                   <h3 className="text-lg font-semibold">
                     {searchTerm || activeFilters.userId !== 'all' || activeFilters.messageType !== 'all' || activeFilters.dateFrom || activeFilters.dateTo
@@ -904,7 +966,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                           {!isCurrentUser && (
                             <Avatar className={`flex-shrink-0 ${settings.compactMode ? 'h-6 w-6' : 'h-8 w-8'} mt-1`}>
                               {isBot ? (
-                                <AvatarFallback className="bg-slate-600">
+                                <AvatarFallback className="bg-muted-foreground">
                                   <Bot className={`${settings.compactMode ? 'w-3 h-3' : 'w-4 h-4'} text-white`} />
                                 </AvatarFallback>
                               ) : (
@@ -923,19 +985,19 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                               </div>
                             )}
                             {isBot && !settings.compactMode && (
-                              <div className="text-xs font-bold mb-1 text-blue-600 flex items-center gap-1">
+                              <div className="text-xs font-bold mb-1 text-protocall-blue flex items-center gap-1">
                                 <span>AI Assistant</span>
                               </div>
                             )}
 
                             <div className={`shadow-sm relative
                               ${isCurrentUser
-                                ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-2xl rounded-tr-none px-4 py-2.5 inline-block'
+                                ? 'bg-gradient-to-br from-protocall-deep to-protocall-blue text-white rounded-2xl rounded-tr-none px-4 py-2.5 inline-block'
                                 : isBot
-                                  ? 'bg-slate-50 text-slate-800 rounded-2xl rounded-tl-none border border-slate-200 px-4 py-2.5 inline-block'
-                                  : 'bg-white text-slate-900 rounded-2xl rounded-tl-none border border-slate-100 px-4 py-2.5 inline-block'
+                                  ? 'bg-surface-2 text-foreground rounded-2xl rounded-tl-none border border-border px-4 py-2.5 inline-block'
+                                  : 'bg-white text-foreground rounded-2xl rounded-tl-none border border-divider px-4 py-2.5 inline-block'
                               }
-                              ${msg.is_deleted ? 'opacity-60 italic text-slate-500' : ''}
+                              ${msg.is_deleted ? 'opacity-60 italic text-muted-foreground' : ''}
                             `}>
                               {msg.is_deleted ? (
                                 <span>This message was deleted</span>
@@ -949,13 +1011,13 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
 
                                   {/* PDF File Display */}
                                   {msg.message_type === 'file' && msg.file_url && (
-                                    <div className="mt-2 p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-center gap-3">
-                                      <FileText className="w-8 h-8 text-red-600 flex-shrink-0" />
+                                    <div className="mt-2 p-3 bg-surface-2 rounded-lg border border-border flex items-center gap-3">
+                                      <FileText className="w-8 h-8 text-sell-muted-foreground flex-shrink-0" />
                                       <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-slate-900 truncate">
+                                        <p className="text-sm font-medium text-foreground truncate">
                                           {msg.file_name || 'Document.pdf'}
                                         </p>
-                                        <p className="text-xs text-slate-500">PDF Document</p>
+                                        <p className="text-xs text-muted-foreground">PDF Document</p>
                                       </div>
                                       <a
                                         href={msg.file_url}
@@ -974,9 +1036,9 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                             </div>
 
                             {settings.showTimestamps && (
-                              <p className="text-xs mt-1 text-slate-400">
+                              <p className="text-xs mt-1 text-muted-foreground">
                                 {formatDistanceToNow(new Date(msg.created_date || msg.created_at), { addSuffix: true })}
-                                {msg.is_edited && !msg.is_deleted && <span className="ml-1 text-xs text-slate-500">(edited)</span>}
+                                {msg.is_edited && !msg.is_deleted && <span className="ml-1 text-xs text-muted-foreground">(edited)</span>}
                               </p>
                             )}
 
@@ -994,7 +1056,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                           {!isBot && msg.id && !msg.id.startsWith('bot_') && !msg.is_deleted && (
                             <Popover>
                               <PopoverTrigger asChild>
-                                <button className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center">
+                                <button className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 w-6 h-6 rounded-full bg-surface-2 hover:bg-border border border-border flex items-center justify-center">
                                   <Plus className="w-4 h-4" />
                                 </button>
                               </PopoverTrigger>
@@ -1003,7 +1065,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                                   <>
                                     <button
                                       onClick={() => handleReply(msg.id)}
-                                      className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors text-left text-sm"
+                                      className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-surface-2 transition-colors text-left text-sm"
                                     >
                                       <Reply className="w-4 h-4" />
                                       Reply
@@ -1012,7 +1074,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                                     {canEditMessage(msg) && (
                                       <button
                                         onClick={() => setEditingMessage(msg)}
-                                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-50 transition-colors text-left text-sm text-blue-700"
+                                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-premium-muted transition-colors text-left text-sm text-protocall-blue"
                                       >
                                         <Pencil className="w-4 h-4" />
                                         Edit Message
@@ -1022,7 +1084,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                                     {canDeleteMessage(msg) && (
                                       <button
                                         onClick={() => setDeletingMessage(msg)}
-                                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-50 transition-colors text-left text-sm text-red-700"
+                                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-sell-muted transition-colors text-left text-sm text-sell-muted-foreground"
                                       >
                                         <Trash2 className="w-4 h-4" />
                                         Delete Message
@@ -1032,7 +1094,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                                     {(user.app_role === 'admin' || user.app_role === 'super_admin') && (
                                       <button
                                         onClick={() => msg.is_pinned ? handleUnpinMessage(msg.id) : handlePinMessage(msg.id)}
-                                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-amber-50 transition-colors text-left text-sm text-amber-700"
+                                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-hold-muted transition-colors text-left text-sm text-hold-muted-foreground"
                                       >
                                         <Pin className="w-4 h-4" />
                                         {msg.is_pinned ? 'Unpin Message' : 'Pin Message'}
@@ -1054,21 +1116,21 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                         </div>
 
                         {isReplying && user && (
-                          <div className={`mt-2 ${isCurrentUser ? 'ml-auto' : 'ml-10'} bg-blue-50 rounded-lg p-3 border-l-4 border-blue-500 max-w-xs md:max-w-md`}>
+                          <div className={`mt-2 ${isCurrentUser ? 'ml-auto' : 'ml-10'} bg-premium-muted rounded-lg p-3 border-l-4 border-protocall-blue max-w-xs md:max-w-md`}>
                             <div className="flex items-center gap-2 mb-2">
-                              <Reply className="w-4 h-4 text-blue-600" />
-                              <span className="text-xs font-semibold text-blue-800">
+                              <Reply className="w-4 h-4 text-protocall-blue" />
+                              <span className="text-xs font-semibold text-protocall-blue">
                                 Replying to {msgUser.display_name}
                               </span>
                               <button
                                 onClick={handleCancelReply}
-                                className="ml-auto text-slate-500 hover:text-slate-700"
+                                className="ml-auto text-muted-foreground hover:text-subtle"
                               >
                                 <X className="w-4 h-4" />
                               </button>
                             </div>
                             <div
-                              className="text-sm text-slate-600 mb-3 max-h-12 overflow-hidden"
+                              className="text-sm text-subtle mb-3 max-h-12 overflow-hidden"
                               style={{
                                 display: '-webkit-box',
                                 WebkitLineClamp: 2,
@@ -1107,7 +1169,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                                 type="submit"
                                 size="sm"
                                 disabled={!newMessage.trim() || isSending}
-                                className="bg-blue-600 hover:bg-blue-700"
+                                className="bg-protocall-blue hover:bg-protocall-blue"
                               >
                                 {isSending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                               </Button>
@@ -1127,7 +1189,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
                 <Button
                   onClick={() => scrollToBottom('smooth')}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full shadow-lg animate-bounce"
+                  className="bg-protocall-blue hover:bg-protocall-blue text-white font-bold rounded-full shadow-lg animate-bounce"
                 >
                   <ArrowDown className="w-4 h-4 mr-2" />
                   New messages
@@ -1138,7 +1200,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
             {/* Typing Indicator - With setting check */}
             <div className="flex-shrink-0 px-4 py-2">
               {settings.showTypingIndicator && typingUsers.length > 0 && (
-                <div className="text-sm text-slate-500 italic animate-pulse">
+                <div className="text-sm text-muted-foreground italic animate-pulse">
                   {typingUsers.length === 1
                     ? `${typingUsers[0]} is typing...`
                     : `${typingUsers.slice(0, -1).join(', ')} and ${typingUsers[typingUsers.length - 1]} are typing...`
@@ -1151,9 +1213,9 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
             {!replyingToMessageId && (
               <CardFooter className="flex-shrink-0 border-t p-4 bg-white/90 backdrop-blur-sm flex flex-col shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
                 {file && (
-                  <div className="flex items-center gap-2 p-2 mb-2 bg-slate-100 border border-slate-200 rounded-lg w-full">
-                    <FileText className="w-5 h-5 text-red-600" />
-                    <span className="text-sm text-slate-700 truncate flex-1">{file.name}</span>
+                  <div className="flex items-center gap-2 p-2 mb-2 bg-surface-2 border border-border rounded-lg w-full">
+                    <FileText className="w-5 h-5 text-sell-muted-foreground" />
+                    <span className="text-sm text-subtle truncate flex-1">{file.name}</span>
                     <Badge variant="outline" className="text-xs">PDF</Badge>
                     <Button
                       size="icon"
@@ -1206,7 +1268,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                         }
                       }
                     }}
-                    className="flex-1 bg-slate-50 border-slate-200 focus-visible:ring-purple-500 focus-visible:border-purple-500 transition-all duration-300 rounded-xl"
+                    className="flex-1 bg-surface-2 border-border focus-visible:ring-ring focus-visible:border-primary transition-all duration-300 rounded-xl"
                     disabled={!user || (user.trust_score !== undefined && user.trust_score < 20) || isUploading || isSending}
                   />
 
@@ -1220,7 +1282,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                   </Button>
                 </form>
                 {user && user.trust_score < 20 && (
-                  <p className="text-xs text-red-600 mt-1">
+                  <p className="text-xs text-sell-muted-foreground mt-1">
                     Your account is muted due to low trust score. Contact support to resolve.
                   </p>
                 )}

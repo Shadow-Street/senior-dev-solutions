@@ -145,7 +145,7 @@ export default function UniversalPaymentModal({
           contact: customerInfo?.phone || ""
         },
         theme: {
-          color: "#2563EB"
+          color: "hsl(var(--chart-1))"
         },
         modal: {
           ondismiss: () => {
@@ -186,30 +186,30 @@ export default function UniversalPaymentModal({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-green-600" />
+            <CheckCircle className="w-5 h-5 text-buy-muted-foreground" />
             Complete Your Payment
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           {/* Payment Summary */}
-          <Card className="border-2 border-blue-100 bg-blue-50">
+          <Card className="border-2 border-protocall-premium-light bg-premium-muted">
             <CardContent className="p-4">
               <div className="space-y-2">
-                <h3 className="font-semibold text-slate-900">{description}</h3>
+                <h3 className="font-semibold text-foreground">{description}</h3>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold text-blue-600">
+                  <span className="text-3xl font-bold text-protocall-blue">
                     {currency === 'INR' ? '₹' : '$'}{amount.toLocaleString()}
                   </span>
                   {metadata.discount_amount > 0 && (
-                    <span className="text-sm line-through text-slate-500">
+                    <span className="text-sm line-through text-muted-foreground">
                       {currency === 'INR' ? '₹' : '$'}{(amount + metadata.discount_amount).toLocaleString()}
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-slate-600">One-time payment</p>
+                <p className="text-sm text-subtle">One-time payment</p>
                 {metadata.discount_amount > 0 && (
-                  <Badge className="bg-green-100 text-green-800">
+                  <Badge className="bg-buy-muted text-buy-muted-foreground">
                     Discount: {currency === 'INR' ? '₹' : '$'}{metadata.discount_amount} OFF
                   </Badge>
                 )}
@@ -224,20 +224,20 @@ export default function UniversalPaymentModal({
               <button
                 onClick={() => setPaymentMode('mock')}
                 className={`w-full p-4 rounded-lg border-2 transition-all text-left ${paymentMode === 'mock'
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-protocall-blue bg-premium-muted'
+                  : 'border-border hover:border-border'
                   }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
+                  <div className="w-10 h-10 rounded-lg bg-buy-muted flex items-center justify-center">
+                    <CheckCircle className="w-5 h-5 text-buy-muted-foreground" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold text-slate-900">Mock Payment (Testing)</p>
-                    <p className="text-xs text-slate-500">Instant test payment - no real money</p>
+                    <p className="font-semibold text-foreground">Mock Payment (Testing)</p>
+                    <p className="text-xs text-muted-foreground">Instant test payment - no real money</p>
                   </div>
                   {paymentMode === 'mock' && (
-                    <CheckCircle className="w-5 h-5 text-blue-600" />
+                    <CheckCircle className="w-5 h-5 text-protocall-blue" />
                   )}
                 </div>
               </button>
@@ -246,20 +246,20 @@ export default function UniversalPaymentModal({
               <button
                 onClick={() => setPaymentMode('razorpay')}
                 className={`w-full p-4 rounded-lg border-2 transition-all text-left ${paymentMode === 'razorpay'
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-protocall-blue bg-premium-muted'
+                  : 'border-border hover:border-border'
                   }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                    <span className="font-bold text-blue-600 text-xs">R</span>
+                  <div className="w-10 h-10 rounded-lg bg-premium-muted flex items-center justify-center">
+                    <span className="font-bold text-protocall-blue text-xs">R</span>
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold text-slate-900">Payment via Razorpay</p>
-                    <p className="text-xs text-slate-500">Cards, UPI, Net Banking & More</p>
+                    <p className="font-semibold text-foreground">Payment via Razorpay</p>
+                    <p className="text-xs text-muted-foreground">Cards, UPI, Net Banking & More</p>
                   </div>
                   {paymentMode === 'razorpay' && (
-                    <CheckCircle className="w-5 h-5 text-blue-600" />
+                    <CheckCircle className="w-5 h-5 text-protocall-blue" />
                   )}
                 </div>
               </button>
@@ -268,11 +268,11 @@ export default function UniversalPaymentModal({
 
           {/* Razorpay Not Configured Warning */}
           {paymentMode === 'razorpay' && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <div className="bg-sell-muted border border-sell/30 rounded-lg p-4 flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-sell-muted-foreground flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm text-red-800 font-semibold">Payment gateway not configured.</p>
-                <p className="text-xs text-red-600 mt-1">
+                <p className="text-sm text-sell-muted-foreground font-semibold">Payment gateway not configured.</p>
+                <p className="text-xs text-sell-muted-foreground mt-1">
                   Please contact support or use Mock Payment for testing.
                 </p>
               </div>
@@ -281,12 +281,12 @@ export default function UniversalPaymentModal({
 
           {/* Mock Payment Instructions */}
           {paymentMode === 'mock' && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div className="bg-buy-muted border border-buy/30 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-buy-muted-foreground flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm text-green-800 font-semibold">Test Mode Active</p>
-                  <p className="text-xs text-green-600 mt-1">
+                  <p className="text-sm text-buy-muted-foreground font-semibold">Test Mode Active</p>
+                  <p className="text-xs text-buy-muted-foreground mt-1">
                     This is a mock payment for testing. No real payment will be charged.
                     Click "Pay" to simulate a successful payment.
                   </p>
@@ -297,12 +297,12 @@ export default function UniversalPaymentModal({
 
           {/* Security Badges */}
           <div className="flex items-center justify-center gap-6 py-3 border-t border-b">
-            <div className="flex items-center gap-2 text-xs text-slate-500">
-              <Lock className="w-4 h-4 text-green-600" />
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Lock className="w-4 h-4 text-buy-muted-foreground" />
               Secure Payment
             </div>
-            <div className="flex items-center gap-2 text-xs text-slate-500">
-              <CheckCircle className="w-4 h-4 text-blue-600" />
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <CheckCircle className="w-4 h-4 text-protocall-blue" />
               256-bit SSL
             </div>
           </div>
@@ -320,7 +320,7 @@ export default function UniversalPaymentModal({
             <Button
               onClick={handlePayment}
               disabled={isProcessing || !paymentMode}
-              className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="flex-1 bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
             >
               {isProcessing ? (
                 <>
@@ -338,7 +338,7 @@ export default function UniversalPaymentModal({
 
           {/* Customer Info */}
           {customerInfo && (
-            <div className="text-xs text-slate-500 text-center">
+            <div className="text-xs text-muted-foreground text-center">
               Payment for: {customerInfo.name || customerInfo.email}
             </div>
           )}

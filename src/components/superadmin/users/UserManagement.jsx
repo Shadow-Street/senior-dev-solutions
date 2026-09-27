@@ -100,9 +100,9 @@ export default function UserManagement({ user: currentAdmin, refreshEntityConfig
     return (
       <Card className="shadow-lg border-0 bg-white">
         <CardContent className="p-12 text-center">
-          <Shield className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">Access Denied</h3>
-          <p className="text-gray-500">You don't have permission to view user management.</p>
+          <Shield className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-subtle mb-2">Access Denied</h3>
+          <p className="text-muted-foreground">You don't have permission to view user management.</p>
         </CardContent>
       </Card>
     );
@@ -125,10 +125,10 @@ export default function UserManagement({ user: currentAdmin, refreshEntityConfig
         <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-blue-600" />
+                <Users className="w-5 h-5 text-protocall-blue" />
                 User Administration
               </CardTitle>
-              <p className="text-sm text-slate-600 mt-1">
+              <p className="text-sm text-subtle mt-1">
                 Manage users, roles, invitations, and platform activity.
               </p>
             </div>
@@ -155,7 +155,7 @@ export default function UserManagement({ user: currentAdmin, refreshEntityConfig
             <TabsTrigger 
               key={tab.value}
               value={tab.value}
-              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md"
+              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
             >
               <tab.icon className="w-4 h-4" />
               {tab.label}

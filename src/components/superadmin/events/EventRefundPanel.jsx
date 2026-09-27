@@ -215,11 +215,11 @@ export default function EventRefundPanel({ event, onUpdate }) {
 
   const getStatusBadge = (status) => {
     const configs = {
-      pending: { color: 'bg-yellow-100 text-yellow-800 border-yellow-300', icon: Clock, text: 'Pending Organizer' },
-      approved: { color: 'bg-blue-100 text-blue-800 border-blue-300', icon: CheckCircle, text: 'Approved - Pending Admin' },
-      processing: { color: 'bg-purple-100 text-purple-800 border-purple-300', icon: RefreshCw, text: 'Processing' },
-      processed: { color: 'bg-green-100 text-green-800 border-green-300', icon: CheckCircle, text: 'Processed' },
-      rejected: { color: 'bg-red-100 text-red-800 border-red-300', icon: XCircle, text: 'Rejected' }
+      pending: { color: 'bg-hold-muted text-hold-muted-foreground border-hold/30', icon: Clock, text: 'Pending Organizer' },
+      approved: { color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light', icon: CheckCircle, text: 'Approved - Pending Admin' },
+      processing: { color: 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light', icon: RefreshCw, text: 'Processing' },
+      processed: { color: 'bg-buy-muted text-buy-muted-foreground border-buy/30', icon: CheckCircle, text: 'Processed' },
+      rejected: { color: 'bg-sell-muted text-sell-muted-foreground border-sell/30', icon: XCircle, text: 'Rejected' }
     };
 
     const config = configs[status] || configs.pending;
@@ -237,8 +237,8 @@ export default function EventRefundPanel({ event, onUpdate }) {
     return (
       <Card>
         <CardContent className="p-12 text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-slate-400 mx-auto mb-3" />
-          <p className="text-slate-600">Loading refund data...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground mx-auto mb-3" />
+          <p className="text-subtle">Loading refund data...</p>
         </CardContent>
       </Card>
     );
@@ -248,57 +248,57 @@ export default function EventRefundPanel({ event, onUpdate }) {
     <div className="space-y-6">
       {/* Refund Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200">
+        <Card className="bg-gradient-to-br from-surface-2 to-hold-muted border-hold/30">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-yellow-200 rounded-lg">
-                <Clock className="w-5 h-5 text-yellow-700" />
+              <div className="p-2 bg-hold-muted rounded-lg">
+                <Clock className="w-5 h-5 text-hold-muted-foreground" />
               </div>
               <div>
-                <p className="text-sm text-yellow-700 font-medium">Pending Review</p>
-                <p className="text-2xl font-bold text-yellow-900">{refundStats.pending}</p>
+                <p className="text-sm text-hold-muted-foreground font-medium">Pending Review</p>
+                <p className="text-2xl font-bold text-hold-muted-foreground">{refundStats.pending}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+        <Card className="bg-surface-2 border-protocall-premium-light">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-200 rounded-lg">
-                <CheckSquare className="w-5 h-5 text-blue-700" />
+              <div className="p-2 bg-premium-muted rounded-lg">
+                <CheckSquare className="w-5 h-5 text-protocall-blue" />
               </div>
               <div>
-                <p className="text-sm text-blue-700 font-medium">Approved</p>
-                <p className="text-2xl font-bold text-blue-900">{refundStats.approved}</p>
+                <p className="text-sm text-protocall-blue font-medium">Approved</p>
+                <p className="text-2xl font-bold text-protocall-blue">{refundStats.approved}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+        <Card className="bg-gradient-to-br from-surface-2 to-buy-muted border-buy/30">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-200 rounded-lg">
-                <CheckCircle className="w-5 h-5 text-green-700" />
+              <div className="p-2 bg-buy-muted rounded-lg">
+                <CheckCircle className="w-5 h-5 text-buy-muted-foreground" />
               </div>
               <div>
-                <p className="text-sm text-green-700 font-medium">Processed</p>
-                <p className="text-2xl font-bold text-green-900">{refundStats.processed}</p>
+                <p className="text-sm text-buy-muted-foreground font-medium">Processed</p>
+                <p className="text-2xl font-bold text-buy-muted-foreground">{refundStats.processed}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+        <Card className="bg-surface-2 border-protocall-premium-light">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-200 rounded-lg">
-                <DollarSign className="w-5 h-5 text-purple-700" />
+              <div className="p-2 bg-premium-muted rounded-lg">
+                <DollarSign className="w-5 h-5 text-protocall-premium-text" />
               </div>
               <div>
-                <p className="text-sm text-purple-700 font-medium">Total Refunded</p>
-                <p className="text-2xl font-bold text-purple-900">₹{refundStats.totalAmount.toLocaleString()}</p>
+                <p className="text-sm text-protocall-premium-text font-medium">Total Refunded</p>
+                <p className="text-2xl font-bold text-protocall-premium-text">₹{refundStats.totalAmount.toLocaleString()}</p>
               </div>
             </div>
           </CardContent>
@@ -309,66 +309,66 @@ export default function EventRefundPanel({ event, onUpdate }) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <RefreshCw className="w-5 h-5 text-blue-600" />
+            <RefreshCw className="w-5 h-5 text-protocall-blue" />
             Refund Requests ({refundStats.total})
           </CardTitle>
         </CardHeader>
         <CardContent>
           {refundRequests.length === 0 ? (
             <div className="text-center py-12">
-              <DollarSign className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">No Refund Requests</h3>
-              <p className="text-slate-600">No refund requests have been submitted for this event yet.</p>
+              <DollarSign className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">No Refund Requests</h3>
+              <p className="text-subtle">No refund requests have been submitted for this event yet.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-slate-50 border-b-2 border-slate-200">
+                <thead className="bg-surface-2 border-b-2 border-border">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-subtle uppercase tracking-wider">
                       User
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-subtle uppercase tracking-wider">
                       Amount
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-subtle uppercase tracking-wider">
                       Reason
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-subtle uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-subtle uppercase tracking-wider">
                       Requested
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-right text-xs font-semibold text-subtle uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-slate-200">
+                <tbody className="bg-white divide-y divide-divider">
                   {refundRequests.map((request) => (
-                    <tr key={request.id} className="hover:bg-slate-50">
+                    <tr key={request.id} className="hover:bg-surface-2">
                       <td className="px-6 py-4">
                         <div>
-                          <p className="font-medium text-slate-900">{request.user_name}</p>
-                          <p className="text-sm text-slate-500">{request.user_email}</p>
+                          <p className="font-medium text-foreground">{request.user_name}</p>
+                          <p className="text-sm text-muted-foreground">{request.user_email}</p>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="font-semibold text-slate-900">₹{request.refund_amount?.toLocaleString()}</span>
+                        <span className="font-semibold text-foreground">₹{request.refund_amount?.toLocaleString()}</span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="max-w-xs">
                           <Badge variant="outline" className="mb-1">
                             {request.reason_category?.replace('_', ' ')}
                           </Badge>
-                          <p className="text-sm text-slate-600 line-clamp-2">{request.request_reason}</p>
+                          <p className="text-sm text-subtle line-clamp-2">{request.request_reason}</p>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         {getStatusBadge(request.status)}
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-600">
+                      <td className="px-6 py-4 text-sm text-subtle">
                         {new Date(request.created_date).toLocaleDateString('en-IN', {
                           day: 'numeric',
                           month: 'short',
@@ -387,7 +387,7 @@ export default function EventRefundPanel({ event, onUpdate }) {
                                   setSelectedRequest(request);
                                   setShowApprovalModal(true);
                                 }}
-                                className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                                className="text-buy-muted-foreground hover:text-buy-muted-foreground hover:bg-buy-muted"
                               >
                                 <CheckCircle className="w-4 h-4 mr-1" />
                                 Approve
@@ -399,7 +399,7 @@ export default function EventRefundPanel({ event, onUpdate }) {
                                   setSelectedRequest(request);
                                   setShowRejectModal(true);
                                 }}
-                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                className="text-sell-muted-foreground hover:text-sell-muted-foreground hover:bg-sell-muted"
                               >
                                 <XCircle className="w-4 h-4 mr-1" />
                                 Reject
@@ -415,7 +415,7 @@ export default function EventRefundPanel({ event, onUpdate }) {
                                 setSelectedRequest(request);
                                 setShowProcessModal(true);
                               }}
-                              className="bg-blue-600 hover:bg-blue-700"
+                              className="bg-protocall-blue hover:bg-protocall-blue"
                             >
                               <RefreshCw className="w-4 h-4 mr-1" />
                               Process Refund
@@ -456,24 +456,24 @@ export default function EventRefundPanel({ event, onUpdate }) {
 
           {selectedRequest && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg">
+              <div className="grid grid-cols-2 gap-4 p-4 bg-surface-2 rounded-lg">
                 <div>
-                  <Label className="text-sm text-slate-600">User</Label>
+                  <Label className="text-sm text-subtle">User</Label>
                   <p className="font-medium">{selectedRequest.user_name}</p>
-                  <p className="text-sm text-slate-600">{selectedRequest.user_email}</p>
+                  <p className="text-sm text-subtle">{selectedRequest.user_email}</p>
                 </div>
                 <div>
-                  <Label className="text-sm text-slate-600">Refund Amount</Label>
-                  <p className="font-semibold text-lg text-green-600">₹{selectedRequest.refund_amount?.toLocaleString()}</p>
+                  <Label className="text-sm text-subtle">Refund Amount</Label>
+                  <p className="font-semibold text-lg text-buy-muted-foreground">₹{selectedRequest.refund_amount?.toLocaleString()}</p>
                 </div>
                 <div className="col-span-2">
-                  <Label className="text-sm text-slate-600">Reason Category</Label>
+                  <Label className="text-sm text-subtle">Reason Category</Label>
                   <Badge variant="outline" className="mt-1">
                     {selectedRequest.reason_category?.replace('_', ' ')}
                   </Badge>
                 </div>
                 <div className="col-span-2">
-                  <Label className="text-sm text-slate-600">Detailed Reason</Label>
+                  <Label className="text-sm text-subtle">Detailed Reason</Label>
                   <p className="text-sm mt-1">{selectedRequest.request_reason}</p>
                 </div>
               </div>
@@ -506,7 +506,7 @@ export default function EventRefundPanel({ event, onUpdate }) {
             <Button
               onClick={() => handleOrganizerApprove(selectedRequest)}
               disabled={isProcessing}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-buy hover:bg-buy"
             >
               {isProcessing ? (
                 <>
@@ -536,11 +536,11 @@ export default function EventRefundPanel({ event, onUpdate }) {
 
           {selectedRequest && (
             <div className="space-y-4">
-              <div className="p-4 bg-red-50 rounded-lg border border-red-200">
-                <p className="text-sm text-red-800">
+              <div className="p-4 bg-sell-muted rounded-lg border border-sell/30">
+                <p className="text-sm text-sell-muted-foreground">
                   <strong>User:</strong> {selectedRequest.user_name}
                 </p>
-                <p className="text-sm text-red-800 mt-1">
+                <p className="text-sm text-sell-muted-foreground mt-1">
                   <strong>Amount:</strong> ₹{selectedRequest.refund_amount?.toLocaleString()}
                 </p>
               </div>
@@ -586,7 +586,7 @@ export default function EventRefundPanel({ event, onUpdate }) {
             <Button
               onClick={() => handleOrganizerReject(selectedRequest)}
               disabled={isProcessing || !rejectionReason.trim()}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-sell hover:bg-sell"
             >
               {isProcessing ? (
                 <>
@@ -616,27 +616,27 @@ export default function EventRefundPanel({ event, onUpdate }) {
 
           {selectedRequest && (
             <div className="space-y-4">
-              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <Label className="text-sm text-blue-700">User</Label>
-                    <p className="font-medium text-blue-900">{selectedRequest.user_name}</p>
+                    <Label className="text-sm text-protocall-blue">User</Label>
+                    <p className="font-medium text-protocall-blue">{selectedRequest.user_name}</p>
                   </div>
                   <div>
-                    <Label className="text-sm text-blue-700">Refund Amount</Label>
-                    <p className="font-semibold text-lg text-blue-900">₹{selectedRequest.refund_amount?.toLocaleString()}</p>
+                    <Label className="text-sm text-protocall-blue">Refund Amount</Label>
+                    <p className="font-semibold text-lg text-protocall-blue">₹{selectedRequest.refund_amount?.toLocaleString()}</p>
                   </div>
                   <div className="col-span-2">
-                    <Label className="text-sm text-blue-700">Original Payment ID</Label>
-                    <p className="font-mono text-sm text-blue-900">{selectedRequest.original_transaction_id}</p>
+                    <Label className="text-sm text-protocall-blue">Original Payment ID</Label>
+                    <p className="font-mono text-sm text-protocall-blue">{selectedRequest.original_transaction_id}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="bg-hold-muted border border-hold/30 rounded-lg p-4">
                 <div className="flex gap-3">
-                  <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                  <div className="text-sm text-yellow-800">
+                  <AlertCircle className="w-5 h-5 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
+                  <div className="text-sm text-hold-muted-foreground">
                     <p className="font-semibold mb-1">Important:</p>
                     <ul className="list-disc list-inside space-y-1">
                       <li>This action will process the refund immediately</li>
@@ -676,7 +676,7 @@ export default function EventRefundPanel({ event, onUpdate }) {
             <Button
               onClick={() => handleAdminProcess(selectedRequest)}
               disabled={isProcessing}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-protocall-blue hover:bg-protocall-blue"
             >
               {isProcessing ? (
                 <>

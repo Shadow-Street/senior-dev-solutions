@@ -8,7 +8,14 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RotateCcw, Search, DollarSign, Clock, CheckCircle, XCircle, Eye, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
+
+// date-fns format() throws RangeError on an invalid date, which unmounts the
+// whole admin shell. Render a placeholder instead.
+const safeDate = (value, pattern = 'dd MMM yyyy') => {
+  const d = value ? new Date(value) : null;
+  return d && isValid(d) ? format(d, pattern) : '—';
+};
 import RefundApprovalModal from './refunds/RefundApprovalModal'; // Not used in the final version of the prompt, but keeping it
 import ProcessRefundModal from './refunds/ProcessRefundModal';
 import RefundDetailsModal from './refunds/RefundDetailsModal';
@@ -16,8 +23,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Minimal EmptyState component for demonstration if not provided elsewhere
 const EmptyState = ({ icon: Icon, title, description }) => (
-  <div className="flex flex-col items-center justify-center py-12 text-center text-slate-500">
-    {Icon && <Icon className="w-12 h-12 mb-4 text-slate-400" />}
+  <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
+    {Icon && <Icon className="w-12 h-12 mb-4 text-muted-foreground" />}
     <p className="text-xl font-semibold">{title}</p>
     <p className="text-sm mt-2">{description}</p>
   </div>
@@ -40,15 +47,15 @@ const EventRefundApproval = ({ refund, onUpdate }) => {
   };
 
   return (
-    <Card className="p-4 bg-yellow-50 border-yellow-200">
+    <Card className="p-4 bg-hold-muted border-hold/30">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex-grow">
-          <p className="font-semibold text-slate-900">{refund.user_name || 'Unknown User'}</p>
-          <p className="text-sm text-slate-600">Email: {refund.user_email}</p>
-          <p className="text-sm text-slate-600">Transaction ID: <code className="text-xs bg-slate-100 px-1 rounded">{refund.original_transaction_id?.substring(0, 10)}...</code></p>
-          <p className="text-sm text-slate-600">Requested Amount: <span className="font-medium text-slate-800">₹{refund.refund_amount?.toLocaleString()}</span></p>
-          <p className="text-sm text-slate-600">Date: {format(new Date(refund.created_date), 'dd MMM yyyy')}</p>
-          {refund.notes && <p className="text-sm text-slate-700 mt-2 italic">Notes: {refund.notes}</p>}
+          <p className="font-semibold text-foreground">{refund.user_name || 'Unknown User'}</p>
+          <p className="text-sm text-subtle">Email: {refund.user_email}</p>
+          <p className="text-sm text-subtle">Transaction ID: <code className="text-xs bg-surface-2 px-1 rounded">{refund.original_transaction_id?.substring(0, 10)}...</code></p>
+          <p className="text-sm text-subtle">Requested Amount: <span className="font-medium text-foreground">₹{refund.refund_amount?.toLocaleString()}</span></p>
+          <p className="text-sm text-subtle">Date: {safeDate(refund.created_date)}</p>
+          {refund.notes && <p className="text-sm text-subtle mt-2 italic">Notes: {refund.notes}</p>}
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => handleUpdateStatus('processing')}>
@@ -195,12 +202,12 @@ export default function RefundManagement({ user }) {
 
   const getStatusBadge = (status) => {
     const config = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' },
-      approved: { color: 'bg-blue-100 text-blue-800', label: 'Approved' },
-      rejected: { color: 'bg-red-100 text-red-800', label: 'Rejected' },
-      processing: { color: 'bg-purple-100 text-purple-800', label: 'Processing' },
-      processed: { color: 'bg-green-100 text-green-800', label: 'Processed' },
-      failed: { color: 'bg-red-100 text-red-800', label: 'Failed' }
+      pending: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending' },
+      approved: { color: 'bg-premium-muted text-protocall-blue', label: 'Approved' },
+      rejected: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Rejected' },
+      processing: { color: 'bg-premium-muted text-protocall-premium-text', label: 'Processing' },
+      processed: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Processed' },
+      failed: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Failed' }
     };
     const { color, label } = config[status] || config.pending;
     return <Badge className={`${color} border-0`}>{label}</Badge>;
@@ -221,7 +228,7 @@ export default function RefundManagement({ user }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
       </div>
     );
   }
@@ -233,12 +240,12 @@ export default function RefundManagement({ user }) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-600 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-hold to-sell rounded-xl flex items-center justify-center">
                 <RotateCcw className="w-6 h-6 text-white" />
               </div>
               <div>
                 <CardTitle className="text-2xl">Refund Management</CardTitle>
-                <p className="text-sm text-slate-600 mt-1">Track and process refunds across all platform services</p>
+                <p className="text-sm text-subtle mt-1">Track and process refunds across all platform services</p>
               </div>
             </div>
           </div>
@@ -247,50 +254,50 @@ export default function RefundManagement({ user }) {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-50 to-blue-100">
+        <Card className="shadow-lg border-0 bg-surface-2">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-blue-600 font-medium">Total Refunds</p>
-                <p className="text-3xl font-bold text-blue-900 mt-1">{stats.totalRefunds}</p>
+                <p className="text-sm text-protocall-blue font-medium">Total Refunds</p>
+                <p className="text-3xl font-bold text-protocall-blue mt-1">{stats.totalRefunds}</p>
               </div>
-              <RotateCcw className="w-10 h-10 text-blue-600 opacity-50" />
+              <RotateCcw className="w-10 h-10 text-protocall-blue opacity-50" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-yellow-50 to-yellow-100">
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-surface-2 to-hold-muted">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-yellow-600 font-medium">Pending</p>
-                <p className="text-3xl font-bold text-yellow-900 mt-1">{stats.pendingRefunds}</p>
+                <p className="text-sm text-hold-muted-foreground font-medium">Pending</p>
+                <p className="text-3xl font-bold text-hold-muted-foreground mt-1">{stats.pendingRefunds}</p>
               </div>
-              <Clock className="w-10 h-10 text-yellow-600 opacity-50" />
+              <Clock className="w-10 h-10 text-hold-muted-foreground opacity-50" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-green-50 to-green-100">
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-surface-2 to-buy-muted">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-green-600 font-medium">Processed</p>
-                <p className="text-3xl font-bold text-green-900 mt-1">{stats.processedRefunds}</p>
+                <p className="text-sm text-buy-muted-foreground font-medium">Processed</p>
+                <p className="text-3xl font-bold text-buy-muted-foreground mt-1">{stats.processedRefunds}</p>
               </div>
-              <CheckCircle className="w-10 h-10 text-green-600 opacity-50" />
+              <CheckCircle className="w-10 h-10 text-buy-muted-foreground opacity-50" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-purple-50 to-purple-100">
+        <Card className="shadow-lg border-0 bg-surface-2">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-purple-600 font-medium">Total Refunded</p>
-                <p className="text-2xl font-bold text-purple-900 mt-1">₹{stats.totalAmountRefunded.toLocaleString()}</p>
+                <p className="text-sm text-protocall-premium-text font-medium">Total Refunded</p>
+                <p className="text-2xl font-bold text-protocall-premium-text mt-1">₹{stats.totalAmountRefunded.toLocaleString()}</p>
               </div>
-              <DollarSign className="w-10 h-10 text-purple-600 opacity-50" />
+              <DollarSign className="w-10 h-10 text-protocall-premium-text opacity-50" />
             </div>
           </CardContent>
         </Card>
@@ -308,7 +315,7 @@ export default function RefundManagement({ user }) {
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                   <Input
                     placeholder="Search by user, transaction ID, email, or item name..."
                     value={searchTerm}
@@ -365,50 +372,50 @@ export default function RefundManagement({ user }) {
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-slate-50 border-b">
+                  <thead className="bg-surface-2 border-b">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">User</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Transaction ID</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Type</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Amount</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">User</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Transaction ID</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Type</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Amount</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-200">
+                  <tbody className="divide-y divide-divider">
                     {filteredRefunds.length === 0 ? (
                       <tr>
-                        <td colSpan="7" className="px-6 py-12 text-center text-slate-500">
+                        <td colSpan="7" className="px-6 py-12 text-center text-muted-foreground">
                           No refund requests found matching current filters.
                         </td>
                       </tr>
                     ) : (
                       filteredRefunds.map((refund) => (
-                        <tr key={refund.id} className="hover:bg-slate-50 transition-colors">
+                        <tr key={refund.id} className="hover:bg-surface-2 transition-colors">
                           <td className="px-6 py-4">
                             <div>
-                              <p className="font-medium text-slate-900">{refund.user_name || 'Unknown'}</p>
-                              <p className="text-xs text-slate-500">{refund.user_email}</p>
+                              <p className="font-medium text-foreground">{refund.user_name || 'Unknown'}</p>
+                              <p className="text-xs text-muted-foreground">{refund.user_email}</p>
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <code className="text-xs bg-slate-100 px-2 py-1 rounded">
+                            <code className="text-xs bg-surface-2 px-2 py-1 rounded">
                               {refund.original_transaction_id?.substring(0, 12)}...
                             </code>
                           </td>
                           <td className="px-6 py-4">
-                            <span className="text-sm text-slate-700">{getTypeLabel(refund.transaction_type)}</span>
+                            <span className="text-sm text-subtle">{getTypeLabel(refund.transaction_type)}</span>
                           </td>
                           <td className="px-6 py-4">
-                            <span className="font-semibold text-slate-900">₹{refund.refund_amount?.toLocaleString()}</span>
+                            <span className="font-semibold text-foreground">₹{refund.refund_amount?.toLocaleString()}</span>
                           </td>
                           <td className="px-6 py-4">
                             {getStatusBadge(refund.status)}
                           </td>
                           <td className="px-6 py-4">
-                            <span className="text-sm text-slate-600">
-                              {format(new Date(refund.created_date), 'dd MMM yyyy')}
+                            <span className="text-sm text-subtle">
+                              {safeDate(refund.created_date)}
                             </span>
                           </td>
                           <td className="px-6 py-4">
@@ -453,7 +460,7 @@ export default function RefundManagement({ user }) {
             <CardContent>
               {eventRefunds.filter(r => r.status === 'approved').length > 0 ? (
                 <div className="space-y-4">
-                  <h3 className="font-semibold text-orange-800">
+                  <h3 className="font-semibold text-hold-muted-foreground">
                     Pending Admin Review ({eventRefunds.filter(r => r.status === 'approved').length})
                   </h3>
                   {eventRefunds.filter(r => r.status === 'approved').map(refund => (
@@ -475,7 +482,7 @@ export default function RefundManagement({ user }) {
               {/* Processed/Rejected Event Refunds */}
               {eventRefunds.filter(r => ['processing', 'processed', 'rejected', 'failed'].includes(r.status)).length > 0 && (
                 <div className="mt-8 space-y-4">
-                  <h3 className="font-semibold text-gray-700">
+                  <h3 className="font-semibold text-subtle">
                     Processed/Rejected ({eventRefunds.filter(r => ['processing', 'processed', 'rejected', 'failed'].includes(r.status)).length})
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -483,9 +490,9 @@ export default function RefundManagement({ user }) {
                       <Card key={refund.id} className="p-4">
                         <div className="flex justify-between items-start">
                           <div>
-                            <p className="font-semibold text-slate-900">{refund.user_name || 'Unknown'}</p>
-                            <p className="text-sm text-slate-600">Amount: ₹{refund.refund_amount?.toLocaleString()}</p>
-                            <p className="text-xs text-slate-500">Trans ID: {refund.original_transaction_id?.substring(0, 10)}...</p>
+                            <p className="font-semibold text-foreground">{refund.user_name || 'Unknown'}</p>
+                            <p className="text-sm text-subtle">Amount: ₹{refund.refund_amount?.toLocaleString()}</p>
+                            <p className="text-xs text-muted-foreground">Trans ID: {refund.original_transaction_id?.substring(0, 10)}...</p>
                             <div className="mt-2">{getStatusBadge(refund.status)}</div>
                           </div>
                           <Button

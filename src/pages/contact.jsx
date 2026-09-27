@@ -46,14 +46,14 @@ export default function ContactPage() {
   // For this change, we assume `settings` object is always available with at least default values.
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-6">
+    <div className="min-h-screen bg-surface-2 p-6">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-blue-700 bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-protocall-ink to-protocall-blue bg-clip-text text-transparent mb-4">
             Contact {settings.site_name}
           </h1>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+          <p className="text-lg text-subtle max-w-2xl mx-auto">
             Have questions, feedback, or need support? We're here to help you succeed in your trading journey.
           </p>
         </div>
@@ -63,45 +63,45 @@ export default function ContactPage() {
           <Card className="shadow-lg border-0 bg-white">
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
-                <Phone className="w-6 h-6 text-blue-600" />
+                <Phone className="w-6 h-6 text-protocall-blue" />
                 Get in Touch
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               {settings.support_email && (
                 <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-full bg-blue-100 flex-shrink-0">
-                    <Mail className="w-6 h-6 text-blue-600" />
+                  <div className="p-3 rounded-full bg-premium-muted flex-shrink-0">
+                    <Mail className="w-6 h-6 text-protocall-blue" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-slate-900">Email Support</h3>
-                    <p className="text-slate-600">{settings.support_email}</p>
-                    <p className="text-sm text-slate-500">We typically respond within 24 hours</p>
+                    <h3 className="font-semibold text-foreground">Email Support</h3>
+                    <p className="text-subtle">{settings.support_email}</p>
+                    <p className="text-sm text-muted-foreground">We typically respond within 24 hours</p>
                   </div>
                 </div>
               )}
 
               {settings.support_phone && (
                 <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-full bg-green-100 flex-shrink-0">
-                    <Phone className="w-6 h-6 text-green-600" />
+                  <div className="p-3 rounded-full bg-buy-muted flex-shrink-0">
+                    <Phone className="w-6 h-6 text-buy-muted-foreground" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-slate-900">Phone Support</h3>
-                    <p className="text-slate-600">{settings.support_phone}</p>
-                    <p className="text-sm text-slate-500">Available Monday - Friday, 9 AM - 6 PM IST</p>
+                    <h3 className="font-semibold text-foreground">Phone Support</h3>
+                    <p className="text-subtle">{settings.support_phone}</p>
+                    <p className="text-sm text-muted-foreground">Available Monday - Friday, 9 AM - 6 PM IST</p>
                   </div>
                 </div>
               )}
 
               <div className="flex items-start gap-4">
-                <div className="p-3 rounded-full bg-purple-100 flex-shrink-0">
-                  <MapPin className="w-6 h-6 text-purple-600" />
+                <div className="p-3 rounded-full bg-premium-muted flex-shrink-0">
+                  <MapPin className="w-6 h-6 text-protocall-premium-text" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900">Office Location</h3>
-                  <p className="text-slate-600">Bangalore, Karnataka, India</p>
-                  <p className="text-sm text-slate-500">Serving traders across India</p>
+                  <h3 className="font-semibold text-foreground">Office Location</h3>
+                  <p className="text-subtle">Bangalore, Karnataka, India</p>
+                  <p className="text-sm text-muted-foreground">Serving traders across India</p>
                 </div>
               </div>
             </CardContent>

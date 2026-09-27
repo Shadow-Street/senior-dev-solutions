@@ -168,27 +168,27 @@ export default function EventDetailsModal({
     const statusConfig = {
       'pending': {
         text: 'Refund Requested (Pending Organizer)',
-        color: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+        color: 'bg-hold-muted text-hold-muted-foreground border-hold/30',
         icon: '⏳'
       },
       'approved': {
         text: 'Refund Approved (Pending Admin)',
-        color: 'bg-orange-100 text-orange-700 border-orange-200',
+        color: 'bg-hold-muted text-hold-muted-foreground border-hold/30',
         icon: '⏳'
       },
       'processing': {
         text: 'Refund Processing',
-        color: 'bg-blue-100 text-blue-700 border-blue-200',
+        color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
         icon: '🔄'
       },
       'processed': {
         text: 'Refund Processed',
-        color: 'bg-green-100 text-green-700 border-green-200',
+        color: 'bg-buy-muted text-buy-muted-foreground border-buy/30',
         icon: '✅'
       },
       'rejected': {
         text: 'Refund Rejected',
-        color: 'bg-red-100 text-red-700 border-red-200',
+        color: 'bg-sell-muted text-sell-muted-foreground border-sell/30',
         icon: '❌'
       }
     };
@@ -240,8 +240,8 @@ export default function EventDetailsModal({
       <Dialog open={true} onOpenChange={onClose}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-              <Calendar className="w-6 h-6 text-blue-600" />
+            <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
+              <Calendar className="w-6 h-6 text-protocall-blue" />
               {event.title}
             </DialogTitle>
           </DialogHeader>
@@ -262,31 +262,31 @@ export default function EventDetailsModal({
               {/* Event Status & Type */}
               <div className="flex flex-wrap gap-2">
                 {event.is_premium && (
-                  <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                  <Badge className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
                     <Crown className="w-3 h-3 mr-1" />
                     Premium Event
                   </Badge>
                 )}
                 {isPastEvent && (
-                  <Badge variant="outline" className="text-gray-500">
+                  <Badge variant="outline" className="text-muted-foreground">
                     Past Event
                   </Badge>
                 )}
                 {userTicket && (
-                  <Badge className="bg-green-100 text-green-700 border-green-200">
+                  <Badge className="bg-buy-muted text-buy-muted-foreground border-buy/30">
                     <Ticket className="w-3 h-3 mr-1" />
                     Ticket Purchased
                   </Badge>
                 )}
                 {userRSVP && (
-                  <Badge variant="outline" className="text-blue-600">
+                  <Badge variant="outline" className="text-protocall-blue">
                     <CheckCircle className="w-3 h-3 mr-1" />
                     Your RSVP: {userRSVP.rsvp_status.toUpperCase()}
                   </Badge>
                 )}
                 {eventRating.count > 0 && (
-                  <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 flex items-center gap-1">
-                    <Star className="w-3 h-3 fill-yellow-600 text-yellow-600" />
+                  <Badge className="bg-hold-muted text-hold-muted-foreground border-hold/30 flex items-center gap-1">
+                    <Star className="w-3 h-3 fill-hold text-hold-muted-foreground" />
                     {eventRating.average} ({eventRating.count} reviews)
                   </Badge>
                 )}
@@ -294,40 +294,40 @@ export default function EventDetailsModal({
 
               {/* Ticket Receipt Section */}
               {userTicket && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="bg-buy-muted border border-buy/30 rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <Receipt className="w-5 h-5 text-green-600" />
-                    <h3 className="font-semibold text-green-800">Your Ticket Receipt</h3>
+                    <Receipt className="w-5 h-5 text-buy-muted-foreground" />
+                    <h3 className="font-semibold text-buy-muted-foreground">Your Ticket Receipt</h3>
                   </div>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-green-600 font-medium">Ticket ID:</span>
-                      <p className="text-green-800">{userTicket.id.slice(-8).toUpperCase()}</p>
+                      <span className="text-buy-muted-foreground font-medium">Ticket ID:</span>
+                      <p className="text-buy-muted-foreground">{userTicket.id.slice(-8).toUpperCase()}</p>
                     </div>
                     <div>
-                      <span className="text-green-600 font-medium">Amount Paid:</span>
-                      <p className="text-green-800">₹{(userTicket.ticket_price || 0).toLocaleString()}</p>
+                      <span className="text-buy-muted-foreground font-medium">Amount Paid:</span>
+                      <p className="text-buy-muted-foreground">₹{(userTicket.ticket_price || 0).toLocaleString()}</p>
                     </div>
                     <div>
-                      <span className="text-green-600 font-medium">Payment Method:</span>
-                      <p className="text-green-800 capitalize">{userTicket.payment_method || 'Online'}</p>
+                      <span className="text-buy-muted-foreground font-medium">Payment Method:</span>
+                      <p className="text-buy-muted-foreground capitalize">{userTicket.payment_method || 'Online'}</p>
                     </div>
                     <div>
-                      <span className="text-green-600 font-medium">Purchase Date:</span>
-                      <p className="text-green-800">
+                      <span className="text-buy-muted-foreground font-medium">Purchase Date:</span>
+                      <p className="text-buy-muted-foreground">
                         {new Date(userTicket.purchased_date || userTicket.created_date).toLocaleDateString('en-IN')}
                       </p>
                     </div>
                   </div>
-                  <div className="mt-3 p-2 bg-green-100 rounded text-xs text-green-700">
+                  <div className="mt-3 p-2 bg-buy-muted rounded text-xs text-buy-muted-foreground">
                     <CreditCard className="w-3 h-3 inline mr-1" />
                     Payment ID: {userTicket.payment_id}
                   </div>
                   
                   {/* Refund Request Section */}
                   {userRSVP && userRSVP.rsvp_status === 'no' && !isPastEvent && (
-                    <div className="mt-4 p-3 bg-red-50 rounded-lg border border-red-200">
-                      <p className="text-sm text-red-700 mb-3">
+                    <div className="mt-4 p-3 bg-sell-muted rounded-lg border border-sell/30">
+                      <p className="text-sm text-sell-muted-foreground mb-3">
                         You've marked "Can't attend". You can request a refund for your ticket before the event starts.
                       </p>
                       
@@ -335,12 +335,12 @@ export default function EventDetailsModal({
                         <div className="flex flex-col gap-2">
                           {getRefundStatusBadge()}
                           {userRefundRequest.status === 'rejected' && userRefundRequest.rejection_reason && (
-                            <p className="text-xs text-red-600">
+                            <p className="text-xs text-sell-muted-foreground">
                               <strong>Reason:</strong> {userRefundRequest.rejection_reason}
                             </p>
                           )}
                           {userRefundRequest.status === 'pending' && (
-                            <p className="text-xs text-yellow-700">
+                            <p className="text-xs text-hold-muted-foreground">
                               You will be notified once your refund request has been reviewed by the organizer.
                             </p>
                           )}
@@ -349,7 +349,7 @@ export default function EventDetailsModal({
                         <Button
                           size="sm"
                           variant="outline"
-                          className="text-red-600 border-red-300 hover:bg-red-50"
+                          className="text-sell-muted-foreground border-sell/30 hover:bg-sell-muted"
                           onClick={() => setShowRefundModal(true)}
                         >
                           <XCircle className="w-4 h-4 mr-2" />
@@ -361,8 +361,8 @@ export default function EventDetailsModal({
 
                   {/* Show message if event is past and user had RSVP'd no */}
                   {userRSVP && userRSVP.rsvp_status === 'no' && isPastEvent && userTicket && !userRefundRequest && (
-                    <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                      <p className="text-sm text-gray-600 text-center">
+                    <div className="mt-4 p-3 bg-surface-2 rounded-lg border border-border">
+                      <p className="text-sm text-subtle text-center">
                         ⚠️ Refund requests are not available after the event has ended.
                       </p>
                     </div>
@@ -371,23 +371,23 @@ export default function EventDetailsModal({
               )}
 
               {/* Event Details */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-surface-2 rounded-lg">
                 <div className="flex items-center gap-3">
-                  <Calendar className="w-5 h-5 text-slate-600" />
+                  <Calendar className="w-5 h-5 text-subtle" />
                   <div>
-                    <p className="font-medium text-slate-800">{date}</p>
-                    <p className="text-sm text-slate-600">{time}</p>
+                    <p className="font-medium text-foreground">{date}</p>
+                    <p className="text-sm text-subtle">{time}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <MapPin className="w-5 h-5 text-slate-600" />
+                  <MapPin className="w-5 h-5 text-subtle" />
                   <div>
-                    <p className="font-medium text-slate-800">
+                    <p className="font-medium text-foreground">
                       {event.location?.includes('http') ? 'Online Event' : event.location || 'Location TBD'}
                     </p>
                     {event.location?.includes('http') && (
-                      <Button variant="link" size="sm" className="p-0 h-auto text-blue-600" asChild>
+                      <Button variant="link" size="sm" className="p-0 h-auto text-protocall-blue" asChild>
                         <a href={event.location} target="_blank" rel="noopener noreferrer">
                           <ExternalLink className="w-3 h-3 mr-1" />
                           Join Meeting
@@ -398,19 +398,19 @@ export default function EventDetailsModal({
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <UserIcon className="w-5 h-5 text-slate-600" />
+                  <UserIcon className="w-5 h-5 text-subtle" />
                   <div>
-                    <p className="font-medium text-slate-800">Organized by</p>
-                    <p className="text-sm text-slate-600">{event.organizer_name || 'Event Organizer'}</p>
+                    <p className="font-medium text-foreground">Organized by</p>
+                    <p className="text-sm text-subtle">{event.organizer_name || 'Event Organizer'}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <Users className="w-5 h-5 text-slate-600" />
+                  <Users className="w-5 h-5 text-subtle" />
                   <div>
-                    <p className="font-medium text-slate-800">{totalAttendees} Attendees</p>
+                    <p className="font-medium text-foreground">{totalAttendees} Attendees</p>
                     {event.capacity && (
-                      <p className="text-sm text-slate-600">Max capacity: {event.capacity}</p>
+                      <p className="text-sm text-subtle">Max capacity: {event.capacity}</p>
                     )}
                   </div>
                 </div>
@@ -418,42 +418,42 @@ export default function EventDetailsModal({
 
               {/* Ticket Price */}
               {event.is_premium && (event.ticket_price || 0) > 0 && !userTicket && (
-                <div className="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                <div className="p-4 bg-premium-muted rounded-lg border-l-4 border-protocall-blue">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-semibold text-blue-800">Premium Event</h3>
-                      <p className="text-sm text-blue-600">
+                      <h3 className="font-semibold text-protocall-blue">Premium Event</h3>
+                      <p className="text-sm text-protocall-blue">
                         ₹{(event.ticket_price || 0).toLocaleString()} per ticket
                       </p>
                     </div>
-                    <Ticket className="w-8 h-8 text-blue-600" />
+                    <Ticket className="w-8 h-8 text-protocall-blue" />
                   </div>
                 </div>
               )}
 
               {/* Event Description */}
               <div>
-                <h3 className="text-lg font-semibold text-slate-800 mb-3">About This Event</h3>
-                <div className="prose prose-sm max-w-none text-slate-600">
+                <h3 className="text-lg font-semibold text-foreground mb-3">About This Event</h3>
+                <div className="prose prose-sm max-w-none text-subtle">
                   {event.description ? (
                     <p className="whitespace-pre-wrap">{event.description}</p>
                   ) : (
-                    <p className="text-slate-400 italic">No description provided</p>
+                    <p className="text-muted-foreground italic">No description provided</p>
                   )}
                 </div>
               </div>
 
               {/* RSVP Section */}
               {!isPastEvent && userAccess.canAccess && user && (
-                <div className="p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
-                  <h3 className="font-semibold text-green-800 mb-3">Your RSVP</h3>
+                <div className="p-4 bg-buy-muted rounded-lg border-l-4 border-buy">
+                  <h3 className="font-semibold text-buy-muted-foreground mb-3">Your RSVP</h3>
                   <div className="flex gap-2">
                     <Button
                       size="sm"
                       variant={userRSVP?.rsvp_status === 'yes' ? 'default' : 'outline'}
                       onClick={() => handleRSVP('yes')}
                       disabled={isRSVPing}
-                      className={userRSVP?.rsvp_status === 'yes' ? 'bg-green-600 hover:bg-green-700' : ''}
+                      className={userRSVP?.rsvp_status === 'yes' ? 'bg-buy hover:bg-buy' : ''}
                     >
                       <CheckCircle className="w-4 h-4 mr-2" />
                       Yes, I'll attend
@@ -463,7 +463,7 @@ export default function EventDetailsModal({
                       variant={userRSVP?.rsvp_status === 'maybe' ? 'default' : 'outline'}
                       onClick={() => handleRSVP('maybe')}
                       disabled={isRSVPing}
-                      className={userRSVP?.rsvp_status === 'maybe' ? 'bg-yellow-600 hover:bg-yellow-700' : ''}
+                      className={userRSVP?.rsvp_status === 'maybe' ? 'bg-hold hover:bg-hold' : ''}
                     >
                       Maybe
                     </Button>
@@ -472,7 +472,7 @@ export default function EventDetailsModal({
                       variant={userRSVP?.rsvp_status === 'no' ? 'default' : 'outline'}
                       onClick={() => handleRSVP('no')}
                       disabled={isRSVPing}
-                      className={userRSVP?.rsvp_status === 'no' ? 'bg-red-600 hover:bg-red-700' : ''}
+                      className={userRSVP?.rsvp_status === 'no' ? 'bg-sell hover:bg-sell' : ''}
                     >
                       Can't attend
                     </Button>
@@ -482,17 +482,17 @@ export default function EventDetailsModal({
 
               {/* Review Button for Past Events */}
               {canLeaveReview() && (
-                <div className="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                <div className="p-4 bg-premium-muted rounded-lg border-l-4 border-protocall-blue">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-semibold text-blue-800 mb-1">Share Your Experience</h3>
-                      <p className="text-sm text-blue-600">
+                      <h3 className="font-semibold text-protocall-blue mb-1">Share Your Experience</h3>
+                      <p className="text-sm text-protocall-blue">
                         Help others by leaving a review for this event
                       </p>
                     </div>
                     <Button
                       onClick={() => setShowReviewModal(true)}
-                      className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
+                      className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white"
                     >
                       <Star className="w-4 h-4 mr-2" />
                       Write Review
@@ -503,25 +503,25 @@ export default function EventDetailsModal({
 
               {/* Show user's existing review */}
               {userReview && (
-                <div className="p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
+                <div className="p-4 bg-buy-muted rounded-lg border-l-4 border-buy">
                   <div className="flex items-start gap-3">
-                    <MessageSquare className="w-5 h-5 text-green-600 mt-1" />
+                    <MessageSquare className="w-5 h-5 text-buy-muted-foreground mt-1" />
                     <div>
-                      <h3 className="font-semibold text-green-800 mb-1">Your Review</h3>
+                      <h3 className="font-semibold text-buy-muted-foreground mb-1">Your Review</h3>
                       <div className="flex gap-1 mb-2">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <Star
                             key={star}
                             className={`w-4 h-4 ${
                               star <= userReview.rating
-                                ? 'fill-yellow-400 text-yellow-400'
-                                : 'text-gray-300'
+                                ? 'fill-hold text-hold'
+                                : 'text-muted-foreground'
                             }`}
                           />
                         ))}
                       </div>
                       {userReview.review_text && (
-                        <p className="text-sm text-green-700">{userReview.review_text}</p>
+                        <p className="text-sm text-buy-muted-foreground">{userReview.review_text}</p>
                       )}
                     </div>
                   </div>
@@ -536,7 +536,7 @@ export default function EventDetailsModal({
                       {event.is_premium && (event.ticket_price || 0) > 0 && (
                         <Button 
                           onClick={() => onTicketPurchase(event)}
-                          className="bg-blue-600 hover:bg-blue-700"
+                          className="bg-protocall-blue hover:bg-protocall-blue"
                         >
                           <Ticket className="w-4 h-4 mr-2" />
                           Buy Ticket - ₹{(event.ticket_price || 0).toLocaleString()}
@@ -544,7 +544,7 @@ export default function EventDetailsModal({
                       )}
                       <Button 
                         onClick={onUpgradePremium}
-                        className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                        className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
                       >
                         <Crown className="w-4 h-4 mr-2" />
                         Upgrade to Premium

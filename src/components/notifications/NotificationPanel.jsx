@@ -192,18 +192,18 @@ export default function NotificationPanel() {
 
   const getTypeColor = (type) => {
     switch (type) {
-      case 'info': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'warning': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'alert': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-slate-100 text-slate-800 border-slate-200';
+      case 'info': return 'bg-premium-muted text-protocall-blue border-protocall-premium-light';
+      case 'warning': return 'bg-hold-muted text-hold-muted-foreground border-hold/30';
+      case 'alert': return 'bg-sell-muted text-sell-muted-foreground border-sell/30';
+      default: return 'bg-surface-2 text-foreground border-border';
     }
   };
 
   // Handle disabled state
   if (!NOTIFICATIONS_ENABLED) {
     return (
-      <div className="flex items-center gap-2 text-sm text-slate-500 cursor-not-allowed">
-        <Bell className="w-5 h-5 text-slate-400" />
+      <div className="flex items-center gap-2 text-sm text-muted-foreground cursor-not-allowed">
+        <Bell className="w-5 h-5 text-muted-foreground" />
         <span>Notifications disabled by admin.</span>
       </div>
     );
@@ -212,8 +212,8 @@ export default function NotificationPanel() {
   // Handle error state
   if (error) {
     return (
-      <div className="flex items-center gap-2 text-sm text-slate-500 cursor-not-allowed">
-        <AlertTriangle className="w-5 h-5 text-slate-400" />
+      <div className="flex items-center gap-2 text-sm text-muted-foreground cursor-not-allowed">
+        <AlertTriangle className="w-5 h-5 text-muted-foreground" />
         <span>Notifications are currently unavailable.</span>
       </div>
     );
@@ -226,11 +226,11 @@ export default function NotificationPanel() {
           <Button 
             variant="ghost" 
             size="icon" 
-            className="relative hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-300"
+            className="relative hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 transition-all duration-300"
           >
             <Bell className="w-5 h-5" />
             {unreadCount > 0 && (
-              <div className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
+              <div className="absolute top-1 right-1 w-4 h-4 bg-protocall-sell-text text-white text-[10px] rounded-full flex items-center justify-center">
                 {unreadCount}
               </div>
             )}
@@ -247,7 +247,7 @@ export default function NotificationPanel() {
                     variant="ghost" 
                     size="sm" 
                     onClick={handleEnableNotifications}
-                    className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                    className="text-protocall-blue hover:text-protocall-blue hover:bg-premium-muted"
                   >
                     <BellOff className="w-4 h-4 mr-1" />
                     Enable Push
@@ -271,9 +271,9 @@ export default function NotificationPanel() {
               </div>
             ) : notifications.length === 0 ? (
               <div className="text-center p-8">
-                <Inbox className="w-12 h-12 text-slate-400 mx-auto mb-2" />
+                <Inbox className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
                 <h4 className="font-semibold">No notifications yet</h4>
-                <p className="text-sm text-slate-500">You're all caught up!</p>
+                <p className="text-sm text-muted-foreground">You're all caught up!</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -283,32 +283,32 @@ export default function NotificationPanel() {
                     onClick={() => handleMarkAsRead(notification.id)}
                     className={`p-3 rounded-lg border cursor-pointer transition-all hover:shadow-sm ${
                       notification.status === 'read' 
-                        ? 'bg-white border-slate-200' 
-                        : 'bg-blue-50 border-blue-200 shadow-sm'
+                        ? 'bg-white border-border' 
+                        : 'bg-premium-muted border-protocall-premium-light shadow-sm'
                     }`}
                   >
                     <div className="flex items-start gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2">
                           <h4 className={`text-sm font-medium truncate ${
-                            notification.status === 'read' ? 'text-slate-700' : 'text-slate-900'
+                            notification.status === 'read' ? 'text-subtle' : 'text-foreground'
                           }`}>
                             {notification.title || 'Notification'}
                           </h4>
                           
                           {notification.status === 'unread' && (
-                            <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />
+                            <div className="w-2 h-2 bg-protocall-blue rounded-full flex-shrink-0" />
                           )}
                         </div>
                         
                         <p className={`text-xs mt-1 line-clamp-2 ${
-                          notification.status === 'read' ? 'text-slate-500' : 'text-slate-600'
+                          notification.status === 'read' ? 'text-muted-foreground' : 'text-subtle'
                         }`}>
                           {notification.message}
                         </p>
                         
                         <div className="flex items-center justify-between mt-2">
-                          <p className="text-xs text-slate-400">
+                          <p className="text-xs text-muted-foreground">
                             {new Date(notification.created_date).toLocaleDateString('en-US', {
                               month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
                             })}
@@ -333,15 +333,15 @@ export default function NotificationPanel() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-orange-500" />
+              <AlertTriangle className="w-5 h-5 text-hold" />
               Enable Notifications in Browser
             </DialogTitle>
             <DialogDescription className="text-left space-y-4 pt-4">
               <p>Notifications are currently blocked in your browser. To enable them:</p>
               
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3">
-                <h4 className="font-semibold text-blue-900">For Chrome/Edge:</h4>
-                <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
+              <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4 space-y-3">
+                <h4 className="font-semibold text-protocall-blue">For Chrome/Edge:</h4>
+                <ol className="text-sm text-protocall-blue space-y-1 list-decimal list-inside">
                   <li>Click the lock icon 🔒 in the address bar</li>
                   <li>Click "Site settings"</li>
                   <li>Find "Notifications" and set to "Allow"</li>
@@ -349,9 +349,9 @@ export default function NotificationPanel() {
                 </ol>
               </div>
 
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 space-y-3">
-                <h4 className="font-semibold text-purple-900">For Firefox:</h4>
-                <ol className="text-sm text-purple-800 space-y-1 list-decimal list-inside">
+              <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4 space-y-3">
+                <h4 className="font-semibold text-protocall-premium-text">For Firefox:</h4>
+                <ol className="text-sm text-protocall-premium-text space-y-1 list-decimal list-inside">
                   <li>Click the lock icon 🔒 in the address bar</li>
                   <li>Click "Connection secure" → "More information"</li>
                   <li>Go to "Permissions" tab</li>
@@ -360,9 +360,9 @@ export default function NotificationPanel() {
                 </ol>
               </div>
 
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-3">
-                <h4 className="font-semibold text-green-900">For Safari:</h4>
-                <ol className="text-sm text-green-800 space-y-1 list-decimal list-inside">
+              <div className="bg-buy-muted border border-buy/30 rounded-lg p-4 space-y-3">
+                <h4 className="font-semibold text-buy-muted-foreground">For Safari:</h4>
+                <ol className="text-sm text-buy-muted-foreground space-y-1 list-decimal list-inside">
                   <li>Go to Safari → Settings</li>
                   <li>Click "Websites" → "Notifications"</li>
                   <li>Find this site and set to "Allow"</li>
@@ -378,7 +378,7 @@ export default function NotificationPanel() {
                     setShowPermissionDialog(false);
                     toast.info('Please follow the instructions above to enable notifications.');
                   }}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                  className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white"
                 >
                   Got it!
                 </Button>

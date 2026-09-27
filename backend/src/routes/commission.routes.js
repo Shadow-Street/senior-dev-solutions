@@ -120,7 +120,19 @@ router.post('/payout', authMiddleware, adminMiddleware, async (req, res) => {
   }
 });
 
-// CRUD routes
+// Commission tracking records
+const trackingRouter = express.Router();
+createCrudRoutes(trackingRouter, createCrudController(db.CommissionTracking, {
+  defaultOrderBy: 'created_at', defaultOrder: 'DESC'
+}));
+router.use('/tracking', trackingRouter);
+
+// Commission settings
+const settingsRouter = express.Router();
+createCrudRoutes(settingsRouter, createCrudController(db.CommissionSettings));
+router.use('/settings', settingsRouter);
+
+// CRUD LAST — '/:id' must not shadow the sub-routers above.
 createCrudRoutes(router, commissionController);
 
 module.exports = router;

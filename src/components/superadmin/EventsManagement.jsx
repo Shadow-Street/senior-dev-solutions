@@ -372,8 +372,8 @@ export default function EventsManagement() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-12 text-gray-500">
-        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <div className="flex items-center justify-center p-12 text-muted-foreground">
+        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
@@ -383,21 +383,21 @@ export default function EventsManagement() {
   }
 
   if (!permissions.canManageEvents && !permissions.canManageRefunds) {
-    return <div className="text-center p-12 text-red-500">You do not have permission to access this section.</div>;
+    return <div className="text-center p-12 text-sell">You do not have permission to access this section.</div>;
   }
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6">
       {/* Header Card */}
-      <Card className="shadow-lg border-0 bg-gradient-to-r from-purple-50 via-blue-50 to-indigo-50">
+      <Card className="shadow-lg border-0 bg-surface-2">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-protocall-deep to-protocall-blue rounded-xl flex items-center justify-center">
                 <Calendar className="w-6 h-6 text-white" />
               </div>
               <div>
-                <CardTitle className="text-2xl bg-gradient-to-r from-purple-800 to-blue-800 bg-clip-text text-transparent">
+                <CardTitle className="text-2xl bg-gradient-to-r from-protocall-deep to-protocall-blue bg-clip-text text-transparent">
                   Events Management Hub
                 </CardTitle>
                 <CardDescription className="mt-1">
@@ -410,7 +410,7 @@ export default function EventsManagement() {
             <Button
               onClick={() => setShowExportModal(true)}
               variant="outline"
-              className="gap-2 border-2 border-blue-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-400 transition-all duration-300"
+              className="gap-2 border-2 border-protocall-premium-light hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-protocall-blue transition-all duration-300"
             >
               <Download className="w-4 h-4" />
               Export Data
@@ -432,7 +432,7 @@ export default function EventsManagement() {
       {/* Update Stats Cards to show filtered count */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {/* Only the 'Total Events' card was shown in the outline, update it */}
-        <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+        <Card className="bg-gradient-to-br from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -457,67 +457,67 @@ export default function EventsManagement() {
         <TabsList className="flex-wrap h-auto bg-transparent p-1 rounded-xl gap-2">
           <TabsTrigger
             value="overview"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 font-semibold"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 font-semibold"
           >
             Overview
           </TabsTrigger>
           <TabsTrigger
             value="approval"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 font-semibold"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 font-semibold"
           >
             Approval Queue
           </TabsTrigger>
           <TabsTrigger
             value="analytics"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 font-semibold"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 font-semibold"
           >
             Analytics
           </TabsTrigger>
           <TabsTrigger
             value="tools"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 font-semibold"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 font-semibold"
           >
             Management Tools
           </TabsTrigger>
           <TabsTrigger
             value="pricing"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 font-semibold"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 font-semibold"
           >
             Pricing & Commission
           </TabsTrigger>
           <TabsTrigger
             value="rsvp"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 font-semibold"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 font-semibold"
           >
             RSVP Analytics
           </TabsTrigger>
           <TabsTrigger
             value="featured"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-gradient-to-r from-yellow-50 to-orange-50 text-yellow-700 hover:from-yellow-100 hover:to-orange-100 font-semibold"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-hold data-[state=active]:to-hold data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-gradient-to-r from-surface-2 to-hold-muted text-hold-muted-foreground hover:from-surface-2 hover:to-hold-muted font-semibold"
           >
             ⭐ Featured
           </TabsTrigger>
           <TabsTrigger
             value="capacity"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 font-semibold"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 font-semibold"
           >
             Capacity
           </TabsTrigger>
           <TabsTrigger
             value="export"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 font-semibold"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 font-semibold"
           >
             Export
           </TabsTrigger>
           <TabsTrigger
             value="search"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 font-semibold"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 font-semibold"
           >
             Advanced Search
           </TabsTrigger>
           <TabsTrigger
             value="refunds"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 font-semibold"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 font-semibold"
           >
             Refunds
           </TabsTrigger>

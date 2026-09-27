@@ -138,18 +138,18 @@ export default function CreateCourseModal({ open, onClose, onCreate, editingCour
           
           {/* Revenue Breakdown */}
           {coursePrice > 0 && (
-            <div className="bg-blue-50 p-3 rounded-lg mt-4">
-              <h4 className="font-medium text-blue-900 mb-2">Revenue Breakdown (per enrollment)</h4>
+            <div className="bg-premium-muted p-3 rounded-lg mt-4">
+              <h4 className="font-medium text-protocall-blue mb-2">Revenue Breakdown (per enrollment)</h4>
               <div className="text-sm space-y-1">
                 <div className="flex justify-between">
                   <span>Course Price:</span>
                   <span className="font-medium">₹{coursePrice.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-red-600">
+                <div className="flex justify-between text-sell-muted-foreground">
                   <span>Platform Commission ({settings.commissionRate}%):</span>
                   <span>-₹{platformCommission.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between font-bold text-green-600 border-t pt-1">
+                <div className="flex justify-between font-bold text-buy-muted-foreground border-t pt-1">
                   <span>Your Payout:</span>
                   <span>₹{influencerPayout.toFixed(2)}</span>
                 </div>
@@ -159,7 +159,7 @@ export default function CreateCourseModal({ open, onClose, onCreate, editingCour
 
           {/* Default Settings Warning */}
           {usingDefaults && (
-            <div className="flex items-center gap-2 text-xs text-amber-600 bg-amber-50 p-2 rounded-lg">
+            <div className="flex items-center gap-2 text-xs text-hold-muted-foreground bg-hold-muted p-2 rounded-lg">
               <AlertCircle className="w-3 h-3" />
               <span>Default settings applied until admin configures values.</span>
             </div>
@@ -351,7 +351,7 @@ export default function CreateCourseModal({ open, onClose, onCreate, editingCour
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-purple-600 hover:bg-purple-700">
+            <Button type="submit" className="bg-primary hover:bg-primary">
               {editingCourse ? 'Update Course' : 'Create Course'}
             </Button>
           </DialogFooter>

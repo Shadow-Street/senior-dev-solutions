@@ -117,7 +117,7 @@ export default function SubscriptionCheckoutModal({ open, onClose, plan, cycle, 
                         toast.error("Payment verification failed");
                     }
                 },
-                theme: { color: "#4F46E5" }
+                theme: { color: "hsl(var(--chart-1))" }
             };
 
             const rzp = new window.Razorpay(options);
@@ -143,18 +143,18 @@ export default function SubscriptionCheckoutModal({ open, onClose, plan, cycle, 
 
                 <div className="space-y-6 py-2">
                     {/* Plan Summary */}
-                    <div className="bg-slate-50 p-4 rounded-lg space-y-2 border">
+                    <div className="bg-surface-2 p-4 rounded-lg space-y-2 border">
                         <div className="flex justify-between items-center">
-                            <span className="font-semibold text-gray-900">{plan.name} Plan</span>
-                            <span className="text-gray-500 capitalize">{cycle}</span>
+                            <span className="font-semibold text-foreground">{plan.name} Plan</span>
+                            <span className="text-muted-foreground capitalize">{cycle}</span>
                         </div>
-                        <div className="flex justify-between items-center text-sm text-gray-600">
+                        <div className="flex justify-between items-center text-sm text-subtle">
                             <span>Price</span>
                             <span>₹{basePrice}</span>
                         </div>
 
                         {appliedCoupon && (
-                            <div className="flex justify-between items-center text-sm text-green-600 font-medium">
+                            <div className="flex justify-between items-center text-sm text-buy-muted-foreground font-medium">
                                 <span className="flex items-center gap-1">
                                     <Tag className="w-3 h-3" /> Coupon ({appliedCoupon.coupon.code})
                                 </span>
@@ -162,7 +162,7 @@ export default function SubscriptionCheckoutModal({ open, onClose, plan, cycle, 
                             </div>
                         )}
 
-                        <div className="border-t pt-2 flex justify-between items-center font-bold text-lg text-gray-900">
+                        <div className="border-t pt-2 flex justify-between items-center font-bold text-lg text-foreground">
                             <span>Total</span>
                             <span>₹{finalPrice}</span>
                         </div>
@@ -187,17 +187,17 @@ export default function SubscriptionCheckoutModal({ open, onClose, plan, cycle, 
                                 </Button>
                             </div>
                         ) : (
-                            <div className="flex items-center justify-between bg-green-50 text-green-700 p-2 rounded border border-green-200">
+                            <div className="flex items-center justify-between bg-buy-muted text-buy-muted-foreground p-2 rounded border border-buy/30">
                                 <span className="flex items-center gap-2 text-sm">
                                     <CheckCircle className="w-4 h-4" /> Coupon Applied
                                 </span>
-                                <Button variant="ghost" size="sm" className="h-6 text-green-700 hover:text-green-800 hover:bg-green-100" onClick={handleRemoveCoupon}>
+                                <Button variant="ghost" size="sm" className="h-6 text-buy-muted-foreground hover:text-buy-muted-foreground hover:bg-buy-muted" onClick={handleRemoveCoupon}>
                                     Remove
                                 </Button>
                             </div>
                         )}
                         {error && (
-                            <div className="flex items-center gap-2 text-red-600 text-sm">
+                            <div className="flex items-center gap-2 text-sell-muted-foreground text-sm">
                                 <AlertCircle className="w-4 h-4" />
                                 {error}
                             </div>
@@ -206,7 +206,7 @@ export default function SubscriptionCheckoutModal({ open, onClose, plan, cycle, 
 
                     {/* Pay Button */}
                     <Button
-                        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
+                        className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white shadow-lg"
                         size="lg"
                         onClick={handlePayment}
                         disabled={isProcessing}
@@ -220,7 +220,7 @@ export default function SubscriptionCheckoutModal({ open, onClose, plan, cycle, 
                         )}
                     </Button>
 
-                    <p className="text-center text-xs text-gray-500">
+                    <p className="text-center text-xs text-muted-foreground">
                         Secure payment via Razorpay. You can cancel anytime.
                     </p>
                 </div>

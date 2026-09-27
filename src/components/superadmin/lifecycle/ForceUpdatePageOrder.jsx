@@ -80,7 +80,7 @@ export default function ForceUpdatePageOrder() {
   };
 
   return (
-    <Card className="border-2 border-blue-200 bg-blue-50">
+    <Card className="border-2 border-protocall-premium-light bg-premium-muted">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <RefreshCw className="w-5 h-5" />
@@ -90,9 +90,9 @@ export default function ForceUpdatePageOrder() {
       <CardContent>
         <div className="space-y-4">
           <div className="bg-white p-4 rounded-lg border">
-            <p className="text-sm font-semibold mb-2 text-red-600">⚠️ Your sidebar is out of order. Click the button below to fix it!</p>
+            <p className="text-sm font-semibold mb-2 text-sell-muted-foreground">⚠️ Your sidebar is out of order. Click the button below to fix it!</p>
             <p className="text-sm font-semibold mb-2">Correct Order:</p>
-            <ol className="text-sm text-gray-700 space-y-1 grid grid-cols-2 gap-2">
+            <ol className="text-sm text-subtle space-y-1 grid grid-cols-2 gap-2">
               <li>1️⃣ Dashboard</li>
               <li>2️⃣ Profile</li>
               <li>3️⃣ My Portfolio</li>
@@ -110,7 +110,7 @@ export default function ForceUpdatePageOrder() {
           <Button
             onClick={handleForceUpdate}
             disabled={isUpdating || updateComplete}
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg py-6"
+            className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-lg py-6"
           >
             {isUpdating ? (
               <>
@@ -134,7 +134,7 @@ export default function ForceUpdatePageOrder() {
             <Button
               onClick={() => window.location.reload()}
               variant="default"
-              className="w-full bg-green-600 hover:bg-green-700 text-lg py-6 animate-pulse"
+              className="w-full bg-buy hover:bg-buy text-lg py-6 animate-pulse"
             >
               <RefreshCw className="w-5 h-5 mr-2" />
               🔄 REFRESH PAGE TO SEE CHANGES
@@ -142,7 +142,7 @@ export default function ForceUpdatePageOrder() {
           )}
 
           {logs.length > 0 && (
-            <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-xs max-h-64 overflow-y-auto">
+            <div className="bg-protocall-ink text-positive p-4 rounded-lg font-mono text-xs max-h-64 overflow-y-auto">
               {logs.map((log, index) => (
                 <div key={index} className="mb-1">{log}</div>
               ))}

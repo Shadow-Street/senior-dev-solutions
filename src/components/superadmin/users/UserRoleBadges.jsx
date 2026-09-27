@@ -20,14 +20,14 @@ export default function UserRoleBadges({ user }) {
   
   // ✅ Role-specific colors
   const roleColors = {
-    super_admin: 'bg-red-100 text-red-800 border-red-200',
-    admin: 'bg-orange-100 text-orange-800 border-orange-200',
-    advisor: 'bg-purple-100 text-purple-800 border-purple-200',
-    finfluencer: 'bg-pink-100 text-pink-800 border-pink-200',
-    educator: 'bg-blue-100 text-blue-800 border-blue-200',
-    organizer: 'bg-green-100 text-green-800 border-green-200',
-    vendor: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    trader: 'bg-gray-100 text-gray-800 border-gray-200'
+    super_admin: 'bg-sell-muted text-sell-muted-foreground border-sell/30',
+    admin: 'bg-hold-muted text-hold-muted-foreground border-hold/30',
+    advisor: 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light',
+    finfluencer: 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light',
+    educator: 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+    organizer: 'bg-buy-muted text-buy-muted-foreground border-buy/30',
+    vendor: 'bg-hold-muted text-hold-muted-foreground border-hold/30',
+    trader: 'bg-surface-2 text-foreground border-border'
   };
   
   return (
@@ -35,7 +35,7 @@ export default function UserRoleBadges({ user }) {
       <div className="flex flex-wrap gap-1">
         {uniqueRoles.length > 0 ? (
           uniqueRoles.map((role, index) => {
-            const colorClass = roleColors[role] || 'bg-gray-100 text-gray-800 border-gray-200';
+            const colorClass = roleColors[role] || 'bg-surface-2 text-foreground border-border';
             
             return (
               <Badge
@@ -48,13 +48,13 @@ export default function UserRoleBadges({ user }) {
             );
           })
         ) : (
-          <Badge variant="outline" className="text-xs bg-gray-100 text-gray-800">
+          <Badge variant="outline" className="text-xs bg-surface-2 text-foreground">
             No Role
           </Badge>
         )}
       </div>
       {user.app_role && (
-        <div className="text-xs text-gray-400 mt-1">
+        <div className="text-xs text-muted-foreground mt-1">
           Primary: {user.app_role.replace('_', ' ')}
         </div>
       )}

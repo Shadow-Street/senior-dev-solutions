@@ -74,20 +74,20 @@ export default function GeneralSettings({ user, onUpdate }) {
               </Button>
             )}
           </div>
-          <p className="text-xs text-slate-500">JPG, PNG, or GIF. Max size of 2MB.</p>
+          <p className="text-xs text-muted-foreground">JPG, PNG, or GIF. Max size of 2MB.</p>
         </div>
       </div>
 
       {/* Account Deletion Section */}
       <div>
-        <h3 className="text-lg font-semibold text-red-600 mb-2 flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-sell-muted-foreground mb-2 flex items-center gap-2">
           <ShieldAlert className="w-5 h-5" />
           Danger Zone
         </h3>
-        <div className="p-4 border border-red-200 bg-red-50 rounded-lg flex items-center justify-between">
+        <div className="p-4 border border-sell/30 bg-sell-muted rounded-lg flex items-center justify-between">
           <div>
-            <h4 className="font-semibold text-slate-800">Deactivate Account</h4>
-            <p className="text-sm text-red-700">This action is permanent and cannot be undone.</p>
+            <h4 className="font-semibold text-foreground">Deactivate Account</h4>
+            <p className="text-sm text-sell-muted-foreground">This action is permanent and cannot be undone.</p>
           </div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -105,14 +105,14 @@ export default function GeneralSettings({ user, onUpdate }) {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDeleteAccount} className="bg-red-600 hover:bg-red-700">
+                <AlertDialogAction onClick={handleDeleteAccount} className="bg-sell hover:bg-sell">
                   Yes, Deactivate My Account
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
         </div>
-         <p className="text-xs text-slate-500 mt-4">
+         <p className="text-xs text-muted-foreground mt-4">
             Note on Password Change: Your account is secured via Google Authentication. To change your password, please manage it through your Google account settings.
           </p>
       </div>

@@ -141,20 +141,20 @@ export default function EventsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-purple-50 p-6">
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+    <div className="min-h-screen bg-surface-2 p-6">
+      <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-4xl font-bold mb-2">Trading Events</h1>
-              <p className="text-blue-100 text-lg">
+              <p className="text-protocall-blue text-lg">
                 Join exclusive workshops, webinars, and trading sessions from market experts
               </p>
             </div>
             <div className="mt-6 md:mt-0">
               <Button
                 onClick={handleCreateEvent}
-                className="bg-white text-blue-600 hover:bg-blue-50 font-semibold"
+                className="bg-white text-protocall-blue hover:bg-premium-muted font-semibold"
               >
                 <Plus className="w-5 h-5 mr-2" />
                 Create Event
@@ -177,7 +177,7 @@ export default function EventsPage() {
 
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               placeholder="Search events..."
               value={searchTerm}
@@ -204,8 +204,8 @@ export default function EventsPage() {
               size="sm"
               onClick={() => setViewMode('list')}
               className={`h-12 px-6 rounded-xl ${viewMode === 'list'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
-                : 'bg-white text-gray-700'
+                ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white'
+                : 'bg-white text-subtle'
                 }`}
             >
               <List className="w-4 h-4" />
@@ -216,8 +216,8 @@ export default function EventsPage() {
               size="sm"
               onClick={() => setViewMode('calendar')}
               className={`h-12 px-6 rounded-xl ${viewMode === 'calendar'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
-                : 'bg-white text-gray-700'
+                ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white'
+                : 'bg-white text-subtle'
                 }`}
             >
               <CalendarIcon className="w-4 h-4" />
@@ -265,9 +265,9 @@ export default function EventsPage() {
               ) : (
                 <Card className="text-center py-12">
                   <CardContent>
-                    <CalendarIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No events found</h3>
-                    <p className="text-gray-500">Try adjusting your filters</p>
+                    <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium text-foreground mb-2">No events found</h3>
+                    <p className="text-muted-foreground">Try adjusting your filters</p>
                   </CardContent>
                 </Card>
               )}

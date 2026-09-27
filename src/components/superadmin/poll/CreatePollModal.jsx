@@ -103,7 +103,7 @@ export default function CreatePollModal({ open, onClose, onCreatePoll }) {
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Plus className="w-5 h-5 text-cyan-600" />
+            <Plus className="w-5 h-5 text-protocall-blue" />
             Create New Poll
           </DialogTitle>
           <DialogDescription>
@@ -258,7 +258,7 @@ export default function CreatePollModal({ open, onClose, onCreatePoll }) {
             <Button 
               type="submit" 
               disabled={isSubmitting}
-              className="bg-cyan-600 hover:bg-cyan-700"
+              className="bg-protocall-blue hover:bg-protocall-blue"
             >
               {isSubmitting ? 'Creating...' : 'Create Poll'}
             </Button>

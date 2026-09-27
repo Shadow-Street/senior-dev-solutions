@@ -44,11 +44,11 @@ export default function PMBilling({ pmProfile }) {
 
   const getStatusBadge = (status) => {
     const config = {
-      generated: { color: 'bg-gray-100 text-gray-800', label: 'Generated' },
-      sent: { color: 'bg-blue-100 text-blue-800', label: 'Sent' },
-      paid: { color: 'bg-green-100 text-green-800', label: 'Paid' },
-      overdue: { color: 'bg-red-100 text-red-800', label: 'Overdue' },
-      cancelled: { color: 'bg-gray-100 text-gray-800', label: 'Cancelled' }
+      generated: { color: 'bg-surface-2 text-foreground', label: 'Generated' },
+      sent: { color: 'bg-premium-muted text-protocall-blue', label: 'Sent' },
+      paid: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Paid' },
+      overdue: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Overdue' },
+      cancelled: { color: 'bg-surface-2 text-foreground', label: 'Cancelled' }
     };
     const { color, label } = config[status] || config.generated;
     return <Badge className={color}>{label}</Badge>;
@@ -62,11 +62,11 @@ export default function PMBilling({ pmProfile }) {
     <div className="space-y-6">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white">
+        <Card className="bg-buy-soft text-buy-foreground">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-100 text-sm">Total Revenue</p>
+                <p className="text-protocall-ink/75 text-sm">Total Revenue</p>
                 <p className="text-3xl font-bold mt-2">₹{(stats.totalRevenue / 1000).toFixed(0)}K</p>
               </div>
               <DollarSign className="w-10 h-10 opacity-80" />
@@ -74,11 +74,11 @@ export default function PMBilling({ pmProfile }) {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+        <Card className="bg-gradient-to-br from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-100 text-sm">Pending Amount</p>
+                <p className="text-white/80 text-sm">Pending Amount</p>
                 <p className="text-3xl font-bold mt-2">₹{(stats.pendingAmount / 1000).toFixed(0)}K</p>
               </div>
               <TrendingUp className="w-10 h-10 opacity-80" />
@@ -90,10 +90,10 @@ export default function PMBilling({ pmProfile }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Paid Invoices</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.paidInvoices}</p>
+                <p className="text-sm text-subtle">Paid Invoices</p>
+                <p className="text-2xl font-bold text-foreground">{stats.paidInvoices}</p>
               </div>
-              <FileText className="w-8 h-8 text-green-600" />
+              <FileText className="w-8 h-8 text-buy-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -102,10 +102,10 @@ export default function PMBilling({ pmProfile }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Unpaid Invoices</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.unpaidInvoices}</p>
+                <p className="text-sm text-subtle">Unpaid Invoices</p>
+                <p className="text-2xl font-bold text-foreground">{stats.unpaidInvoices}</p>
               </div>
-              <FileText className="w-8 h-8 text-orange-600" />
+              <FileText className="w-8 h-8 text-hold-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -118,30 +118,30 @@ export default function PMBilling({ pmProfile }) {
         </CardHeader>
         <CardContent>
           {invoices.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <div className="text-center py-12 text-muted-foreground">
+              <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
               <p>No invoices generated yet</p>
             </div>
           ) : (
             <div className="space-y-3">
               {invoices.map(invoice => (
-                <div key={invoice.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div key={invoice.id} className="flex items-center justify-between p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="font-bold text-gray-900">{invoice.invoice_number}</span>
+                      <span className="font-bold text-foreground">{invoice.invoice_number}</span>
                       {getStatusBadge(invoice.status)}
                     </div>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-subtle">
                       {invoice.client_name} • Period: {new Date(invoice.period_start).toLocaleDateString()} - {new Date(invoice.period_end).toLocaleDateString()}
                     </p>
-                    <div className="flex gap-4 mt-2 text-xs text-gray-500">
+                    <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
                       <span>Fee: ₹{invoice.performance_fee_amount?.toLocaleString()}</span>
                       <span>GST: ₹{invoice.gst_amount?.toLocaleString()}</span>
                       <span>Profit: ₹{invoice.profit_above_hwm?.toLocaleString()}</span>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xl font-bold text-gray-900 mb-2">₹{invoice.total_amount?.toLocaleString()}</p>
+                    <p className="text-xl font-bold text-foreground mb-2">₹{invoice.total_amount?.toLocaleString()}</p>
                     <Button variant="outline" size="sm">
                       <Download className="w-4 h-4 mr-2" />
                       Download

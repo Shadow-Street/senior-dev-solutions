@@ -55,7 +55,7 @@ export default function PlatformSettings({ settings = {}, onSettingsUpdated }) {
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                        <DollarSign className="w-5 h-5 text-green-600" />
+                        <DollarSign className="w-5 h-5 text-buy-muted-foreground" />
                         Financial Settings
                     </CardTitle>
                     <CardDescription>Configure global fees and financial switches.</CardDescription>
@@ -74,7 +74,7 @@ export default function PlatformSettings({ settings = {}, onSettingsUpdated }) {
                                 <Save className="w-4 h-4 mr-2" /> Save
                             </Button>
                         </div>
-                        <p className="text-xs text-slate-500 mt-1">Percentage taken from advisor subscriptions.</p>
+                        <p className="text-xs text-muted-foreground mt-1">Percentage taken from advisor subscriptions.</p>
                     </div>
                 </CardContent>
             </Card>
@@ -82,7 +82,7 @@ export default function PlatformSettings({ settings = {}, onSettingsUpdated }) {
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                        <Settings className="w-5 h-5 text-blue-600" />
+                        <Settings className="w-5 h-5 text-protocall-blue" />
                         Feature Toggles
                     </CardTitle>
                     <CardDescription>Enable or disable major platform features.</CardDescription>
@@ -90,8 +90,8 @@ export default function PlatformSettings({ settings = {}, onSettingsUpdated }) {
                 <CardContent className="space-y-6">
                     <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
-                            <h4 className="font-medium text-slate-900">Pledge System</h4>
-                            <p className="text-sm text-slate-500">Allow users to pledge amounts on polls.</p>
+                            <h4 className="font-medium text-foreground">Pledge System</h4>
+                            <p className="text-sm text-muted-foreground">Allow users to pledge amounts on polls.</p>
                         </div>
                         <Switch
                             checked={pledgesEnabled}

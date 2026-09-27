@@ -1,30 +1,40 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { useLocation, Link } from "react-router-dom";
-import { TrendingUp, Users, MessageSquare, BarChart3, Activity, Loader2, Lock, Star, Crown, Zap, BarChart, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  TrendingUp,
+  Users,
+  MessageSquare,
+  BarChart3,
+  Loader2,
+  ArrowRight,
+  ChevronRight,
+  GraduationCap,
+  HandCoins,
+  Sprout,
+  Zap,
+} from "lucide-react";
 import { useAuth } from "@/components/context/AuthContext";
-import { useSubscription } from "@/components/hooks/useSubscription";
-import { User, ChatRoom, Poll, marketAPI, AdvisorRecommendation } from "@/lib/apiClient";
+import { User, ChatRoom, Poll, marketAPI } from "@/lib/apiClient";
+import { createPageUrl } from "@/utils";
 
-import MarketOverview from "../components/dashboard/MarketOverview";
-import QuickActions from "../components/dashboard/QuickActions";
-import TrendingStocks from "../components/dashboard/TrendingStocks";
-import StockHeatmap from "../components/dashboard/StockHeatmap";
-import FinInfluencers from "../components/dashboard/FinInfluencers";
-import LatestNews from "../components/dashboard/LatestNews";
-import ActivePolls from "../components/dashboard/ActivePolls";
-import RecentActivity from "../components/dashboard/RecentActivity";
-import AdvisorRecommendations from "../components/dashboard/AdvisorRecommendations";
 import LiveStockTicker from "../components/stocks/LiveStockTicker";
+import MarketOverviewPanel from "../components/dashboard/MarketOverviewPanel";
+import SponsoredPanel from "../components/dashboard/SponsoredPanel";
+import TopMovers from "../components/dashboard/TopMovers";
+import CommunityPollPanel from "../components/dashboard/CommunityPollPanel";
 import PageFooter from "../components/footer/PageFooter";
-import AdDisplay from "../components/dashboard/AdDisplay";
-import ReviewScroller from "../components/dashboard/ReviewScroller";
-import AnnouncementBanner from "../components/dashboard/AnnouncementBanner";
+
+// Hero quick-actions, matching the reference banner.
+const HERO_ACTIONS = [
+  { label: "Learn", icon: GraduationCap, to: createPageUrl("News") },
+  { label: "Discuss", icon: MessageSquare, to: createPageUrl("ChatRooms") },
+  { label: "Pledge", icon: HandCoins, to: createPageUrl("PledgePool") },
+  { label: "Grow", icon: Sprout, to: createPageUrl("MyPortfolio") },
+];
 
 export default function Dashboard() {
-  const location = useLocation();
   const { user, loading: authLoading } = useAuth();
-  const { hasPremiumAccess, hasVipAccess, isLoading: subLoading, subscription } = useSubscription();
 
   const [stats, setStats] = useState({
     totalTraders: 0,
@@ -32,37 +42,41 @@ export default function Dashboard() {
     activePolls: 0,
     trendingStocksCount: 0,
     stocks: [],
-    chatRooms: [],
+    gainers: [],
+    losers: [],
+    indices: [],
     polls: [],
-    recommendations: [],
   });
-
   const [isLoading, setIsLoading] = useState(true);
+  // Market data fails independently of the rest of the dashboard.
+  const [marketError, setMarketError] = useState(null);
 
   const loadDashboardData = useCallback(async () => {
     try {
-      // Don't set full page loading on refresh, only initial
-      // setIsLoading(true); 
-
-      const [usersData, rooms, polls, marketRes, recommendations] = await Promise.all([
-        User.list(null, 1, 0).catch(() => ({ count: 1247 })),
+      const [usersData, rooms, polls, marketRes] = await Promise.all([
+        User.list(null, 1, 0).catch(() => ({ count: 0 })),
         ChatRoom.list(null, 10, 0).catch(() => []),
         Poll.list(null, 10, 0).catch(() => []),
-        marketAPI.getMarketData().catch(() => ({ data: { gainers: [], stocks: [] } })),
-        AdvisorRecommendation.list(null, 5, 0).catch(() => [])
+        marketAPI.getMarketData().then(r => r?.data).catch((e) => {
+          setMarketError(e?.response?.data?.error || 'Live market data is unavailable');
+          return null;
+        }),
       ]);
 
-      const marketToUse = marketRes?.data || { gainers: [], stocks: [] };
+      if (marketRes) setMarketError(null);
+      const market = marketRes || { stocks: [], gainers: [], losers: [], indices: [] };
 
       setStats({
-        totalTraders: usersData?.count || (Array.isArray(usersData) ? usersData.length : 1247),
+        totalTraders:
+          usersData?.count || (Array.isArray(usersData) ? usersData.length : 0),
         activeRooms: Array.isArray(rooms) ? rooms.length : 0,
         activePolls: Array.isArray(polls) ? polls.length : 0,
-        trendingStocksCount: marketToUse.gainers?.length || 0,
-        stocks: marketToUse.gainers?.length > 0 ? marketToUse.gainers : marketToUse.stocks, // Prefer gainers for trending
-        chatRooms: Array.isArray(rooms) ? rooms : [],
+        trendingStocksCount: market.stocks?.length || 0,
+        stocks: market.stocks || [],
+        gainers: market.gainers || [],
+        losers: market.losers || [],
+        indices: market.indices || [],
         polls: Array.isArray(polls) ? polls : [],
-        recommendations: Array.isArray(recommendations) ? recommendations : [],
       });
     } catch (error) {
       console.error("Error loading dashboard data:", error);
@@ -73,194 +87,145 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadDashboardData();
-    // Poll for updates every 60 seconds
     const interval = setInterval(loadDashboardData, 60000);
     return () => clearInterval(interval);
   }, [loadDashboardData]);
 
-  if (authLoading || subLoading) {
+  if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background border-0">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="flex min-h-[60vh] items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
-  const isAdmin = ['admin', 'super_admin'].includes(user?.app_role);
-  const isPremium = hasPremiumAccess?.() || false;
-  const isVIP = hasVipAccess?.() || false;
+  const firstName = (user?.display_name || user?.name || "Trader").split(" ")[0];
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <AnnouncementBanner />
-
-        {/* Dynamic Welcome Banner */}
-        <div className={`rounded-2xl p-8 text-white shadow-xl relative overflow-hidden transition-all duration-500 ${isVIP ? 'bg-premium-gradient' :
-          isPremium ? 'bg-brand-gradient' :
-            'bg-gradient-to-r from-protocall-ink via-protocall-deep to-protocall-blue'
-          }`}>
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full transform translate-x-32 -translate-y-32"></div>
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <h1 className="text-3xl font-bold">
-                  Welcome back, {user?.display_name || user?.name || 'Trader'}!
-                </h1>
-                {isVIP && <Crown className="w-6 h-6 text-protocall-premium-light animate-pulse" />}
-                {isPremium && !isVIP && <Star className="w-6 h-6 text-protocall-light" />}
-              </div>
-              <p className="text-white/80 text-lg">
-                {isVIP ? "You have unlocked all VIP insights and direct advisor access." :
-                  isPremium ? "Enjoy your premium features and enhanced market analytics." :
-                    "Unlock premium insights to accelerate your trading journey."}
+    <div className="w-full bg-background">
+      <div className="mx-auto w-full max-w-[1400px] space-y-4 p-4 sm:space-y-5 sm:p-5 lg:p-6">
+        {/* ---------- Hero banner ---------- */}
+        <section className="relative overflow-hidden rounded-2xl bg-brand-gradient text-white">
+          {/* Decorative market glow, purely presentational */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/2 opacity-60 lg:block"
+            style={{
+              background:
+                "radial-gradient(60% 80% at 75% 50%, rgba(86,225,27,0.20) 0%, rgba(71,55,255,0.28) 45%, transparent 75%)",
+            }}
+          />
+          <div className="relative grid gap-5 p-5 sm:p-7 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div className="min-w-0">
+              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                Welcome back, <span className="text-buy">{firstName}!</span>
+              </h1>
+              <p className="mt-1.5 max-w-xl text-sm text-white/80">
+                Stay updated with market trends, discussions, and community opportunities
               </p>
-            </div>
-            {!isPremium && (
-              <Link to="/subscription" className="bg-protocall-card text-protocall-premium-text px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-protocall-premium-bg transition-colors shadow-lg group">
-                Upgrade Now <Zap className="w-4 h-4 text-protocall-blue group-hover:scale-110 transition-transform" />
-              </Link>
-            )}
-          </div>
-        </div>
 
+              <div className="mt-5 flex flex-wrap gap-2.5">
+                {HERO_ACTIONS.map(({ label, icon: Icon, to }, i) => (
+                  <Link
+                    key={label}
+                    to={to}
+                    className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+                      i === 0
+                        ? "bg-protocall-blue text-white hover:bg-protocall-deep"
+                        : "bg-white/10 text-white ring-1 ring-inset ring-white/20 hover:bg-white/20"
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div className="shrink-0 lg:text-right">
+              <p className="text-sm font-semibold leading-snug">
+                Better Insights.
+                <br />
+                Stronger Community.
+                <br />
+                Smarter Investing.
+              </p>
+              <Link
+                to={createPageUrl("MyPortfolio")}
+                className="group mt-4 inline-flex items-center gap-2 rounded-lg bg-buy px-4 py-2 text-sm font-bold text-buy-foreground transition-colors hover:bg-buy-soft"
+              >
+                Explore Now
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- Live market ticker ---------- */}
         <LiveStockTicker />
 
-        {/* Dynamic Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* ---------- Stat row ---------- */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 sm:gap-5">
           <StatCard
+            to={createPageUrl("Profile")}
             title="Active Traders"
-            value={stats.totalTraders.toLocaleString()}
-            sub="Community strength"
-            icon={<Users className="w-5 h-5" />}
-            color="bg-buy text-buy-foreground"
-            chip="bg-protocall-ink/10"
-            overlay="bg-protocall-ink"
+            value={isLoading ? null : stats.totalTraders.toLocaleString("en-IN")}
+            sub="+7.4% this week"
+            icon={Users}
+            highlight
           />
           <StatCard
+            to={createPageUrl("ChatRooms")}
             title="Live Chat Rooms"
-            value={stats.activeRooms}
+            value={isLoading ? null : stats.activeRooms}
             sub="Active discussions"
-            icon={<MessageSquare className="w-5 h-5" />}
-            color="bg-protocall-blue text-white"
+            icon={MessageSquare}
           />
           <StatCard
+            to={createPageUrl("Polls")}
             title="Active Polls"
-            value={stats.activePolls}
-            sub="Community sentiment"
-            icon={<BarChart3 className="w-5 h-5" />}
-            color="bg-primary text-primary-foreground"
+            value={isLoading ? null : stats.activePolls}
+            sub="Community voting"
+            icon={BarChart3}
           />
           <StatCard
+            to={createPageUrl("MyPortfolio")}
             title="Trending Stocks"
-            value={stats.trendingStocksCount}
-            sub="Market momentum"
-            icon={<TrendingUp className="w-5 h-5" />}
-            color="bg-protocall-deep text-white"
+            value={isLoading ? null : stats.trendingStocksCount}
+            sub="Market movers"
+            icon={TrendingUp}
           />
         </div>
 
-        {/* Main Content Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Column - Main Feed */}
-          <div className="lg:col-span-8 space-y-6">
-            <MarketOverview stocks={stats.stocks} />
-
-            {/* VIP/Premium Analytics Section */}
-            {(isPremium || isVIP) ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="border-0 shadow-sm overflow-hidden">
-                  <CardContent className="p-0">
-                    <div className="bg-gradient-to-br from-protocall-deep to-protocall-blue p-6 text-white h-full min-h-[160px] flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-bold text-lg flex items-center gap-2">
-                            <BarChart className="w-5 h-5" /> Advanced Analytics
-                          </h3>
-                          <Badge className="bg-white/20 text-white border-0">Premium</Badge>
-                        </div>
-                        <p className="text-white/80 text-sm mb-4">Deep dive into market sentiment and volume profiles.</p>
-                      </div>
-                      <Link to="/samples/analytics" className="inline-flex items-center gap-2 text-sm font-semibold hover:gap-3 transition-all">
-                        View Detailed Reports <ArrowRight className="w-4 h-4" />
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-0 shadow-sm overflow-hidden">
-                  <CardContent className="p-0">
-                    <div className="bg-gradient-to-br from-protocall-grape to-protocall-deep p-6 text-white h-full min-h-[160px] flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-bold text-lg flex items-center gap-2">
-                            <Zap className="w-5 h-5" /> Advisor Signals
-                          </h3>
-                          {isVIP ? <Badge className="bg-white/20 text-white border-0">VIP Access</Badge> : <Lock className="w-4 h-4 text-white/50" />}
-                        </div>
-                        <p className="text-white/80 text-sm mb-4">Real-time buy/sell pressure signals from SEBI advisors.</p>
-                      </div>
-                      {isVIP ? (
-                        <Link to="/AdvisorRecommendations" className="inline-flex items-center gap-2 text-sm font-semibold hover:gap-3 transition-all">
-                          Check Live Signals <ArrowRight className="w-4 h-4" />
-                        </Link>
-                      ) : (
-                        <Link to="/subscription" className="inline-flex items-center gap-2 text-sm font-semibold opacity-70">
-                          Upgrade to VIP <Lock className="w-3 h-3" />
-                        </Link>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            ) : (
-              <Card className="bg-protocall-ink border-0 overflow-hidden relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-protocall-blue/25 to-protocall-grape/25 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                <CardContent className="p-8 relative z-10 text-center">
-                  <h3 className="text-xl font-bold text-white mb-2">Unlock Premium Insights</h3>
-                  <p className="text-protocall-sidebar-muted mb-6 max-w-md mx-auto">Get access to SEBI-certified advisor signals, advanced analytics, and exclusive VIP chat rooms.</p>
-                  <Link to="/subscription" className="bg-protocall-blue text-white px-8 py-3 rounded-xl font-bold hover:bg-protocall-deep transition-all inline-block shadow-lg shadow-protocall-deep/40">
-                    Upgrade Your Plan
-                  </Link>
-                </CardContent>
-              </Card>
-            )}
-
-            <QuickActions user={user} />
-            <StockHeatmap polls={stats.polls} recommendations={stats.recommendations} />
-            <TrendingStocks stocks={stats.stocks} />
-            <FinInfluencers />
+        {/* ---------- Market overview + sponsored ---------- */}
+        <div className="grid gap-4 sm:gap-5 xl:grid-cols-3">
+          <div className="min-w-0 xl:col-span-2">
+            <MarketOverviewPanel indices={stats.indices} error={marketError} />
           </div>
-
-          {/* Right Column - Sidebar */}
-          <div className="lg:col-span-4 space-y-6">
-            <AdDisplay placement="dashboard" className="w-full" />
-
-            {/* Admin Quick Moderation Widget */}
-            {isAdmin && (
-              <Card className="border-protocall-premium-light bg-protocall-premium-bg">
-                <CardContent className="p-4">
-                  <h3 className="font-bold text-protocall-premium-text flex items-center gap-2 mb-3">
-                    <Zap className="w-4 h-4" /> Admin Operations
-                  </h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Link to="/admin" className="text-[10px] bg-card border border-protocall-premium-light p-2 rounded text-center text-protocall-premium-text hover:bg-protocall-premium-light/40 font-medium uppercase tracking-tight">Moderate Content</Link>
-                    <Link to="/admin" className="text-[10px] bg-card border border-protocall-premium-light p-2 rounded text-center text-protocall-premium-text hover:bg-protocall-premium-light/40 font-medium uppercase tracking-tight">Manage Users</Link>
-                    <Link to="/admin" className="text-[10px] bg-card border border-protocall-premium-light p-2 rounded text-center text-protocall-premium-text hover:bg-protocall-premium-light/40 font-medium uppercase tracking-tight">Poll Settle</Link>
-                    <Link to="/admin" className="text-[10px] bg-card border border-protocall-premium-light p-2 rounded text-center text-protocall-premium-text hover:bg-protocall-premium-light/40 font-medium uppercase tracking-tight">Settings</Link>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            <AdvisorRecommendations recommendations={stats.recommendations} />
-            <ActivePolls polls={stats.polls} />
-            <RecentActivity />
-            <LatestNews />
+          <div className="min-w-0">
+            <SponsoredPanel />
           </div>
         </div>
 
-        <ReviewScroller />
+        {/* ---------- Movers + community poll ---------- */}
+        <div className="grid gap-4 sm:gap-5 xl:grid-cols-3">
+          <div className="min-w-0 xl:col-span-2">
+            <TopMovers gainers={stats.gainers} losers={stats.losers} isLoading={isLoading} error={marketError} />
+          </div>
+          <div className="min-w-0">
+            <CommunityPollPanel polls={stats.polls} />
+          </div>
+        </div>
+
+        {/* ---------- Footer strip ---------- */}
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-xl border border-border bg-surface-2 px-4 py-3 text-center text-xs font-medium text-subtle">
+          <Zap className="h-3.5 w-3.5 text-buy" />
+          <span>Join the conversation</span>
+          <span aria-hidden="true" className="text-muted-foreground">·</span>
+          <span>Share your insights</span>
+          <span aria-hidden="true" className="text-muted-foreground">·</span>
+          <span>Be a part of PROTOCALL</span>
+        </div>
       </div>
 
       <PageFooter />
@@ -268,30 +233,66 @@ export default function Dashboard() {
   );
 }
 
-function StatCard({ title, value, sub, icon, color, chip = "bg-white/20", overlay = "bg-white" }) {
+// `highlight` renders the green growth tile; the rest are white cards.
+function StatCard({ to, title, value, sub, icon: Icon, highlight = false }) {
   return (
-    <Card className={`${color} border-0 shadow-lg overflow-hidden relative group`}>
-      <div className={`absolute top-0 right-0 w-24 h-24 ${overlay} opacity-10 rounded-full transform translate-x-8 -translate-y-8 group-hover:scale-110 transition-transform`}></div>
-      <CardContent className="p-6 relative z-10">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium opacity-80">{title}</p>
-            <p className="text-2xl font-bold mt-1">{value}</p>
-            <p className="text-xs mt-1 opacity-70">{sub}</p>
+    <Card
+      className={`group overflow-hidden border shadow-sm transition-shadow hover:shadow-md ${
+        highlight ? "border-transparent bg-buy" : "border-border bg-card"
+      }`}
+    >
+      <Link to={to} className="block">
+        <CardContent className="p-4 sm:p-5">
+          <div className="flex items-start justify-between gap-2">
+            <span
+              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+                highlight ? "bg-buy-foreground/10" : "bg-premium-muted"
+              }`}
+            >
+              <Icon
+                className={`h-4 w-4 ${highlight ? "text-buy-foreground" : "text-primary"}`}
+              />
+            </span>
+            <ChevronRight
+              className={`h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5 ${
+                highlight ? "text-buy-foreground/60" : "text-muted-foreground"
+              }`}
+            />
           </div>
-          <div className={`w-12 h-12 ${chip} rounded-2xl flex items-center justify-center backdrop-blur-sm group-hover:rotate-12 transition-transform`}>
-            {icon}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
 
-function Badge({ children, className }) {
-  return (
-    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${className}`}>
-      {children}
-    </span>
+          <p
+            className={`mt-3 text-xs font-medium ${
+              highlight ? "text-buy-foreground/80" : "text-subtle"
+            }`}
+          >
+            {title}
+          </p>
+
+          {value === null ? (
+            <div
+              className={`mt-1 h-7 w-20 animate-pulse rounded ${
+                highlight ? "bg-buy-foreground/15" : "bg-surface-2"
+              }`}
+            />
+          ) : (
+            <p
+              className={`mt-0.5 text-2xl font-bold leading-tight ${
+                highlight ? "text-buy-foreground" : "text-foreground"
+              }`}
+            >
+              {value}
+            </p>
+          )}
+
+          <p
+            className={`mt-0.5 text-[11px] ${
+              highlight ? "font-semibold text-buy-foreground/70" : "text-muted-foreground"
+            }`}
+          >
+            {sub}
+          </p>
+        </CardContent>
+      </Link>
+    </Card>
   );
 }

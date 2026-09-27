@@ -28,9 +28,9 @@ export default function PMStrategies({ pmProfile }) {
 
   const getRiskBadge = (risk) => {
     const config = {
-      low: { color: 'bg-green-100 text-green-800', label: 'Low Risk' },
-      medium: { color: 'bg-yellow-100 text-yellow-800', label: 'Medium Risk' },
-      high: { color: 'bg-red-100 text-red-800', label: 'High Risk' }
+      low: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Low Risk' },
+      medium: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Medium Risk' },
+      high: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'High Risk' }
     };
     const { color, label } = config[risk] || config.medium;
     return <Badge className={color}>{label}</Badge>;
@@ -45,10 +45,10 @@ export default function PMStrategies({ pmProfile }) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Investment Strategies</h2>
-          <p className="text-gray-600">Create and manage your portfolio strategies</p>
+          <h2 className="text-2xl font-bold text-foreground">Investment Strategies</h2>
+          <p className="text-subtle">Create and manage your portfolio strategies</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700">
+        <Button className="bg-protocall-blue hover:bg-protocall-blue">
           <Plus className="w-4 h-4 mr-2" />
           Create Strategy
         </Button>
@@ -59,9 +59,9 @@ export default function PMStrategies({ pmProfile }) {
         {strategies.length === 0 ? (
           <Card>
             <CardContent className="text-center py-12">
-              <Target className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Strategies Yet</h3>
-              <p className="text-gray-600">Create your first investment strategy</p>
+              <Target className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-foreground mb-2">No Strategies Yet</h3>
+              <p className="text-subtle">Create your first investment strategy</p>
             </CardContent>
           </Card>
         ) : (
@@ -73,13 +73,13 @@ export default function PMStrategies({ pmProfile }) {
                     <div className="flex items-center gap-3 mb-2">
                       <CardTitle className="text-xl">{strategy.strategy_name}</CardTitle>
                       {strategy.is_active ? (
-                        <Badge className="bg-green-100 text-green-800">Active</Badge>
+                        <Badge className="bg-buy-muted text-buy-muted-foreground">Active</Badge>
                       ) : (
-                        <Badge className="bg-gray-100 text-gray-800">Inactive</Badge>
+                        <Badge className="bg-surface-2 text-foreground">Inactive</Badge>
                       )}
                       {getRiskBadge(strategy.risk_level)}
                     </div>
-                    <p className="text-sm text-gray-600">{strategy.description}</p>
+                    <p className="text-sm text-subtle">{strategy.description}</p>
                   </div>
                   <Button variant="outline" size="sm">
                     <Edit className="w-4 h-4 mr-2" />
@@ -89,33 +89,33 @@ export default function PMStrategies({ pmProfile }) {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                  <div className="bg-blue-50 p-3 rounded-lg">
-                    <TrendingUp className="w-5 h-5 text-blue-600 mb-2" />
-                    <p className="text-sm text-blue-600">Target Return</p>
-                    <p className="text-xl font-bold text-blue-900">{strategy.target_return}%</p>
+                  <div className="bg-premium-muted p-3 rounded-lg">
+                    <TrendingUp className="w-5 h-5 text-protocall-blue mb-2" />
+                    <p className="text-sm text-protocall-blue">Target Return</p>
+                    <p className="text-xl font-bold text-protocall-blue">{strategy.target_return}%</p>
                   </div>
-                  <div className="bg-green-50 p-3 rounded-lg">
-                    <Target className="w-5 h-5 text-green-600 mb-2" />
-                    <p className="text-sm text-green-600">Total AUM</p>
-                    <p className="text-xl font-bold text-green-900">
+                  <div className="bg-buy-muted p-3 rounded-lg">
+                    <Target className="w-5 h-5 text-buy-muted-foreground mb-2" />
+                    <p className="text-sm text-buy-muted-foreground">Total AUM</p>
+                    <p className="text-xl font-bold text-buy-muted-foreground">
                       ₹{(strategy.total_aum / 100000).toFixed(2)}L
                     </p>
                   </div>
-                  <div className="bg-purple-50 p-3 rounded-lg">
-                    <Users className="w-5 h-5 text-purple-600 mb-2" />
-                    <p className="text-sm text-purple-600">Clients</p>
-                    <p className="text-xl font-bold text-purple-900">{strategy.client_count || 0}</p>
+                  <div className="bg-premium-muted p-3 rounded-lg">
+                    <Users className="w-5 h-5 text-protocall-premium-text mb-2" />
+                    <p className="text-sm text-protocall-premium-text">Clients</p>
+                    <p className="text-xl font-bold text-protocall-premium-text">{strategy.client_count || 0}</p>
                   </div>
-                  <div className="bg-orange-50 p-3 rounded-lg">
-                    <TrendingUp className="w-5 h-5 text-orange-600 mb-2" />
-                    <p className="text-sm text-orange-600">Performance</p>
-                    <p className="text-xl font-bold text-orange-900">{strategy.performance_return || 0}%</p>
+                  <div className="bg-hold-muted p-3 rounded-lg">
+                    <TrendingUp className="w-5 h-5 text-hold-muted-foreground mb-2" />
+                    <p className="text-sm text-hold-muted-foreground">Performance</p>
+                    <p className="text-xl font-bold text-hold-muted-foreground">{strategy.performance_return || 0}%</p>
                   </div>
                 </div>
 
                 {strategy.stock_list && strategy.stock_list.length > 0 && (
                   <div className="mt-4">
-                    <p className="text-sm font-semibold text-gray-700 mb-2">Stock Allocation:</p>
+                    <p className="text-sm font-semibold text-subtle mb-2">Stock Allocation:</p>
                     <div className="flex flex-wrap gap-2">
                       {strategy.stock_list.slice(0, 5).map((stock, idx) => (
                         <Badge key={idx} variant="outline">

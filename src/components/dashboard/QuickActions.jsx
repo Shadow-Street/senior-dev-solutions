@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shield, Star, Calendar, Crown, TrendingUp, MessageSquare } from 'lucide-react';
+import { Shield, Star, Wallet, Crown, TrendingUp, MessageSquare } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 
 export default function QuickActions({ user }) {
@@ -34,9 +34,9 @@ export default function QuickActions({ user }) {
       iconColor: "text-white",
     },
     {
-      icon: Calendar,
-      label: "Browse Events",
-      url: createPageUrl("Events"),
+      icon: Wallet,
+      label: "Pledge Pool",
+      url: createPageUrl("PledgePool"),
       show: true,
       gradient: "from-protocall-deep to-protocall-blue",
       iconColor: "text-white",

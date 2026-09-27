@@ -84,7 +84,7 @@ export default function CreatePostModal({ open, onClose, onCreatePost, advisorId
   const getPlanBadge = (planId) => {
     if (!planId) {
       return (
-        <Badge className="bg-blue-100 text-blue-800 flex items-center gap-1">
+        <Badge className="bg-premium-muted text-protocall-blue flex items-center gap-1">
           <Users className="w-3 h-3" />
           All Subscribers
         </Badge>
@@ -99,8 +99,8 @@ export default function CreatePostModal({ open, onClose, onCreatePost, advisorId
     return (
       <Badge className={`flex items-center gap-1 ${
         isHighTier 
-          ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white' 
-          : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
+          ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white' 
+          : 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white'
       }`}>
         {isHighTier ? <Crown className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
         {plan.name} Only
@@ -117,8 +117,8 @@ export default function CreatePostModal({ open, onClose, onCreatePost, advisorId
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Plan Access Control - PROMINENT */}
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-lg p-4">
-            <Label className="text-base font-semibold text-slate-900 mb-3 block">
+          <div className="bg-surface-2 border-2 border-protocall-premium-light rounded-lg p-4">
+            <Label className="text-base font-semibold text-foreground mb-3 block">
               👥 Who Can See This Post?
             </Label>
             <Select
@@ -134,7 +134,7 @@ export default function CreatePostModal({ open, onClose, onCreatePost, advisorId
               <SelectContent>
                 <SelectItem value="all">
                   <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-blue-600" />
+                    <Users className="w-4 h-4 text-protocall-blue" />
                     <span>All Subscribers (Any Plan)</span>
                   </div>
                 </SelectItem>
@@ -142,12 +142,12 @@ export default function CreatePostModal({ open, onClose, onCreatePost, advisorId
                   <SelectItem key={plan.id} value={plan.id}>
                     <div className="flex items-center gap-2">
                       {plan.price >= 2000 ? (
-                        <Crown className="w-4 h-4 text-purple-600" />
+                        <Crown className="w-4 h-4 text-protocall-premium-text" />
                       ) : (
-                        <Lock className="w-4 h-4 text-blue-600" />
+                        <Lock className="w-4 h-4 text-protocall-blue" />
                       )}
                       <span className="font-semibold">{plan.name}</span>
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-muted-foreground">
                         (₹{plan.price}/{plan.billing_interval})
                       </span>
                     </div>
@@ -156,10 +156,10 @@ export default function CreatePostModal({ open, onClose, onCreatePost, advisorId
               </SelectContent>
             </Select>
             <div className="mt-2 flex items-center gap-2">
-              <span className="text-xs text-slate-600">Selected:</span>
+              <span className="text-xs text-subtle">Selected:</span>
               {getPlanBadge(formData.required_plan_id)}
             </div>
-            <p className="text-xs text-slate-500 mt-2">
+            <p className="text-xs text-muted-foreground mt-2">
               💡 <strong>Tip:</strong> Choose "All Subscribers" for general content, or select a specific plan for exclusive premium insights.
             </p>
           </div>
@@ -294,7 +294,7 @@ export default function CreatePostModal({ open, onClose, onCreatePost, advisorId
             <Button
               type="submit"
               disabled={isLoading}
-              className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="flex-1 bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
             >
               {isLoading ? (
                 <>

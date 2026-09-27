@@ -47,7 +47,7 @@ export default function VIPMessageEffects({ message, vipFeatures, children }) {
       return {
         className: 'vip-fire-effect',
         style: {
-          color: '#ff6b35',
+          color: 'hsl(var(--chart-5))',
           textShadow: '0 0 5px #ff6b35, 0 0 10px #ff6b35'
         }
       };
@@ -57,7 +57,7 @@ export default function VIPMessageEffects({ message, vipFeatures, children }) {
       return {
         className: 'vip-ice-effect',
         style: {
-          color: '#00d4ff',
+          color: 'hsl(var(--chart-1))',
           textShadow: '0 0 5px #00d4ff, 0 0 10px #00d4ff'
         }
       };

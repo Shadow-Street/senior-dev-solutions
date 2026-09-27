@@ -140,10 +140,10 @@ export default function PledgeExecutions({ executions = [], sessions = [], pledg
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="w-6 h-6 text-indigo-600" />
+            <TrendingUp className="w-6 h-6 text-protocall-blue" />
             Sessions Awaiting Sell-Side Execution
           </CardTitle>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             These are "Buy-Sell Cycle" sessions where the initial buy orders have been executed. Click to trigger the sell orders and complete the cycle.
           </p>
         </CardHeader>
@@ -162,7 +162,7 @@ export default function PledgeExecutions({ executions = [], sessions = [], pledg
               ))}
             </div>
           ) : (
-            <p className="text-center text-gray-500 py-8">No sessions are currently awaiting sell execution.</p>
+            <p className="text-center text-muted-foreground py-8">No sessions are currently awaiting sell execution.</p>
           )}
         </CardContent>
       </Card>
@@ -214,7 +214,7 @@ export default function PledgeExecutions({ executions = [], sessions = [], pledg
             <TableBody>
               {filteredExecutions.length === 0 ? (
                  <TableRow>
-                     <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                     <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                          No execution records found matching your criteria.
                      </TableCell>
                  </TableRow>
@@ -223,7 +223,7 @@ export default function PledgeExecutions({ executions = [], sessions = [], pledg
                   <TableRow key={exec.id}>
                     <TableCell className="font-medium">{exec.stock_symbol}</TableCell>
                     <TableCell>
-                      <Badge className={exec.side === 'buy' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                      <Badge className={exec.side === 'buy' ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-sell-muted text-sell-muted-foreground'}>
                         {exec.side.toUpperCase()}
                       </Badge>
                     </TableCell>
@@ -231,9 +231,9 @@ export default function PledgeExecutions({ executions = [], sessions = [], pledg
                     <TableCell>₹{exec.executed_price?.toFixed(2)}</TableCell>
                     <TableCell>
                        <Badge variant="outline" className={
-                          exec.status === 'completed' ? 'text-green-700 border-green-200' :
-                          exec.status === 'failed' ? 'text-red-700 border-red-200' :
-                          'text-yellow-700 border-yellow-200'
+                          exec.status === 'completed' ? 'text-buy-muted-foreground border-buy/30' :
+                          exec.status === 'failed' ? 'text-sell-muted-foreground border-sell/30' :
+                          'text-hold-muted-foreground border-hold/30'
                        }>
                           {exec.status}
                        </Badge>
@@ -269,7 +269,7 @@ export default function PledgeExecutions({ executions = [], sessions = [], pledg
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full">
                 <h2 className="text-xl font-bold mb-4">Execution Details: {selectedExecution.stock_symbol}</h2>
-                <pre className="bg-gray-100 p-4 rounded-md text-sm overflow-auto max-h-96">
+                <pre className="bg-surface-2 p-4 rounded-md text-sm overflow-auto max-h-96">
                     {JSON.stringify(selectedExecution, null, 2)}
                 </pre>
                 <div className="flex justify-end mt-4">

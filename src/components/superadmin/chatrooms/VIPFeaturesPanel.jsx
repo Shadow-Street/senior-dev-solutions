@@ -42,9 +42,9 @@ export default function VIPFeaturesPanel() {
     custom_badge: {
       name: 'VIP',
       icon: '👑',
-      color: '#fbbf24'
+      color: 'hsl(var(--chart-5))'
     },
-    custom_color: '#8b5cf6',
+    custom_color: 'hsl(var(--primary))',
     message_effects: [],
     priority_support: true,
     ad_free: true
@@ -107,7 +107,7 @@ export default function VIPFeaturesPanel() {
       custom_badge: customization.custom_badge || {
         name: 'VIP',
         icon: '👑',
-        color: '#fbbf24'
+        color: 'hsl(var(--chart-5))'
       },
       custom_color: customization.custom_color || '#8b5cf6',
       message_effects: customization.message_effects || [],
@@ -139,9 +139,9 @@ export default function VIPFeaturesPanel() {
       custom_badge: {
         name: 'VIP',
         icon: '👑',
-        color: '#fbbf24'
+        color: 'hsl(var(--chart-5))'
       },
-      custom_color: '#8b5cf6',
+      custom_color: 'hsl(var(--primary))',
       message_effects: [],
       priority_support: true,
       ad_free: true
@@ -182,8 +182,8 @@ export default function VIPFeaturesPanel() {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 font-medium">Loading VIP Features...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-lg text-subtle font-medium">Loading VIP Features...</p>
         </div>
       </div>
     );
@@ -197,10 +197,10 @@ export default function VIPFeaturesPanel() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Star className="w-5 h-5 text-yellow-500" />
+                <Star className="w-5 h-5 text-hold" />
                 VIP Features Management
               </h3>
-              <p className="text-sm text-slate-600">Manage custom badges, colors, emojis, and effects for VIP users</p>
+              <p className="text-sm text-subtle">Manage custom badges, colors, emojis, and effects for VIP users</p>
             </div>
             <Button onClick={() => { resetForm(); setShowCreateModal(true); }}>
               <Plus className="w-4 h-4 mr-2" />
@@ -212,7 +212,7 @@ export default function VIPFeaturesPanel() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
+        <Card className="bg-hold text-hold-foreground">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -224,7 +224,7 @@ export default function VIPFeaturesPanel() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -236,7 +236,7 @@ export default function VIPFeaturesPanel() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-pink-500 to-rose-500 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-sell text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -248,7 +248,7 @@ export default function VIPFeaturesPanel() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -265,7 +265,7 @@ export default function VIPFeaturesPanel() {
       <Card>
         <CardContent className="p-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
               placeholder="Search VIP users..."
               value={searchTerm}
@@ -285,9 +285,9 @@ export default function VIPFeaturesPanel() {
           <div className="space-y-3">
             {filteredCustomizations.length === 0 ? (
               <div className="text-center py-12">
-                <Star className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                <p className="text-slate-600 font-medium">No VIP users yet</p>
-                <p className="text-slate-500 text-sm mt-1">Add VIP features to premium users</p>
+                <Star className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <p className="text-subtle font-medium">No VIP users yet</p>
+                <p className="text-muted-foreground text-sm mt-1">Add VIP features to premium users</p>
               </div>
             ) : (
               filteredCustomizations.map(custom => {
@@ -295,14 +295,14 @@ export default function VIPFeaturesPanel() {
                 const room = rooms.find(r => r.id === custom.room_id);
 
                 return (
-                  <div key={custom.id} className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                  <div key={custom.id} className="flex items-center gap-4 p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
                     <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style={{ backgroundColor: custom.custom_color || '#8b5cf6', color: 'white' }}>
                       {custom.custom_badge?.icon || '👑'}
                     </div>
 
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <p className="font-medium text-slate-900">{user?.display_name || 'Unknown User'}</p>
+                        <p className="font-medium text-foreground">{user?.display_name || 'Unknown User'}</p>
                         
                         {custom.custom_badge && (
                           <Badge style={{ 
@@ -315,20 +315,20 @@ export default function VIPFeaturesPanel() {
                         )}
 
                         {custom.priority_support && (
-                          <Badge className="bg-blue-100 text-blue-800">
+                          <Badge className="bg-premium-muted text-protocall-blue">
                             <Shield className="w-3 h-3 mr-1" />
                             Priority Support
                           </Badge>
                         )}
 
                         {custom.ad_free && (
-                          <Badge className="bg-green-100 text-green-800">
+                          <Badge className="bg-buy-muted text-buy-muted-foreground">
                             Ad-Free
                           </Badge>
                         )}
                       </div>
 
-                      <div className="flex items-center gap-4 text-sm text-slate-600">
+                      <div className="flex items-center gap-4 text-sm text-subtle">
                         {room && (
                           <span>Room: {room.name}</span>
                         )}
@@ -369,7 +369,7 @@ export default function VIPFeaturesPanel() {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDelete(custom.id)}
-                        className="text-red-600 hover:text-red-800"
+                        className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -431,7 +431,7 @@ export default function VIPFeaturesPanel() {
 
             {/* Custom Badge */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-slate-900 flex items-center gap-2">
+              <h4 className="font-semibold text-foreground flex items-center gap-2">
                 <Shield className="w-4 h-4" />
                 Custom Badge
               </h4>
@@ -476,8 +476,8 @@ export default function VIPFeaturesPanel() {
               </div>
 
               {/* Preview */}
-              <div className="p-3 bg-slate-100 rounded-lg">
-                <p className="text-sm text-slate-600 mb-2">Badge Preview:</p>
+              <div className="p-3 bg-surface-2 rounded-lg">
+                <p className="text-sm text-subtle mb-2">Badge Preview:</p>
                 <Badge style={{ 
                   backgroundColor: formData.custom_badge?.color,
                   color: 'white',
@@ -490,7 +490,7 @@ export default function VIPFeaturesPanel() {
 
             {/* Custom Color */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-slate-900 flex items-center gap-2">
+              <h4 className="font-semibold text-foreground flex items-center gap-2">
                 <Palette className="w-4 h-4" />
                 Custom Name Color
               </h4>
@@ -507,7 +507,7 @@ export default function VIPFeaturesPanel() {
                   onChange={(e) => setFormData({...formData, custom_color: e.target.value})}
                   placeholder="#8b5cf6"
                 />
-                <div className="p-3 bg-slate-100 rounded-lg flex-1">
+                <div className="p-3 bg-surface-2 rounded-lg flex-1">
                   <p style={{ color: formData.custom_color }} className="font-semibold">
                     Preview Name
                   </p>
@@ -517,7 +517,7 @@ export default function VIPFeaturesPanel() {
 
             {/* Message Effects */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-slate-900 flex items-center gap-2">
+              <h4 className="font-semibold text-foreground flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
                 Message Effects
               </h4>
@@ -529,8 +529,8 @@ export default function VIPFeaturesPanel() {
                     onClick={() => toggleEffect(effect.id)}
                     className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
                       formData.message_effects?.includes(effect.id)
-                        ? 'border-purple-500 bg-purple-50'
-                        : 'border-slate-200 hover:border-purple-300'
+                        ? 'border-primary bg-premium-muted'
+                        : 'border-border hover:border-protocall-premium-light'
                     }`}
                   >
                     <div className="text-2xl mb-1">{effect.icon}</div>
@@ -542,15 +542,15 @@ export default function VIPFeaturesPanel() {
 
             {/* Additional Features */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-slate-900 flex items-center gap-2">
+              <h4 className="font-semibold text-foreground flex items-center gap-2">
                 <Star className="w-4 h-4" />
                 Additional Features
               </h4>
 
-              <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-premium-muted rounded-lg">
                 <div>
                   <Label className="font-medium">Priority Support</Label>
-                  <p className="text-sm text-slate-600">Get priority in support queue</p>
+                  <p className="text-sm text-subtle">Get priority in support queue</p>
                 </div>
                 <Switch
                   checked={formData.priority_support}
@@ -558,10 +558,10 @@ export default function VIPFeaturesPanel() {
                 />
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-buy-muted rounded-lg">
                 <div>
                   <Label className="font-medium">Ad-Free Experience</Label>
-                  <p className="text-sm text-slate-600">Remove all advertisements</p>
+                  <p className="text-sm text-subtle">Remove all advertisements</p>
                 </div>
                 <Switch
                   checked={formData.ad_free}
@@ -574,7 +574,7 @@ export default function VIPFeaturesPanel() {
               <Button variant="outline" onClick={() => setShowCreateModal(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleCreate} className="bg-purple-600 hover:bg-purple-700">
+              <Button onClick={handleCreate} className="bg-primary hover:bg-primary">
                 {editingCustomization ? 'Update VIP Features' : 'Add VIP User'}
               </Button>
             </div>

@@ -113,54 +113,54 @@ export default function RefundAnalytics({ refunds, permissions }) {
     <div className="space-y-6">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-orange-50 to-red-50">
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-surface-2 to-sell-muted">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-orange-600 font-medium">Total Refunds</p>
-                <p className="text-3xl font-bold text-orange-900 mt-1">{refundStats.total}</p>
-                <p className="text-xs text-orange-600 mt-1">All time</p>
+                <p className="text-sm text-hold-muted-foreground font-medium">Total Refunds</p>
+                <p className="text-3xl font-bold text-hold-muted-foreground mt-1">{refundStats.total}</p>
+                <p className="text-xs text-hold-muted-foreground mt-1">All time</p>
               </div>
-              <RotateCcw className="w-10 h-10 text-orange-600 opacity-50" />
+              <RotateCcw className="w-10 h-10 text-hold-muted-foreground opacity-50" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-yellow-50 to-amber-50">
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-surface-2 to-hold-muted">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-yellow-600 font-medium">Pending</p>
-                <p className="text-3xl font-bold text-yellow-900 mt-1">{refundStats.pending}</p>
-                <p className="text-xs text-yellow-600 mt-1">Awaiting action</p>
+                <p className="text-sm text-hold-muted-foreground font-medium">Pending</p>
+                <p className="text-3xl font-bold text-hold-muted-foreground mt-1">{refundStats.pending}</p>
+                <p className="text-xs text-hold-muted-foreground mt-1">Awaiting action</p>
               </div>
-              <Clock className="w-10 h-10 text-yellow-600 opacity-50" />
+              <Clock className="w-10 h-10 text-hold-muted-foreground opacity-50" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-green-50 to-emerald-50">
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-surface-2 to-buy-muted">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-green-600 font-medium">Processed</p>
-                <p className="text-3xl font-bold text-green-900 mt-1">{refundStats.processed}</p>
-                <p className="text-xs text-green-600 mt-1">Successfully refunded</p>
+                <p className="text-sm text-buy-muted-foreground font-medium">Processed</p>
+                <p className="text-3xl font-bold text-buy-muted-foreground mt-1">{refundStats.processed}</p>
+                <p className="text-xs text-buy-muted-foreground mt-1">Successfully refunded</p>
               </div>
-              <CheckCircle className="w-10 h-10 text-green-600 opacity-50" />
+              <CheckCircle className="w-10 h-10 text-buy-muted-foreground opacity-50" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-purple-50 to-indigo-50">
+        <Card className="shadow-lg border-0 bg-surface-2">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-purple-600 font-medium">Total Refunded</p>
-                <p className="text-2xl font-bold text-purple-900 mt-1">₹{refundStats.totalAmount.toLocaleString()}</p>
-                <p className="text-xs text-purple-600 mt-1">Avg: {refundStats.avgProcessingTime} days</p>
+                <p className="text-sm text-protocall-premium-text font-medium">Total Refunded</p>
+                <p className="text-2xl font-bold text-protocall-premium-text mt-1">₹{refundStats.totalAmount.toLocaleString()}</p>
+                <p className="text-xs text-protocall-premium-text mt-1">Avg: {refundStats.avgProcessingTime} days</p>
               </div>
-              <TrendingDown className="w-10 h-10 text-purple-600 opacity-50" />
+              <TrendingDown className="w-10 h-10 text-protocall-premium-text opacity-50" />
             </div>
           </CardContent>
         </Card>
@@ -172,7 +172,7 @@ export default function RefundAnalytics({ refunds, permissions }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <RotateCcw className="w-5 h-5 text-orange-600" />
+              <RotateCcw className="w-5 h-5 text-hold-muted-foreground" />
               Refunds by Transaction Type
             </CardTitle>
           </CardHeader>
@@ -205,7 +205,7 @@ export default function RefundAnalytics({ refunds, permissions }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-blue-600" />
+              <AlertCircle className="w-5 h-5 text-protocall-blue" />
               Refund Reasons
             </CardTitle>
           </CardHeader>
@@ -231,7 +231,7 @@ export default function RefundAnalytics({ refunds, permissions }) {
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-purple-600" />
+            <BarChart3 className="w-5 h-5 text-protocall-premium-text" />
             Monthly Refund Trend
           </CardTitle>
         </CardHeader>
@@ -244,8 +244,8 @@ export default function RefundAnalytics({ refunds, permissions }) {
               <YAxis yAxisId="right" orientation="right" />
               <Tooltip />
               <Legend />
-              <Line yAxisId="left" type="monotone" dataKey="count" stroke="#F59E0B" strokeWidth={3} name="Refund Count" />
-              <Line yAxisId="right" type="monotone" dataKey="amount" stroke="#EF4444" strokeWidth={3} name="Refund Amount (₹)" />
+              <Line yAxisId="left" type="monotone" dataKey="count" stroke="hsl(var(--chart-5))" strokeWidth={3} name="Refund Count" />
+              <Line yAxisId="right" type="monotone" dataKey="amount" stroke="hsl(var(--chart-3))" strokeWidth={3} name="Refund Amount (₹)" />
             </LineChart>
           </ResponsiveContainer>
         </CardContent>
@@ -255,49 +255,49 @@ export default function RefundAnalytics({ refunds, permissions }) {
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Clock className="w-5 h-5 text-blue-600" />
+            <Clock className="w-5 h-5 text-protocall-blue" />
             Recent Refund Requests
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-slate-50 border-b">
+              <thead className="bg-surface-2 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">User</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Type</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Amount</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Reason</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">User</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Type</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Amount</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Reason</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-divider">
                 {refunds.slice(0, 10).map((refund) => (
-                  <tr key={refund.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 text-sm text-slate-600">
+                  <tr key={refund.id} className="hover:bg-surface-2">
+                    <td className="px-4 py-3 text-sm text-subtle">
                       {format(new Date(refund.created_date), 'dd MMM yyyy')}
                     </td>
-                    <td className="px-4 py-3 text-sm text-slate-900">
+                    <td className="px-4 py-3 text-sm text-foreground">
                       {refund.user_name || 'Unknown'}
                     </td>
-                    <td className="px-4 py-3 text-sm text-slate-600">
+                    <td className="px-4 py-3 text-sm text-subtle">
                       {getTypeLabel(refund.transaction_type)}
                     </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-slate-900">
+                    <td className="px-4 py-3 text-sm font-semibold text-foreground">
                       ₹{refund.refund_amount?.toLocaleString()}
                     </td>
                     <td className="px-4 py-3">
                       <Badge className={
-                        refund.status === 'processed' ? 'bg-green-100 text-green-800' :
-                        refund.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                        refund.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                        'bg-gray-100 text-gray-800'
+                        refund.status === 'processed' ? 'bg-buy-muted text-buy-muted-foreground' :
+                        refund.status === 'pending' ? 'bg-hold-muted text-hold-muted-foreground' :
+                        refund.status === 'rejected' ? 'bg-sell-muted text-sell-muted-foreground' :
+                        'bg-surface-2 text-foreground'
                       }>
                         {refund.status}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3 text-sm text-slate-600">
+                    <td className="px-4 py-3 text-sm text-subtle">
                       {getReasonLabel(refund.reason_category)}
                     </td>
                   </tr>

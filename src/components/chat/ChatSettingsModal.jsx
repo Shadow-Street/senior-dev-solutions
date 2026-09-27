@@ -90,7 +90,7 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
         <div className="space-y-6 py-4">
           {/* Notification Settings */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2 mb-3">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
               <Bell className="w-4 h-4" />
               Notifications
             </h3>
@@ -100,7 +100,7 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
                   <Label htmlFor="notifications" className="text-sm font-medium">
                     Enable Notifications
                   </Label>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     Receive alerts for new messages
                   </p>
                 </div>
@@ -116,7 +116,7 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
                   <Label htmlFor="sound" className="text-sm font-medium">
                     Sound Effects
                   </Label>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     Play sound for new messages
                   </p>
                 </div>
@@ -133,7 +133,7 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
                   <Label htmlFor="desktop" className="text-sm font-medium">
                     Desktop Notifications
                   </Label>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     Show system notifications
                   </p>
                 </div>
@@ -151,7 +151,7 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
 
           {/* Display Settings */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2 mb-3">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
               <Eye className="w-4 h-4" />
               Display
             </h3>
@@ -161,7 +161,7 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
                   <Label htmlFor="typing" className="text-sm font-medium">
                     Typing Indicators
                   </Label>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     Show when others are typing
                   </p>
                 </div>
@@ -177,7 +177,7 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
                   <Label htmlFor="timestamps" className="text-sm font-medium">
                     Message Timestamps
                   </Label>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     Show time for each message
                   </p>
                 </div>
@@ -193,7 +193,7 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
                   <Label htmlFor="compact" className="text-sm font-medium">
                     Compact Mode
                   </Label>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     Reduce spacing between messages
                   </p>
                 </div>
@@ -210,7 +210,7 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
 
           {/* Behavior Settings */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2 mb-3">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
               <ArrowDown className="w-4 h-4" />
               Behavior
             </h3>
@@ -220,7 +220,7 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
                   <Label htmlFor="autoscroll" className="text-sm font-medium">
                     Auto-Scroll
                   </Label>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     Automatically scroll to new messages
                   </p>
                 </div>
@@ -236,7 +236,7 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
                   <Label htmlFor="enter" className="text-sm font-medium">
                     Enter to Send
                   </Label>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     Press Enter to send (Shift+Enter for new line)
                   </p>
                 </div>
@@ -252,9 +252,9 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
           <Separator />
 
           {/* Info Section */}
-          <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-            <h4 className="text-sm font-semibold text-blue-900 mb-2">💡 Pro Tip</h4>
-            <p className="text-xs text-blue-700 leading-relaxed">
+          <div className="bg-premium-muted rounded-lg p-4 border border-protocall-premium-light">
+            <h4 className="text-sm font-semibold text-protocall-blue mb-2">💡 Pro Tip</h4>
+            <p className="text-xs text-protocall-blue leading-relaxed">
               These settings are saved per chat room and persist across sessions. You can customize each room independently.
             </p>
           </div>
@@ -270,7 +270,7 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
             </Button>
             <Button
               onClick={onClose}
-              className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700"
+              className="flex-1 bg-gradient-to-r from-protocall-deep to-protocall-blue text-white hover:from-protocall-deep hover:to-protocall-blue"
             >
               Done
             </Button>

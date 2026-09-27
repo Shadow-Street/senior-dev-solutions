@@ -31,102 +31,102 @@ export default function AdminSubscriptionManager() {
   if (loading) return <Loader2 className="animate-spin" />;
 
   return (
-    <div className="space-y-8 p-8 bg-gray-50/50 min-h-screen">
+    <div className="space-y-8 p-8 bg-surface-2/50 min-h-screen">
       <div className="flex flex-col gap-2">
-        <h2 className="text-4xl font-extrabold tracking-tight text-gray-900 bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent w-fit">Subscription Management</h2>
-        <p className="text-gray-500 font-medium">Overview of your revenue, subscribers, and coupon performance.</p>
+        <h2 className="text-4xl font-extrabold tracking-tight text-foreground bg-gradient-to-r from-protocall-deep to-protocall-blue bg-clip-text text-transparent w-fit">Subscription Management</h2>
+        <p className="text-muted-foreground font-medium">Overview of your revenue, subscribers, and coupon performance.</p>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-white overflow-hidden relative">
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-protocall-deep to-protocall-blue text-white overflow-hidden relative">
           <div className="absolute top-0 right-0 p-4 opacity-10">
             <Loader2 className="w-24 h-24" />
           </div>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-indigo-100 uppercase tracking-wider">Total Revenue (ARR)</CardTitle>
+            <CardTitle className="text-sm font-semibold text-protocall-blue uppercase tracking-wider">Total Revenue (ARR)</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">₹{stats?.financials?.arr?.toLocaleString()}</div>
-            <p className="text-xs text-indigo-200 mt-1">Projected Annual Recurring Revenue</p>
+            <p className="text-xs text-protocall-premium-light mt-1">Projected Annual Recurring Revenue</p>
           </CardContent>
         </Card>
 
-        <Card className="border border-indigo-100 shadow-md bg-white hover:shadow-lg transition-shadow">
+        <Card className="border border-protocall-premium-light shadow-md bg-white hover:shadow-lg transition-shadow">
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Active Users</CardTitle>
-            <Badge className="bg-green-100 text-green-700 hover:bg-green-200">Live</Badge>
+            <CardTitle className="text-sm font-semibold text-subtle uppercase tracking-wider">Active Users</CardTitle>
+            <Badge className="bg-buy-muted text-buy-muted-foreground hover:bg-buy-muted">Live</Badge>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-gray-900">{stats?.subscribers?.active}</div>
-            <p className="text-xs text-gray-400 mt-1">Currently subscribed members</p>
+            <div className="text-3xl font-bold text-foreground">{stats?.subscribers?.active}</div>
+            <p className="text-xs text-muted-foreground mt-1">Currently subscribed members</p>
           </CardContent>
         </Card>
 
-        <Card className="border border-red-100 shadow-md bg-white hover:shadow-lg transition-shadow">
+        <Card className="border border-sell/30 shadow-md bg-white hover:shadow-lg transition-shadow">
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Churn Rate</CardTitle>
-            <AlertCircle className="w-5 h-5 text-red-400" />
+            <CardTitle className="text-sm font-semibold text-subtle uppercase tracking-wider">Churn Rate</CardTitle>
+            <AlertCircle className="w-5 h-5 text-sell" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-red-600">{stats?.subscribers?.churnRate}%</div>
-            <p className="text-xs text-gray-400 mt-1">Cancellation rate this month</p>
+            <div className="text-3xl font-bold text-sell-muted-foreground">{stats?.subscribers?.churnRate}%</div>
+            <p className="text-xs text-muted-foreground mt-1">Cancellation rate this month</p>
           </CardContent>
         </Card>
 
-        <Card className="border border-blue-100 shadow-md bg-white hover:shadow-lg transition-shadow">
+        <Card className="border border-protocall-premium-light shadow-md bg-white hover:shadow-lg transition-shadow">
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Failed Payments</CardTitle>
+            <CardTitle className="text-sm font-semibold text-subtle uppercase tracking-wider">Failed Payments</CardTitle>
             <Badge variant="destructive">{stats?.issues?.failedPayments || 0}</Badge>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-gray-900">{stats?.issues?.failedPayments || 0}</div>
-            <p className="text-xs text-gray-400 mt-1">Transactions affecting revenue</p>
+            <div className="text-3xl font-bold text-foreground">{stats?.issues?.failedPayments || 0}</div>
+            <p className="text-xs text-muted-foreground mt-1">Transactions affecting revenue</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Coupons Table */}
       <Card className="border-0 shadow-lg bg-white overflow-hidden">
-        <CardHeader className="bg-gray-50 border-b border-gray-100">
-          <CardTitle className="text-xl font-bold text-gray-800 flex items-center gap-2">
-            <span className="p-2 bg-yellow-100 rounded-lg text-yellow-600"><Loader2 className="w-5 h-5" /></span>
+        <CardHeader className="bg-surface-2 border-b border-divider">
+          <CardTitle className="text-xl font-bold text-foreground flex items-center gap-2">
+            <span className="p-2 bg-hold-muted rounded-lg text-hold-muted-foreground"><Loader2 className="w-5 h-5" /></span>
             Top Performing Coupons
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow className="hover:bg-gray-50 border-gray-100">
-                <TableHead className="py-4 pl-6 font-semibold text-gray-600">Coupon Code</TableHead>
-                <TableHead className="py-4 font-semibold text-gray-600">Usage Count</TableHead>
-                <TableHead className="text-right py-4 pr-6 font-semibold text-gray-600">Revenue Generated</TableHead>
+              <TableRow className="hover:bg-surface-2 border-divider">
+                <TableHead className="py-4 pl-6 font-semibold text-subtle">Coupon Code</TableHead>
+                <TableHead className="py-4 font-semibold text-subtle">Usage Count</TableHead>
+                <TableHead className="text-right py-4 pr-6 font-semibold text-subtle">Revenue Generated</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {stats?.charts?.coupons?.map((coupon, index) => (
-                <TableRow key={coupon.coupon_used} className="hover:bg-gray-50/50 transition-colors border-gray-100">
-                  <TableCell className="font-semibold text-indigo-600 pl-6 border-l-4 border-l-transparent hover:border-l-indigo-500 py-4">
+                <TableRow key={coupon.coupon_used} className="hover:bg-surface-2/50 transition-colors border-divider">
+                  <TableCell className="font-semibold text-protocall-blue pl-6 border-l-4 border-l-transparent hover:border-l-indigo-500 py-4">
                     <div className="flex items-center gap-2">
-                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-50 text-indigo-600 text-xs flex items-center justify-center font-bold">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-premium-muted text-protocall-blue text-xs flex items-center justify-center font-bold">
                         {index + 1}
                       </span>
                       {coupon.coupon_used}
                     </div>
                   </TableCell>
                   <TableCell className="py-4">
-                    <Badge variant="secondary" className="bg-gray-100 text-gray-700">
+                    <Badge variant="secondary" className="bg-surface-2 text-subtle">
                       {coupon.usage_count} uses
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right font-bold text-gray-900 pr-6 py-4">
+                  <TableCell className="text-right font-bold text-foreground pr-6 py-4">
                     ₹{parseFloat(coupon.total_revenue).toLocaleString()}
                   </TableCell>
                 </TableRow>
               ))}
               {(!stats?.charts?.coupons || stats.charts.coupons.length === 0) && (
                 <TableRow>
-                  <TableCell colSpan={3} className="text-center py-8 text-gray-400">
+                  <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
                     No coupon usage data available yet.
                   </TableCell>
                 </TableRow>

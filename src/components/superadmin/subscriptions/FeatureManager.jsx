@@ -160,9 +160,9 @@ export default function FeatureManager({ permissions }) {
 
   const getTierColor = (tier) => {
     switch (tier) {
-      case 'vip': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'premium': return 'bg-purple-100 text-purple-800 border-purple-200';
-      default: return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'vip': return 'bg-hold-muted text-hold-muted-foreground border-hold/30';
+      case 'premium': return 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light';
+      default: return 'bg-premium-muted text-protocall-blue border-protocall-premium-light';
     }
   };
 
@@ -173,7 +173,7 @@ export default function FeatureManager({ permissions }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
       </div>
     );
   }
@@ -190,12 +190,12 @@ export default function FeatureManager({ permissions }) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Feature Management</h2>
-          <p className="text-sm text-gray-600 mt-1">
+          <h2 className="text-2xl font-bold text-foreground">Feature Management</h2>
+          <p className="text-sm text-subtle mt-1">
             Create and manage features that appear in subscription plan editors
           </p>
         </div>
-        <Button onClick={handleCreate} className="bg-blue-600 hover:bg-blue-700">
+        <Button onClick={handleCreate} className="bg-protocall-blue hover:bg-protocall-blue">
           <Plus className="w-4 h-4 mr-2" />
           Add New Feature
         </Button>
@@ -203,28 +203,28 @@ export default function FeatureManager({ permissions }) {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+        <Card className="bg-surface-2 border-protocall-premium-light">
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-blue-900">{features.length}</div>
-            <div className="text-sm text-blue-700">Total Features</div>
+            <div className="text-2xl font-bold text-protocall-blue">{features.length}</div>
+            <div className="text-sm text-protocall-blue">Total Features</div>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-blue-50 to-cyan-100 border-blue-200">
+        <Card className="bg-surface-2 border-protocall-premium-light">
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-blue-900">{featuresByTier.basic.length}</div>
-            <div className="text-sm text-blue-700">Basic Features</div>
+            <div className="text-2xl font-bold text-protocall-blue">{featuresByTier.basic.length}</div>
+            <div className="text-sm text-protocall-blue">Basic Features</div>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-purple-50 to-pink-100 border-purple-200">
+        <Card className="bg-surface-2 border-protocall-premium-light">
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-purple-900">{featuresByTier.premium.length}</div>
-            <div className="text-sm text-purple-700">Premium Features</div>
+            <div className="text-2xl font-bold text-protocall-premium-text">{featuresByTier.premium.length}</div>
+            <div className="text-sm text-protocall-premium-text">Premium Features</div>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-yellow-50 to-orange-100 border-yellow-200">
+        <Card className="bg-gradient-to-br from-surface-2 to-hold-muted border-hold/30">
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-yellow-900">{featuresByTier.vip.length}</div>
-            <div className="text-sm text-yellow-700">VIP Features</div>
+            <div className="text-2xl font-bold text-hold-muted-foreground">{featuresByTier.vip.length}</div>
+            <div className="text-sm text-hold-muted-foreground">VIP Features</div>
           </CardContent>
         </Card>
       </div>
@@ -232,26 +232,26 @@ export default function FeatureManager({ permissions }) {
       {/* Feature List by Tier */}
       <div className="space-y-6">
         {/* Basic Features */}
-        <Card className="bg-blue-50 border-2 border-blue-200">
-          <CardHeader className="bg-blue-100 border-b border-blue-200">
-            <CardTitle className="flex items-center gap-2 text-blue-900">
+        <Card className="bg-premium-muted border-2 border-protocall-premium-light">
+          <CardHeader className="bg-premium-muted border-b border-protocall-premium-light">
+            <CardTitle className="flex items-center gap-2 text-protocall-blue">
               <Shield className="w-5 h-5" />
               Basic Tier Features ({featuresByTier.basic.length})
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
             {featuresByTier.basic.length === 0 ? (
-              <p className="text-sm text-gray-500 italic">No basic features yet</p>
+              <p className="text-sm text-muted-foreground italic">No basic features yet</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {featuresByTier.basic.map(feature => (
-                  <div key={feature.id} className="p-4 bg-white rounded-lg border border-blue-200 hover:shadow-md transition-shadow">
+                  <div key={feature.id} className="p-4 bg-white rounded-lg border border-protocall-premium-light hover:shadow-md transition-shadow">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900">{feature.feature_name}</h4>
-                        <p className="text-xs text-gray-500 mt-1 font-mono">{feature.feature_key}</p>
+                        <h4 className="font-semibold text-foreground">{feature.feature_name}</h4>
+                        <p className="text-xs text-muted-foreground mt-1 font-mono">{feature.feature_key}</p>
                         {feature.description && (
-                          <p className="text-sm text-gray-600 mt-2">{feature.description}</p>
+                          <p className="text-sm text-subtle mt-2">{feature.description}</p>
                         )}
                       </div>
                       <div className="flex items-center gap-2 ml-4">
@@ -259,7 +259,7 @@ export default function FeatureManager({ permissions }) {
                           size="sm"
                           variant="ghost"
                           onClick={() => handleEdit(feature)}
-                          className="hover:bg-blue-100"
+                          className="hover:bg-premium-muted"
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
@@ -267,7 +267,7 @@ export default function FeatureManager({ permissions }) {
                           size="sm"
                           variant="ghost"
                           onClick={() => handleDelete(feature)}
-                          className="hover:bg-red-100 text-red-600"
+                          className="hover:bg-sell-muted text-sell-muted-foreground"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -281,26 +281,26 @@ export default function FeatureManager({ permissions }) {
         </Card>
 
         {/* Premium Features */}
-        <Card className="bg-purple-50 border-2 border-purple-200">
-          <CardHeader className="bg-purple-100 border-b border-purple-200">
-            <CardTitle className="flex items-center gap-2 text-purple-900">
+        <Card className="bg-premium-muted border-2 border-protocall-premium-light">
+          <CardHeader className="bg-premium-muted border-b border-protocall-premium-light">
+            <CardTitle className="flex items-center gap-2 text-protocall-premium-text">
               <Sparkles className="w-5 h-5" />
               Premium Tier Features ({featuresByTier.premium.length})
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
             {featuresByTier.premium.length === 0 ? (
-              <p className="text-sm text-gray-500 italic">No premium features yet</p>
+              <p className="text-sm text-muted-foreground italic">No premium features yet</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {featuresByTier.premium.map(feature => (
-                  <div key={feature.id} className="p-4 bg-white rounded-lg border border-purple-200 hover:shadow-md transition-shadow">
+                  <div key={feature.id} className="p-4 bg-white rounded-lg border border-protocall-premium-light hover:shadow-md transition-shadow">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900">{feature.feature_name}</h4>
-                        <p className="text-xs text-gray-500 mt-1 font-mono">{feature.feature_key}</p>
+                        <h4 className="font-semibold text-foreground">{feature.feature_name}</h4>
+                        <p className="text-xs text-muted-foreground mt-1 font-mono">{feature.feature_key}</p>
                         {feature.description && (
-                          <p className="text-sm text-gray-600 mt-2">{feature.description}</p>
+                          <p className="text-sm text-subtle mt-2">{feature.description}</p>
                         )}
                       </div>
                       <div className="flex items-center gap-2 ml-4">
@@ -308,7 +308,7 @@ export default function FeatureManager({ permissions }) {
                           size="sm"
                           variant="ghost"
                           onClick={() => handleEdit(feature)}
-                          className="hover:bg-purple-100"
+                          className="hover:bg-premium-muted"
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
@@ -316,7 +316,7 @@ export default function FeatureManager({ permissions }) {
                           size="sm"
                           variant="ghost"
                           onClick={() => handleDelete(feature)}
-                          className="hover:bg-red-100 text-red-600"
+                          className="hover:bg-sell-muted text-sell-muted-foreground"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -330,26 +330,26 @@ export default function FeatureManager({ permissions }) {
         </Card>
 
         {/* VIP Features */}
-        <Card className="bg-yellow-50 border-2 border-yellow-200">
-          <CardHeader className="bg-yellow-100 border-b border-yellow-200">
-            <CardTitle className="flex items-center gap-2 text-yellow-900">
+        <Card className="bg-hold-muted border-2 border-hold/30">
+          <CardHeader className="bg-hold-muted border-b border-hold/30">
+            <CardTitle className="flex items-center gap-2 text-hold-muted-foreground">
               <Crown className="w-5 h-5" />
               VIP Tier Features ({featuresByTier.vip.length})
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
             {featuresByTier.vip.length === 0 ? (
-              <p className="text-sm text-gray-500 italic">No VIP features yet</p>
+              <p className="text-sm text-muted-foreground italic">No VIP features yet</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {featuresByTier.vip.map(feature => (
-                  <div key={feature.id} className="p-4 bg-white rounded-lg border border-yellow-200 hover:shadow-md transition-shadow">
+                  <div key={feature.id} className="p-4 bg-white rounded-lg border border-hold/30 hover:shadow-md transition-shadow">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900">{feature.feature_name}</h4>
-                        <p className="text-xs text-gray-500 mt-1 font-mono">{feature.feature_key}</p>
+                        <h4 className="font-semibold text-foreground">{feature.feature_name}</h4>
+                        <p className="text-xs text-muted-foreground mt-1 font-mono">{feature.feature_key}</p>
                         {feature.description && (
-                          <p className="text-sm text-gray-600 mt-2">{feature.description}</p>
+                          <p className="text-sm text-subtle mt-2">{feature.description}</p>
                         )}
                       </div>
                       <div className="flex items-center gap-2 ml-4">
@@ -357,7 +357,7 @@ export default function FeatureManager({ permissions }) {
                           size="sm"
                           variant="ghost"
                           onClick={() => handleEdit(feature)}
-                          className="hover:bg-yellow-100"
+                          className="hover:bg-hold-muted"
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
@@ -365,7 +365,7 @@ export default function FeatureManager({ permissions }) {
                           size="sm"
                           variant="ghost"
                           onClick={() => handleDelete(feature)}
-                          className="hover:bg-red-100 text-red-600"
+                          className="hover:bg-sell-muted text-sell-muted-foreground"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -398,7 +398,7 @@ export default function FeatureManager({ permissions }) {
             <div>
               <Label htmlFor="feature-key">
                 Feature Key * 
-                <span className="text-xs text-gray-500 ml-2">(lowercase, underscores only)</span>
+                <span className="text-xs text-muted-foreground ml-2">(lowercase, underscores only)</span>
               </Label>
               <Input
                 id="feature-key"
@@ -409,7 +409,7 @@ export default function FeatureManager({ permissions }) {
                 className="font-mono"
               />
               {!editingFeature && (
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   This is the unique identifier used in code. Cannot be changed after creation.
                 </p>
               )}
@@ -466,7 +466,7 @@ export default function FeatureManager({ permissions }) {
             <Button
               onClick={handleSave}
               disabled={isSaving || !formData.feature_key || !formData.feature_name}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-protocall-blue hover:bg-protocall-blue"
             >
               {isSaving ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />

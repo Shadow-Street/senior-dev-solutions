@@ -23,18 +23,18 @@ export default function TradingLimitsValidator({ riskScore, pledgeAmount }) {
   }
 
   return (
-    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+    <div className="bg-hold-muted border border-hold/30 rounded-lg p-4 mb-4">
       <div className="flex items-start gap-3">
-        <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />
+        <AlertTriangle className="w-5 h-5 text-hold-muted-foreground mt-0.5" />
         <div className="flex-1">
-          <h4 className="font-semibold text-yellow-900 text-sm mb-1">
+          <h4 className="font-semibold text-hold-muted-foreground text-sm mb-1">
             Above Recommended Limit
           </h4>
-          <p className="text-xs text-yellow-800 mb-2">
+          <p className="text-xs text-hold-muted-foreground mb-2">
             Your pledge amount of <strong>₹{pledgeAmount.toLocaleString()}</strong> exceeds the recommended limit 
             of <strong>₹{limit.toLocaleString()}</strong> for your risk profile ({level}).
           </p>
-          <div className="flex items-center gap-2 text-xs text-yellow-700">
+          <div className="flex items-center gap-2 text-xs text-hold-muted-foreground">
             <Info className="w-4 h-4" />
             <span>This is a recommendation only. You may proceed if you wish.</span>
           </div>

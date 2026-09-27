@@ -121,11 +121,11 @@ export default function NotificationBell({ user }) {
     <div className="relative" ref={panelRef}>
       <button
         onClick={() => setShowPanel(!showPanel)}
-        className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors"
+        className="relative p-2 hover:bg-surface-2 rounded-lg transition-colors"
       >
-        <Bell className="w-6 h-6 text-slate-700" />
+        <Bell className="w-6 h-6 text-subtle" />
         {unreadCount > 0 && (
-          <Badge className="absolute -top-1 -right-1 h-5 min-w-[20px] flex items-center justify-center bg-red-500 text-white text-xs px-1">
+          <Badge className="absolute -top-1 -right-1 h-5 min-w-[20px] flex items-center justify-center bg-protocall-sell-text text-white text-xs px-1">
             {unreadCount}
           </Badge>
         )}
@@ -133,20 +133,20 @@ export default function NotificationBell({ user }) {
 
       {showPanel && (
         <Card className="absolute right-0 mt-2 w-96 max-h-[600px] shadow-2xl border-0 z-50">
-          <CardHeader className="border-b border-slate-200 pb-3">
+          <CardHeader className="border-b border-border pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Bell className="w-5 h-5 text-blue-600" />
+                <Bell className="w-5 h-5 text-protocall-blue" />
                 Notifications
                 {unreadCount > 0 && (
-                  <Badge className="bg-red-100 text-red-700">{unreadCount} new</Badge>
+                  <Badge className="bg-sell-muted text-sell-muted-foreground">{unreadCount} new</Badge>
                 )}
               </CardTitle>
               <button
                 onClick={() => setShowPanel(false)}
-                className="p-1 hover:bg-slate-100 rounded transition-colors"
+                className="p-1 hover:bg-surface-2 rounded transition-colors"
               >
-                <X className="w-5 h-5 text-slate-500" />
+                <X className="w-5 h-5 text-muted-foreground" />
               </button>
             </div>
           </CardHeader>
@@ -154,22 +154,22 @@ export default function NotificationBell({ user }) {
           <CardContent className="p-0">
             {isLoading ? (
               <div className="flex items-center justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
               </div>
             ) : notifications.length === 0 ? (
-              <div className="py-12 text-center text-slate-500">
-                <Bell className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+              <div className="py-12 text-center text-muted-foreground">
+                <Bell className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
                 <p className="text-sm">No notifications yet</p>
               </div>
             ) : (
               <>
                 {unreadCount > 0 && (
-                  <div className="p-3 border-b border-slate-100 bg-slate-50">
+                  <div className="p-3 border-b border-divider bg-surface-2">
                     <Button
                       onClick={handleMarkAllAsRead}
                       variant="ghost"
                       size="sm"
-                      className="w-full text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                      className="w-full text-protocall-blue hover:text-protocall-blue hover:bg-premium-muted"
                     >
                       <Check className="w-4 h-4 mr-2" />
                       Mark all as read
@@ -181,8 +181,8 @@ export default function NotificationBell({ user }) {
                   {notifications.map((notification) => (
                     <div
                       key={notification.id}
-                      className={`p-4 border-b border-slate-100 hover:bg-slate-50 transition-colors ${
-                        notification.status === 'unread' ? 'bg-blue-50' : ''
+                      className={`p-4 border-b border-divider hover:bg-surface-2 transition-colors ${
+                        notification.status === 'unread' ? 'bg-premium-muted' : ''
                       }`}
                     >
                       <div className="flex items-start gap-3">
@@ -190,14 +190,14 @@ export default function NotificationBell({ user }) {
                         
                         <div className="flex-1 min-w-0">
                           {notification.title && (
-                            <p className="font-semibold text-slate-900 text-sm mb-1">
+                            <p className="font-semibold text-foreground text-sm mb-1">
                               {notification.title}
                             </p>
                           )}
-                          <p className="text-sm text-slate-700 mb-2">
+                          <p className="text-sm text-subtle mb-2">
                             {notification.message}
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-muted-foreground">
                             {new Date(notification.created_date).toLocaleString('en-IN', {
                               day: 'numeric',
                               month: 'short',
@@ -212,18 +212,18 @@ export default function NotificationBell({ user }) {
                           {notification.status === 'unread' && (
                             <button
                               onClick={() => handleMarkAsRead(notification.id)}
-                              className="p-1 hover:bg-slate-200 rounded transition-colors"
+                              className="p-1 hover:bg-border rounded transition-colors"
                               title="Mark as read"
                             >
-                              <Check className="w-4 h-4 text-green-600" />
+                              <Check className="w-4 h-4 text-buy-muted-foreground" />
                             </button>
                           )}
                           <button
                             onClick={() => handleDeleteNotification(notification.id)}
-                            className="p-1 hover:bg-slate-200 rounded transition-colors"
+                            className="p-1 hover:bg-border rounded transition-colors"
                             title="Delete"
                           >
-                            <X className="w-4 h-4 text-red-600" />
+                            <X className="w-4 h-4 text-sell-muted-foreground" />
                           </button>
                         </div>
                       </div>

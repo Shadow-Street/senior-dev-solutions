@@ -108,35 +108,35 @@ export default function QRCheckInSystem({ event, tickets, onUpdate }) {
     <div className="space-y-6">
       {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white">
+        <Card className="bg-buy-soft text-buy-foreground">
           <CardContent className="p-4">
             <CheckCircle className="w-8 h-8 mb-2 text-white/80" />
             <p className="text-2xl font-bold">{checkedInCount}</p>
-            <p className="text-sm text-green-100">Checked In</p>
+            <p className="text-sm text-buy-muted-foreground">Checked In</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+        <Card className="bg-gradient-to-br from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <Users className="w-8 h-8 mb-2 text-white/80" />
             <p className="text-2xl font-bold">{totalTickets}</p>
-            <p className="text-sm text-blue-100">Total Tickets</p>
+            <p className="text-sm text-protocall-blue">Total Tickets</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+        <Card className="bg-gradient-to-br from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <Clock className="w-8 h-8 mb-2 text-white/80" />
             <p className="text-2xl font-bold">{totalTickets - checkedInCount}</p>
-            <p className="text-sm text-purple-100">Pending</p>
+            <p className="text-sm text-protocall-premium-text">Pending</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white">
+        <Card className="bg-hold text-hold-foreground">
           <CardContent className="p-4">
             <QrCode className="w-8 h-8 mb-2 text-white/80" />
             <p className="text-2xl font-bold">{Math.round(checkInRate)}%</p>
-            <p className="text-sm text-orange-100">Check-In Rate</p>
+            <p className="text-sm text-hold-muted-foreground">Check-In Rate</p>
           </CardContent>
         </Card>
       </div>
@@ -144,7 +144,7 @@ export default function QRCheckInSystem({ event, tickets, onUpdate }) {
       {/* Actions */}
       <div className="flex gap-4">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             placeholder="Search by name, email, or ticket ID..."
             value={searchTerm}
@@ -154,7 +154,7 @@ export default function QRCheckInSystem({ event, tickets, onUpdate }) {
         </div>
         <Button 
           onClick={handleQRScan}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+          className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
           disabled={isScanning}
         >
           <Scan className="w-4 h-4 mr-2" />
@@ -173,26 +173,26 @@ export default function QRCheckInSystem({ event, tickets, onUpdate }) {
               const checkedIn = checkIns.find(c => c.ticket_id === ticket.id);
               
               return (
-                <div key={ticket.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                <div key={ticket.id} className="flex items-center justify-between p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
                   <div className="flex items-center gap-4 flex-1">
-                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                      <Users className="w-6 h-6 text-purple-600" />
+                    <div className="w-12 h-12 bg-premium-muted rounded-full flex items-center justify-center">
+                      <Users className="w-6 h-6 text-protocall-premium-text" />
                     </div>
                     <div className="flex-1">
-                      <p className="font-semibold text-slate-900">{ticket.user_name || 'Guest'}</p>
-                      <p className="text-sm text-slate-600">{ticket.user_email}</p>
-                      <p className="text-xs text-slate-500 mt-1">Ticket ID: {ticket.id.substring(0, 8)}...</p>
+                      <p className="font-semibold text-foreground">{ticket.user_name || 'Guest'}</p>
+                      <p className="text-sm text-subtle">{ticket.user_email}</p>
+                      <p className="text-xs text-muted-foreground mt-1">Ticket ID: {ticket.id.substring(0, 8)}...</p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
                     {checkedIn ? (
                       <div className="text-right">
-                        <Badge className="bg-green-100 text-green-800 border-0 mb-1">
+                        <Badge className="bg-buy-muted text-buy-muted-foreground border-0 mb-1">
                           <CheckCircle className="w-3 h-3 mr-1" />
                           Checked In
                         </Badge>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-muted-foreground">
                           {format(new Date(checkedIn.checked_in_at), 'HH:mm')}
                         </p>
                       </div>
@@ -200,7 +200,7 @@ export default function QRCheckInSystem({ event, tickets, onUpdate }) {
                       <Button
                         size="sm"
                         onClick={() => handleManualCheckIn(ticket)}
-                        className="bg-blue-600 hover:bg-blue-700"
+                        className="bg-protocall-blue hover:bg-protocall-blue"
                       >
                         <CheckCircle className="w-4 h-4 mr-1" />
                         Check In

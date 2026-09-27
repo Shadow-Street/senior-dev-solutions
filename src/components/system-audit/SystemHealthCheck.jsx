@@ -59,19 +59,19 @@ export default function SystemHealthCheck() {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'healthy': return <CheckCircle className="w-5 h-5 text-green-600" />;
-      case 'warning': return <AlertTriangle className="w-5 h-5 text-yellow-600" />;
-      case 'error': return <XCircle className="w-5 h-5 text-red-600" />;
-      default: return <Clock className="w-5 h-5 text-gray-400 animate-spin" />;
+      case 'healthy': return <CheckCircle className="w-5 h-5 text-buy-muted-foreground" />;
+      case 'warning': return <AlertTriangle className="w-5 h-5 text-hold-muted-foreground" />;
+      case 'error': return <XCircle className="w-5 h-5 text-sell-muted-foreground" />;
+      default: return <Clock className="w-5 h-5 text-muted-foreground animate-spin" />;
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'healthy': return 'bg-green-50 border-green-200';
-      case 'warning': return 'bg-yellow-50 border-yellow-200';
-      case 'error': return 'bg-red-50 border-red-200';
-      default: return 'bg-gray-50 border-gray-200';
+      case 'healthy': return 'bg-buy-muted border-buy/30';
+      case 'warning': return 'bg-hold-muted border-hold/30';
+      case 'error': return 'bg-sell-muted border-sell/30';
+      default: return 'bg-surface-2 border-border';
     }
   };
 
@@ -96,7 +96,7 @@ export default function SystemHealthCheck() {
                   {data.issues.length > 0 && (
                     <div className="space-y-1">
                       {data.issues.map((issue, idx) => (
-                        <p key={idx} className="text-xs text-gray-600">• {issue}</p>
+                        <p key={idx} className="text-xs text-subtle">• {issue}</p>
                       ))}
                     </div>
                   )}

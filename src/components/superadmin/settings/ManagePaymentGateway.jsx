@@ -184,12 +184,12 @@ export default function ManagePaymentGateway() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Payment Gateway Settings</h2>
-          <p className="text-slate-600 mt-1">
+          <h2 className="text-2xl font-bold text-foreground">Payment Gateway Settings</h2>
+          <p className="text-subtle mt-1">
             Configure Razorpay and Stripe API credentials for payment processing
           </p>
         </div>
-        <Button onClick={handleSave} disabled={isSaving} className="bg-green-600 hover:bg-green-700">
+        <Button onClick={handleSave} disabled={isSaving} className="bg-buy hover:bg-buy">
           {isSaving ? 'Saving...' : (
             <>
               <Save className="w-4 h-4 mr-2" />
@@ -202,9 +202,9 @@ export default function ManagePaymentGateway() {
       {/* Test Mode Warning */}
       {(settings.razorpay_key_id.includes('test') || settings.razorpay_key_id.includes('demo') ||
         settings.stripe_publishable_key.includes('test')) && (
-        <Alert className="bg-yellow-50 border-yellow-200">
-          <AlertCircle className="h-4 w-4 text-yellow-600" />
-          <AlertDescription className="text-yellow-800">
+        <Alert className="bg-hold-muted border-hold/30">
+          <AlertCircle className="h-4 w-4 text-hold-muted-foreground" />
+          <AlertDescription className="text-hold-muted-foreground">
             <strong>Test Mode Active:</strong> You're using test/demo API keys. Payments will be simulated.
             Replace with live keys to process real payments.
           </AlertDescription>
@@ -215,7 +215,7 @@ export default function ManagePaymentGateway() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-blue-600" />
+            <Shield className="w-5 h-5 text-protocall-blue" />
             Default Payment Gateway
           </CardTitle>
         </CardHeader>
@@ -236,7 +236,7 @@ export default function ManagePaymentGateway() {
               💵 Stripe (International)
             </Button>
           </div>
-          <p className="text-sm text-slate-500 mt-3">
+          <p className="text-sm text-muted-foreground mt-3">
             This gateway will be used by default for all payments. Users can still choose at checkout if both are enabled.
           </p>
         </CardContent>
@@ -276,7 +276,7 @@ export default function ManagePaymentGateway() {
                 <AlertDescription className="text-sm">
                   <strong>Get your Razorpay API keys:</strong>
                   <br />
-                  1. Sign up at <a href="https://razorpay.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">razorpay.com</a>
+                  1. Sign up at <a href="https://razorpay.com" target="_blank" rel="noopener noreferrer" className="text-protocall-blue underline">razorpay.com</a>
                   <br />
                   2. Go to Settings → API Keys
                   <br />
@@ -345,7 +345,7 @@ export default function ManagePaymentGateway() {
                       {showSecrets.razorpay_webhook_secret ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </Button>
                   </div>
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     Used to verify webhook signatures from Razorpay
                   </p>
                 </div>
@@ -382,7 +382,7 @@ export default function ManagePaymentGateway() {
                 <AlertDescription className="text-sm">
                   <strong>Get your Stripe API keys:</strong>
                   <br />
-                  1. Sign up at <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">stripe.com</a>
+                  1. Sign up at <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" className="text-protocall-blue underline">stripe.com</a>
                   <br />
                   2. Go to Developers → API keys
                   <br />
@@ -451,7 +451,7 @@ export default function ManagePaymentGateway() {
                       {showSecrets.stripe_webhook_secret ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </Button>
                   </div>
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     Used to verify webhook events from Stripe
                   </p>
                 </div>
@@ -481,7 +481,7 @@ export default function ManagePaymentGateway() {
               onChange={(e) => handleSettingChange('refund_processing_days', e.target.value)}
               placeholder="e.g., 7"
             />
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               Number of business days for refund processing
             </p>
           </div>
@@ -490,14 +490,14 @@ export default function ManagePaymentGateway() {
             <Label htmlFor="auto_refund_on_cancellation">Auto-Refund on Event Cancellation</Label>
             <select
               id="auto_refund_on_cancellation"
-              className="w-full border border-slate-300 rounded-lg px-3 py-2"
+              className="w-full border border-border rounded-lg px-3 py-2"
               value={settings.auto_refund_on_cancellation || 'false'}
               onChange={(e) => handleSettingChange('auto_refund_on_cancellation', e.target.value)}
             >
               <option value="true">Enabled</option>
               <option value="false">Disabled (Manual Approval Required)</option>
             </select>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               Automatically process refunds when events are cancelled
             </p>
           </div>
@@ -506,7 +506,7 @@ export default function ManagePaymentGateway() {
             <Label htmlFor="refund_policy_text">Refund Policy Text</Label>
             <textarea
               id="refund_policy_text"
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 h-24"
+              className="w-full border border-border rounded-lg px-3 py-2 h-24"
               value={settings.refund_policy_text || ''}
               onChange={(e) => handleSettingChange('refund_policy_text', e.target.value)}
               placeholder="Enter your refund policy..."
@@ -519,7 +519,7 @@ export default function ManagePaymentGateway() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Key className="w-5 h-5 text-purple-600" />
+            <Key className="w-5 h-5 text-protocall-premium-text" />
             Quick Setup Guide
           </CardTitle>
         </CardHeader>
@@ -549,10 +549,10 @@ export default function ManagePaymentGateway() {
           </Alert>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card className="bg-blue-50 border-blue-200">
+            <Card className="bg-premium-muted border-protocall-premium-light">
               <CardContent className="p-4">
-                <h4 className="font-semibold text-blue-900 mb-2">Razorpay Benefits</h4>
-                <ul className="text-sm text-blue-800 space-y-1">
+                <h4 className="font-semibold text-protocall-blue mb-2">Razorpay Benefits</h4>
+                <ul className="text-sm text-protocall-blue space-y-1">
                   <li>✓ Best for Indian customers</li>
                   <li>✓ UPI, Cards, Net Banking, Wallets</li>
                   <li>✓ Lower transaction fees (~2%)</li>
@@ -561,10 +561,10 @@ export default function ManagePaymentGateway() {
               </CardContent>
             </Card>
 
-            <Card className="bg-purple-50 border-purple-200">
+            <Card className="bg-premium-muted border-protocall-premium-light">
               <CardContent className="p-4">
-                <h4 className="font-semibold text-purple-900 mb-2">Stripe Benefits</h4>
-                <ul className="text-sm text-purple-800 space-y-1">
+                <h4 className="font-semibold text-protocall-premium-text mb-2">Stripe Benefits</h4>
+                <ul className="text-sm text-protocall-premium-text space-y-1">
                   <li>✓ Best for international customers</li>
                   <li>✓ 135+ currencies supported</li>
                   <li>✓ Apple Pay, Google Pay</li>

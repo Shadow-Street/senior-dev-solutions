@@ -8,9 +8,9 @@ import PageFooter from '../components/footer/PageFooter';
 
 export default function Privacy() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+    <div className="min-h-screen bg-surface-2">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white py-12">
+      <div className="bg-gradient-to-r from-protocall-deep via-protocall-grape to-protocall-blue text-white py-12">
         <div className="max-w-5xl mx-auto px-6">
           <Link to={createPageUrl('Landing')}>
             <Button variant="outline" className="mb-6 bg-white/20 border-white/30 text-white hover:bg-white/30">
@@ -22,7 +22,7 @@ export default function Privacy() {
             <Lock className="w-10 h-10" />
             <h1 className="text-4xl font-bold">Privacy Policy</h1>
           </div>
-          <p className="text-blue-100 text-lg">
+          <p className="text-protocall-blue text-lg">
             Last Updated: January 1, 2025
           </p>
         </div>
@@ -31,12 +31,12 @@ export default function Privacy() {
       {/* Content */}
       <div className="max-w-5xl mx-auto px-6 py-12">
         {/* Privacy Commitment Banner */}
-        <Card className="mb-8 border-green-200 bg-green-50 p-6">
+        <Card className="mb-8 border-buy/30 bg-buy-muted p-6">
           <div className="flex items-start gap-4">
-            <Shield className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+            <Shield className="w-6 h-6 text-buy-muted-foreground flex-shrink-0 mt-1" />
             <div>
-              <h3 className="text-lg font-bold text-green-900 mb-2">Your Privacy is Our Priority</h3>
-              <p className="text-sm text-green-800 leading-relaxed">
+              <h3 className="text-lg font-bold text-buy-muted-foreground mb-2">Your Privacy is Our Priority</h3>
+              <p className="text-sm text-buy-muted-foreground leading-relaxed">
                 At Protocall, we are committed to protecting your personal information and your right to privacy. 
                 This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform.
               </p>
@@ -46,12 +46,12 @@ export default function Privacy() {
 
         <Card className="p-8 mb-8">
           {/* Table of Contents */}
-          <div className="mb-8 p-4 bg-slate-50 rounded-lg">
+          <div className="mb-8 p-4 bg-surface-2 rounded-lg">
             <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
               <FileText className="w-5 h-5" />
               Table of Contents
             </h3>
-            <ol className="space-y-1 text-sm text-blue-600">
+            <ol className="space-y-1 text-sm text-protocall-blue">
               <li><a href="#introduction" className="hover:underline">1. Introduction</a></li>
               <li><a href="#information-collected" className="hover:underline">2. Information We Collect</a></li>
               <li><a href="#how-we-use" className="hover:underline">3. How We Use Your Information</a></li>
@@ -72,11 +72,11 @@ export default function Privacy() {
 
           {/* Section 1 */}
           <section id="introduction" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               1. Introduction
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 Welcome to Protocall's Privacy Policy. This policy describes how Protocall ("we," "us," or "our") 
                 collects, uses, and shares your personal information when you use our website, mobile applications, 
@@ -86,7 +86,7 @@ export default function Privacy() {
                 By accessing or using the Platform, you acknowledge that you have read and understood this Privacy Policy 
                 and consent to the collection, use, and disclosure of your personal information as described herein.
               </p>
-              <p className="font-semibold text-slate-900">
+              <p className="font-semibold text-foreground">
                 If you do not agree with our policies and practices, please do not use our Platform.
               </p>
             </div>
@@ -94,11 +94,11 @@ export default function Privacy() {
 
           {/* Section 2 */}
           <section id="information-collected" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               2. Information We Collect
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>We collect several types of information from and about users of our Platform:</p>
 
               <h3 className="font-bold text-lg mt-4">2.1 Information You Provide to Us</h3>
@@ -170,11 +170,11 @@ export default function Privacy() {
 
           {/* Section 3 */}
           <section id="how-we-use" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               3. How We Use Your Information
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>We use the information we collect for the following purposes:</p>
 
               <h3 className="font-bold text-lg mt-4">3.1 To Provide and Maintain Our Services</h3>
@@ -228,11 +228,11 @@ export default function Privacy() {
 
           {/* Section 4 */}
           <section id="sharing" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               4. Sharing and Disclosure of Information
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>We may share your information in the following circumstances:</p>
 
               <h3 className="font-bold text-lg mt-4">4.1 Service Providers</h3>
@@ -287,11 +287,11 @@ export default function Privacy() {
 
           {/* Section 5 */}
           <section id="data-security" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               5. Data Security
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 We implement industry-standard security measures to protect your personal information from 
                 unauthorized access, disclosure, alteration, and destruction.
@@ -324,8 +324,8 @@ export default function Privacy() {
                 <li>Notifying us immediately of any unauthorized access</li>
               </ul>
 
-              <Card className="bg-orange-50 border-orange-200 p-4 mt-4">
-                <p className="text-sm text-orange-800">
+              <Card className="bg-hold-muted border-hold/30 p-4 mt-4">
+                <p className="text-sm text-hold-muted-foreground">
                   <strong>Important:</strong> No method of transmission over the internet or electronic storage 
                   is 100% secure. While we strive to protect your information, we cannot guarantee absolute security.
                 </p>
@@ -335,11 +335,11 @@ export default function Privacy() {
 
           {/* Section 6 */}
           <section id="data-retention" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               6. Data Retention
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 We retain your personal information for as long as necessary to fulfill the purposes outlined in 
                 this Privacy Policy, unless a longer retention period is required or permitted by law.
@@ -365,11 +365,11 @@ export default function Privacy() {
 
           {/* Section 7 */}
           <section id="your-rights" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               7. Your Privacy Rights
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>You have the following rights regarding your personal information:</p>
 
               <h3 className="font-bold text-lg mt-4">7.1 Right to Access</h3>
@@ -420,11 +420,11 @@ export default function Privacy() {
 
           {/* Section 8 */}
           <section id="cookies" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               8. Cookies and Tracking Technologies
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 We use cookies and similar tracking technologies to collect information about your browsing 
                 activities and to personalize your experience.
@@ -451,17 +451,17 @@ export default function Privacy() {
                 You can control cookies through your browser settings. However, disabling cookies may affect 
                 the functionality of the Platform.
               </p>
-              <p>For more information, see our <Link to={createPageUrl('Cookies')} className="text-blue-600 hover:underline">Cookies Policy</Link>.</p>
+              <p>For more information, see our <Link to={createPageUrl('Cookies')} className="text-protocall-blue hover:underline">Cookies Policy</Link>.</p>
             </div>
           </section>
 
           {/* Section 9 */}
           <section id="third-party" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               9. Third-Party Services
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 Our Platform may contain links to third-party websites, services, or applications that are not 
                 operated by us.
@@ -489,11 +489,11 @@ export default function Privacy() {
 
           {/* Section 10 */}
           <section id="international" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               10. International Data Transfers
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 Your information may be transferred to and processed in countries other than your country of 
                 residence, including India and other countries where our service providers operate.
@@ -516,11 +516,11 @@ export default function Privacy() {
 
           {/* Section 11 */}
           <section id="children" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               11. Children's Privacy
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 Our Platform is not intended for individuals under the age of 18. We do not knowingly collect 
                 personal information from children under 18.
@@ -538,11 +538,11 @@ export default function Privacy() {
 
           {/* Section 12 */}
           <section id="india-laws" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               12. Compliance with Indian Laws
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">12.1 Information Technology Act, 2000</h3>
               <p>
                 We comply with the Information Technology Act, 2000, and the Information Technology (Reasonable 
@@ -577,11 +577,11 @@ export default function Privacy() {
 
           {/* Section 13 */}
           <section id="financial-data" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               13. Financial and Trading Data
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">13.1 Portfolio Data</h3>
               <p>
                 Investment portfolio data you enter into our Platform is stored securely and used solely for 
@@ -617,11 +617,11 @@ export default function Privacy() {
 
           {/* Section 14 */}
           <section id="changes" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               14. Changes to This Privacy Policy
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 We may update this Privacy Policy from time to time to reflect changes in our practices, 
                 technology, legal requirements, or other factors.
@@ -653,17 +653,17 @@ export default function Privacy() {
 
           {/* Section 15 */}
           <section id="contact" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               15. Contact Us
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 If you have questions, concerns, or complaints about this Privacy Policy or our data practices, 
                 please contact us:
               </p>
 
-              <Card className="bg-blue-50 p-6 mt-4">
+              <Card className="bg-premium-muted p-6 mt-4">
                 <h4 className="font-bold mb-4 text-lg">Privacy & Data Protection</h4>
                 
                 <div className="space-y-4 text-sm">
@@ -700,14 +700,14 @@ export default function Privacy() {
                 </div>
               </Card>
 
-              <p className="text-sm text-slate-600 mt-4">
+              <p className="text-sm text-subtle mt-4">
                 For urgent security concerns or to report a data breach, please contact security@protocall.in immediately.
               </p>
             </div>
           </section>
 
           {/* Acknowledgment */}
-          <Card className="bg-gradient-to-r from-green-600 to-emerald-600 text-white p-6 mt-8">
+          <Card className="bg-buy-soft text-buy-foreground p-6 mt-8">
             <div className="flex items-start gap-4">
               <Shield className="w-8 h-8 flex-shrink-0" />
               <div>
@@ -717,7 +717,7 @@ export default function Privacy() {
                   with care and transparency. We continuously review and enhance our security measures to keep your 
                   data safe.
                 </p>
-                <p className="text-sm text-green-100">
+                <p className="text-sm text-buy-muted-foreground">
                   BY USING PROTOCALL, YOU ACKNOWLEDGE THAT YOU HAVE READ AND UNDERSTOOD THIS PRIVACY POLICY AND 
                   CONSENT TO THE COLLECTION, USE, AND DISCLOSURE OF YOUR INFORMATION AS DESCRIBED HEREIN.
                 </p>
@@ -730,23 +730,23 @@ export default function Privacy() {
         <div className="grid md:grid-cols-3 gap-4 mt-8">
           <Link to={createPageUrl('Terms')}>
             <Card className="p-6 hover:shadow-lg transition-all cursor-pointer h-full">
-              <FileText className="w-8 h-8 text-blue-600 mb-3" />
+              <FileText className="w-8 h-8 text-protocall-blue mb-3" />
               <h3 className="font-bold mb-2">Terms of Service</h3>
-              <p className="text-sm text-slate-600">Review our terms and conditions</p>
+              <p className="text-sm text-subtle">Review our terms and conditions</p>
             </Card>
           </Link>
           <Link to={createPageUrl('Cookies')}>
             <Card className="p-6 hover:shadow-lg transition-all cursor-pointer h-full">
-              <Eye className="w-8 h-8 text-purple-600 mb-3" />
+              <Eye className="w-8 h-8 text-protocall-premium-text mb-3" />
               <h3 className="font-bold mb-2">Cookies Policy</h3>
-              <p className="text-sm text-slate-600">Learn about our use of cookies</p>
+              <p className="text-sm text-subtle">Learn about our use of cookies</p>
             </Card>
           </Link>
           <Link to={createPageUrl('Feedback')}>
             <Card className="p-6 hover:shadow-lg transition-all cursor-pointer h-full">
-              <Database className="w-8 h-8 text-green-600 mb-3" />
+              <Database className="w-8 h-8 text-buy-muted-foreground mb-3" />
               <h3 className="font-bold mb-2">Contact Support</h3>
-              <p className="text-sm text-slate-600">Get help with privacy concerns</p>
+              <p className="text-sm text-subtle">Get help with privacy concerns</p>
             </Card>
           </Link>
         </div>

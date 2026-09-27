@@ -8,9 +8,9 @@ import PageFooter from '../components/footer/PageFooter';
 
 export default function Terms() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+    <div className="min-h-screen bg-surface-2">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white py-12">
+      <div className="bg-gradient-to-r from-protocall-deep via-protocall-grape to-protocall-blue text-white py-12">
         <div className="max-w-5xl mx-auto px-6">
           <Link to={createPageUrl('Landing')}>
             <Button variant="outline" className="mb-6 bg-white/20 border-white/30 text-white hover:bg-white/30">
@@ -22,7 +22,7 @@ export default function Terms() {
             <Scale className="w-10 h-10" />
             <h1 className="text-4xl font-bold">Terms of Service</h1>
           </div>
-          <p className="text-blue-100 text-lg">
+          <p className="text-protocall-blue text-lg">
             Last Updated: January 1, 2025
           </p>
         </div>
@@ -31,12 +31,12 @@ export default function Terms() {
       {/* Content */}
       <div className="max-w-5xl mx-auto px-6 py-12">
         {/* Important Notice Banner */}
-        <Card className="mb-8 border-orange-200 bg-orange-50 p-6">
+        <Card className="mb-8 border-hold/30 bg-hold-muted p-6">
           <div className="flex items-start gap-4">
-            <AlertTriangle className="w-6 h-6 text-orange-600 flex-shrink-0 mt-1" />
+            <AlertTriangle className="w-6 h-6 text-hold-muted-foreground flex-shrink-0 mt-1" />
             <div>
-              <h3 className="text-lg font-bold text-orange-900 mb-2">Important Notice</h3>
-              <p className="text-sm text-orange-800 leading-relaxed">
+              <h3 className="text-lg font-bold text-hold-muted-foreground mb-2">Important Notice</h3>
+              <p className="text-sm text-hold-muted-foreground leading-relaxed">
                 Please read these Terms of Service carefully before using Protocall. By accessing or using our platform, 
                 you agree to be bound by these terms. If you do not agree with any part of these terms, you must not use our services.
               </p>
@@ -46,12 +46,12 @@ export default function Terms() {
 
         <Card className="p-8 mb-8">
           {/* Table of Contents */}
-          <div className="mb-8 p-4 bg-slate-50 rounded-lg">
+          <div className="mb-8 p-4 bg-surface-2 rounded-lg">
             <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
               <FileText className="w-5 h-5" />
               Table of Contents
             </h3>
-            <ol className="space-y-1 text-sm text-blue-600">
+            <ol className="space-y-1 text-sm text-protocall-blue">
               <li><a href="#acceptance" className="hover:underline">1. Acceptance of Terms</a></li>
               <li><a href="#platform" className="hover:underline">2. Platform Overview</a></li>
               <li><a href="#accounts" className="hover:underline">3. User Accounts and Registration</a></li>
@@ -73,11 +73,11 @@ export default function Terms() {
 
           {/* Section 1 */}
           <section id="acceptance" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               1. Acceptance of Terms
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 Welcome to Protocall ("we," "our," or "us"). These Terms of Service ("Terms") govern your access to and use 
                 of the Protocall platform, website, mobile applications, and all related services (collectively, the "Platform").
@@ -87,7 +87,7 @@ export default function Terms() {
                 understood, and agree to be bound by these Terms, along with our Privacy Policy, Risk Disclosure Statement, 
                 and any other policies referenced herein.
               </p>
-              <p className="font-semibold text-slate-900">
+              <p className="font-semibold text-foreground">
                 If you do not agree to these Terms, you must immediately discontinue use of the Platform.
               </p>
             </div>
@@ -95,11 +95,11 @@ export default function Terms() {
 
           {/* Section 2 */}
           <section id="platform" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               2. Platform Overview
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 Protocall is India's largest retail investor community platform that provides:
               </p>
@@ -120,11 +120,11 @@ export default function Terms() {
 
           {/* Section 3 */}
           <section id="accounts" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               3. User Accounts and Registration
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">3.1 Eligibility</h3>
               <p>
                 You must be at least 18 years old and have the legal capacity to enter into contracts under Indian law 
@@ -158,11 +158,11 @@ export default function Terms() {
 
           {/* Section 4 */}
           <section id="subscription" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               4. Subscription and Payment Terms
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">4.1 Subscription Plans</h3>
               <p>Protocall offers the following subscription tiers:</p>
               <ul className="list-disc pl-6 space-y-2">
@@ -211,11 +211,11 @@ export default function Terms() {
 
           {/* Section 5 */}
           <section id="conduct" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               5. User Conduct and Responsibilities
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">5.1 Acceptable Use</h3>
               <p>You agree to use the Platform only for lawful purposes and in accordance with these Terms. You agree NOT to:</p>
               <ul className="list-disc pl-6 space-y-2">
@@ -258,17 +258,17 @@ export default function Terms() {
 
           {/* Section 6 */}
           <section id="investment" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               6. Investment and Trading Disclaimers
             </h2>
-            <div className="space-y-4 text-slate-700">
-              <Card className="bg-red-50 border-red-200 p-4">
+            <div className="space-y-4 text-subtle">
+              <Card className="bg-sell-muted border-sell/30 p-4">
                 <div className="flex items-start gap-3">
-                  <Shield className="w-6 h-6 text-red-600 flex-shrink-0" />
+                  <Shield className="w-6 h-6 text-sell-muted-foreground flex-shrink-0" />
                   <div>
-                    <p className="font-bold text-red-900 mb-2">CRITICAL INVESTMENT RISK DISCLOSURE</p>
-                    <p className="text-sm text-red-800">
+                    <p className="font-bold text-sell-muted-foreground mb-2">CRITICAL INVESTMENT RISK DISCLOSURE</p>
+                    <p className="text-sm text-sell-muted-foreground">
                       This section contains legally required disclosures about investment risks. 
                       Please read carefully before using any trading or investment features.
                     </p>
@@ -335,11 +335,11 @@ export default function Terms() {
 
           {/* Section 7 */}
           <section id="sebi" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               7. SEBI Compliance and Regulatory Information
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">7.1 Platform Registration</h3>
               <p>
                 Protocall operates as a technology platform under the applicable regulations of the Securities and 
@@ -370,11 +370,11 @@ export default function Terms() {
 
           {/* Section 8 */}
           <section id="advisors" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               8. SEBI Registered Advisors
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">8.1 Advisor Services</h3>
               <p>
                 SEBI-registered advisors on our Platform provide independent advisory services. The relationship is 
@@ -403,17 +403,17 @@ export default function Terms() {
 
           {/* Section 9 */}
           <section id="pledge" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               9. Pledge Pool Feature
             </h2>
-            <div className="space-y-4 text-slate-700">
-              <Card className="bg-orange-50 border-orange-200 p-4">
+            <div className="space-y-4 text-subtle">
+              <Card className="bg-hold-muted border-hold/30 p-4">
                 <div className="flex items-start gap-3">
-                  <AlertTriangle className="w-6 h-6 text-orange-600 flex-shrink-0" />
+                  <AlertTriangle className="w-6 h-6 text-hold-muted-foreground flex-shrink-0" />
                   <div>
-                    <p className="font-bold text-orange-900 mb-2">HIGH-RISK FEATURE</p>
-                    <p className="text-sm text-orange-800">
+                    <p className="font-bold text-hold-muted-foreground mb-2">HIGH-RISK FEATURE</p>
+                    <p className="text-sm text-hold-muted-foreground">
                       Pledge Pool involves coordinated trading and carries significant risks. 
                       Only use this feature if you fully understand the risks involved.
                     </p>
@@ -480,11 +480,11 @@ export default function Terms() {
 
           {/* Section 10 */}
           <section id="ip" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               10. Intellectual Property
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">10.1 Platform Ownership</h3>
               <p>
                 The Platform, including all content, features, functionality, software, code, design, trademarks, 
@@ -516,14 +516,14 @@ export default function Terms() {
 
           {/* Section 11 */}
           <section id="liability" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               11. Limitation of Liability
             </h2>
-            <div className="space-y-4 text-slate-700">
-              <Card className="bg-red-50 border-red-200 p-4">
-                <p className="font-bold text-red-900 mb-2">IMPORTANT LEGAL NOTICE</p>
-                <p className="text-sm text-red-800">
+            <div className="space-y-4 text-subtle">
+              <Card className="bg-sell-muted border-sell/30 p-4">
+                <p className="font-bold text-sell-muted-foreground mb-2">IMPORTANT LEGAL NOTICE</p>
+                <p className="text-sm text-sell-muted-foreground">
                   This section limits our liability. Please read carefully as it affects your legal rights.
                 </p>
               </Card>
@@ -565,11 +565,11 @@ export default function Terms() {
 
           {/* Section 12 */}
           <section id="privacy" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               12. Privacy and Data Protection
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 Your privacy is important to us. Our collection, use, and disclosure of your personal information 
                 is governed by our Privacy Policy, which is incorporated into these Terms by reference.
@@ -592,11 +592,11 @@ export default function Terms() {
 
           {/* Section 13 */}
           <section id="termination" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               13. Termination
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">13.1 Termination by You</h3>
               <p>
                 You may terminate your account at any time by contacting support@protocall.in or using the 
@@ -632,11 +632,11 @@ export default function Terms() {
 
           {/* Section 14 */}
           <section id="disputes" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               14. Dispute Resolution
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">14.1 Governing Law</h3>
               <p>
                 These Terms shall be governed by and construed in accordance with the laws of India, 
@@ -671,11 +671,11 @@ export default function Terms() {
 
           {/* Section 15 */}
           <section id="changes" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               15. Changes to Terms
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 We reserve the right to modify these Terms at any time. We will notify you of material changes by:
               </p>
@@ -697,15 +697,15 @@ export default function Terms() {
 
           {/* Section 16 */}
           <section id="contact" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               16. Contact Information
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 If you have any questions, concerns, or complaints about these Terms or the Platform, please contact us:
               </p>
-              <Card className="bg-blue-50 p-6 mt-4">
+              <Card className="bg-premium-muted p-6 mt-4">
                 <h4 className="font-bold mb-3 text-lg">Protocall Support</h4>
                 <div className="space-y-2 text-sm">
                   <p><strong>Email:</strong> support@protocall.in</p>
@@ -714,7 +714,7 @@ export default function Terms() {
                   <p><strong>Business Hours:</strong> Monday - Friday, 9:00 AM - 6:00 PM IST</p>
                 </div>
               </Card>
-              <p className="text-sm text-slate-600 mt-4">
+              <p className="text-sm text-subtle mt-4">
                 For legal notices and formal communications, please send correspondence to the address above, 
                 marked "Attention: Legal Department."
               </p>
@@ -723,11 +723,11 @@ export default function Terms() {
 
           {/* Miscellaneous */}
           <section className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               17. Miscellaneous Provisions
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">17.1 Entire Agreement</h3>
               <p>
                 These Terms, along with our Privacy Policy and other referenced policies, constitute the entire 
@@ -767,14 +767,14 @@ export default function Terms() {
           </section>
 
           {/* Acknowledgment */}
-          <Card className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 mt-8">
+          <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white p-6 mt-8">
             <h3 className="font-bold text-xl mb-3">Acknowledgment</h3>
             <p className="mb-4">
               BY USING PROTOCALL, YOU ACKNOWLEDGE THAT YOU HAVE READ, UNDERSTOOD, AND AGREE TO BE BOUND BY THESE 
               TERMS OF SERVICE. YOU ALSO ACKNOWLEDGE THAT YOU HAVE READ AND UNDERSTOOD OUR PRIVACY POLICY AND 
               RISK DISCLOSURE STATEMENT.
             </p>
-            <p className="text-sm text-blue-100">
+            <p className="text-sm text-protocall-blue">
               If you do not agree to these Terms, you must not access or use the Platform.
             </p>
           </Card>
@@ -784,23 +784,23 @@ export default function Terms() {
         <div className="grid md:grid-cols-3 gap-4 mt-8">
           <Link to={createPageUrl('Privacy')}>
             <Card className="p-6 hover:shadow-lg transition-all cursor-pointer h-full">
-              <Shield className="w-8 h-8 text-blue-600 mb-3" />
+              <Shield className="w-8 h-8 text-protocall-blue mb-3" />
               <h3 className="font-bold mb-2">Privacy Policy</h3>
-              <p className="text-sm text-slate-600">Learn how we protect your data</p>
+              <p className="text-sm text-subtle">Learn how we protect your data</p>
             </Card>
           </Link>
           <Link to={createPageUrl('RiskDisclosure')}>
             <Card className="p-6 hover:shadow-lg transition-all cursor-pointer h-full">
-              <AlertTriangle className="w-8 h-8 text-orange-600 mb-3" />
+              <AlertTriangle className="w-8 h-8 text-hold-muted-foreground mb-3" />
               <h3 className="font-bold mb-2">Risk Disclosure</h3>
-              <p className="text-sm text-slate-600">Understand investment risks</p>
+              <p className="text-sm text-subtle">Understand investment risks</p>
             </Card>
           </Link>
           <Link to={createPageUrl('Feedback')}>
             <Card className="p-6 hover:shadow-lg transition-all cursor-pointer h-full">
-              <FileText className="w-8 h-8 text-purple-600 mb-3" />
+              <FileText className="w-8 h-8 text-protocall-premium-text mb-3" />
               <h3 className="font-bold mb-2">Contact Support</h3>
-              <p className="text-sm text-slate-600">Get help with any questions</p>
+              <p className="text-sm text-subtle">Get help with any questions</p>
             </Card>
           </Link>
         </div>

@@ -34,7 +34,7 @@ export default function Portfolio({
 
   if (!stocks) {
     return (
-        <div className="text-center p-8 text-slate-500">
+        <div className="text-center p-8 text-muted-foreground">
             Loading portfolio...
         </div>
     );
@@ -48,59 +48,59 @@ export default function Portfolio({
         <div className="space-y-6">
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0">
+            <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white border-0">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-blue-100 text-sm">Portfolio Value</p>
+                    <p className="text-white/80 text-sm">Portfolio Value</p>
                     <p className="text-xl font-bold">₹0</p>
                   </div>
-                  <RupeeIcon className="w-6 h-6 text-blue-200" />
+                  <RupeeIcon className="w-6 h-6 text-white/80" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-r from-gray-500 to-gray-600 text-white border-0">
+            <Card className="bg-gradient-to-r from-protocall-ink to-protocall-sidebar-bg text-white border-0">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-100 text-sm">Total Change</p>
+                    <p className="text-white/80 text-sm">Total Change</p>
                     <p className="text-xl font-bold">₹0</p>
                   </div>
-                  <Activity className="w-6 h-6 text-gray-200" />
+                  <Activity className="w-6 h-6 text-subtle" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0">
+            <Card className="bg-buy-soft text-buy-foreground border-0">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-green-100 text-sm">Gainers</p>
+                    <p className="text-protocall-ink/75 text-sm">Gainers</p>
                     <p className="text-xl font-bold">0</p>
                   </div>
-                  <TrendingUp className="w-6 h-6 text-green-200" />
+                  <TrendingUp className="w-6 h-6 text-protocall-ink/75" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-r from-red-500 to-red-600 text-white border-0">
+            <Card className="bg-protocall-sell-text text-white border-0">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-red-100 text-sm">Losers</p>
+                    <p className="text-white/80 text-sm">Losers</p>
                     <p className="text-xl font-bold">0</p>
                   </div>
-                  <TrendingDown className="w-6 h-6 text-red-200" />
+                  <TrendingDown className="w-6 h-6 text-white/80" />
                 </div>
               </CardContent>
             </Card>
           </div>
 
           <div className="text-center p-8 bg-white rounded-2xl shadow-sm">
-            <Activity className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-800">Your portfolio is empty.</h3>
-            <p className="text-gray-500 mt-2">Add your first investment to start tracking.</p>
+            <Activity className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-foreground">Your portfolio is empty.</h3>
+            <p className="text-muted-foreground mt-2">Add your first investment to start tracking.</p>
           </div>
         </div>
     );
@@ -124,53 +124,53 @@ export default function Portfolio({
     <div className="space-y-6">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white border-0">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-100 text-sm">Portfolio Value</p>
+                <p className="text-white/80 text-sm">Portfolio Value</p>
                 <p className="text-xl font-bold">₹{(totalValue / 100000).toFixed(1)}L</p>
               </div>
-              <RupeeIcon className="w-6 h-6 text-blue-200" />
+              <RupeeIcon className="w-6 h-6 text-white/80" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className={`${totalChange >= 0 ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-gradient-to-r from-red-500 to-red-600'} text-white border-0`}>
+        <Card className={`${totalChange >= 0 ? 'bg-buy-soft text-buy-foreground' : 'bg-protocall-sell-text text-white'} border-0`}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className={`${totalChange >= 0 ? 'text-green-100' : 'text-red-100'} text-sm`}>Total Change</p>
+                <p className={`${totalChange >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'} text-sm`}>Total Change</p>
                 <p className="text-xl font-bold">{totalChange >= 0 ? '+' : ''}₹{Math.abs(totalChange / 1000).toFixed(1)}K</p>
               </div>
               {totalChange >= 0 ? 
-                <TrendingUp className="w-6 h-6 text-green-200" /> : 
-                <TrendingDown className="w-6 h-6 text-red-200" />
+                <TrendingUp className="w-6 h-6 text-buy-muted-foreground" /> : 
+                <TrendingDown className="w-6 h-6 text-sell-muted-foreground" />
               }
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0">
+        <Card className="bg-buy-soft text-buy-foreground border-0">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-100 text-sm">Gainers</p>
+                <p className="text-protocall-ink/75 text-sm">Gainers</p>
                 <p className="text-xl font-bold">{gainers}</p>
               </div>
-              <TrendingUp className="w-6 h-6 text-green-200" />
+              <TrendingUp className="w-6 h-6 text-protocall-ink/75" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-red-500 to-red-600 text-white border-0">
+        <Card className="bg-protocall-sell-text text-white border-0">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-red-100 text-sm">Losers</p>
+                <p className="text-white/80 text-sm">Losers</p>
                 <p className="text-xl font-bold">{losers}</p>
               </div>
-              <TrendingDown className="w-6 h-6 text-red-200" />
+              <TrendingDown className="w-6 h-6 text-white/80" />
             </div>
           </CardContent>
         </Card>
@@ -182,7 +182,7 @@ export default function Portfolio({
           onClick={() => setView("grid")}
           variant={view === 'grid' ? 'default' : 'outline'}
           size="icon"
-          className="bg-gradient-to-r from-blue-500 to-purple-600 text-white data-[state=inactive]:bg-white data-[state=inactive]:text-slate-600"
+          className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white data-[state=inactive]:bg-white data-[state=inactive]:text-subtle"
         >
           <LayoutGrid className="w-4 h-4" />
         </Button>
@@ -190,7 +190,7 @@ export default function Portfolio({
           onClick={() => setView("list")}
           variant={view === 'list' ? 'default' : 'outline'}
           size="icon"
-           className="bg-gradient-to-r from-blue-500 to-purple-600 text-white data-[state=inactive]:bg-white data-[state=inactive]:text-slate-600"
+           className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white data-[state=inactive]:bg-white data-[state=inactive]:text-subtle"
         >
           <List className="w-4 h-4" />
         </Button>
@@ -217,7 +217,7 @@ export default function Portfolio({
       {view === "list" && (
         <div className="overflow-x-auto bg-white shadow-lg rounded-2xl">
           <table className="w-full text-sm text-left">
-            <thead className="bg-slate-50 text-slate-600 uppercase text-xs">
+            <thead className="bg-surface-2 text-subtle uppercase text-xs">
               <tr>
                 <th className="px-6 py-3">Stock</th>
                 <th className="px-6 py-3 text-right">Qty</th>
@@ -227,7 +227,7 @@ export default function Portfolio({
                 <th className="px-6 py-3 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-divider">
               {investedStocks.map((stock) => {
                 const investment = stock.user_investment_data;
                 const pnl = (stock.current_price * investment.quantity) - investment.total_invested;
@@ -235,27 +235,27 @@ export default function Portfolio({
                 const isPositive = stock.change_percent >= 0;
 
                 return (
-                  <tr key={stock.id} className="hover:bg-slate-50 transition-colors">
+                  <tr key={stock.id} className="hover:bg-surface-2 transition-colors">
                     <td className="px-6 py-4">
-                      <div className="font-bold text-slate-800">{stock.symbol}</div>
-                      <div className="text-xs text-slate-500 truncate">{stock.company_name}</div>
+                      <div className="font-bold text-foreground">{stock.symbol}</div>
+                      <div className="text-xs text-muted-foreground truncate">{stock.company_name}</div>
                     </td>
                     <td className="px-6 py-4 font-medium text-right">{investment.quantity}</td>
                     <td className="px-6 py-4 text-right">₹{investment.avg_buy_price.toFixed(2)}</td>
                     <td className="px-6 py-4 text-right">
-                       <div className="font-medium text-slate-800">₹{stock.current_price.toFixed(2)}</div>
-                       <Badge variant="outline" className={`${isPositive ? "bg-green-100 text-green-800 border-green-200" : "bg-red-100 text-red-800 border-red-200"}`}>
+                       <div className="font-medium text-foreground">₹{stock.current_price.toFixed(2)}</div>
+                       <Badge variant="outline" className={`${isPositive ? "bg-buy-muted text-buy-muted-foreground border-buy/30" : "bg-sell-muted text-sell-muted-foreground border-sell/30"}`}>
                           {isPositive ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
                           {isPositive ? '+' : ''}{stock.change_percent?.toFixed(2)}%
                         </Badge>
                     </td>
-                    <td className={`px-6 py-4 text-right font-bold ${pnl >= 0 ? "text-green-600" : "text-red-600"}`}>
+                    <td className={`px-6 py-4 text-right font-bold ${pnl >= 0 ? "text-buy-muted-foreground" : "text-sell-muted-foreground"}`}>
                       <div>{pnl >= 0 ? '+' : '-'}₹{Math.abs(pnl).toFixed(2)}</div>
                       <div className="text-xs font-normal">({pnlPercent.toFixed(2)}%)</div>
                     </td>
                     <td className="px-6 py-4 text-center">
                       <div className="flex items-center justify-center space-x-2">
-                        <Button size="sm" onClick={() => onSell(stock)} className="bg-red-500 hover:bg-red-600 text-white">
+                        <Button size="sm" onClick={() => onSell(stock)} className="bg-protocall-sell-text hover:bg-sell text-white">
                           <TrendingDown className="w-3 h-3 mr-1"/>
                           Sell
                         </Button>

@@ -143,13 +143,13 @@ export default function BlogsPage() {
 
   const getCategoryColor = (category) => {
     switch(category) {
-      case 'education': return 'bg-blue-100 text-blue-800';
-      case 'strategy': return 'bg-purple-100 text-purple-800';
-      case 'technical': return 'bg-orange-100 text-orange-800';
-      case 'tax': return 'bg-green-100 text-green-800';
-      case 'wealth': return 'bg-yellow-100 text-yellow-800';
-      case 'comparison': return 'bg-pink-100 text-pink-800';
-      default: return 'bg-slate-100 text-slate-800';
+      case 'education': return 'bg-premium-muted text-protocall-blue';
+      case 'strategy': return 'bg-premium-muted text-protocall-premium-text';
+      case 'technical': return 'bg-hold-muted text-hold-muted-foreground';
+      case 'tax': return 'bg-buy-muted text-buy-muted-foreground';
+      case 'wealth': return 'bg-hold-muted text-hold-muted-foreground';
+      case 'comparison': return 'bg-premium-muted text-protocall-premium-text';
+      default: return 'bg-surface-2 text-foreground';
     }
   };
 
@@ -167,7 +167,7 @@ export default function BlogsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-6">
+      <div className="min-h-screen bg-surface-2 p-6">
         <div className="max-w-7xl mx-auto space-y-6">
           <Skeleton className="h-20 w-full" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -181,17 +181,17 @@ export default function BlogsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+    <div className="min-h-screen bg-surface-2">
       <div className="max-w-7xl mx-auto p-6 space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <BookOpen className="w-8 h-8 text-blue-600" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <BookOpen className="w-8 h-8 text-protocall-blue" />
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-protocall-deep to-protocall-blue bg-clip-text text-transparent">
               Investment Insights & Articles
             </h1>
           </div>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+          <p className="text-xl text-subtle max-w-3xl mx-auto">
             Expert analysis, investment strategies, and educational content to help you make smarter financial decisions
           </p>
         </div>
@@ -199,7 +199,7 @@ export default function BlogsPage() {
         {/* Search and Filters */}
         <div className="flex flex-col md:flex-row gap-4 items-center justify-center max-w-2xl mx-auto">
           <div className="relative flex-1 w-full">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               placeholder="Search articles..."
               value={searchTerm}
@@ -210,7 +210,7 @@ export default function BlogsPage() {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 rounded-xl border border-slate-300 bg-white"
+            className="px-4 py-2 rounded-xl border border-border bg-white"
           >
             <option value="all">All Categories</option>
             <option value="education">Education</option>
@@ -235,7 +235,7 @@ export default function BlogsPage() {
                   alt={filteredBlogs[0].title}
                   className="w-full h-full object-cover"
                 />
-                <Badge className="absolute top-4 left-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                <Badge className="absolute top-4 left-4 bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
                   Featured Article
                 </Badge>
               </div>
@@ -243,13 +243,13 @@ export default function BlogsPage() {
                 <Badge className={`${getCategoryColor(filteredBlogs[0].category)} w-fit mb-4`}>
                   {filteredBlogs[0].category.replace('_', ' ')}
                 </Badge>
-                <h2 className="text-3xl font-bold text-slate-900 mb-4">
+                <h2 className="text-3xl font-bold text-foreground mb-4">
                   {filteredBlogs[0].title}
                 </h2>
-                <p className="text-slate-600 mb-6 text-lg leading-relaxed">
+                <p className="text-subtle mb-6 text-lg leading-relaxed">
                   {filteredBlogs[0].excerpt}
                 </p>
-                <div className="flex items-center gap-4 mb-6 text-sm text-slate-500">
+                <div className="flex items-center gap-4 mb-6 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <UserIcon className="w-4 h-4" />
                     <span>{filteredBlogs[0].author}</span>
@@ -263,7 +263,7 @@ export default function BlogsPage() {
                     <span>{new Date(filteredBlogs[0].published_date).toLocaleDateString()}</span>
                   </div>
                 </div>
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 w-fit">
+                <Button className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue w-fit">
                   Read Full Article
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
@@ -292,11 +292,11 @@ export default function BlogsPage() {
               </div>
 
               <CardContent className="p-6">
-                <h3 className="font-bold text-xl text-slate-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                <h3 className="font-bold text-xl text-foreground mb-3 line-clamp-2 group-hover:text-protocall-blue transition-colors">
                   {blog.title}
                 </h3>
 
-                <p className="text-sm text-slate-600 mb-4 line-clamp-3">
+                <p className="text-sm text-subtle mb-4 line-clamp-3">
                   {blog.excerpt}
                 </p>
 
@@ -310,15 +310,15 @@ export default function BlogsPage() {
 
                 <div className="flex items-center justify-between pt-4 border-t">
                   <div>
-                    <p className="text-sm font-semibold text-slate-900">{blog.author}</p>
-                    <p className="text-xs text-slate-500">{blog.author_role}</p>
+                    <p className="text-sm font-semibold text-foreground">{blog.author}</p>
+                    <p className="text-xs text-muted-foreground">{blog.author_role}</p>
                   </div>
                   <div className="text-right">
-                    <div className="flex items-center gap-1 text-xs text-slate-500">
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Clock className="w-3 h-3" />
                       <span>{blog.read_time}</span>
                     </div>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {new Date(blog.published_date).toLocaleDateString()}
                     </p>
                   </div>
@@ -330,26 +330,26 @@ export default function BlogsPage() {
 
         {filteredBlogs.length === 0 && (
           <div className="text-center py-12">
-            <BookOpen className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-slate-700 mb-2">No articles found</h3>
-            <p className="text-slate-500">Try adjusting your search or filters</p>
+            <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-subtle mb-2">No articles found</h3>
+            <p className="text-muted-foreground">Try adjusting your search or filters</p>
           </div>
         )}
 
         {/* Newsletter CTA */}
-        <Card className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white border-0 shadow-2xl mt-12">
+        <Card className="bg-gradient-to-r from-protocall-deep via-protocall-grape to-protocall-blue text-white border-0 shadow-2xl mt-12">
           <CardContent className="p-8 text-center">
             <TrendingUp className="w-12 h-12 mx-auto mb-4" />
             <h3 className="text-2xl font-bold mb-2">Get Weekly Investment Insights</h3>
-            <p className="text-blue-100 mb-6">
+            <p className="text-white/80 mb-6">
               Subscribe to our newsletter and receive expert analysis directly in your inbox
             </p>
             <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
               <Input
                 placeholder="Enter your email"
-                className="bg-white text-slate-900"
+                className="bg-white text-foreground"
               />
-              <Button className="bg-white text-blue-600 hover:bg-blue-50">
+              <Button className="bg-white text-protocall-blue hover:bg-premium-muted">
                 Subscribe
               </Button>
             </div>

@@ -71,36 +71,36 @@ export default function PayoutApprovalModal({
 
         <div className="space-y-6">
           {/* Payout Details */}
-          <div className="bg-slate-50 p-4 rounded-lg">
+          <div className="bg-surface-2 p-4 rounded-lg">
             <h3 className="font-semibold mb-3">Payout Details</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-slate-600">Entity Name</p>
+                <p className="text-sm text-subtle">Entity Name</p>
                 <p className="font-medium">{entityName}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-600">Entity Type</p>
+                <p className="text-sm text-subtle">Entity Type</p>
                 <p className="font-medium capitalize">{payout.entity_type}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-600">Requested Amount</p>
-                <p className="font-bold text-green-600 text-lg">₹{payout.requested_amount.toLocaleString()}</p>
+                <p className="text-sm text-subtle">Requested Amount</p>
+                <p className="font-bold text-buy-muted-foreground text-lg">₹{payout.requested_amount.toLocaleString()}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-600">Available Balance</p>
+                <p className="text-sm text-subtle">Available Balance</p>
                 <p className="font-medium">₹{payout.available_balance.toLocaleString()}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-600">Request Date</p>
+                <p className="text-sm text-subtle">Request Date</p>
                 <p className="font-medium">{format(new Date(payout.created_date), 'MMM dd, yyyy HH:mm')}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-600">Status</p>
+                <p className="text-sm text-subtle">Status</p>
                 <Badge className={
-                  payout.status === 'processed' ? 'bg-green-100 text-green-700' :
-                  payout.status === 'approved' ? 'bg-blue-100 text-blue-700' :
-                  payout.status === 'rejected' ? 'bg-red-100 text-red-700' :
-                  'bg-yellow-100 text-yellow-700'
+                  payout.status === 'processed' ? 'bg-buy-muted text-buy-muted-foreground' :
+                  payout.status === 'approved' ? 'bg-premium-muted text-protocall-blue' :
+                  payout.status === 'rejected' ? 'bg-sell-muted text-sell-muted-foreground' :
+                  'bg-hold-muted text-hold-muted-foreground'
                 }>
                   {payout.status}
                 </Badge>
@@ -109,26 +109,26 @@ export default function PayoutApprovalModal({
           </div>
 
           {/* Payout Method Details */}
-          <div className="bg-blue-50 p-4 rounded-lg">
+          <div className="bg-premium-muted p-4 rounded-lg">
             <h3 className="font-semibold mb-3 flex items-center gap-2">
-              <PayoutMethodIcon className="w-5 h-5 text-blue-600" />
+              <PayoutMethodIcon className="w-5 h-5 text-protocall-blue" />
               Payout Method: {payout.payout_method.replace('_', ' ').toUpperCase()}
             </h3>
             
             {payout.payout_method === 'bank_transfer' && payout.bank_details && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-blue-700">Account Holder</p>
+                  <p className="text-sm text-protocall-blue">Account Holder</p>
                   <p className="font-medium">{payout.bank_details.account_holder_name}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-blue-700">Account Number</p>
+                  <p className="text-sm text-protocall-blue">Account Number</p>
                   <p className="font-medium font-mono">
                     {payout.bank_details.account_number.replace(/.(?=.{4})/g, '*')}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-blue-700">IFSC Code</p>
+                  <p className="text-sm text-protocall-blue">IFSC Code</p>
                   <p className="font-medium font-mono">{payout.bank_details.ifsc_code}</p>
                 </div>
               </div>
@@ -136,14 +136,14 @@ export default function PayoutApprovalModal({
 
             {payout.payout_method === 'upi' && payout.upi_id && (
               <div>
-                <p className="text-sm text-blue-700">UPI ID</p>
+                <p className="text-sm text-protocall-blue">UPI ID</p>
                 <p className="font-medium font-mono">{payout.upi_id}</p>
               </div>
             )}
 
             {payout.payout_method === 'paypal' && payout.paypal_email && (
               <div>
-                <p className="text-sm text-blue-700">PayPal Email</p>
+                <p className="text-sm text-protocall-blue">PayPal Email</p>
                 <p className="font-medium">{payout.paypal_email}</p>
               </div>
             )}
@@ -151,11 +151,11 @@ export default function PayoutApprovalModal({
 
           {/* Admin Notes */}
           {payout.status !== 'pending' && payout.admin_notes && (
-            <div className="bg-slate-50 p-4 rounded-lg">
+            <div className="bg-surface-2 p-4 rounded-lg">
               <h4 className="font-semibold mb-2">Admin Notes</h4>
-              <p className="text-sm text-slate-700">{payout.admin_notes}</p>
+              <p className="text-sm text-subtle">{payout.admin_notes}</p>
               {payout.processed_date && (
-                <p className="text-xs text-slate-500 mt-2">
+                <p className="text-xs text-muted-foreground mt-2">
                   Processed on {format(new Date(payout.processed_date), 'MMM dd, yyyy HH:mm')}
                 </p>
               )}
@@ -177,9 +177,9 @@ export default function PayoutApprovalModal({
           )}
 
           {/* Processing Guidelines */}
-          <div className="bg-yellow-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-yellow-800 mb-2">Processing Guidelines</h4>
-            <ul className="text-sm text-yellow-700 space-y-1">
+          <div className="bg-hold-muted p-4 rounded-lg">
+            <h4 className="font-semibold text-hold-muted-foreground mb-2">Processing Guidelines</h4>
+            <ul className="text-sm text-hold-muted-foreground space-y-1">
               <li>• Verify that the requested amount doesn't exceed available balance</li>
               <li>• Ensure payout method details are complete and accurate</li>
               <li>• Bank transfers typically take 3-5 business days</li>
@@ -200,7 +200,7 @@ export default function PayoutApprovalModal({
                   onClick={handleReject}
                   disabled={isProcessing}
                   variant="ghost"
-                  className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                  className="text-sell-muted-foreground hover:text-sell-muted-foreground hover:bg-sell-muted"
                 >
                   <XCircle className="w-4 h-4 mr-2" />
                   Reject Request
@@ -208,7 +208,7 @@ export default function PayoutApprovalModal({
                 <Button
                   onClick={handleApprove}
                   disabled={isProcessing}
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-buy hover:bg-buy"
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
                   {isProcessing ? 'Processing...' : 'Approve Payout'}

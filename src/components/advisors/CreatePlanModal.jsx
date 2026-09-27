@@ -48,19 +48,19 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
       name: 'Basic', 
       description: 'Essential advisory services for beginners',
       icon: '📊',
-      color: 'from-blue-500 to-cyan-500'
+      color: 'from-protocall-deep to-protocall-blue'
     },
     { 
       name: 'Premium', 
       description: 'Advanced insights and priority support',
       icon: '⭐',
-      color: 'from-purple-500 to-pink-500'
+      color: 'from-protocall-deep to-protocall-blue'
     },
     { 
       name: 'VIP', 
       description: 'Exclusive research and personalized guidance',
       icon: '👑',
-      color: 'from-amber-500 to-orange-500'
+      color: 'from-hold to-hold'
     }
   ];
 
@@ -132,12 +132,12 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
           <DialogTitle className="flex items-center gap-2">
             {isEditMode ? (
               <>
-                <Edit className="w-5 h-5 text-blue-600" />
+                <Edit className="w-5 h-5 text-protocall-blue" />
                 Edit Subscription Plan
               </>
             ) : (
               <>
-                <DollarSign className="w-5 h-5 text-green-600" />
+                <DollarSign className="w-5 h-5 text-buy-muted-foreground" />
                 Create Subscription Plan
               </>
             )}
@@ -147,10 +147,10 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Suggested Plan Names - Only show when creating */}
           {!isEditMode && (
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-lg p-4">
+            <div className="bg-surface-2 border-2 border-protocall-premium-light rounded-lg p-4">
               <div className="flex items-center gap-2 mb-3">
-                <Sparkles className="w-4 h-4 text-purple-600" />
-                <Label className="text-base font-semibold text-slate-900">Quick Start - Choose a Plan Name</Label>
+                <Sparkles className="w-4 h-4 text-protocall-premium-text" />
+                <Label className="text-base font-semibold text-foreground">Quick Start - Choose a Plan Name</Label>
               </div>
               <div className="grid grid-cols-3 gap-3">
                 {suggestedPlans.map((plan) => (
@@ -161,20 +161,20 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
                     className={`p-3 rounded-lg border-2 transition-all duration-200 hover:scale-105 ${
                       formData.name === plan.name
                         ? 'bg-gradient-to-r ' + plan.color + ' text-white border-transparent shadow-lg'
-                        : 'bg-white border-gray-200 hover:border-blue-300 hover:shadow-md'
+                        : 'bg-white border-border hover:border-protocall-premium-light hover:shadow-md'
                     }`}
                   >
                     <div className="text-2xl mb-1">{plan.icon}</div>
-                    <div className={`font-bold text-sm ${formData.name === plan.name ? 'text-white' : 'text-slate-900'}`}>
+                    <div className={`font-bold text-sm ${formData.name === plan.name ? 'text-white' : 'text-foreground'}`}>
                       {plan.name}
                     </div>
-                    <div className={`text-xs mt-1 ${formData.name === plan.name ? 'text-white/90' : 'text-slate-500'}`}>
+                    <div className={`text-xs mt-1 ${formData.name === plan.name ? 'text-white/90' : 'text-muted-foreground'}`}>
                       {plan.description}
                     </div>
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-slate-600 mt-2">
+              <p className="text-xs text-subtle mt-2">
                 💡 Click a suggested plan or enter your own custom name below
               </p>
             </div>
@@ -234,8 +234,8 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
             </div>
           </div>
 
-          <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
-            <Label htmlFor="monthly_post_limit" className="text-base font-semibold text-slate-900 mb-2 block">
+          <div className="bg-premium-muted border-2 border-protocall-premium-light rounded-lg p-4">
+            <Label htmlFor="monthly_post_limit" className="text-base font-semibold text-foreground mb-2 block">
               📅 Monthly Post Limit
             </Label>
             <Input
@@ -247,7 +247,7 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
               placeholder="e.g., 5 (leave empty for unlimited)"
               className="mb-2"
             />
-            <div className="flex items-start gap-2 text-xs text-slate-600">
+            <div className="flex items-start gap-2 text-xs text-subtle">
               <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
               <p>
                 Set how many exclusive posts you'll publish for this plan per month. 
@@ -271,7 +271,7 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
                       type="button"
                       variant="outline"
                       onClick={() => handleRemoveFeature(index)}
-                      className="text-red-600 hover:text-red-700"
+                      className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                     >
                       Remove
                     </Button>
@@ -290,8 +290,8 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
             </div>
           </div>
 
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <p className="text-sm text-blue-800">
+          <div className="bg-premium-muted p-4 rounded-lg">
+            <p className="text-sm text-protocall-blue">
               <strong>Note:</strong> {isEditMode 
                 ? 'Changes will be applied immediately. Existing subscribers will see the updated plan details.' 
                 : 'This plan will be immediately available for users to subscribe. You can deactivate it anytime from the plans list.'}
@@ -305,7 +305,7 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
             <Button 
               type="submit" 
               disabled={isSubmitting}
-              className={isEditMode ? "bg-blue-600 hover:bg-blue-700" : "bg-green-600 hover:bg-green-700"}
+              className={isEditMode ? "bg-protocall-blue hover:bg-protocall-blue" : "bg-buy hover:bg-buy"}
             >
               {isSubmitting ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Plan' : 'Create Plan')}
             </Button>

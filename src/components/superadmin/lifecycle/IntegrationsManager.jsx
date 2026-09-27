@@ -150,21 +150,21 @@ export default function IntegrationsManager({ user }) {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'live': return <CheckCircle className="w-4 h-4 text-green-600" />;
-      case 'partial': return <AlertCircle className="w-4 h-4 text-yellow-600" />;
-      case 'placeholder': return <Clock className="w-4 h-4 text-purple-600" />;
-      case 'disabled': return <Ban className="w-4 h-4 text-red-600" />;
+      case 'live': return <CheckCircle className="w-4 h-4 text-buy-muted-foreground" />;
+      case 'partial': return <AlertCircle className="w-4 h-4 text-hold-muted-foreground" />;
+      case 'placeholder': return <Clock className="w-4 h-4 text-protocall-premium-text" />;
+      case 'disabled': return <Ban className="w-4 h-4 text-sell-muted-foreground" />;
       default: return null;
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'live': return 'bg-green-100 text-green-800 border-green-300';
-      case 'partial': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'placeholder': return 'bg-purple-100 text-purple-800 border-purple-300';
-      case 'disabled': return 'bg-red-100 text-red-800 border-red-300';
-      default: return 'bg-gray-100 text-gray-800 border-gray-300';
+      case 'live': return 'bg-buy-muted text-buy-muted-foreground border-buy/30';
+      case 'partial': return 'bg-hold-muted text-hold-muted-foreground border-hold/30';
+      case 'placeholder': return 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light';
+      case 'disabled': return 'bg-sell-muted text-sell-muted-foreground border-sell/30';
+      default: return 'bg-surface-2 text-foreground border-border';
     }
   };
 
@@ -185,8 +185,8 @@ export default function IntegrationsManager({ user }) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading integrations...</p>
+          <div className="w-12 h-12 border-4 border-protocall-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-subtle">Loading integrations...</p>
         </div>
       </div>
     );
@@ -196,16 +196,16 @@ export default function IntegrationsManager({ user }) {
     <div className="space-y-6">
       {/* Initialization Helper */}
       {integrations.length === 0 && (
-        <Card className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-blue-50">
+        <Card className="border-2 border-protocall-premium-light bg-surface-2">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-purple-900 mb-2">Initialize Common Integrations</h3>
-                <p className="text-sm text-purple-700 mb-4">
+                <h3 className="text-lg font-semibold text-protocall-premium-text mb-2">Initialize Common Integrations</h3>
+                <p className="text-sm text-protocall-premium-text mb-4">
                   Quickly add common integrations like Payment Gateway, Email, SMS, Stock Data API, etc.
                 </p>
               </div>
-              <Button onClick={handleInitializeCommonIntegrations} className="bg-purple-600 hover:bg-purple-700">
+              <Button onClick={handleInitializeCommonIntegrations} className="bg-primary hover:bg-primary">
                 <Plug className="w-4 h-4 mr-2" />
                 Initialize
               </Button>
@@ -220,10 +220,10 @@ export default function IntegrationsManager({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Total Integrations</p>
-                <p className="text-3xl font-bold text-slate-900">{stats.total}</p>
+                <p className="text-sm text-muted-foreground">Total Integrations</p>
+                <p className="text-3xl font-bold text-foreground">{stats.total}</p>
               </div>
-              <Plug className="w-12 h-12 text-blue-600" />
+              <Plug className="w-12 h-12 text-protocall-blue" />
             </div>
           </CardContent>
         </Card>
@@ -232,10 +232,10 @@ export default function IntegrationsManager({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Live</p>
-                <p className="text-3xl font-bold text-green-600">{stats.live}</p>
+                <p className="text-sm text-muted-foreground">Live</p>
+                <p className="text-3xl font-bold text-buy-muted-foreground">{stats.live}</p>
               </div>
-              <CheckCircle className="w-12 h-12 text-green-600" />
+              <CheckCircle className="w-12 h-12 text-buy-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -244,10 +244,10 @@ export default function IntegrationsManager({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Planned</p>
-                <p className="text-3xl font-bold text-purple-600">{stats.placeholder}</p>
+                <p className="text-sm text-muted-foreground">Planned</p>
+                <p className="text-3xl font-bold text-protocall-premium-text">{stats.placeholder}</p>
               </div>
-              <Clock className="w-12 h-12 text-purple-600" />
+              <Clock className="w-12 h-12 text-protocall-premium-text" />
             </div>
           </CardContent>
         </Card>
@@ -256,10 +256,10 @@ export default function IntegrationsManager({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Disabled</p>
-                <p className="text-3xl font-bold text-red-600">{stats.disabled}</p>
+                <p className="text-sm text-muted-foreground">Disabled</p>
+                <p className="text-3xl font-bold text-sell-muted-foreground">{stats.disabled}</p>
               </div>
-              <Ban className="w-12 h-12 text-red-600" />
+              <Ban className="w-12 h-12 text-sell-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -268,7 +268,7 @@ export default function IntegrationsManager({ user }) {
       {/* Filters and Actions */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             placeholder="Search integrations..."
             value={searchTerm}
@@ -290,7 +290,7 @@ export default function IntegrationsManager({ user }) {
           ))}
         </div>
 
-        <Button onClick={() => { setEditingIntegration(null); setShowModal(true); }} className="bg-blue-600 hover:bg-blue-700">
+        <Button onClick={() => { setEditingIntegration(null); setShowModal(true); }} className="bg-protocall-blue hover:bg-protocall-blue">
           <Plus className="w-4 h-4 mr-2" />
           Add Integration
         </Button>
@@ -303,12 +303,12 @@ export default function IntegrationsManager({ user }) {
             <CardContent className="p-4">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <Link2 className="w-5 h-5 text-blue-600" />
+                  <div className="p-2 bg-premium-muted rounded-lg">
+                    <Link2 className="w-5 h-5 text-protocall-blue" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-slate-900">{integration.feature_name}</h3>
-                    <p className="text-xs text-slate-500">{integration.feature_key}</p>
+                    <h3 className="font-semibold text-foreground">{integration.feature_name}</h3>
+                    <p className="text-xs text-muted-foreground">{integration.feature_key}</p>
                   </div>
                 </div>
                 <Badge className={`${getStatusColor(integration.status)} border flex items-center gap-1`}>
@@ -317,16 +317,16 @@ export default function IntegrationsManager({ user }) {
                 </Badge>
               </div>
 
-              <p className="text-sm text-slate-600 mb-3">{integration.description}</p>
+              <p className="text-sm text-subtle mb-3">{integration.description}</p>
 
               <div className="flex items-center gap-2 mb-3">
                 {integration.visible_to_users ? (
-                  <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300 text-xs">
+                  <Badge variant="outline" className="bg-premium-muted text-protocall-blue border-protocall-premium-light text-xs">
                     <Eye className="w-3 h-3 mr-1" />
                     Enabled
                   </Badge>
                 ) : (
-                  <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-300 text-xs">
+                  <Badge variant="outline" className="bg-surface-2 text-subtle border-border text-xs">
                     <EyeOff className="w-3 h-3 mr-1" />
                     Disabled
                   </Badge>
@@ -356,7 +356,7 @@ export default function IntegrationsManager({ user }) {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="text-red-600 hover:bg-red-50"
+                  className="text-sell-muted-foreground hover:bg-sell-muted"
                   onClick={() => handleDelete(integration)}
                 >
                   <Trash2 className="w-4 h-4" />
@@ -370,9 +370,9 @@ export default function IntegrationsManager({ user }) {
           <div className="col-span-full">
             <Card>
               <CardContent className="p-12 text-center">
-                <Plug className="w-16 h-16 mx-auto mb-4 text-slate-300" />
-                <p className="text-lg font-semibold text-slate-700 mb-2">No integrations found</p>
-                <p className="text-sm text-slate-500">Try adjusting your search or filters</p>
+                <Plug className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+                <p className="text-lg font-semibold text-subtle mb-2">No integrations found</p>
+                <p className="text-sm text-muted-foreground">Try adjusting your search or filters</p>
               </CardContent>
             </Card>
           </div>

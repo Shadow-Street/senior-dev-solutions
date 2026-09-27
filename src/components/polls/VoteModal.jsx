@@ -45,7 +45,7 @@ export default function VoteModal({ open, onClose, poll, userVote, onVote }) {
         count: poll.bullish_votes || 0,
         percentage: totalVotes > 0 ? (poll.bullish_votes || 0) / totalVotes * 100 : 0,
         icon: TrendingUp,
-        color: 'text-green-600',
+        color: 'text-buy-muted-foreground',
         label: 'Bullish',
         description: 'I think this stock will perform well'
       },
@@ -53,7 +53,7 @@ export default function VoteModal({ open, onClose, poll, userVote, onVote }) {
         count: poll.bearish_votes || 0,
         percentage: totalVotes > 0 ? (poll.bearish_votes || 0) / totalVotes * 100 : 0,
         icon: TrendingDown,
-        color: 'text-red-600',
+        color: 'text-sell-muted-foreground',
         label: 'Bearish',
         description: 'I think this stock will perform poorly'
       },
@@ -61,7 +61,7 @@ export default function VoteModal({ open, onClose, poll, userVote, onVote }) {
         count: poll.neutral_votes || 0,
         percentage: totalVotes > 0 ? (poll.neutral_votes || 0) / totalVotes * 100 : 0,
         icon: Minus,
-        color: 'text-yellow-600',
+        color: 'text-hold-muted-foreground',
         label: 'Neutral',
         description: 'I think this stock will remain stable'
       }
@@ -72,7 +72,7 @@ export default function VoteModal({ open, onClose, poll, userVote, onVote }) {
         count: poll.yes_votes || 0,
         percentage: totalVotes > 0 ? (poll.yes_votes || 0) / totalVotes * 100 : 0,
         icon: TrendingUp,
-        color: 'text-green-600',
+        color: 'text-buy-muted-foreground',
         label: 'Yes',
         description: `It will reach ₹${poll.target_price}`
       },
@@ -80,7 +80,7 @@ export default function VoteModal({ open, onClose, poll, userVote, onVote }) {
         count: poll.no_votes || 0,
         percentage: totalVotes > 0 ? (poll.no_votes || 0) / totalVotes * 100 : 0,
         icon: TrendingDown,
-        color: 'text-red-600',
+        color: 'text-sell-muted-foreground',
         label: 'No',
         description: `It won't reach ₹${poll.target_price}`
       }
@@ -91,7 +91,7 @@ export default function VoteModal({ open, onClose, poll, userVote, onVote }) {
         count: poll.buy_votes || 0,
         percentage: totalVotes > 0 ? (poll.buy_votes || 0) / totalVotes * 100 : 0,
         icon: TrendingUp,
-        color: 'text-green-600',
+        color: 'text-buy-muted-foreground',
         label: 'Buy',
         description: 'I think this stock will go up'
       },
@@ -99,7 +99,7 @@ export default function VoteModal({ open, onClose, poll, userVote, onVote }) {
         count: poll.sell_votes || 0,
         percentage: totalVotes > 0 ? (poll.sell_votes || 0) / totalVotes * 100 : 0,
         icon: TrendingDown,
-        color: 'text-red-600',
+        color: 'text-sell-muted-foreground',
         label: 'Sell',
         description: 'I think this stock will go down'
       },
@@ -107,7 +107,7 @@ export default function VoteModal({ open, onClose, poll, userVote, onVote }) {
         count: poll.hold_votes || 0,
         percentage: totalVotes > 0 ? (poll.hold_votes || 0) / totalVotes * 100 : 0,
         icon: Minus,
-        color: 'text-yellow-600',
+        color: 'text-hold-muted-foreground',
         label: 'Hold',
         description: 'I think this stock will stay stable'
       }
@@ -120,16 +120,16 @@ export default function VoteModal({ open, onClose, poll, userVote, onVote }) {
       case 'buy':
       case 'bullish':
       case 'yes':
-        return 'bg-green-600 text-white';
+        return 'bg-buy text-buy-foreground';
       case 'sell':
       case 'bearish':
       case 'no':
-        return 'bg-red-600 text-white';
+        return 'bg-protocall-sell-text text-white';
       case 'hold':
       case 'neutral':
-        return 'bg-orange-600 text-white';
+        return 'bg-hold text-hold-foreground';
       default:
-        return 'bg-gray-600 text-white';
+        return 'bg-muted-foreground text-white';
     }
   };
 
@@ -167,16 +167,16 @@ export default function VoteModal({ open, onClose, poll, userVote, onVote }) {
           {/* Updated title display - Stock Symbol as main title */}
           <DialogTitle>{poll.stock_symbol}</DialogTitle>
           {/* Poll question as semi-bold description */}
-          <p className="text-sm text-slate-700 font-semibold mt-2 leading-relaxed">{poll.title}</p>
+          <p className="text-sm text-subtle font-semibold mt-2 leading-relaxed">{poll.title}</p>
           <div className="flex items-center gap-2 mt-2">
             {poll.is_premium && (
-              <Badge className="bg-purple-100 text-purple-800">
+              <Badge className="bg-premium-muted text-protocall-premium-text">
                 <Crown className="w-3 h-3 mr-1" />
                 Premium
               </Badge>
             )}
             {poll.created_by_admin && (
-              <Badge className="bg-green-100 text-green-800">
+              <Badge className="bg-buy-muted text-buy-muted-foreground">
                 <Shield className="w-3 h-3 mr-1" />
                 Admin
               </Badge>
@@ -191,13 +191,13 @@ export default function VoteModal({ open, onClose, poll, userVote, onVote }) {
         <div className="space-y-6">
           {/* Target Price Display for Price Target Polls */}
           {poll.poll_type === 'price_target' && poll.target_price && (
-            <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
+            <div className="p-4 bg-hold-muted rounded-lg border border-hold/30">
               <div className="flex items-center gap-2 mb-2">
-                <Target className="w-4 h-4 text-orange-600" />
-                <span className="font-semibold text-orange-800">Target Price</span>
+                <Target className="w-4 h-4 text-hold-muted-foreground" />
+                <span className="font-semibold text-hold-muted-foreground">Target Price</span>
               </div>
-              <p className="text-2xl font-bold text-orange-900">₹{poll.target_price}</p>
-              <p className="text-sm text-orange-700 mt-1">
+              <p className="text-2xl font-bold text-hold-muted-foreground">₹{poll.target_price}</p>
+              <p className="text-sm text-hold-muted-foreground mt-1">
                 Will {poll.stock_symbol} reach this price within the poll duration?
               </p>
             </div>
@@ -205,19 +205,19 @@ export default function VoteModal({ open, onClose, poll, userVote, onVote }) {
 
           {/* Admin Details */}
           {poll.created_by_admin && poll.poll_type !== 'price_target' && (
-            <div className="p-4 bg-green-50 rounded-lg space-y-2">
+            <div className="p-4 bg-buy-muted rounded-lg space-y-2">
               {poll.target_price && (
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-green-700">Admin Target Price:</span>
-                  <span className="font-semibold text-green-800">₹{poll.target_price}</span>
+                  <span className="text-sm text-buy-muted-foreground">Admin Target Price:</span>
+                  <span className="font-semibold text-buy-muted-foreground">₹{poll.target_price}</span>
                 </div>
               )}
               {poll.confidence_score && (
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-green-700">Confidence:</span>
+                  <span className="text-sm text-buy-muted-foreground">Confidence:</span>
                   <div className="flex">
                     {Array(poll.confidence_score).fill(0).map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <Star key={i} className="w-4 h-4 fill-hold text-hold" />
                     ))}
                   </div>
                 </div>
@@ -245,7 +245,7 @@ export default function VoteModal({ open, onClose, poll, userVote, onVote }) {
             </div>
 
             {/* Stats */}
-            <div className="flex items-center justify-between text-sm text-slate-500 border-t pt-3">
+            <div className="flex items-center justify-between text-sm text-muted-foreground border-t pt-3">
               <div className="flex items-center gap-1">
                 <Users className="w-4 h-4" />
                 <span>{totalVotes} total votes</span>
@@ -275,9 +275,9 @@ export default function VoteModal({ open, onClose, poll, userVote, onVote }) {
                     onClick={() => setSelectedVote(voteType)}
                     className={`justify-start ${
                       selectedVote === voteType ? (
-                        voteType === 'buy' || voteType === 'bullish' || voteType === 'yes' ? 'bg-green-600 hover:bg-green-700 text-white' :
-                        voteType === 'sell' || voteType === 'bearish' || voteType === 'no' ? 'bg-red-600 hover:bg-red-700 text-white' :
-                        'bg-orange-600 hover:bg-orange-700 text-white'
+                        voteType === 'buy' || voteType === 'bullish' || voteType === 'yes' ? 'bg-buy hover:bg-buy text-buy-foreground' :
+                        voteType === 'sell' || voteType === 'bearish' || voteType === 'no' ? 'bg-protocall-sell-text hover:bg-sell text-white' :
+                        'bg-hold hover:bg-hold text-hold-foreground'
                       ) : ''
                     }`}
                   >
@@ -296,7 +296,7 @@ export default function VoteModal({ open, onClose, poll, userVote, onVote }) {
               </Button>
             </div>
           ) : (
-            <div className="text-center p-4 bg-slate-50 rounded-lg">
+            <div className="text-center p-4 bg-surface-2 rounded-lg">
               {/* Updated "You Voted" Badge */}
               <Badge className={`${getUserVoteBadgeStyle(userVote)} text-lg px-4 py-2 rounded-full font-semibold hover:bg-black hover:text-white hover:shadow-md transition-all duration-200 cursor-default`}>
                 You voted: {
@@ -308,7 +308,7 @@ export default function VoteModal({ open, onClose, poll, userVote, onVote }) {
                   userVote.toUpperCase()
                 }
               </Badge>
-              <p className="text-sm text-slate-600 mt-2">Thank you for participating!</p>
+              <p className="text-sm text-subtle mt-2">Thank you for participating!</p>
             </div>
           )}
         </div>

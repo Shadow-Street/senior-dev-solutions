@@ -99,28 +99,28 @@ function ProfileDropdown({ investor, onLogout, onNavigate }) {
     switch (investor?.kyc_status) {
       case 'verified':
         return (
-          <div className="flex items-center gap-2 text-green-700">
+          <div className="flex items-center gap-2 text-buy-muted-foreground">
             <CheckCircle className="w-4 h-4" />
             <span className="font-medium">KYC: Verified</span>
           </div>);
 
       case 'pending':
         return (
-          <div className="flex items-center gap-2 text-yellow-700">
+          <div className="flex items-center gap-2 text-hold-muted-foreground">
             <Clock className="w-4 h-4" />
             <span className="font-medium">KYC: Pending Verification</span>
           </div>);
 
       case 'failed':
         return (
-          <div className="flex items-center gap-2 text-red-700">
+          <div className="flex items-center gap-2 text-sell-muted-foreground">
             <XCircle className="w-4 h-4" />
             <span className="font-medium">KYC: Rejected (Please re-upload)</span>
           </div>);
 
       default:
         return (
-          <div className="flex items-center gap-2 text-gray-700">
+          <div className="flex items-center gap-2 text-subtle">
             <AlertTriangle className="w-4 h-4" />
             <span className="font-medium">KYC: Not Submitted</span>
           </div>);
@@ -131,33 +131,33 @@ function ProfileDropdown({ investor, onLogout, onNavigate }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="flex items-center gap-2 hover:bg-blue-50">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+        <Button variant="ghost" size="sm" className="flex items-center gap-2 hover:bg-premium-muted">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center text-white font-bold">
             {investor?.full_name?.charAt(0)?.toUpperCase() || 'I'}
           </div>
           <div className="text-left">
             <p className="font-semibold text-sm">{investor?.full_name || 'Investor'}</p>
-            <p className="text-xs text-slate-500">{investor?.investor_code}</p>
+            <p className="text-xs text-muted-foreground">{investor?.investor_code}</p>
           </div>
-          <ChevronDown className="w-4 h-4 text-slate-400" />
+          <ChevronDown className="w-4 h-4 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
         <div className="px-3 py-2 border-b">
           <p className="font-semibold text-sm">{investor?.full_name}</p>
-          <p className="text-xs text-slate-500">{investor?.investor_code}</p>
-          <p className="text-xs text-slate-500 mt-1">{investor?.email}</p>
+          <p className="text-xs text-muted-foreground">{investor?.investor_code}</p>
+          <p className="text-xs text-muted-foreground mt-1">{investor?.email}</p>
         </div>
 
-        <div className="px-3 py-2 border-b bg-slate-50">
+        <div className="px-3 py-2 border-b bg-surface-2">
           {getKYCStatusDisplay()}
         </div>
 
         {/* Show rejection reason if failed */}
         {investor?.kyc_status === 'failed' && investor?.kyc_rejection_reason &&
-          <div className="px-3 py-2 bg-red-50 border-b border-red-200">
-            <p className="text-xs font-semibold text-red-900 mb-1">Rejection Reason:</p>
-            <p className="text-xs text-red-800">{investor.kyc_rejection_reason}</p>
+          <div className="px-3 py-2 bg-sell-muted border-b border-sell/30">
+            <p className="text-xs font-semibold text-sell-muted-foreground mb-1">Rejection Reason:</p>
+            <p className="text-xs text-sell-muted-foreground">{investor.kyc_rejection_reason}</p>
           </div>
         }
 
@@ -170,7 +170,7 @@ function ProfileDropdown({ investor, onLogout, onNavigate }) {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem onClick={onLogout} className="text-red-600 cursor-pointer">
+        <DropdownMenuItem onClick={onLogout} className="text-sell-muted-foreground cursor-pointer">
           <LogOut className="w-4 h-4 mr-2" />
           Logout
         </DropdownMenuItem>
@@ -205,11 +205,11 @@ function InvestorLayout({
   }, []);
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="flex h-screen bg-surface-2">
       {/* Enhanced Sidebar */}
-      <aside className="w-72 bg-white border-r border-slate-200 flex flex-col shadow-lg">
+      <aside className="w-72 bg-white border-r border-border flex flex-col shadow-lg">
         {/* Gradient Header Banner */}
-        <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 p-6 relative overflow-hidden">
+        <div className="bg-gradient-to-r from-protocall-deep via-protocall-grape to-protocall-blue p-6 relative overflow-hidden">
           {/* Decorative Elements */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-10 rounded-full -ml-12 -mb-12"></div>
@@ -217,7 +217,7 @@ function InvestorLayout({
           {/* Title */}
           <div className="relative z-10">
             <h2 className="text-2xl font-bold text-white tracking-tight">Investor Portfolio</h2>
-            <p className="text-blue-100 text-sm mt-1">Fund Management System</p>
+            <p className="text-protocall-blue text-sm mt-1">Fund Management System</p>
           </div>
         </div>
 
@@ -227,8 +227,8 @@ function InvestorLayout({
           <button
             onClick={() => onNavigate('home')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 mb-6 ${currentView === 'home'
-              ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md'
-              : 'hover:bg-slate-100 text-slate-700'
+              ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-md'
+              : 'hover:bg-surface-2 text-subtle'
               }`
             }
             style={{ fontSize: '16px', fontWeight: 500 }}>
@@ -239,12 +239,12 @@ function InvestorLayout({
 
           {/* Pending Investments Alert */}
           {pendingInvestments.length > 0 &&
-            <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
+            <div className="mb-6 p-4 bg-hold-muted border border-hold/30 rounded-xl">
               <div className="flex items-center gap-2 mb-2">
-                <Clock className="w-5 h-5 text-yellow-600" />
-                <span className="font-semibold text-yellow-900">Pending Investments</span>
+                <Clock className="w-5 h-5 text-hold-muted-foreground" />
+                <span className="font-semibold text-hold-muted-foreground">Pending Investments</span>
               </div>
-              <p className="text-xs text-yellow-800 mb-2">
+              <p className="text-xs text-hold-muted-foreground mb-2">
                 {pendingInvestments.length} investment{pendingInvestments.length > 1 ? 's' : ''} awaiting allocation
               </p>
               <div className="space-y-1">
@@ -252,9 +252,9 @@ function InvestorLayout({
                   <div key={req.id} className="text-xs bg-white rounded px-2 py-1 flex justify-between items-center">
                     <span className="flex-1">
                       <span className="font-semibold">{fundPlansMap[req.fund_plan_id]?.plan_name || 'Unknown Plan'}</span>
-                      <span className="block text-slate-500 mt-0.5">₹{req.requested_amount.toLocaleString('en-IN')}</span>
+                      <span className="block text-muted-foreground mt-0.5">₹{req.requested_amount.toLocaleString('en-IN')}</span>
                     </span>
-                    <Badge className="bg-yellow-100 text-yellow-800 text-[10px] h-4">Pending</Badge>
+                    <Badge className="bg-hold-muted text-hold-muted-foreground text-[10px] h-4">Pending</Badge>
                   </div>
                 )}
               </div>
@@ -262,7 +262,7 @@ function InvestorLayout({
           }
 
           {/* Divider */}
-          <div className="border-t border-slate-200 mb-4"></div>
+          <div className="border-t border-border mb-4"></div>
 
           {/* Menu Items with Standardized Styling */}
           <div className="space-y-2">
@@ -275,8 +275,8 @@ function InvestorLayout({
                   key={item.view}
                   onClick={() => onNavigate(item.view)}
                   className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 ${isActive
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md'
-                    : 'hover:bg-slate-100 text-slate-700'
+                    ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-md'
+                    : 'hover:bg-surface-2 text-subtle'
                     }`
                   }
                   style={{ fontSize: '16px', fontWeight: 500 }}>
@@ -286,7 +286,7 @@ function InvestorLayout({
                     <span>{item.label}</span>
                   </div>
                   {item.badge > 0 &&
-                    <Badge className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                    <Badge className="bg-protocall-sell-text text-white text-xs px-2 py-1 rounded-full">
                       {item.badge}
                     </Badge>
                   }
@@ -297,12 +297,12 @@ function InvestorLayout({
         </nav>
 
         {/* Logout Button - Bottom Section */}
-        <div className="border-t border-slate-200 p-4">
+        <div className="border-t border-border p-4">
           <button
             onClick={async () => {
               await User.logout();
               window.location.href = '/';
-            }} className="text- w-full flex items-center gap-3 rounded-xl transition-all duration-200 hover:from-purple-100 hover:to-blue-100 bg-gradient-to-r from-purple-50 to-blue-50 "
+            }} className="text- w-full flex items-center gap-3 rounded-xl transition-all duration-200 hover:from-surface-2 hover:to-surface-2 bg-surface-2 "
 
             style={{ fontSize: '16px', fontWeight: 500 }}>
 
@@ -314,14 +314,14 @@ function InvestorLayout({
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between shadow-sm">
+        <header className="bg-white border-b border-border px-8 py-4 flex items-center justify-between shadow-sm">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">{investor?.full_name || 'Investor'}</h1>
-            <p className="text-sm text-slate-600">Investor Code: {investor?.investor_code}</p>
+            <h1 className="text-2xl font-bold text-foreground">{investor?.full_name || 'Investor'}</h1>
+            <p className="text-sm text-subtle">Investor Code: {investor?.investor_code}</p>
           </div>
 
           <div className="flex items-center gap-4">
-            <Badge className={investorStatus === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+            <Badge className={investorStatus === 'active' ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-surface-2 text-foreground'}>
               {investorStatus === 'active' ?
                 <>
                   <CheckCircle className="w-3 h-3 mr-1" />
@@ -342,7 +342,7 @@ function InvestorLayout({
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto bg-gradient-to-br from-slate-50 to-blue-50">
+        <main className="flex-1 overflow-auto bg-surface-2">
           {children}
         </main>
       </div>
@@ -354,24 +354,24 @@ function InvestorLayout({
 // PUBLIC LANDING PAGE FOR NON-LOGGED-IN USERS
 function InvestorLandingPage({ onRegisterClick }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+    <div className="min-h-screen bg-surface-2">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 shadow-sm">
+      <header className="bg-white border-b border-border shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
-                <Shield className="w-10 h-10 text-blue-600" />
+                <Shield className="w-10 h-10 text-protocall-blue" />
               </div>
 
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">Protocol Investment Fund</h1>
-                <p className="text-sm text-slate-600">Secure & Transparent Investment Platform</p>
+                <h1 className="text-2xl font-bold text-foreground">Protocol Investment Fund</h1>
+                <p className="text-sm text-subtle">Secure & Transparent Investment Platform</p>
               </div>
             </div>
             <Button
               onClick={() => User.login(window.location.href)} // Changed from loginWithRedirect to login
-              className="bg-gradient-to-r from-blue-600 to-purple-600">
+              className="bg-gradient-to-r from-protocall-deep to-protocall-blue">
 
               Login
             </Button>
@@ -382,10 +382,10 @@ function InvestorLandingPage({ onRegisterClick }) {
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-slate-900 mb-4">
+          <h2 className="text-4xl font-extrabold text-foreground mb-4">
             Welcome to Protocol Investment Dashboard
           </h2>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+          <p className="text-xl text-subtle max-w-3xl mx-auto">
             Join our exclusive investment platform and access professionally managed funds with monthly returns
           </p>
         </div>
@@ -394,11 +394,11 @@ function InvestorLandingPage({ onRegisterClick }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           <Card className="border-0 shadow-xl">
             <CardContent className="p-6 text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-8 h-8 text-blue-600" />
+              <div className="w-16 h-16 bg-premium-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-8 h-8 text-protocall-blue" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">Secure & Regulated</h3>
-              <p className="text-slate-600">
+              <h3 className="text-xl font-bold text-foreground mb-2">Secure & Regulated</h3>
+              <p className="text-subtle">
                 All investments are managed with strict compliance and security protocols
               </p>
             </CardContent>
@@ -406,11 +406,11 @@ function InvestorLandingPage({ onRegisterClick }) {
 
           <Card className="border-0 shadow-xl">
             <CardContent className="p-6  text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-buy-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <TrendingUp className="w-8 h-8 text-buy-muted-foreground" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">Monthly Returns</h3>
-              <p className="text-slate-600">
+              <h3 className="text-xl font-bold text-foreground mb-2">Monthly Returns</h3>
+              <p className="text-subtle">
                 Receive consistent monthly profit distributions directly to your wallet
               </p>
             </CardContent>
@@ -418,11 +418,11 @@ function InvestorLandingPage({ onRegisterClick }) {
 
           <Card className="border-0 shadow-xl">
             <CardContent className="p-6 text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Wallet className="w-8 h-8 text-purple-600" />
+              <div className="w-16 h-16 bg-premium-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Wallet className="w-8 h-8 text-protocall-premium-text" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">Easy Withdrawals</h3>
-              <p className="text-slate-600">
+              <h3 className="text-xl font-bold text-foreground mb-2">Easy Withdrawals</h3>
+              <p className="text-subtle">
                 Request withdrawals anytime with a simple 30-day notice period
               </p>
             </CardContent>
@@ -430,16 +430,16 @@ function InvestorLandingPage({ onRegisterClick }) {
         </div>
 
         {/* Registration CTA */}
-        <Card className="border-0 shadow-2xl bg-gradient-to-r from-blue-600 to-purple-600">
+        <Card className="border-0 shadow-2xl bg-gradient-to-r from-protocall-deep to-protocall-blue">
           <CardContent className="p-12 text-center text-white">
             <h3 className="text-3xl font-bold mb-4">Ready to Start Investing?</h3>
-            <p className="text-xl mb-8 text-blue-100">
+            <p className="text-xl mb-8 text-protocall-blue">
               Register now and get access to our premium investment plans
             </p>
             <Button
               onClick={onRegisterClick}
               size="lg"
-              className="bg-white text-blue-600 hover:bg-blue-50 text-lg px-8 py-6">
+              className="bg-white text-protocall-blue hover:bg-premium-muted text-lg px-8 py-6">
 
               Request Investor Access
             </Button>
@@ -448,17 +448,17 @@ function InvestorLandingPage({ onRegisterClick }) {
       </section>
 
       {/* Disclaimer Section */}
-      <section className="bg-yellow-50 border-t border-yellow-200 py-12">
+      <section className="bg-hold-muted border-t border-hold/30 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-start gap-4">
-            <div className="p-3 bg-yellow-100 rounded-full flex-shrink-0">
-              <svg className="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+            <div className="p-3 bg-hold-muted rounded-full flex-shrink-0">
+              <svg className="w-6 h-6 text-hold-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742-2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
             </div>
             <div>
-              <h4 className="text-lg font-bold text-yellow-900 mb-2">Investment Disclaimer</h4>
-              <p className="text-sm text-yellow-800">
+              <h4 className="text-lg font-bold text-hold-muted-foreground mb-2">Investment Disclaimer</h4>
+              <p className="text-sm text-hold-muted-foreground">
                 <strong>⚠️ Important:</strong> All investments are subject to market risks. Past performance is not indicative of future results.
                 Please read all fund documents carefully before investing. Returns are not guaranteed and may vary based on market conditions.
                 Protocol Investment Fund is regulated and operates under strict compliance guidelines. Investor protection and transparency are our top priorities.
@@ -470,13 +470,13 @@ function InvestorLandingPage({ onRegisterClick }) {
 
       {/* FAQ Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h3 className="text-3xl font-bold text-slate-900 mb-8 text-center">Frequently Asked Questions</h3>
+        <h3 className="text-3xl font-bold text-foreground mb-8 text-center">Frequently Asked Questions</h3>
 
         <div className="space-y-4">
           <Card className="border-0 shadow-lg">
             <CardContent className="p-6">
-              <h4 className="font-bold text-slate-900 mb-2">How do I become an investor?</h4>
-              <p className="text-slate-600">
+              <h4 className="font-bold text-foreground mb-2">How do I become an investor?</h4>
+              <p className="text-subtle">
                 Click the "Request Investor Access" button above and fill out the registration form. Our team will review your application within 24-48 hours.
                 Once approved, you'll receive an investor code and can start investing immediately.
               </p>
@@ -485,8 +485,8 @@ function InvestorLandingPage({ onRegisterClick }) {
 
           <Card className="border-0 shadow-lg">
             <CardContent className="p-6">
-              <h4 className="font-bold text-slate-900 mb-2">What is the minimum investment amount?</h4>
-              <p className="text-slate-600">
+              <h4 className="font-bold text-foreground mb-2">What is the minimum investment amount?</h4>
+              <p className="text-subtle">
                 Minimum investment varies by fund plan, typically starting from ₹10,000. Each fund plan has its own minimum and maximum investment limits,
                 which you can view on the fund details page after registration.
               </p>
@@ -495,8 +495,8 @@ function InvestorLandingPage({ onRegisterClick }) {
 
           <Card className="border-0 shadow-lg">
             <CardContent className="p-6">
-              <h4 className="font-bold text-slate-900 mb-2">How do profit distributions work?</h4>
-              <p className="text-slate-600">
+              <h4 className="font-bold text-foreground mb-2">How do profit distributions work?</h4>
+              <p className="text-subtle">
                 Profits are distributed monthly or quarterly based on your selected plan. Profits are automatically credited to your investment wallet,
                 and you can request a payout to your bank account at any time.
               </p>
@@ -505,8 +505,8 @@ function InvestorLandingPage({ onRegisterClick }) {
 
           <Card className="border-0 shadow-lg">
             <CardContent className="p-6">
-              <h4 className="font-bold text-slate-900 mb-2">Can I withdraw my capital anytime?</h4>
-              <p className="text-slate-600">
+              <h4 className="font-bold text-foreground mb-2">Can I withdraw my capital anytime?</h4>
+              <p className="text-subtle">
                 Yes, but you must provide a 30-day notice period before withdrawing your capital. This allows the fund manager to liquidate positions
                 without impacting market performance. Profit withdrawals have no notice period requirement.
               </p>
@@ -515,8 +515,8 @@ function InvestorLandingPage({ onRegisterClick }) {
 
           <Card className="border-0 shadow-lg">
             <CardContent className="p-6">
-              <h4 className="font-bold text-slate-900 mb-2">Is my investment secure?</h4>
-              <p className="text-slate-600">
+              <h4 className="font-bold text-foreground mb-2">Is my investment secure?</h4>
+              <p className="text-subtle">
                 Yes. All funds are managed by certified fund managers and held in segregated accounts. We follow strict regulatory guidelines
                 and provide complete transparency through regular portfolio reports and real-time dashboard updates.
               </p>
@@ -526,18 +526,18 @@ function InvestorLandingPage({ onRegisterClick }) {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white py-12">
+      <footer className="bg-protocall-ink text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <h5 className="font-bold text-lg mb-4">Protocol Investment Fund</h5>
-              <p className="text-slate-400 text-sm">
+              <p className="text-muted-foreground text-sm">
                 A regulated investment platform providing professional fund management services with transparency and security.
               </p>
             </div>
             <div>
               <h5 className="font-bold text-lg mb-4">Contact</h5>
-              <p className="text-slate-400 text-sm">
+              <p className="text-muted-foreground text-sm">
                 Email: support@protocol.in<br />
                 Phone: +91-80-4567-8900<br />
                 Hours: Mon-Fri, 9 AM - 6 PM IST
@@ -546,14 +546,14 @@ function InvestorLandingPage({ onRegisterClick }) {
             <div>
               <h5 className="font-bold text-lg mb-4">Quick Links</h5>
               <div className="space-y-2 text-sm">
-                <a href="#" className="block text-slate-400 hover:text-white transition-colors">Terms & Conditions</a>
-                <a href="#" className="block text-slate-400 hover:text-white transition-colors">Privacy Policy</a>
-                <a href="#" className="block text-slate-400 hover:text-white transition-colors">Risk Disclosure</a>
-                <a href="#" className="block text-slate-400 hover:text-white transition-colors">Contact Support</a>
+                <a href="#" className="block text-muted-foreground hover:text-white transition-colors">Terms & Conditions</a>
+                <a href="#" className="block text-muted-foreground hover:text-white transition-colors">Privacy Policy</a>
+                <a href="#" className="block text-muted-foreground hover:text-white transition-colors">Risk Disclosure</a>
+                <a href="#" className="block text-muted-foreground hover:text-white transition-colors">Contact Support</a>
               </div>
             </div>
           </div>
-          <div className="border-t border-slate-700 mt-8 pt-8 text-center text-sm text-slate-400">
+          <div className="border-t border-protocall-ink mt-8 pt-8 text-center text-sm text-muted-foreground">
             <p>&copy; {new Date().getFullYear()} Protocol Investment Fund. All rights reserved.</p>
           </div>
         </div>
@@ -605,12 +605,12 @@ function InvestorRegistrationForm({ user, onSuccess, onLogout }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-8">
+    <div className="min-h-screen bg-surface-2 p-8">
       <div className="max-w-2xl mx-auto">
         <Card className="border-0 shadow-2xl">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-xl">
+          <CardHeader className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white rounded-t-xl">
             <CardTitle className="text-2xl">Request Investor Access</CardTitle>
-            <p className="text-blue-100 mt-2">Fill out the form below to apply for investor registration</p>
+            <p className="text-protocall-blue mt-2">Fill out the form below to apply for investor registration</p>
           </CardHeader>
           <CardContent className="p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -653,7 +653,7 @@ function InvestorRegistrationForm({ user, onSuccess, onLogout }) {
                 <select
                   value={formData.annual_income_range}
                   onChange={(e) => setFormData({ ...formData, annual_income_range: e.target.value })}
-                  className="w-full mt-1 px-3 py-2 border border-slate-200 rounded-lg"
+                  className="w-full mt-1 px-3 py-2 border border-border rounded-lg"
                   required>
 
                   <option value="below_5l">Below ₹5 Lakhs</option>
@@ -669,7 +669,7 @@ function InvestorRegistrationForm({ user, onSuccess, onLogout }) {
                 <select
                   value={formData.investment_experience}
                   onChange={(e) => setFormData({ ...formData, investment_experience: e.target.value })}
-                  className="w-full mt-1 px-3 py-2 border border-slate-200 rounded-lg"
+                  className="w-full mt-1 px-3 py-2 border border-border rounded-lg"
                   required>
 
                   <option value="beginner">Beginner (0-2 years)</option>
@@ -678,7 +678,7 @@ function InvestorRegistrationForm({ user, onSuccess, onLogout }) {
                 </select>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
+              <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4 text-sm text-protocall-blue">
                 <p className="font-semibold mb-2">📋 What happens next?</p>
                 <ul className="space-y-1 text-xs">
                   <li>• Your application will be reviewed by our compliance team</li>
@@ -691,7 +691,7 @@ function InvestorRegistrationForm({ user, onSuccess, onLogout }) {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-lg py-6">
+                className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue text-lg py-6">
 
                 {isSubmitting ?
                   <>
@@ -707,7 +707,7 @@ function InvestorRegistrationForm({ user, onSuccess, onLogout }) {
               <Button
                 onClick={onLogout}
                 variant="ghost"
-                className="w-full mt-4 text-slate-500 hover:text-slate-700">
+                className="w-full mt-4 text-muted-foreground hover:text-subtle">
 
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
@@ -779,7 +779,7 @@ function DashboardHomeView({ investor, allocations, wallet, onRefresh }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
       </div>);
 
   }
@@ -787,38 +787,38 @@ function DashboardHomeView({ investor, allocations, wallet, onRefresh }) {
   return (
     <div className="p-8 space-y-8">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-white">
+      <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue rounded-2xl p-8 text-white">
         <h1 className="text-3xl font-bold mb-2">Welcome back, {investor?.full_name}!</h1>
-        <p className="text-indigo-100">Investor Code: <span className="font-bold">{investor?.investor_code}</span></p>
+        <p className="text-protocall-blue">Investor Code: <span className="font-bold">{investor?.investor_code}</span></p>
       </div>
 
       {/* Portfolio Stats - Modified as per code_outline for cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-100 text-sm">Total Invested</p>
+                <p className="text-white/80 text-sm">Total Invested</p>
                 <p className="text-3xl font-bold mt-2">₹{totalInvested.toLocaleString('en-IN')}</p>
               </div>
-              <TrendingUp className="w-8 h-8 text-blue-200" />
+              <TrendingUp className="w-8 h-8 text-white/80" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-purple-100 text-sm">Current Value</p>
+                <p className="text-white/80 text-sm">Current Value</p>
                 <p className="text-3xl font-bold mt-2">₹{totalCurrentValue.toLocaleString('en-IN')}</p>
               </div>
-              <Wallet className="w-8 h-8 text-purple-200" />
+              <Wallet className="w-8 h-8 text-white/80" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className={`border-0 shadow-lg bg-gradient-to-br ${totalProfitLoss >= 0 ? 'from-green-500 to-emerald-600' : 'from-red-500 to-rose-600'} text-white`}>
+        <Card className={`border-0 shadow-lg bg-gradient-to-br ${totalProfitLoss >= 0 ? 'from-buy to-buy-soft' : 'from-sell to-sell'} text-white`}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -830,14 +830,14 @@ function DashboardHomeView({ investor, allocations, wallet, onRefresh }) {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-500 to-orange-600 text-white">
+        <Card className="border-0 shadow-lg bg-hold text-hold-foreground">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-amber-100 text-sm">Available Balance</p>
+                <p className="text-protocall-ink/75 text-sm">Available Balance</p>
                 <p className="text-3xl font-bold mt-2">₹{(wallet?.available_balance || 0).toLocaleString('en-IN')}</p>
               </div>
-              <IndianRupee className="w-8 h-8 text-amber-200" />
+              <IndianRupee className="w-8 h-8 text-protocall-ink/75" />
             </div>
           </CardContent>
         </Card>
@@ -849,7 +849,7 @@ function DashboardHomeView({ investor, allocations, wallet, onRefresh }) {
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-blue-600" />
+              <Activity className="w-5 h-5 text-protocall-blue" />
               Portfolio Performance
             </CardTitle>
           </CardHeader>
@@ -858,23 +858,23 @@ function DashboardHomeView({ investor, allocations, wallet, onRefresh }) {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
-                  <YAxis stroke="#64748b" fontSize={12} />
+                  <XAxis dataKey="name" stroke="hsl(var(--chart-4))" fontSize={12} />
+                  <YAxis stroke="hsl(var(--chart-4))" fontSize={12} />
                   <Tooltip
                     contentStyle={{ backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px' }}
                     formatter={(value) => [`₹${value.toLocaleString('en-IN')}`, '']} />
 
                   <Legend />
-                  <Line type="monotone" dataKey="invested" stroke="#8b5cf6" strokeWidth={2} name="Invested" />
-                  <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={3} name="Current Value" />
+                  <Line type="monotone" dataKey="invested" stroke="hsl(var(--primary))" strokeWidth={2} name="Invested" />
+                  <Line type="monotone" dataKey="value" stroke="hsl(var(--chart-1))" strokeWidth={3} name="Current Value" />
                 </LineChart>
               </ResponsiveContainer> :
 
-              <div className="h-[300px] flex items-center justify-center text-slate-500">
+              <div className="h-[300px] flex items-center justify-center text-muted-foreground">
                 <div className="text-center">
-                  <Activity className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                  <Activity className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
                   <p>No portfolio data yet</p>
-                  <p className="text-sm text-slate-400 mt-1">Invest in a fund to see your performance</p>
+                  <p className="text-sm text-muted-foreground mt-1">Invest in a fund to see your performance</p>
                 </div>
               </div>
             }
@@ -885,7 +885,7 @@ function DashboardHomeView({ investor, allocations, wallet, onRefresh }) {
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <PieChartIcon className="w-5 h-5 text-purple-600" />
+              <PieChartIcon className="w-5 h-5 text-protocall-premium-text" />
               Asset Allocation
             </CardTitle>
           </CardHeader>
@@ -911,11 +911,11 @@ function DashboardHomeView({ investor, allocations, wallet, onRefresh }) {
                 </PieChart>
               </ResponsiveContainer> :
 
-              <div className="h-[300px] flex items-center justify-center text-slate-500">
+              <div className="h-[300px] flex items-center justify-center text-muted-foreground">
                 <div className="text-center">
-                  <PieChartIcon className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                  <PieChartIcon className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
                   <p>No allocations yet</p>
-                  <p className="text-sm text-slate-400 mt-1">Invest to see asset distribution</p>
+                  <p className="text-sm text-muted-foreground mt-1">Invest to see asset distribution</p>
                 </div>
               </div>
             }
@@ -932,7 +932,7 @@ function DashboardHomeView({ investor, allocations, wallet, onRefresh }) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Button
               onClick={() => window.location.hash = 'browse'}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 h-auto py-4">
+              className="bg-gradient-to-r from-protocall-deep to-protocall-blue h-auto py-4">
 
               <div className="flex flex-col items-center gap-2">
                 <TrendingUp className="w-6 h-6" />
@@ -977,20 +977,20 @@ function DashboardHomeView({ investor, allocations, wallet, onRefresh }) {
                 const plPercent = alloc.total_invested > 0 ? (pl / alloc.total_invested * 100).toFixed(2) : 0;
 
                 return (
-                  <div key={alloc.id} className="p-4 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl border border-slate-200">
+                  <div key={alloc.id} className="p-4 bg-surface-2 rounded-xl border border-border">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-semibold text-slate-900">{plan?.plan_name || 'Unknown Plan'}</p>
-                        <p className="text-sm text-slate-600 mt-1">
+                        <p className="font-semibold text-foreground">{plan?.plan_name || 'Unknown Plan'}</p>
+                        <p className="text-sm text-subtle mt-1">
                           Invested: ₹{(alloc.total_invested || 0).toLocaleString('en-IN')} •
                           Current: ₹{(alloc.current_value || 0).toLocaleString('en-IN')}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className={`font-bold ${pl >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <p className={`font-bold ${pl >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
                           {pl >= 0 ? '+' : ''}₹{Math.abs(pl).toLocaleString('en-IN')}
                         </p>
-                        <p className={`text-sm ${pl >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <p className={`text-sm ${pl >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
                           {pl >= 0 ? '+' : ''}{plPercent}%
                         </p>
                       </div>
@@ -1105,10 +1105,10 @@ function InvestmentRequestModal({ isOpen, onClose, plan, investor, wallet, onSuc
         <DialogHeader>
           <DialogTitle>Invest in {plan?.plan_name}</DialogTitle>
           <DialogDescription>
-            <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-              <h4 className="font-semibold text-blue-900">{plan?.plan_name}</h4>
-              <p className="text-sm text-blue-700 mt-1">Expected Return: {plan?.expected_return_percent}% per month</p>
-              <p className="text-sm text-blue-700 mt-1">Minimum Investment: ₹{plan?.minimum_investment?.toLocaleString('en-IN')}</p>
+            <div className="mt-4 p-4 bg-surface-2 rounded-lg border border-protocall-premium-light">
+              <h4 className="font-semibold text-protocall-blue">{plan?.plan_name}</h4>
+              <p className="text-sm text-protocall-blue mt-1">Expected Return: {plan?.expected_return_percent}% per month</p>
+              <p className="text-sm text-protocall-blue mt-1">Minimum Investment: ₹{plan?.minimum_investment?.toLocaleString('en-IN')}</p>
             </div>
           </DialogDescription>
         </DialogHeader>
@@ -1125,24 +1125,24 @@ function InvestmentRequestModal({ isOpen, onClose, plan, investor, wallet, onSuc
               className="mt-1" />
 
             {plan?.minimum_investment &&
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Minimum investment: ₹{plan.minimum_investment.toLocaleString('en-IN')}
               </p>
             }
             {plan?.maximum_investment &&
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Maximum investment: ₹{plan.maximum_investment.toLocaleString('en-IN')}
               </p>
             }
           </div>
 
-          <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+          <div className="p-3 bg-surface-2 rounded-lg border border-border">
             <div className="flex justify-between text-sm mb-2">
-              <span className="text-slate-600">Available Wallet Balance:</span>
+              <span className="text-subtle">Available Wallet Balance:</span>
               <span className="font-semibold">₹{(wallet?.available_balance || 0).toLocaleString('en-IN')}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-slate-600">Balance After Investment:</span>
+              <span className="text-subtle">Balance After Investment:</span>
               <span className="font-semibold">
                 ₹{((wallet?.available_balance || 0) - parseFloat(investAmount || 0)).toLocaleString('en-IN')}
               </span>
@@ -1157,7 +1157,7 @@ function InvestmentRequestModal({ isOpen, onClose, plan, investor, wallet, onSuc
           <Button
             onClick={handleInvest}
             disabled={isProcessing || !investAmount || parseFloat(investAmount) < (plan?.minimum_investment || 0) || parseFloat(investAmount) > (plan?.maximum_investment || Infinity) || (wallet?.available_balance || 0) < parseFloat(investAmount || 0)}
-            className="bg-gradient-to-r from-blue-600 to-purple-600">
+            className="bg-gradient-to-r from-protocall-deep to-protocall-blue">
 
             {isProcessing ?
               <>
@@ -1300,31 +1300,31 @@ function BrowseFundPlansView({ investor, wallet, allocations }) {
     <div className="p-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Browse Investment Plans</h1>
-        <p className="text-slate-600">Choose a fund plan that matches your investment goals</p>
+        <h1 className="text-3xl font-bold text-foreground mb-2">Browse Investment Plans</h1>
+        <p className="text-subtle">Choose a fund plan that matches your investment goals</p>
       </div>
 
       {/* Investment Disclaimer */}
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start gap-3">
-        <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+      <div className="bg-hold-muted border border-hold/30 rounded-lg p-4 flex items-start gap-3">
+        <AlertTriangle className="w-5 h-5 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
         <div>
-          <p className="font-semibold text-yellow-900 mb-1">Investment Disclaimer:</p>
-          <p className="text-sm text-yellow-800">All investments are subject to market risks. Please read the fund documents carefully before investing.</p>
+          <p className="font-semibold text-hold-muted-foreground mb-1">Investment Disclaimer:</p>
+          <p className="text-sm text-hold-muted-foreground">All investments are subject to market risks. Please read the fund documents carefully before investing.</p>
         </div>
       </div>
 
       {/* Wallet Balance Warning - Show if low balance */}
       {availableBalance < 10000 && // Arbitrary threshold for "low balance" warning
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+        <div className="bg-sell-muted border border-sell/30 rounded-lg p-4 flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-sell-muted-foreground flex-shrink-0 mt-0.5" />
           <div className="flex-1">
-            <p className="font-semibold text-red-900 mb-1">Low Wallet Balance</p>
-            <p className="text-sm text-red-800">Your current wallet balance is ₹{availableBalance.toLocaleString('en-IN')}. Please add funds to invest in plans.</p>
+            <p className="font-semibold text-sell-muted-foreground mb-1">Low Wallet Balance</p>
+            <p className="text-sm text-sell-muted-foreground">Your current wallet balance is ₹{availableBalance.toLocaleString('en-IN')}. Please add funds to invest in plans.</p>
           </div>
           <Button
             onClick={() => window.location.hash = 'wallet'}
             size="sm"
-            className="bg-red-600 hover:bg-red-700 text-white">
+            className="bg-protocall-sell-text hover:bg-sell text-white">
 
             Add Funds
           </Button>
@@ -1335,9 +1335,9 @@ function BrowseFundPlansView({ investor, wallet, allocations }) {
       {fundPlans.length === 0 ?
         <Card className="border-0 shadow-md">
           <CardContent className="p-12 text-center">
-            <AlertCircle className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-slate-900 mb-2">No Active Plans Available</h3>
-            <p className="text-slate-600">Please check back later for investment opportunities</p>
+            <AlertCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-foreground mb-2">No Active Plans Available</h3>
+            <p className="text-subtle">Please check back later for investment opportunities</p>
           </CardContent>
         </Card> :
 
@@ -1352,10 +1352,10 @@ function BrowseFundPlansView({ investor, wallet, allocations }) {
             return (
               <Card key={plan.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
                 {/* Header with Gradient Background */}
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white">
+                <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue p-6 text-white">
                   <div className="flex items-start justify-between mb-4">
                     <h3 className="text-2xl font-bold">{plan.plan_name}</h3>
-                    <Badge className="bg-green-500 text-white border-0 flex items-center gap-1">
+                    <Badge className="bg-buy text-buy-foreground border-0 flex items-center gap-1">
                       <CheckCircle className="w-3 h-3" />
                       Active
                     </Badge>
@@ -1382,7 +1382,7 @@ function BrowseFundPlansView({ investor, wallet, allocations }) {
                 <CardContent className="p-6 space-y-4">
                   {/* Show existing investment details if applicable */}
                   {hasInvestment &&
-                    <div className="bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg p-4 text-white mb-4">
+                    <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue rounded-lg p-4 text-white mb-4">
                       <div className="flex items-center gap-2 mb-2">
                         <Briefcase className="w-4 h-4" />
                         <span className="text-sm font-medium">Your Investment</span>
@@ -1390,11 +1390,11 @@ function BrowseFundPlansView({ investor, wallet, allocations }) {
                       </div>
                       <div className="grid grid-cols-2 gap-4 mt-3">
                         <div>
-                          <p className="text-xs text-purple-100">Current</p>
+                          <p className="text-xs text-protocall-premium-text">Current</p>
                           <p className="text-lg font-bold">₹{(existingAllocation.current_value || 0).toLocaleString('en-IN')}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-purple-100">Units</p>
+                          <p className="text-xs text-protocall-premium-text">Units</p>
                           <p className="text-lg font-bold">{(existingAllocation.units_held || 0).toFixed(2)}</p>
                         </div>
                       </div>
@@ -1402,55 +1402,55 @@ function BrowseFundPlansView({ investor, wallet, allocations }) {
                   }
 
                   {/* Expected Return */}
-                  <div className="bg-green-50 rounded-lg p-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-green-700">
+                  <div className="bg-buy-muted rounded-lg p-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-buy-muted-foreground">
                       <TrendingUp className="w-4 h-4" />
                       <span className="text-sm font-medium">Expected Return</span>
                     </div>
-                    <span className="text-lg font-bold text-green-800">{getReturnDisplay(plan)} /mo</span>
+                    <span className="text-lg font-bold text-buy-muted-foreground">{getReturnDisplay(plan)} /mo</span>
                   </div>
 
                   {/* Minimum Investment */}
-                  <div className="bg-blue-50 rounded-lg p-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-blue-700">
+                  <div className="bg-premium-muted rounded-lg p-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-protocall-blue">
                       <IndianRupee className="w-4 h-4" />
                       <span className="text-sm font-medium">Min. Investment</span>
                     </div>
-                    <span className="text-lg font-bold text-blue-800">₹{(plan.minimum_investment || 0).toLocaleString('en-IN')}</span>
+                    <span className="text-lg font-bold text-protocall-blue">₹{(plan.minimum_investment || 0).toLocaleString('en-IN')}</span>
                   </div>
 
                   {/* Period and Payout */}
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-purple-50 rounded-lg p-3">
-                      <div className="flex items-center gap-2 text-purple-700 mb-1">
+                    <div className="bg-premium-muted rounded-lg p-3">
+                      <div className="flex items-center gap-2 text-protocall-premium-text mb-1">
                         <Calendar className="w-4 h-4" />
                         <span className="text-xs font-medium">Period</span>
                       </div>
-                      <p className="font-semibold text-purple-900">{getPeriodDisplay(plan)}</p>
+                      <p className="font-semibold text-protocall-premium-text">{getPeriodDisplay(plan)}</p>
                     </div>
-                    <div className="bg-orange-50 rounded-lg p-3">
-                      <div className="flex items-center gap-2 text-orange-700 mb-1">
+                    <div className="bg-hold-muted rounded-lg p-3">
+                      <div className="flex items-center gap-2 text-hold-muted-foreground mb-1">
                         <Clock className="w-4 h-4" />
                         <span className="text-xs font-medium">Payout</span>
                       </div>
-                      <p className="font-semibold text-orange-900">{getPayoutDisplay(plan)}</p>
+                      <p className="font-semibold text-hold-muted-foreground">{getPayoutDisplay(plan)}</p>
                     </div>
                   </div>
 
                   {/* Notice Period */}
-                  <div className="bg-slate-50 rounded-lg p-3">
-                    <div className="flex items-center gap-2 text-slate-700 mb-1">
+                  <div className="bg-surface-2 rounded-lg p-3">
+                    <div className="flex items-center gap-2 text-subtle mb-1">
                       <Clock className="w-4 h-4" />
                       <span className="text-xs font-medium">Notice Period</span>
                     </div>
-                    <p className="font-semibold text-slate-900">{plan.notice_period_days || 30} days</p>
+                    <p className="font-semibold text-foreground">{plan.notice_period_days || 30} days</p>
                   </div>
 
                   {/* Insufficient Balance Warning */}
                   {!canInvest &&
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
-                      <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
-                      <div className="text-xs text-red-800">
+                    <div className="bg-sell-muted border border-sell/30 rounded-lg p-3 flex items-start gap-2">
+                      <AlertCircle className="w-4 h-4 text-sell-muted-foreground flex-shrink-0 mt-0.5" />
+                      <div className="text-xs text-sell-muted-foreground">
                         <p className="font-semibold">Insufficient Balance</p>
                         <p>You need ₹{minimumRequired.toLocaleString('en-IN')} but have ₹{availableBalance.toLocaleString('en-IN')}</p>
                       </div>
@@ -1463,7 +1463,7 @@ function BrowseFundPlansView({ investor, wallet, allocations }) {
                       <Button
                         onClick={() => handleInvest(plan)}
                         disabled={availableBalance <= 0} // For top-ups, just need any balance
-                        className={`flex-1 ${availableBalance > 0 ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700' : 'bg-slate-300 cursor-not-allowed'} text-white`}
+                        className={`flex-1 ${availableBalance > 0 ? 'bg-buy-soft text-buy-foreground hover:bg-buy' : 'bg-border text-muted-foreground cursor-not-allowed'}`}
                         title={availableBalance <= 0 ? 'Insufficient wallet balance' : 'Add more to this investment'}>
 
                         <Plus className="w-4 h-4 mr-2" />
@@ -1472,7 +1472,7 @@ function BrowseFundPlansView({ investor, wallet, allocations }) {
                       <Button
                         onClick={() => handleWithdraw(existingAllocation)}
                         variant="outline"
-                        className="flex-1 border-2 border-red-200 text-red-700 hover:bg-red-50">
+                        className="flex-1 border-2 border-sell/30 text-sell-muted-foreground hover:bg-sell-muted">
 
                         <Download className="w-4 h-4 mr-2" />
                         Withdraw
@@ -1482,7 +1482,7 @@ function BrowseFundPlansView({ investor, wallet, allocations }) {
                     <Button
                       onClick={() => handleInvest(plan)}
                       disabled={!canInvest}
-                      className={`w-full ${canInvest ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700' : 'bg-slate-300 cursor-not-allowed'} text-white py-6 text-base font-semibold`}
+                      className={`w-full ${canInvest ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue' : 'bg-border cursor-not-allowed'} text-white py-6 text-base font-semibold`}
                       title={!canInvest ? 'Insufficient wallet balance. Please add funds first.' : 'Start investing in this plan'}>
 
                       <Briefcase className="w-5 h-5 mr-2" />
@@ -1618,42 +1618,42 @@ function AllocationsView({ investor, wallet }) {
     <div className="p-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">My Investments</h1>
-        <p className="text-slate-600">Detailed view and analytics of your investment portfolio</p>
+        <h1 className="text-3xl font-bold text-foreground mb-2">My Investments</h1>
+        <p className="text-subtle">Detailed view and analytics of your investment portfolio</p>
       </div>
 
       {/* Portfolio Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100">
+        <Card className="border-0 shadow-lg bg-surface-2">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-2">
-              <div className="p-2 bg-blue-500 rounded-lg">
+              <div className="p-2 bg-protocall-blue rounded-lg">
                 <IndianRupee className="w-5 h-5 text-white" />
               </div>
               <Badge variant="outline" className="text-xs bg-white">Total</Badge>
             </div>
-            <p className="text-sm text-blue-700 mb-1">Total Invested</p>
-            <p className="text-2xl font-bold text-blue-900">₹{totalInvested.toLocaleString('en-IN')}</p>
+            <p className="text-sm text-protocall-blue mb-1">Total Invested</p>
+            <p className="text-2xl font-bold text-protocall-blue">₹{totalInvested.toLocaleString('en-IN')}</p>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100">
+        <Card className="border-0 shadow-lg bg-surface-2">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-2">
-              <div className="p-2 bg-purple-500 rounded-lg">
+              <div className="p-2 bg-primary rounded-lg">
                 <TrendingUp className="w-5 h-5 text-white" />
               </div>
               <Badge variant="outline" className="text-xs bg-white">Current</Badge>
             </div>
-            <p className="text-sm text-purple-700 mb-1">Current Value</p>
-            <p className="text-2xl font-bold text-purple-900">₹{totalCurrentValue.toLocaleString('en-IN')}</p>
+            <p className="text-sm text-protocall-premium-text mb-1">Current Value</p>
+            <p className="text-2xl font-bold text-protocall-premium-text">₹{totalCurrentValue.toLocaleString('en-IN')}</p>
           </CardContent>
         </Card>
 
-        <Card className={`border-0 shadow-lg ${totalProfitLoss >= 0 ? 'bg-gradient-to-br from-green-50 to-green-100' : 'bg-gradient-to-br from-red-50 to-red-100'}`}>
+        <Card className={`border-0 shadow-lg ${totalProfitLoss >= 0 ? 'bg-gradient-to-br from-surface-2 to-buy-muted' : 'bg-gradient-to-br from-surface-2 to-sell-muted'}`}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-2">
-              <div className={`p-2 rounded-lg ${totalProfitLoss >= 0 ? 'bg-green-500' : 'bg-red-500'}`}>
+              <div className={`p-2 rounded-lg ${totalProfitLoss >= 0 ? 'bg-buy' : 'bg-sell'}`}>
                 {totalProfitLoss >= 0 ?
                   <TrendingUp className="w-5 h-5 text-white" /> :
 
@@ -1662,23 +1662,23 @@ function AllocationsView({ investor, wallet }) {
               </div>
               <Badge variant="outline" className="text-xs bg-white">P&L</Badge>
             </div>
-            <p className={`text-sm mb-1 ${totalProfitLoss >= 0 ? 'text-green-700' : 'text-red-700'}`}>Total Profit/Loss</p>
-            <p className={`text-2xl font-bold ${totalProfitLoss >= 0 ? 'text-green-900' : 'text-red-900'}`}>
+            <p className={`text-sm mb-1 ${totalProfitLoss >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>Total Profit/Loss</p>
+            <p className={`text-2xl font-bold ${totalProfitLoss >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
               ₹{Math.abs(totalProfitLoss).toLocaleString('en-IN')}
             </p>
           </CardContent>
         </Card>
 
-        <Card className={`border-0 shadow-lg ${totalROI >= 0 ? 'bg-gradient-to-br from-emerald-50 to-emerald-100' : 'bg-gradient-to-br from-orange-50 to-orange-100'}`}>
+        <Card className={`border-0 shadow-lg ${totalROI >= 0 ? 'bg-gradient-to-br from-surface-2 to-buy-muted' : 'bg-gradient-to-br from-surface-2 to-hold-muted'}`}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-2">
-              <div className={`p-2 rounded-lg ${totalROI >= 0 ? 'bg-emerald-500' : 'bg-orange-500'}`}>
+              <div className={`p-2 rounded-lg ${totalROI >= 0 ? 'bg-buy' : 'bg-hold'}`}>
                 <Target className="w-5 h-5 text-white" />
               </div>
               <Badge variant="outline" className="text-xs bg-white">ROI</Badge>
             </div>
-            <p className={`text-sm mb-1 ${totalROI >= 0 ? 'text-emerald-700' : 'text-orange-700'}`}>Return on Investment</p>
-            <p className={`text-2xl font-bold ${totalROI >= 0 ? 'text-emerald-900' : 'text-orange-900'}`}>
+            <p className={`text-sm mb-1 ${totalROI >= 0 ? 'text-buy-muted-foreground' : 'text-hold-muted-foreground'}`}>Return on Investment</p>
+            <p className={`text-2xl font-bold ${totalROI >= 0 ? 'text-buy-muted-foreground' : 'text-hold-muted-foreground'}`}>
               {totalROI >= 0 ? '+' : ''}{totalROI}%
             </p>
           </CardContent>
@@ -1689,12 +1689,12 @@ function AllocationsView({ investor, wallet }) {
       {activeAllocations.length === 0 ?
         <Card className="border-0 shadow-md">
           <CardContent className="p-12 text-center">
-            <Briefcase className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-slate-900 mb-2">No Active Investments</h3>
-            <p className="text-slate-600 mb-6">Start investing to build your portfolio</p>
+            <Briefcase className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-foreground mb-2">No Active Investments</h3>
+            <p className="text-subtle mb-6">Start investing to build your portfolio</p>
             <Button
               onClick={() => window.location.hash = 'browse'}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+              className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
 
               Browse Investment Plans
             </Button>
@@ -1702,7 +1702,7 @@ function AllocationsView({ investor, wallet }) {
         </Card> :
 
         <div className="space-y-4">
-          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
             <Briefcase className="w-5 h-5" />
             Active Investments ({activeAllocations.length})
           </h2>
@@ -1717,13 +1717,13 @@ function AllocationsView({ investor, wallet }) {
             return (
               <Card key={allocation.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
                 {/* Card Header with Gradient */}
-                <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white">
+                <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue p-6 text-white">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <h3 className="text-2xl font-bold mb-1">{plan?.plan_name || 'Unknown Plan'}</h3>
-                      <p className="text-sm text-indigo-100">{plan?.plan_code || 'N/A'}</p>
+                      <p className="text-sm text-protocall-blue">{plan?.plan_code || 'N/A'}</p>
                     </div>
-                    <Badge className="bg-green-500 text-white border-0 flex items-center gap-1">
+                    <Badge className="bg-buy text-buy-foreground border-0 flex items-center gap-1">
                       <CheckCircle className="w-3 h-3" />
                       Active
                     </Badge>
@@ -1731,11 +1731,11 @@ function AllocationsView({ investor, wallet }) {
 
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <p className="text-indigo-200 mb-1">Total Invested</p>
+                      <p className="text-protocall-premium-light mb-1">Total Invested</p>
                       <p className="text-xl font-bold">₹{(allocation.total_invested || 0).toLocaleString('en-IN')}</p>
                     </div>
                     <div>
-                      <p className="text-indigo-200 mb-1">Current Value</p>
+                      <p className="text-protocall-premium-light mb-1">Current Value</p>
                       <p className="text-xl font-bold">₹{(allocation.current_value || 0).toLocaleString('en-IN')}</p>
                     </div>
                   </div>
@@ -1745,53 +1745,53 @@ function AllocationsView({ investor, wallet }) {
                 <CardContent className="p-6 space-y-4">
                   {/* Performance Overview */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-slate-50 rounded-lg p-4">
-                      <div className="flex items-center gap-2 text-slate-600 mb-2">
+                    <div className="bg-surface-2 rounded-lg p-4">
+                      <div className="flex items-center gap-2 text-subtle mb-2">
                         <Target className="w-4 h-4" />
                         <span className="text-xs font-medium">Profit/Loss</span>
                       </div>
-                      <p className={`text-lg font-bold ${allocation.profit_loss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      <p className={`text-lg font-bold ${allocation.profit_loss >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
                         {allocation.profit_loss >= 0 ? '+' : ''}₹{Math.abs(allocation.profit_loss || 0).toLocaleString('en-IN')}
                       </p>
                     </div>
 
-                    <div className="bg-slate-50 rounded-lg p-4">
-                      <div className="flex items-center gap-2 text-slate-600 mb-2">
+                    <div className="bg-surface-2 rounded-lg p-4">
+                      <div className="flex items-center gap-2 text-subtle mb-2">
                         <TrendingUp className="w-4 h-4" />
                         <span className="text-xs font-medium">ROI</span>
                       </div>
-                      <p className={`text-lg font-bold ${roi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      <p className={`text-lg font-bold ${roi >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
                         {roi >= 0 ? '+' : ''}{roi}%
                       </p>
                     </div>
 
-                    <div className="bg-slate-50 rounded-lg p-4">
-                      <div className="flex items-center gap-2 text-slate-600 mb-2">
+                    <div className="bg-surface-2 rounded-lg p-4">
+                      <div className="flex items-center gap-2 text-subtle mb-2">
                         <Layers className="w-4 h-4" />
                         <span className="text-xs font-medium">Units Held</span>
                       </div>
-                      <p className="text-lg font-bold text-slate-900">
+                      <p className="text-lg font-bold text-foreground">
                         {(allocation.units_held || 0).toFixed(4)}
                       </p>
                     </div>
 
-                    <div className="bg-slate-50 rounded-lg p-4">
-                      <div className="flex items-center gap-2 text-slate-600 mb-2">
+                    <div className="bg-surface-2 rounded-lg p-4">
+                      <div className="flex items-center gap-2 text-subtle mb-2">
                         <Clock className="w-4 h-4" />
                         <span className="text-xs font-medium">Days Held</span>
                       </div>
-                      <p className="text-lg font-bold text-slate-900">
+                      <p className="text-lg font-bold text-foreground">
                         {daysHeld} days
                       </p>
                     </div>
                   </div>
 
                   {/* Investment Details */}
-                  <div className="border-t border-slate-200 pt-4">
+                  <div className="border-t border-border pt-4">
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                       <div>
-                        <p className="text-slate-500 mb-1">Investment Date</p>
-                        <p className="font-semibold text-slate-900">
+                        <p className="text-muted-foreground mb-1">Investment Date</p>
+                        <p className="font-semibold text-foreground">
                           {allocation.initial_investment_date ? new Date(allocation.initial_investment_date).toLocaleDateString('en-IN', {
                             day: 'numeric',
                             month: 'short',
@@ -1800,12 +1800,12 @@ function AllocationsView({ investor, wallet }) {
                         </p>
                       </div>
                       <div>
-                        <p className="text-slate-500 mb-1">Average NAV</p>
-                        <p className="font-semibold text-slate-900">₹{(allocation.average_nav || 0).toFixed(2)}</p>
+                        <p className="text-muted-foreground mb-1">Average NAV</p>
+                        <p className="font-semibold text-foreground">₹{(allocation.average_nav || 0).toFixed(2)}</p>
                       </div>
                       <div>
-                        <p className="text-slate-500 mb-1">Last Updated</p>
-                        <p className="font-semibold text-slate-900">
+                        <p className="text-muted-foreground mb-1">Last Updated</p>
+                        <p className="font-semibold text-foreground">
                           {allocation.last_transaction_date ? new Date(allocation.last_transaction_date).toLocaleDateString('en-IN', {
                             day: 'numeric',
                             month: 'short'
@@ -1816,41 +1816,41 @@ function AllocationsView({ investor, wallet }) {
                   </div>
 
                   {/* Expand/Collapse Transaction History */}
-                  <div className="border-t border-slate-200 pt-4">
+                  <div className="border-t border-border pt-4">
                     <Button
                       variant="ghost"
                       onClick={() => toggleExpand(allocation.id)}
-                      className="w-full justify-between hover:bg-slate-50">
+                      className="w-full justify-between hover:bg-surface-2">
 
-                      <span className="flex items-center gap-2 text-slate-700 font-medium">
+                      <span className="flex items-center gap-2 text-subtle font-medium">
                         <History className="w-4 h-4" />
                         Transaction History ({allocationTransactions.length})
                       </span>
-                      <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                     </Button>
 
                     {isExpanded &&
                       <div className="mt-4 space-y-2 max-h-64 overflow-y-auto">
                         {allocationTransactions.length === 0 ?
-                          <p className="text-sm text-slate-500 text-center py-4">No transactions yet</p> :
+                          <p className="text-sm text-muted-foreground text-center py-4">No transactions yet</p> :
 
                           allocationTransactions.map((txn) =>
-                            <div key={txn.id} className="bg-slate-50 rounded-lg p-3 flex items-center justify-between">
+                            <div key={txn.id} className="bg-surface-2 rounded-lg p-3 flex items-center justify-between">
                               <div className="flex items-center gap-3">
-                                <div className={`p-2 rounded-lg ${txn.transaction_type === 'purchase' || txn.transaction_type === 'investment_topup' ? 'bg-green-100' :
-                                  txn.transaction_type === 'dividend' || txn.transaction_type === 'profit_payout' ? 'bg-blue-100' :
-                                    txn.transaction_type === 'redemption' || txn.transaction_type === 'withdrawal' || txn.transaction_type === 'management_fee' ? 'bg-red-100' :
-                                      'bg-slate-100'
+                                <div className={`p-2 rounded-lg ${txn.transaction_type === 'purchase' || txn.transaction_type === 'investment_topup' ? 'bg-buy-muted' :
+                                  txn.transaction_type === 'dividend' || txn.transaction_type === 'profit_payout' ? 'bg-premium-muted' :
+                                    txn.transaction_type === 'redemption' || txn.transaction_type === 'withdrawal' || txn.transaction_type === 'management_fee' ? 'bg-sell-muted' :
+                                      'bg-surface-2'
                                   }`}>
-                                  {(txn.transaction_type === 'purchase' || txn.transaction_type === 'investment_topup' || txn.transaction_type === 'dividend' || txn.transaction_type === 'profit_payout') && <ArrowUpRight className="w-4 h-4 text-green-600" />}
-                                  {(txn.transaction_type === 'redemption' || txn.transaction_type === 'withdrawal' || txn.transaction_type === 'management_fee') && <ArrowDownLeft className="w-4 h-4 text-red-600" />}
-                                  {!(txn.transaction_type === 'purchase' || txn.transaction_type === 'investment_topup' || txn.transaction_type === 'dividend' || txn.transaction_type === 'profit_payout' || txn.transaction_type === 'redemption' || txn.transaction_type === 'withdrawal' || txn.transaction_type === 'management_fee') && <IndianRupee className="w-4 h-4 text-slate-600" />}
+                                  {(txn.transaction_type === 'purchase' || txn.transaction_type === 'investment_topup' || txn.transaction_type === 'dividend' || txn.transaction_type === 'profit_payout') && <ArrowUpRight className="w-4 h-4 text-buy-muted-foreground" />}
+                                  {(txn.transaction_type === 'redemption' || txn.transaction_type === 'withdrawal' || txn.transaction_type === 'management_fee') && <ArrowDownLeft className="w-4 h-4 text-sell-muted-foreground" />}
+                                  {!(txn.transaction_type === 'purchase' || txn.transaction_type === 'investment_topup' || txn.transaction_type === 'dividend' || txn.transaction_type === 'profit_payout' || txn.transaction_type === 'redemption' || txn.transaction_type === 'withdrawal' || txn.transaction_type === 'management_fee') && <IndianRupee className="w-4 h-4 text-subtle" />}
                                 </div>
                                 <div>
-                                  <p className="font-medium text-slate-900 text-sm capitalize">
+                                  <p className="font-medium text-foreground text-sm capitalize">
                                     {txn.transaction_type.replace(/_/g, ' ')}
                                   </p>
-                                  <p className="text-xs text-slate-500">
+                                  <p className="text-xs text-muted-foreground">
                                     {new Date(txn.transaction_date).toLocaleDateString('en-IN', {
                                       day: 'numeric',
                                       month: 'short',
@@ -1860,12 +1860,12 @@ function AllocationsView({ investor, wallet }) {
                                 </div>
                               </div>
                               <div className="text-right">
-                                <p className={`font-bold text-sm ${txn.transaction_type === 'redemption' || txn.transaction_type === 'withdrawal' || txn.transaction_type === 'management_fee' ? 'text-red-600' : 'text-green-600'
+                                <p className={`font-bold text-sm ${txn.transaction_type === 'redemption' || txn.transaction_type === 'withdrawal' || txn.transaction_type === 'management_fee' ? 'text-sell-muted-foreground' : 'text-buy-muted-foreground'
                                   }`}>
                                   {txn.transaction_type === 'redemption' || txn.transaction_type === 'withdrawal' || txn.transaction_type === 'management_fee' ? '-' : '+'}₹{(txn.amount || 0).toLocaleString('en-IN')}
                                 </p>
                                 {txn.units &&
-                                  <p className="text-xs text-slate-500">{txn.units.toFixed(4)} units</p>
+                                  <p className="text-xs text-muted-foreground">{txn.units.toFixed(4)} units</p>
                                 }
                               </div>
                             </div>
@@ -1876,11 +1876,11 @@ function AllocationsView({ investor, wallet }) {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-3 pt-4 border-t border-slate-200">
+                  <div className="flex gap-3 pt-4 border-t border-border">
                     <Button
                       variant="outline"
                       onClick={() => handleWithdraw(allocation)}
-                      className="flex-1 border-2 border-red-200 text-red-700 hover:bg-red-50 hover:border-red-300">
+                      className="flex-1 border-2 border-sell/30 text-sell-muted-foreground hover:bg-sell-muted hover:border-sell/30">
 
                       <Download className="w-4 h-4 mr-2" />
                       Request Withdrawal
@@ -1889,7 +1889,7 @@ function AllocationsView({ investor, wallet }) {
                       onClick={() => {
                         window.location.hash = 'browse';
                       }}
-                      className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                      className="flex-1 bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
 
                       <Plus className="w-4 h-4 mr-2" />
                       Invest More
@@ -2037,7 +2037,7 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
       </div>);
 
   }
@@ -2046,13 +2046,13 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
     <div className="p-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Wallet</h1>
-          <p className="text-slate-600 mt-1">Manage your investment funds</p>
+          <h1 className="text-3xl font-bold text-foreground">Wallet</h1>
+          <p className="text-subtle mt-1">Manage your investment funds</p>
         </div>
       </div>
 
       {/* Wallet Balance Card with Request Payout Button */}
-      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-2xl p-8 text-white shadow-2xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-protocall-deep via-protocall-grape to-protocall-blue rounded-2xl p-8 text-white shadow-2xl relative overflow-hidden">
         {/* Decorative Elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full -ml-24 -mb-24"></div>
@@ -2061,13 +2061,13 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
           <div className="flex items-start justify-between mb-6">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <Wallet className="w-5 h-5 text-blue-100" />
-                <p className="text-blue-100 text-sm">Available Balance</p>
+                <Wallet className="w-5 h-5 text-protocall-blue" />
+                <p className="text-protocall-blue text-sm">Available Balance</p>
               </div>
               <h1 className="text-5xl font-bold">
                 ₹{(wallet?.available_balance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
               </h1>
-              <p className="text-blue-100 text-sm mt-2">Ready for investment or withdrawal</p>
+              <p className="text-protocall-blue text-sm mt-2">Ready for investment or withdrawal</p>
             </div>
 
             {/* Request Payout Button - Top Right Corner */}
@@ -2078,7 +2078,7 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
                   investor?.kyc_status !== 'verified' ||
                   (wallet?.available_balance || 0) <= 0
                 }
-                className="bg-white text-blue-600 hover:bg-blue-50 font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                className="bg-white text-protocall-blue hover:bg-premium-muted font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
 
                 <Download className="w-4 h-4" />
                 Request Payout
@@ -2086,14 +2086,14 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
 
               {/* Helper Text for Disabled State */}
               {investor?.kyc_status !== 'verified' &&
-                <div className="bg-yellow-500/20 border border-yellow-300/30 rounded-lg px-3 py-2 text-xs text-yellow-100 max-w-[200px]">
+                <div className="bg-hold/20 border border-hold/30/30 rounded-lg px-3 py-2 text-xs text-hold-foreground max-w-[200px]">
                   <Shield className="w-3 h-3 inline mr-1" />
                   KYC verification required
                 </div>
               }
 
               {investor?.kyc_status === 'verified' && (wallet?.available_balance || 0) <= 0 &&
-                <div className="bg-blue-500/20 border border-blue-300/30 rounded-lg px-3 py-2 text-xs text-blue-100 max-w-[200px]">
+                <div className="bg-protocall-blue/20 border border-protocall-premium-light/30 rounded-lg px-3 py-2 text-xs text-white max-w-[200px]">
                   <AlertTriangle className="w-3 h-3 inline mr-1" />
                   No balance available
                 </div>
@@ -2105,29 +2105,29 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-6 border-t border-white/20">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Target className="w-4 h-4 text-blue-100" />
-                <p className="text-blue-100 text-sm">Locked Balance</p>
+                <Target className="w-4 h-4 text-protocall-blue" />
+                <p className="text-protocall-blue text-sm">Locked Balance</p>
               </div>
               <p className="text-2xl font-bold">₹{totalInvested.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <ArrowUpRight className="w-4 h-4 text-blue-100" />
-                <p className="text-blue-100 text-sm">Total Deposited</p>
+                <ArrowUpRight className="w-4 h-4 text-protocall-blue" />
+                <p className="text-protocall-blue text-sm">Total Deposited</p>
               </div>
               <p className="text-2xl font-bold">₹{(wallet?.total_deposited || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <ArrowDownRight className="w-4 h-4 text-blue-100" />
-                <p className="text-blue-100 text-sm">Total Payouts</p>
+                <ArrowDownRight className="w-4 h-4 text-protocall-blue" />
+                <p className="text-protocall-blue text-sm">Total Payouts</p>
               </div>
               <p className="text-2xl font-bold">₹{totalPayouts.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Download className="w-4 h-4 text-blue-100" />
-                <p className="text-blue-100 text-sm">Total Withdrawals</p>
+                <Download className="w-4 h-4 text-protocall-blue" />
+                <p className="text-protocall-blue text-sm">Total Withdrawals</p>
               </div>
               <p className="text-2xl font-bold">₹{totalWithdrawals.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
             </div>
@@ -2139,10 +2139,10 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
       <Card className="border-0 shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-blue-600" />
+            <CreditCard className="w-5 h-5 text-protocall-blue" />
             Add Money to Wallet
           </CardTitle>
-          <p className="text-slate-600 mt-1">Supports INR (Indian Rupees) via UPI/Bank Transfer.</p>
+          <p className="text-subtle mt-1">Supports INR (Indian Rupees) via UPI/Bank Transfer.</p>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4 items-end">
@@ -2159,7 +2159,7 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
             <Button
               onClick={handleAddMoneyClick}
               disabled={!addAmount || parseFloat(addAmount) <= 0}
-              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
+              className="bg-buy-soft hover:from-buy hover:to-buy">
 
               <Plus className="w-4 h-4 mr-2" />
               Add Money
@@ -2186,14 +2186,14 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5 text-blue-600" />
+              <FileText className="w-5 h-5 text-protocall-blue" />
               Transaction History
             </CardTitle>
           </CardHeader>
           <CardContent>
             {transactions.length === 0 ?
-              <div className="py-8 text-center text-slate-500">
-                <FileText className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+              <div className="py-8 text-center text-muted-foreground">
+                <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
                 <p className="text-sm">No transactions yet</p>
               </div> :
 
@@ -2203,19 +2203,19 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
                   const isCredit = creditTypes.includes(txn.transaction_type);
 
                   return (
-                    <div key={txn.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                    <div key={txn.id} className="flex items-center justify-between p-3 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
                       <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${isCredit ? 'bg-green-100' : 'bg-red-100'}`}>
+                        <div className={`p-2 rounded-lg ${isCredit ? 'bg-buy-muted' : 'bg-sell-muted'}`}>
                           {isCredit ?
-                            <ArrowDownRight className="w-5 h-5 text-green-600" /> :
-                            <ArrowUpRight className="w-5 h-5 text-red-600" />
+                            <ArrowDownRight className="w-5 h-5 text-buy-muted-foreground" /> :
+                            <ArrowUpRight className="w-5 h-5 text-sell-muted-foreground" />
                           }
                         </div>
                         <div>
-                          <p className="font-medium capitalize text-sm text-slate-900">
+                          <p className="font-medium capitalize text-sm text-foreground">
                             {txn.transaction_type.replace(/_/g, ' ')}
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-muted-foreground">
                             {new Date(txn.transaction_date).toLocaleDateString('en-US', {
                               day: 'numeric',
                               month: 'short',
@@ -2223,17 +2223,17 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
                             })}
                           </p>
                           {txn.payment_method &&
-                            <p className="text-xs text-slate-400 capitalize">
+                            <p className="text-xs text-muted-foreground capitalize">
                               {txn.payment_method.replace('_', ' ')}
                             </p>
                           }
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className={`font-bold ${isCredit ? 'text-green-600' : 'text-red-600'}`}>
+                        <p className={`font-bold ${isCredit ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
                           {isCredit ? '+' : '-'}₹{(txn.amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                         </p>
-                        <Badge className={txn.status === 'completed' ? 'bg-green-100 text-green-700 text-xs' : 'bg-yellow-100 text-yellow-700 text-xs'}>
+                        <Badge className={txn.status === 'completed' ? 'bg-buy-muted text-buy-muted-foreground text-xs' : 'bg-hold-muted text-hold-muted-foreground text-xs'}>
                           <CheckCircle className="w-3 h-3 mr-1" />
                           {txn.status}
                         </Badge>
@@ -2250,25 +2250,25 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5 text-blue-600" />
+              <FileText className="w-5 h-5 text-protocall-blue" />
               Invoices
             </CardTitle>
           </CardHeader>
           <CardContent>
             {loadedInvoices.length === 0 ?
-              <div className="py-8 text-center text-slate-500">
-                <FileText className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+              <div className="py-8 text-center text-muted-foreground">
+                <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
                 <p className="text-sm">No invoices available</p>
               </div> :
 
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {loadedInvoices.map((invoice) =>
-                  <div key={invoice.id} className="p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                  <div key={invoice.id} className="p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
                     <div className="flex items-center justify-between mb-2">
                       <p className="font-semibold text-sm">{invoice.invoice_number}</p>
                       <Badge variant="outline" className="text-xs capitalize">{invoice.invoice_type}</Badge>
                     </div>
-                    <p className="text-xs text-slate-500 mb-2">
+                    <p className="text-xs text-muted-foreground mb-2">
                       {new Date(invoice.invoice_date).toLocaleDateString('en-US', {
                         day: 'numeric',
                         month: 'short',
@@ -2394,18 +2394,18 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
     switch (status) {
       case 'pending':
       case 'pending_execution':
-        return <Clock className="w-4 h-4 text-yellow-600" />;
+        return <Clock className="w-4 h-4 text-hold-muted-foreground" />;
       case 'approved':
-        return <CheckCircle className="w-4 h-4 text-blue-600" />;
+        return <CheckCircle className="w-4 h-4 text-protocall-blue" />;
       case 'processed':
       case 'paid':
       case 'completed':
-        return <CheckCircle className="w-4 h-4 text-green-600" />;
+        return <CheckCircle className="w-4 h-4 text-buy-muted-foreground" />;
       case 'rejected':
       case 'failed':
-        return <XCircle className="w-4 h-4 text-red-600" />;
+        return <XCircle className="w-4 h-4 text-sell-muted-foreground" />;
       default:
-        return <Clock className="w-4 h-4 text-gray-600" />;
+        return <Clock className="w-4 h-4 text-subtle" />;
     }
   };
 
@@ -2413,18 +2413,18 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
     switch (status) {
       case 'pending':
       case 'pending_execution':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-hold-muted text-hold-muted-foreground border-hold/30';
       case 'approved':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-premium-muted text-protocall-blue border-protocall-premium-light';
       case 'processed':
       case 'paid':
       case 'completed':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-buy-muted text-buy-muted-foreground border-buy/30';
       case 'rejected':
       case 'failed':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-sell-muted text-sell-muted-foreground border-sell/30';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-surface-2 text-foreground border-border';
     }
   };
 
@@ -2533,7 +2533,7 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
       </div>);
 
   }
@@ -2542,21 +2542,21 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
     <div className="p-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Payouts & Withdrawals</h1>
-          <p className="text-slate-600 mt-1">Manage fund withdrawals and payout requests</p>
+          <h1 className="text-3xl font-bold text-foreground">Payouts & Withdrawals</h1>
+          <p className="text-subtle mt-1">Manage fund withdrawals and payout requests</p>
         </div>
         <div className="flex gap-3">
           <Button
             onClick={() => setShowWithdrawalModal(true)}
             variant="secondary"
-            className="bg-gradient-to-r from-red-500 to-pink-600 text-white hover:from-red-600 hover:to-pink-700">
+            className="bg-gradient-to-r from-sell to-protocall-blue text-white hover:from-sell hover:to-protocall-blue">
 
             <IndianRupee className="w-4 h-4 mr-2" />
             Request Fund Withdrawal
           </Button>
           <Button
             onClick={() => setShowPayoutModal(true)}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+            className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
 
             <Download className="w-4 h-4 mr-2" />
             Request Payout
@@ -2566,30 +2566,30 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
 
       {/* Unified Requests Table */}
       <Card className="border-0 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 border-b">
+        <CardHeader className="bg-surface-2 border-b">
           <CardTitle className="flex items-center gap-2">
-            <FileText className="w-6 h-6 text-blue-600" />
+            <FileText className="w-6 h-6 text-protocall-blue" />
             All Requests
           </CardTitle>
-          <p className="text-sm text-slate-600 mt-1">Complete history of withdrawals and payouts</p>
+          <p className="text-sm text-subtle mt-1">Complete history of withdrawals and payouts</p>
         </CardHeader>
         <CardContent className="p-6">
           {allRequests.length === 0 ?
-            <div className="py-12 text-center text-slate-500">
-              <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">No Requests Yet</h3>
+            <div className="py-12 text-center text-muted-foreground">
+              <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">No Requests Yet</h3>
               <p className="text-sm">You haven't made any withdrawal or payout requests.</p>
               <div className="flex gap-3 justify-center mt-4">
                 <Button
                   onClick={() => setShowWithdrawalModal(true)}
-                  className="bg-gradient-to-r from-red-500 to-pink-600">
+                  className="bg-gradient-to-r from-sell to-protocall-blue">
 
                   <IndianRupee className="w-4 h-4 mr-2" />
                   Request Withdrawal
                 </Button>
                 <Button
                   onClick={() => setShowPayoutModal(true)}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600">
+                  className="bg-gradient-to-r from-protocall-deep to-protocall-blue">
 
                   <Download className="w-4 h-4 mr-2" />
                   Request Payout
@@ -2600,29 +2600,29 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b-2 border-slate-200">
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-slate-700">Type</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-slate-700">Fund Plan</th>
-                    <th className="text-right py-3 px-4 text-sm font-semibold text-slate-700">Amount</th>
-                    <th className="text-center py-3 px-4 text-sm font-semibold text-slate-700">Status</th>
-                    <th className="text-center py-3 px-4 text-sm font-semibold text-slate-700">Requested At</th>
-                    <th className="text-center py-3 px-4 text-sm font-semibold text-slate-700">Processed At</th>
-                    <th className="text-center py-3 px-4 text-sm font-semibold text-slate-700">Action</th>
+                  <tr className="border-b-2 border-border">
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-subtle">Type</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-subtle">Fund Plan</th>
+                    <th className="text-right py-3 px-4 text-sm font-semibold text-subtle">Amount</th>
+                    <th className="text-center py-3 px-4 text-sm font-semibold text-subtle">Status</th>
+                    <th className="text-center py-3 px-4 text-sm font-semibold text-subtle">Requested At</th>
+                    <th className="text-center py-3 px-4 text-sm font-semibold text-subtle">Processed At</th>
+                    <th className="text-center py-3 px-4 text-sm font-semibold text-subtle">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {allRequests.map((request) =>
-                    <tr key={`${request.request_type}-${request.id}`} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <tr key={`${request.request_type}-${request.id}`} className="border-b border-divider hover:bg-surface-2 transition-colors">
                       <td className="py-4 px-4">
-                        <Badge variant="outline" className={request.type === 'Withdrawal' ? 'bg-red-50 text-red-700' : 'bg-blue-50 text-blue-700'}>
+                        <Badge variant="outline" className={request.type === 'Withdrawal' ? 'bg-sell-muted text-sell-muted-foreground' : 'bg-premium-muted text-protocall-blue'}>
                           {request.type}
                         </Badge>
                       </td>
                       <td className="py-4 px-4">
-                        <p className="text-sm font-medium text-slate-900">{request.fund_plan_name}</p>
+                        <p className="text-sm font-medium text-foreground">{request.fund_plan_name}</p>
                       </td>
                       <td className="py-4 px-4 text-right">
-                        <p className="text-sm font-bold text-slate-900">
+                        <p className="text-sm font-bold text-foreground">
                           ₹{(request.amount || 0).toLocaleString('en-IN')}
                         </p>
                       </td>
@@ -2633,14 +2633,14 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
                         </Badge>
                       </td>
                       <td className="py-4 px-4 text-center">
-                        <p className="text-sm text-slate-700">
+                        <p className="text-sm text-subtle">
                           {new Date(request.created_date).toLocaleDateString('en-IN', {
                             day: 'numeric',
                             month: 'short',
                             year: 'numeric'
                           })}
                         </p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-muted-foreground">
                           {new Date(request.created_date).toLocaleTimeString('en-IN', {
                             hour: '2-digit',
                             minute: '2-digit'
@@ -2650,14 +2650,14 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
                       <td className="py-4 px-4 text-center">
                         {request.processed_date ?
                           <>
-                            <p className="text-sm text-slate-700">
+                            <p className="text-sm text-subtle">
                               {new Date(request.processed_date).toLocaleDateString('en-IN', {
                                 day: 'numeric',
                                 month: 'short',
                                 year: 'numeric'
                               })}
                             </p>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-muted-foreground">
                               {new Date(request.processed_date).toLocaleTimeString('en-IN', {
                                 hour: '2-digit',
                                 minute: '2-digit'
@@ -2665,7 +2665,7 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
                             </p>
                           </> :
 
-                          <p className="text-xs text-slate-400">-</p>
+                          <p className="text-xs text-muted-foreground">-</p>
                         }
                       </td>
                       <td className="py-4 px-4 text-center">
@@ -2673,7 +2673,7 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
                           size="sm"
                           variant="outline"
                           onClick={() => handleViewTimeline(request, request.request_type)}
-                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+                          className="text-protocall-blue hover:text-protocall-blue hover:bg-premium-muted">
 
                           <FileText className="w-4 h-4 mr-1" />
                           VIEW
@@ -2694,7 +2694,7 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-blue-600" />
+                <FileText className="w-5 h-5 text-protocall-blue" />
                 Request Progress Timeline
               </DialogTitle>
               <DialogDescription>
@@ -2704,23 +2704,23 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
 
             <div className="space-y-6 py-4">
               {/* Request Details */}
-              <div className="grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg">
+              <div className="grid grid-cols-2 gap-4 p-4 bg-surface-2 rounded-lg">
                 <div>
-                  <p className="text-xs text-slate-500">Amount</p>
-                  <p className="text-lg font-bold text-slate-900">
+                  <p className="text-xs text-muted-foreground">Amount</p>
+                  <p className="text-lg font-bold text-foreground">
                     ₹{(selectedRequest.amount || 0).toLocaleString('en-IN')}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500">Status</p>
+                  <p className="text-xs text-muted-foreground">Status</p>
                   <Badge className={`${getStatusColor(selectedRequest.status)} border mt-1`}>
                     {getStatusIcon(selectedRequest.status)}
                     <span className="capitalize ml-1">{getStatusLabel(selectedRequest.status)}</span>
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500">Requested On</p>
-                  <p className="text-sm font-medium text-slate-900">
+                  <p className="text-xs text-muted-foreground">Requested On</p>
+                  <p className="text-sm font-medium text-foreground">
                     {new Date(selectedRequest.created_date).toLocaleDateString('en-IN', {
                       day: 'numeric',
                       month: 'long',
@@ -2730,8 +2730,8 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
                 </div>
                 {selectedRequestType === 'withdrawal' && selectedRequest.expected_processing_date &&
                   <div>
-                    <p className="text-xs text-slate-500">Expected Processing</p>
-                    <p className="text-sm font-medium text-slate-900">
+                    <p className="text-xs text-muted-foreground">Expected Processing</p>
+                    <p className="text-sm font-medium text-foreground">
                       {new Date(selectedRequest.expected_processing_date).toLocaleDateString('en-IN', {
                         day: 'numeric',
                         month: 'long',
@@ -2744,31 +2744,31 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
 
               {/* Timeline */}
               <div className="relative">
-                <div className="text-sm font-semibold text-slate-700 mb-4">Progress Timeline</div>
+                <div className="text-sm font-semibold text-subtle mb-4">Progress Timeline</div>
                 {getTimeline(selectedRequest, selectedRequestType).map((step, idx) =>
                   <div key={idx} className="flex gap-4 pb-6 last:pb-0">
                     <div className="flex flex-col items-center">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${step.completed ? step.error ? 'bg-red-100' : 'bg-green-100' :
-                        step.active ? 'bg-blue-100 animate-pulse' : 'bg-slate-100'
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${step.completed ? step.error ? 'bg-sell-muted' : 'bg-buy-muted' :
+                        step.active ? 'bg-premium-muted animate-pulse' : 'bg-surface-2'
                         }`}>
                         {step.completed ?
-                          step.error ? <XCircle className="w-5 h-5 text-red-600" /> : <CheckCircle className="w-5 h-5 text-green-600" /> :
+                          step.error ? <XCircle className="w-5 h-5 text-sell-muted-foreground" /> : <CheckCircle className="w-5 h-5 text-buy-muted-foreground" /> :
 
-                          step.active ? <Clock className="w-5 h-5 text-blue-600" /> : <Clock className="w-5 h-5 text-slate-400" />
+                          step.active ? <Clock className="w-5 h-5 text-protocall-blue" /> : <Clock className="w-5 h-5 text-muted-foreground" />
                         }
                       </div>
                       {idx < getTimeline(selectedRequest, selectedRequestType).length - 1 &&
-                        <div className={`w-0.5 h-full min-h-[40px] ${step.completed ? step.error ? 'bg-red-200' : 'bg-green-200' : 'bg-slate-200'
+                        <div className={`w-0.5 h-full min-h-[40px] ${step.completed ? step.error ? 'bg-sell-muted' : 'bg-buy-muted' : 'bg-border'
                           }`} />
                       }
                     </div>
 
                     <div className="flex-1 pb-2">
-                      <p className={`font-semibold ${step.completed ? step.error ? 'text-red-900' : 'text-slate-900' : 'text-slate-600'}`}>
+                      <p className={`font-semibold ${step.completed ? step.error ? 'text-sell-muted-foreground' : 'text-foreground' : 'text-subtle'}`}>
                         {step.label}
                       </p>
                       {step.date &&
-                        <p className="text-xs text-slate-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           {new Date(step.date).toLocaleDateString('en-IN', {
                             day: 'numeric',
                             month: 'short',
@@ -2779,7 +2779,7 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
                         </p>
                       }
                       {step.active &&
-                        <p className="text-xs text-blue-600 mt-1">In progress...</p>
+                        <p className="text-xs text-protocall-blue mt-1">In progress...</p>
                       }
                     </div>
                   </div>
@@ -2788,25 +2788,25 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
 
               {/* Admin Notes */}
               {selectedRequest.admin_notes &&
-                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <p className="text-sm font-semibold text-blue-900 mb-1">Admin Notes:</p>
-                  <p className="text-sm text-blue-800">{selectedRequest.admin_notes}</p>
+                <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
+                  <p className="text-sm font-semibold text-protocall-blue mb-1">Admin Notes:</p>
+                  <p className="text-sm text-protocall-blue">{selectedRequest.admin_notes}</p>
                 </div>
               }
 
               {/* Rejection Reason */}
               {selectedRequest.rejection_reason &&
-                <div className="p-4 bg-red-50 rounded-lg border border-red-200">
-                  <p className="text-sm font-semibold text-red-900 mb-1">Rejection Reason:</p>
-                  <p className="text-sm text-red-800">{selectedRequest.rejection_reason}</p>
+                <div className="p-4 bg-sell-muted rounded-lg border border-sell/30">
+                  <p className="text-sm font-semibold text-sell-muted-foreground mb-1">Rejection Reason:</p>
+                  <p className="text-sm text-sell-muted-foreground">{selectedRequest.rejection_reason}</p>
                 </div>
               }
 
               {/* UTR Number (for payouts) */}
               {selectedRequestType === 'payout' && selectedRequest.utr_number &&
-                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                  <p className="text-sm font-semibold text-green-900 mb-1">UTR Number:</p>
-                  <p className="text-sm text-green-800 font-mono">{selectedRequest.utr_number}</p>
+                <div className="p-4 bg-buy-muted rounded-lg border border-buy/30">
+                  <p className="text-sm font-semibold text-buy-muted-foreground mb-1">UTR Number:</p>
+                  <p className="text-sm text-buy-muted-foreground font-mono">{selectedRequest.utr_number}</p>
                 </div>
               }
             </div>
@@ -2962,17 +2962,17 @@ function ReportsView({ investor }) {
 
   const getTransactionTypeColor = (type) => {
     const colors = {
-      wallet_deposit: 'bg-green-100 text-green-800',
-      wallet_withdrawal: 'bg-red-100 text-red-800',
-      purchase: 'bg-blue-100 text-blue-800',
-      redemption: 'bg-orange-100 text-orange-800',
-      dividend: 'bg-purple-100 text-purple-800',
-      profit_payout: 'bg-teal-100 text-teal-800',
-      management_fee: 'bg-gray-100 text-gray-800',
-      investment_topup: 'bg-indigo-100 text-indigo-800',
-      withdrawal: 'bg-orange-100 text-orange-800'
+      wallet_deposit: 'bg-buy-muted text-buy-muted-foreground',
+      wallet_withdrawal: 'bg-sell-muted text-sell-muted-foreground',
+      purchase: 'bg-premium-muted text-protocall-blue',
+      redemption: 'bg-hold-muted text-hold-muted-foreground',
+      dividend: 'bg-premium-muted text-protocall-premium-text',
+      profit_payout: 'bg-buy-muted text-buy-muted-foreground',
+      management_fee: 'bg-surface-2 text-foreground',
+      investment_topup: 'bg-premium-muted text-protocall-blue',
+      withdrawal: 'bg-hold-muted text-hold-muted-foreground'
     };
-    return colors[type] || 'bg-gray-100 text-gray-800';
+    return colors[type] || 'bg-surface-2 text-foreground';
   };
 
   const downloadCSV = () => {
@@ -3015,7 +3015,7 @@ function ReportsView({ investor }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
       </div>);
 
   }
@@ -3024,10 +3024,10 @@ function ReportsView({ investor }) {
     <div className="p-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Transaction Reports</h1>
-          <p className="text-slate-600 mt-1">View and export your transaction history</p>
+          <h1 className="text-3xl font-bold text-foreground">Transaction Reports</h1>
+          <p className="text-subtle mt-1">View and export your transaction history</p>
         </div>
-        <Button onClick={downloadCSV} className="bg-gradient-to-r from-blue-600 to-purple-600">
+        <Button onClick={downloadCSV} className="bg-gradient-to-r from-protocall-deep to-protocall-blue">
           <Download className="w-4 h-4 mr-2" />
           Export CSV
         </Button>
@@ -3081,36 +3081,36 @@ function ReportsView({ investor }) {
       <Card className="border-0 shadow-lg">
         <CardContent className="p-6">
           <div className="mb-4 flex items-center justify-between">
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-subtle">
               Showing {filteredTransactions.length} of {allTransactions.length} transactions
             </p>
           </div>
 
           {filteredTransactions.length === 0 ?
-            <div className="py-12 text-center text-slate-500">
-              <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+            <div className="py-12 text-center text-muted-foreground">
+              <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
               <p>No transactions found</p>
-              <p className="text-sm text-slate-400 mt-2">Try adjusting your filters</p>
+              <p className="text-sm text-muted-foreground mt-2">Try adjusting your filters</p>
             </div> :
 
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-slate-200">
-                <thead className="bg-slate-50 border-b">
+              <table className="min-w-full divide-y divide-divider">
+                <thead className="bg-surface-2 border-b">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase whitespace-nowrap">Date & Time</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase whitespace-nowrap">Type</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase whitespace-nowrap">Fund Plan</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase whitespace-nowrap">Amount</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase whitespace-nowrap">Units</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-slate-600 uppercase whitespace-nowrap">NAV</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase whitespace-nowrap">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase whitespace-nowrap">Notes</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-subtle uppercase whitespace-nowrap">Date & Time</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-subtle uppercase whitespace-nowrap">Type</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-subtle uppercase whitespace-nowrap">Fund Plan</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-subtle uppercase whitespace-nowrap">Amount</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-subtle uppercase whitespace-nowrap">Units</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-subtle uppercase whitespace-nowrap">NAV</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-subtle uppercase whitespace-nowrap">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-subtle uppercase whitespace-nowrap">Notes</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200">
+                <tbody className="divide-y divide-divider">
                   {filteredTransactions.map((txn) =>
-                    <tr key={txn.id} className="hover:bg-slate-50">
-                      <td className="px-4 py-4 text-sm text-slate-600 whitespace-nowrap">
+                    <tr key={txn.id} className="hover:bg-surface-2">
+                      <td className="px-4 py-4 text-sm text-subtle whitespace-nowrap">
                         {new Date(txn.transaction_date).toLocaleString('en-IN', {
                           day: '2-digit',
                           month: 'short',
@@ -3124,28 +3124,28 @@ function ReportsView({ investor }) {
                           {getTransactionTypeLabel(txn.transaction_type)}
                         </Badge>
                       </td>
-                      <td className="px-4 py-4 text-sm text-slate-700 whitespace-nowrap">
+                      <td className="px-4 py-4 text-sm text-subtle whitespace-nowrap">
                         {txn.fund_plan_id ? fundPlans[txn.fund_plan_id]?.plan_name || 'N/A' : '-'}
                       </td>
-                      <td className="px-4 py-4 text-right text-sm font-semibold text-slate-900 whitespace-nowrap">
+                      <td className="px-4 py-4 text-right text-sm font-semibold text-foreground whitespace-nowrap">
                         ₹{(txn.amount || 0).toLocaleString('en-IN')}
                       </td>
-                      <td className="px-4 py-4 text-right text-sm text-slate-600 whitespace-nowrap">
+                      <td className="px-4 py-4 text-right text-sm text-subtle whitespace-nowrap">
                         {txn.units ? txn.units.toFixed(4) : '-'}
                       </td>
-                      <td className="px-4 py-4 text-right text-sm text-slate-600 whitespace-nowrap">
+                      <td className="px-4 py-4 text-right text-sm text-subtle whitespace-nowrap">
                         {txn.nav ? `₹${txn.nav.toFixed(2)}` : '-'}
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap">
                         <Badge className={
-                          txn.status === 'completed' ? 'bg-green-100 text-green-800' :
-                            txn.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-red-100 text-red-800'
+                          txn.status === 'completed' ? 'bg-buy-muted text-buy-muted-foreground' :
+                            txn.status === 'pending' ? 'bg-hold-muted text-hold-muted-foreground' :
+                              'bg-sell-muted text-sell-muted-foreground'
                         }>
                           {txn.status}
                         </Badge>
                       </td>
-                      <td className="px-4 py-4 text-xs text-slate-500 max-w-xs truncate">
+                      <td className="px-4 py-4 text-xs text-muted-foreground max-w-xs truncate">
                         {txn.notes || '-'}
                       </td>
                     </tr>
@@ -3194,8 +3194,8 @@ function ProfileView({ investor, user, onUpdate }) {
     <div className="p-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Investor Profile</h1>
-          <p className="text-slate-600 mt-1">Manage your personal and financial information</p>
+          <h1 className="text-3xl font-bold text-foreground">Investor Profile</h1>
+          <p className="text-subtle mt-1">Manage your personal and financial information</p>
         </div>
         {!isEditing ?
           <Button onClick={() => setIsEditing(true)} variant="outline">
@@ -3207,7 +3207,7 @@ function ProfileView({ investor, user, onUpdate }) {
             <Button onClick={() => setIsEditing(false)} variant="outline" disabled={isSaving}>
               Cancel
             </Button>
-            <Button onClick={handleSave} disabled={isSaving} className="bg-gradient-to-r from-blue-600 to-purple-600">
+            <Button onClick={handleSave} disabled={isSaving} className="bg-gradient-to-r from-protocall-deep to-protocall-blue">
               {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
               Save Changes
             </Button>
@@ -3220,7 +3220,7 @@ function ProfileView({ investor, user, onUpdate }) {
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <UserCircle className="w-5 h-5 text-blue-600" />
+              <UserCircle className="w-5 h-5 text-protocall-blue" />
               Personal Information
             </CardTitle>
           </CardHeader>
@@ -3287,15 +3287,15 @@ function ProfileView({ investor, user, onUpdate }) {
 
             <div>
               <Label>Investor Code</Label>
-              <p className="mt-1 font-mono text-sm bg-slate-100 p-2 rounded">{investor.investor_code}</p>
+              <p className="mt-1 font-mono text-sm bg-surface-2 p-2 rounded">{investor.investor_code}</p>
             </div>
 
             <div>
               <Label>KYC Status</Label>
               <Badge className={
-                investor.kyc_status === 'verified' ? 'bg-green-100 text-green-800 mt-1' :
-                  investor.kyc_status === 'pending' ? 'bg-yellow-100 text-yellow-800 mt-1' :
-                    'bg-red-100 text-red-800 mt-1'
+                investor.kyc_status === 'verified' ? 'bg-buy-muted text-buy-muted-foreground mt-1' :
+                  investor.kyc_status === 'pending' ? 'bg-hold-muted text-hold-muted-foreground mt-1' :
+                    'bg-sell-muted text-sell-muted-foreground mt-1'
               }>
                 {investor.kyc_status || 'Pending'}
               </Badge>
@@ -3307,7 +3307,7 @@ function ProfileView({ investor, user, onUpdate }) {
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CreditCard className="w-5 h-5 text-purple-600" />
+              <CreditCard className="w-5 h-5 text-protocall-premium-text" />
               Financial Information
             </CardTitle>
           </CardHeader>
@@ -3382,29 +3382,29 @@ function ProfileView({ investor, user, onUpdate }) {
       <Card className="border-0 shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-green-600" />
+            <TrendingUp className="w-5 h-5 text-buy-muted-foreground" />
             Investment Summary
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div>
-              <p className="text-sm text-slate-500">Total Invested</p>
-              <p className="text-2xl font-bold text-blue-600">₹{(investor.total_invested || 0).toLocaleString('en-IN')}</p>
+              <p className="text-sm text-muted-foreground">Total Invested</p>
+              <p className="text-2xl font-bold text-protocall-blue">₹{(investor.total_invested || 0).toLocaleString('en-IN')}</p>
             </div>
             <div>
-              <p className="text-sm text-slate-500">Current Value</p>
-              <p className="text-2xl font-bold text-green-600">₹{(investor.current_value || 0).toLocaleString('en-IN')}</p>
+              <p className="text-sm text-muted-foreground">Current Value</p>
+              <p className="text-2xl font-bold text-buy-muted-foreground">₹{(investor.current_value || 0).toLocaleString('en-IN')}</p>
             </div>
             <div>
-              <p className="text-sm text-slate-500">Profit/Loss</p>
-              <p className={`text-2xl font-bold ${(investor.total_profit_loss || 0) >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+              <p className="text-sm text-muted-foreground">Profit/Loss</p>
+              <p className={`text-2xl font-bold ${(investor.total_profit_loss || 0) >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
                 ₹{Math.abs(investor.total_profit_loss || 0).toLocaleString('en-IN')}
               </p>
             </div>
             <div>
-              <p className="text-sm text-slate-500">Account Status</p>
-              <Badge className={investor.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+              <p className="text-sm text-muted-foreground">Account Status</p>
+              <Badge className={investor.status === 'active' ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-surface-2 text-foreground'}>
                 {investor.status}
               </Badge>
             </div>
@@ -3440,8 +3440,8 @@ function SupportView({ investor }) {
   return (
     <div className="p-8 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">Support</h1>
-        <p className="text-slate-600 mt-1">Get help with your investment account</p>
+        <h1 className="text-3xl font-bold text-foreground">Support</h1>
+        <p className="text-subtle mt-1">Get help with your investment account</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -3449,7 +3449,7 @@ function SupportView({ investor }) {
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <LifeBuoy className="w-5 h-5 text-blue-600" />
+              <LifeBuoy className="w-5 h-5 text-protocall-blue" />
               Contact Support
             </CardTitle>
           </CardHeader>
@@ -3481,7 +3481,7 @@ function SupportView({ investor }) {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600">
+                className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue">
 
                 {isSubmitting ?
                   <>
@@ -3502,26 +3502,26 @@ function SupportView({ investor }) {
             <CardTitle>Quick Help</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <h3 className="font-semibold text-blue-900 mb-2">📧 Email Support</h3>
-              <p className="text-sm text-blue-700">support@protocol.in</p>
+            <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
+              <h3 className="font-semibold text-protocall-blue mb-2">📧 Email Support</h3>
+              <p className="text-sm text-protocall-blue">support@protocol.in</p>
             </div>
 
-            <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-              <h3 className="font-semibold text-green-900 mb-2">📞 Phone Support</h3>
-              <p className="text-sm text-green-700">+91-80-4567-8900</p>
-              <p className="text-xs text-green-600 mt-1">Mon-Fri, 9 AM - 6 PM IST</p>
+            <div className="p-4 bg-buy-muted rounded-lg border border-buy/30">
+              <h3 className="font-semibold text-buy-muted-foreground mb-2">📞 Phone Support</h3>
+              <p className="text-sm text-buy-muted-foreground">+91-80-4567-8900</p>
+              <p className="text-xs text-buy-muted-foreground mt-1">Mon-Fri, 9 AM - 6 PM IST</p>
             </div>
 
-            <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-              <h3 className="font-semibold text-purple-900 mb-2">🕒 Business Hours</h3>
-              <p className="text-sm text-purple-700">Monday to Friday</p>
-              <p className="text-sm text-purple-700">9:00 AM - 6:00 PM IST</p>
+            <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
+              <h3 className="font-semibold text-protocall-premium-text mb-2">🕒 Business Hours</h3>
+              <p className="text-sm text-protocall-premium-text">Monday to Friday</p>
+              <p className="text-sm text-protocall-premium-text">9:00 AM - 6:00 PM IST</p>
             </div>
 
-            <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
-              <h3 className="font-semibold text-amber-900 mb-2">⚡ Average Response Time</h3>
-              <p className="text-sm text-amber-700">Within 24 hours</p>
+            <div className="p-4 bg-hold-muted rounded-lg border border-hold/30">
+              <h3 className="font-semibold text-hold-muted-foreground mb-2">⚡ Average Response Time</h3>
+              <p className="text-sm text-hold-muted-foreground">Within 24 hours</p>
             </div>
           </CardContent>
         </Card>
@@ -3533,24 +3533,24 @@ function SupportView({ investor }) {
           <CardTitle>Frequently Asked Questions</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="p-4 bg-slate-50 rounded-lg">
-            <h3 className="font-semibold text-slate-900 mb-2">How do I request a payout?</h3>
-            <p className="text-sm text-slate-600">Go to the Payouts & Withdrawals page and click "Request Payout". Fill in the required details and submit your request.</p>
+          <div className="p-4 bg-surface-2 rounded-lg">
+            <h3 className="font-semibold text-foreground mb-2">How do I request a payout?</h3>
+            <p className="text-sm text-subtle">Go to the Payouts & Withdrawals page and click "Request Payout". Fill in the required details and submit your request.</p>
           </div>
 
-          <div className="p-4 bg-slate-50 rounded-lg">
-            <h3 className="font-semibold text-slate-900 mb-2">What is the minimum investment amount?</h3>
-            <p className="text-sm text-slate-600">The minimum investment amount varies by fund plan. Check the plan details for specific information.</p>
+          <div className="p-4 bg-surface-2 rounded-lg">
+            <h3 className="font-semibold text-foreground mb-2">What is the minimum investment amount?</h3>
+            <p className="text-sm text-subtle">The minimum investment amount varies by fund plan. Check the plan details for specific information.</p>
           </div>
 
-          <div className="p-4 bg-slate-50 rounded-lg">
-            <h3 className="font-semibold text-slate-900 mb-2">How long does KYC verification take?</h3>
-            <p className="text-sm text-slate-600">KYC verification typically takes 1-2 business days after you submit all required documents.</p>
+          <div className="p-4 bg-surface-2 rounded-lg">
+            <h3 className="font-semibold text-foreground mb-2">How long does KYC verification take?</h3>
+            <p className="text-sm text-subtle">KYC verification typically takes 1-2 business days after you submit all required documents.</p>
           </div>
 
-          <div className="p-4 bg-slate-50 rounded-lg">
-            <h3 className="font-semibold text-slate-900 mb-2">When will I receive profit distributions?</h3>
-            <p className="text-sm text-slate-600">Profit distributions are made according to your selected plan (monthly or quarterly) on the first week of each period.</p>
+          <div className="p-4 bg-surface-2 rounded-lg">
+            <h3 className="font-semibold text-foreground mb-2">When will I receive profit distributions?</h3>
+            <p className="text-sm text-subtle">Profit distributions are made according to your selected plan (monthly or quarterly) on the first week of each period.</p>
           </div>
         </CardContent>
       </Card>
@@ -3828,8 +3828,8 @@ export default function InvestorDashboard() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
-        <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+      <div className="flex h-screen items-center justify-center bg-surface-2">
+        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
       </div>);
 
   }
@@ -3851,36 +3851,36 @@ export default function InvestorDashboard() {
   // FIX: User has pending request - show locked dashboard with banner
   if (investorStatus === 'pending_approval' || pendingRequest && (pendingRequest.status === 'pending' || pendingRequest.status === 'under_review')) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+      <div className="min-h-screen bg-surface-2">
         {/* Header with Pending Badge */}
-        <header className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
+        <header className="bg-white border-b border-border shadow-sm sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
-                  <Shield className="w-10 h-10 text-blue-600" />
+                  <Shield className="w-10 h-10 text-protocall-blue" />
                 </div>
 
                 <div>
-                  <h1 className="text-2xl font-bold text-slate-900">Investor Dashboard</h1>
-                  <p className="text-sm text-slate-600">Registration Pending</p>
+                  <h1 className="text-2xl font-bold text-foreground">Investor Dashboard</h1>
+                  <p className="text-sm text-subtle">Registration Pending</p>
                 </div>
               </div>
 
               {/* User Dropdown with Pending Badge */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-3 hover:bg-slate-100 rounded-xl px-4 py-2 transition-colors">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-500 to-orange-600 flex items-center justify-center text-white font-semibold">
+                  <button className="flex items-center gap-3 hover:bg-surface-2 rounded-xl px-4 py-2 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-hold flex items-center justify-center text-hold-foreground font-semibold">
                       {user.display_name?.charAt(0)?.toUpperCase() || 'U'}
                     </div>
                     <div className="text-left">
-                      <p className="font-semibold text-sm text-slate-900">{user.display_name}</p>
+                      <p className="font-semibold text-sm text-foreground">{user.display_name}</p>
                       <div className="flex items-center gap-1">
-                        <Badge className="bg-yellow-100 text-yellow-800 text-xs">Pending</Badge>
+                        <Badge className="bg-hold-muted text-hold-muted-foreground text-xs">Pending</Badge>
                       </div>
                     </div>
-                    <ChevronDown className="w-4 h-4 text-slate-400" />
+                    <ChevronDown className="w-4 h-4 text-muted-foreground" />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
@@ -3891,7 +3891,7 @@ export default function InvestorDashboard() {
                     Profile
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={async () => { await User.logout(); window.location.href = '/'; }} className="text-red-600">
+                  <DropdownMenuItem onClick={async () => { await User.logout(); window.location.href = '/'; }} className="text-sell-muted-foreground">
                     <LogOut className="w-4 h-4 mr-2" />
                     Logout
                   </DropdownMenuItem>
@@ -3903,42 +3903,42 @@ export default function InvestorDashboard() {
 
         {/* Pending Approval Banner */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <Card className="border-2 border-yellow-200 bg-gradient-to-r from-yellow-50 to-orange-50 shadow-2xl">
+          <Card className="border-2 border-hold/30 bg-gradient-to-r from-surface-2 to-hold-muted shadow-2xl">
             <CardContent className="p-12 text-center">
-              <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Clock className="w-10 h-10 text-yellow-600" />
+              <div className="w-20 h-20 bg-hold-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                <Clock className="w-10 h-10 text-hold-muted-foreground" />
               </div>
 
-              <h2 className="text-3xl font-bold text-slate-900 mb-4">
+              <h2 className="text-3xl font-bold text-foreground mb-4">
                 Registration Pending Approval
               </h2>
 
-              <p className="text-lg text-slate-700 mb-8 max-w-2xl mx-auto">
+              <p className="text-lg text-subtle mb-8 max-w-2xl mx-auto">
                 Your registration is pending Fund Manager approval. You'll be notified once approved and can start investing.
               </p>
 
               {/* Registration Details */}
               {pendingRequest &&
                 <div className="bg-white rounded-xl p-6 max-w-md mx-auto mb-8">
-                  <h3 className="font-semibold text-slate-900 mb-4">Submitted Information</h3>
+                  <h3 className="font-semibold text-foreground mb-4">Submitted Information</h3>
                   <div className="space-y-3 text-left">
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Name:</span>
-                      <span className="font-medium text-slate-900">{pendingRequest.full_name || user.display_name}</span>
+                      <span className="text-subtle">Name:</span>
+                      <span className="font-medium text-foreground">{pendingRequest.full_name || user.display_name}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Email:</span>
-                      <span className="font-medium text-slate-900">{pendingRequest.email || user.email}</span>
+                      <span className="text-subtle">Email:</span>
+                      <span className="font-medium text-foreground">{pendingRequest.email || user.email}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Status:</span>
-                      <Badge className="bg-yellow-100 text-yellow-800">
+                      <span className="text-subtle">Status:</span>
+                      <Badge className="bg-hold-muted text-hold-muted-foreground">
                         {pendingRequest.status === 'under_review' ? 'Under Review' : 'Pending'}
                       </Badge>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Submitted:</span>
-                      <span className="font-medium text-slate-900">
+                      <span className="text-subtle">Submitted:</span>
+                      <span className="font-medium text-foreground">
                         {new Date(pendingRequest.created_date).toLocaleDateString('en-IN', {
                           day: 'numeric',
                           month: 'short',
@@ -3951,12 +3951,12 @@ export default function InvestorDashboard() {
               }
 
               {/* What Happens Next */}
-              <div className="bg-blue-50 rounded-xl p-6 max-w-2xl mx-auto">
-                <h3 className="font-semibold text-blue-900 mb-3 flex items-center gap-2 justify-center">
+              <div className="bg-premium-muted rounded-xl p-6 max-w-2xl mx-auto">
+                <h3 className="font-semibold text-protocall-blue mb-3 flex items-center gap-2 justify-center">
                   <AlertCircle className="w-5 h-5" />
                   What Happens Next?
                 </h3>
-                <ul className="space-y-2 text-sm text-blue-800 text-left max-w-md mx-auto">
+                <ul className="space-y-2 text-sm text-protocall-blue text-left max-w-md mx-auto">
                   <li className="flex gap-2">
                     <span>1.</span>
                     <span>Fund Manager will review your registration details</span>
@@ -3974,7 +3974,7 @@ export default function InvestorDashboard() {
 
               <Button
                 onClick={() => window.location.href = createPageUrl('Dashboard')} // Refresh the page to trigger re-evaluation
-                className="mt-8 bg-gradient-to-r from-blue-600 to-purple-600">
+                className="mt-8 bg-gradient-to-r from-protocall-deep to-protocall-blue">
 
                 <Home className="w-4 h-4 mr-2" />
                 Back to Dashboard
@@ -4063,7 +4063,7 @@ function KYCApprovalModal({ isOpen, onClose, investorId, currentKycStatus, curre
         <DialogHeader>
           <DialogTitle>Update KYC Status</DialogTitle>
           <DialogDescription>
-            Review and update the KYC status for <span className="font-semibold text-slate-800">{investorName}</span>.
+            Review and update the KYC status for <span className="font-semibold text-foreground">{investorName}</span>.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -4104,7 +4104,7 @@ function KYCApprovalModal({ isOpen, onClose, investorId, currentKycStatus, curre
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting || kycStatus === currentKycStatus && rejectionReason === currentKycReason}
-            className="bg-gradient-to-r from-blue-600 to-purple-600">
+            className="bg-gradient-to-r from-protocall-deep to-protocall-blue">
 
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Save changes

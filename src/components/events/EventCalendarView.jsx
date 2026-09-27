@@ -65,7 +65,7 @@ export default function EventCalendarView({
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-blue-600" />
+            <Calendar className="w-5 h-5 text-protocall-blue" />
             Events Calendar
           </CardTitle>
           <div className="flex items-center gap-2">
@@ -86,7 +86,7 @@ export default function EventCalendarView({
         <div className="grid grid-cols-7 gap-1 mb-4">
           {/* Day Headers */}
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-            <div key={day} className="p-2 text-center text-sm font-medium text-gray-500 border-b">
+            <div key={day} className="p-2 text-center text-sm font-medium text-muted-foreground border-b">
               {day}
             </div>
           ))}
@@ -100,17 +100,17 @@ export default function EventCalendarView({
               <div
                 key={day.toString()}
                 className={`
-                  min-h-[120px] p-2 border border-gray-100 relative
-                  ${isCurrentMonth(day) ? 'bg-white' : 'bg-gray-50'}
-                  ${isToday(day) ? 'bg-blue-50 border-blue-200' : ''}
-                  ${hasEvents ? 'cursor-pointer hover:bg-gray-50' : ''}
+                  min-h-[120px] p-2 border border-divider relative
+                  ${isCurrentMonth(day) ? 'bg-white' : 'bg-surface-2'}
+                  ${isToday(day) ? 'bg-premium-muted border-protocall-premium-light' : ''}
+                  ${hasEvents ? 'cursor-pointer hover:bg-surface-2' : ''}
                 `}
               >
                 {/* Day Number */}
                 <div className={`
                   text-sm font-medium mb-1
-                  ${isCurrentMonth(day) ? 'text-gray-900' : 'text-gray-400'}
-                  ${isToday(day) ? 'text-blue-600 font-bold' : ''}
+                  ${isCurrentMonth(day) ? 'text-foreground' : 'text-muted-foreground'}
+                  ${isToday(day) ? 'text-protocall-blue font-bold' : ''}
                 `}>
                   {format(day, 'd')}
                 </div>
@@ -130,7 +130,7 @@ export default function EventCalendarView({
                       }}
                     >
                       <div className="font-medium truncate">{event.title}</div>
-                      <div className="text-gray-500 flex items-center gap-1">
+                      <div className="text-muted-foreground flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {format(new Date(event.event_date), 'HH:mm')}
                       </div>
@@ -138,7 +138,7 @@ export default function EventCalendarView({
                   ))}
                   
                   {dayEvents.length > 3 && (
-                    <div className="text-xs text-gray-500 font-medium">
+                    <div className="text-xs text-muted-foreground font-medium">
                       +{dayEvents.length - 3} more
                     </div>
                   )}
@@ -151,15 +151,15 @@ export default function EventCalendarView({
         {/* Event Legend */}
         <div className="flex flex-wrap gap-4 text-sm">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded" style={{ backgroundColor: '#7c3aed' }}></div>
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: 'hsl(var(--primary))' }}></div>
             <span>Featured Events</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded" style={{ backgroundColor: '#f59e0b' }}></div>
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: 'hsl(var(--chart-5))' }}></div>
             <span>Premium Events</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded" style={{ backgroundColor: '#3b82f6' }}></div>
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: 'hsl(var(--chart-1))' }}></div>
             <span>Free Events</span>
           </div>
         </div>
@@ -172,32 +172,32 @@ export default function EventCalendarView({
 
           return (
             <div className="mt-6">
-              <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
                 Today's Events ({todayEvents.length})
               </h4>
               <div className="grid gap-3">
                 {todayEvents.map(event => (
-                  <Card key={event.id} className="border border-gray-200 hover:shadow-md transition-shadow cursor-pointer" onClick={() => onViewDetails(event)}>
+                  <Card key={event.id} className="border border-border hover:shadow-md transition-shadow cursor-pointer" onClick={() => onViewDetails(event)}>
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <h5 className="font-medium text-gray-900">{event.title}</h5>
+                            <h5 className="font-medium text-foreground">{event.title}</h5>
                             {event.is_featured && (
-                              <Badge className="bg-purple-100 text-purple-800 border-purple-200">
+                              <Badge className="bg-premium-muted text-protocall-premium-text border-protocall-premium-light">
                                 <Crown className="w-3 h-3 mr-1" />
                                 Featured
                               </Badge>
                             )}
                             {event.is_premium && (
-                              <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
+                              <Badge className="bg-hold-muted text-hold-muted-foreground border-hold/30">
                                 <Ticket className="w-3 h-3 mr-1" />
                                 {event.ticket_price > 0 ? `₹${event.ticket_price}` : 'Premium'}
                               </Badge>
                             )}
                           </div>
-                          <div className="text-sm text-gray-600 space-y-1">
+                          <div className="text-sm text-subtle space-y-1">
                             <div className="flex items-center gap-1">
                               <Clock className="w-3 h-3" />
                               {format(new Date(event.event_date), 'h:mm a')}

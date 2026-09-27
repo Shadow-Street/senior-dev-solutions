@@ -301,21 +301,21 @@ export default function Polls() {
   }, [polls, userVotes]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 p-6">
+    <div className="w-full bg-background p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-purple-700 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-protocall-ink to-protocall-blue bg-clip-text text-transparent">
               Community Polls
             </h1>
-            <p className="text-slate-600 mt-1">Vote and make informed decisions together</p>
+            <p className="text-subtle mt-1">Vote and make informed decisions together</p>
           </div>
           <div className="flex items-center gap-3">
-            <Badge variant="outline" className="bg-purple-50 text-purple-700">
+            <Badge variant="outline" className="bg-premium-muted text-protocall-premium-text">
               <BarChart3 className="w-3 h-3 mr-1" />
               {polls.filter(p => p.is_active).length} Active
             </Badge>
-            <Button onClick={() => setShowCreateModal(true)} className="bg-purple-600 hover:bg-purple-700">
+            <Button onClick={() => setShowCreateModal(true)} className="bg-primary hover:bg-primary">
               <Plus className="w-4 h-4 mr-2" />
               Create Poll
             </Button>
@@ -323,59 +323,59 @@ export default function Polls() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+          <Card className="border-0 bg-protocall-blue text-white shadow-sm">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-sm">Polls Voted</p>
+                  <p className="text-sm text-white/80">Polls Voted</p>
                   <p className="text-xl font-bold">{userStats.pollsVoted}</p>
                 </div>
-                <Check className="w-6 h-6 text-blue-200" />
+                <Check className="w-6 h-6 text-white/80" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-emerald-500 to-cyan-600 text-white">
+          <Card className="border-0 bg-buy text-buy-foreground shadow-sm">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-emerald-100 text-sm">Active Participants</p>
+                  <p className="text-sm text-buy-foreground/75">Active Participants</p>
                   <p className="text-xl font-bold">{userStats.activeParticipants}</p>
                 </div>
-                <Users className="w-6 h-6 text-emerald-200" />
+                <Users className="w-6 h-6 text-buy-foreground/70" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-amber-500 to-orange-600 text-white">
+          <Card className="border-0 bg-primary text-primary-foreground shadow-sm">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-amber-100 text-sm">My Won Polls</p>
+                  <p className="text-sm text-white/80">My Won Polls</p>
                   <p className="text-xl font-bold">{userStats.wonPolls}</p>
                 </div>
-                <Star className="w-6 h-6 text-amber-200" />
+                <Star className="w-6 h-6 text-white/80" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-pink-500 to-rose-600 text-white">
+          <Card className="border-0 bg-protocall-deep text-white shadow-sm">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-pink-100 text-sm">Success Rate</p>
+                  <p className="text-sm text-white/80">Success Rate</p>
                   <p className="text-xl font-bold">{userStats.successRate}%</p>
                 </div>
-                <Award className="w-6 h-6 text-pink-200" />
+                <Award className="w-6 h-6 text-white/80" />
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 space-y-4">
+        <div className="bg-card rounded-xl shadow-sm border border-border p-4 space-y-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 pointer-events-none" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 pointer-events-none" />
               <Input
                 placeholder="Search polls by title or stock symbol..."
                 value={searchTerm}
@@ -387,7 +387,7 @@ export default function Polls() {
             <div className="sm:w-52">
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="h-11">
-                  <Clock className="w-4 h-4 mr-2 text-slate-500" />
+                  <Clock className="w-4 h-4 mr-2 text-muted-foreground" />
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
@@ -401,10 +401,10 @@ export default function Polls() {
 
           <div className="flex gap-2 flex-wrap">
             {[
-              { value: "all", label: "All Polls", icon: BarChart3, color: "from-blue-500 to-purple-600" },
-              { value: "premium", label: "Premium", icon: Star, color: "from-purple-500 to-pink-600" },
-              { value: "free", label: "Free", icon: Users, color: "from-green-500 to-emerald-600" },
-              { value: "advisor", label: "Advisor", icon: Award, color: "from-indigo-500 to-blue-600" },
+              { value: "all", label: "All Polls", icon: BarChart3, color: "from-protocall-deep to-protocall-blue" },
+              { value: "premium", label: "Premium", icon: Star, color: "from-protocall-deep to-protocall-blue" },
+              { value: "free", label: "Free", icon: Users, color: "from-buy to-buy-soft" },
+              { value: "advisor", label: "Advisor", icon: Award, color: "from-protocall-deep to-protocall-blue" },
             ].map(filterOption => (
               <Button
                 key={filterOption.value}
@@ -412,7 +412,7 @@ export default function Polls() {
                 size="sm"
                 className={`h-9 px-4 rounded-full font-semibold transition-all duration-200 flex items-center gap-2 ${filter === filterOption.value
                   ? `bg-gradient-to-r ${filterOption.color} text-white shadow-lg scale-105`
-                  : 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100'
+                  : 'bg-background text-protocall-blue hover:from-surface-2 hover:to-surface-2'
                   }`}
               >
                 <filterOption.icon className="w-4 h-4" />

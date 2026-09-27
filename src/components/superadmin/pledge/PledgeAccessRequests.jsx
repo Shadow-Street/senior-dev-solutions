@@ -31,12 +31,12 @@ import { cn } from '@/lib/utils';
 
 
 const statusConfig = {
-  pending: { label: 'Pending', icon: Clock, classes: 'text-yellow-800 bg-yellow-100/60 border-yellow-200/80' },
-  approved: { label: 'Approved', icon: CheckCircle, classes: 'text-green-800 bg-green-100/60 border-green-200/80' },
-  rejected: { label: 'Rejected', icon: XCircle, classes: 'text-red-800 bg-red-100/60 border-red-200/80' },
-  suspended: { label: 'Suspended', icon: Ban, classes: 'text-gray-800 bg-gray-200/60 border-gray-300/80' },
-  withdrawn: { label: 'Withdrawn', icon: HelpCircle, classes: 'text-gray-800 bg-gray-100/60 border-gray-200/80' },
-  unknown: { label: 'Unknown', icon: HelpCircle, classes: 'text-gray-800 bg-gray-100/60 border-gray-200/80' }
+  pending: { label: 'Pending', icon: Clock, classes: 'text-hold-muted-foreground bg-hold-muted/60 border-hold/30/80' },
+  approved: { label: 'Approved', icon: CheckCircle, classes: 'text-buy-muted-foreground bg-buy-muted/60 border-buy/30/80' },
+  rejected: { label: 'Rejected', icon: XCircle, classes: 'text-sell-muted-foreground bg-sell-muted/60 border-sell/30/80' },
+  suspended: { label: 'Suspended', icon: Ban, classes: 'text-foreground bg-border/60 border-border/80' },
+  withdrawn: { label: 'Withdrawn', icon: HelpCircle, classes: 'text-foreground bg-surface-2/60 border-border/80' },
+  unknown: { label: 'Unknown', icon: HelpCircle, classes: 'text-foreground bg-surface-2/60 border-border/80' }
 };
 
 const filterRequests = (requests, searchTerm, statusFilter) => {
@@ -81,56 +81,56 @@ const ReviewRequestModal = ({ isOpen, onClose, request, onUpdateStatus }) => {
         </DialogHeader>
         <div className="space-y-6 pt-4">
           
-          <div className="bg-slate-50 rounded-lg p-4 space-y-4">
-            <h3 className="font-semibold text-gray-800">User Information</h3>
+          <div className="bg-surface-2 rounded-lg p-4 space-y-4">
+            <h3 className="font-semibold text-foreground">User Information</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-gray-500">Name</p>
-                <p className="font-medium text-gray-900">{request.user_name}</p>
+                <p className="text-muted-foreground">Name</p>
+                <p className="font-medium text-foreground">{request.user_name}</p>
               </div>
               <div>
-                <p className="text-gray-500">Email</p>
-                <p className="font-medium text-gray-900">{request.user_email}</p>
+                <p className="text-muted-foreground">Email</p>
+                <p className="font-medium text-foreground">{request.user_email}</p>
               </div>
               <div>
-                <p className="text-gray-500">Demat Account</p>
-                <p className="font-medium text-gray-900">{request.demat_account_id}</p>
+                <p className="text-muted-foreground">Demat Account</p>
+                <p className="font-medium text-foreground">{request.demat_account_id}</p>
               </div>
               <div>
-                <p className="text-gray-500">Broker</p>
-                <p className="font-medium text-gray-900 capitalize">{request.broker}</p>
+                <p className="text-muted-foreground">Broker</p>
+                <p className="font-medium text-foreground capitalize">{request.broker}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-slate-50 rounded-lg p-4 space-y-4">
-            <h3 className="font-semibold text-gray-800">Trading Profile</h3>
+          <div className="bg-surface-2 rounded-lg p-4 space-y-4">
+            <h3 className="font-semibold text-foreground">Trading Profile</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-gray-500">Experience Level</p>
-                <p className="font-medium text-gray-900 capitalize">{request.trading_experience?.replace(/_/g, ' ')}</p>
+                <p className="text-muted-foreground">Experience Level</p>
+                <p className="font-medium text-foreground capitalize">{request.trading_experience?.replace(/_/g, ' ')}</p>
               </div>
               <div>
-                <p className="text-gray-500">Annual Income</p>
-                <p className="font-medium text-gray-900">{request.annual_income_range?.replace(/_/g, ' ')}</p>
+                <p className="text-muted-foreground">Annual Income</p>
+                <p className="font-medium text-foreground">{request.annual_income_range?.replace(/_/g, ' ')}</p>
               </div>
             </div>
             <div className="text-sm">
-              <p className="text-gray-500">Risk Assessment Score</p>
+              <p className="text-muted-foreground">Risk Assessment Score</p>
               <div className="flex items-center gap-3 mt-1">
                 <Progress value={request.risk_score || 0} className="w-full" />
-                <span className="font-semibold text-gray-800">{request.risk_score || 0}/100</span>
+                <span className="font-semibold text-foreground">{request.risk_score || 0}/100</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-slate-50 rounded-lg p-4">
-            <h3 className="font-semibold text-gray-800 mb-2">Request Reason</h3>
-            <p className="text-sm text-gray-700">{request.request_reason}</p>
+          <div className="bg-surface-2 rounded-lg p-4">
+            <h3 className="font-semibold text-foreground mb-2">Request Reason</h3>
+            <p className="text-sm text-subtle">{request.request_reason}</p>
           </div>
 
           <div>
-            <label htmlFor="admin_notes" className="font-semibold text-gray-800 text-sm">Admin Review Notes</label>
+            <label htmlFor="admin_notes" className="font-semibold text-foreground text-sm">Admin Review Notes</label>
             <Textarea
               id="admin_notes"
               value={adminNotes}
@@ -154,7 +154,7 @@ const ReviewRequestModal = ({ isOpen, onClose, request, onUpdateStatus }) => {
                 Reject
               </Button>
               <Button
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-buy hover:bg-buy"
                 onClick={() => handleStatusUpdate('approved')}
               >
                 <CheckCircle className="w-4 h-4 mr-2" />
@@ -268,8 +268,8 @@ export default function PledgeAccessRequests({ requests = [], onRequestUpdate, o
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-        <span className="ml-4 text-gray-600">Loading access requests...</span>
+        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+        <span className="ml-4 text-subtle">Loading access requests...</span>
       </div>
     );
   }
@@ -288,10 +288,10 @@ export default function PledgeAccessRequests({ requests = [], onRequestUpdate, o
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <ShieldQuestion className="w-6 h-6 text-blue-600" />
+                <ShieldQuestion className="w-6 h-6 text-protocall-blue" />
                 Pledge Access Requests
               </CardTitle>
-              <p className="text-sm text-gray-500 mt-1">Review and manage user requests for pledge trading access.</p>
+              <p className="text-sm text-muted-foreground mt-1">Review and manage user requests for pledge trading access.</p>
             </div>
             <div className="flex gap-2 w-full sm:w-auto">
               <Input
@@ -330,10 +330,10 @@ export default function PledgeAccessRequests({ requests = [], onRequestUpdate, o
                   const statusInfo = statusConfig[request.status] || statusConfig.unknown;
                   const Icon = statusInfo.icon;
                   return (
-                    <TableRow key={request.id} onClick={() => openReviewModal(request)} className="cursor-pointer hover:bg-gray-50">
+                    <TableRow key={request.id} onClick={() => openReviewModal(request)} className="cursor-pointer hover:bg-surface-2">
                       <TableCell>
                         <div className="font-medium">{request.user_name}</div>
-                        <div className="text-xs text-gray-500">{request.user_email}</div>
+                        <div className="text-xs text-muted-foreground">{request.user_email}</div>
                       </TableCell>
                       <TableCell className="capitalize">{request.broker}</TableCell>
                       <TableCell>{format(new Date(request.created_date), 'PP')}</TableCell>
@@ -349,8 +349,8 @@ export default function PledgeAccessRequests({ requests = [], onRequestUpdate, o
               ) : (
                 <TableRow>
                   <TableCell colSpan={4}>
-                    <Alert className="bg-blue-50 border-blue-200 text-blue-800">
-                      <ShieldQuestion className="h-4 w-4 text-blue-600" />
+                    <Alert className="bg-premium-muted border-protocall-premium-light text-protocall-blue">
+                      <ShieldQuestion className="h-4 w-4 text-protocall-blue" />
                       <AlertTitle>No Requests Found</AlertTitle>
                       <AlertDescription>
                         There are no access requests matching your current filters.

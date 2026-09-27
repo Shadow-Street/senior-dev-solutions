@@ -66,7 +66,7 @@ export default function ModeratorManager({ room, users, onClose, onRefresh }) {
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-blue-600" />
+            <Shield className="w-5 h-5 text-protocall-blue" />
             Manage Moderators - "{room.name}"
           </DialogTitle>
           <DialogDescription>
@@ -84,19 +84,19 @@ export default function ModeratorManager({ room, users, onClose, onRefresh }) {
                   const user = users.find(u => u.id === mod.user_id);
                   if (!user) return null;
                   return (
-                    <div key={mod.user_id} className="flex items-center justify-between bg-blue-50 p-3 rounded-lg">
+                    <div key={mod.user_id} className="flex items-center justify-between bg-premium-muted p-3 rounded-lg">
                       <div className="flex items-center gap-3">
-                        <Shield className="w-4 h-4 text-blue-600" />
+                        <Shield className="w-4 h-4 text-protocall-blue" />
                         <div>
                           <p className="font-medium text-sm">{user.display_name}</p>
-                          <p className="text-xs text-slate-500">{user.email}</p>
+                          <p className="text-xs text-muted-foreground">{user.email}</p>
                         </div>
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => handleRemoveModerator(mod.user_id)}
-                        className="text-red-600 hover:text-red-800"
+                        className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                       >
                         <X className="w-4 h-4" />
                       </Button>
@@ -111,7 +111,7 @@ export default function ModeratorManager({ room, users, onClose, onRefresh }) {
           <div>
             <h4 className="font-semibold text-sm mb-2">Add Moderators</h4>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Search users by name or email..."
                 value={searchTerm}
@@ -124,10 +124,10 @@ export default function ModeratorManager({ room, users, onClose, onRefresh }) {
           {/* User List */}
           <div className="flex-1 overflow-y-auto space-y-2">
             {filteredUsers.map(user => (
-              <div key={user.id} className="flex items-center justify-between bg-slate-50 p-3 rounded-lg hover:bg-slate-100 transition-colors">
+              <div key={user.id} className="flex items-center justify-between bg-surface-2 p-3 rounded-lg hover:bg-surface-2 transition-colors">
                 <div className="flex-1">
                   <p className="font-medium text-sm">{user.display_name}</p>
-                  <p className="text-xs text-slate-500">{user.email}</p>
+                  <p className="text-xs text-muted-foreground">{user.email}</p>
                   <Badge variant="outline" className="mt-1 text-xs">
                     {user.app_role}
                   </Badge>
@@ -136,7 +136,7 @@ export default function ModeratorManager({ room, users, onClose, onRefresh }) {
                   variant="ghost"
                   size="sm"
                   onClick={() => handleAddModerator(user.id)}
-                  className="text-blue-600 hover:text-blue-800"
+                  className="text-protocall-blue hover:text-protocall-blue"
                 >
                   <Plus className="w-4 h-4 mr-1" />
                   Add
@@ -144,7 +144,7 @@ export default function ModeratorManager({ room, users, onClose, onRefresh }) {
               </div>
             ))}
             {filteredUsers.length === 0 && searchTerm && (
-              <p className="text-center text-slate-500 py-8">No users found</p>
+              <p className="text-center text-muted-foreground py-8">No users found</p>
             )}
           </div>
         </div>

@@ -131,17 +131,17 @@ export default function RoomAccessControl({ room, children }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-16">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   if (!hasAccess) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-purple-50 p-6">
+      <div className="flex items-center justify-center min-h-screen bg-surface-2 p-6">
         <Card className="max-w-md w-full">
           <CardContent className="p-8 text-center">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center mx-auto mb-6">
               {accessReason === 'payment_required' && <DollarSign className="w-10 h-10 text-white" />}
               {accessReason === 'not_whitelisted' && <Lock className="w-10 h-10 text-white" />}
               {accessReason === 'upgrade_required' && <Crown className="w-10 h-10 text-white" />}
@@ -149,7 +149,7 @@ export default function RoomAccessControl({ room, children }) {
               {accessReason === 'login_required' && <Shield className="w-10 h-10 text-white" />}
             </div>
 
-            <h2 className="text-2xl font-bold text-slate-900 mb-3">
+            <h2 className="text-2xl font-bold text-foreground mb-3">
               {accessReason === 'payment_required' && 'Paid Room Access Required'}
               {accessReason === 'not_whitelisted' && 'Private Room'}
               {accessReason === 'upgrade_required' && 'Upgrade Required'}
@@ -157,7 +157,7 @@ export default function RoomAccessControl({ room, children }) {
               {accessReason === 'login_required' && 'Login Required'}
             </h2>
 
-            <p className="text-slate-600 mb-6">
+            <p className="text-subtle mb-6">
               {accessReason === 'payment_required' && `This room requires a ₹${room.room_price}/month subscription to access exclusive content and discussions.`}
               {accessReason === 'not_whitelisted' && 'This is a private room. You need an invitation to join.'}
               {accessReason === 'upgrade_required' && `This room requires a ${room.premium_tier?.toUpperCase()} tier subscription.`}
@@ -167,7 +167,7 @@ export default function RoomAccessControl({ room, children }) {
 
             {room.is_premium && room.premium_tier && (
               <div className="mb-6">
-                <Badge className="bg-purple-100 text-purple-800 mb-3">
+                <Badge className="bg-premium-muted text-protocall-premium-text mb-3">
                   <Crown className="w-3 h-3 mr-1" />
                   {room.premium_tier?.toUpperCase()} TIER REQUIRED
                 </Badge>
@@ -175,22 +175,22 @@ export default function RoomAccessControl({ room, children }) {
             )}
 
             {accessReason === 'payment_required' && (
-              <Button className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
+              <Button className="w-full bg-buy-soft hover:from-buy hover:to-buy">
                 <DollarSign className="w-4 h-4 mr-2" />
                 Subscribe for ₹{room.room_price}/month
               </Button>
             )}
 
             {accessReason === 'not_whitelisted' && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
-                <Lock className="w-5 h-5 mx-auto mb-2 text-blue-600" />
+              <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4 text-sm text-protocall-blue">
+                <Lock className="w-5 h-5 mx-auto mb-2 text-protocall-blue" />
                 Contact the room administrator for an invitation
               </div>
             )}
 
             {(accessReason === 'upgrade_required' || accessReason === 'subscription_required') && (
               <Link to={createPageUrl("Subscription")}>
-                <Button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
+                <Button className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
                   <Crown className="w-4 h-4 mr-2" />
                   Upgrade to {room.premium_tier?.toUpperCase()}
                 </Button>
@@ -199,7 +199,7 @@ export default function RoomAccessControl({ room, children }) {
 
             {accessReason === 'login_required' && (
               <Link to={createPageUrl("Profile")}>
-                <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                <Button className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
                   <Shield className="w-4 h-4 mr-2" />
                   Login to Continue
                 </Button>
@@ -221,10 +221,10 @@ export default function RoomAccessControl({ room, children }) {
   return (
     <div className={vipFeatures?.ad_free ? 'vip-ad-free' : ''}>
       {vipFeatures && (
-        <div className="mb-4 p-3 bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg">
+        <div className="mb-4 p-3 bg-gradient-to-r from-surface-2 to-hold-muted border border-hold/30 rounded-lg">
           <div className="flex items-center gap-2">
-            <Star className="w-5 h-5 text-yellow-600" />
-            <span className="font-semibold text-slate-900">VIP Features Active</span>
+            <Star className="w-5 h-5 text-hold-muted-foreground" />
+            <span className="font-semibold text-foreground">VIP Features Active</span>
           </div>
           <div className="flex gap-2 mt-2">
             {vipFeatures.custom_badge && (
@@ -237,13 +237,13 @@ export default function RoomAccessControl({ room, children }) {
               </Badge>
             )}
             {vipFeatures.message_effects?.length > 0 && (
-              <Badge className="bg-purple-100 text-purple-800">
+              <Badge className="bg-premium-muted text-protocall-premium-text">
                 <Sparkles className="w-3 h-3 mr-1" />
                 {vipFeatures.message_effects.length} Effects
               </Badge>
             )}
             {vipFeatures.ad_free && (
-              <Badge className="bg-green-100 text-green-800">
+              <Badge className="bg-buy-muted text-buy-muted-foreground">
                 Ad-Free
               </Badge>
             )}

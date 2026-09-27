@@ -81,10 +81,10 @@ export default function PMSManagement({ user }) {
 
   const getStatusBadge = (status) => {
     const config = {
-      pending_approval: { color: 'bg-yellow-100 text-yellow-800', icon: Clock, label: 'Pending' },
-      approved: { color: 'bg-green-100 text-green-800', icon: CheckCircle, label: 'Approved' },
-      rejected: { color: 'bg-red-100 text-red-800', icon: XCircle, label: 'Rejected' },
-      suspended: { color: 'bg-orange-100 text-orange-800', icon: XCircle, label: 'Suspended' }
+      pending_approval: { color: 'bg-hold-muted text-hold-muted-foreground', icon: Clock, label: 'Pending' },
+      approved: { color: 'bg-buy-muted text-buy-muted-foreground', icon: CheckCircle, label: 'Approved' },
+      rejected: { color: 'bg-sell-muted text-sell-muted-foreground', icon: XCircle, label: 'Rejected' },
+      suspended: { color: 'bg-hold-muted text-hold-muted-foreground', icon: XCircle, label: 'Suspended' }
     };
     const { color, icon: Icon, label } = config[status] || config.pending_approval;
     return (
@@ -106,13 +106,13 @@ export default function PMSManagement({ user }) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+      <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-white">
             <Briefcase className="w-6 h-6" />
             Portfolio Management Service (PMS)
           </CardTitle>
-          <p className="text-blue-100">Manage SEBI-registered Portfolio Managers and their clients</p>
+          <p className="text-white/80">Manage SEBI-registered Portfolio Managers and their clients</p>
         </CardHeader>
       </Card>
 
@@ -122,10 +122,10 @@ export default function PMSManagement({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total PMs</p>
+                <p className="text-sm text-subtle">Total PMs</p>
                 <p className="text-2xl font-bold">{portfolioManagers.length}</p>
               </div>
-              <Briefcase className="w-8 h-8 text-blue-600" />
+              <Briefcase className="w-8 h-8 text-protocall-blue" />
             </div>
           </CardContent>
         </Card>
@@ -134,10 +134,10 @@ export default function PMSManagement({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Pending Approval</p>
+                <p className="text-sm text-subtle">Pending Approval</p>
                 <p className="text-2xl font-bold">{pendingPMs.length}</p>
               </div>
-              <Clock className="w-8 h-8 text-orange-600" />
+              <Clock className="w-8 h-8 text-hold-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -146,10 +146,10 @@ export default function PMSManagement({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Active PMs</p>
+                <p className="text-sm text-subtle">Active PMs</p>
                 <p className="text-2xl font-bold">{approvedPMs.length}</p>
               </div>
-              <CheckCircle className="w-8 h-8 text-green-600" />
+              <CheckCircle className="w-8 h-8 text-buy-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -158,12 +158,12 @@ export default function PMSManagement({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total AUM</p>
+                <p className="text-sm text-subtle">Total AUM</p>
                 <p className="text-2xl font-bold">
                   ₹{(approvedPMs.reduce((sum, pm) => sum + (pm.total_aum || 0), 0) / 10000000).toFixed(2)}Cr
                 </p>
               </div>
-              <TrendingUp className="w-8 h-8 text-purple-600" />
+              <TrendingUp className="w-8 h-8 text-protocall-premium-text" />
             </div>
           </CardContent>
         </Card>
@@ -198,7 +198,7 @@ export default function PMSManagement({ user }) {
           ))}
           {pendingPMs.length === 0 && (
             <Card>
-              <CardContent className="text-center py-12 text-gray-500">
+              <CardContent className="text-center py-12 text-muted-foreground">
                 No pending applications
               </CardContent>
             </Card>
@@ -243,23 +243,23 @@ export default function PMSManagement({ user }) {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600">Display Name</p>
+                  <p className="text-sm text-subtle">Display Name</p>
                   <p className="font-semibold">{selectedPM.display_name}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Company</p>
+                  <p className="text-sm text-subtle">Company</p>
                   <p className="font-semibold">{selectedPM.company_name || 'N/A'}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">SEBI Reg No.</p>
+                  <p className="text-sm text-subtle">SEBI Reg No.</p>
                   <p className="font-semibold">{selectedPM.sebi_registration_number}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Experience</p>
+                  <p className="text-sm text-subtle">Experience</p>
                   <p className="font-semibold">{selectedPM.experience_years} years</p>
                 </div>
                 <div className="col-span-2">
-                  <p className="text-sm text-gray-600">Bio</p>
+                  <p className="text-sm text-subtle">Bio</p>
                   <p className="text-sm">{selectedPM.bio}</p>
                 </div>
               </div>
@@ -284,10 +284,10 @@ export default function PMSManagement({ user }) {
 function PMCard({ pm, onApprove, onReject, onSuspend, onViewDetails }) {
   const getStatusBadge = (status) => {
     const config = {
-      pending_approval: { color: 'bg-yellow-100 text-yellow-800', icon: Clock, label: 'Pending' },
-      approved: { color: 'bg-green-100 text-green-800', icon: CheckCircle, label: 'Approved' },
-      rejected: { color: 'bg-red-100 text-red-800', icon: XCircle, label: 'Rejected' },
-      suspended: { color: 'bg-orange-100 text-orange-800', icon: XCircle, label: 'Suspended' }
+      pending_approval: { color: 'bg-hold-muted text-hold-muted-foreground', icon: Clock, label: 'Pending' },
+      approved: { color: 'bg-buy-muted text-buy-muted-foreground', icon: CheckCircle, label: 'Approved' },
+      rejected: { color: 'bg-sell-muted text-sell-muted-foreground', icon: XCircle, label: 'Rejected' },
+      suspended: { color: 'bg-hold-muted text-hold-muted-foreground', icon: XCircle, label: 'Suspended' }
     };
     const { color, icon: Icon, label } = config[status] || config.pending_approval;
     return (
@@ -304,32 +304,32 @@ function PMCard({ pm, onApprove, onReject, onSuspend, onViewDetails }) {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-3">
-              <Briefcase className="w-6 h-6 text-blue-600" />
+              <Briefcase className="w-6 h-6 text-protocall-blue" />
               <div>
-                <h3 className="text-lg font-bold text-gray-900">{pm.display_name}</h3>
-                <p className="text-sm text-gray-600">SEBI: {pm.sebi_registration_number}</p>
+                <h3 className="text-lg font-bold text-foreground">{pm.display_name}</h3>
+                <p className="text-sm text-subtle">SEBI: {pm.sebi_registration_number}</p>
               </div>
               {getStatusBadge(pm.status)}
             </div>
 
             <div className="grid grid-cols-3 gap-4 mb-4">
-              <div className="bg-blue-50 p-3 rounded-lg">
-                <p className="text-xs text-blue-600 mb-1">Total AUM</p>
-                <p className="text-lg font-bold text-blue-900">
+              <div className="bg-premium-muted p-3 rounded-lg">
+                <p className="text-xs text-protocall-blue mb-1">Total AUM</p>
+                <p className="text-lg font-bold text-protocall-blue">
                   ₹{((pm.total_aum || 0) / 10000000).toFixed(2)}Cr
                 </p>
               </div>
-              <div className="bg-green-50 p-3 rounded-lg">
-                <p className="text-xs text-green-600 mb-1">Clients</p>
-                <p className="text-lg font-bold text-green-900">{pm.total_clients || 0}</p>
+              <div className="bg-buy-muted p-3 rounded-lg">
+                <p className="text-xs text-buy-muted-foreground mb-1">Clients</p>
+                <p className="text-lg font-bold text-buy-muted-foreground">{pm.total_clients || 0}</p>
               </div>
-              <div className="bg-purple-50 p-3 rounded-lg">
-                <p className="text-xs text-purple-600 mb-1">Fee Rate</p>
-                <p className="text-lg font-bold text-purple-900">{pm.performance_fee_percentage}%</p>
+              <div className="bg-premium-muted p-3 rounded-lg">
+                <p className="text-xs text-protocall-premium-text mb-1">Fee Rate</p>
+                <p className="text-lg font-bold text-protocall-premium-text">{pm.performance_fee_percentage}%</p>
               </div>
             </div>
 
-            <p className="text-sm text-gray-600">{pm.bio}</p>
+            <p className="text-sm text-subtle">{pm.bio}</p>
           </div>
 
           <div className="flex flex-col gap-2 ml-4">
@@ -340,11 +340,11 @@ function PMCard({ pm, onApprove, onReject, onSuspend, onViewDetails }) {
 
             {pm.status === 'pending_approval' && onApprove && onReject && (
               <>
-                <Button size="sm" onClick={() => onApprove(pm.id)} className="bg-green-600 hover:bg-green-700">
+                <Button size="sm" onClick={() => onApprove(pm.id)} className="bg-buy hover:bg-buy">
                   <CheckCircle className="w-4 h-4 mr-2" />
                   Approve
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => onReject(pm.id)} className="text-red-600 border-red-600">
+                <Button size="sm" variant="outline" onClick={() => onReject(pm.id)} className="text-sell-muted-foreground border-sell">
                   <XCircle className="w-4 h-4 mr-2" />
                   Reject
                 </Button>
@@ -352,7 +352,7 @@ function PMCard({ pm, onApprove, onReject, onSuspend, onViewDetails }) {
             )}
 
             {pm.status === 'approved' && onSuspend && (
-              <Button size="sm" variant="outline" onClick={() => onSuspend(pm.id)} className="text-orange-600 border-orange-600">
+              <Button size="sm" variant="outline" onClick={() => onSuspend(pm.id)} className="text-hold-muted-foreground border-hold">
                 <XCircle className="w-4 h-4 mr-2" />
                 Suspend
               </Button>

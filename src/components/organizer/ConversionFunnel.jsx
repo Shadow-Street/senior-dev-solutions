@@ -23,7 +23,7 @@ export default function ConversionFunnel({ events, tickets, attendees, checkIns 
         count: estimatedViews, 
         conversion: 100, 
         icon: Eye,
-        color: '#3B82F6',
+        color: 'hsl(var(--chart-1))',
         dropoff: 0
       },
       { 
@@ -31,7 +31,7 @@ export default function ConversionFunnel({ events, tickets, attendees, checkIns 
         count: rsvpCount, 
         conversion: viewToRSVP,
         icon: UserPlus,
-        color: '#8B5CF6',
+        color: 'hsl(var(--primary))',
         dropoff: estimatedViews - rsvpCount
       },
       { 
@@ -39,7 +39,7 @@ export default function ConversionFunnel({ events, tickets, attendees, checkIns 
         count: ticketCount, 
         conversion: rsvpToTicket,
         icon: Ticket,
-        color: '#10B981',
+        color: 'hsl(var(--chart-2))',
         dropoff: rsvpCount - ticketCount
       },
       { 
@@ -47,7 +47,7 @@ export default function ConversionFunnel({ events, tickets, attendees, checkIns 
         count: checkInCount, 
         conversion: ticketToCheckIn,
         icon: CheckCircle,
-        color: '#F59E0B',
+        color: 'hsl(var(--chart-5))',
         dropoff: ticketCount - checkInCount
       }
     ];
@@ -59,10 +59,10 @@ export default function ConversionFunnel({ events, tickets, attendees, checkIns 
     <Card className="shadow-lg border-0">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <TrendingDown className="w-5 h-5 text-purple-600" />
+          <TrendingDown className="w-5 h-5 text-protocall-premium-text" />
           Conversion Funnel Analysis
         </CardTitle>
-        <p className="text-sm text-slate-600">Track how visitors convert to attendees</p>
+        <p className="text-sm text-subtle">Track how visitors convert to attendees</p>
       </CardHeader>
       <CardContent>
         {/* Funnel Visualization */}
@@ -76,12 +76,12 @@ export default function ConversionFunnel({ events, tickets, attendees, checkIns 
               <div key={stage.stage} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-slate-100 rounded-lg">
+                    <div className="p-2 bg-surface-2 rounded-lg">
                       <Icon className="w-5 h-5" style={{ color: stage.color }} />
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-900">{stage.stage}</p>
-                      <p className="text-sm text-slate-600">{stage.count.toLocaleString()} people</p>
+                      <p className="font-semibold text-foreground">{stage.stage}</p>
+                      <p className="text-sm text-subtle">{stage.count.toLocaleString()} people</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -89,12 +89,12 @@ export default function ConversionFunnel({ events, tickets, attendees, checkIns 
                       {stage.conversion.toFixed(1)}%
                     </p>
                     {index > 0 && stage.dropoff > 0 && (
-                      <p className="text-xs text-red-600">-{stage.dropoff} drop-off</p>
+                      <p className="text-xs text-sell-muted-foreground">-{stage.dropoff} drop-off</p>
                     )}
                   </div>
                 </div>
                 
-                <div className="w-full bg-slate-200 rounded-full h-8 overflow-hidden">
+                <div className="w-full bg-border rounded-full h-8 overflow-hidden">
                   <div 
                     className="h-full flex items-center justify-center text-white text-sm font-semibold transition-all duration-500"
                     style={{ 
@@ -128,28 +128,28 @@ export default function ConversionFunnel({ events, tickets, attendees, checkIns 
 
         {/* Insights */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <p className="text-xs text-blue-600 font-medium mb-1">Best Converting Stage</p>
-            <p className="text-lg font-bold text-blue-900">
+          <div className="bg-premium-muted p-4 rounded-lg">
+            <p className="text-xs text-protocall-blue font-medium mb-1">Best Converting Stage</p>
+            <p className="text-lg font-bold text-protocall-blue">
               {funnelData.reduce((max, stage) => stage.conversion > max.conversion ? stage : max).stage}
             </p>
-            <p className="text-xs text-blue-600">{funnelData.reduce((max, stage) => stage.conversion > max.conversion ? stage : max).conversion.toFixed(1)}% conversion</p>
+            <p className="text-xs text-protocall-blue">{funnelData.reduce((max, stage) => stage.conversion > max.conversion ? stage : max).conversion.toFixed(1)}% conversion</p>
           </div>
 
-          <div className="bg-red-50 p-4 rounded-lg">
-            <p className="text-xs text-red-600 font-medium mb-1">Biggest Drop-Off</p>
-            <p className="text-lg font-bold text-red-900">
+          <div className="bg-sell-muted p-4 rounded-lg">
+            <p className="text-xs text-sell-muted-foreground font-medium mb-1">Biggest Drop-Off</p>
+            <p className="text-lg font-bold text-sell-muted-foreground">
               {funnelData.reduce((max, stage) => (stage.dropoff || 0) > (max.dropoff || 0) ? stage : max).stage}
             </p>
-            <p className="text-xs text-red-600">{funnelData.reduce((max, stage) => (stage.dropoff || 0) > (max.dropoff || 0) ? stage : max).dropoff} people lost</p>
+            <p className="text-xs text-sell-muted-foreground">{funnelData.reduce((max, stage) => (stage.dropoff || 0) > (max.dropoff || 0) ? stage : max).dropoff} people lost</p>
           </div>
 
-          <div className="bg-green-50 p-4 rounded-lg">
-            <p className="text-xs text-green-600 font-medium mb-1">Overall Conversion</p>
-            <p className="text-lg font-bold text-green-900">
+          <div className="bg-buy-muted p-4 rounded-lg">
+            <p className="text-xs text-buy-muted-foreground font-medium mb-1">Overall Conversion</p>
+            <p className="text-lg font-bold text-buy-muted-foreground">
               {((funnelData[3].count / funnelData[0].count) * 100).toFixed(1)}%
             </p>
-            <p className="text-xs text-green-600">View to attendance</p>
+            <p className="text-xs text-buy-muted-foreground">View to attendance</p>
           </div>
         </div>
       </CardContent>

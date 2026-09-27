@@ -8,7 +8,7 @@ import { createPageUrl } from '@/utils';
 import { TrendingUp, Eye, MessageCircle, Star, BarChart3, Users, Crown, Vote, PackageOpen } from 'lucide-react';
 
 const ProgressBar = ({ value, color }) => (
-  <div className="w-full bg-slate-200 rounded-full h-1.5">
+  <div className="w-full bg-border rounded-full h-1.5">
     <div className={`${color} h-1.5 rounded-full`} style={{ width: `${value}%` }}></div>
   </div>
 );
@@ -50,7 +50,7 @@ export default function TopPollsWidget({ polls, onViewDetails }) {
     <Card className="shadow-lg border-0 bg-white">
       <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <CardTitle className="flex items-center gap-2">
-          <Star className="w-5 h-5 text-purple-600" />
+          <Star className="w-5 h-5 text-protocall-premium-text" />
           Top Performing Polls
         </CardTitle>
         <div className="flex items-center gap-3">
@@ -81,14 +81,14 @@ export default function TopPollsWidget({ polls, onViewDetails }) {
         {topPolls.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {topPolls.map((poll) => (
-              <div key={poll.id} className="bg-slate-50 border border-slate-200 rounded-xl p-4 transition-all duration-300 hover:shadow-md hover:border-purple-200">
+              <div key={poll.id} className="bg-surface-2 border border-border rounded-xl p-4 transition-all duration-300 hover:shadow-md hover:border-protocall-premium-light">
                 <div className="flex items-start justify-between mb-3">
-                  <p className="font-semibold text-slate-800 flex-1">{poll.title}</p>
-                  <Badge variant={poll.is_currently_active ? 'default' : 'secondary'} className={poll.is_currently_active ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-600'}>
+                  <p className="font-semibold text-foreground flex-1">{poll.title}</p>
+                  <Badge variant={poll.is_currently_active ? 'default' : 'secondary'} className={poll.is_currently_active ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-surface-2 text-subtle'}>
                     {poll.is_currently_active ? 'Active' : 'Expired'}
                   </Badge>
                 </div>
-                <div className="text-xs text-slate-500 mb-4 space-y-1">
+                <div className="text-xs text-muted-foreground mb-4 space-y-1">
                   <div className="flex items-center gap-1.5"><TrendingUp className="w-3 h-3" /><span>Stock: {poll.stock_symbol}</span></div>
                   {poll.chatroom && <div className="flex items-center gap-1.5"><MessageCircle className="w-3 h-3" /><span>Room: {poll.chatroom.name}</span></div>}
                 </div>
@@ -96,31 +96,31 @@ export default function TopPollsWidget({ polls, onViewDetails }) {
                 <div className="space-y-3 mb-4">
                   <div>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="font-medium text-green-600">Buy ({poll.buy_percentage}%)</span>
-                      <span className="font-medium text-slate-500">{poll.buy_votes || 0} votes</span>
+                      <span className="font-medium text-buy-muted-foreground">Buy ({poll.buy_percentage}%)</span>
+                      <span className="font-medium text-muted-foreground">{poll.buy_votes || 0} votes</span>
                     </div>
-                    <ProgressBar value={poll.buy_percentage} color="bg-green-500" />
+                    <ProgressBar value={poll.buy_percentage} color="bg-buy" />
                   </div>
                   <div>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="font-medium text-red-600">Sell ({poll.sell_percentage}%)</span>
-                      <span className="font-medium text-slate-500">{poll.sell_votes || 0} votes</span>
+                      <span className="font-medium text-sell-muted-foreground">Sell ({poll.sell_percentage}%)</span>
+                      <span className="font-medium text-muted-foreground">{poll.sell_votes || 0} votes</span>
                     </div>
-                    <ProgressBar value={poll.sell_percentage} color="bg-red-500" />
+                    <ProgressBar value={poll.sell_percentage} color="bg-sell" />
                   </div>
                   <div>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="font-medium text-yellow-600">Hold ({poll.hold_percentage}%)</span>
-                      <span className="font-medium text-slate-500">{poll.hold_votes || 0} votes</span>
+                      <span className="font-medium text-hold-muted-foreground">Hold ({poll.hold_percentage}%)</span>
+                      <span className="font-medium text-muted-foreground">{poll.hold_votes || 0} votes</span>
                     </div>
-                    <ProgressBar value={poll.hold_percentage} color="bg-yellow-500" />
+                    <ProgressBar value={poll.hold_percentage} color="bg-hold" />
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-3 border-t border-slate-200">
+                <div className="flex items-center justify-between pt-3 border-t border-border">
                    <div className="flex items-center gap-4 text-sm">
-                      <div className="flex items-center gap-1.5 text-slate-600"><Vote className="w-4 h-4"/><span>{poll.total_votes || 0}</span></div>
-                      <div className="flex items-center gap-1.5 text-slate-600"><Users className="w-4 h-4"/><span>{poll.total_pledges || 0}</span></div>
+                      <div className="flex items-center gap-1.5 text-subtle"><Vote className="w-4 h-4"/><span>{poll.total_votes || 0}</span></div>
+                      <div className="flex items-center gap-1.5 text-subtle"><Users className="w-4 h-4"/><span>{poll.total_pledges || 0}</span></div>
                    </div>
                    <div className="flex items-center gap-2">
                      {poll.chatroom_id && (
@@ -140,9 +140,9 @@ export default function TopPollsWidget({ polls, onViewDetails }) {
           </div>
         ) : (
           <div className="text-center py-12">
-            <PackageOpen className="mx-auto h-12 w-12 text-slate-400" />
-            <h3 className="mt-2 text-sm font-medium text-slate-900">No top polls found</h3>
-            <p className="mt-1 text-sm text-slate-500">Try adjusting your filters or encourage more community participation!</p>
+            <PackageOpen className="mx-auto h-12 w-12 text-muted-foreground" />
+            <h3 className="mt-2 text-sm font-medium text-foreground">No top polls found</h3>
+            <p className="mt-1 text-sm text-muted-foreground">Try adjusting your filters or encourage more community participation!</p>
           </div>
         )}
       </CardContent>

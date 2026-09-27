@@ -25,7 +25,7 @@ export default function ManageApiCredentials({ settings, onChange }) {
             onChange={(e) => handleInputChange(field.key, e.target.value)}
             placeholder={field.placeholder}
           />
-          <p className="text-xs text-slate-500">This key is sensitive and will not be shown again once saved.</p>
+          <p className="text-xs text-muted-foreground">This key is sensitive and will not be shown again once saved.</p>
         </div>
       ))}
     </div>

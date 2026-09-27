@@ -167,4 +167,32 @@ db.InfluencerPost.belongsTo(db.FinInfluencer, { foreignKey: 'influencer_id' });
 db.FinInfluencer.hasMany(db.Subscription, { foreignKey: 'finfluencer_id' });
 db.Subscription.belongsTo(db.FinInfluencer, { foreignKey: 'finfluencer_id' });
 
+// ---------------------------------------------------------------------------
+// created_date / updated_date compatibility
+//
+// The frontend was migrated from Base44 and reads `created_date` in ~357
+// places. Factory-built models expose it as a VIRTUAL; the handful defined
+// directly with Sequelize `timestamps: true` produce `createdAt` instead.
+// Normalise both shapes here so every serialised record carries all spellings.
+// ---------------------------------------------------------------------------
+Object.values(db).forEach((model) => {
+  if (!model || typeof model.prototype?.toJSON !== 'function') return;
+
+  const baseToJSON = model.prototype.toJSON;
+  model.prototype.toJSON = function toJSONWithDateAliases() {
+    const values = baseToJSON.call(this);
+    const created = values.created_at ?? values.createdAt;
+    const updated = values.updated_at ?? values.updatedAt;
+    if (created !== undefined) {
+      values.created_at ??= created;
+      values.created_date ??= created;
+    }
+    if (updated !== undefined) {
+      values.updated_at ??= updated;
+      values.updated_date ??= updated;
+    }
+    return values;
+  };
+});
+
 module.exports = db;

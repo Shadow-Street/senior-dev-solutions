@@ -243,10 +243,10 @@ export default function InvestorRequestsManager({ onUpdate }) {
 
   const getStatusBadge = (status) => {
     const config = {
-      pending: { label: 'Pending', className: 'bg-yellow-100 text-yellow-800' },
-      under_review: { label: 'Under Review', className: 'bg-blue-100 text-blue-800' },
-      approved: { label: 'Approved', className: 'bg-green-100 text-green-800' },
-      rejected: { label: 'Rejected', className: 'bg-red-100 text-red-800' }
+      pending: { label: 'Pending', className: 'bg-hold-muted text-hold-muted-foreground' },
+      under_review: { label: 'Under Review', className: 'bg-premium-muted text-protocall-blue' },
+      approved: { label: 'Approved', className: 'bg-buy-muted text-buy-muted-foreground' },
+      rejected: { label: 'Rejected', className: 'bg-sell-muted text-sell-muted-foreground' }
     };
     const { label, className } = config[status] || config.pending;
     return <Badge className={className}>{label}</Badge>;
@@ -263,17 +263,17 @@ export default function InvestorRequestsManager({ onUpdate }) {
     const config = {
       beginner: {
         label: 'Beginner',
-        className: 'bg-blue-100 text-blue-800 border-blue-200',
+        className: 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
         description: '0-2 years'
       },
       intermediate: {
         label: 'Intermediate',
-        className: 'bg-purple-100 text-purple-800 border-purple-200',
+        className: 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light',
         description: '2-5 years'
       },
       advanced: {
         label: 'Advanced',
-        className: 'bg-green-100 text-green-800 border-green-200',
+        className: 'bg-buy-muted text-buy-muted-foreground border-buy/30',
         description: '5+ years'
       }
     };
@@ -291,7 +291,7 @@ export default function InvestorRequestsManager({ onUpdate }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
       </div>
     );
   }
@@ -299,37 +299,37 @@ export default function InvestorRequestsManager({ onUpdate }) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900">Investor Access Requests</h2>
-        <p className="text-slate-600 mt-1">Review and approve investor registration requests</p>
+        <h2 className="text-2xl font-bold text-foreground">Investor Access Requests</h2>
+        <p className="text-subtle mt-1">Review and approve investor registration requests</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
-            <div className="text-sm text-slate-500">Total Requests</div>
-            <div className="text-2xl font-bold text-slate-900">{requests.length}</div>
+            <div className="text-sm text-muted-foreground">Total Requests</div>
+            <div className="text-2xl font-bold text-foreground">{requests.length}</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-sm text-slate-500">Pending</div>
-            <div className="text-2xl font-bold text-yellow-600">
+            <div className="text-sm text-muted-foreground">Pending</div>
+            <div className="text-2xl font-bold text-hold-muted-foreground">
               {requests.filter(r => r.status === 'pending' || r.status === 'under_review').length}
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-sm text-slate-500">Approved</div>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-sm text-muted-foreground">Approved</div>
+            <div className="text-2xl font-bold text-buy-muted-foreground">
               {requests.filter(r => r.status === 'approved').length}
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-sm text-slate-500">Rejected</div>
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-sm text-muted-foreground">Rejected</div>
+            <div className="text-2xl font-bold text-sell-muted-foreground">
               {requests.filter(r => r.status === 'rejected').length}
             </div>
           </CardContent>
@@ -342,8 +342,8 @@ export default function InvestorRequestsManager({ onUpdate }) {
         </CardHeader>
         <CardContent>
           {requests.length === 0 ? (
-            <div className="text-center py-12 text-slate-500">
-              <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-slate-300" />
+            <div className="text-center py-12 text-muted-foreground">
+              <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
               <p>No investor requests found</p>
             </div>
           ) : (
@@ -359,7 +359,7 @@ export default function InvestorRequestsManager({ onUpdate }) {
                       <Tooltip>
                         <TooltipTrigger className="flex items-center gap-1 cursor-help">
                           Investment Experience
-                          <AlertTriangle className="w-3 h-3 text-slate-400" />
+                          <AlertTriangle className="w-3 h-3 text-muted-foreground" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="text-xs">Used to auto-assign risk profile:</p>
@@ -406,11 +406,11 @@ export default function InvestorRequestsManager({ onUpdate }) {
                       </TableCell>
                       <TableCell>
                         {investorCode ? (
-                          <Badge className="bg-blue-100 text-blue-800 font-mono">
+                          <Badge className="bg-premium-muted text-protocall-blue font-mono">
                             {investorCode}
                           </Badge>
                         ) : (
-                          <span className="text-slate-400 text-sm">-</span>
+                          <span className="text-muted-foreground text-sm">-</span>
                         )}
                       </TableCell>
                       <TableCell>{getStatusBadge(request.status)}</TableCell>
@@ -427,7 +427,7 @@ export default function InvestorRequestsManager({ onUpdate }) {
                             <>
                               <Button
                                 size="sm"
-                                className="bg-green-600 hover:bg-green-700"
+                                className="bg-buy hover:bg-buy"
                                 onClick={() => {
                                   setSelectedRequest(request);
                                   setShowApprovalModal(true);
@@ -465,68 +465,68 @@ export default function InvestorRequestsManager({ onUpdate }) {
             <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="text-2xl flex items-center gap-2">
-                  <UserIcon className="w-6 h-6 text-blue-600" />
+                  <UserIcon className="w-6 h-6 text-protocall-blue" />
                   Investor Profile
                 </DialogTitle>
-                <p className="text-sm text-slate-600 mt-1">
+                <p className="text-sm text-subtle mt-1">
                   {selectedInvestorProfile ? 'Live profile data synced from investor dashboard' : 'Application data'}
                 </p>
               </DialogHeader>
               <div className="space-y-6">
                 {/* Personal Information */}
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-5">
-                  <h3 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                <div className="bg-surface-2 border border-protocall-premium-light rounded-lg p-5">
+                  <h3 className="font-semibold text-protocall-blue mb-3 flex items-center gap-2">
                     <UserIcon className="w-5 h-5" />
                     Personal Information
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-sm text-slate-600">Full Name</Label>
-                      <p className="font-medium text-slate-900">
+                      <Label className="text-sm text-subtle">Full Name</Label>
+                      <p className="font-medium text-foreground">
                         {selectedInvestorProfile?.full_name || selectedRequest.full_name}
                       </p>
                     </div>
                     <div>
-                      <Label className="text-sm text-slate-600">Email</Label>
-                      <p className="font-medium text-slate-900">
+                      <Label className="text-sm text-subtle">Email</Label>
+                      <p className="font-medium text-foreground">
                         {selectedInvestorProfile?.email || selectedRequest.email}
                       </p>
                     </div>
                     <div>
-                      <Label className="text-sm text-slate-600">Mobile</Label>
-                      <p className="font-medium text-slate-900">
+                      <Label className="text-sm text-subtle">Mobile</Label>
+                      <p className="font-medium text-foreground">
                         {selectedInvestorProfile?.mobile_number || selectedRequest.mobile_number}
                       </p>
                     </div>
                     <div>
-                      <Label className="text-sm text-slate-600">PAN Number</Label>
-                      <p className="font-medium text-slate-900">
+                      <Label className="text-sm text-subtle">PAN Number</Label>
+                      <p className="font-medium text-foreground">
                         {selectedInvestorProfile?.pan_number || selectedRequest.pan_number || 'Not provided'}
                       </p>
                     </div>
                     {selectedInvestorProfile && (
                       <>
                         <div>
-                          <Label className="text-sm text-slate-600">Investor Code</Label>
-                          <Badge className="bg-blue-100 text-blue-800 font-mono mt-1">
+                          <Label className="text-sm text-subtle">Investor Code</Label>
+                          <Badge className="bg-premium-muted text-protocall-blue font-mono mt-1">
                             {selectedInvestorProfile.investor_code}
                           </Badge>
                         </div>
                         <div>
-                          <Label className="text-sm text-slate-600">KYC Status</Label>
+                          <Label className="text-sm text-subtle">KYC Status</Label>
                           <div className="mt-1">
                             {selectedInvestorProfile.kyc_status === 'verified' ? (
-                              <Badge className="bg-green-100 text-green-800 border-green-200">
+                              <Badge className="bg-buy-muted text-buy-muted-foreground border-buy/30">
                                 <CheckCircle className="w-3 h-3 mr-1" />
                                 Verified
                               </Badge>
                             ) : selectedInvestorProfile.kyc_status === 'pending' ? (
-                              <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
+                              <Badge className="bg-hold-muted text-hold-muted-foreground border-hold/30">
                                 <Clock className="w-3 h-3 mr-1" />
                                 Pending
                               </Badge>
                             ) : (
-                              <Badge className="bg-red-100 text-red-800 border-red-200">
+                              <Badge className="bg-sell-muted text-sell-muted-foreground border-sell/30">
                                 <XCircle className="w-3 h-3 mr-1" />
                                 Rejected
                               </Badge>
@@ -539,22 +539,22 @@ export default function InvestorRequestsManager({ onUpdate }) {
                 </div>
 
                 {/* Financial Profile */}
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-5">
-                  <h3 className="font-semibold text-green-900 mb-3 flex items-center gap-2">
+                <div className="bg-gradient-to-r from-surface-2 to-buy-muted border border-buy/30 rounded-lg p-5">
+                  <h3 className="font-semibold text-buy-muted-foreground mb-3 flex items-center gap-2">
                     <DollarSign className="w-5 h-5" />
                     Financial Profile
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-sm text-slate-600">Annual Income Range</Label>
-                      <Badge className="bg-green-100 text-green-800 border-green-200 mt-1">
+                      <Label className="text-sm text-subtle">Annual Income Range</Label>
+                      <Badge className="bg-buy-muted text-buy-muted-foreground border-buy/30 mt-1">
                         {selectedRequest.annual_income_range ?
                           selectedRequest.annual_income_range.replace(/_/g, ' ').replace(/l/g, 'L').toUpperCase()
                           : 'Not provided'}
                       </Badge>
                     </div>
                     <div>
-                      <Label className="text-sm text-slate-600">Investment Experience</Label>
+                      <Label className="text-sm text-subtle">Investment Experience</Label>
                       <div className="mt-1">
                         {getExperienceBadge(selectedRequest.investment_experience)}
                       </div>
@@ -562,14 +562,14 @@ export default function InvestorRequestsManager({ onUpdate }) {
                     {selectedInvestorProfile && (
                       <>
                         <div>
-                          <Label className="text-sm text-slate-600">Risk Profile</Label>
-                          <Badge className="bg-green-700 text-white mt-1">
+                          <Label className="text-sm text-subtle">Risk Profile</Label>
+                          <Badge className="bg-buy text-buy-foreground mt-1">
                             {selectedInvestorProfile.risk_profile || getRiskProfileForExperience(selectedRequest.investment_experience)}
                           </Badge>
                         </div>
                         <div>
-                          <Label className="text-sm text-slate-600">Total Invested</Label>
-                          <p className="font-bold text-green-900 text-lg mt-1">
+                          <Label className="text-sm text-subtle">Total Invested</Label>
+                          <p className="font-bold text-buy-muted-foreground text-lg mt-1">
                             ₹{(selectedInvestorProfile.total_invested || 0).toLocaleString('en-IN')}
                           </p>
                         </div>
@@ -578,15 +578,15 @@ export default function InvestorRequestsManager({ onUpdate }) {
                   </div>
 
                   {!selectedInvestorProfile && ( // Show this block only if no live investor profile
-                    <div className="bg-green-100 border border-green-300 rounded-lg p-3 mt-3">
+                    <div className="bg-buy-muted border border-buy/30 rounded-lg p-3 mt-3">
                       <div className="flex items-center gap-2">
-                        <Shield className="w-4 h-4 text-green-700" />
-                        <span className="text-sm font-semibold text-green-900">Auto-Assigned Risk Profile:</span>
-                        <Badge className="bg-green-700 text-white">
+                        <Shield className="w-4 h-4 text-buy-muted-foreground" />
+                        <span className="text-sm font-semibold text-buy-muted-foreground">Auto-Assigned Risk Profile:</span>
+                        <Badge className="bg-buy text-buy-foreground">
                           {getRiskProfileForExperience(selectedRequest.investment_experience)}
                         </Badge>
                       </div>
-                      <p className="text-xs text-green-700 mt-1">
+                      <p className="text-xs text-buy-muted-foreground mt-1">
                         Based on {selectedRequest.investment_experience} investment experience level
                       </p>
                     </div>
@@ -594,12 +594,12 @@ export default function InvestorRequestsManager({ onUpdate }) {
                 </div>
 
                 {/* Bank Details - SYNCED FROM INVESTOR PROFILE */}
-                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-5">
-                  <h3 className="font-semibold text-purple-900 mb-3 flex items-center gap-2">
+                <div className="bg-surface-2 border border-protocall-premium-light rounded-lg p-5">
+                  <h3 className="font-semibold text-protocall-premium-text mb-3 flex items-center gap-2">
                     <Building className="w-5 h-5" />
                     Bank Details
                     {selectedInvestorProfile && (
-                      <Badge className="bg-purple-100 text-purple-800 text-xs ml-2">
+                      <Badge className="bg-premium-muted text-protocall-premium-text text-xs ml-2">
                         Live Data
                       </Badge>
                     )}
@@ -609,35 +609,35 @@ export default function InvestorRequestsManager({ onUpdate }) {
                     selectedRequest.bank_name || selectedRequest.bank_account_number || selectedRequest.bank_ifsc_code || selectedInvestorProfile?.upi_id) ? (
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-sm text-slate-600">Bank Name</Label>
-                        <p className="font-medium text-slate-900">
+                        <Label className="text-sm text-subtle">Bank Name</Label>
+                        <p className="font-medium text-foreground">
                           {selectedInvestorProfile?.bank_name || selectedRequest.bank_name || 'Not provided'}
                         </p>
                       </div>
                       <div>
-                        <Label className="text-sm text-slate-600">Account Number</Label>
-                        <p className="font-medium text-slate-900 font-mono">
+                        <Label className="text-sm text-subtle">Account Number</Label>
+                        <p className="font-medium text-foreground font-mono">
                           {selectedInvestorProfile?.bank_account_number || selectedRequest.bank_account_number || 'Not provided'}
                         </p>
                       </div>
                       <div className="col-span-2">
-                        <Label className="text-sm text-slate-600">IFSC Code</Label>
-                        <p className="font-medium text-slate-900 font-mono">
+                        <Label className="text-sm text-subtle">IFSC Code</Label>
+                        <p className="font-medium text-foreground font-mono">
                           {selectedInvestorProfile?.bank_ifsc_code || selectedRequest.bank_ifsc_code || 'Not provided'}
                         </p>
                       </div>
                       {selectedInvestorProfile?.upi_id && (
                         <div className="col-span-2">
-                          <Label className="text-sm text-slate-600">UPI ID</Label>
-                          <p className="font-medium text-slate-900 font-mono">
+                          <Label className="text-sm text-subtle">UPI ID</Label>
+                          <p className="font-medium text-foreground font-mono">
                             {selectedInvestorProfile.upi_id}
                           </p>
                         </div>
                       )}
                     </div>
                   ) : (
-                    <div className="bg-purple-100 border border-purple-200 rounded-lg p-3">
-                      <p className="text-sm text-purple-800">
+                    <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-3">
+                      <p className="text-sm text-protocall-premium-text">
                         <AlertTriangle className="w-4 h-4 inline mr-2" />
                         Bank details not provided yet. Investor can update these in their profile.
                       </p>
@@ -646,19 +646,19 @@ export default function InvestorRequestsManager({ onUpdate }) {
                 </div>
 
                 {/* Request Status & Timeline */}
-                <div className="bg-gradient-to-r from-slate-50 to-gray-50 border border-slate-200 rounded-lg p-5">
-                  <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                <div className="bg-surface-2 border border-border rounded-lg p-5">
+                  <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                     <Clock className="w-5 h-5" />
                     Request Status & Timeline
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-sm text-slate-600">Application Status</Label>
+                      <Label className="text-sm text-subtle">Application Status</Label>
                       <div className="mt-1">{getStatusBadge(selectedRequest.status)}</div>
                     </div>
                     <div>
-                      <Label className="text-sm text-slate-600">Submitted On</Label>
-                      <p className="font-medium text-slate-900">
+                      <Label className="text-sm text-subtle">Submitted On</Label>
+                      <p className="font-medium text-foreground">
                         {new Date(selectedRequest.created_date).toLocaleString('en-IN', {
                           day: 'numeric',
                           month: 'long',
@@ -670,8 +670,8 @@ export default function InvestorRequestsManager({ onUpdate }) {
                     </div>
                     {selectedRequest.reviewed_at && (
                       <div>
-                        <Label className="text-sm text-slate-600">Reviewed On</Label>
-                        <p className="font-medium text-slate-900">
+                        <Label className="text-sm text-subtle">Reviewed On</Label>
+                        <p className="font-medium text-foreground">
                           {new Date(selectedRequest.reviewed_at).toLocaleString('en-IN', {
                             day: 'numeric',
                             month: 'long',
@@ -684,11 +684,11 @@ export default function InvestorRequestsManager({ onUpdate }) {
                     )}
                     {selectedInvestorProfile && (
                       <div>
-                        <Label className="text-sm text-slate-600">Account Status</Label>
+                        <Label className="text-sm text-subtle">Account Status</Label>
                         <Badge className={
                           selectedInvestorProfile.status === 'active'
-                            ? 'bg-green-100 text-green-800 mt-1'
-                            : 'bg-gray-100 text-gray-800 mt-1'
+                            ? 'bg-buy-muted text-buy-muted-foreground mt-1'
+                            : 'bg-surface-2 text-foreground mt-1'
                         }>
                           {selectedInvestorProfile.status?.toUpperCase()}
                         </Badge>
@@ -696,8 +696,8 @@ export default function InvestorRequestsManager({ onUpdate }) {
                     )}
                     {selectedRequest.admin_notes && (
                       <div className="col-span-2">
-                        <Label className="text-sm text-slate-600">Admin Notes</Label>
-                        <p className="font-medium text-slate-700 bg-white rounded p-2 mt-1 border border-slate-200">
+                        <Label className="text-sm text-subtle">Admin Notes</Label>
+                        <p className="font-medium text-subtle bg-white rounded p-2 mt-1 border border-border">
                           {selectedRequest.admin_notes}
                         </p>
                       </div>
@@ -707,18 +707,18 @@ export default function InvestorRequestsManager({ onUpdate }) {
 
                 {/* Rejection Details */}
                 {selectedRequest.status === 'rejected' && selectedRequest.rejection_reason && (
-                  <div className="bg-red-50 border-2 border-red-300 rounded-lg p-5">
-                    <h3 className="font-semibold text-red-900 mb-2 flex items-center gap-2">
+                  <div className="bg-sell-muted border-2 border-sell/30 rounded-lg p-5">
+                    <h3 className="font-semibold text-sell-muted-foreground mb-2 flex items-center gap-2">
                       <XCircle className="w-5 h-5" />
                       Rejection Details
                     </h3>
-                    <p className="text-red-800 text-sm">{selectedRequest.rejection_reason}</p>
+                    <p className="text-sell-muted-foreground text-sm">{selectedRequest.rejection_reason}</p>
                   </div>
                 )}
 
                 {/* Data Source Indicator */}
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <p className="text-xs text-blue-800">
+                <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-3">
+                  <p className="text-xs text-protocall-blue">
                     {selectedInvestorProfile ? (
                       <>
                         <CheckCircle className="w-3 h-3 inline mr-1" />
@@ -752,9 +752,9 @@ export default function InvestorRequestsManager({ onUpdate }) {
               </DialogHeader>
               <div className="space-y-4">
                 <p>Are you sure you want to approve this investor request?</p>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
                   <p className="font-semibold">{selectedRequest.full_name}</p>
-                  <p className="text-sm text-slate-600">{selectedRequest.email}</p>
+                  <p className="text-sm text-subtle">{selectedRequest.email}</p>
                 </div>
                 <div>
                   <Label>Admin Notes (Optional)</Label>
@@ -770,7 +770,7 @@ export default function InvestorRequestsManager({ onUpdate }) {
                 <Button variant="outline" onClick={() => setShowApprovalModal(false)} disabled={isProcessing}>
                   Cancel
                 </Button>
-                <Button onClick={handleApprove} disabled={isProcessing} className="bg-green-600 hover:bg-green-700">
+                <Button onClick={handleApprove} disabled={isProcessing} className="bg-buy hover:bg-buy">
                   {isProcessing ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -794,9 +794,9 @@ export default function InvestorRequestsManager({ onUpdate }) {
               </DialogHeader>
               <div className="space-y-4">
                 <p>Please provide a reason for rejecting this request:</p>
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="bg-sell-muted border border-sell/30 rounded-lg p-4">
                   <p className="font-semibold">{selectedRequest.full_name}</p>
-                  <p className="text-sm text-slate-600">{selectedRequest.email}</p>
+                  <p className="text-sm text-subtle">{selectedRequest.email}</p>
                 </div>
                 <div>
                   <Label>Rejection Reason *</Label>

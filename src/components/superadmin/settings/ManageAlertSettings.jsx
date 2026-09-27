@@ -183,9 +183,9 @@ export default function ManageAlertSettings({ settings, onChange }) {
   };
 
   const severityColors = {
-    info: 'bg-blue-100 text-blue-800',
-    warning: 'bg-yellow-100 text-yellow-800',
-    critical: 'bg-red-100 text-red-800'
+    info: 'bg-premium-muted text-protocall-blue',
+    warning: 'bg-hold-muted text-hold-muted-foreground',
+    critical: 'bg-sell-muted text-sell-muted-foreground'
   };
 
   if (isLoading) {
@@ -194,12 +194,12 @@ export default function ManageAlertSettings({ settings, onChange }) {
 
   return (
     <div className="space-y-6">
-      <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg">
+      <div className="bg-premium-muted border-l-4 border-protocall-blue p-4 rounded-r-lg">
         <div className="flex items-start gap-3">
-          <Bell className="w-5 h-5 text-blue-600 mt-1" />
+          <Bell className="w-5 h-5 text-protocall-blue mt-1" />
           <div>
-            <h4 className="font-semibold text-blue-800">Alert Configuration</h4>
-            <p className="text-sm text-blue-700">
+            <h4 className="font-semibold text-protocall-blue">Alert Configuration</h4>
+            <p className="text-sm text-protocall-blue">
               Configure thresholds and settings for automated alerts. Changes take effect immediately.
             </p>
           </div>
@@ -217,7 +217,7 @@ export default function ManageAlertSettings({ settings, onChange }) {
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="font-medium">{alertTypeLabels[config.alert_type]}</h4>
-                  <p className="text-sm text-slate-600">{config.description}</p>
+                  <p className="text-sm text-subtle">{config.description}</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <Badge className={severityColors[config.severity]}>
@@ -244,7 +244,7 @@ export default function ManageAlertSettings({ settings, onChange }) {
                     }
                     className="mt-1"
                   />
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     {config.alert_type.includes('engagement') && 'Number of votes'}
                     {config.alert_type.includes('anomaly') && 'Percentage (0.9 = 90%)'}
                     {config.alert_type.includes('conversion') && 'Conversion rate (0.15 = 15%)'}
@@ -289,7 +289,7 @@ export default function ManageAlertSettings({ settings, onChange }) {
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="font-medium">{alertTypeLabels[config.alert_type]}</h4>
-                  <p className="text-sm text-slate-600">{config.description}</p>
+                  <p className="text-sm text-subtle">{config.description}</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <Badge className={severityColors[config.severity]}>
@@ -316,7 +316,7 @@ export default function ManageAlertSettings({ settings, onChange }) {
                     }
                     className="mt-1"
                   />
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     {(config.alert_type.includes('near_target') || config.alert_type.includes('target_achieved') || config.alert_type.includes('participation')) && 'Percentage (0.8 = 80%)'}
                     {config.alert_type.includes('expired') && 'Auto-trigger (always 1)'}
                   </p>

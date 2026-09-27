@@ -99,7 +99,7 @@ export default function SubscriptionUserManagement({ permissions }) {
   const getStatusBadge = (subscription) => {
     if (subscription.cancelAtPeriodEnd && subscription.status === 'active') {
       return (
-        <Badge className="bg-orange-100 text-orange-800 border-orange-300">
+        <Badge className="bg-hold-muted text-hold-muted-foreground border-hold/30">
           <Clock className="w-3 h-3 mr-1" />
           CANCELLING
         </Badge>
@@ -109,28 +109,28 @@ export default function SubscriptionUserManagement({ permissions }) {
     switch (subscription.status) {
       case 'active':
         return (
-          <Badge className="bg-green-100 text-green-800 border-green-300">
+          <Badge className="bg-buy-muted text-buy-muted-foreground border-buy/30">
             <CheckCircle className="w-3 h-3 mr-1" />
             ACTIVE
           </Badge>
         );
       case 'cancelled':
         return (
-          <Badge className="bg-red-100 text-red-800 border-red-300">
+          <Badge className="bg-sell-muted text-sell-muted-foreground border-sell/30">
             <XCircle className="w-3 h-3 mr-1" />
             CANCELLED
           </Badge>
         );
       case 'expired':
         return (
-          <Badge className="bg-gray-100 text-gray-800 border-gray-300">
+          <Badge className="bg-surface-2 text-foreground border-border">
             <XCircle className="w-3 h-3 mr-1" />
             EXPIRED
           </Badge>
         );
       default:
         return (
-          <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300">
+          <Badge className="bg-hold-muted text-hold-muted-foreground border-hold/30">
             <AlertTriangle className="w-3 h-3 mr-1" />
             {subscription.status.toUpperCase()}
           </Badge>
@@ -165,7 +165,7 @@ export default function SubscriptionUserManagement({ permissions }) {
       <Card className="border-0 shadow-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <UsersIcon className="w-5 h-5 text-purple-600" />
+            <UsersIcon className="w-5 h-5 text-protocall-premium-text" />
             User Subscriptions ({filteredSubscriptions.length})
           </CardTitle>
         </CardHeader>
@@ -173,7 +173,7 @@ export default function SubscriptionUserManagement({ permissions }) {
           <div className="flex flex-col md:flex-row gap-4">
             {/* Search */}
             <div className="flex-1 relative">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+              <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search by email, name, or plan..."
                 value={searchTerm}
@@ -205,27 +205,27 @@ export default function SubscriptionUserManagement({ permissions }) {
 
           {/* Summary Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="p-3 bg-green-50 rounded-lg">
-              <p className="text-xs text-green-700 mb-1">Active</p>
-              <p className="text-xl font-bold text-green-900">
+            <div className="p-3 bg-buy-muted rounded-lg">
+              <p className="text-xs text-buy-muted-foreground mb-1">Active</p>
+              <p className="text-xl font-bold text-buy-muted-foreground">
                 {subscriptions.filter(s => s.status === 'active' && !s.cancelAtPeriodEnd).length}
               </p>
             </div>
-            <div className="p-3 bg-orange-50 rounded-lg">
-              <p className="text-xs text-orange-700 mb-1">Cancelling</p>
-              <p className="text-xl font-bold text-orange-900">
+            <div className="p-3 bg-hold-muted rounded-lg">
+              <p className="text-xs text-hold-muted-foreground mb-1">Cancelling</p>
+              <p className="text-xl font-bold text-hold-muted-foreground">
                 {subscriptions.filter(s => s.cancelAtPeriodEnd && s.status === 'active').length}
               </p>
             </div>
-            <div className="p-3 bg-red-50 rounded-lg">
-              <p className="text-xs text-red-700 mb-1">Cancelled</p>
-              <p className="text-xl font-bold text-red-900">
+            <div className="p-3 bg-sell-muted rounded-lg">
+              <p className="text-xs text-sell-muted-foreground mb-1">Cancelled</p>
+              <p className="text-xl font-bold text-sell-muted-foreground">
                 {subscriptions.filter(s => s.status === 'cancelled').length}
               </p>
             </div>
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-700 mb-1">Expired</p>
-              <p className="text-xl font-bold text-gray-900">
+            <div className="p-3 bg-surface-2 rounded-lg">
+              <p className="text-xs text-subtle mb-1">Expired</p>
+              <p className="text-xl font-bold text-foreground">
                 {subscriptions.filter(s => s.status === 'expired').length}
               </p>
             </div>
@@ -237,9 +237,9 @@ export default function SubscriptionUserManagement({ permissions }) {
       {filteredSubscriptions.length === 0 ? (
         <Card className="border-0 shadow-md">
           <CardContent className="p-12 text-center">
-            <UsersIcon className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-slate-900 mb-2">No Subscriptions Found</h3>
-            <p className="text-slate-600">Try adjusting your search or filter criteria</p>
+            <UsersIcon className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-foreground mb-2">No Subscriptions Found</h3>
+            <p className="text-subtle">Try adjusting your search or filter criteria</p>
           </CardContent>
         </Card>
       ) : (
@@ -253,30 +253,30 @@ export default function SubscriptionUserManagement({ permissions }) {
                     {/* User Info */}
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-white font-semibold">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center text-white font-semibold">
                           {user?.display_name?.charAt(0)?.toUpperCase() || 'U'}
                         </div>
                         <div>
-                          <p className="font-semibold text-slate-900">{user?.display_name || 'Unknown User'}</p>
-                          <p className="text-sm text-slate-500">{user?.email || 'No email'}</p>
+                          <p className="font-semibold text-foreground">{user?.display_name || 'Unknown User'}</p>
+                          <p className="text-sm text-muted-foreground">{user?.email || 'No email'}</p>
                         </div>
                       </div>
 
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                         <div>
-                          <p className="text-xs text-slate-500">Plan</p>
+                          <p className="text-xs text-muted-foreground">Plan</p>
                           <p className="font-semibold capitalize">{subscription.plan_type}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-slate-500">Price</p>
+                          <p className="text-xs text-muted-foreground">Price</p>
                           <p className="font-semibold">₹{subscription.price}/mo</p>
                         </div>
                         <div>
-                          <p className="text-xs text-slate-500">Start Date</p>
+                          <p className="text-xs text-muted-foreground">Start Date</p>
                           <p className="font-semibold">{format(new Date(subscription.start_date), 'MMM d, yyyy')}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-slate-500">End Date</p>
+                          <p className="text-xs text-muted-foreground">End Date</p>
                           <p className="font-semibold">{format(new Date(subscription.end_date), 'MMM d, yyyy')}</p>
                         </div>
                       </div>
@@ -291,7 +291,7 @@ export default function SubscriptionUserManagement({ permissions }) {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="border-green-300 text-green-700 hover:bg-green-50"
+                          className="border-buy/30 text-buy-muted-foreground hover:bg-buy-muted"
                           onClick={() => handleReinstate(subscription)}
                         >
                           <CheckCircle className="w-4 h-4 mr-2" />
@@ -300,7 +300,7 @@ export default function SubscriptionUserManagement({ permissions }) {
                       )}
 
                       {subscription.cancelAtPeriodEnd && (
-                        <p className="text-xs text-orange-600 text-right">
+                        <p className="text-xs text-hold-muted-foreground text-right">
                           Cancels on: {format(new Date(subscription.end_date), 'MMM d, yyyy')}
                         </p>
                       )}

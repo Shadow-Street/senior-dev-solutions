@@ -80,7 +80,7 @@ const PayoutTracking = ({ globalMinPayout, commissionData, events }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300 overflow-hidden">
           <CardContent className="p-0">
-            <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-4">
+            <div className="bg-buy-soft p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 bg-white/20 rounded-xl backdrop-blur-sm">
@@ -94,14 +94,14 @@ const PayoutTracking = ({ globalMinPayout, commissionData, events }) => {
               </div>
             </div>
             <div className="p-4 bg-white">
-              <p className="text-xs text-gray-600">Total event revenue generated</p>
+              <p className="text-xs text-subtle">Total event revenue generated</p>
             </div>
           </CardContent>
         </Card>
 
         <Card className="shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300 overflow-hidden">
           <CardContent className="p-0">
-            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-4">
+            <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 bg-white/20 rounded-xl backdrop-blur-sm">
@@ -115,14 +115,14 @@ const PayoutTracking = ({ globalMinPayout, commissionData, events }) => {
               </div>
             </div>
             <div className="p-4 bg-white">
-              <p className="text-xs text-gray-600">Platform earnings from events</p>
+              <p className="text-xs text-subtle">Platform earnings from events</p>
             </div>
           </CardContent>
         </Card>
 
         <Card className="shadow-lg border-0 bg-white hover:shadow-xl transition-all duration-300 overflow-hidden">
           <CardContent className="p-0">
-            <div className="bg-gradient-to-r from-purple-500 to-violet-600 p-4">
+            <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 bg-white/20 rounded-xl backdrop-blur-sm">
@@ -136,14 +136,14 @@ const PayoutTracking = ({ globalMinPayout, commissionData, events }) => {
               </div>
             </div>
             <div className="p-4 bg-white">
-              <p className="text-xs text-gray-600">Total organizer earnings</p>
+              <p className="text-xs text-subtle">Total organizer earnings</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-subtle">
           Global Minimum Payout Threshold: <span className="font-bold">₹{parseFloat(globalMinPayout).toFixed(2)}</span>
         </p>
         <Button onClick={handleExport} variant="outline" className="rounded-full">
@@ -174,22 +174,22 @@ const PayoutTracking = ({ globalMinPayout, commissionData, events }) => {
                 {commissionData.map((item) => {
                   const event = events.find((e) => e.id === item.event_id);
                   return (
-                    <tr key={item.id} className="border-b hover:bg-gray-50">
+                    <tr key={item.id} className="border-b hover:bg-surface-2">
                       <td className="p-2">
                         <div className="font-medium">{event?.title || 'Unknown Event'}</div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-muted-foreground">
                           {event ? new Date(event.event_date).toLocaleDateString() : 'N/A'}
                         </div>
                       </td>
                       <td className="p-2">{event?.organizer_name || 'Unknown'}</td>
                       <td className="p-2 font-medium">₹{item.gross_revenue.toFixed(2)}</td>
-                      <td className="p-2 text-blue-600">₹{item.platform_commission.toFixed(2)}</td>
-                      <td className="p-2 text-green-600">₹{item.organizer_payout.toFixed(2)}</td>
+                      <td className="p-2 text-protocall-blue">₹{item.platform_commission.toFixed(2)}</td>
+                      <td className="p-2 text-buy-muted-foreground">₹{item.organizer_payout.toFixed(2)}</td>
                       <td className="p-2">
                         <Badge className={
-                          item.payout_status === 'processed' ? 'bg-green-100 text-green-800' :
-                            item.payout_status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-red-100 text-red-800'
+                          item.payout_status === 'processed' ? 'bg-buy-muted text-buy-muted-foreground' :
+                            item.payout_status === 'pending' ? 'bg-hold-muted text-hold-muted-foreground' :
+                              'bg-sell-muted text-sell-muted-foreground'
                         }>
                           {item.payout_status}
                         </Badge>
@@ -200,7 +200,7 @@ const PayoutTracking = ({ globalMinPayout, commissionData, events }) => {
               </tbody>
             </table>
             {commissionData.length === 0 &&
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 No commission data available yet.
               </div>
             }
@@ -358,14 +358,14 @@ export default function EventPricingCommission({
       <TabsList className="grid w-full grid-cols-2 bg-transparent p-1 rounded-xl gap-2">
         <TabsTrigger
           value="settings"
-          className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg"
+          className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
         >
           <Settings className="w-4 h-4" />
           Commission Settings
         </TabsTrigger>
         <TabsTrigger
           value="tracking"
-          className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg"
+          className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
         >
           <TrendingUp className="w-4 h-4" />
           Payout Tracking
@@ -374,12 +374,12 @@ export default function EventPricingCommission({
 
       <TabsContent value="settings" className="space-y-6">
         {/* Global Settings Reference */}
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+        <div className="bg-premium-muted border border-protocall-premium-light rounded-xl p-4">
           <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+            <AlertCircle className="w-5 h-5 text-protocall-blue mt-0.5 flex-shrink-0" />
             <div>
-              <h4 className="font-semibold text-blue-800">Global Settings</h4>
-              <div className="text-sm text-blue-700 mt-1 space-y-1">
+              <h4 className="font-semibold text-protocall-blue">Global Settings</h4>
+              <div className="text-sm text-protocall-blue mt-1 space-y-1">
                 <p>Global Commission Rate: <strong>{globalCommissionRate}%</strong></p>
                 <p>Global Minimum Payout: <strong>₹{globalMinimumPayout}</strong></p>
                 <p className="text-xs">Override these settings below for the Events module.</p>
@@ -392,10 +392,10 @@ export default function EventPricingCommission({
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Settings className="w-5 h-5 text-indigo-600" />
+              <Settings className="w-5 h-5 text-protocall-blue" />
               Events Module Commission Override
             </CardTitle>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               Override global commission rate for all events. Leave blank to use global rate ({globalCommissionRate}%).
             </p>
           </CardHeader>
@@ -403,7 +403,7 @@ export default function EventPricingCommission({
             <div className="flex items-end gap-3 max-w-md">
               <div className="flex-grow">
                 <Label htmlFor="module-commission" className="flex items-center gap-1 mb-1">
-                  <Percent className="w-4 h-4 text-gray-500" /> Events Commission Rate (%)
+                  <Percent className="w-4 h-4 text-muted-foreground" /> Events Commission Rate (%)
                 </Label>
                 <Input
                   id="module-commission"
@@ -419,13 +419,13 @@ export default function EventPricingCommission({
               <Button
                 onClick={saveModuleSettings}
                 disabled={isSaving}
-                className="bg-indigo-600 hover:bg-indigo-700">
+                className="bg-protocall-blue hover:bg-protocall-blue">
 
                 {isSaving ? 'Saving...' : 'Save Override'}
               </Button>
             </div>
             {moduleCommissionRate !== '' &&
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-muted-foreground mt-2">
                 Events will use {moduleCommissionRate}% commission instead of global {globalCommissionRate}%.
               </p>
             }
@@ -436,16 +436,16 @@ export default function EventPricingCommission({
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-purple-600" />
+              <Users className="w-5 h-5 text-protocall-premium-text" />
               Individual Event Organizer Overrides
             </CardTitle>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               Set specific commission rates for individual event organizers. These override both global and module settings.
             </p>
           </CardHeader>
           <CardContent>
             {eventOrganizers.length === 0 ?
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 No event organizers found to set individual overrides.
               </div> :
 
@@ -458,7 +458,7 @@ export default function EventPricingCommission({
                   return (
                     <div key={organizer.id} className="flex items-end gap-3 border-b pb-4 last:border-b-0 last:pb-0">
                       <div className="flex-grow">
-                        <Label htmlFor={`organizer-${organizer.id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                        <Label htmlFor={`organizer-${organizer.id}`} className="block text-sm font-medium text-subtle mb-1">
                           {organizer.name}
                         </Label>
                         <div className="flex items-center gap-2 mb-1">
@@ -484,7 +484,7 @@ export default function EventPricingCommission({
                       <Button
                         onClick={() => saveIndividualOverride(organizer.id)}
                         size="sm"
-                        className="bg-purple-600 hover:bg-purple-700">
+                        className="bg-primary hover:bg-primary">
 
                         Save
                       </Button>

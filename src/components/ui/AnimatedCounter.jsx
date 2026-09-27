@@ -16,7 +16,7 @@ export default function AnimatedCounter({
   const { value: animatedValue, isAnimating } = useAnimatedValue(value, duration);
 
   return (
-    <span className={`${className} ${isAnimating ? 'text-blue-600' : ''} transition-colors duration-300`}>
+    <span className={`${className} ${isAnimating ? 'text-protocall-blue' : ''} transition-colors duration-300`}>
       {prefix}{formatter(animatedValue)}{suffix}
     </span>
   );

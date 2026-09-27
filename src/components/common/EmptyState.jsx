@@ -13,11 +13,11 @@ export default function EmptyState({
   return (
     <Card className={`border-dashed border-2 ${className}`}>
       <CardContent className="flex flex-col items-center justify-center p-12 text-center">
-        {Icon && <Icon className="w-16 h-16 text-gray-400 mb-4" />}
-        <h3 className="text-xl font-semibold text-gray-700 mb-2">{title}</h3>
-        <p className="text-gray-500 mb-6 max-w-md">{description}</p>
+        {Icon && <Icon className="w-16 h-16 text-muted-foreground mb-4" />}
+        <h3 className="text-xl font-semibold text-subtle mb-2">{title}</h3>
+        <p className="text-muted-foreground mb-6 max-w-md">{description}</p>
         {actionLabel && onAction && (
-          <Button onClick={onAction} className="bg-blue-600 hover:bg-blue-700">
+          <Button onClick={onAction} className="bg-protocall-blue hover:bg-protocall-blue">
             {actionLabel}
           </Button>
         )}

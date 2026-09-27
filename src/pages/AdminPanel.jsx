@@ -127,15 +127,15 @@ export default function AdminPanel() {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row font-sans text-slate-900">
+        <div className="min-h-screen bg-surface-2 flex flex-col md:flex-row font-sans text-foreground">
             {/* Sidebar Navigation */}
-            <aside className="w-full md:w-64 bg-white border-r border-slate-200 flex-shrink-0">
+            <aside className="w-full md:w-64 bg-white border-r border-border flex-shrink-0">
                 <div className="p-6">
-                    <h1 className="text-xl font-bold flex items-center gap-2 text-slate-800">
-                        <Shield className="w-6 h-6 text-purple-600" />
+                    <h1 className="text-xl font-bold flex items-center gap-2 text-foreground">
+                        <Shield className="w-6 h-6 text-protocall-premium-text" />
                         Admin Panel
                     </h1>
-                    <p className="text-xs text-slate-500 mt-1 uppercase tracking-wider font-semibold">Super Admin Access</p>
+                    <p className="text-xs text-muted-foreground mt-1 uppercase tracking-wider font-semibold">Super Admin Access</p>
                 </div>
 
                 <nav className="px-3 space-y-1">
@@ -143,7 +143,7 @@ export default function AdminPanel() {
                         <Button
                             key={tab.id}
                             variant={selectedTab === tab.id ? 'secondary' : 'ghost'}
-                            className={`w-full justify-start ${selectedTab === tab.id ? 'bg-purple-50 text-purple-700' : 'text-slate-600'}`}
+                            className={`w-full justify-start ${selectedTab === tab.id ? 'bg-premium-muted text-protocall-premium-text' : 'text-subtle'}`}
                             onClick={() => setSelectedTab(tab.id)}
                         >
                             <tab.icon className="w-4 h-4 mr-3" />
@@ -153,14 +153,14 @@ export default function AdminPanel() {
                 </nav>
 
                 <div className="p-6 mt-auto">
-                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <div className="bg-surface-2 p-4 rounded-xl border border-divider">
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold">
+                            <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold">
                                 {currentUser?.display_name?.[0] || 'A'}
                             </div>
                             <div className="overflow-hidden">
                                 <p className="text-sm font-semibold truncate">{currentUser?.display_name}</p>
-                                <p className="text-xs text-slate-500 truncate">{currentUser?.email}</p>
+                                <p className="text-xs text-muted-foreground truncate">{currentUser?.email}</p>
                             </div>
                         </div>
                     </div>
@@ -171,8 +171,8 @@ export default function AdminPanel() {
             <main className="flex-1 p-6 md:p-8 overflow-y-auto">
                 <header className="mb-8 flex justify-between items-center">
                     <div>
-                        <h2 className="text-2xl font-bold text-slate-900">{tabs.find(t => t.id === selectedTab)?.label}</h2>
-                        <p className="text-slate-500">Manage your platform efficiently.</p>
+                        <h2 className="text-2xl font-bold text-foreground">{tabs.find(t => t.id === selectedTab)?.label}</h2>
+                        <p className="text-muted-foreground">Manage your platform efficiently.</p>
                     </div>
                     <div className="md:hidden">
                         {/* Mobile menu trigger could go here */}
@@ -220,10 +220,10 @@ export default function AdminPanel() {
                     )}
 
                     {selectedTab === 'advisors' && (
-                        <div className="bg-white p-6 rounded-xl border border-slate-200 text-center">
-                            <BookUser className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+                        <div className="bg-white p-6 rounded-xl border border-border text-center">
+                            <BookUser className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                             <h3 className="text-lg font-medium">Advisor Management</h3>
-                            <p className="text-slate-500 mb-4">This section is being upgraded. Please use User Management for basic role changes.</p>
+                            <p className="text-muted-foreground mb-4">This section is being upgraded. Please use User Management for basic role changes.</p>
                             {/* You can re-integrate the specific Advisor card usage from the original file here if needed */}
                         </div>
                     )}

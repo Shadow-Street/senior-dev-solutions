@@ -232,7 +232,7 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
     <div className="space-y-6">
       {/* Profile Picture Section */}
       <Card>
-        <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100">
+        <CardHeader className="bg-surface-2">
           <CardTitle className="flex items-center gap-2">
             <UserIcon className="w-5 h-5" />
             Profile Picture
@@ -250,7 +250,7 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
                   variant="outline" 
                   size="sm" 
                   onClick={() => fileInputRef.current?.click()}
-                  className="text-slate-900 border-slate-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-300 transition-all duration-300"
+                  className="text-foreground border-border hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-protocall-premium-light transition-all duration-300"
                 >
                   <Upload className="w-4 h-4 mr-2" />
                   Change Picture
@@ -268,7 +268,7 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
                   </Button>
                 )}
               </div>
-              <p className="text-xs text-slate-500">JPG, PNG, or GIF. Max size of 2MB.</p>
+              <p className="text-xs text-muted-foreground">JPG, PNG, or GIF. Max size of 2MB.</p>
             </div>
           </div>
         </CardContent>
@@ -276,13 +276,13 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
 
       {/* Account Information */}
       <Card>
-        <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100">
+        <CardHeader className="bg-surface-2">
           <CardTitle>Account Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6 p-6">
           {/* Display Name */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-slate-700">Display Name</Label>
+            <Label className="text-sm font-medium text-subtle">Display Name</Label>
             {isEditingName ? (
               <div className="flex gap-2">
                 <Input
@@ -299,12 +299,12 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
               </div>
             ) : (
               <div className="flex gap-2">
-                <Input value={user.display_name} readOnly className="bg-slate-50" />
+                <Input value={user.display_name} readOnly className="bg-surface-2" />
                 <Button 
                   size="sm" 
                   variant="outline" 
                   onClick={() => setIsEditingName(true)}
-                  className="text-slate-900 border-slate-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-300 transition-all duration-300"
+                  className="text-foreground border-border hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-protocall-premium-light transition-all duration-300"
                 >
                   <Edit3 className="w-4 h-4" />
                 </Button>
@@ -314,21 +314,21 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
 
           {/* Email */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-slate-700">Email</Label>
-            <Input value={user.email} readOnly className="bg-slate-50" />
-            <p className="text-xs text-slate-500">
+            <Label className="text-sm font-medium text-subtle">Email</Label>
+            <Input value={user.email} readOnly className="bg-surface-2" />
+            <p className="text-xs text-muted-foreground">
               Your email is managed through Google Authentication and cannot be changed here.
             </p>
           </div>
 
           {/* Mobile Number */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-slate-700">Mobile Number</Label>
+            <Label className="text-sm font-medium text-subtle">Mobile Number</Label>
             {isEditingMobile ? (
               <div className="space-y-3">
                 <div className="flex gap-2">
                   <div className="flex items-center gap-2 flex-1">
-                    <span className="px-3 py-2 bg-slate-100 border border-slate-300 rounded-md text-sm font-medium">+91</span>
+                    <span className="px-3 py-2 bg-surface-2 border border-border rounded-md text-sm font-medium">+91</span>
                     <Input
                       value={tempMobileNumber}
                       onChange={(e) => setTempMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
@@ -359,21 +359,21 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
                     </Button>
                   </div>
                 )}
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-muted-foreground">
                   An OTP will be sent to your registered email ({user.email}) for verification.
                 </p>
               </div>
             ) : (
               <div className="flex gap-2">
                 <div className="flex items-center gap-2 flex-1">
-                  <span className="px-3 py-2 bg-slate-100 border border-slate-300 rounded-md text-sm font-medium">+91</span>
-                  <Input value={mobileNumber || 'Not provided'} readOnly className="bg-slate-50 flex-1" />
+                  <span className="px-3 py-2 bg-surface-2 border border-border rounded-md text-sm font-medium">+91</span>
+                  <Input value={mobileNumber || 'Not provided'} readOnly className="bg-surface-2 flex-1" />
                 </div>
                 <Button 
                   size="sm" 
                   variant="outline" 
                   onClick={() => setIsEditingMobile(true)}
-                  className="text-slate-900 border-slate-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-300 transition-all duration-300"
+                  className="text-foreground border-border hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-protocall-premium-light transition-all duration-300"
                 >
                   <Edit3 className="w-4 h-4" />
                 </Button>
@@ -385,7 +385,7 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
 
       {/* Password Management */}
       <Card>
-        <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100">
+        <CardHeader className="bg-surface-2">
           <CardTitle className="flex items-center gap-2">
             <Lock className="w-5 h-5" />
             Password & Security
@@ -396,12 +396,12 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
             <div className="flex items-center justify-between">
               <div>
                 <h4 className="font-semibold">Change Password</h4>
-                <p className="text-sm text-slate-600">Update your account password</p>
+                <p className="text-sm text-subtle">Update your account password</p>
               </div>
               <Button 
                 variant="outline" 
                 onClick={() => setShowPasswordForm(true)}
-                className="text-slate-900 border-slate-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-300 transition-all duration-300"
+                className="text-foreground border-border hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-protocall-premium-light transition-all duration-300"
               >
                 <Lock className="w-4 h-4 mr-2" />
                 Change Password
@@ -454,20 +454,20 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
 
       {/* Account Actions */}
       <Card>
-        <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100">
+        <CardHeader className="bg-surface-2">
           <CardTitle>Account Actions</CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-4">
           {/* Logout */}
-          <div className="flex items-center justify-between p-4 border border-slate-200 bg-slate-50 rounded-lg">
+          <div className="flex items-center justify-between p-4 border border-border bg-surface-2 rounded-lg">
             <div>
-              <h4 className="font-semibold text-slate-800">Logout</h4>
-              <p className="text-sm text-slate-600">Sign out of your account</p>
+              <h4 className="font-semibold text-foreground">Logout</h4>
+              <p className="text-sm text-subtle">Sign out of your account</p>
             </div>
             <Button 
               variant="outline" 
               onClick={handleLogout}
-              className="text-slate-900 border-slate-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:border-blue-300 transition-all duration-300"
+              className="text-foreground border-border hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-protocall-premium-light transition-all duration-300"
             >
               <LogOut className="w-4 h-4 mr-2" />
               Logout
@@ -475,10 +475,10 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
           </div>
 
           {/* Delete Account */}
-          <div className="p-4 border border-red-200 bg-red-50 rounded-lg flex items-center justify-between">
+          <div className="p-4 border border-sell/30 bg-sell-muted rounded-lg flex items-center justify-between">
             <div>
-              <h4 className="font-semibold text-slate-800">Deactivate Account</h4>
-              <p className="text-sm text-red-700">This action is permanent and cannot be undone.</p>
+              <h4 className="font-semibold text-foreground">Deactivate Account</h4>
+              <p className="text-sm text-sell-muted-foreground">This action is permanent and cannot be undone.</p>
             </div>
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -496,7 +496,7 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteAccount} className="bg-red-600 hover:bg-red-700">
+                  <AlertDialogAction onClick={handleDeleteAccount} className="bg-sell hover:bg-sell">
                     Yes, Deactivate My Account
                   </AlertDialogAction>
                 </AlertDialogFooter>

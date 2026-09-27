@@ -160,7 +160,7 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
         <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-cyan-600" />
+              <MessageSquare className="w-5 h-5 text-protocall-blue" />
               {room ? 'Edit Chat Room' : 'Create New Chat Room'}
             </DialogTitle>
             <DialogDescription>
@@ -175,7 +175,7 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
             {/* Basic Information */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-slate-700">Basic Information</h3>
+                <h3 className="text-sm font-semibold text-subtle">Basic Information</h3>
                 {room && (
                   <Badge variant="outline" className="text-xs">
                     Room ID: {room.id?.slice(-8)}
@@ -204,7 +204,7 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
 
               <div>
                 <Label htmlFor="stock_symbol">
-                  Stock Symbol {formData.room_type === 'stock_specific' && <span className="text-red-500">*</span>}
+                  Stock Symbol {formData.room_type === 'stock_specific' && <span className="text-sell">*</span>}
                 </Label>
                 <Input
                   id="stock_symbol"
@@ -214,7 +214,7 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
                   className="mt-1"
                   required={formData.room_type === 'stock_specific'}
                 />
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   {formData.room_type === 'stock_specific'
                     ? 'Required: Stock symbol for this room'
                     : 'Optional: Associate this room with a specific stock'
@@ -233,7 +233,7 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
                   required
                 />
                 {formData.room_type === 'stock_specific' && !room && (
-                  <p className="text-xs text-blue-600 mt-1">
+                  <p className="text-xs text-protocall-blue mt-1">
                     💡 Tip: Room name will auto-fill with stock symbol unless manually changed.
                   </p>
                 )}
@@ -253,12 +253,12 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
 
             {/* Room Configuration */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700">Room Configuration</h3>
+              <h3 className="text-sm font-semibold text-subtle">Room Configuration</h3>
 
-              <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-premium-muted rounded-lg">
                 <div className="flex-1">
                   <Label htmlFor="is_premium" className="font-medium">Premium Room</Label>
-                  <p className="text-xs text-slate-600 mt-1">
+                  <p className="text-xs text-subtle mt-1">
                     Requires subscription to access
                   </p>
                 </div>
@@ -288,10 +288,10 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
                 </div>
               )}
 
-              <div className="flex items-center justify-between p-3 bg-amber-50 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-hold-muted rounded-lg">
                 <div className="flex-1">
                   <Label htmlFor="admin_only_post" className="font-medium">Admin Only Posting</Label>
-                  <p className="text-xs text-slate-600 mt-1">
+                  <p className="text-xs text-subtle mt-1">
                     Only admins and advisors can send messages
                   </p>
                 </div>
@@ -308,11 +308,11 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
               <div className="space-y-4 pt-4 border-t">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                      <Vote className="w-4 h-4 text-blue-600" />
+                    <h3 className="text-sm font-semibold text-subtle flex items-center gap-2">
+                      <Vote className="w-4 h-4 text-protocall-blue" />
                       Poll Management
                     </h3>
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       Create polls for this chat room
                     </p>
                   </div>
@@ -321,7 +321,7 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
                     variant="outline"
                     size="sm"
                     onClick={() => setShowCreatePollModal(true)}
-                    className="bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 border-blue-200"
+                    className="bg-surface-2 hover:from-surface-2 hover:to-surface-2 border-protocall-premium-light"
                   >
                     <Vote className="w-4 h-4 mr-2" />
                     Create Poll
@@ -329,8 +329,8 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
                 </div>
 
                 {!formData.stock_symbol && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <p className="text-xs text-yellow-800">
+                  <div className="bg-hold-muted border border-hold/30 rounded-lg p-3">
+                    <p className="text-xs text-hold-muted-foreground">
                       💡 Tip: Set a stock symbol for this room to create stock-specific polls more easily
                     </p>
                   </div>
@@ -346,7 +346,7 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
               <Button
                 type="submit"
                 disabled={isSaving}
-                className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700"
+                className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
               >
                 <Save className="w-4 h-4 mr-2" />
                 {isSaving ? 'Saving...' : room ? 'Update Room' : 'Create Room'}

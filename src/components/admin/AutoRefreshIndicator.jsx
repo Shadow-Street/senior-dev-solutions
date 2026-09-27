@@ -18,7 +18,7 @@ export default function AutoRefreshIndicator({
   onClearNewData
 }) {
   return (
-    <div className="flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+    <div className="flex items-center gap-3 px-4 py-2 bg-surface-2 rounded-lg border border-protocall-premium-light">
       {/* Auto-refresh toggle */}
       <Button
         variant="outline"
@@ -54,7 +54,7 @@ export default function AutoRefreshIndicator({
       {/* Status indicator */}
       <div className="flex items-center gap-2 text-sm">
         {isEnabled && (
-          <Badge className="bg-green-100 text-green-800 border-green-200 animate-pulse">
+          <Badge className="bg-buy-muted text-buy-muted-foreground border-buy/30 animate-pulse">
             <Activity className="w-3 h-3 mr-1" />
             Auto-refresh ON ({intervalSeconds}s)
           </Badge>
@@ -69,7 +69,7 @@ export default function AutoRefreshIndicator({
 
         {hasNewData && (
           <Badge 
-            className="bg-blue-500 text-white cursor-pointer hover:bg-blue-600"
+            className="bg-protocall-blue text-white cursor-pointer hover:bg-protocall-blue"
             onClick={onClearNewData}
           >
             New Data Available - Click to Dismiss

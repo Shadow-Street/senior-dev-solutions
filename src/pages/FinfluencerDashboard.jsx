@@ -368,18 +368,18 @@ export default function FinfluencerDashboard() {
 
   const getStatusBadge = (status) => {
     const config = {
-      published: { color: 'bg-green-100 text-green-800', label: 'Published' },
-      draft: { color: 'bg-gray-100 text-gray-800', label: 'Draft' },
-      active: { color: 'bg-green-100 text-green-800', label: 'Active' },
-      cancelled: { color: 'bg-red-100 text-red-800', label: 'Cancelled' },
-      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending' },
-      approved: { color: 'bg-blue-100 text-blue-800', label: 'Approved' },
-      processed: { color: 'bg-green-100 text-green-800', label: 'Processed' },
-      rejected: { color: 'bg-red-100 text-red-800', label: 'Rejected' },
-      live: { color: 'bg-green-100 text-green-800', label: 'Live' },
-      completed: { color: 'bg-blue-100 text-blue-800', label: 'Completed' }
+      published: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Published' },
+      draft: { color: 'bg-surface-2 text-foreground', label: 'Draft' },
+      active: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Active' },
+      cancelled: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Cancelled' },
+      pending: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending' },
+      approved: { color: 'bg-premium-muted text-protocall-blue', label: 'Approved' },
+      processed: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Processed' },
+      rejected: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Rejected' },
+      live: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Live' },
+      completed: { color: 'bg-premium-muted text-protocall-blue', label: 'Completed' }
     };
-    const { color, label } = config[status] || { color: 'bg-gray-100 text-gray-800', label: 'Unknown' };
+    const { color, label } = config[status] || { color: 'bg-surface-2 text-foreground', label: 'Unknown' };
     return <Badge className={`${color} border-0`}>{label}</Badge>;
   };
 
@@ -389,10 +389,10 @@ export default function FinfluencerDashboard() {
         <div className="p-6">
           <div className="max-w-7xl mx-auto">
             <div className="animate-pulse">
-              <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
+              <div className="h-8 bg-border rounded w-1/3 mb-6"></div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 {[...Array(4)].map((_, i) => (
-                  <div key={i} className="h-24 bg-gray-200 rounded"></div>
+                  <div key={i} className="h-24 bg-border rounded"></div>
                 ))}
               </div>
             </div>
@@ -408,9 +408,9 @@ export default function FinfluencerDashboard() {
         <div className="min-h-screen flex items-center justify-center p-4">
           <Card className="max-w-md w-full">
             <CardContent className="p-8 text-center">
-              <Star className="w-16 h-16 text-purple-500 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-slate-800 mb-2">Finfluencer Registration Required</h2>
-              <p className="text-slate-600 mb-6">
+              <Star className="w-16 h-16 text-protocall-premium-light mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-foreground mb-2">Finfluencer Registration Required</h2>
+              <p className="text-subtle mb-6">
                 Complete your finfluencer registration to access this dashboard.
               </p>
               <Button onClick={() => window.location.href = createPageUrl('Finfluencers')}>
@@ -428,20 +428,20 @@ export default function FinfluencerDashboard() {
     return (
       <FinfluencerLayout activePage="finfluencer-dashboard">
         <div className="min-h-screen flex items-center justify-center p-4">
-          <Card className="max-w-md w-full border-2 border-yellow-200">
+          <Card className="max-w-md w-full border-2 border-hold/30">
             <CardContent className="p-8 text-center">
-              <div className="w-20 h-20 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4">
-                <Clock className="w-10 h-10 text-yellow-600" />
+              <div className="w-20 h-20 rounded-full bg-hold-muted flex items-center justify-center mx-auto mb-4">
+                <Clock className="w-10 h-10 text-hold-muted-foreground" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-800 mb-2">Application Under Review</h2>
-              <p className="text-slate-600 mb-4">
+              <h2 className="text-2xl font-bold text-foreground mb-2">Application Under Review</h2>
+              <p className="text-subtle mb-4">
                 Your finfluencer application is currently being reviewed by our admin team.
               </p>
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                <p className="text-sm text-yellow-800">
+              <div className="bg-hold-muted border border-hold/30 rounded-lg p-4 mb-6">
+                <p className="text-sm text-hold-muted-foreground">
                   <strong>Status:</strong> Pending Approval
                 </p>
-                <p className="text-sm text-yellow-800 mt-2">
+                <p className="text-sm text-hold-muted-foreground mt-2">
                   We'll notify you via email once your application is approved. This usually takes 1-2 business days.
                 </p>
               </div>
@@ -459,21 +459,21 @@ export default function FinfluencerDashboard() {
     return (
       <FinfluencerLayout activePage="finfluencer-dashboard">
         <div className="min-h-screen flex items-center justify-center p-4">
-          <Card className="max-w-md w-full border-2 border-red-200">
+          <Card className="max-w-md w-full border-2 border-sell/30">
             <CardContent className="p-8 text-center">
-              <div className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-                <AlertCircle className="w-10 h-10 text-red-600" />
+              <div className="w-20 h-20 rounded-full bg-sell-muted flex items-center justify-center mx-auto mb-4">
+                <AlertCircle className="w-10 h-10 text-sell-muted-foreground" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-800 mb-2">Application Not Approved</h2>
-              <p className="text-slate-600 mb-4">
+              <h2 className="text-2xl font-bold text-foreground mb-2">Application Not Approved</h2>
+              <p className="text-subtle mb-4">
                 Unfortunately, your finfluencer application was not approved.
               </p>
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                <p className="text-sm text-red-800">
+              <div className="bg-sell-muted border border-sell/30 rounded-lg p-4 mb-6">
+                <p className="text-sm text-sell-muted-foreground">
                   <strong>Status:</strong> Rejected
                 </p>
                 {finfluencer.rejection_reason && (
-                  <p className="text-sm text-red-800 mt-2">
+                  <p className="text-sm text-sell-muted-foreground mt-2">
                     <strong>Reason:</strong> {finfluencer.rejection_reason}
                   </p>
                 )}
@@ -515,10 +515,10 @@ export default function FinfluencerDashboard() {
                       <img
                         src={finfluencer.profile_image_url}
                         alt={finfluencer.display_name}
-                        className="w-20 h-20 rounded-full object-cover border-4 border-purple-200 shadow-lg"
+                        className="w-20 h-20 rounded-full object-cover border-4 border-protocall-premium-light shadow-lg"
                       />
                     ) : (
-                      <div className="w-20 h-20 rounded-full bg-gradient-to-r from-purple-500 to-blue-600 flex items-center justify-center text-white text-3xl font-bold border-4 border-purple-200 shadow-lg">
+                      <div className="w-20 h-20 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center text-white text-3xl font-bold border-4 border-protocall-premium-light shadow-lg">
                         {finfluencer.display_name?.charAt(0)?.toUpperCase() || 'F'}
                       </div>
                     )}
@@ -530,15 +530,15 @@ export default function FinfluencerDashboard() {
                   </div>
 
                   <div>
-                    <h2 className="text-3xl font-bold text-slate-800">Welcome back, {finfluencer.display_name}!</h2>
-                    <p className="text-slate-600 mt-1">Here's your content creator dashboard overview</p>
+                    <h2 className="text-3xl font-bold text-foreground">Welcome back, {finfluencer.display_name}!</h2>
+                    <p className="text-subtle mt-1">Here's your content creator dashboard overview</p>
                     <div className="flex items-center gap-2 mt-2">
-                      <Badge className="bg-green-100 text-green-800 border-0">Verified Creator</Badge>
+                      <Badge className="bg-buy-muted text-buy-muted-foreground border-0">Verified Creator</Badge>
                     </div>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <Button onClick={() => setShowCreateCourse(true)} className="bg-purple-600 hover:bg-purple-700">
+                  <Button onClick={() => setShowCreateCourse(true)} className="bg-primary hover:bg-primary">
                     <PlusCircle className="w-4 h-4 mr-2" />
                     Create Course
                   </Button>
@@ -549,10 +549,10 @@ export default function FinfluencerDashboard() {
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
-                      <Users className="w-8 h-8 text-indigo-600" />
+                      <Users className="w-8 h-8 text-protocall-blue" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-slate-600">Active Students</p>
-                        <p className="text-2xl font-bold text-slate-900">{stats.activeEnrollments}</p>
+                        <p className="text-sm font-medium text-subtle">Active Students</p>
+                        <p className="text-2xl font-bold text-foreground">{stats.activeEnrollments}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -561,10 +561,10 @@ export default function FinfluencerDashboard() {
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
-                      <CreditCard className="w-8 h-8 text-green-600" />
+                      <CreditCard className="w-8 h-8 text-buy-muted-foreground" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-slate-600">Total Students</p>
-                        <p className="text-2xl font-bold text-slate-900">{stats.totalStudents}</p>
+                        <p className="text-sm font-medium text-subtle">Total Students</p>
+                        <p className="text-2xl font-bold text-foreground">{stats.totalStudents}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -573,10 +573,10 @@ export default function FinfluencerDashboard() {
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
-                      <DollarSign className="w-8 h-8 text-purple-600" />
+                      <DollarSign className="w-8 h-8 text-protocall-premium-text" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-slate-600">Total Earnings</p>
-                        <p className="text-2xl font-bold text-slate-900">₹{stats.totalEarnings.toLocaleString()}</p>
+                        <p className="text-sm font-medium text-subtle">Total Earnings</p>
+                        <p className="text-2xl font-bold text-foreground">₹{stats.totalEarnings.toLocaleString()}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -585,10 +585,10 @@ export default function FinfluencerDashboard() {
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
-                      <Wallet className="w-8 h-8 text-emerald-600" />
+                      <Wallet className="w-8 h-8 text-buy-muted-foreground" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-slate-600">Available Balance</p>
-                        <p className="text-2xl font-bold text-slate-900">₹{stats.availableBalance.toLocaleString()}</p>
+                        <p className="text-sm font-medium text-subtle">Available Balance</p>
+                        <p className="text-2xl font-bold text-foreground">₹{stats.availableBalance.toLocaleString()}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -597,10 +597,10 @@ export default function FinfluencerDashboard() {
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
-                      <Star className="w-8 h-8 text-yellow-600" />
+                      <Star className="w-8 h-8 text-hold-muted-foreground" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-slate-600">Avg Rating</p>
-                        <p className="text-2xl font-bold text-slate-900">{stats.avgRating}/5</p>
+                        <p className="text-sm font-medium text-subtle">Avg Rating</p>
+                        <p className="text-2xl font-bold text-foreground">{stats.avgRating}/5</p>
                       </div>
                     </div>
                   </CardContent>
@@ -616,23 +616,23 @@ export default function FinfluencerDashboard() {
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <GraduationCap className="w-8 h-8 text-purple-600" />
+                          <GraduationCap className="w-8 h-8 text-protocall-premium-text" />
                           <div>
-                            <p className="font-semibold text-slate-800">Total Courses</p>
-                            <p className="text-sm text-slate-500">Live courses</p>
+                            <p className="font-semibold text-foreground">Total Courses</p>
+                            <p className="text-sm text-muted-foreground">Live courses</p>
                           </div>
                         </div>
-                        <p className="text-2xl font-bold text-slate-900">{stats.totalCourses}</p>
+                        <p className="text-2xl font-bold text-foreground">{stats.totalCourses}</p>
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <Video className="w-8 h-8 text-blue-600" />
+                          <Video className="w-8 h-8 text-protocall-blue" />
                           <div>
-                            <p className="font-semibold text-slate-800">Total Posts</p>
-                            <p className="text-sm text-slate-500">Published content</p>
+                            <p className="font-semibold text-foreground">Total Posts</p>
+                            <p className="text-sm text-muted-foreground">Published content</p>
                           </div>
                         </div>
-                        <p className="text-2xl font-bold text-slate-900">{stats.totalPosts}</p>
+                        <p className="text-2xl font-bold text-foreground">{stats.totalPosts}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -666,8 +666,8 @@ export default function FinfluencerDashboard() {
 
             <TabsContent value="courses" className="space-y-4 mt-0">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-slate-800">My Courses</h2>
-                <Button onClick={() => setShowCreateCourse(true)} className="bg-purple-600 hover:bg-purple-700">
+                <h2 className="text-2xl font-bold text-foreground">My Courses</h2>
+                <Button onClick={() => setShowCreateCourse(true)} className="bg-primary hover:bg-primary">
                   <PlusCircle className="w-4 h-4 mr-2" />
                   Create Course
                 </Button>
@@ -680,55 +680,55 @@ export default function FinfluencerDashboard() {
                     const courseRevenue = courseEnrollments.reduce((sum, e) => sum + (e.amount_paid || 0), 0);
 
                     return (
-                      <Card key={course.id} className="hover:shadow-xl transition-all duration-300 border-2 hover:border-purple-200 bg-white overflow-hidden">
+                      <Card key={course.id} className="hover:shadow-xl transition-all duration-300 border-2 hover:border-protocall-premium-light bg-white overflow-hidden">
                         <CardContent className="p-5">
                           {/* Header with Badges */}
                           <div className="flex items-center gap-2 mb-4">
-                            <Badge className="bg-blue-100 text-blue-800 border-0 font-semibold">
+                            <Badge className="bg-premium-muted text-protocall-blue border-0 font-semibold">
                               {course.course_type.replace('_', ' ').toUpperCase()}
                             </Badge>
                             {getStatusBadge(course.status)}
                           </div>
 
                           {/* Course Title */}
-                          <h3 className="font-bold text-xl text-slate-900 mb-4 line-clamp-2 min-h-[3.5rem]">
+                          <h3 className="font-bold text-xl text-foreground mb-4 line-clamp-2 min-h-[3.5rem]">
                             {course.title}
                           </h3>
 
                           {/* Course Info Section - Blue Background */}
-                          <div className="bg-blue-50 rounded-lg p-3 mb-3">
-                            <p className="text-xs text-slate-600 mb-1">Category</p>
-                            <p className="text-sm font-semibold text-blue-800 uppercase">
+                          <div className="bg-premium-muted rounded-lg p-3 mb-3">
+                            <p className="text-xs text-subtle mb-1">Category</p>
+                            <p className="text-sm font-semibold text-protocall-blue uppercase">
                               {course.category?.replace('_', ' ')}
                             </p>
                           </div>
 
                           {/* Price and Students Grid */}
                           <div className="grid grid-cols-2 gap-3 mb-3">
-                            <div className="bg-green-50 rounded-lg p-3 border border-green-200">
-                              <p className="text-xs text-slate-600 mb-1">Price</p>
-                              <p className="text-lg font-bold text-green-700">₹{course.price}</p>
+                            <div className="bg-buy-muted rounded-lg p-3 border border-buy/30">
+                              <p className="text-xs text-subtle mb-1">Price</p>
+                              <p className="text-lg font-bold text-buy-muted-foreground">₹{course.price}</p>
                             </div>
-                            <div className="bg-purple-50 rounded-lg p-3 border border-purple-200">
-                              <p className="text-xs text-slate-600 mb-1">Students</p>
-                              <p className="text-lg font-bold text-purple-700">{courseEnrollments.length}</p>
+                            <div className="bg-premium-muted rounded-lg p-3 border border-protocall-premium-light">
+                              <p className="text-xs text-subtle mb-1">Students</p>
+                              <p className="text-lg font-bold text-protocall-premium-text">{courseEnrollments.length}</p>
                             </div>
                           </div>
 
                           {/* Revenue Section */}
-                          <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-lg p-3 mb-3 border border-orange-200">
-                            <p className="text-xs text-slate-600 mb-1">Total Revenue</p>
-                            <p className="text-lg font-bold text-orange-700">₹{courseRevenue.toLocaleString()}</p>
+                          <div className="bg-gradient-to-r from-surface-2 to-sell-muted rounded-lg p-3 mb-3 border border-hold/30">
+                            <p className="text-xs text-subtle mb-1">Total Revenue</p>
+                            <p className="text-lg font-bold text-hold-muted-foreground">₹{courseRevenue.toLocaleString()}</p>
                           </div>
 
                           {/* Duration Badge */}
                           {course.duration_hours && (
                             <div className="flex items-center gap-2 mb-4">
-                              <Badge variant="outline" className="text-slate-600">
+                              <Badge variant="outline" className="text-subtle">
                                 <Clock className="w-3 h-3 mr-1" />
                                 {course.duration_hours}h
                               </Badge>
-                              <Badge variant="outline" className="text-slate-600">
+                              <Badge variant="outline" className="text-subtle">
                                 {course.difficulty_level}
                               </Badge>
                             </div>
@@ -749,7 +749,7 @@ export default function FinfluencerDashboard() {
                             </Button>
                             <Button
                               variant="outline"
-                              className="w-full text-sm text-blue-600 border-blue-200 hover:bg-blue-50"
+                              className="w-full text-sm text-protocall-blue border-protocall-premium-light hover:bg-premium-muted"
                               onClick={() => {
                                 // For stats, maybe open a modal or navigate to a dedicated stats page
                                 toast.info('Course stats feature coming soon!');
@@ -763,7 +763,7 @@ export default function FinfluencerDashboard() {
                           {/* Edit & Delete Buttons */}
                           <div className="grid grid-cols-2 gap-2">
                             <Button
-                              className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                              className="w-full bg-primary hover:bg-primary text-white"
                               onClick={() => {
                                 setEditingCourse(course);
                                 setShowCreateCourse(true);
@@ -774,7 +774,7 @@ export default function FinfluencerDashboard() {
                             </Button>
                             <Button
                               variant="destructive"
-                              className="w-full bg-red-600 hover:bg-red-700 text-white"
+                              className="w-full bg-protocall-sell-text hover:bg-sell text-white"
                               onClick={() => handleCourseDelete(course.id, course.title)}
                             >
                               <Trash2 className="w-4 h-4 mr-2" />
@@ -783,7 +783,7 @@ export default function FinfluencerDashboard() {
                           </div>
 
                           {/* Date Footer */}
-                          <div className="text-xs text-slate-500 mt-3 pt-3 border-t text-center">
+                          <div className="text-xs text-muted-foreground mt-3 pt-3 border-t text-center">
                             {format(new Date(course.created_date), 'MMM dd, yyyy')}
                           </div>
                         </CardContent>
@@ -794,8 +794,8 @@ export default function FinfluencerDashboard() {
                   <div className="col-span-full">
                     <Card>
                       <CardContent className="p-8 text-center">
-                        <GraduationCap className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                        <p className="text-slate-600">No courses created yet.</p>
+                        <GraduationCap className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                        <p className="text-subtle">No courses created yet.</p>
                         <Button onClick={() => setShowCreateCourse(true)} className="mt-4">
                           Create Your First Course
                         </Button>
@@ -808,8 +808,8 @@ export default function FinfluencerDashboard() {
 
             <TabsContent value="content" className="space-y-4 mt-0">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-slate-800">My Content</h2>
-                <Button onClick={() => setShowCreatePost(true)} className="bg-purple-600 hover:bg-purple-700">
+                <h2 className="text-2xl font-bold text-foreground">My Content</h2>
+                <Button onClick={() => setShowCreatePost(true)} className="bg-primary hover:bg-primary">
                   <PlusCircle className="w-4 h-4 mr-2" />
                   Create Post
                 </Button>
@@ -832,23 +832,23 @@ export default function FinfluencerDashboard() {
                           <div>
                             <div className="flex items-center gap-2 mb-2">
                               {getStatusBadge(post.status)}
-                              <Badge className="bg-blue-100 text-blue-800">
+                              <Badge className="bg-premium-muted text-protocall-blue">
                                 {post.post_type}
                               </Badge>
                             </div>
-                            <h3 className="font-bold text-lg text-slate-900">
+                            <h3 className="font-bold text-lg text-foreground">
                               {post.title}
                             </h3>
                           </div>
 
-                          <div className="flex items-center gap-4 text-sm text-slate-600">
+                          <div className="flex items-center gap-4 text-sm text-subtle">
                             <div className="flex items-center gap-1">
                               <Eye className="w-4 h-4" />
                               {post.view_count || 0}
                             </div>
                           </div>
 
-                          <div className="text-xs text-slate-500 pt-3 border-t">
+                          <div className="text-xs text-muted-foreground pt-3 border-t">
                             {format(new Date(post.created_date), 'MMM d, yyyy')}
                           </div>
                         </div>
@@ -859,9 +859,9 @@ export default function FinfluencerDashboard() {
                   <div className="col-span-full">
                     <Card>
                       <CardContent className="p-8 text-center">
-                        <Video className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                        <p className="text-slate-600">No content published yet.</p>
-                        <Button onClick={() => setShowCreatePost(true)} className="mt-4 bg-purple-600 hover:bg-purple-700">
+                        <Video className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                        <p className="text-subtle">No content published yet.</p>
+                        <Button onClick={() => setShowCreatePost(true)} className="mt-4 bg-primary hover:bg-primary">
                           <PlusCircle className="w-4 h-4 mr-2" />
                           Create Your First Post
                         </Button>
@@ -873,7 +873,7 @@ export default function FinfluencerDashboard() {
             </TabsContent>
 
             <TabsContent value="students" className="space-y-4 mt-0">
-              <h2 className="text-2xl font-bold text-slate-800 mb-6">Students</h2>
+              <h2 className="text-2xl font-bold text-foreground mb-6">Students</h2>
 
               <div className="space-y-4">
                 {enrollments.length > 0 ? (
@@ -884,13 +884,13 @@ export default function FinfluencerDashboard() {
                         <CardContent className="p-6">
                           <div className="flex justify-between items-start">
                             <div className="flex-1">
-                              <p className="font-semibold text-slate-800">
+                              <p className="font-semibold text-foreground">
                                 Student ID: {enrollment.user_id.substring(0, 8)}...
                               </p>
-                              <p className="text-sm text-slate-600">
+                              <p className="text-sm text-subtle">
                                 Course: {course?.title || 'Unknown'}
                               </p>
-                              <p className="text-xs text-slate-500">
+                              <p className="text-xs text-muted-foreground">
                                 Enrolled: {format(new Date(enrollment.created_date), 'MMM d, yyyy')}
                               </p>
                             </div>
@@ -898,7 +898,7 @@ export default function FinfluencerDashboard() {
                               {getStatusBadge(enrollment.enrollment_status)}
                               {enrollment.rating && (
                                 <div className="flex items-center gap-1 mt-2">
-                                  <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                                  <Star className="w-4 h-4 text-hold fill-current" />
                                   <span className="text-sm font-semibold">{enrollment.rating}/5</span>
                                 </div>
                               )}
@@ -911,8 +911,8 @@ export default function FinfluencerDashboard() {
                 ) : (
                   <Card>
                     <CardContent className="p-8 text-center">
-                      <Users className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                      <p className="text-slate-600">No students enrolled yet.</p>
+                      <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                      <p className="text-subtle">No students enrolled yet.</p>
                     </CardContent>
                   </Card>
                 )}
@@ -924,8 +924,8 @@ export default function FinfluencerDashboard() {
                 <Button
                   onClick={() => setFinancialTab('overview')}
                   className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'overview'
-                    ? 'bg-gradient-to-r from-purple-500 to-blue-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
-                    : 'bg-gradient-to-r from-purple-50 to-blue-50 text-slate-700 hover:from-purple-100 hover:to-blue-100 hover:shadow-md border border-purple-200'
+                    ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg hover:shadow-xl hover:scale-105'
+                    : 'bg-surface-2 text-subtle hover:from-surface-2 hover:to-surface-2 hover:shadow-md border border-protocall-premium-light'
                     }`}
                 >
                   <DollarSign className="w-5 h-5 mr-2 inline-block" />
@@ -934,8 +934,8 @@ export default function FinfluencerDashboard() {
                 <Button
                   onClick={() => setFinancialTab('payouts')}
                   className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'payouts'
-                    ? 'bg-gradient-to-r from-purple-500 to-blue-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
-                    : 'bg-gradient-to-r from-purple-50 to-blue-50 text-slate-700 hover:from-purple-100 hover:to-blue-100 hover:shadow-md border border-purple-200'
+                    ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg hover:shadow-xl hover:scale-105'
+                    : 'bg-surface-2 text-subtle hover:from-surface-2 hover:to-surface-2 hover:shadow-md border border-protocall-premium-light'
                     }`}
                 >
                   <Wallet className="w-5 h-5 mr-2 inline-block" />
@@ -946,11 +946,11 @@ export default function FinfluencerDashboard() {
               {financialTab === 'overview' && (
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-bold text-slate-800">Financial Overview</h2>
+                    <h2 className="text-2xl font-bold text-foreground">Financial Overview</h2>
                     <Button
                       onClick={() => setShowPayoutRequest(true)}
                       disabled={stats.availableBalance <= 0}
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-buy hover:bg-buy"
                     >
                       <Wallet className="w-4 h-4 mr-2" />
                       Request Payout
@@ -968,11 +968,11 @@ export default function FinfluencerDashboard() {
               {financialTab === 'payouts' && (
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-bold text-slate-800">Payout Requests</h2>
+                    <h2 className="text-2xl font-bold text-foreground">Payout Requests</h2>
                     <Button
                       onClick={() => setShowPayoutRequest(true)}
                       disabled={stats.availableBalance <= 0}
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-buy hover:bg-buy"
                     >
                       <Wallet className="w-4 h-4 mr-2" />
                       Request Payout
@@ -983,10 +983,10 @@ export default function FinfluencerDashboard() {
                     <Card>
                       <CardContent className="p-6">
                         <div className="flex items-center">
-                          <Wallet className="w-8 h-8 text-green-600" />
+                          <Wallet className="w-8 h-8 text-buy-muted-foreground" />
                           <div className="ml-4">
-                            <p className="text-sm font-medium text-slate-600">Available Balance</p>
-                            <p className="text-2xl font-bold text-slate-900">₹{stats.availableBalance.toLocaleString()}</p>
+                            <p className="text-sm font-medium text-subtle">Available Balance</p>
+                            <p className="text-2xl font-bold text-foreground">₹{stats.availableBalance.toLocaleString()}</p>
                           </div>
                         </div>
                       </CardContent>
@@ -995,10 +995,10 @@ export default function FinfluencerDashboard() {
                     <Card>
                       <CardContent className="p-6">
                         <div className="flex items-center">
-                          <Clock className="w-8 h-8 text-orange-600" />
+                          <Clock className="w-8 h-8 text-hold-muted-foreground" />
                           <div className="ml-4">
-                            <p className="text-sm font-medium text-slate-600">Pending Payouts</p>
-                            <p className="text-2xl font-bold text-slate-900">₹{stats.pendingPayouts.toLocaleString()}</p>
+                            <p className="text-sm font-medium text-subtle">Pending Payouts</p>
+                            <p className="text-2xl font-bold text-foreground">₹{stats.pendingPayouts.toLocaleString()}</p>
                           </div>
                         </div>
                       </CardContent>
@@ -1007,10 +1007,10 @@ export default function FinfluencerDashboard() {
                     <Card>
                       <CardContent className="p-6">
                         <div className="flex items-center">
-                          <TrendingUp className="w-8 h-8 text-purple-600" />
+                          <TrendingUp className="w-8 h-8 text-protocall-premium-text" />
                           <div className="ml-4">
-                            <p className="text-sm font-medium text-slate-600">Total Earned</p>
-                            <p className="text-2xl font-bold text-slate-900">₹{stats.totalEarnings.toLocaleString()}</p>
+                            <p className="text-sm font-medium text-subtle">Total Earned</p>
+                            <p className="text-2xl font-bold text-foreground">₹{stats.totalEarnings.toLocaleString()}</p>
                           </div>
                         </div>
                       </CardContent>
@@ -1025,13 +1025,13 @@ export default function FinfluencerDashboard() {
                             <div className="flex justify-between items-start">
                               <div>
                                 <p className="font-semibold">₹{payout.requested_amount.toLocaleString()}</p>
-                                <p className="text-sm text-slate-600">{format(new Date(payout.created_date), 'MMM d, yyyy')}</p>
-                                <p className="text-xs text-slate-500">{payout.payout_method}</p>
+                                <p className="text-sm text-subtle">{format(new Date(payout.created_date), 'MMM d, yyyy')}</p>
+                                <p className="text-xs text-muted-foreground">{payout.payout_method}</p>
                               </div>
                               {getStatusBadge(payout.status)}
                             </div>
                             {payout.admin_notes && (
-                              <p className="text-sm text-slate-600 mt-2">Admin Notes: {payout.admin_notes}</p>
+                              <p className="text-sm text-subtle mt-2">Admin Notes: {payout.admin_notes}</p>
                             )}
                           </CardContent>
                         </Card>
@@ -1039,10 +1039,10 @@ export default function FinfluencerDashboard() {
                     ) : (
                       <Card>
                         <CardContent className="p-8 text-center">
-                          <Wallet className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                          <p className="text-slate-600">No payout requests yet.</p>
+                          <Wallet className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                          <p className="text-subtle">No payout requests yet.</p>
                           {stats.availableBalance > 0 && (
-                            <Button onClick={() => setShowPayoutRequest(true)} className="mt-4 bg-green-600 hover:bg-green-700">
+                            <Button onClick={() => setShowPayoutRequest(true)} className="mt-4 bg-buy hover:bg-buy">
                               Request Your First Payout
                             </Button>
                           )}
@@ -1055,39 +1055,39 @@ export default function FinfluencerDashboard() {
             </TabsContent>
 
             <TabsContent value="analytics" className="mt-0">
-              <h2 className="text-2xl font-bold text-slate-800 mb-6">Advanced Analytics</h2>
+              <h2 className="text-2xl font-bold text-foreground mb-6">Advanced Analytics</h2>
 
               <div className="space-y-6">
                 <Card className="shadow-lg border-0">
-                  <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-purple-50">
+                  <CardHeader className="border-b bg-surface-2">
                     <CardTitle>Performance Overview</CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                      <div className="text-center p-4 bg-purple-50 rounded-xl">
-                        <div className="text-3xl font-bold text-purple-600">{courses.length}</div>
-                        <div className="text-sm text-slate-600 mt-1">Total Courses</div>
+                      <div className="text-center p-4 bg-premium-muted rounded-xl">
+                        <div className="text-3xl font-bold text-protocall-premium-text">{courses.length}</div>
+                        <div className="text-sm text-subtle mt-1">Total Courses</div>
                       </div>
-                      <div className="text-center p-4 bg-green-50 rounded-xl">
-                        <div className="text-3xl font-bold text-green-600">{enrollments.length}</div>
-                        <div className="text-sm text-slate-600 mt-1">Total Enrollments</div>
+                      <div className="text-center p-4 bg-buy-muted rounded-xl">
+                        <div className="text-3xl font-bold text-buy-muted-foreground">{enrollments.length}</div>
+                        <div className="text-sm text-subtle mt-1">Total Enrollments</div>
                       </div>
-                      <div className="text-center p-4 bg-blue-50 rounded-xl">
-                        <div className="text-3xl font-bold text-blue-600">{posts.length}</div>
-                        <div className="text-sm text-slate-600 mt-1">Content Posts</div>
+                      <div className="text-center p-4 bg-premium-muted rounded-xl">
+                        <div className="text-3xl font-bold text-protocall-blue">{posts.length}</div>
+                        <div className="text-sm text-subtle mt-1">Content Posts</div>
                       </div>
-                      <div className="text-center p-4 bg-orange-50 rounded-xl">
-                        <div className="text-3xl font-bold text-orange-600">
+                      <div className="text-center p-4 bg-hold-muted rounded-xl">
+                        <div className="text-3xl font-bold text-hold-muted-foreground">
                           {posts.reduce((sum, p) => sum + (p.view_count || 0), 0)}
                         </div>
-                        <div className="text-sm text-slate-600 mt-1">Total Views</div>
+                        <div className="text-sm text-subtle mt-1">Total Views</div>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="shadow-lg border-0">
-                  <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-purple-50">
+                  <CardHeader className="border-b bg-surface-2">
                     <CardTitle>Revenue Trends</CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
@@ -1098,20 +1098,20 @@ export default function FinfluencerDashboard() {
                           <XAxis dataKey="created_date" tickFormatter={(date) => format(new Date(date), 'MMM')} />
                           <YAxis />
                           <Tooltip formatter={(value) => [`₹${value}`, 'Earnings']} />
-                          <Line type="monotone" dataKey="influencer_payout" stroke="#8b5cf6" strokeWidth={2} />
+                          <Line type="monotone" dataKey="influencer_payout" stroke="hsl(var(--primary))" strokeWidth={2} />
                         </LineChart>
                       </ResponsiveContainer>
                     ) : (
                       <div className="text-center p-8">
-                        <TrendingUp className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                        <p className="text-slate-600">No revenue data available yet.</p>
+                        <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                        <p className="text-subtle">No revenue data available yet.</p>
                       </div>
                     )}
                   </CardContent>
                 </Card>
 
                 <Card className="shadow-lg border-0">
-                  <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-purple-50">
+                  <CardHeader className="border-b bg-surface-2">
                     <CardTitle>Top Performing Courses</CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
@@ -1121,25 +1121,25 @@ export default function FinfluencerDashboard() {
                           .sort((a, b) => (b.current_enrollments || 0) - (a.current_enrollments || 0))
                           .slice(0, 5)
                           .map((course, index) => (
-                            <div key={course.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                            <div key={course.id} className="flex items-center justify-between p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
                               <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-blue-600 text-white flex items-center justify-center font-bold text-sm">
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue text-white flex items-center justify-center font-bold text-sm">
                                   {index + 1}
                                 </div>
                                 <div>
-                                  <p className="font-semibold text-slate-800">{course.title}</p>
-                                  <p className="text-xs text-slate-500">{format(new Date(course.created_date), 'MMM dd, yyyy')}</p>
+                                  <p className="font-semibold text-foreground">{course.title}</p>
+                                  <p className="text-xs text-muted-foreground">{format(new Date(course.created_date), 'MMM dd, yyyy')}</p>
                                 </div>
                               </div>
                               <div className="text-right">
-                                <p className="font-bold text-purple-600">{course.current_enrollments || 0}</p>
-                                <p className="text-xs text-slate-500">students</p>
+                                <p className="font-bold text-protocall-premium-text">{course.current_enrollments || 0}</p>
+                                <p className="text-xs text-muted-foreground">students</p>
                               </div>
                             </div>
                           ))}
                       </div>
                     ) : (
-                      <div className="text-center p-8 text-slate-500">
+                      <div className="text-center p-8 text-muted-foreground">
                         No courses available yet
                       </div>
                     )}
@@ -1182,7 +1182,7 @@ export default function FinfluencerDashboard() {
           {showProfileImageModal && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
               <div className="bg-white rounded-lg p-6 max-w-md w-full mx-auto shadow-xl">
-                <h3 className="text-xl font-bold text-slate-800 mb-4">Update Profile Picture</h3>
+                <h3 className="text-xl font-bold text-foreground mb-4">Update Profile Picture</h3>
 
                 <div className="space-y-4">
                   <div className="flex justify-center">
@@ -1190,10 +1190,10 @@ export default function FinfluencerDashboard() {
                       <img
                         src={finfluencer.profile_image_url}
                         alt="Current"
-                        className="w-32 h-32 rounded-full object-cover border-4 border-purple-200"
+                        className="w-32 h-32 rounded-full object-cover border-4 border-protocall-premium-light"
                       />
                     ) : (
-                      <div className="w-32 h-32 rounded-full bg-gradient-to-r from-purple-500 to-blue-600 flex items-center justify-center text-white text-5xl font-bold">
+                      <div className="w-32 h-32 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center text-white text-5xl font-bold">
                         {finfluencer.display_name?.charAt(0)?.toUpperCase() || 'F'}
                       </div>
                     )}
@@ -1211,7 +1211,7 @@ export default function FinfluencerDashboard() {
                       }}
                       className="mt-2"
                     />
-                    <p className="text-xs text-slate-500 mt-2">
+                    <p className="text-xs text-muted-foreground mt-2">
                       Recommended: Square image, at least 400x400px, max 5MB
                     </p>
                   </div>

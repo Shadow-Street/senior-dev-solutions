@@ -106,8 +106,8 @@ export default function RealTimeActivityMonitor() {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 font-medium">Loading Live Activity...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <p className="text-lg text-subtle font-medium">Loading Live Activity...</p>
         </div>
       </div>
     );
@@ -117,7 +117,7 @@ export default function RealTimeActivityMonitor() {
     <div className="space-y-6">
       {/* Live Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -133,7 +133,7 @@ export default function RealTimeActivityMonitor() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
+        <Card className="bg-buy-soft text-buy-foreground">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -149,7 +149,7 @@ export default function RealTimeActivityMonitor() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-purple-500 to-violet-500 text-white">
+        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -165,7 +165,7 @@ export default function RealTimeActivityMonitor() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-orange-500 to-amber-500 text-white">
+        <Card className="bg-hold text-hold-foreground">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -187,10 +187,10 @@ export default function RealTimeActivityMonitor() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-cyan-600" />
+              <MessageSquare className="w-5 h-5 text-protocall-blue" />
               Live Message Stream
-              <Badge className="bg-green-100 text-green-800 ml-auto">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"></div>
+              <Badge className="bg-buy-muted text-buy-muted-foreground ml-auto">
+                <div className="w-2 h-2 bg-buy rounded-full animate-pulse mr-2"></div>
                 Live
               </Badge>
             </CardTitle>
@@ -199,25 +199,25 @@ export default function RealTimeActivityMonitor() {
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {liveData.recentMessages.length === 0 ? (
                 <div className="text-center py-8">
-                  <MessageSquare className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-                  <p className="text-slate-600">No recent messages</p>
+                  <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                  <p className="text-subtle">No recent messages</p>
                 </div>
               ) : (
                 liveData.recentMessages.map((message, index) => (
-                  <div key={message.id || index} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
-                    <div className="w-8 h-8 rounded-full bg-cyan-100 flex items-center justify-center flex-shrink-0">
-                      <MessageSquare className="w-4 h-4 text-cyan-600" />
+                  <div key={message.id || index} className="flex items-start gap-3 p-3 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
+                    <div className="w-8 h-8 rounded-full bg-premium-muted flex items-center justify-center flex-shrink-0">
+                      <MessageSquare className="w-4 h-4 text-protocall-blue" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <p className="font-medium text-sm text-slate-900 truncate">
+                        <p className="font-medium text-sm text-foreground truncate">
                           {message.user_id?.slice(-6) || 'System'}
                         </p>
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs text-muted-foreground">
                           {new Date(message.created_date).toLocaleTimeString()}
                         </span>
                       </div>
-                      <p className="text-sm text-slate-600 truncate">{message.content}</p>
+                      <p className="text-sm text-subtle truncate">{message.content}</p>
                     </div>
                   </div>
                 ))
@@ -230,7 +230,7 @@ export default function RealTimeActivityMonitor() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-green-600" />
+              <Activity className="w-5 h-5 text-buy-muted-foreground" />
               Active Rooms
             </CardTitle>
           </CardHeader>
@@ -238,19 +238,19 @@ export default function RealTimeActivityMonitor() {
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {liveData.activeRooms.length === 0 ? (
                 <div className="text-center py-8">
-                  <MessageSquare className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-                  <p className="text-slate-600">No active rooms</p>
+                  <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                  <p className="text-subtle">No active rooms</p>
                 </div>
               ) : (
                 liveData.activeRooms.map((room, index) => (
-                  <div key={room.id || index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                  <div key={room.id || index} className="flex items-center justify-between p-3 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-                        <MessageSquare className="w-5 h-5 text-green-600" />
+                      <div className="w-10 h-10 rounded-lg bg-buy-muted flex items-center justify-center">
+                        <MessageSquare className="w-5 h-5 text-buy-muted-foreground" />
                       </div>
                       <div>
-                        <p className="font-medium text-slate-900">{room.name}</p>
-                        <p className="text-xs text-slate-500">{room.room_type}</p>
+                        <p className="font-medium text-foreground">{room.name}</p>
+                        <p className="text-xs text-muted-foreground">{room.room_type}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -258,7 +258,7 @@ export default function RealTimeActivityMonitor() {
                         <Users className="w-3 h-3 mr-1" />
                         {room.participant_count || 0}
                       </Badge>
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <div className="w-2 h-2 bg-buy rounded-full animate-pulse"></div>
                     </div>
                   </div>
                 ))
@@ -272,7 +272,7 @@ export default function RealTimeActivityMonitor() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-purple-600" />
+            <Users className="w-5 h-5 text-protocall-premium-text" />
             Online Users ({liveData.onlineUsers.length})
           </CardTitle>
         </CardHeader>
@@ -280,25 +280,25 @@ export default function RealTimeActivityMonitor() {
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
             {liveData.onlineUsers.length === 0 ? (
               <div className="col-span-full text-center py-8">
-                <Users className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-                <p className="text-slate-600">No users online</p>
+                <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                <p className="text-subtle">No users online</p>
               </div>
             ) : (
               liveData.onlineUsers.map((participant, index) => (
-                <div key={participant.id || index} className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg">
+                <div key={participant.id || index} className="flex items-center gap-2 p-3 bg-surface-2 rounded-lg">
                   <div className="relative">
-                    <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-                      <Users className="w-5 h-5 text-purple-600" />
+                    <div className="w-10 h-10 rounded-full bg-premium-muted flex items-center justify-center">
+                      <Users className="w-5 h-5 text-protocall-premium-text" />
                     </div>
                     {participant.is_online && (
-                      <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                      <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-buy rounded-full border-2 border-white"></div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-900 truncate">
+                    <p className="text-sm font-medium text-foreground truncate">
                       {participant.user_name || 'User'}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       {participant.role || 'member'}
                     </p>
                   </div>
@@ -310,8 +310,8 @@ export default function RealTimeActivityMonitor() {
       </Card>
 
       {/* Auto-refresh indicator */}
-      <div className="flex items-center justify-center gap-2 text-sm text-slate-600">
-        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+      <div className="flex items-center justify-center gap-2 text-sm text-subtle">
+        <div className="w-2 h-2 bg-buy rounded-full animate-pulse"></div>
         <span>Auto-refreshing every 5 seconds</span>
       </div>
     </div>

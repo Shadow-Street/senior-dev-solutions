@@ -6,31 +6,31 @@ import { TrendingUp, Loader2 } from 'lucide-react';
 
 const AwaitingSellExecutionCard = ({ session, onExecuteSell, isExecuting }) => {
   return (
-    <Card className="bg-indigo-50 border-indigo-200 shadow-md">
+    <Card className="bg-premium-muted border-protocall-premium-light shadow-md">
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-lg font-bold text-indigo-900">{session.stock_symbol}</CardTitle>
-            <p className="text-sm text-indigo-700 mt-1">{session.stock_name}</p>
+            <CardTitle className="text-lg font-bold text-protocall-blue">{session.stock_symbol}</CardTitle>
+            <p className="text-sm text-protocall-blue mt-1">{session.stock_name}</p>
           </div>
-          <Badge className="bg-indigo-200 text-indigo-800 font-semibold">Awaiting Sell</Badge>
+          <Badge className="bg-premium-muted text-protocall-blue font-semibold">Awaiting Sell</Badge>
         </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
-            <p className="text-xs text-indigo-600 font-semibold">BUY PLEDGES</p>
-            <p className="text-lg font-bold text-indigo-900">{session.buy_pledges_count || 0}</p>
+            <p className="text-xs text-protocall-blue font-semibold">BUY PLEDGES</p>
+            <p className="text-lg font-bold text-protocall-blue">{session.buy_pledges_count || 0}</p>
           </div>
           <div>
-            <p className="text-xs text-indigo-600 font-semibold">BUY VALUE</p>
-            <p className="text-lg font-bold text-indigo-900">
+            <p className="text-xs text-protocall-blue font-semibold">BUY VALUE</p>
+            <p className="text-lg font-bold text-protocall-blue">
               ₹{((session.buy_pledges_value || 0) / 1000).toFixed(1)}K
             </p>
           </div>
            <div>
-            <p className="text-xs text-indigo-600 font-semibold">PLEDGERS</p>
-            <p className="text-lg font-bold text-indigo-900">{session.total_pledges || 0}</p>
+            <p className="text-xs text-protocall-blue font-semibold">PLEDGERS</p>
+            <p className="text-lg font-bold text-protocall-blue">{session.total_pledges || 0}</p>
           </div>
         </div>
       </CardContent>
@@ -38,7 +38,7 @@ const AwaitingSellExecutionCard = ({ session, onExecuteSell, isExecuting }) => {
         <Button
           onClick={() => onExecuteSell(session.id)}
           disabled={isExecuting}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg"
+          className="w-full bg-protocall-blue hover:bg-protocall-blue text-white shadow-lg"
         >
           {isExecuting ? (
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />

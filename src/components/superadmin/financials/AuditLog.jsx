@@ -35,13 +35,13 @@ export default function AuditLog({ logs }) {
   const getActionColor = (action) => {
     switch (action) {
       case 'CREATE_EXPENSE':
-        return 'bg-green-100 text-green-800';
+        return 'bg-buy-muted text-buy-muted-foreground';
       case 'UPDATE_EXPENSE':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-hold-muted text-hold-muted-foreground';
       case 'DELETE_EXPENSE':
-        return 'bg-red-100 text-red-800';
+        return 'bg-sell-muted text-sell-muted-foreground';
       default:
-        return 'bg-slate-100 text-slate-800';
+        return 'bg-surface-2 text-foreground';
     }
   };
 
@@ -50,35 +50,35 @@ export default function AuditLog({ logs }) {
       <CardHeader>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-sell rounded-lg flex items-center justify-center">
               <ShieldCheck className="w-5 h-5 text-white" />
             </div>
             <div>
-              <CardTitle className="text-xl bg-gradient-to-r from-red-700 to-red-600 bg-clip-text text-transparent">
+              <CardTitle className="text-xl bg-sell bg-clip-text text-transparent">
                 Financial Audit Log
               </CardTitle>
-              <p className="text-sm text-slate-600 font-normal mt-0.5">
+              <p className="text-sm text-subtle font-normal mt-0.5">
                 Complete audit trail of all financial operations
               </p>
             </div>
           </div>
-          <Badge className="bg-gradient-to-r from-red-100 to-red-200 text-red-800 border-0">
+          <Badge className="bg-gradient-to-r from-surface-2 to-sell text-sell-muted-foreground border-0">
             Super Admin Only
           </Badge>
         </div>
         
         <div className="flex items-center gap-4 mt-6 pt-4 border-t">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               placeholder="Search audit logs by admin, action, or details..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border-slate-200 focus:border-red-400 focus:ring-red-400"
+              className="pl-10 border-border focus:border-sell focus:ring-sell/30"
             />
           </div>
           <Select value={actionFilter} onValueChange={setActionFilter}>
-            <SelectTrigger className="w-[180px] border-slate-200 focus:border-red-400 focus:ring-red-400">
+            <SelectTrigger className="w-[180px] border-border focus:border-sell focus:ring-sell/30">
               <SelectValue placeholder="All Actions" />
             </SelectTrigger>
             <SelectContent>
@@ -95,29 +95,29 @@ export default function AuditLog({ logs }) {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b bg-gradient-to-r from-slate-50 to-slate-100">
-                <th className="p-4 text-left font-semibold text-slate-700">Timestamp</th>
-                <th className="p-4 text-left font-semibold text-slate-700">Admin</th>
-                <th className="p-4 text-left font-semibold text-slate-700">Action</th>
-                <th className="p-4 text-left font-semibold text-slate-700">Details</th>
+              <tr className="border-b bg-surface-2">
+                <th className="p-4 text-left font-semibold text-subtle">Timestamp</th>
+                <th className="p-4 text-left font-semibold text-subtle">Admin</th>
+                <th className="p-4 text-left font-semibold text-subtle">Action</th>
+                <th className="p-4 text-left font-semibold text-subtle">Details</th>
               </tr>
             </thead>
             <tbody>
               {filteredLogs.length > 0 ? filteredLogs.map(log => (
-                <tr key={log.id} className="border-b transition-colors hover:bg-gradient-to-r hover:from-slate-50 hover:to-transparent">
-                  <td className="p-4 text-slate-600 font-mono text-xs">
+                <tr key={log.id} className="border-b transition-colors hover:bg-gradient-to-r hover:from-surface-2 hover:to-transparent">
+                  <td className="p-4 text-subtle font-mono text-xs">
                     {new Date(log.created_date).toLocaleString()}
                   </td>
                   <td className="p-4">
-                    <div className="font-medium text-slate-900">{log.admin_name}</div>
-                    <div className="text-xs text-slate-500">{log.admin_id}</div>
+                    <div className="font-medium text-foreground">{log.admin_name}</div>
+                    <div className="text-xs text-muted-foreground">{log.admin_id}</div>
                   </td>
                   <td className="p-4">
                     <Badge className={`${getActionColor(log.action)} border-0`}>
                       {log.action.replace(/_/g, ' ')}
                     </Badge>
                   </td>
-                  <td className="p-4 text-slate-700 max-w-md truncate">
+                  <td className="p-4 text-subtle max-w-md truncate">
                     {log.details}
                   </td>
                 </tr>
@@ -128,9 +128,9 @@ export default function AuditLog({ logs }) {
         
         {filteredLogs.length === 0 && (
           <div className="text-center py-12">
-            <ShieldCheck className="mx-auto h-12 w-12 text-slate-400" />
-            <h3 className="mt-2 text-sm font-medium text-slate-900">No audit logs found</h3>
-            <p className="mt-1 text-sm text-slate-500">Try adjusting your search or filter criteria.</p>
+            <ShieldCheck className="mx-auto h-12 w-12 text-muted-foreground" />
+            <h3 className="mt-2 text-sm font-medium text-foreground">No audit logs found</h3>
+            <p className="mt-1 text-sm text-muted-foreground">Try adjusting your search or filter criteria.</p>
           </div>
         )}
       </CardContent>

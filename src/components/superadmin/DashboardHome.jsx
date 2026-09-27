@@ -326,31 +326,31 @@ export default function DashboardHome({ setActiveTab }) {
 
       // Enhanced Chart Data
       const roleDistribution = [
-        { name: 'Traders', value: users.filter(u => u.app_role === 'trader').length, color: '#3B82F6' },
-        { name: 'Finfluencers', value: users.filter(u => u.app_role === 'finfluencer').length, color: '#8B5CF6' },
-        { name: 'Advisors', value: users.filter(u => u.app_role === 'advisor').length, color: '#10B981' },
-        { name: 'Admins', value: users.filter(u => ['admin', 'super_admin', 'sub_admin'].includes(u.app_role)).length, color: '#F59E0B' }
+        { name: 'Traders', value: users.filter(u => u.app_role === 'trader').length, color: 'hsl(var(--chart-1))' },
+        { name: 'Finfluencers', value: users.filter(u => u.app_role === 'finfluencer').length, color: 'hsl(var(--primary))' },
+        { name: 'Advisors', value: users.filter(u => u.app_role === 'advisor').length, color: 'hsl(var(--chart-2))' },
+        { name: 'Admins', value: users.filter(u => ['admin', 'super_admin', 'sub_admin'].includes(u.app_role)).length, color: 'hsl(var(--chart-5))' }
       ];
 
       const planDistribution = [
-        { name: 'Free Users', value: users.length - activeSubscriptions.length, color: '#6B7280' },
-        { name: 'Premium', value: activeSubscriptions.filter(s => s.plan_type === 'premium').length, color: '#8B5CF6' },
-        { name: 'VIP', value: activeSubscriptions.filter(s => s.plan_type === 'vip').length, color: '#F59E0B' }
+        { name: 'Free Users', value: users.length - activeSubscriptions.length, color: 'hsl(var(--chart-4))' },
+        { name: 'Premium', value: activeSubscriptions.filter(s => s.plan_type === 'premium').length, color: 'hsl(var(--primary))' },
+        { name: 'VIP', value: activeSubscriptions.filter(s => s.plan_type === 'vip').length, color: 'hsl(var(--chart-5))' }
       ];
 
       const revenueBySource = [
-        { name: 'Course Sales', value: courseRevenue.reduce((sum, e) => sum + (e.gross_amount || 0), 0), color: '#10B981' },
-        { name: 'Platform Subscriptions', value: subscriptions.reduce((sum, s) => sum + (s.price || 0), 0), color: '#8B5CF6' },
-        { name: 'Advisor Subscriptions', value: advisorRevenue.reduce((sum, tx) => sum + (tx.gross_amount || 0), 0), color: '#F59E0B' },
-        { name: 'Other', value: Math.floor(totalGrossRevenue * 0.05), color: '#6B7280' }
+        { name: 'Course Sales', value: courseRevenue.reduce((sum, e) => sum + (e.gross_amount || 0), 0), color: 'hsl(var(--chart-2))' },
+        { name: 'Platform Subscriptions', value: subscriptions.reduce((sum, s) => sum + (s.price || 0), 0), color: 'hsl(var(--primary))' },
+        { name: 'Advisor Subscriptions', value: advisorRevenue.reduce((sum, tx) => sum + (tx.gross_amount || 0), 0), color: 'hsl(var(--chart-5))' },
+        { name: 'Other', value: Math.floor(totalGrossRevenue * 0.05), color: 'hsl(var(--chart-4))' }
       ];
 
       // Trust Score Distribution
       const trustScoreDistribution = [
-        { name: 'Excellent (80-100)', value: users.filter(u => (u.trust_score || 50) >= 80).length, color: '#10B981' },
-        { name: 'Good (60-79)', value: users.filter(u => (u.trust_score || 50) >= 60 && (u.trust_score || 50) < 80).length, color: '#F59E0B' },
-        { name: 'Fair (40-59)', value: users.filter(u => (u.trust_score || 50) >= 40 && (u.trust_score || 50) < 60).length, color: '#EF4444' },
-        { name: 'Poor (0-39)', value: users.filter(u => (u.trust_score || 50) < 40).length, color: '#DC2626' }
+        { name: 'Excellent (80-100)', value: users.filter(u => (u.trust_score || 50) >= 80).length, color: 'hsl(var(--chart-2))' },
+        { name: 'Good (60-79)', value: users.filter(u => (u.trust_score || 50) >= 60 && (u.trust_score || 50) < 80).length, color: 'hsl(var(--chart-5))' },
+        { name: 'Fair (40-59)', value: users.filter(u => (u.trust_score || 50) >= 40 && (u.trust_score || 50) < 60).length, color: 'hsl(var(--chart-3))' },
+        { name: 'Poor (0-39)', value: users.filter(u => (u.trust_score || 50) < 40).length, color: 'hsl(var(--chart-3))' }
       ];
 
       // Monthly trend data (last 6 months)
@@ -397,11 +397,11 @@ export default function DashboardHome({ setActiveTab }) {
 
       // Expense breakdown (sample data)
       const expenseBreakdown = [
-        { name: 'Salaries', value: 150000, color: '#3B82F6' },
-        { name: 'Infrastructure', value: 45000, color: '#10B981' },
-        { name: 'Marketing', value: 30000, color: '#F59E0B' },
-        { name: 'Operations', value: 25000, color: '#8B5CF6' },
-        { name: 'Miscellaneous', value: 15000, color: '#6B7280' }
+        { name: 'Salaries', value: 150000, color: 'hsl(var(--chart-1))' },
+        { name: 'Infrastructure', value: 45000, color: 'hsl(var(--chart-2))' },
+        { name: 'Marketing', value: 30000, color: 'hsl(var(--chart-5))' },
+        { name: 'Operations', value: 25000, color: 'hsl(var(--primary))' },
+        { name: 'Miscellaneous', value: 15000, color: 'hsl(var(--chart-4))' }
       ];
 
       const calculatedChartData = {
@@ -443,50 +443,60 @@ export default function DashboardHome({ setActiveTab }) {
     }
   };
 
-  const StatCard = ({ title, value, icon: Icon, change, status, colorClass, subtitle }) => (
+  // Green and orange fills are light: they need dark ink, not white.
+  const LIGHT_FILLS = ['bg-buy', 'bg-buy-soft', 'bg-hold'];
+
+  const StatCard = ({ title, value, icon: Icon, change, status, colorClass, subtitle }) => {
+    const onLightFill = LIGHT_FILLS.includes(colorClass);
+    const fg = onLightFill ? 'text-protocall-ink' : 'text-white';
+    const scrim = onLightFill ? 'bg-protocall-ink/10' : 'bg-white/20';
+    const soft = onLightFill ? 'text-protocall-ink/75' : 'text-white/80';
+
+    return (
     <Card className="border-0 shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300">
-      <div className={`${colorClass} p-6 text-white`}>
+      <div className={`${colorClass} ${fg} p-6`}>
         <div className="flex items-center justify-between mb-4">
-          <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
-            <Icon className="w-6 h-6 text-white" />
+          <div className={`p-2 ${scrim} rounded-lg backdrop-blur-sm`}>
+            <Icon className="w-6 h-6" />
           </div>
           {status && (
-            <span className="px-2 py-1 text-xs rounded bg-white/20 text-white font-medium backdrop-blur-sm">
+            <span className={`px-2 py-1 text-xs rounded ${scrim} font-medium backdrop-blur-sm`}>
               {status}
             </span>
           )}
         </div>
         <div className="space-y-1">
-          <p className="text-white/80 text-sm font-medium">{title}</p>
+          <p className={`${soft} text-sm font-medium`}>{title}</p>
           <h3 className="text-3xl font-bold">{value}</h3>
-          {subtitle && <p className="text-white/70 text-xs">{subtitle}</p>}
+          {subtitle && <p className={`${soft} text-xs`}>{subtitle}</p>}
         </div>
       </div>
 
-      <div className="p-4 bg-white flex items-center gap-2">
+      <div className="p-4 bg-card flex items-center gap-2">
         {change && (
           <>
-            <TrendingUp className="w-4 h-4 text-emerald-500" />
-            <span className="text-emerald-600 text-sm font-medium">{change}</span>
+            <TrendingUp className="w-4 h-4 text-positive" />
+            <span className="text-buy-muted-foreground text-sm font-medium">{change}</span>
           </>
         )}
         {!change && status && (
-          <span className="text-slate-500 text-sm">Status: {status}</span>
+          <span className="text-muted-foreground text-sm">Status: {status}</span>
         )}
         {!change && !status && (
-          <span className="text-slate-400 text-sm">No recent changes</span>
+          <span className="text-muted-foreground text-sm">No recent changes</span>
         )}
       </div>
     </Card>
-  );
+    );
+  };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 font-medium">Loading Advanced Analytics Dashboard...</p>
-          <p className="text-sm text-gray-500 mt-2">Aggregating platform metrics and insights</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <p className="text-lg text-subtle font-medium">Loading Advanced Analytics Dashboard...</p>
+          <p className="text-sm text-muted-foreground mt-2">Aggregating platform metrics and insights</p>
         </div>
       </div>
     );
@@ -495,28 +505,28 @@ export default function DashboardHome({ setActiveTab }) {
   return (
     <div className="space-y-8">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue rounded-2xl p-8 text-white shadow-xl relative overflow-hidden">
         {/* Decorative Circles */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-2xl"></div>
 
         <div className="relative z-10">
           <h1 className="text-3xl font-bold mb-3 tracking-tight">Platform Analytics Dashboard</h1>
-          <p className="text-blue-100 text-lg opacity-90">Real-time insights and comprehensive metrics for informed decision making</p>
+          <p className="text-protocall-blue text-lg opacity-90">Real-time insights and comprehensive metrics for informed decision making</p>
           <div className="flex items-center gap-6 mt-6">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></div>
+              <div className="w-3 h-3 bg-buy rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></div>
               <span className="text-sm font-medium text-white/90">Live Data</span>
             </div>
-            <div className="text-sm text-blue-100/80">Last updated: {new Date().toLocaleTimeString()}</div>
+            <div className="text-sm text-protocall-blue/80">Last updated: {new Date().toLocaleTimeString()}</div>
           </div>
         </div>
       </div>
 
       {/* Primary KPI Cards - User & Community Metrics */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-          <Users className="w-6 h-6 text-blue-600" />
+        <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+          <Users className="w-6 h-6 text-protocall-blue" />
           User & Community Metrics
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -526,7 +536,7 @@ export default function DashboardHome({ setActiveTab }) {
             subtitle="All registered users"
             icon={Users}
             change={`${stats.newRegistrationsWeek} new this week`}
-            colorClass="bg-blue-500"
+            colorClass="bg-protocall-blue"
           />
           <StatCard
             title="Daily Active Users"
@@ -534,7 +544,7 @@ export default function DashboardHome({ setActiveTab }) {
             subtitle={`${((stats.dailyActiveUsers / stats.totalUsers) * 100).toFixed(1)}% of total`}
             icon={Activity}
             change="Strong engagement"
-            colorClass="bg-emerald-500"
+            colorClass="bg-buy"
           />
           <StatCard
             title="Premium Members"
@@ -542,7 +552,7 @@ export default function DashboardHome({ setActiveTab }) {
             subtitle={`${((stats.premiumUsers / stats.totalUsers) * 100).toFixed(1)}% conversion`}
             icon={Crown}
             change="Growing subscription base"
-            colorClass="bg-purple-500"
+            colorClass="bg-primary"
           />
           <StatCard
             title="Active Communities"
@@ -550,15 +560,15 @@ export default function DashboardHome({ setActiveTab }) {
             subtitle={`${stats.activePollsCount} active polls`}
             icon={MessageSquare}
             change="High participation"
-            colorClass="bg-cyan-500"
+            colorClass="bg-protocall-blue"
           />
         </div>
       </div>
 
       {/* Financial KPI Cards */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-          <DollarSign className="w-6 h-6 text-green-600" />
+        <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+          <DollarSign className="w-6 h-6 text-buy-muted-foreground" />
           Financial Performance
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -568,7 +578,7 @@ export default function DashboardHome({ setActiveTab }) {
             subtitle="All income sources"
             icon={DollarSign}
             change="+18% vs last month"
-            colorClass="bg-emerald-500"
+            colorClass="bg-buy"
           />
           <StatCard
             title="Monthly Net Revenue"
@@ -576,7 +586,7 @@ export default function DashboardHome({ setActiveTab }) {
             subtitle="Platform earnings"
             icon={TrendingUp}
             change="After commissions"
-            colorClass="bg-cyan-500"
+            colorClass="bg-protocall-blue"
           />
           <StatCard
             title="Total Gross Revenue"
@@ -584,7 +594,7 @@ export default function DashboardHome({ setActiveTab }) {
             subtitle="All-time revenue"
             icon={BarChart3}
             change="Lifetime performance"
-            colorClass="bg-purple-500"
+            colorClass="bg-primary"
           />
           <StatCard
             title="Course Enrollments"
@@ -592,15 +602,15 @@ export default function DashboardHome({ setActiveTab }) {
             subtitle="Across all courses"
             icon={Star}
             change="Growing education"
-            colorClass="bg-pink-500"
+            colorClass="bg-primary"
           />
         </div>
       </div>
 
       {/* Advisor & Finfluencer Metrics */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-          <ShieldCheck className="w-6 h-6 text-indigo-600" />
+        <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+          <ShieldCheck className="w-6 h-6 text-protocall-blue" />
           Advisors & Content Creators
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -610,7 +620,7 @@ export default function DashboardHome({ setActiveTab }) {
             subtitle="SEBI registered"
             icon={ShieldCheck}
             change={`${stats.pendingAdvisors} pending approval`}
-            colorClass="bg-indigo-500"
+            colorClass="bg-protocall-blue"
           />
           <StatCard
             title="Active Finfluencers"
@@ -618,7 +628,7 @@ export default function DashboardHome({ setActiveTab }) {
             subtitle="Content creators"
             icon={Star}
             change={`${stats.pendingFinfluencers} pending applications`}
-            colorClass="bg-violet-500"
+            colorClass="bg-primary"
           />
           <StatCard
             title="Platform Health"
@@ -626,7 +636,7 @@ export default function DashboardHome({ setActiveTab }) {
             subtitle="Flagged items"
             icon={Shield}
             status={stats.platformHealth}
-            colorClass="bg-orange-500"
+            colorClass="bg-hold"
           />
           <StatCard
             title="Trust Score Avg"
@@ -634,7 +644,7 @@ export default function DashboardHome({ setActiveTab }) {
             subtitle="Community trust"
             icon={Award}
             change="Out of 100"
-            colorClass="bg-teal-500"
+            colorClass="bg-buy"
           />
         </div>
       </div>
@@ -645,7 +655,7 @@ export default function DashboardHome({ setActiveTab }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-green-600" />
+              <DollarSign className="w-5 h-5 text-buy-muted-foreground" />
               Revenue vs Expenses Trend (6 Months)
             </CardTitle>
           </CardHeader>
@@ -657,8 +667,8 @@ export default function DashboardHome({ setActiveTab }) {
                 <YAxis />
                 <Tooltip formatter={(value) => [`₹${value.toLocaleString()}`, '']} />
                 <Legend />
-                <Line type="monotone" dataKey="grossRevenue" stroke="#10B981" strokeWidth={3} name="Gross Revenue" />
-                <Line type="monotone" dataKey="netRevenue" stroke="#3B82F6" strokeWidth={3} name="Net Revenue" />
+                <Line type="monotone" dataKey="grossRevenue" stroke="hsl(var(--chart-2))" strokeWidth={3} name="Gross Revenue" />
+                <Line type="monotone" dataKey="netRevenue" stroke="hsl(var(--chart-1))" strokeWidth={3} name="Net Revenue" />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
@@ -668,7 +678,7 @@ export default function DashboardHome({ setActiveTab }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-blue-600" />
+              <Users className="w-5 h-5 text-protocall-blue" />
               User Growth & Engagement
             </CardTitle>
           </CardHeader>
@@ -680,8 +690,8 @@ export default function DashboardHome({ setActiveTab }) {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Area type="monotone" dataKey="users" stackId="1" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.6} name="New Users" />
-                <Area type="monotone" dataKey="enrollments" stackId="2" stroke="#F59E0B" fill="#F59E0B" fillOpacity={0.6} name="Course Enrollments" />
+                <Area type="monotone" dataKey="users" stackId="1" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.6} name="New Users" />
+                <Area type="monotone" dataKey="enrollments" stackId="2" stroke="hsl(var(--chart-5))" fill="hsl(var(--chart-5))" fillOpacity={0.6} name="Course Enrollments" />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
@@ -693,7 +703,7 @@ export default function DashboardHome({ setActiveTab }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-purple-600" />
+              <BarChart3 className="w-5 h-5 text-protocall-premium-text" />
               Revenue Breakdown by Source
             </CardTitle>
           </CardHeader>
@@ -722,7 +732,7 @@ export default function DashboardHome({ setActiveTab }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-blue-600" />
+              <Users className="w-5 h-5 text-protocall-blue" />
               User Role Distribution
             </CardTitle>
           </CardHeader>
@@ -754,7 +764,7 @@ export default function DashboardHome({ setActiveTab }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-cyan-600" />
+              <BarChart3 className="w-5 h-5 text-protocall-blue" />
               Weekly Poll Participation
             </CardTitle>
           </CardHeader>
@@ -766,8 +776,8 @@ export default function DashboardHome({ setActiveTab }) {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="general" fill="#3B82F6" name="General Polls" />
-                <Bar dataKey="premium" fill="#8B5CF6" name="Premium Polls" />
+                <Bar dataKey="general" fill="hsl(var(--chart-1))" name="General Polls" />
+                <Bar dataKey="premium" fill="hsl(var(--primary))" name="Premium Polls" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -776,7 +786,7 @@ export default function DashboardHome({ setActiveTab }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Award className="w-5 h-5 text-green-600" />
+              <Award className="w-5 h-5 text-buy-muted-foreground" />
               Community Trust Score Distribution
             </CardTitle>
           </CardHeader>
@@ -810,26 +820,26 @@ export default function DashboardHome({ setActiveTab }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-indigo-600" />
+              <ShieldCheck className="w-5 h-5 text-protocall-blue" />
               Top 5 Advisors by Performance
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {stats.topAdvisors.slice(0, 5).map((advisor, index) => (
-                <div key={advisor.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div key={advisor.id} className="flex items-center justify-between p-4 bg-surface-2 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold">
+                    <div className="w-8 h-8 bg-premium-muted rounded-full flex items-center justify-center text-protocall-blue font-bold">
                       {index + 1}
                     </div>
                     <div>
                       <p className="font-semibold">{advisor.display_name}</p>
-                      <p className="text-sm text-gray-500">{advisor.subscribers || 0} subscribers</p>
+                      <p className="text-sm text-muted-foreground">{advisor.subscribers || 0} subscribers</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-green-600">₹{(advisor.revenue / 1000).toFixed(1)}k</p>
-                    <p className="text-xs text-gray-500">Revenue</p>
+                    <p className="font-bold text-buy-muted-foreground">₹{(advisor.revenue / 1000).toFixed(1)}k</p>
+                    <p className="text-xs text-muted-foreground">Revenue</p>
                   </div>
                 </div>
               ))}
@@ -841,26 +851,26 @@ export default function DashboardHome({ setActiveTab }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Star className="w-5 h-5 text-purple-600" />
+              <Star className="w-5 h-5 text-protocall-premium-text" />
               Top 5 Finfluencers by Course Sales
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {stats.topFinfluencers.slice(0, 5).map((finfluencer, index) => (
-                <div key={finfluencer.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div key={finfluencer.id} className="flex items-center justify-between p-4 bg-surface-2 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold">
+                    <div className="w-8 h-8 bg-premium-muted rounded-full flex items-center justify-center text-protocall-premium-text font-bold">
                       {index + 1}
                     </div>
                     <div>
                       <p className="font-semibold">{finfluencer.display_name}</p>
-                      <p className="text-sm text-gray-500">{finfluencer.coursesSold || 0} courses sold</p>
+                      <p className="text-sm text-muted-foreground">{finfluencer.coursesSold || 0} courses sold</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-green-600">₹{(finfluencer.revenue / 1000).toFixed(1)}k</p>
-                    <p className="text-xs text-gray-500">Revenue</p>
+                    <p className="font-bold text-buy-muted-foreground">₹{(finfluencer.revenue / 1000).toFixed(1)}k</p>
+                    <p className="text-xs text-muted-foreground">Revenue</p>
                   </div>
                 </div>
               ))}
@@ -870,25 +880,25 @@ export default function DashboardHome({ setActiveTab }) {
       </div>
 
       {/* Action Items & Alerts */}
-      <Card className="shadow-lg border-0 bg-gradient-to-r from-blue-50 to-purple-50">
+      <Card className="shadow-lg border-0 bg-surface-2">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-blue-600" />
+            <Activity className="w-5 h-5 text-protocall-blue" />
             Critical Action Items & System Alerts
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {stats.pendingAdvisors > 0 && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-5">
+              <div className="bg-hold-muted border border-hold/30 rounded-xl p-5">
                 <div className="flex items-center gap-3 mb-3">
-                  <AlertTriangle className="w-5 h-5 text-yellow-600" />
-                  <h4 className="font-semibold text-yellow-800">Pending Approvals</h4>
+                  <AlertTriangle className="w-5 h-5 text-hold-muted-foreground" />
+                  <h4 className="font-semibold text-hold-muted-foreground">Pending Approvals</h4>
                 </div>
-                <p className="text-sm text-yellow-700 mb-2">{stats.pendingAdvisors} advisor applications need review</p>
+                <p className="text-sm text-hold-muted-foreground mb-2">{stats.pendingAdvisors} advisor applications need review</p>
                 <button
                   onClick={() => setActiveTab && setActiveTab('Advisor Management')}
-                  className="text-xs bg-yellow-600 text-white px-3 py-1 rounded-full hover:bg-yellow-700 transition-colors"
+                  className="text-xs bg-hold text-hold-foreground px-3 py-1 rounded-full hover:bg-hold transition-colors"
                 >
                   Review Now
                 </button>
@@ -896,74 +906,74 @@ export default function DashboardHome({ setActiveTab }) {
             )}
 
             {stats.moderationFlags > 0 && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-5">
+              <div className="bg-sell-muted border border-sell/30 rounded-xl p-5">
                 <div className="flex items-center gap-3 mb-3">
-                  <MessageSquare className="w-5 h-5 text-red-600" />
-                  <h4 className="font-semibold text-red-800">Content Moderation</h4>
+                  <MessageSquare className="w-5 h-5 text-sell-muted-foreground" />
+                  <h4 className="font-semibold text-sell-muted-foreground">Content Moderation</h4>
                 </div>
-                <p className="text-sm text-red-700 mb-2">{stats.moderationFlags} flagged items need attention</p>
+                <p className="text-sm text-sell-muted-foreground mb-2">{stats.moderationFlags} flagged items need attention</p>
                 <button
                   onClick={() => setActiveTab && setActiveTab('Content Moderation')}
-                  className="text-xs bg-red-600 text-white px-3 py-1 rounded-full hover:bg-red-700 transition-colors"
+                  className="text-xs bg-protocall-sell-text text-white px-3 py-1 rounded-full hover:bg-sell transition-colors"
                 >
                   Review Content
                 </button>
               </div>
             )}
 
-            <div className="bg-green-50 border border-green-200 rounded-xl p-5">
+            <div className="bg-buy-muted border border-buy/30 rounded-xl p-5">
               <div className="flex items-center gap-3 mb-3">
-                <TrendingUp className="w-5 h-5 text-green-600" />
-                <h4 className="font-semibold text-green-800">Growth Performance</h4>
+                <TrendingUp className="w-5 h-5 text-buy-muted-foreground" />
+                <h4 className="font-semibold text-buy-muted-foreground">Growth Performance</h4>
               </div>
-              <p className="text-sm text-green-700 mb-2">Platform is growing at +{((stats.newRegistrationsWeek / stats.totalUsers) * 100).toFixed(1)}% weekly rate</p>
+              <p className="text-sm text-buy-muted-foreground mb-2">Platform is growing at +{((stats.newRegistrationsWeek / stats.totalUsers) * 100).toFixed(1)}% weekly rate</p>
               <button
                 onClick={() => setActiveTab && setActiveTab('User Management')}
-                className="text-xs bg-green-600 text-white px-3 py-1 rounded-full hover:bg-green-700 transition-colors"
+                className="text-xs bg-buy text-buy-foreground px-3 py-1 rounded-full hover:bg-buy transition-colors"
               >
                 View Details
               </button>
             </div>
 
             {stats.suspendedUsers > 0 && (
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
+              <div className="bg-surface-2 border border-border rounded-xl p-5">
                 <div className="flex items-center gap-3 mb-3">
-                  <Shield className="w-5 h-5 text-gray-600" />
-                  <h4 className="font-semibold text-gray-800">Suspended Users</h4>
+                  <Shield className="w-5 h-5 text-subtle" />
+                  <h4 className="font-semibold text-foreground">Suspended Users</h4>
                 </div>
-                <p className="text-sm text-gray-700 mb-2">{stats.suspendedUsers} users currently suspended</p>
+                <p className="text-sm text-subtle mb-2">{stats.suspendedUsers} users currently suspended</p>
                 <button
                   onClick={() => setActiveTab && setActiveTab('User Management')}
-                  className="text-xs bg-gray-600 text-white px-3 py-1 rounded-full hover:bg-gray-700 transition-colors"
+                  className="text-xs bg-muted-foreground text-white px-3 py-1 rounded-full hover:bg-protocall-ink transition-colors"
                 >
                   Manage Users
                 </button>
               </div>
             )}
 
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
+            <div className="bg-premium-muted border border-protocall-premium-light rounded-xl p-5">
               <div className="flex items-center gap-3 mb-3">
-                <Eye className="w-5 h-5 text-blue-600" />
-                <h4 className="font-semibold text-blue-800">Engagement Stats</h4>
+                <Eye className="w-5 h-5 text-protocall-blue" />
+                <h4 className="font-semibold text-protocall-blue">Engagement Stats</h4>
               </div>
-              <p className="text-sm text-blue-700 mb-2">{((stats.dailyActiveUsers / stats.totalUsers) * 100).toFixed(1)}% daily active users</p>
+              <p className="text-sm text-protocall-blue mb-2">{((stats.dailyActiveUsers / stats.totalUsers) * 100).toFixed(1)}% daily active users</p>
               <button
                 onClick={() => setActiveTab && setActiveTab('Poll Management')}
-                className="text-xs bg-blue-600 text-white px-3 py-1 rounded-full hover:bg-blue-700 transition-colors"
+                className="text-xs bg-protocall-blue text-white px-3 py-1 rounded-full hover:bg-protocall-blue transition-colors"
               >
                 Boost Engagement
               </button>
             </div>
 
-            <div className="bg-purple-50 border border-purple-200 rounded-xl p-5">
+            <div className="bg-premium-muted border border-protocall-premium-light rounded-xl p-5">
               <div className="flex items-center gap-3 mb-3">
-                <BarChart3 className="w-5 h-5 text-purple-600" />
-                <h4 className="font-semibold text-purple-800">Revenue Health</h4>
+                <BarChart3 className="w-5 h-5 text-protocall-premium-text" />
+                <h4 className="font-semibold text-protocall-premium-text">Revenue Health</h4>
               </div>
-              <p className="text-sm text-purple-700 mb-2">₹{(stats.monthlyNetRevenue / 1000).toFixed(1)}k net revenue this month</p>
+              <p className="text-sm text-protocall-premium-text mb-2">₹{(stats.monthlyNetRevenue / 1000).toFixed(1)}k net revenue this month</p>
               <button
                 onClick={() => setActiveTab && setActiveTab('Financials')}
-                className="text-xs bg-purple-600 text-white px-3 py-1 rounded-full hover:bg-purple-700 transition-colors"
+                className="text-xs bg-primary text-white px-3 py-1 rounded-full hover:bg-primary transition-colors"
               >
                 View Reports
               </button>

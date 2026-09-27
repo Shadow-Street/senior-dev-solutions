@@ -192,7 +192,7 @@ export default function PledgeExecutionPanel() {
       <Card>
         <CardContent className="p-6">
           <div className="flex items-center justify-center">
-            <RefreshCw className="w-6 h-6 animate-spin text-blue-600" />
+            <RefreshCw className="w-6 h-6 animate-spin text-protocall-blue" />
             <span className="ml-2">Loading active positions...</span>
           </div>
         </CardContent>
@@ -215,12 +215,12 @@ export default function PledgeExecutionPanel() {
       {/* Auto-Target Positions */}
       {autoTargetPositions.length > 0 && (
         <Card>
-          <CardHeader className="bg-gradient-to-r from-green-50 to-blue-50">
+          <CardHeader className="bg-surface-2">
             <CardTitle className="flex items-center gap-2">
-              <Target className="w-5 h-5 text-green-600" />
+              <Target className="w-5 h-5 text-buy-muted-foreground" />
               🤖 Auto-Target Positions ({autoTargetPositions.length})
             </CardTitle>
-            <p className="text-sm text-gray-600">System monitoring for target prices - Admin can override anytime</p>
+            <p className="text-sm text-subtle">System monitoring for target prices - Admin can override anytime</p>
           </CardHeader>
           <CardContent className="p-6">
             <div className="space-y-4">
@@ -232,30 +232,30 @@ export default function PledgeExecutionPanel() {
                 const targetReached = currentPrice >= config.sell_price;
 
                 return (
-                  <div key={pledge.id} className="p-4 rounded-lg border-2 border-green-200 bg-gradient-to-br from-green-50 to-white">
+                  <div key={pledge.id} className="p-4 rounded-lg border-2 border-buy/30 bg-gradient-to-br from-surface-2 to-white">
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <div className="flex items-center gap-2">
                           <h4 className="font-bold text-lg">{pledge.stock_symbol}</h4>
                           {isPaused && (
-                            <Badge className="bg-orange-100 text-orange-700 border-orange-300">
+                            <Badge className="bg-hold-muted text-hold-muted-foreground border-hold/30">
                               <Pause className="w-3 h-3 mr-1" />
                               Paused
                             </Badge>
                           )}
                           {targetReached && !isPaused && (
-                            <Badge className="bg-green-500 text-white animate-pulse">
+                            <Badge className="bg-buy text-buy-foreground animate-pulse">
                               🎯 Target Reached!
                             </Badge>
                           )}
                         </div>
-                        <p className="text-sm text-gray-600">User ID: {pledge.user_id}</p>
+                        <p className="text-sm text-subtle">User ID: {pledge.user_id}</p>
                       </div>
                       <div className="text-right">
-                        <p className={`text-lg font-bold ${pl >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <p className={`text-lg font-bold ${pl >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
                           {pl >= 0 ? '+' : ''}₹{pl.toFixed(2)}
                         </p>
-                        <p className={`text-sm ${plPercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <p className={`text-sm ${plPercent >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
                           {plPercent >= 0 ? '+' : ''}{plPercent.toFixed(2)}%
                         </p>
                       </div>
@@ -263,15 +263,15 @@ export default function PledgeExecutionPanel() {
 
                     <div className="grid grid-cols-3 gap-3 mb-3 text-sm">
                       <div>
-                        <p className="text-gray-500">Buy Price</p>
+                        <p className="text-muted-foreground">Buy Price</p>
                         <p className="font-semibold">₹{pledge.price_target}</p>
                       </div>
                       <div>
-                        <p className="text-gray-500">Target Price</p>
-                        <p className="font-semibold text-green-600">₹{config.sell_price}</p>
+                        <p className="text-muted-foreground">Target Price</p>
+                        <p className="font-semibold text-buy-muted-foreground">₹{config.sell_price}</p>
                       </div>
                       <div>
-                        <p className="text-gray-500">Current Price</p>
+                        <p className="text-muted-foreground">Current Price</p>
                         <p className="font-semibold">₹{currentPrice.toFixed(2)}</p>
                       </div>
                     </div>
@@ -302,7 +302,7 @@ export default function PledgeExecutionPanel() {
                         size="sm"
                         variant="default"
                         onClick={() => handleManualExecute(pledge)}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700"
+                        className="flex-1 bg-protocall-blue hover:bg-protocall-blue"
                       >
                         <CheckCircle className="w-4 h-4 mr-1" />
                         Execute Now
@@ -319,7 +319,7 @@ export default function PledgeExecutionPanel() {
                         size="sm"
                         variant="outline"
                         onClick={() => handleCancelAutoSell(pledge)}
-                        className="text-red-600 hover:bg-red-50"
+                        className="text-sell-muted-foreground hover:bg-sell-muted"
                       >
                         <X className="w-4 h-4 mr-1" />
                         Cancel Auto
@@ -336,12 +336,12 @@ export default function PledgeExecutionPanel() {
       {/* Admin-Managed Positions */}
       {adminManagedPositions.length > 0 && (
         <Card>
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50">
+          <CardHeader className="bg-surface-2">
             <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-blue-600" />
+              <Users className="w-5 h-5 text-protocall-blue" />
               👨‍💼 Admin-Managed Positions ({adminManagedPositions.length})
             </CardTitle>
-            <p className="text-sm text-gray-600">No target set - Admin decides when to sell</p>
+            <p className="text-sm text-subtle">No target set - Admin decides when to sell</p>
           </CardHeader>
           <CardContent className="p-6">
             <div className="space-y-4">
@@ -351,23 +351,23 @@ export default function PledgeExecutionPanel() {
                 const daysHeld = Math.floor((Date.now() - new Date(pledge.created_date)) / (1000 * 60 * 60 * 24));
 
                 return (
-                  <div key={pledge.id} className="p-4 rounded-lg border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white">
+                  <div key={pledge.id} className="p-4 rounded-lg border-2 border-protocall-premium-light bg-gradient-to-br from-surface-2 to-white">
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <div className="flex items-center gap-2">
                           <h4 className="font-bold text-lg">{pledge.stock_symbol}</h4>
-                          <Badge variant="outline" className="bg-blue-100 text-blue-700">
+                          <Badge variant="outline" className="bg-premium-muted text-protocall-blue">
                             <Clock className="w-3 h-3 mr-1" />
                             {daysHeld} days
                           </Badge>
                         </div>
-                        <p className="text-sm text-gray-600">User ID: {pledge.user_id}</p>
+                        <p className="text-sm text-subtle">User ID: {pledge.user_id}</p>
                       </div>
                       <div className="text-right">
-                        <p className={`text-lg font-bold ${pl >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <p className={`text-lg font-bold ${pl >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
                           {pl >= 0 ? '+' : ''}₹{pl.toFixed(2)}
                         </p>
-                        <p className={`text-sm ${plPercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <p className={`text-sm ${plPercent >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
                           {plPercent >= 0 ? '+' : ''}{plPercent.toFixed(2)}%
                         </p>
                       </div>
@@ -375,15 +375,15 @@ export default function PledgeExecutionPanel() {
 
                     <div className="grid grid-cols-3 gap-3 mb-3 text-sm">
                       <div>
-                        <p className="text-gray-500">Buy Price</p>
+                        <p className="text-muted-foreground">Buy Price</p>
                         <p className="font-semibold">₹{pledge.price_target}</p>
                       </div>
                       <div>
-                        <p className="text-gray-500">Target</p>
-                        <p className="font-semibold text-gray-400">Not Set</p>
+                        <p className="text-muted-foreground">Target</p>
+                        <p className="font-semibold text-muted-foreground">Not Set</p>
                       </div>
                       <div>
-                        <p className="text-gray-500">Current Price</p>
+                        <p className="text-muted-foreground">Current Price</p>
                         <p className="font-semibold">₹{currentPrice.toFixed(2)}</p>
                       </div>
                     </div>
@@ -393,7 +393,7 @@ export default function PledgeExecutionPanel() {
                         size="sm"
                         variant="default"
                         onClick={() => handleManualExecute(pledge)}
-                        className="flex-1 bg-green-600 hover:bg-green-700"
+                        className="flex-1 bg-buy hover:bg-buy"
                       >
                         <CheckCircle className="w-4 h-4 mr-1" />
                         Execute Sell Now
@@ -418,9 +418,9 @@ export default function PledgeExecutionPanel() {
       {activePositions.length === 0 && (
         <Card>
           <CardContent className="p-12 text-center">
-            <Activity className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">No Active Positions</h3>
-            <p className="text-gray-500">All buy-sell cycle positions have been completed</p>
+            <Activity className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-subtle mb-2">No Active Positions</h3>
+            <p className="text-muted-foreground">All buy-sell cycle positions have been completed</p>
           </CardContent>
         </Card>
       )}
@@ -448,8 +448,8 @@ export default function PledgeExecutionPanel() {
 
           {overrideAction === 'execute' && (
             <div className="space-y-4">
-              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="text-sm text-yellow-800">
+              <div className="p-4 bg-hold-muted border border-hold/30 rounded-lg">
+                <p className="text-sm text-hold-muted-foreground">
                   This will execute the sell order immediately at current market price.
                   User will be notified of the execution.
                 </p>
@@ -471,8 +471,8 @@ export default function PledgeExecutionPanel() {
                   className="mt-2"
                 />
               </div>
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-sm text-blue-800">
+              <div className="p-4 bg-premium-muted border border-protocall-premium-light rounded-lg">
+                <p className="text-sm text-protocall-blue">
                   System will monitor and auto-execute when the new target price is reached.
                   User will be notified of the change.
                 </p>
@@ -482,8 +482,8 @@ export default function PledgeExecutionPanel() {
 
           {overrideAction === 'cancel_auto' && (
             <div className="space-y-4">
-              <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
-                <p className="text-sm text-orange-800">
+              <div className="p-4 bg-hold-muted border border-hold/30 rounded-lg">
+                <p className="text-sm text-hold-muted-foreground">
                   This will convert the position to admin-managed. Auto-execution will be disabled,
                   and you will need to manually execute the sell order.
                 </p>
@@ -495,7 +495,7 @@ export default function PledgeExecutionPanel() {
             <Button variant="outline" onClick={() => setShowOverrideModal(false)}>
               Cancel
             </Button>
-            <Button onClick={executeOverrideAction} className="bg-blue-600 hover:bg-blue-700">
+            <Button onClick={executeOverrideAction} className="bg-protocall-blue hover:bg-protocall-blue">
               Confirm
             </Button>
           </DialogFooter>

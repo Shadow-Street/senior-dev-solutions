@@ -128,7 +128,7 @@ export const getEventStatusBadge = (event) => {
   if (eventDate < now) {
     return {
       label: 'Completed',
-      color: 'bg-gray-100 text-gray-700',
+      color: 'bg-surface-2 text-subtle',
       icon: 'CheckCircle'
     };
   }
@@ -137,7 +137,7 @@ export const getEventStatusBadge = (event) => {
   if (event.capacity && event.attendees_count >= event.capacity) {
     return {
       label: 'Full',
-      color: 'bg-red-100 text-red-700',
+      color: 'bg-sell-muted text-sell-muted-foreground',
       icon: 'Lock'
     };
   }
@@ -146,7 +146,7 @@ export const getEventStatusBadge = (event) => {
   if (isEventSoon(event.event_date)) {
     return {
       label: 'Happening Soon!',
-      color: 'bg-orange-100 text-orange-700',
+      color: 'bg-hold-muted text-hold-muted-foreground',
       icon: 'Clock',
       urgent: true
     };
@@ -156,7 +156,7 @@ export const getEventStatusBadge = (event) => {
   if (event.capacity && event.attendees_count / event.capacity >= 0.8) {
     return {
       label: 'Almost Full',
-      color: 'bg-yellow-100 text-yellow-700',
+      color: 'bg-hold-muted text-hold-muted-foreground',
       icon: 'AlertTriangle'
     };
   }
@@ -164,7 +164,7 @@ export const getEventStatusBadge = (event) => {
   // Regular upcoming
   return {
     label: 'Upcoming',
-    color: 'bg-green-100 text-green-700',
+    color: 'bg-buy-muted text-buy-muted-foreground',
     icon: 'Calendar'
   };
 };

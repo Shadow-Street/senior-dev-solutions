@@ -75,25 +75,25 @@ export default function EventRefundApproval({ refund, onUpdate }) {
 
   return (
     <>
-      <Card className="border-orange-200 bg-orange-50">
+      <Card className="border-hold/30 bg-hold-muted">
         <CardContent className="p-6">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
-                <h4 className="font-semibold text-gray-900">{refund.related_entity_name}</h4>
-                <Badge className="bg-orange-100 text-orange-800">
+                <h4 className="font-semibold text-foreground">{refund.related_entity_name}</h4>
+                <Badge className="bg-hold-muted text-hold-muted-foreground">
                   <AlertCircle className="w-3 h-3 mr-1" />
                   Awaiting Admin Review
                 </Badge>
               </div>
-              <div className="space-y-1 text-sm text-gray-600">
+              <div className="space-y-1 text-sm text-subtle">
                 <p><strong>User:</strong> {refund.user_name} ({refund.user_email})</p>
                 <p><strong>Amount:</strong> ₹{refund.refund_amount.toLocaleString()}</p>
                 <p><strong>Payment ID:</strong> {refund.original_transaction_id}</p>
                 <p><strong>Requested:</strong> {format(new Date(refund.created_date), 'PPP')}</p>
                 <p><strong>User Reason:</strong> {refund.request_reason}</p>
                 {refund.admin_notes && (
-                  <p className="text-blue-600"><strong>Organizer Notes:</strong> {refund.admin_notes}</p>
+                  <p className="text-protocall-ink/75"><strong>Organizer Notes:</strong> {refund.admin_notes}</p>
                 )}
               </div>
             </div>
@@ -101,7 +101,7 @@ export default function EventRefundApproval({ refund, onUpdate }) {
               <Button
                 size="sm"
                 onClick={() => handleAction('process')}
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-buy hover:bg-buy"
               >
                 <CheckCircle className="w-4 h-4 mr-2" />
                 Process Refund
@@ -110,7 +110,7 @@ export default function EventRefundApproval({ refund, onUpdate }) {
                 size="sm"
                 variant="outline"
                 onClick={() => handleAction('reject')}
-                className="border-red-300 text-red-700 hover:bg-red-50"
+                className="border-sell/30 text-sell-muted-foreground hover:bg-sell-muted"
               >
                 <XCircle className="w-4 h-4 mr-2" />
                 Reject
@@ -130,7 +130,7 @@ export default function EventRefundApproval({ refund, onUpdate }) {
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
-              <div className="p-4 bg-slate-50 rounded-lg">
+              <div className="p-4 bg-surface-2 rounded-lg">
                 <p className="text-sm"><strong>Event:</strong> {refund.related_entity_name}</p>
                 <p className="text-sm"><strong>User:</strong> {refund.user_name}</p>
                 <p className="text-sm"><strong>Amount:</strong> ₹{refund.refund_amount.toLocaleString()}</p>
@@ -158,7 +158,7 @@ export default function EventRefundApproval({ refund, onUpdate }) {
               <Button
                 onClick={submitAction}
                 disabled={isProcessing || (action === 'reject' && !notes.trim())}
-                className={action === 'process' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}
+                className={action === 'process' ? 'bg-buy hover:bg-buy' : 'bg-sell hover:bg-sell'}
               >
                 {isProcessing ? (
                   <>

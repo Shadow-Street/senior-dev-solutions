@@ -160,9 +160,9 @@ export default function ReviewModeration({ user }) {
 
   const getStatusBadge = (status) => {
     const variants = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', icon: Clock },
-      approved: { color: 'bg-green-100 text-green-800', icon: CheckCircle },
-      rejected: { color: 'bg-red-100 text-red-800', icon: XCircle }
+      pending: { color: 'bg-hold-muted text-hold-muted-foreground', icon: Clock },
+      approved: { color: 'bg-buy-muted text-buy-muted-foreground', icon: CheckCircle },
+      rejected: { color: 'bg-sell-muted text-sell-muted-foreground', icon: XCircle }
     };
     
     const { color, icon: Icon } = variants[status] || variants.pending;
@@ -188,7 +188,7 @@ export default function ReviewModeration({ user }) {
       <div className="p-6">
         <div className="animate-pulse space-y-4">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-24 bg-gray-200 rounded-lg"></div>
+            <div key={i} className="h-24 bg-border rounded-lg"></div>
           ))}
         </div>
       </div>
@@ -200,8 +200,8 @@ export default function ReviewModeration({ user }) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Review Moderation</h2>
-          <p className="text-gray-600">Manage user reviews and testimonials</p>
+          <h2 className="text-2xl font-bold text-foreground">Review Moderation</h2>
+          <p className="text-subtle">Manage user reviews and testimonials</p>
         </div>
         
         <Select value={filter} onValueChange={setFilter}>
@@ -223,10 +223,10 @@ export default function ReviewModeration({ user }) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Reviews</p>
+                <p className="text-sm text-subtle">Total Reviews</p>
                 <p className="text-2xl font-bold">{reviews.length}</p>
               </div>
-              <Star className="w-8 h-8 text-yellow-500" />
+              <Star className="w-8 h-8 text-hold" />
             </div>
           </CardContent>
         </Card>
@@ -235,12 +235,12 @@ export default function ReviewModeration({ user }) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Pending</p>
-                <p className="text-2xl font-bold text-yellow-600">
+                <p className="text-sm text-subtle">Pending</p>
+                <p className="text-2xl font-bold text-hold-muted-foreground">
                   {reviews.filter(r => r.status === 'pending').length}
                 </p>
               </div>
-              <Clock className="w-8 h-8 text-yellow-500" />
+              <Clock className="w-8 h-8 text-hold" />
             </div>
           </CardContent>
         </Card>
@@ -249,12 +249,12 @@ export default function ReviewModeration({ user }) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Approved</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-sm text-subtle">Approved</p>
+                <p className="text-2xl font-bold text-buy-muted-foreground">
                   {reviews.filter(r => r.status === 'approved').length}
                 </p>
               </div>
-              <CheckCircle className="w-8 h-8 text-green-500" />
+              <CheckCircle className="w-8 h-8 text-positive" />
             </div>
           </CardContent>
         </Card>
@@ -263,12 +263,12 @@ export default function ReviewModeration({ user }) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Featured</p>
-                <p className="text-2xl font-bold text-purple-600">
+                <p className="text-sm text-subtle">Featured</p>
+                <p className="text-2xl font-bold text-protocall-premium-text">
                   {reviews.filter(r => r.is_featured).length}
                 </p>
               </div>
-              <Award className="w-8 h-8 text-purple-500" />
+              <Award className="w-8 h-8 text-protocall-premium-light" />
             </div>
           </CardContent>
         </Card>
@@ -279,8 +279,8 @@ export default function ReviewModeration({ user }) {
         {reviews.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
-              <Star className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">No reviews found</p>
+              <Star className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No reviews found</p>
             </CardContent>
           </Card>
         ) : (
@@ -305,7 +305,7 @@ export default function ReviewModeration({ user }) {
                           <div className="flex items-center gap-2 mb-1">
                             <h4 className="font-semibold">{review.username}</h4>
                             {review.is_featured && (
-                              <Badge className="bg-yellow-100 text-yellow-800">
+                              <Badge className="bg-hold-muted text-hold-muted-foreground">
                                 <Award className="w-3 h-3 mr-1" />
                                 Featured
                               </Badge>
@@ -319,7 +319,7 @@ export default function ReviewModeration({ user }) {
                                 <Star
                                   key={i}
                                   size={16}
-                                  className={i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}
+                                  className={i < review.rating ? 'text-hold fill-hold' : 'text-muted-foreground'}
                                 />
                               ))}
                             </div>
@@ -329,7 +329,7 @@ export default function ReviewModeration({ user }) {
                                 href={review.social_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+                                className="flex items-center gap-1 text-sm text-protocall-blue hover:text-protocall-blue"
                               >
                                 <SocialIcon size={14} />
                                 <span>View on {review.social_platform}</span>
@@ -339,12 +339,12 @@ export default function ReviewModeration({ user }) {
                           </div>
                         </div>
 
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-muted-foreground">
                           {format(new Date(review.created_date), 'MMM d, yyyy')}
                         </div>
                       </div>
 
-                      <p className="text-gray-700 mb-4">"{review.review_text}"</p>
+                      <p className="text-subtle mb-4">"{review.review_text}"</p>
 
                       {/* Actions */}
                       <div className="flex gap-2">
@@ -353,7 +353,7 @@ export default function ReviewModeration({ user }) {
                             <Button
                               size="sm"
                               onClick={() => handleApprove(review)}
-                              className="bg-green-600 hover:bg-green-700"
+                              className="bg-buy hover:bg-buy"
                             >
                               <CheckCircle className="w-4 h-4 mr-1" />
                               Approve
@@ -408,8 +408,8 @@ export default function ReviewModeration({ user }) {
                       </div>
 
                       {review.rejection_reason && (
-                        <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-                          <p className="text-sm text-red-800">
+                        <div className="mt-3 p-3 bg-sell-muted border border-sell/30 rounded-lg">
+                          <p className="text-sm text-sell-muted-foreground">
                             <strong>Rejection Reason:</strong> {review.rejection_reason}
                           </p>
                         </div>

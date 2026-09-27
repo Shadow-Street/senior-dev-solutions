@@ -156,21 +156,21 @@ export default function ApprovalWorkflow({ user }) {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'approved': return 'bg-green-100 text-green-800 border-green-300';
-      case 'rejected': return 'bg-red-100 text-red-800 border-red-300';
-      case 'cancelled': return 'bg-gray-100 text-gray-800 border-gray-300';
-      default: return 'bg-gray-100 text-gray-800 border-gray-300';
+      case 'pending': return 'bg-hold-muted text-hold-muted-foreground border-hold/30';
+      case 'approved': return 'bg-buy-muted text-buy-muted-foreground border-buy/30';
+      case 'rejected': return 'bg-sell-muted text-sell-muted-foreground border-sell/30';
+      case 'cancelled': return 'bg-surface-2 text-foreground border-border';
+      default: return 'bg-surface-2 text-foreground border-border';
     }
   };
 
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case 'critical': return 'bg-red-100 text-red-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'medium': return 'bg-blue-100 text-blue-800';
-      case 'low': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'critical': return 'bg-sell-muted text-sell-muted-foreground';
+      case 'high': return 'bg-hold-muted text-hold-muted-foreground';
+      case 'medium': return 'bg-premium-muted text-protocall-blue';
+      case 'low': return 'bg-surface-2 text-foreground';
+      default: return 'bg-surface-2 text-foreground';
     }
   };
 
@@ -181,8 +181,8 @@ export default function ApprovalWorkflow({ user }) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading approval requests...</p>
+          <div className="w-12 h-12 border-4 border-protocall-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-subtle">Loading approval requests...</p>
         </div>
       </div>
     );
@@ -196,10 +196,10 @@ export default function ApprovalWorkflow({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Pending Review</p>
-                <p className="text-3xl font-bold text-yellow-600">{pendingRequests.length}</p>
+                <p className="text-sm text-muted-foreground">Pending Review</p>
+                <p className="text-3xl font-bold text-hold-muted-foreground">{pendingRequests.length}</p>
               </div>
-              <Clock className="w-12 h-12 text-yellow-600" />
+              <Clock className="w-12 h-12 text-hold-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -208,12 +208,12 @@ export default function ApprovalWorkflow({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Approved</p>
-                <p className="text-3xl font-bold text-green-600">
+                <p className="text-sm text-muted-foreground">Approved</p>
+                <p className="text-3xl font-bold text-buy-muted-foreground">
                   {requests.filter(r => r.status === 'approved').length}
                 </p>
               </div>
-              <CheckCircle className="w-12 h-12 text-green-600" />
+              <CheckCircle className="w-12 h-12 text-buy-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -222,12 +222,12 @@ export default function ApprovalWorkflow({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Rejected</p>
-                <p className="text-3xl font-bold text-red-600">
+                <p className="text-sm text-muted-foreground">Rejected</p>
+                <p className="text-3xl font-bold text-sell-muted-foreground">
                   {requests.filter(r => r.status === 'rejected').length}
                 </p>
               </div>
-              <XCircle className="w-12 h-12 text-red-600" />
+              <XCircle className="w-12 h-12 text-sell-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -236,10 +236,10 @@ export default function ApprovalWorkflow({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Total Requests</p>
-                <p className="text-3xl font-bold text-slate-900">{requests.length}</p>
+                <p className="text-sm text-muted-foreground">Total Requests</p>
+                <p className="text-3xl font-bold text-foreground">{requests.length}</p>
               </div>
-              <FileText className="w-12 h-12 text-blue-600" />
+              <FileText className="w-12 h-12 text-protocall-blue" />
             </div>
           </CardContent>
         </Card>
@@ -250,7 +250,7 @@ export default function ApprovalWorkflow({ user }) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-yellow-600" />
+              <Clock className="w-5 h-5 text-hold-muted-foreground" />
               Pending Approval Requests ({pendingRequests.length})
             </CardTitle>
           </CardHeader>
@@ -259,12 +259,12 @@ export default function ApprovalWorkflow({ user }) {
               {pendingRequests.map((request) => (
                 <div
                   key={request.id}
-                  className="p-4 border-2 border-yellow-200 rounded-lg bg-yellow-50 hover:shadow-md transition-all"
+                  className="p-4 border-2 border-hold/30 rounded-lg bg-hold-muted hover:shadow-md transition-all"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <h4 className="font-semibold text-slate-900">{request.module_name}</h4>
+                        <h4 className="font-semibold text-foreground">{request.module_name}</h4>
                         <Badge className={getPriorityColor(request.priority)}>
                           {request.priority}
                         </Badge>
@@ -273,7 +273,7 @@ export default function ApprovalWorkflow({ user }) {
                         </Badge>
                       </div>
                       
-                      <div className="text-sm text-slate-700 space-y-1">
+                      <div className="text-sm text-subtle space-y-1">
                         {request.change_type === 'status_change' && (
                           <p>
                             <span className="font-medium">Status Change:</span> {request.current_status} → {request.requested_status}
@@ -291,13 +291,13 @@ export default function ApprovalWorkflow({ user }) {
                     <Button
                       onClick={() => handleReviewRequest(request)}
                       size="sm"
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="bg-protocall-blue hover:bg-protocall-blue"
                     >
                       Review
                     </Button>
                   </div>
 
-                  <div className="flex items-center gap-4 text-xs text-slate-500 border-t border-yellow-200 pt-2">
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground border-t border-hold/30 pt-2">
                     <div className="flex items-center gap-1">
                       <User className="w-3 h-3" />
                       <span>Requested by {request.requested_by_name}</span>
@@ -325,18 +325,18 @@ export default function ApprovalWorkflow({ user }) {
               {reviewedRequests.map((request) => (
                 <div
                   key={request.id}
-                  className="p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all"
+                  className="p-4 border border-border rounded-lg hover:bg-surface-2 transition-all"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <h4 className="font-semibold text-slate-900">{request.module_name}</h4>
+                        <h4 className="font-semibold text-foreground">{request.module_name}</h4>
                         <Badge className={`${getStatusColor(request.status)} border`}>
                           {request.status}
                         </Badge>
                       </div>
                       
-                      <div className="text-sm text-slate-600 space-y-1">
+                      <div className="text-sm text-subtle space-y-1">
                         <p>{request.justification}</p>
                         {request.review_notes && (
                           <p className="italic">Review: {request.review_notes}</p>
@@ -345,7 +345,7 @@ export default function ApprovalWorkflow({ user }) {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 text-xs text-slate-500 mt-2">
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground mt-2">
                     {request.reviewed_by_name && (
                       <div className="flex items-center gap-1">
                         <User className="w-3 h-3" />
@@ -369,9 +369,9 @@ export default function ApprovalWorkflow({ user }) {
       {requests.length === 0 && (
         <Card>
           <CardContent className="p-12 text-center">
-            <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-700 mb-2">No Approval Requests</h3>
-            <p className="text-slate-500">Change requests will appear here for review</p>
+            <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-subtle mb-2">No Approval Requests</h3>
+            <p className="text-muted-foreground">Change requests will appear here for review</p>
           </CardContent>
         </Card>
       )}
@@ -391,9 +391,9 @@ export default function ApprovalWorkflow({ user }) {
             </DialogHeader>
 
             <div className="space-y-4">
-              <div className="p-4 bg-slate-50 rounded-lg">
-                <h4 className="font-semibold text-slate-900 mb-2">{selectedRequest.module_name}</h4>
-                <div className="text-sm text-slate-700 space-y-2">
+              <div className="p-4 bg-surface-2 rounded-lg">
+                <h4 className="font-semibold text-foreground mb-2">{selectedRequest.module_name}</h4>
+                <div className="text-sm text-subtle space-y-2">
                   <div>
                     <span className="font-medium">Change Type:</span> {selectedRequest.change_type.replace('_', ' ')}
                   </div>
@@ -401,18 +401,18 @@ export default function ApprovalWorkflow({ user }) {
                   {selectedRequest.change_type === 'status_change' && (
                     <div>
                       <span className="font-medium">Status Change:</span>{' '}
-                      <span className="text-red-600">{selectedRequest.current_status}</span>
+                      <span className="text-sell-muted-foreground">{selectedRequest.current_status}</span>
                       {' → '}
-                      <span className="text-green-600">{selectedRequest.requested_status}</span>
+                      <span className="text-buy-muted-foreground">{selectedRequest.requested_status}</span>
                     </div>
                   )}
 
                   {selectedRequest.change_type === 'visibility_change' && (
                     <div>
                       <span className="font-medium">Visibility:</span>{' '}
-                      <span className="text-red-600">{selectedRequest.current_visibility ? 'Visible' : 'Hidden'}</span>
+                      <span className="text-sell-muted-foreground">{selectedRequest.current_visibility ? 'Visible' : 'Hidden'}</span>
                       {' → '}
-                      <span className="text-green-600">{selectedRequest.requested_visibility ? 'Visible' : 'Hidden'}</span>
+                      <span className="text-buy-muted-foreground">{selectedRequest.requested_visibility ? 'Visible' : 'Hidden'}</span>
                     </div>
                   )}
 
@@ -435,8 +435,8 @@ export default function ApprovalWorkflow({ user }) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Review Notes <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-subtle mb-2">
+                  Review Notes <span className="text-sell">*</span>
                 </label>
                 <Textarea
                   value={reviewNotes}
@@ -458,7 +458,7 @@ export default function ApprovalWorkflow({ user }) {
                   variant="outline"
                   onClick={handleReject}
                   disabled={isProcessing || !reviewNotes.trim()}
-                  className="text-red-600 border-red-300 hover:bg-red-50"
+                  className="text-sell-muted-foreground border-sell/30 hover:bg-sell-muted"
                 >
                   <ThumbsDown className="w-4 h-4 mr-2" />
                   Reject
@@ -466,7 +466,7 @@ export default function ApprovalWorkflow({ user }) {
                 <Button
                   onClick={handleApprove}
                   disabled={isProcessing || !reviewNotes.trim()}
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-buy hover:bg-buy"
                 >
                   <ThumbsUp className="w-4 h-4 mr-2" />
                   Approve & Apply

@@ -613,11 +613,11 @@ export default function MyPledgePortfolio({ user }) {
 
   const getAuditStatusBadge = (log) => {
     if (log.success) {
-      return 'bg-green-100 text-green-800';
+      return 'bg-buy-muted text-buy-muted-foreground';
     } else if (log.action.includes('Failed') || log.action.includes('Error')) {
-      return 'bg-red-100 text-red-800';
+      return 'bg-sell-muted text-sell-muted-foreground';
     }
-    return 'bg-gray-100 text-gray-800';
+    return 'bg-surface-2 text-foreground';
   };
 
   const handleExportAuditLogs = () => {
@@ -665,12 +665,12 @@ export default function MyPledgePortfolio({ user }) {
 
   return (
     <div className="space-y-6">
-      <Card className="border-0 shadow-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+      <Card className="border-0 shadow-lg bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
         <CardContent className="p-6">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <h2 className="text-2xl font-bold mb-2">My Pledge Portfolio</h2>
-              <p className="text-blue-100">Track and manage your collective investment pledges</p>
+              <p className="text-white/80">Track and manage your collective investment pledges</p>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
               <Button
@@ -679,7 +679,7 @@ export default function MyPledgePortfolio({ user }) {
                 onClick={handleToggleLiveUpdates}
                 className={`${
                   isPolling
-                    ? 'bg-green-500/20 hover:bg-green-500/30 border border-green-300'
+                    ? 'bg-buy/20 hover:bg-buy/30 border border-buy/30'
                     : 'bg-white/20 hover:bg-white/30'
                 } text-white`}
               >
@@ -721,17 +721,17 @@ export default function MyPledgePortfolio({ user }) {
           </div>
 
           <div className="mt-3 flex items-center justify-between flex-wrap gap-2">
-            <div className="text-xs text-blue-100">
+            <div className="text-xs text-protocall-blue">
               Last updated: {new Date(lastUpdate).toLocaleTimeString()}
             </div>
             {pollingError && (
-              <div className="flex items-center gap-2 text-xs bg-red-500/20 text-white px-3 py-1 rounded-lg">
+              <div className="flex items-center gap-2 text-xs bg-sell/20 text-white px-3 py-1 rounded-lg">
                 <AlertCircle className="w-3 h-3" />
                 {pollingError}
               </div>
             )}
             {isPolling && (
-              <div className="text-xs text-green-300">
+              <div className="text-xs text-positive">
                 ⚡ Auto-refreshing every 30 seconds
               </div>
             )}
@@ -743,35 +743,35 @@ export default function MyPledgePortfolio({ user }) {
         <TabsList className="grid w-full grid-cols-5 bg-transparent border-0 rounded-xl shadow-sm gap-2 p-1">
           <TabsTrigger
             value="active" // MODIFIED: was "pledge"
-            className="bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
+            className="bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
           >
             <Target className="w-4 h-4 mr-2" />
             Active Sessions
           </TabsTrigger>
           <TabsTrigger
             value="my-pledges" // MODIFIED: was "committed"
-            className="bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
+            className="bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
           >
             <Users className="w-4 h-4 mr-2" />
             My Pledges
           </TabsTrigger>
           <TabsTrigger
             value="executed"
-            className="bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
+            className="bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
           >
             <CheckCircle className="w-4 h-4 mr-2" />
             Executed
           </TabsTrigger>
           <TabsTrigger
             value="payments"
-            className="bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
+            className="bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
           >
             <CreditCard className="w-4 h-4 mr-2" />
             Payments
           </TabsTrigger>
           <TabsTrigger
             value="audit"
-            className="bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:from-blue-100 hover:to-purple-100 data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
+            className="bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
           >
             <Activity className="w-4 h-4 mr-2" />
             Audit Log
@@ -783,9 +783,9 @@ export default function MyPledgePortfolio({ user }) {
           {activeSessions.length === 0 ? (
             <Card>
               <CardContent className="p-12 text-center">
-                <Target className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">No Active Sessions</h3>
-                <p className="text-gray-600">There are no pledge sessions available right now. Check back soon!</p>
+                <Target className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-xl font-semibold text-foreground mb-2">No Active Sessions</h3>
+                <p className="text-subtle">There are no pledge sessions available right now. Check back soon!</p>
               </CardContent>
             </Card>
           ) : (
@@ -800,16 +800,16 @@ export default function MyPledgePortfolio({ user }) {
                 const isPricePositive = priceChange >= 0;
 
                 // Determine badge color based on session mode
-                let sessionModeBadgeClass = 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'; // Default for 'buy_only' or unknown
+                let sessionModeBadgeClass = 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white'; // Default for 'buy_only' or unknown
                 if (session.session_mode === 'sell_only') {
-                  sessionModeBadgeClass = 'bg-gradient-to-r from-red-500 to-rose-600 text-white';
+                  sessionModeBadgeClass = 'bg-protocall-sell-text text-white';
                 } else if (session.session_mode === 'buy_sell_cycle') {
-                  sessionModeBadgeClass = 'bg-gradient-to-r from-indigo-500 to-violet-600 text-white';
+                  sessionModeBadgeClass = 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white';
                 }
 
                 return (
-                  <Card key={session.id} className="relative rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden bg-gradient-to-br from-white to-slate-50 flex flex-col">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-400 to-purple-500 opacity-10 rounded-full transform translate-x-10 -translate-y-10 z-0"></div>
+                  <Card key={session.id} className="relative rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden bg-gradient-to-br from-white to-surface-2 flex flex-col">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-protocall-blue opacity-10 rounded-full transform translate-x-10 -translate-y-10 z-0"></div>
                     <CardHeader className="pb-3 relative z-10">
                       {/* Stock Name & Price Section */}
                       <div className="flex items-start justify-between mb-3">
@@ -818,17 +818,17 @@ export default function MyPledgePortfolio({ user }) {
                             <CardTitle className="text-2xl font-bold">{session.stock_symbol}</CardTitle>
                             {currentPrice && (
                               <div className="flex items-center gap-1">
-                                <IndianRupee className={`w-4 h-4 ${isPricePositive ? 'text-green-600' : 'text-red-600'}`} />
-                                <span className={`text-lg font-bold ${isPricePositive ? 'text-green-600' : 'text-red-600'}`}>
+                                <IndianRupee className={`w-4 h-4 ${isPricePositive ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`} />
+                                <span className={`text-lg font-bold ${isPricePositive ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
                                   {currentPrice.toFixed(2)}
                                 </span>
-                                <span className={`text-sm font-semibold ${isPricePositive ? 'text-green-600' : 'text-red-600'} flex items-center`}>
+                                <span className={`text-sm font-semibold ${isPricePositive ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'} flex items-center`}>
                                   {isPricePositive ? '▲' : '▼'} {Math.abs(priceChange).toFixed(2)}%
                                 </span>
                               </div>
                             )}
                           </div>
-                          <p className="text-sm text-gray-500">{session.stock_name}</p>
+                          <p className="text-sm text-muted-foreground">{session.stock_name}</p>
                         </div>
                         <Badge className={`${sessionModeBadgeClass} text-[10px] font-semibold border-0 px-3 py-1`}>
                           {session.session_mode?.replace(/_/g, ' ').toUpperCase()}
@@ -839,13 +839,13 @@ export default function MyPledgePortfolio({ user }) {
                       {(session.is_advisor_recommended || session.is_analyst_certified) && (
                         <div className="flex flex-wrap gap-2 mb-3">
                           {session.is_advisor_recommended && (
-                            <Badge className="bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 text-xs font-semibold border-0 flex items-center gap-1">
+                            <Badge className="bg-gradient-to-r from-surface-2 to-buy-muted text-buy-muted-foreground text-xs font-semibold border-0 flex items-center gap-1">
                               <CheckCircle className="w-3 h-3" />
                               Advisor Recommended
                             </Badge>
                           )}
                           {session.is_analyst_certified && (
-                            <Badge className="bg-gradient-to-r from-purple-50 to-pink-50 text-purple-700 text-xs font-semibold border-0 flex items-center gap-1">
+                            <Badge className="bg-surface-2 text-protocall-premium-text text-xs font-semibold border-0 flex items-center gap-1">
                               <CheckCircle className="w-3 h-3" />
                               Analyst Certified
                             </Badge>
@@ -855,19 +855,19 @@ export default function MyPledgePortfolio({ user }) {
 
                       {/* Session Description */}
                       {session.description && (
-                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                        <p className="text-sm text-subtle mb-3 line-clamp-2">
                           {session.description}
                         </p>
                       )}
 
                       {/* Execution Reason - Prominent Display */}
                       {session.execution_reason && (
-                        <div className="p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg border border-amber-200">
+                        <div className="p-3 bg-gradient-to-r from-surface-2 to-hold-muted rounded-lg border border-hold/30">
                           <div className="flex items-start gap-2">
-                            <TrendingUp className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                            <TrendingUp className="w-4 h-4 text-hold-muted-foreground flex-shrink-0 mt-0.5" />
                             <div className="flex-1">
-                              <p className="text-xs font-bold text-amber-900 mb-1">Why This Stock?</p>
-                              <p className="text-xs text-amber-800 leading-relaxed">
+                              <p className="text-xs font-bold text-hold-muted-foreground mb-1">Why This Stock?</p>
+                              <p className="text-xs text-hold-muted-foreground leading-relaxed">
                                 {session.execution_reason}
                               </p>
                             </div>
@@ -886,12 +886,12 @@ export default function MyPledgePortfolio({ user }) {
                       </div>
 
                       {hasPledged && userPledge ? (
-                        <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border-0 shadow-sm">
+                        <div className="mt-4 p-4 bg-gradient-to-r from-surface-2 to-buy-muted rounded-xl border-0 shadow-sm">
                           <div className="flex items-center gap-2 mb-2">
-                            <CheckCircle className="w-5 h-5 text-green-600" />
-                            <span className="font-bold text-green-800">You've Pledged!</span>
+                            <CheckCircle className="w-5 h-5 text-buy-muted-foreground" />
+                            <span className="font-bold text-buy-muted-foreground">You've Pledged!</span>
                           </div>
-                          <div className="text-sm text-green-700 space-y-1">
+                          <div className="text-sm text-buy-muted-foreground space-y-1">
                             <p><strong>Qty:</strong> {userPledge.qty} shares</p>
                             <p><strong>Price:</strong> ₹{userPledge.price_target}</p>
                             <p><strong>Status:</strong> {userPledge.status.replace(/_/g, ' ').toUpperCase()}</p>
@@ -907,7 +907,7 @@ export default function MyPledgePortfolio({ user }) {
                             setSelectedSession(session);
                             setShowPledgeModal(true);
                           }}
-                          className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50"
+                          className="w-full mt-4 bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue disabled:opacity-50"
                           disabled={isExpired}
                         >
                           <Plus className="w-4 h-4 mr-2" />
@@ -948,9 +948,9 @@ export default function MyPledgePortfolio({ user }) {
           {paymentHistory.length === 0 ? (
             <Card>
               <CardContent className="p-12 text-center">
-                <CreditCard className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">No Payments Yet</h3>
-                <p className="text-gray-600">Your payment history will appear here.</p>
+                <CreditCard className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-xl font-semibold text-foreground mb-2">No Payments Yet</h3>
+                <p className="text-subtle">Your payment history will appear here.</p>
               </CardContent>
             </Card>
           ) : (
@@ -968,22 +968,22 @@ export default function MyPledgePortfolio({ user }) {
                     if (!pledge) return null; // Skip if pledge not found
 
                     return (
-                      <div key={payment.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg transition-colors hover:bg-gray-100">
+                      <div key={payment.id} className="flex items-center justify-between p-4 bg-surface-2 rounded-lg transition-colors hover:bg-surface-2">
                         <div className="flex-1">
                           <div className="flex items-center gap-4">
-                             <p className="font-bold text-lg text-gray-800">₹{payment.amount}</p>
+                             <p className="font-bold text-lg text-foreground">₹{payment.amount}</p>
                             <Badge className={
-                              payment.status === 'completed' ? 'bg-green-100 text-green-700' :
-                              payment.status === 'failed' ? 'bg-red-100 text-red-700' :
-                              'bg-yellow-100 text-yellow-700'
+                              payment.status === 'completed' ? 'bg-buy-muted text-buy-muted-foreground' :
+                              payment.status === 'failed' ? 'bg-sell-muted text-sell-muted-foreground' :
+                              'bg-hold-muted text-hold-muted-foreground'
                             }>
                               {payment.status}
                             </Badge>
                           </div>
-                          <p className="text-sm text-gray-600 mt-1">
+                          <p className="text-sm text-subtle mt-1">
                             {payment.payment_method === 'test_mode' ? 'Convenience Fee' : payment.payment_method} for <span className="font-semibold">{pledge.stock_symbol}</span> Pledge
                           </p>
-                          <p className="text-xs text-gray-500 mt-1">
+                          <p className="text-xs text-muted-foreground mt-1">
                             {new Date(payment.created_date).toLocaleString()}
                           </p>
                         </div>
@@ -1012,7 +1012,7 @@ export default function MyPledgePortfolio({ user }) {
             <CardHeader>
               <div className="flex justify-between items-center flex-wrap gap-2">
                 <CardTitle className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-blue-600" />
+                  <FileText className="w-5 h-5 text-protocall-blue" />
                   Pledge Audit Log
                 </CardTitle>
                 <Button onClick={handleExportAuditLogs} variant="outline" size="sm">
@@ -1049,9 +1049,9 @@ export default function MyPledgePortfolio({ user }) {
             <CardContent>
               {filteredAuditLogs.length === 0 ? (
                 <div className="text-center py-12">
-                  <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No Audit Records</h3>
-                  <p className="text-gray-600">Pledge activities will appear here as they happen.</p>
+                  <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-foreground mb-2">No Audit Records</h3>
+                  <p className="text-subtle">Pledge activities will appear here as they happen.</p>
                 </div>
               ) : (
                 <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -1067,14 +1067,14 @@ export default function MyPledgePortfolio({ user }) {
                             </Badge>
                             <span className="text-sm font-medium">{log.action}</span>
                           </div>
-                          <p className="text-sm text-gray-600 mb-1 break-all">
+                          <p className="text-sm text-subtle mb-1 break-all">
                             {logPayload && logPayload.stock_symbol && `Stock: ${logPayload.stock_symbol}`}
                             {logPayload && logPayload.qty && ` Qty: ${logPayload.qty}`}
                             {logPayload && logPayload.amount && ` Amount: ₹${logPayload.amount}`}
                             {logPayload && logPayload.error_message && ` Error: ${logPayload.error_message}`}
                             {!logPayload && log.action}
                           </p>
-                          <div className="flex items-center gap-4 text-xs text-gray-500">
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
                             <span>{new Date(log.created_date).toLocaleString()}</span>
                           </div>
                         </div>

@@ -117,17 +117,17 @@ export default function EventRefundRequestModal({
         </DialogHeader>
 
         <div className="space-y-4">
-          <Alert className="bg-yellow-50 border-yellow-200">
-            <AlertCircle className="h-4 w-4 text-yellow-600" />
-            <AlertDescription className="text-sm text-yellow-800">
+          <Alert className="bg-hold-muted border-hold/30">
+            <AlertCircle className="h-4 w-4 text-hold-muted-foreground" />
+            <AlertDescription className="text-sm text-hold-muted-foreground">
               Your refund request will be reviewed by the event organizer first, then by our admin team. This process may take 3-5 business days.
             </AlertDescription>
           </Alert>
 
-          <div className="p-4 bg-slate-50 rounded-lg">
-            <p className="text-sm text-slate-600 mb-2"><strong>Event:</strong> {event.title}</p>
-            <p className="text-sm text-slate-600 mb-2"><strong>Ticket Price:</strong> ₹{ticket.ticket_price.toLocaleString()}</p>
-            <p className="text-sm text-slate-600"><strong>Payment ID:</strong> {ticket.payment_id}</p>
+          <div className="p-4 bg-surface-2 rounded-lg">
+            <p className="text-sm text-subtle mb-2"><strong>Event:</strong> {event.title}</p>
+            <p className="text-sm text-subtle mb-2"><strong>Ticket Price:</strong> ₹{ticket.ticket_price.toLocaleString()}</p>
+            <p className="text-sm text-subtle"><strong>Payment ID:</strong> {ticket.payment_id}</p>
           </div>
 
           <div>
@@ -135,7 +135,7 @@ export default function EventRefundRequestModal({
             <RadioGroup value={reasonCategory} onValueChange={setReasonCategory}>
               <div className="space-y-2">
                 {reasonCategories.map((category) => (
-                  <div key={category.value} className="flex items-center space-x-2 p-2 hover:bg-slate-50 rounded-lg">
+                  <div key={category.value} className="flex items-center space-x-2 p-2 hover:bg-surface-2 rounded-lg">
                     <RadioGroupItem value={category.value} id={category.value} />
                     <Label htmlFor={category.value} className="cursor-pointer flex-1 font-normal">
                       {category.label}
@@ -156,7 +156,7 @@ export default function EventRefundRequestModal({
               className="mt-2 h-32"
               maxLength={500}
             />
-            <p className="text-xs text-slate-500 mt-1">{reason.length}/500 characters</p>
+            <p className="text-xs text-muted-foreground mt-1">{reason.length}/500 characters</p>
           </div>
 
           <Alert>
@@ -178,7 +178,7 @@ export default function EventRefundRequestModal({
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting || !reasonCategory || !reason.trim()}
-            className="bg-red-600 hover:bg-red-700"
+            className="bg-sell hover:bg-sell"
           >
             {isSubmitting ? (
               <>

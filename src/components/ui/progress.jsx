@@ -6,7 +6,7 @@ const Progress = React.forwardRef(({ className, value = 0, indicatorClassName, .
     <div
       ref={ref}
       className={cn(
-        "relative h-4 w-full overflow-hidden rounded-full bg-gray-200",
+        "relative h-4 w-full overflow-hidden rounded-full bg-border",
         className
       )}
       {...props}
@@ -14,7 +14,7 @@ const Progress = React.forwardRef(({ className, value = 0, indicatorClassName, .
       <div
         className={cn(
           "h-full transition-all duration-300 ease-in-out",
-          indicatorClassName || "bg-blue-600"
+          indicatorClassName || "bg-protocall-blue"
         )}
         style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
       />

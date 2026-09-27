@@ -52,12 +52,12 @@ export default function RefundManagementSection({ advisorId }) {
 
   const getStatusBadge = (status) => {
     const config = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'Pending', icon: Clock },
-      approved: { color: 'bg-blue-100 text-blue-800', label: 'Approved', icon: CheckCircle },
-      rejected: { color: 'bg-red-100 text-red-800', label: 'Rejected', icon: XCircle },
-      processing: { color: 'bg-orange-100 text-orange-800', label: 'Processing', icon: RefreshCw },
-      processed: { color: 'bg-green-100 text-green-800', label: 'Processed', icon: CheckCircle },
-      failed: { color: 'bg-red-100 text-red-800', label: 'Failed', icon: AlertCircle }
+      pending: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending', icon: Clock },
+      approved: { color: 'bg-premium-muted text-protocall-blue', label: 'Approved', icon: CheckCircle },
+      rejected: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Rejected', icon: XCircle },
+      processing: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Processing', icon: RefreshCw },
+      processed: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Processed', icon: CheckCircle },
+      failed: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Failed', icon: AlertCircle }
     };
     const { color, label, icon: Icon } = config[status] || config.pending;
     return (
@@ -87,7 +87,7 @@ export default function RefundManagementSection({ advisorId }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
       </div>
     );
   }
@@ -95,7 +95,7 @@ export default function RefundManagementSection({ advisorId }) {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-xl font-semibold text-slate-800">Refund Management</h3>
+        <h3 className="text-xl font-semibold text-foreground">Refund Management</h3>
         <Button onClick={loadRefunds} variant="outline" size="sm">
           <RefreshCw className="w-4 h-4 mr-2" />
           Refresh
@@ -108,10 +108,10 @@ export default function RefundManagementSection({ advisorId }) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-600">Total Refunds</p>
-                <p className="text-2xl font-bold text-slate-900">{stats.total}</p>
+                <p className="text-sm text-subtle">Total Refunds</p>
+                <p className="text-2xl font-bold text-foreground">{stats.total}</p>
               </div>
-              <DollarSign className="w-8 h-8 text-blue-600" />
+              <DollarSign className="w-8 h-8 text-protocall-blue" />
             </div>
           </CardContent>
         </Card>
@@ -120,10 +120,10 @@ export default function RefundManagementSection({ advisorId }) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-600">Pending</p>
-                <p className="text-2xl font-bold text-orange-900">{stats.pending}</p>
+                <p className="text-sm text-subtle">Pending</p>
+                <p className="text-2xl font-bold text-hold-muted-foreground">{stats.pending}</p>
               </div>
-              <Clock className="w-8 h-8 text-orange-600" />
+              <Clock className="w-8 h-8 text-hold-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -132,10 +132,10 @@ export default function RefundManagementSection({ advisorId }) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-600">Processed</p>
-                <p className="text-2xl font-bold text-green-900">{stats.processed}</p>
+                <p className="text-sm text-subtle">Processed</p>
+                <p className="text-2xl font-bold text-buy-muted-foreground">{stats.processed}</p>
               </div>
-              <CheckCircle className="w-8 h-8 text-green-600" />
+              <CheckCircle className="w-8 h-8 text-buy-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -144,10 +144,10 @@ export default function RefundManagementSection({ advisorId }) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-600">Total Amount</p>
-                <p className="text-2xl font-bold text-purple-900">₹{stats.totalAmount.toLocaleString()}</p>
+                <p className="text-sm text-subtle">Total Amount</p>
+                <p className="text-2xl font-bold text-protocall-premium-text">₹{stats.totalAmount.toLocaleString()}</p>
               </div>
-              <DollarSign className="w-8 h-8 text-purple-600" />
+              <DollarSign className="w-8 h-8 text-protocall-premium-text" />
             </div>
           </CardContent>
         </Card>
@@ -156,7 +156,7 @@ export default function RefundManagementSection({ advisorId }) {
       {/* Filters */}
       <div className="flex gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             placeholder="Search by user name, email, or transaction ID..."
             value={searchTerm}
@@ -167,7 +167,7 @@ export default function RefundManagementSection({ advisorId }) {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-normal text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="px-4 py-2 bg-white border border-border rounded-md text-sm font-normal text-subtle focus:outline-none focus:ring-2 focus:ring-ring focus:border-protocall-blue"
         >
           <option value="all">All Status</option>
           <option value="pending">Pending</option>
@@ -187,7 +187,7 @@ export default function RefundManagementSection({ advisorId }) {
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h4 className="font-semibold text-slate-800">{refund.user_name || 'Unknown User'}</h4>
+                      <h4 className="font-semibold text-foreground">{refund.user_name || 'Unknown User'}</h4>
                       {getStatusBadge(refund.status)}
                       <Badge variant="outline">
                         {refund.refund_type === 'full' ? 'Full Refund' : 'Partial Refund'}
@@ -196,38 +196,38 @@ export default function RefundManagementSection({ advisorId }) {
 
                     <div className="grid grid-cols-2 gap-4 text-sm mb-3">
                       <div>
-                        <p className="text-slate-500 text-xs">User Email</p>
-                        <p className="text-slate-900">{refund.user_email || 'N/A'}</p>
+                        <p className="text-muted-foreground text-xs">User Email</p>
+                        <p className="text-foreground">{refund.user_email || 'N/A'}</p>
                       </div>
                       <div>
-                        <p className="text-slate-500 text-xs">Transaction ID</p>
-                        <p className="text-slate-900 font-mono text-xs">{refund.original_transaction_id?.substring(0, 20) || 'N/A'}</p>
+                        <p className="text-muted-foreground text-xs">Transaction ID</p>
+                        <p className="text-foreground font-mono text-xs">{refund.original_transaction_id?.substring(0, 20) || 'N/A'}</p>
                       </div>
                       <div>
-                        <p className="text-slate-500 text-xs">Original Amount</p>
-                        <p className="text-slate-900 font-semibold">₹{refund.original_amount?.toLocaleString()}</p>
+                        <p className="text-muted-foreground text-xs">Original Amount</p>
+                        <p className="text-foreground font-semibold">₹{refund.original_amount?.toLocaleString()}</p>
                       </div>
                       <div>
-                        <p className="text-slate-500 text-xs">Refund Amount</p>
-                        <p className="text-green-700 font-bold">₹{refund.refund_amount?.toLocaleString()}</p>
+                        <p className="text-muted-foreground text-xs">Refund Amount</p>
+                        <p className="text-buy-muted-foreground font-bold">₹{refund.refund_amount?.toLocaleString()}</p>
                       </div>
                     </div>
 
                     <div className="space-y-2">
                       <div>
-                        <p className="text-xs text-slate-500">Reason</p>
-                        <p className="text-sm text-slate-700">{refund.request_reason}</p>
+                        <p className="text-xs text-muted-foreground">Reason</p>
+                        <p className="text-sm text-subtle">{refund.request_reason}</p>
                       </div>
 
                       {refund.admin_notes && (
                         <div>
-                          <p className="text-xs text-slate-500">Admin Notes</p>
-                          <p className="text-sm text-slate-700">{refund.admin_notes}</p>
+                          <p className="text-xs text-muted-foreground">Admin Notes</p>
+                          <p className="text-sm text-subtle">{refund.admin_notes}</p>
                         </div>
                       )}
                     </div>
 
-                    <div className="flex gap-4 mt-3 text-xs text-slate-500">
+                    <div className="flex gap-4 mt-3 text-xs text-muted-foreground">
                       <span>Requested: {format(new Date(refund.created_date), 'MMM dd, yyyy hh:mm a')}</span>
                       {refund.processed_date && (
                         <span>Processed: {format(new Date(refund.processed_date), 'MMM dd, yyyy')}</span>
@@ -241,9 +241,9 @@ export default function RefundManagementSection({ advisorId }) {
         ) : (
           <Card>
             <CardContent className="p-12 text-center">
-              <DollarSign className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500 text-lg">No refund requests found</p>
-              <p className="text-slate-400 text-sm">
+              <DollarSign className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground text-lg">No refund requests found</p>
+              <p className="text-muted-foreground text-sm">
                 {searchTerm || statusFilter !== 'all'
                   ? 'Try adjusting your search or filters'
                   : 'Refund requests will appear here'

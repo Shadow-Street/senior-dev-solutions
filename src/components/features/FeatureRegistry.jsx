@@ -11,14 +11,14 @@ import { createPageUrl } from '@/utils';
 
 // Placeholder component for features not yet implemented
 const ComingSoonPlaceholder = ({ feature }) => (
-  <div className="min-h-[400px] flex items-center justify-center bg-gradient-to-br from-slate-50 to-purple-50 rounded-xl border-2 border-dashed border-purple-200 p-8">
+  <div className="min-h-[400px] flex items-center justify-center bg-surface-2 rounded-xl border-2 border-dashed border-protocall-premium-light p-8">
     <div className="text-center max-w-md">
-      <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <feature.icon className="w-8 h-8 text-purple-600" />
+      <div className="w-16 h-16 bg-premium-muted rounded-full flex items-center justify-center mx-auto mb-4">
+        <feature.icon className="w-8 h-8 text-protocall-premium-text" />
       </div>
-      <h3 className="text-2xl font-bold text-slate-900 mb-2">{feature.name}</h3>
-      <p className="text-slate-600 mb-4">{feature.description}</p>
-      <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-semibold">
+      <h3 className="text-2xl font-bold text-foreground mb-2">{feature.name}</h3>
+      <p className="text-subtle mb-4">{feature.description}</p>
+      <div className="inline-flex items-center gap-2 bg-premium-muted text-protocall-premium-text px-4 py-2 rounded-full text-sm font-semibold">
         <Sparkles className="w-4 h-4" />
         Coming Soon {feature.releaseDate && `(Est. ${feature.releaseDate})`}
       </div>
@@ -28,20 +28,20 @@ const ComingSoonPlaceholder = ({ feature }) => (
 
 // Locked placeholder for users without access
 const LockedPlaceholder = ({ feature, requiredPlan }) => (
-  <div className="min-h-[400px] flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl border-2 border-slate-300 p-8 relative overflow-hidden">
+  <div className="min-h-[400px] flex items-center justify-center bg-surface-2 rounded-xl border-2 border-border p-8 relative overflow-hidden">
     <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10"></div>
     <div className="text-center max-w-md relative z-20">
-      <div className="w-16 h-16 bg-slate-300 rounded-full flex items-center justify-center mx-auto mb-4">
-        <Lock className="w-8 h-8 text-slate-600" />
+      <div className="w-16 h-16 bg-border rounded-full flex items-center justify-center mx-auto mb-4">
+        <Lock className="w-8 h-8 text-subtle" />
       </div>
-      <h3 className="text-2xl font-bold text-slate-900 mb-2">{feature.name}</h3>
-      <p className="text-slate-600 mb-4">{feature.description}</p>
-      <div className="inline-flex items-center gap-2 bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+      <h3 className="text-2xl font-bold text-foreground mb-2">{feature.name}</h3>
+      <p className="text-subtle mb-4">{feature.description}</p>
+      <div className="inline-flex items-center gap-2 bg-hold-muted text-hold-muted-foreground px-4 py-2 rounded-full text-sm font-semibold mb-4">
         <Crown className="w-4 h-4" />
         {requiredPlan} Plan Required
       </div>
       <Link to={createPageUrl("Subscription")}>
-        <button className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700">
+        <button className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white px-6 py-2 rounded-lg font-semibold hover:from-protocall-deep hover:to-protocall-blue">
           Upgrade Now
         </button>
       </Link>
@@ -61,7 +61,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['basic', 'premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("ChatRooms")} className="block"><div className="p-6 bg-blue-50 border-2 border-blue-200 rounded-xl hover:shadow-lg transition-all"><MessageSquare className="w-8 h-8 text-blue-600 mb-2" /><h3 className="font-bold text-lg">Chat Rooms</h3><p className="text-sm text-slate-600">Join community discussions</p></div></Link>
+    component: () => <Link to={createPageUrl("ChatRooms")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><MessageSquare className="w-8 h-8 text-protocall-blue mb-2" /><h3 className="font-bold text-lg">Chat Rooms</h3><p className="text-sm text-subtle">Join community discussions</p></div></Link>
   },
   basic_stock_discussions: {
     key: 'basic_stock_discussions',
@@ -72,7 +72,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['basic', 'premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("ChatRooms")} className="block"><div className="p-6 bg-green-50 border-2 border-green-200 rounded-xl hover:shadow-lg transition-all"><TrendingUp className="w-8 h-8 text-green-600 mb-2" /><h3 className="font-bold text-lg">Stock Discussions</h3><p className="text-sm text-slate-600">Discuss market trends and stocks</p></div></Link>
+    component: () => <Link to={createPageUrl("ChatRooms")} className="block"><div className="p-6 bg-buy-muted border-2 border-buy/30 rounded-xl hover:shadow-lg transition-all"><TrendingUp className="w-8 h-8 text-buy-muted-foreground mb-2" /><h3 className="font-bold text-lg">Stock Discussions</h3><p className="text-sm text-subtle">Discuss market trends and stocks</p></div></Link>
   },
   community_polls_participation: {
     key: 'community_polls_participation',
@@ -83,7 +83,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['basic', 'premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("Polls")} className="block"><div className="p-6 bg-purple-50 border-2 border-purple-200 rounded-xl hover:shadow-lg transition-all"><BarChart3 className="w-8 h-8 text-purple-600 mb-2" /><h3 className="font-bold text-lg">Community Polls</h3><p className="text-sm text-slate-600">Vote on market sentiment</p></div></Link>
+    component: () => <Link to={createPageUrl("Polls")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><BarChart3 className="w-8 h-8 text-protocall-premium-text mb-2" /><h3 className="font-bold text-lg">Community Polls</h3><p className="text-sm text-subtle">Vote on market sentiment</p></div></Link>
   },
   market_overview_access: {
     key: 'market_overview_access',
@@ -94,7 +94,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['basic', 'premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("Dashboard")} className="block"><div className="p-6 bg-indigo-50 border-2 border-indigo-200 rounded-xl hover:shadow-lg transition-all"><TrendingUp className="w-8 h-8 text-indigo-600 mb-2" /><h3 className="font-bold text-lg">Market Overview</h3><p className="text-sm text-slate-600">Daily market insights</p></div></Link>
+    component: () => <Link to={createPageUrl("Dashboard")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><TrendingUp className="w-8 h-8 text-protocall-blue mb-2" /><h3 className="font-bold text-lg">Market Overview</h3><p className="text-sm text-subtle">Daily market insights</p></div></Link>
   },
   basic_trading_tips: {
     key: 'basic_trading_tips',
@@ -105,7 +105,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['basic', 'premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("Dashboard")} className="block"><div className="p-6 bg-yellow-50 border-2 border-yellow-200 rounded-xl hover:shadow-lg transition-all"><BookOpen className="w-8 h-8 text-yellow-600 mb-2" /><h3 className="font-bold text-lg">Trading Tips</h3><p className="text-sm text-slate-600">Learn trading basics</p></div></Link>
+    component: () => <Link to={createPageUrl("Dashboard")} className="block"><div className="p-6 bg-hold-muted border-2 border-hold/30 rounded-xl hover:shadow-lg transition-all"><BookOpen className="w-8 h-8 text-hold-muted-foreground mb-2" /><h3 className="font-bold text-lg">Trading Tips</h3><p className="text-sm text-subtle">Learn trading basics</p></div></Link>
   },
 
   // ============ PREMIUM FEATURES ============
@@ -129,7 +129,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("Polls")} className="block"><div className="p-6 bg-purple-50 border-2 border-purple-200 rounded-xl hover:shadow-lg transition-all"><Crown className="w-8 h-8 text-purple-600 mb-2" /><h3 className="font-bold text-lg">Premium Polls</h3><p className="text-sm text-slate-600">Advisor recommendations</p></div></Link>
+    component: () => <Link to={createPageUrl("Polls")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><Crown className="w-8 h-8 text-protocall-premium-text mb-2" /><h3 className="font-bold text-lg">Premium Polls</h3><p className="text-sm text-subtle">Advisor recommendations</p></div></Link>
   },
   premium_events: {
     key: 'premium_events',
@@ -140,7 +140,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("Events")} className="block"><div className="p-6 bg-blue-50 border-2 border-blue-200 rounded-xl hover:shadow-lg transition-all"><Calendar className="w-8 h-8 text-blue-600 mb-2" /><h3 className="font-bold text-lg">Premium Events</h3><p className="text-sm text-slate-600">Exclusive webinars & events</p></div></Link>
+    component: () => <Link to={createPageUrl("Polls")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><Calendar className="w-8 h-8 text-protocall-blue mb-2" /><h3 className="font-bold text-lg">Community Poll</h3><p className="text-sm text-subtle">Vote with the community</p></div></Link>
   },
   admin_recommendations: {
     key: 'admin_recommendations',
@@ -151,7 +151,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("Dashboard")} className="block"><div className="p-6 bg-green-50 border-2 border-green-200 rounded-xl hover:shadow-lg transition-all"><Shield className="w-8 h-8 text-green-600 mb-2" /><h3 className="font-bold text-lg">Admin Picks</h3><p className="text-sm text-slate-600">Expert recommendations</p></div></Link>
+    component: () => <Link to={createPageUrl("Dashboard")} className="block"><div className="p-6 bg-buy-muted border-2 border-buy/30 rounded-xl hover:shadow-lg transition-all"><Shield className="w-8 h-8 text-buy-muted-foreground mb-2" /><h3 className="font-bold text-lg">Admin Picks</h3><p className="text-sm text-subtle">Expert recommendations</p></div></Link>
   },
   advisor_subscriptions: {
     key: 'advisor_subscriptions',
@@ -162,7 +162,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("Advisors")} className="block"><div className="p-6 bg-indigo-50 border-2 border-indigo-200 rounded-xl hover:shadow-lg transition-all"><Award className="w-8 h-8 text-indigo-600 mb-2" /><h3 className="font-bold text-lg">SEBI Advisors</h3><p className="text-sm text-slate-600">Subscribe to verified advisors</p></div></Link>
+    component: () => <Link to={createPageUrl("Advisors")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><Award className="w-8 h-8 text-protocall-blue mb-2" /><h3 className="font-bold text-lg">SEBI Advisors</h3><p className="text-sm text-subtle">Subscribe to verified advisors</p></div></Link>
   },
   exclusive_finfluencer_content: {
     key: 'exclusive_finfluencer_content',
@@ -173,7 +173,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("Finfluencers")} className="block"><div className="p-6 bg-pink-50 border-2 border-pink-200 rounded-xl hover:shadow-lg transition-all"><GraduationCap className="w-8 h-8 text-pink-600 mb-2" /><h3 className="font-bold text-lg">Finfluencers</h3><p className="text-sm text-slate-600">Exclusive premium content</p></div></Link>
+    component: () => <Link to={createPageUrl("Finfluencers")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><GraduationCap className="w-8 h-8 text-protocall-premium-text mb-2" /><h3 className="font-bold text-lg">Finfluencers</h3><p className="text-sm text-subtle">Exclusive premium content</p></div></Link>
   },
   pledge_participation: {
     key: 'pledge_participation',
@@ -184,7 +184,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("PledgePool")} className="block"><div className="p-6 bg-cyan-50 border-2 border-cyan-200 rounded-xl hover:shadow-lg transition-all"><Target className="w-8 h-8 text-cyan-600 mb-2" /><h3 className="font-bold text-lg">Pledge Pool</h3><p className="text-sm text-slate-600">Community trading pledges</p></div></Link>
+    component: () => <Link to={createPageUrl("PledgePool")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><Target className="w-8 h-8 text-protocall-blue mb-2" /><h3 className="font-bold text-lg">Pledge Pool</h3><p className="text-sm text-subtle">Community trading pledges</p></div></Link>
   },
   advanced_analytics: {
     key: 'advanced_analytics',
@@ -217,7 +217,7 @@ export const FEATURE_REGISTRY = {
     status: 'partial',
     visibility: ['premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("Events")} className="block"><div className="p-6 bg-purple-50 border-2 border-purple-200 rounded-xl hover:shadow-lg transition-all"><Calendar className="w-8 h-8 text-purple-600 mb-2" /><h3 className="font-bold text-lg">Webinars</h3><p className="text-sm text-slate-600">Expert-led sessions</p></div></Link>
+    component: () => <Link to={createPageUrl("Polls")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><Calendar className="w-8 h-8 text-protocall-premium-text mb-2" /><h3 className="font-bold text-lg">Community Poll</h3><p className="text-sm text-subtle">Expert-led sentiment</p></div></Link>
   },
   portfolio_tools: {
     key: 'portfolio_tools',
@@ -228,7 +228,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("MyStocks")} className="block"><div className="p-6 bg-teal-50 border-2 border-teal-200 rounded-xl hover:shadow-lg transition-all"><TrendingUp className="w-8 h-8 text-teal-600 mb-2" /><h3 className="font-bold text-lg">Portfolio Tracker</h3><p className="text-sm text-slate-600">Manage your investments</p></div></Link>
+    component: () => <Link to={createPageUrl("MyStocks")} className="block"><div className="p-6 bg-buy-muted border-2 border-buy/30 rounded-xl hover:shadow-lg transition-all"><TrendingUp className="w-8 h-8 text-buy-muted-foreground mb-2" /><h3 className="font-bold text-lg">Portfolio Tracker</h3><p className="text-sm text-subtle">Manage your investments</p></div></Link>
   },
 
   // ============ VIP ELITE FEATURES ============
@@ -307,7 +307,7 @@ export const FEATURE_REGISTRY = {
     status: 'partial',
     visibility: ['vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("MyStocks")} className="block"><div className="p-6 bg-orange-50 border-2 border-orange-200 rounded-xl hover:shadow-lg transition-all"><Bell className="w-8 h-8 text-orange-600 mb-2" /><h3 className="font-bold text-lg">Custom Alerts</h3><p className="text-sm text-slate-600">Personalized notifications</p></div></Link>
+    component: () => <Link to={createPageUrl("MyStocks")} className="block"><div className="p-6 bg-hold-muted border-2 border-hold/30 rounded-xl hover:shadow-lg transition-all"><Bell className="w-8 h-8 text-hold-muted-foreground mb-2" /><h3 className="font-bold text-lg">Custom Alerts</h3><p className="text-sm text-subtle">Personalized notifications</p></div></Link>
   },
   research_reports: {
     key: 'research_reports',

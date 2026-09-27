@@ -70,9 +70,9 @@ export default function AdvisorCommissionTracker({ user, advisorProfile }) {
 
   const getStatusBadge = (status) => {
     const config = {
-      'pending': { color: 'bg-yellow-100 text-yellow-800', icon: Clock, text: 'Pending' },
-      'processed': { color: 'bg-green-100 text-green-800', icon: CheckCircle, text: 'Processed' },
-      'failed': { color: 'bg-red-100 text-red-800', icon: Clock, text: 'Failed' }
+      'pending': { color: 'bg-hold-muted text-hold-muted-foreground', icon: Clock, text: 'Pending' },
+      'processed': { color: 'bg-buy-muted text-buy-muted-foreground', icon: CheckCircle, text: 'Processed' },
+      'failed': { color: 'bg-sell-muted text-sell-muted-foreground', icon: Clock, text: 'Failed' }
     };
     const { color, icon: Icon, text } = config[status] || config['pending'];
     return (
@@ -86,7 +86,7 @@ export default function AdvisorCommissionTracker({ user, advisorProfile }) {
   if (isLoading) {
     return (
       <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto"></div>
       </div>
     );
   }
@@ -94,8 +94,8 @@ export default function AdvisorCommissionTracker({ user, advisorProfile }) {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">Commission Tracker</h2>
-        <Badge className="bg-purple-100 text-purple-800 px-4 py-2 text-base">
+        <h2 className="text-2xl font-bold text-foreground">Commission Tracker</h2>
+        <Badge className="bg-premium-muted text-protocall-premium-text px-4 py-2 text-base">
           Your Rate: {stats.commissionRate}%
         </Badge>
       </div>
@@ -104,10 +104,10 @@ export default function AdvisorCommissionTracker({ user, advisorProfile }) {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <DollarSign className="w-8 h-8 text-green-600" />
+              <DollarSign className="w-8 h-8 text-buy-muted-foreground" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Earned</p>
-                <p className="text-2xl font-bold text-gray-900">₹{stats.totalEarned.toLocaleString()}</p>
+                <p className="text-sm font-medium text-subtle">Total Earned</p>
+                <p className="text-2xl font-bold text-foreground">₹{stats.totalEarned.toLocaleString()}</p>
               </div>
             </div>
           </CardContent>
@@ -116,10 +116,10 @@ export default function AdvisorCommissionTracker({ user, advisorProfile }) {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <Clock className="w-8 h-8 text-yellow-600" />
+              <Clock className="w-8 h-8 text-hold-muted-foreground" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Pending Payouts</p>
-                <p className="text-2xl font-bold text-gray-900">₹{stats.pendingPayouts.toLocaleString()}</p>
+                <p className="text-sm font-medium text-subtle">Pending Payouts</p>
+                <p className="text-2xl font-bold text-foreground">₹{stats.pendingPayouts.toLocaleString()}</p>
               </div>
             </div>
           </CardContent>
@@ -128,10 +128,10 @@ export default function AdvisorCommissionTracker({ user, advisorProfile }) {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <CheckCircle className="w-8 h-8 text-green-600" />
+              <CheckCircle className="w-8 h-8 text-buy-muted-foreground" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Processed</p>
-                <p className="text-2xl font-bold text-gray-900">₹{stats.processedPayouts.toLocaleString()}</p>
+                <p className="text-sm font-medium text-subtle">Processed</p>
+                <p className="text-2xl font-bold text-foreground">₹{stats.processedPayouts.toLocaleString()}</p>
               </div>
             </div>
           </CardContent>
@@ -145,35 +145,35 @@ export default function AdvisorCommissionTracker({ user, advisorProfile }) {
         <CardContent>
           {commissions.length === 0 ? (
             <div className="text-center py-8">
-              <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No commission records yet</p>
-              <p className="text-sm text-gray-500 mt-2">
+              <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-subtle">No commission records yet</p>
+              <p className="text-sm text-muted-foreground mt-2">
                 Once your pledge sessions are executed, commission will appear here
               </p>
             </div>
           ) : (
             <div className="space-y-4">
               {commissions.map((commission) => (
-                <div key={commission.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div key={commission.id} className="flex items-center justify-between p-4 bg-surface-2 rounded-lg">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
                       <p className="font-semibold">{commission.stock_symbol}</p>
                       {getStatusBadge(commission.payout_status)}
                     </div>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-subtle">
                       {commission.commission_type === 'convenience_fee' && 'Convenience Fee Commission'}
                       {commission.commission_type === 'trading_profit' && 'Trading Profit Commission'}
                       {commission.commission_type === 'both' && 'Combined Commission'}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       Execution Value: ₹{(commission.total_execution_value || 0).toLocaleString()}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xl font-bold text-green-600">
+                    <p className="text-xl font-bold text-buy-muted-foreground">
                       +₹{commission.advisor_commission_amount.toLocaleString()}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       {new Date(commission.created_date).toLocaleDateString()}
                     </p>
                   </div>

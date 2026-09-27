@@ -17,21 +17,21 @@ const PremiumAccessOverlay = ({
 
             {/* Content Center */}
             <div className="relative z-10 p-6 text-center max-w-[280px] animate-in fade-in zoom-in duration-300">
-                <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-full bg-purple-100 shadow-inner">
-                    <Lock className="w-8 h-8 text-purple-600" />
+                <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-full bg-premium-muted shadow-inner">
+                    <Lock className="w-8 h-8 text-protocall-premium-text" />
                 </div>
 
-                <h3 className="text-xl font-bold text-slate-900 mb-2 flex items-center justify-center gap-2">
+                <h3 className="text-xl font-bold text-foreground mb-2 flex items-center justify-center gap-2">
                     {title}
-                    <Crown className="w-5 h-5 text-purple-500 fill-purple-500" />
+                    <Crown className="w-5 h-5 text-protocall-premium-light fill-primary" />
                 </h3>
 
-                <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+                <p className="text-sm text-subtle mb-6 leading-relaxed">
                     {message}
                 </p>
 
                 <Link to={createPageUrl("Subscription")} onClick={(e) => e.stopPropagation()}>
-                    <Button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold py-2 rounded-xl shadow-lg transform transition active:scale-95">
+                    <Button className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white font-bold py-2 rounded-xl shadow-lg transform transition active:scale-95">
                         {actionLabel}
                     </Button>
                 </Link>

@@ -83,21 +83,21 @@ export default function PagesManager({ user }) {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'live': return <CheckCircle className="w-4 h-4 text-green-600" />;
-      case 'partial': return <AlertCircle className="w-4 h-4 text-yellow-600" />;
-      case 'placeholder': return <Clock className="w-4 h-4 text-purple-600" />;
-      case 'disabled': return <Ban className="w-4 h-4 text-red-600" />;
+      case 'live': return <CheckCircle className="w-4 h-4 text-buy-muted-foreground" />;
+      case 'partial': return <AlertCircle className="w-4 h-4 text-hold-muted-foreground" />;
+      case 'placeholder': return <Clock className="w-4 h-4 text-protocall-premium-text" />;
+      case 'disabled': return <Ban className="w-4 h-4 text-sell-muted-foreground" />;
       default: return null;
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'live': return 'bg-green-100 text-green-800 border-green-300';
-      case 'partial': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'placeholder': return 'bg-purple-100 text-purple-800 border-purple-300';
-      case 'disabled': return 'bg-red-100 text-red-800 border-red-300';
-      default: return 'bg-gray-100 text-gray-800 border-gray-300';
+      case 'live': return 'bg-buy-muted text-buy-muted-foreground border-buy/30';
+      case 'partial': return 'bg-hold-muted text-hold-muted-foreground border-hold/30';
+      case 'placeholder': return 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light';
+      case 'disabled': return 'bg-sell-muted text-sell-muted-foreground border-sell/30';
+      default: return 'bg-surface-2 text-foreground border-border';
     }
   };
 
@@ -119,8 +119,8 @@ export default function PagesManager({ user }) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading pages...</p>
+          <div className="w-12 h-12 border-4 border-protocall-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-subtle">Loading pages...</p>
         </div>
       </div>
     );
@@ -137,10 +137,10 @@ export default function PagesManager({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Total Pages</p>
-                <p className="text-3xl font-bold text-slate-900">{stats.total}</p>
+                <p className="text-sm text-muted-foreground">Total Pages</p>
+                <p className="text-3xl font-bold text-foreground">{stats.total}</p>
               </div>
-              <FileText className="w-12 h-12 text-blue-600" />
+              <FileText className="w-12 h-12 text-protocall-blue" />
             </div>
           </CardContent>
         </Card>
@@ -149,10 +149,10 @@ export default function PagesManager({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Live Pages</p>
-                <p className="text-3xl font-bold text-green-600">{stats.live}</p>
+                <p className="text-sm text-muted-foreground">Live Pages</p>
+                <p className="text-3xl font-bold text-buy-muted-foreground">{stats.live}</p>
               </div>
-              <CheckCircle className="w-12 h-12 text-green-600" />
+              <CheckCircle className="w-12 h-12 text-buy-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -161,10 +161,10 @@ export default function PagesManager({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Coming Soon</p>
-                <p className="text-3xl font-bold text-purple-600">{stats.placeholder}</p>
+                <p className="text-sm text-muted-foreground">Coming Soon</p>
+                <p className="text-3xl font-bold text-protocall-premium-text">{stats.placeholder}</p>
               </div>
-              <Clock className="w-12 h-12 text-purple-600" />
+              <Clock className="w-12 h-12 text-protocall-premium-text" />
             </div>
           </CardContent>
         </Card>
@@ -173,10 +173,10 @@ export default function PagesManager({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Disabled</p>
-                <p className="text-3xl font-bold text-red-600">{stats.disabled}</p>
+                <p className="text-sm text-muted-foreground">Disabled</p>
+                <p className="text-3xl font-bold text-sell-muted-foreground">{stats.disabled}</p>
               </div>
-              <Ban className="w-12 h-12 text-red-600" />
+              <Ban className="w-12 h-12 text-sell-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -185,7 +185,7 @@ export default function PagesManager({ user }) {
       {/* Filters and Actions */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             placeholder="Search pages..."
             value={searchTerm}
@@ -207,7 +207,7 @@ export default function PagesManager({ user }) {
           ))}
         </div>
 
-        <Button onClick={() => { setEditingPage(null); setShowModal(true); }} className="bg-blue-600 hover:bg-blue-700">
+        <Button onClick={() => { setEditingPage(null); setShowModal(true); }} className="bg-protocall-blue hover:bg-protocall-blue">
           <Plus className="w-4 h-4 mr-2" />
           Add New Page
         </Button>
@@ -223,22 +223,22 @@ export default function PagesManager({ user }) {
             {filteredPages.map((page) => (
               <div
                 key={page.id}
-                className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all"
+                className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-surface-2 transition-all"
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <h3 className="font-semibold text-slate-900">{page.feature_name}</h3>
+                    <h3 className="font-semibold text-foreground">{page.feature_name}</h3>
                     <Badge className={`${getStatusColor(page.status)} border flex items-center gap-1`}>
                       {getStatusIcon(page.status)}
                       {page.status.charAt(0).toUpperCase() + page.status.slice(1)}
                     </Badge>
                     {page.visible_to_users ? (
-                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300">
+                      <Badge variant="outline" className="bg-premium-muted text-protocall-blue border-protocall-premium-light">
                         <Eye className="w-3 h-3 mr-1" />
                         Visible
                       </Badge>
                     ) : (
-                      <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-300">
+                      <Badge variant="outline" className="bg-surface-2 text-subtle border-border">
                         <EyeOff className="w-3 h-3 mr-1" />
                         Hidden
                       </Badge>
@@ -247,9 +247,9 @@ export default function PagesManager({ user }) {
                       {page.tier}
                     </Badge>
                   </div>
-                  <p className="text-sm text-slate-600">{page.description}</p>
+                  <p className="text-sm text-subtle">{page.description}</p>
                   {page.route_path && (
-                    <p className="text-xs text-slate-500 mt-1">Route: {page.route_path}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Route: {page.route_path}</p>
                   )}
                 </div>
 
@@ -271,7 +271,7 @@ export default function PagesManager({ user }) {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="text-red-600 hover:bg-red-50"
+                    className="text-sell-muted-foreground hover:bg-sell-muted"
                     onClick={() => handleDelete(page)}
                   >
                     <Trash2 className="w-4 h-4" />
@@ -281,8 +281,8 @@ export default function PagesManager({ user }) {
             ))}
 
             {filteredPages.length === 0 && (
-              <div className="text-center py-12 text-slate-500">
-                <FileText className="w-16 h-16 mx-auto mb-4 text-slate-300" />
+              <div className="text-center py-12 text-muted-foreground">
+                <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
                 <p className="text-lg font-semibold mb-2">No pages found</p>
                 <p className="text-sm">Try adjusting your search or filters</p>
               </div>

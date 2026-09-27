@@ -11,9 +11,9 @@ const StatCard = ({ title, value, subtitle, icon: Icon, color }) => (
       <Icon className={`w-5 h-5 ${color.iconText}`} />
     </div>
     <div>
-      <p className="text-xs font-semibold text-slate-500">{title}</p>
-      <p className="text-xl font-bold text-slate-800">{value}</p>
-      {subtitle && <p className="text-xs text-slate-400">{subtitle}</p>}
+      <p className="text-xs font-semibold text-muted-foreground">{title}</p>
+      <p className="text-xl font-bold text-foreground">{value}</p>
+      {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
     </div>
   </div>
 );
@@ -59,9 +59,9 @@ export default function PollAnalytics({ polls = [], votes = [] }) {
 
     // Create vote distribution data for pie chart
     const voteDistribution = [
-      { name: 'Buy', value: totalBuyVotes, color: '#10B981', percentage: buySentiment },
-      { name: 'Sell', value: totalSellVotes, color: '#EF4444', percentage: sellSentiment },
-      { name: 'Hold', value: totalHoldVotes, color: '#F59E0B', percentage: holdSentiment }
+      { name: 'Buy', value: totalBuyVotes, color: 'hsl(var(--chart-2))', percentage: buySentiment },
+      { name: 'Sell', value: totalSellVotes, color: 'hsl(var(--chart-3))', percentage: sellSentiment },
+      { name: 'Hold', value: totalHoldVotes, color: 'hsl(var(--chart-5))', percentage: holdSentiment }
     ].filter(item => item.value > 0);
 
     // Create 7-day participation trend
@@ -120,9 +120,9 @@ export default function PollAnalytics({ polls = [], votes = [] }) {
     return (
       <div className="space-y-6">
         <div className="text-center py-16">
-          <BarChart3 className="mx-auto h-16 w-16 text-slate-300" />
-          <h3 className="mt-4 text-lg font-medium text-slate-900">No analytics data yet</h3>
-          <p className="mt-2 text-sm text-slate-500">
+          <BarChart3 className="mx-auto h-16 w-16 text-muted-foreground" />
+          <h3 className="mt-4 text-lg font-medium text-foreground">No analytics data yet</h3>
+          <p className="mt-2 text-sm text-muted-foreground">
             Analytics will appear here once polls are created and receive votes.
           </p>
         </div>
@@ -141,28 +141,28 @@ export default function PollAnalytics({ polls = [], votes = [] }) {
           value={analytics.totalEngagement}
           subtitle={`${analytics.totalVotes} votes + ${analytics.totalPledges} pledges`}
           icon={Users}
-          color={{ bg: 'bg-blue-50', iconBg: 'bg-blue-100', iconText: 'text-blue-600' }}
+          color={{ bg: 'bg-premium-muted', iconBg: 'bg-premium-muted', iconText: 'text-protocall-blue' }}
         />
         <StatCard
           title="Buy Sentiment"
           value={`${analytics.buySentiment}%`}
           subtitle="of all votes"
           icon={TrendingUp}
-          color={{ bg: 'bg-green-50', iconBg: 'bg-green-100', iconText: 'text-green-600' }}
+          color={{ bg: 'bg-buy-muted', iconBg: 'bg-buy-muted', iconText: 'text-buy-muted-foreground' }}
         />
         <StatCard
           title="Premium Engagement"
           value={analytics.premiumEngagement}
           subtitle="votes on premium polls"
           icon={Crown}
-          color={{ bg: 'bg-purple-50', iconBg: 'bg-purple-100', iconText: 'text-purple-600' }}
+          color={{ bg: 'bg-premium-muted', iconBg: 'bg-premium-muted', iconText: 'text-protocall-premium-text' }}
         />
         <StatCard
           title="Avg. Participation"
           value={analytics.avgParticipation}
           subtitle="votes per poll"
           icon={Vote}
-          color={{ bg: 'bg-orange-50', iconBg: 'bg-orange-100', iconText: 'text-orange-600' }}
+          color={{ bg: 'bg-hold-muted', iconBg: 'bg-hold-muted', iconText: 'text-hold-muted-foreground' }}
         />
       </div>
 
@@ -171,7 +171,7 @@ export default function PollAnalytics({ polls = [], votes = [] }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-purple-600" />
+              <BarChart3 className="w-5 h-5 text-protocall-premium-text" />
               Overall Vote Distribution
             </CardTitle>
           </CardHeader>
@@ -197,9 +197,9 @@ export default function PollAnalytics({ polls = [], votes = [] }) {
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-[300px] flex items-center justify-center text-slate-500">
+              <div className="h-[300px] flex items-center justify-center text-muted-foreground">
                 <div className="text-center">
-                  <Vote className="w-12 h-12 mx-auto mb-2 text-slate-300" />
+                  <Vote className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
                   <p>No vote data available</p>
                 </div>
               </div>
@@ -211,7 +211,7 @@ export default function PollAnalytics({ polls = [], votes = [] }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-blue-600" />
+              <Calendar className="w-5 h-5 text-protocall-blue" />
               7-Day Participation Trend
             </CardTitle>
           </CardHeader>
@@ -229,14 +229,14 @@ export default function PollAnalytics({ polls = [], votes = [] }) {
                 <Line 
                   type="monotone" 
                   dataKey="votes" 
-                  stroke="#3B82F6" 
+                  stroke="hsl(var(--chart-1))" 
                   strokeWidth={3}
                   name="Daily Votes"
                 />
                 <Line 
                   type="monotone" 
                   dataKey="polls" 
-                  stroke="#10B981" 
+                  stroke="hsl(var(--chart-2))" 
                   strokeWidth={2}
                   name="New Polls"
                 />
@@ -250,7 +250,7 @@ export default function PollAnalytics({ polls = [], votes = [] }) {
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-green-600" />
+            <TrendingUp className="w-5 h-5 text-buy-muted-foreground" />
             Top Performing Stocks
           </CardTitle>
         </CardHeader>
@@ -268,9 +268,9 @@ export default function PollAnalytics({ polls = [], votes = [] }) {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-[300px] flex items-center justify-center text-slate-500">
+            <div className="h-[300px] flex items-center justify-center text-muted-foreground">
               <div className="text-center">
-                <BarChart3 className="w-12 h-12 mx-auto mb-2 text-slate-300" />
+                <BarChart3 className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
                 <p>No stock performance data available</p>
               </div>
             </div>
@@ -285,24 +285,24 @@ export default function PollAnalytics({ polls = [], votes = [] }) {
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-green-50 p-4 rounded-lg text-center">
-              <div className="text-2xl font-bold text-green-600">{analytics.buySentiment}%</div>
-              <div className="text-sm text-green-700">Bullish Sentiment</div>
-              <div className="text-xs text-slate-500 mt-1">
+            <div className="bg-buy-muted p-4 rounded-lg text-center">
+              <div className="text-2xl font-bold text-buy-muted-foreground">{analytics.buySentiment}%</div>
+              <div className="text-sm text-buy-muted-foreground">Bullish Sentiment</div>
+              <div className="text-xs text-muted-foreground mt-1">
                 {polls.reduce((sum, poll) => sum + (poll.buy_votes || 0), 0)} total buy votes
               </div>
             </div>
-            <div className="bg-red-50 p-4 rounded-lg text-center">
-              <div className="text-2xl font-bold text-red-600">{analytics.sellSentiment}%</div>
-              <div className="text-sm text-red-700">Bearish Sentiment</div>
-              <div className="text-xs text-slate-500 mt-1">
+            <div className="bg-sell-muted p-4 rounded-lg text-center">
+              <div className="text-2xl font-bold text-sell-muted-foreground">{analytics.sellSentiment}%</div>
+              <div className="text-sm text-sell-muted-foreground">Bearish Sentiment</div>
+              <div className="text-xs text-muted-foreground mt-1">
                 {polls.reduce((sum, poll) => sum + (poll.sell_votes || 0), 0)} total sell votes
               </div>
             </div>
-            <div className="bg-orange-50 p-4 rounded-lg text-center">
-              <div className="text-2xl font-bold text-orange-600">{analytics.holdSentiment}%</div>
-              <div className="text-sm text-orange-700">Neutral Sentiment</div>
-              <div className="text-xs text-slate-500 mt-1">
+            <div className="bg-hold-muted p-4 rounded-lg text-center">
+              <div className="text-2xl font-bold text-hold-muted-foreground">{analytics.holdSentiment}%</div>
+              <div className="text-sm text-hold-muted-foreground">Neutral Sentiment</div>
+              <div className="text-xs text-muted-foreground mt-1">
                 {polls.reduce((sum, poll) => sum + (poll.hold_votes || 0), 0)} total hold votes
               </div>
             </div>

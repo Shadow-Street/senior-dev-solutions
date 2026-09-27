@@ -149,10 +149,10 @@ export default function PledgeAccessRequestModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white/95 backdrop-blur-xl border-0 shadow-2xl">
         <DialogHeader className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-t-lg"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-protocall-deep/10 to-protocall-blue/10 rounded-t-lg"></div>
           <div className="relative z-10">
             <DialogTitle className="flex items-center gap-3 text-2xl">
-              <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
+              <div className="p-2 bg-gradient-to-r from-protocall-deep to-protocall-blue rounded-xl">
                 <Shield className="w-6 h-6 text-white" />
               </div>
               Request Pledge Access
@@ -165,15 +165,15 @@ export default function PledgeAccessRequestModal({
 
         <form onSubmit={handleSubmit} className="space-y-6 mt-6">
           {/* Demat Account Information */}
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 space-y-4">
-            <h3 className="font-semibold text-lg text-gray-800 flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-blue-600" />
+          <div className="bg-surface-2 rounded-xl p-6 space-y-4">
+            <h3 className="font-semibold text-lg text-foreground flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-protocall-blue" />
               Account Information
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="demat_account_id" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="demat_account_id" className="text-sm font-medium text-subtle">
                   Demat Account ID *
                 </Label>
                 <Input
@@ -182,29 +182,29 @@ export default function PledgeAccessRequestModal({
                   value={formData.demat_account_id}
                   onChange={(e) => handleInputChange('demat_account_id', e.target.value)}
                   placeholder="e.g., 1201234567890123"
-                  className={`bg-white/80 backdrop-blur-sm ${validationErrors.demat_account_id ? 'border-red-300' : 'border-gray-200'}`}
+                  className={`bg-white/80 backdrop-blur-sm ${validationErrors.demat_account_id ? 'border-sell/30' : 'border-border'}`}
                   maxLength={16}
                 />
                 {validationErrors.demat_account_id ? (
-                  <div className="flex items-center gap-1 text-red-600 text-xs">
+                  <div className="flex items-center gap-1 text-sell-muted-foreground text-xs">
                     <AlertCircle className="w-3 h-3" />
                     {validationErrors.demat_account_id}
                   </div>
                 ) : formData.demat_account_id && validateDematAccount(formData.demat_account_id) && (
-                  <div className="flex items-center gap-1 text-green-600 text-xs">
+                  <div className="flex items-center gap-1 text-buy-muted-foreground text-xs">
                     <CheckCircle className="w-3 h-3" />
                     Valid Demat Account ID format
                   </div>
                 )}
-                <p className="text-xs text-gray-500">Enter your 8-16 character Demat Account ID</p>
+                <p className="text-xs text-muted-foreground">Enter your 8-16 character Demat Account ID</p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="broker" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="broker" className="text-sm font-medium text-subtle">
                   Broker *
                 </Label>
                 <Select value={formData.broker} onValueChange={(value) => handleInputChange('broker', value)}>
-                  <SelectTrigger className={`bg-white/80 backdrop-blur-sm ${validationErrors.broker ? 'border-red-300' : 'border-gray-200'}`}>
+                  <SelectTrigger className={`bg-white/80 backdrop-blur-sm ${validationErrors.broker ? 'border-sell/30' : 'border-border'}`}>
                     <SelectValue placeholder="Select your broker" />
                   </SelectTrigger>
                   <SelectContent className="bg-white/95 backdrop-blur-lg">
@@ -217,7 +217,7 @@ export default function PledgeAccessRequestModal({
                   </SelectContent>
                 </Select>
                 {validationErrors.broker && (
-                  <div className="flex items-center gap-1 text-red-600 text-xs">
+                  <div className="flex items-center gap-1 text-sell-muted-foreground text-xs">
                     <AlertCircle className="w-3 h-3" />
                     {validationErrors.broker}
                   </div>
@@ -227,16 +227,16 @@ export default function PledgeAccessRequestModal({
           </div>
 
           {/* Trading Profile */}
-          <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 space-y-4">
-            <h3 className="font-semibold text-lg text-gray-800">Trading Profile</h3>
+          <div className="bg-surface-2 rounded-xl p-6 space-y-4">
+            <h3 className="font-semibold text-lg text-foreground">Trading Profile</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="trading_experience" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="trading_experience" className="text-sm font-medium text-subtle">
                   Trading Experience *
                 </Label>
                 <Select value={formData.trading_experience} onValueChange={(value) => handleInputChange('trading_experience', value)}>
-                  <SelectTrigger className={`bg-white/80 backdrop-blur-sm ${validationErrors.trading_experience ? 'border-red-300' : 'border-gray-200'}`}>
+                  <SelectTrigger className={`bg-white/80 backdrop-blur-sm ${validationErrors.trading_experience ? 'border-sell/30' : 'border-border'}`}>
                     <SelectValue placeholder="Select experience level" />
                   </SelectTrigger>
                   <SelectContent className="bg-white/95 backdrop-blur-lg">
@@ -246,7 +246,7 @@ export default function PledgeAccessRequestModal({
                   </SelectContent>
                 </Select>
                 {validationErrors.trading_experience && (
-                  <div className="flex items-center gap-1 text-red-600 text-xs">
+                  <div className="flex items-center gap-1 text-sell-muted-foreground text-xs">
                     <AlertCircle className="w-3 h-3" />
                     {validationErrors.trading_experience}
                   </div>
@@ -254,11 +254,11 @@ export default function PledgeAccessRequestModal({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="annual_income_range" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="annual_income_range" className="text-sm font-medium text-subtle">
                   Annual Income Range *
                 </Label>
                 <Select value={formData.annual_income_range} onValueChange={(value) => handleInputChange('annual_income_range', value)}>
-                  <SelectTrigger className={`bg-white/80 backdrop-blur-sm ${validationErrors.annual_income_range ? 'border-red-300' : 'border-gray-200'}`}>
+                  <SelectTrigger className={`bg-white/80 backdrop-blur-sm ${validationErrors.annual_income_range ? 'border-sell/30' : 'border-border'}`}>
                     <SelectValue placeholder="Select income range" />
                   </SelectTrigger>
                   <SelectContent className="bg-white/95 backdrop-blur-lg">
@@ -270,7 +270,7 @@ export default function PledgeAccessRequestModal({
                   </SelectContent>
                 </Select>
                 {validationErrors.annual_income_range && (
-                  <div className="flex items-center gap-1 text-red-600 text-xs">
+                  <div className="flex items-center gap-1 text-sell-muted-foreground text-xs">
                     <AlertCircle className="w-3 h-3" />
                     {validationErrors.annual_income_range}
                   </div>
@@ -281,7 +281,7 @@ export default function PledgeAccessRequestModal({
 
           {/* Request Reason */}
           <div className="space-y-2">
-            <Label htmlFor="request_reason" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="request_reason" className="text-sm font-medium text-subtle">
               Reason for Request *
             </Label>
             <Textarea
@@ -289,11 +289,11 @@ export default function PledgeAccessRequestModal({
               value={formData.request_reason}
               onChange={(e) => handleInputChange('request_reason', e.target.value)}
               placeholder="Please explain why you want access to pledge trading features..."
-              className={`bg-white/80 backdrop-blur-sm ${validationErrors.request_reason ? 'border-red-300' : 'border-gray-200'} min-h-[100px]`}
+              className={`bg-white/80 backdrop-blur-sm ${validationErrors.request_reason ? 'border-sell/30' : 'border-border'} min-h-[100px]`}
               rows={4}
             />
             {validationErrors.request_reason && (
-              <div className="flex items-center gap-1 text-red-600 text-xs">
+              <div className="flex items-center gap-1 text-sell-muted-foreground text-xs">
                 <AlertCircle className="w-3 h-3" />
                 {validationErrors.request_reason}
               </div>
@@ -301,9 +301,9 @@ export default function PledgeAccessRequestModal({
           </div>
 
           {/* Consent Section */}
-          <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-6 space-y-4">
-            <h3 className="font-semibold text-lg text-gray-800 flex items-center gap-2">
-              <Lock className="w-5 h-5 text-orange-600" />
+          <div className="bg-gradient-to-r from-surface-2 to-sell-muted rounded-xl p-6 space-y-4">
+            <h3 className="font-semibold text-lg text-foreground flex items-center gap-2">
+              <Lock className="w-5 h-5 text-hold-muted-foreground" />
               Consent & Agreement
             </h3>
             
@@ -314,11 +314,11 @@ export default function PledgeAccessRequestModal({
                   id="consent"
                   checked={formData.consent_given}
                   onChange={(e) => handleInputChange('consent_given', e.target.checked)}
-                  className="mt-1 w-4 h-4 text-blue-600 rounded"
+                  className="mt-1 w-4 h-4 text-protocall-blue rounded"
                 />
-                <label htmlFor="consent" className="text-sm text-gray-700 leading-relaxed">
+                <label htmlFor="consent" className="text-sm text-subtle leading-relaxed">
                   I understand and consent to the following:
-                  <ul className="list-disc list-inside mt-2 space-y-1 text-xs text-gray-600">
+                  <ul className="list-disc list-inside mt-2 space-y-1 text-xs text-subtle">
                     <li>My trading activities will be executed on my behalf through the pledge system</li>
                     <li>I am responsible for maintaining adequate funds in my trading account</li>
                     <li>I understand the risks associated with algorithmic and automated trading</li>
@@ -327,7 +327,7 @@ export default function PledgeAccessRequestModal({
                 </label>
               </div>
               {validationErrors.consent_given && (
-                <div className="flex items-center gap-1 text-red-600 text-xs">
+                <div className="flex items-center gap-1 text-sell-muted-foreground text-xs">
                   <AlertCircle className="w-3 h-3" />
                   {validationErrors.consent_given}
                 </div>
@@ -341,7 +341,7 @@ export default function PledgeAccessRequestModal({
               type="button"
               variant="outline"
               onClick={onClose}
-              className="hover:bg-gray-50"
+              className="hover:bg-surface-2"
             >
               Cancel
             </Button>
@@ -349,7 +349,7 @@ export default function PledgeAccessRequestModal({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 px-8"
+              className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 px-8"
             >
               {isSubmitting ? (
                 <>

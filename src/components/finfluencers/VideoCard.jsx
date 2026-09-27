@@ -33,9 +33,9 @@ export default function VideoCard({ video, influencer, canAccessPremium }) {
           >
             <div className="w-16 h-16 bg-white bg-opacity-90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
               {video.is_premium && !canAccessPremium ? (
-                <Lock className="w-6 h-6 text-slate-600" />
+                <Lock className="w-6 h-6 text-subtle" />
               ) : (
-                <Play className="w-6 h-6 text-slate-600 ml-1" />
+                <Play className="w-6 h-6 text-subtle ml-1" />
               )}
             </div>
           </div>
@@ -48,7 +48,7 @@ export default function VideoCard({ video, influencer, canAccessPremium }) {
 
           {/* Premium Badge */}
           {video.is_premium && (
-            <Badge className="absolute top-2 right-2 bg-purple-600">
+            <Badge className="absolute top-2 right-2 bg-primary">
               <Lock className="w-3 h-3 mr-1" />
               Premium
             </Badge>
@@ -56,12 +56,12 @@ export default function VideoCard({ video, influencer, canAccessPremium }) {
         </div>
 
         <CardHeader className="pb-2">
-          <h3 className="font-semibold text-lg text-slate-900 line-clamp-2">
+          <h3 className="font-semibold text-lg text-foreground line-clamp-2">
             {video.title}
           </h3>
           
           {influencer && (
-            <div className="flex items-center gap-2 text-sm text-slate-600">
+            <div className="flex items-center gap-2 text-sm text-subtle">
               <img
                 src={influencer.profile_image_url}
                 alt={influencer.display_name}
@@ -69,7 +69,7 @@ export default function VideoCard({ video, influencer, canAccessPremium }) {
               />
               <span>{influencer.display_name}</span>
               {influencer.sebi_registered && (
-                <Shield className="w-4 h-4 text-green-500" />
+                <Shield className="w-4 h-4 text-positive" />
               )}
             </div>
           )}
@@ -93,7 +93,7 @@ export default function VideoCard({ video, influencer, canAccessPremium }) {
           )}
 
           {/* Stats */}
-          <div className="flex items-center justify-between text-sm text-slate-500">
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1">
                 <Eye className="w-4 h-4" />
@@ -108,20 +108,20 @@ export default function VideoCard({ video, influencer, canAccessPremium }) {
 
           {/* Action */}
           {video.is_premium && !canAccessPremium ? (
-            <div className="text-center p-3 bg-purple-50 rounded-lg">
-              <Lock className="w-6 h-6 text-purple-600 mx-auto mb-2" />
-              <p className="text-sm text-purple-700 font-medium">Premium Content</p>
-              <p className="text-xs text-purple-600 mt-1">
+            <div className="text-center p-3 bg-premium-muted rounded-lg">
+              <Lock className="w-6 h-6 text-protocall-premium-text mx-auto mb-2" />
+              <p className="text-sm text-protocall-premium-text font-medium">Premium Content</p>
+              <p className="text-xs text-protocall-premium-text mt-1">
                 Subscribe to view this video
               </p>
-              <Button size="sm" className="mt-2 bg-purple-600 hover:bg-purple-700">
+              <Button size="sm" className="mt-2 bg-primary hover:bg-primary">
                 Upgrade Now
               </Button>
             </div>
           ) : (
             <Button 
               onClick={handleWatch}
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full bg-protocall-blue hover:bg-protocall-blue"
             >
               <Play className="w-4 h-4 mr-2" />
               Watch Now

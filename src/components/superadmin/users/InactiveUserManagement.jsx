@@ -20,8 +20,8 @@ const StatCard = ({ title, value, icon: Icon, color }) => (
           <Icon className="w-5 h-5 text-white" />
         </div>
         <div>
-          <p className="text-sm text-slate-500 font-medium">{title}</p>
-          <p className="text-2xl font-bold text-slate-800">{value}</p>
+          <p className="text-sm text-muted-foreground font-medium">{title}</p>
+          <p className="text-2xl font-bold text-foreground">{value}</p>
         </div>
       </div>
     </CardContent>
@@ -41,9 +41,9 @@ const UserTable = ({ users, onSendReminder, sendingStatus }) => {
   if (users.length === 0) {
     return (
       <div className="text-center py-12">
-        <UserCheck className="mx-auto h-12 w-12 text-green-500" />
-        <h3 className="mt-2 text-lg font-medium text-slate-800">All users are active!</h3>
-        <p className="mt-1 text-sm text-slate-500">No users found in this inactivity category.</p>
+        <UserCheck className="mx-auto h-12 w-12 text-positive" />
+        <h3 className="mt-2 text-lg font-medium text-foreground">All users are active!</h3>
+        <p className="mt-1 text-sm text-muted-foreground">No users found in this inactivity category.</p>
       </div>
     );
   }
@@ -52,7 +52,7 @@ const UserTable = ({ users, onSendReminder, sendingStatus }) => {
     <>
       <div className="overflow-x-auto rounded-lg border">
         <Table>
-          <TableHeader className="bg-slate-50">
+          <TableHeader className="bg-surface-2">
             <TableRow>
               <TableHead>User</TableHead>
               <TableHead>Role</TableHead>
@@ -66,7 +66,7 @@ const UserTable = ({ users, onSendReminder, sendingStatus }) => {
               <TableRow key={user.id}>
                 <TableCell>
                   <div className="font-medium">{user.display_name}</div>
-                  <div className="text-xs text-slate-500">{user.email}</div>
+                  <div className="text-xs text-muted-foreground">{user.email}</div>
                 </TableCell>
                 <TableCell><Badge variant="outline">{user.app_role}</Badge></TableCell>
                 <TableCell>{format(parseISO(user.last_activity_date), 'MMM dd, yyyy')}</TableCell>
@@ -224,7 +224,7 @@ export default function InactiveUserManagement() {
     }
   };
 
-  const triggerClasses = "whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md";
+  const triggerClasses = "whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md";
 
   const stats = useMemo(() => ({
     mild: inactiveStats.mild,
@@ -243,19 +243,19 @@ export default function InactiveUserManagement() {
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <UserX className="w-5 h-5 text-orange-600" />
+            <UserX className="w-5 h-5 text-hold-muted-foreground" />
             Inactive User Engagement
           </CardTitle>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-subtle">
             Track, analyze, and re-engage users who have become inactive.
           </p>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard title="Mildly Inactive (15-30 Days)" value={stats.mild} icon={UserX} color="bg-yellow-500" />
-            <StatCard title="Moderately Inactive (30-60 Days)" value={stats.moderate} icon={UserX} color="bg-orange-500" />
-            <StatCard title="Dormant (60+ Days)" value={stats.dormant} icon={UserX} color="bg-red-500" />
-            <StatCard title="Re-Engaged Users (30d)" value={stats.reEngaged} icon={UserCheck} color="bg-green-500" />
+            <StatCard title="Mildly Inactive (15-30 Days)" value={stats.mild} icon={UserX} color="bg-hold" />
+            <StatCard title="Moderately Inactive (30-60 Days)" value={stats.moderate} icon={UserX} color="bg-hold" />
+            <StatCard title="Dormant (60+ Days)" value={stats.dormant} icon={UserX} color="bg-sell" />
+            <StatCard title="Re-Engaged Users (30d)" value={stats.reEngaged} icon={UserCheck} color="bg-buy" />
           </div>
         </CardContent>
       </Card>
@@ -278,7 +278,7 @@ export default function InactiveUserManagement() {
         <TabsContent value="mild" className="mt-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center gap-2"><UserX className="w-5 h-5 text-yellow-600" />Mildly Inactive Users (15-30 days)</CardTitle>
+              <CardTitle className="flex items-center gap-2"><UserX className="w-5 h-5 text-hold-muted-foreground" />Mildly Inactive Users (15-30 days)</CardTitle>
               <Button variant="outline" size="sm" onClick={() => handleExport(mildInactive, "mildly_inactive_users.csv")}>
                 <Download className="w-4 h-4 mr-2" /> Export
               </Button>
@@ -291,7 +291,7 @@ export default function InactiveUserManagement() {
         <TabsContent value="moderate" className="mt-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center gap-2"><UserX className="w-5 h-5 text-orange-600" />Moderately Inactive Users (30-60 days)</CardTitle>
+              <CardTitle className="flex items-center gap-2"><UserX className="w-5 h-5 text-hold-muted-foreground" />Moderately Inactive Users (30-60 days)</CardTitle>
               <Button variant="outline" size="sm" onClick={() => handleExport(moderateInactive, "moderately_inactive_users.csv")}>
                 <Download className="w-4 h-4 mr-2" /> Export
               </Button>
@@ -304,7 +304,7 @@ export default function InactiveUserManagement() {
         <TabsContent value="dormant" className="mt-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center gap-2"><UserX className="w-5 h-5 text-red-600" />Dormant Users (60+ days)</CardTitle>
+              <CardTitle className="flex items-center gap-2"><UserX className="w-5 h-5 text-sell-muted-foreground" />Dormant Users (60+ days)</CardTitle>
                <Button variant="outline" size="sm" onClick={() => handleExport(dormantInactive, "dormant_users.csv")}>
                 <Download className="w-4 h-4 mr-2" /> Export
               </Button>

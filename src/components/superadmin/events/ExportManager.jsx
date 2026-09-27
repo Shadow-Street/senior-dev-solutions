@@ -463,7 +463,7 @@ export default function ExportManager({
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl">
-            <Download className="w-6 h-6 text-blue-600" />
+            <Download className="w-6 h-6 text-protocall-blue" />
             Export Data
           </DialogTitle>
           <DialogDescription>
@@ -582,7 +582,7 @@ export default function ExportManager({
           {exportType === 'events' && (
             <div className="space-y-2">
               <Label className="text-sm font-semibold">Include Fields</Label>
-              <div className="space-y-2 bg-slate-50 p-4 rounded-lg">
+              <div className="space-y-2 bg-surface-2 p-4 rounded-lg">
                 {Object.entries({
                   basicInfo: 'Basic Information',
                   dates: 'Dates',
@@ -611,12 +611,12 @@ export default function ExportManager({
           )}
 
           {/* Export Summary */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+              <CheckCircle className="w-5 h-5 text-protocall-blue mt-0.5 flex-shrink-0" />
               <div className="text-sm">
-                <p className="font-semibold text-blue-900 mb-1">Export Summary</p>
-                <ul className="text-blue-700 space-y-1">
+                <p className="font-semibold text-protocall-blue mb-1">Export Summary</p>
+                <ul className="text-protocall-blue space-y-1">
                   <li>• Format: <span className="font-medium">{exportFormat.toUpperCase()}</span></li>
                   <li>• Data Type: <span className="font-medium">{exportType}</span></li>
                   <li>• Date Range: <span className="font-medium">
@@ -635,7 +635,7 @@ export default function ExportManager({
           <Button variant="outline" onClick={onClose} disabled={isExporting}>
             Cancel
           </Button>
-          <Button onClick={handleExport} disabled={isExporting} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+          <Button onClick={handleExport} disabled={isExporting} className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
             {isExporting ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />

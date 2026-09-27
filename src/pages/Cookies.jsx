@@ -8,9 +8,9 @@ import PageFooter from '../components/footer/PageFooter';
 
 export default function Cookies() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+    <div className="min-h-screen bg-surface-2">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white py-12">
+      <div className="bg-gradient-to-r from-protocall-deep via-protocall-grape to-protocall-blue text-white py-12">
         <div className="max-w-5xl mx-auto px-6">
           <Link to={createPageUrl('Landing')}>
             <Button variant="outline" className="mb-6 bg-white/20 border-white/30 text-white hover:bg-white/30">
@@ -22,7 +22,7 @@ export default function Cookies() {
             <Cookie className="w-10 h-10" />
             <h1 className="text-4xl font-bold">Cookies Policy</h1>
           </div>
-          <p className="text-blue-100 text-lg">
+          <p className="text-protocall-blue text-lg">
             Last Updated: January 1, 2025
           </p>
         </div>
@@ -31,12 +31,12 @@ export default function Cookies() {
       {/* Content */}
       <div className="max-w-5xl mx-auto px-6 py-12">
         {/* Cookie Notice Banner */}
-        <Card className="mb-8 border-blue-200 bg-blue-50 p-6">
+        <Card className="mb-8 border-protocall-premium-light bg-premium-muted p-6">
           <div className="flex items-start gap-4">
-            <Cookie className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+            <Cookie className="w-6 h-6 text-protocall-blue flex-shrink-0 mt-1" />
             <div>
-              <h3 className="text-lg font-bold text-blue-900 mb-2">What Are Cookies?</h3>
-              <p className="text-sm text-blue-800 leading-relaxed">
+              <h3 className="text-lg font-bold text-protocall-blue mb-2">What Are Cookies?</h3>
+              <p className="text-sm text-protocall-blue leading-relaxed">
                 Cookies are small text files that are placed on your device when you visit our website. 
                 They help us provide you with a better experience by remembering your preferences and understanding 
                 how you use our platform.
@@ -47,12 +47,12 @@ export default function Cookies() {
 
         <Card className="p-8 mb-8">
           {/* Table of Contents */}
-          <div className="mb-8 p-4 bg-slate-50 rounded-lg">
+          <div className="mb-8 p-4 bg-surface-2 rounded-lg">
             <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
               <FileText className="w-5 h-5" />
               Table of Contents
             </h3>
-            <ol className="space-y-1 text-sm text-blue-600">
+            <ol className="space-y-1 text-sm text-protocall-blue">
               <li><a href="#introduction" className="hover:underline">1. Introduction</a></li>
               <li><a href="#what-are-cookies" className="hover:underline">2. What Are Cookies?</a></li>
               <li><a href="#types-we-use" className="hover:underline">3. Types of Cookies We Use</a></li>
@@ -70,17 +70,17 @@ export default function Cookies() {
 
           {/* Section 1 */}
           <section id="introduction" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               1. Introduction
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 This Cookies Policy explains how Protocall ("we," "us," or "our") uses cookies and similar 
                 tracking technologies on our website and platform (collectively, the "Platform").
               </p>
               <p>
-                This policy should be read together with our <Link to={createPageUrl('Privacy')} className="text-blue-600 hover:underline font-semibold">Privacy Policy</Link>, 
+                This policy should be read together with our <Link to={createPageUrl('Privacy')} className="text-protocall-blue hover:underline font-semibold">Privacy Policy</Link>, 
                 which provides more information about how we collect, use, and protect your personal information.
               </p>
               <p>
@@ -92,11 +92,11 @@ export default function Cookies() {
 
           {/* Section 2 */}
           <section id="what-are-cookies" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               2. What Are Cookies?
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 Cookies are small text files that are stored on your computer or mobile device when you visit a website. 
                 They are widely used to make websites work more efficiently and provide a better user experience.
@@ -126,22 +126,22 @@ export default function Cookies() {
 
           {/* Section 3 */}
           <section id="types-we-use" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               3. Types of Cookies We Use
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>We use the following categories of cookies on our Platform:</p>
 
-              <Card className="bg-green-50 border-green-200 p-4 mt-4">
+              <Card className="bg-buy-muted border-buy/30 p-4 mt-4">
                 <div className="flex items-start gap-3">
-                  <Shield className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                  <Shield className="w-6 h-6 text-buy-muted-foreground flex-shrink-0 mt-1" />
                   <div>
-                    <h4 className="font-bold text-lg text-green-900 mb-2">3.1 Strictly Necessary Cookies</h4>
-                    <p className="text-sm text-green-800 mb-2">
+                    <h4 className="font-bold text-lg text-buy-muted-foreground mb-2">3.1 Strictly Necessary Cookies</h4>
+                    <p className="text-sm text-buy-muted-foreground mb-2">
                       <strong>Required for the Platform to function.</strong> These cookies cannot be disabled.
                     </p>
-                    <ul className="list-disc pl-6 space-y-1 text-sm text-green-800">
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-buy-muted-foreground">
                       <li>Authentication and security</li>
                       <li>Session management</li>
                       <li>Load balancing</li>
@@ -152,22 +152,22 @@ export default function Cookies() {
                 </div>
               </Card>
 
-              <Card className="bg-blue-50 border-blue-200 p-4 mt-4">
+              <Card className="bg-premium-muted border-protocall-premium-light p-4 mt-4">
                 <div className="flex items-start gap-3">
-                  <Settings className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+                  <Settings className="w-6 h-6 text-protocall-blue flex-shrink-0 mt-1" />
                   <div>
-                    <h4 className="font-bold text-lg text-blue-900 mb-2">3.2 Performance and Analytics Cookies</h4>
-                    <p className="text-sm text-blue-800 mb-2">
+                    <h4 className="font-bold text-lg text-protocall-blue mb-2">3.2 Performance and Analytics Cookies</h4>
+                    <p className="text-sm text-protocall-blue mb-2">
                       Help us understand how visitors use our Platform so we can improve it.
                     </p>
-                    <ul className="list-disc pl-6 space-y-1 text-sm text-blue-800">
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-protocall-blue">
                       <li>Number of visitors and page views</li>
                       <li>How users navigate through the Platform</li>
                       <li>Which features are most popular</li>
                       <li>Error tracking and performance monitoring</li>
                       <li>A/B testing and optimization</li>
                     </ul>
-                    <p className="text-xs text-blue-700 mt-2 italic">
+                    <p className="text-xs text-protocall-blue mt-2 italic">
                       These cookies do not collect information that identifies you personally. 
                       All information is aggregated and anonymous.
                     </p>
@@ -175,15 +175,15 @@ export default function Cookies() {
                 </div>
               </Card>
 
-              <Card className="bg-purple-50 border-purple-200 p-4 mt-4">
+              <Card className="bg-premium-muted border-protocall-premium-light p-4 mt-4">
                 <div className="flex items-start gap-3">
-                  <Eye className="w-6 h-6 text-purple-600 flex-shrink-0 mt-1" />
+                  <Eye className="w-6 h-6 text-protocall-premium-text flex-shrink-0 mt-1" />
                   <div>
-                    <h4 className="font-bold text-lg text-purple-900 mb-2">3.3 Functionality Cookies</h4>
-                    <p className="text-sm text-purple-800 mb-2">
+                    <h4 className="font-bold text-lg text-protocall-premium-text mb-2">3.3 Functionality Cookies</h4>
+                    <p className="text-sm text-protocall-premium-text mb-2">
                       Allow the Platform to remember your choices and provide enhanced, personalized features.
                     </p>
-                    <ul className="list-disc pl-6 space-y-1 text-sm text-purple-800">
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-protocall-premium-text">
                       <li>Language preferences</li>
                       <li>Theme and display settings (dark mode, font size)</li>
                       <li>Remembering your login status</li>
@@ -195,43 +195,43 @@ export default function Cookies() {
                 </div>
               </Card>
 
-              <Card className="bg-orange-50 border-orange-200 p-4 mt-4">
+              <Card className="bg-hold-muted border-hold/30 p-4 mt-4">
                 <div className="flex items-start gap-3">
-                  <Globe className="w-6 h-6 text-orange-600 flex-shrink-0 mt-1" />
+                  <Globe className="w-6 h-6 text-hold-muted-foreground flex-shrink-0 mt-1" />
                   <div>
-                    <h4 className="font-bold text-lg text-orange-900 mb-2">3.4 Targeting and Advertising Cookies</h4>
-                    <p className="text-sm text-orange-800 mb-2">
+                    <h4 className="font-bold text-lg text-hold-muted-foreground mb-2">3.4 Targeting and Advertising Cookies</h4>
+                    <p className="text-sm text-hold-muted-foreground mb-2">
                       Used to deliver advertisements relevant to you and your interests.
                     </p>
-                    <ul className="list-disc pl-6 space-y-1 text-sm text-orange-800">
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-hold-muted-foreground">
                       <li>Deliver targeted advertisements based on your interests</li>
                       <li>Limit the number of times you see an ad</li>
                       <li>Measure advertising campaign effectiveness</li>
                       <li>Track conversions from ads to sign-ups</li>
                       <li>Build profiles of user interests</li>
                     </ul>
-                    <p className="text-xs text-orange-700 mt-2 italic">
+                    <p className="text-xs text-hold-muted-foreground mt-2 italic">
                       You can opt out of targeted advertising. See Section 8 for details.
                     </p>
                   </div>
                 </div>
               </Card>
 
-              <Card className="bg-pink-50 border-pink-200 p-4 mt-4">
+              <Card className="bg-premium-muted border-protocall-premium-light p-4 mt-4">
                 <div className="flex items-start gap-3">
-                  <FileText className="w-6 h-6 text-pink-600 flex-shrink-0 mt-1" />
+                  <FileText className="w-6 h-6 text-protocall-premium-text flex-shrink-0 mt-1" />
                   <div>
-                    <h4 className="font-bold text-lg text-pink-900 mb-2">3.5 Social Media Cookies</h4>
-                    <p className="text-sm text-pink-800 mb-2">
+                    <h4 className="font-bold text-lg text-protocall-premium-text mb-2">3.5 Social Media Cookies</h4>
+                    <p className="text-sm text-protocall-premium-text mb-2">
                       Allow you to share content on social networks and see social content on our Platform.
                     </p>
-                    <ul className="list-disc pl-6 space-y-1 text-sm text-pink-800">
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-protocall-premium-text">
                       <li>Social media sharing buttons</li>
                       <li>Login with social media accounts</li>
                       <li>Embedded social media content</li>
                       <li>Social media analytics</li>
                     </ul>
-                    <p className="text-xs text-pink-700 mt-2 italic">
+                    <p className="text-xs text-protocall-premium-text mt-2 italic">
                       These cookies are controlled by third-party social media platforms.
                     </p>
                   </div>
@@ -242,11 +242,11 @@ export default function Cookies() {
 
           {/* Section 4 */}
           <section id="first-vs-third" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               4. First-Party vs. Third-Party Cookies
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <h3 className="font-bold text-lg">4.1 First-Party Cookies</h3>
               <p>
                 First-party cookies are set directly by Protocall when you visit our Platform. We use these cookies to:
@@ -279,11 +279,11 @@ export default function Cookies() {
 
           {/* Section 5 */}
           <section id="why-we-use" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               5. Why We Use Cookies
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>We use cookies for the following purposes:</p>
 
               <h3 className="font-bold text-lg mt-4">5.1 Essential Platform Functionality</h3>
@@ -334,83 +334,83 @@ export default function Cookies() {
 
           {/* Section 6 */}
           <section id="specific-cookies" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               6. Specific Cookies Used on Protocall
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>Below is a detailed list of cookies we use on our Platform:</p>
 
               <div className="overflow-x-auto">
-                <table className="min-w-full border-collapse border border-slate-300 mt-4 text-sm">
+                <table className="min-w-full border-collapse border border-border mt-4 text-sm">
                   <thead>
-                    <tr className="bg-slate-100">
-                      <th className="border border-slate-300 px-4 py-2 text-left font-bold">Cookie Name</th>
-                      <th className="border border-slate-300 px-4 py-2 text-left font-bold">Purpose</th>
-                      <th className="border border-slate-300 px-4 py-2 text-left font-bold">Type</th>
-                      <th className="border border-slate-300 px-4 py-2 text-left font-bold">Duration</th>
+                    <tr className="bg-surface-2">
+                      <th className="border border-border px-4 py-2 text-left font-bold">Cookie Name</th>
+                      <th className="border border-border px-4 py-2 text-left font-bold">Purpose</th>
+                      <th className="border border-border px-4 py-2 text-left font-bold">Type</th>
+                      <th className="border border-border px-4 py-2 text-left font-bold">Duration</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td className="border border-slate-300 px-4 py-2 font-mono text-xs">session_id</td>
-                      <td className="border border-slate-300 px-4 py-2">Maintains your login session</td>
-                      <td className="border border-slate-300 px-4 py-2">Necessary</td>
-                      <td className="border border-slate-300 px-4 py-2">Session</td>
+                      <td className="border border-border px-4 py-2 font-mono text-xs">session_id</td>
+                      <td className="border border-border px-4 py-2">Maintains your login session</td>
+                      <td className="border border-border px-4 py-2">Necessary</td>
+                      <td className="border border-border px-4 py-2">Session</td>
                     </tr>
-                    <tr className="bg-slate-50">
-                      <td className="border border-slate-300 px-4 py-2 font-mono text-xs">auth_token</td>
-                      <td className="border border-slate-300 px-4 py-2">Authenticates your requests</td>
-                      <td className="border border-slate-300 px-4 py-2">Necessary</td>
-                      <td className="border border-slate-300 px-4 py-2">7 days</td>
-                    </tr>
-                    <tr>
-                      <td className="border border-slate-300 px-4 py-2 font-mono text-xs">user_preferences</td>
-                      <td className="border border-slate-300 px-4 py-2">Stores your display settings and preferences</td>
-                      <td className="border border-slate-300 px-4 py-2">Functional</td>
-                      <td className="border border-slate-300 px-4 py-2">1 year</td>
-                    </tr>
-                    <tr className="bg-slate-50">
-                      <td className="border border-slate-300 px-4 py-2 font-mono text-xs">theme</td>
-                      <td className="border border-slate-300 px-4 py-2">Remembers your theme choice (light/dark)</td>
-                      <td className="border border-slate-300 px-4 py-2">Functional</td>
-                      <td className="border border-slate-300 px-4 py-2">1 year</td>
+                    <tr className="bg-surface-2">
+                      <td className="border border-border px-4 py-2 font-mono text-xs">auth_token</td>
+                      <td className="border border-border px-4 py-2">Authenticates your requests</td>
+                      <td className="border border-border px-4 py-2">Necessary</td>
+                      <td className="border border-border px-4 py-2">7 days</td>
                     </tr>
                     <tr>
-                      <td className="border border-slate-300 px-4 py-2 font-mono text-xs">_ga</td>
-                      <td className="border border-slate-300 px-4 py-2">Google Analytics - distinguishes users</td>
-                      <td className="border border-slate-300 px-4 py-2">Analytics</td>
-                      <td className="border border-slate-300 px-4 py-2">2 years</td>
+                      <td className="border border-border px-4 py-2 font-mono text-xs">user_preferences</td>
+                      <td className="border border-border px-4 py-2">Stores your display settings and preferences</td>
+                      <td className="border border-border px-4 py-2">Functional</td>
+                      <td className="border border-border px-4 py-2">1 year</td>
                     </tr>
-                    <tr className="bg-slate-50">
-                      <td className="border border-slate-300 px-4 py-2 font-mono text-xs">_gid</td>
-                      <td className="border border-slate-300 px-4 py-2">Google Analytics - distinguishes users</td>
-                      <td className="border border-slate-300 px-4 py-2">Analytics</td>
-                      <td className="border border-slate-300 px-4 py-2">24 hours</td>
-                    </tr>
-                    <tr>
-                      <td className="border border-slate-300 px-4 py-2 font-mono text-xs">_gat</td>
-                      <td className="border border-slate-300 px-4 py-2">Google Analytics - throttles request rate</td>
-                      <td className="border border-slate-300 px-4 py-2">Analytics</td>
-                      <td className="border border-slate-300 px-4 py-2">1 minute</td>
-                    </tr>
-                    <tr className="bg-slate-50">
-                      <td className="border border-slate-300 px-4 py-2 font-mono text-xs">_fbp</td>
-                      <td className="border border-slate-300 px-4 py-2">Facebook Pixel - tracks user behavior</td>
-                      <td className="border border-slate-300 px-4 py-2">Advertising</td>
-                      <td className="border border-slate-300 px-4 py-2">3 months</td>
+                    <tr className="bg-surface-2">
+                      <td className="border border-border px-4 py-2 font-mono text-xs">theme</td>
+                      <td className="border border-border px-4 py-2">Remembers your theme choice (light/dark)</td>
+                      <td className="border border-border px-4 py-2">Functional</td>
+                      <td className="border border-border px-4 py-2">1 year</td>
                     </tr>
                     <tr>
-                      <td className="border border-slate-300 px-4 py-2 font-mono text-xs">__cf_bm</td>
-                      <td className="border border-slate-300 px-4 py-2">Cloudflare - bot management</td>
-                      <td className="border border-slate-300 px-4 py-2">Security</td>
-                      <td className="border border-slate-300 px-4 py-2">30 minutes</td>
+                      <td className="border border-border px-4 py-2 font-mono text-xs">_ga</td>
+                      <td className="border border-border px-4 py-2">Google Analytics - distinguishes users</td>
+                      <td className="border border-border px-4 py-2">Analytics</td>
+                      <td className="border border-border px-4 py-2">2 years</td>
                     </tr>
-                    <tr className="bg-slate-50">
-                      <td className="border border-slate-300 px-4 py-2 font-mono text-xs">cart_id</td>
-                      <td className="border border-slate-300 px-4 py-2">Stores event tickets and course selections</td>
-                      <td className="border border-slate-300 px-4 py-2">Necessary</td>
-                      <td className="border border-slate-300 px-4 py-2">Session</td>
+                    <tr className="bg-surface-2">
+                      <td className="border border-border px-4 py-2 font-mono text-xs">_gid</td>
+                      <td className="border border-border px-4 py-2">Google Analytics - distinguishes users</td>
+                      <td className="border border-border px-4 py-2">Analytics</td>
+                      <td className="border border-border px-4 py-2">24 hours</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-border px-4 py-2 font-mono text-xs">_gat</td>
+                      <td className="border border-border px-4 py-2">Google Analytics - throttles request rate</td>
+                      <td className="border border-border px-4 py-2">Analytics</td>
+                      <td className="border border-border px-4 py-2">1 minute</td>
+                    </tr>
+                    <tr className="bg-surface-2">
+                      <td className="border border-border px-4 py-2 font-mono text-xs">_fbp</td>
+                      <td className="border border-border px-4 py-2">Facebook Pixel - tracks user behavior</td>
+                      <td className="border border-border px-4 py-2">Advertising</td>
+                      <td className="border border-border px-4 py-2">3 months</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-border px-4 py-2 font-mono text-xs">__cf_bm</td>
+                      <td className="border border-border px-4 py-2">Cloudflare - bot management</td>
+                      <td className="border border-border px-4 py-2">Security</td>
+                      <td className="border border-border px-4 py-2">30 minutes</td>
+                    </tr>
+                    <tr className="bg-surface-2">
+                      <td className="border border-border px-4 py-2 font-mono text-xs">cart_id</td>
+                      <td className="border border-border px-4 py-2">Stores event tickets and course selections</td>
+                      <td className="border border-border px-4 py-2">Necessary</td>
+                      <td className="border border-border px-4 py-2">Session</td>
                     </tr>
                   </tbody>
                 </table>
@@ -425,11 +425,11 @@ export default function Cookies() {
 
           {/* Section 7 */}
           <section id="third-party-services" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               7. Third-Party Cookies and Services
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 We use the following third-party services that may set cookies on your device:
               </p>
@@ -439,8 +439,8 @@ export default function Cookies() {
                 <li>
                   <strong>Google Analytics:</strong> Tracks website traffic and user behavior
                   <br />
-                  <span className="text-sm text-slate-600">
-                    Privacy Policy: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://policies.google.com/privacy</a>
+                  <span className="text-sm text-subtle">
+                    Privacy Policy: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">https://policies.google.com/privacy</a>
                   </span>
                 </li>
               </ul>
@@ -450,15 +450,15 @@ export default function Cookies() {
                 <li>
                   <strong>Google Ads:</strong> Delivers targeted advertisements
                   <br />
-                  <span className="text-sm text-slate-600">
-                    Opt-out: <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://adssettings.google.com</a>
+                  <span className="text-sm text-subtle">
+                    Opt-out: <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">https://adssettings.google.com</a>
                   </span>
                 </li>
                 <li>
                   <strong>Facebook Pixel:</strong> Tracks conversions and delivers targeted ads
                   <br />
-                  <span className="text-sm text-slate-600">
-                    Privacy Policy: <a href="https://www.facebook.com/privacy/explanation" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://www.facebook.com/privacy/explanation</a>
+                  <span className="text-sm text-subtle">
+                    Privacy Policy: <a href="https://www.facebook.com/privacy/explanation" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">https://www.facebook.com/privacy/explanation</a>
                   </span>
                 </li>
               </ul>
@@ -468,15 +468,15 @@ export default function Cookies() {
                 <li>
                   <strong>Razorpay:</strong> Secure payment processing for subscriptions and purchases
                   <br />
-                  <span className="text-sm text-slate-600">
-                    Privacy Policy: <a href="https://razorpay.com/privacy/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://razorpay.com/privacy/</a>
+                  <span className="text-sm text-subtle">
+                    Privacy Policy: <a href="https://razorpay.com/privacy/" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">https://razorpay.com/privacy/</a>
                   </span>
                 </li>
                 <li>
                   <strong>Stripe:</strong> Alternative payment gateway
                   <br />
-                  <span className="text-sm text-slate-600">
-                    Privacy Policy: <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://stripe.com/privacy</a>
+                  <span className="text-sm text-subtle">
+                    Privacy Policy: <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">https://stripe.com/privacy</a>
                   </span>
                 </li>
               </ul>
@@ -486,8 +486,8 @@ export default function Cookies() {
                 <li>
                   <strong>Cloudflare:</strong> Content delivery network and DDoS protection
                   <br />
-                  <span className="text-sm text-slate-600">
-                    Privacy Policy: <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://www.cloudflare.com/privacypolicy/</a>
+                  <span className="text-sm text-subtle">
+                    Privacy Policy: <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">https://www.cloudflare.com/privacypolicy/</a>
                   </span>
                 </li>
               </ul>
@@ -509,11 +509,11 @@ export default function Cookies() {
 
           {/* Section 8 */}
           <section id="manage-cookies" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               8. How to Manage Cookies
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 You have the right to decide whether to accept or reject cookies. You can manage your cookie 
                 preferences through your browser settings or our cookie consent tool.
@@ -523,42 +523,42 @@ export default function Cookies() {
               <p>Most web browsers allow you to control cookies through their settings. Here's how:</p>
               
               <div className="space-y-3 mt-4">
-                <Card className="p-4 bg-slate-50">
+                <Card className="p-4 bg-surface-2">
                   <h4 className="font-bold mb-2">Google Chrome</h4>
                   <p className="text-sm">
                     Settings → Privacy and security → Cookies and other site data
                   </p>
-                  <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
+                  <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline text-sm">
                     Learn more →
                   </a>
                 </Card>
 
-                <Card className="p-4 bg-slate-50">
+                <Card className="p-4 bg-surface-2">
                   <h4 className="font-bold mb-2">Mozilla Firefox</h4>
                   <p className="text-sm">
                     Settings → Privacy & Security → Cookies and Site Data
                   </p>
-                  <a href="https://support.mozilla.org/en-US/kb/enhanced-tracking-protection-firefox-desktop" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
+                  <a href="https://support.mozilla.org/en-US/kb/enhanced-tracking-protection-firefox-desktop" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline text-sm">
                     Learn more →
                   </a>
                 </Card>
 
-                <Card className="p-4 bg-slate-50">
+                <Card className="p-4 bg-surface-2">
                   <h4 className="font-bold mb-2">Safari</h4>
                   <p className="text-sm">
                     Preferences → Privacy → Cookies and website data
                   </p>
-                  <a href="https://support.apple.com/guide/safari/manage-cookies-sfri11471/mac" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
+                  <a href="https://support.apple.com/guide/safari/manage-cookies-sfri11471/mac" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline text-sm">
                     Learn more →
                   </a>
                 </Card>
 
-                <Card className="p-4 bg-slate-50">
+                <Card className="p-4 bg-surface-2">
                   <h4 className="font-bold mb-2">Microsoft Edge</h4>
                   <p className="text-sm">
                     Settings → Privacy, search, and services → Cookies and site permissions
                   </p>
-                  <a href="https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
+                  <a href="https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline text-sm">
                     Learn more →
                   </a>
                 </Card>
@@ -575,19 +575,19 @@ export default function Cookies() {
               <ul className="list-disc pl-6 space-y-2">
                 <li>
                   <strong>Network Advertising Initiative (NAI):</strong>{' '}
-                  <a href="https://optout.networkadvertising.org/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                  <a href="https://optout.networkadvertising.org/" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">
                     https://optout.networkadvertising.org/
                   </a>
                 </li>
                 <li>
                   <strong>Digital Advertising Alliance (DAA):</strong>{' '}
-                  <a href="https://optout.aboutads.info/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                  <a href="https://optout.aboutads.info/" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">
                     https://optout.aboutads.info/
                   </a>
                 </li>
                 <li>
                   <strong>European Interactive Digital Advertising Alliance (EDAA):</strong>{' '}
-                  <a href="https://www.youronlinechoices.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                  <a href="https://www.youronlinechoices.com/" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">
                     https://www.youronlinechoices.com/
                   </a>
                 </li>
@@ -598,7 +598,7 @@ export default function Cookies() {
                 You can prevent Google Analytics from tracking your activity by installing the 
                 Google Analytics Opt-out Browser Add-on:
               </p>
-              <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">
                 https://tools.google.com/dlpage/gaoptout
               </a>
             </div>
@@ -606,13 +606,13 @@ export default function Cookies() {
 
           {/* Section 9 */}
           <section id="disable-cookies" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               9. What Happens If You Disable Cookies?
             </h2>
-            <div className="space-y-4 text-slate-700">
-              <Card className="bg-orange-50 border-orange-200 p-4">
-                <p className="text-sm text-orange-800">
+            <div className="space-y-4 text-subtle">
+              <Card className="bg-hold-muted border-hold/30 p-4">
+                <p className="text-sm text-hold-muted-foreground">
                   <strong>Warning:</strong> Disabling cookies may significantly affect your ability to use the Platform.
                 </p>
               </Card>
@@ -657,11 +657,11 @@ export default function Cookies() {
 
           {/* Section 10 */}
           <section id="tracking-tech" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               10. Other Tracking Technologies
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 In addition to cookies, we may use other tracking technologies:
               </p>
@@ -722,11 +722,11 @@ export default function Cookies() {
 
           {/* Section 11 */}
           <section id="updates" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               11. Updates to This Policy
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 We may update this Cookies Policy from time to time to reflect changes in our practices, 
                 technology, or legal requirements.
@@ -756,16 +756,16 @@ export default function Cookies() {
 
           {/* Section 12 */}
           <section id="contact" className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               12. Contact Us
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>
                 If you have questions or concerns about our use of cookies, please contact us:
               </p>
 
-              <Card className="bg-blue-50 p-6 mt-4">
+              <Card className="bg-premium-muted p-6 mt-4">
                 <h4 className="font-bold mb-4 text-lg">Cookies & Privacy Inquiries</h4>
                 
                 <div className="space-y-3 text-sm">
@@ -798,25 +798,25 @@ export default function Cookies() {
 
           {/* Additional Resources */}
           <section className="mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-slate-900 flex items-center gap-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></div>
+            <h2 className="text-2xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <div className="w-1 h-8 bg-gradient-to-b from-protocall-deep to-protocall-blue rounded-full"></div>
               Additional Resources
             </h2>
-            <div className="space-y-4 text-slate-700">
+            <div className="space-y-4 text-subtle">
               <p>For more information about cookies and online privacy:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>
-                  <a href="https://www.allaboutcookies.org/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                  <a href="https://www.allaboutcookies.org/" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">
                     All About Cookies
                   </a> - Comprehensive information about cookies
                 </li>
                 <li>
-                  <a href="https://www.youronlinechoices.eu/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                  <a href="https://www.youronlinechoices.eu/" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">
                     Your Online Choices
                   </a> - Control behavioral advertising
                 </li>
                 <li>
-                  <a href="https://ico.org.uk/for-the-public/online/cookies/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                  <a href="https://ico.org.uk/for-the-public/online/cookies/" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">
                     ICO Cookies Guidance
                   </a> - UK Information Commissioner's Office guidance
                 </li>
@@ -825,7 +825,7 @@ export default function Cookies() {
           </section>
 
           {/* Acknowledgment */}
-          <Card className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 mt-8">
+          <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white p-6 mt-8">
             <div className="flex items-start gap-4">
               <Cookie className="w-8 h-8 flex-shrink-0" />
               <div>
@@ -835,7 +835,7 @@ export default function Cookies() {
                   at any time through your browser settings. We're committed to transparency about how we use cookies 
                   to enhance your experience on Protocall.
                 </p>
-                <p className="text-sm text-blue-100">
+                <p className="text-sm text-protocall-blue">
                   BY USING PROTOCALL, YOU ACKNOWLEDGE THAT YOU HAVE READ AND UNDERSTOOD THIS COOKIES POLICY AND 
                   CONSENT TO THE USE OF COOKIES AS DESCRIBED HEREIN.
                 </p>
@@ -848,23 +848,23 @@ export default function Cookies() {
         <div className="grid md:grid-cols-3 gap-4 mt-8">
           <Link to={createPageUrl('Privacy')}>
             <Card className="p-6 hover:shadow-lg transition-all cursor-pointer h-full">
-              <Shield className="w-8 h-8 text-green-600 mb-3" />
+              <Shield className="w-8 h-8 text-buy-muted-foreground mb-3" />
               <h3 className="font-bold mb-2">Privacy Policy</h3>
-              <p className="text-sm text-slate-600">Learn how we protect your data</p>
+              <p className="text-sm text-subtle">Learn how we protect your data</p>
             </Card>
           </Link>
           <Link to={createPageUrl('Terms')}>
             <Card className="p-6 hover:shadow-lg transition-all cursor-pointer h-full">
-              <FileText className="w-8 h-8 text-blue-600 mb-3" />
+              <FileText className="w-8 h-8 text-protocall-blue mb-3" />
               <h3 className="font-bold mb-2">Terms of Service</h3>
-              <p className="text-sm text-slate-600">Review our terms and conditions</p>
+              <p className="text-sm text-subtle">Review our terms and conditions</p>
             </Card>
           </Link>
           <Link to={createPageUrl('Feedback')}>
             <Card className="p-6 hover:shadow-lg transition-all cursor-pointer h-full">
-              <Settings className="w-8 h-8 text-purple-600 mb-3" />
+              <Settings className="w-8 h-8 text-protocall-premium-text mb-3" />
               <h3 className="font-bold mb-2">Contact Support</h3>
-              <p className="text-sm text-slate-600">Get help with privacy concerns</p>
+              <p className="text-sm text-subtle">Get help with privacy concerns</p>
             </Card>
           </Link>
         </div>

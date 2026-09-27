@@ -96,20 +96,20 @@ export default function AdvisorPledgeOverview({ user, advisorProfile, accessRequ
 
   const getStatusColor = (status) => {
     const colors = {
-      'pending_approval': 'bg-yellow-100 text-yellow-800',
-      'approved': 'bg-blue-100 text-blue-800',
-      'active': 'bg-green-100 text-green-800',
-      'executing': 'bg-purple-100 text-purple-800',
-      'completed': 'bg-gray-100 text-gray-800',
-      'closed': 'bg-gray-100 text-gray-800'
+      'pending_approval': 'bg-hold-muted text-hold-muted-foreground',
+      'approved': 'bg-premium-muted text-protocall-blue',
+      'active': 'bg-buy-muted text-buy-muted-foreground',
+      'executing': 'bg-premium-muted text-protocall-premium-text',
+      'completed': 'bg-surface-2 text-foreground',
+      'closed': 'bg-surface-2 text-foreground'
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || 'bg-surface-2 text-foreground';
   };
 
   if (isLoading) {
     return (
       <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto"></div>
       </div>
     );
   }
@@ -118,8 +118,8 @@ export default function AdvisorPledgeOverview({ user, advisorProfile, accessRequ
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Pledge Management Overview</h2>
-          <p className="text-gray-600 mt-1">Your pledge trading performance at a glance</p>
+          <h2 className="text-2xl font-bold text-foreground">Pledge Management Overview</h2>
+          <p className="text-subtle mt-1">Your pledge trading performance at a glance</p>
         </div>
       </div>
 
@@ -129,27 +129,12 @@ export default function AdvisorPledgeOverview({ user, advisorProfile, accessRequ
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Sessions</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">{stats.totalSessions}</p>
-                <p className="text-xs text-green-600 mt-1">{stats.activeSessions} active</p>
+                <p className="text-sm text-subtle">Total Sessions</p>
+                <p className="text-3xl font-bold text-foreground mt-1">{stats.totalSessions}</p>
+                <p className="text-xs text-buy-muted-foreground mt-1">{stats.activeSessions} active</p>
               </div>
-              <div className="p-3 bg-blue-100 rounded-xl">
-                <Target className="w-8 h-8 text-blue-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Pledges</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">{stats.totalPledges}</p>
-                <p className="text-xs text-gray-500 mt-1">₹{stats.totalPledgeValue.toLocaleString()}</p>
-              </div>
-              <div className="p-3 bg-purple-100 rounded-xl">
-                <BarChart3 className="w-8 h-8 text-purple-600" />
+              <div className="p-3 bg-premium-muted rounded-xl">
+                <Target className="w-8 h-8 text-protocall-blue" />
               </div>
             </div>
           </CardContent>
@@ -159,12 +144,12 @@ export default function AdvisorPledgeOverview({ user, advisorProfile, accessRequ
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Executions</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">{stats.totalExecutions}</p>
-                <p className="text-xs text-gray-500 mt-1">₹{stats.totalExecutionValue.toLocaleString()}</p>
+                <p className="text-sm text-subtle">Total Pledges</p>
+                <p className="text-3xl font-bold text-foreground mt-1">{stats.totalPledges}</p>
+                <p className="text-xs text-muted-foreground mt-1">₹{stats.totalPledgeValue.toLocaleString()}</p>
               </div>
-              <div className="p-3 bg-green-100 rounded-xl">
-                <Activity className="w-8 h-8 text-green-600" />
+              <div className="p-3 bg-premium-muted rounded-xl">
+                <BarChart3 className="w-8 h-8 text-protocall-premium-text" />
               </div>
             </div>
           </CardContent>
@@ -174,12 +159,27 @@ export default function AdvisorPledgeOverview({ user, advisorProfile, accessRequ
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Commission</p>
-                <p className="text-3xl font-bold text-green-600 mt-1">₹{stats.totalCommission.toLocaleString()}</p>
-                <p className="text-xs text-yellow-600 mt-1">₹{stats.pendingPayouts.toLocaleString()} pending</p>
+                <p className="text-sm text-subtle">Total Executions</p>
+                <p className="text-3xl font-bold text-foreground mt-1">{stats.totalExecutions}</p>
+                <p className="text-xs text-muted-foreground mt-1">₹{stats.totalExecutionValue.toLocaleString()}</p>
               </div>
-              <div className="p-3 bg-emerald-100 rounded-xl">
-                <DollarSign className="w-8 h-8 text-emerald-600" />
+              <div className="p-3 bg-buy-muted rounded-xl">
+                <Activity className="w-8 h-8 text-buy-muted-foreground" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-subtle">Total Commission</p>
+                <p className="text-3xl font-bold text-buy-muted-foreground mt-1">₹{stats.totalCommission.toLocaleString()}</p>
+                <p className="text-xs text-hold-muted-foreground mt-1">₹{stats.pendingPayouts.toLocaleString()} pending</p>
+              </div>
+              <div className="p-3 bg-buy-muted rounded-xl">
+                <DollarSign className="w-8 h-8 text-buy-muted-foreground" />
               </div>
             </div>
           </CardContent>
@@ -192,35 +192,35 @@ export default function AdvisorPledgeOverview({ user, advisorProfile, accessRequ
           <div className="flex justify-between items-center">
             <CardTitle>Recent Sessions</CardTitle>
             <Link to={createPageUrl('AdvisorPledgeManagement') + '?section=sessions'}>
-              <button className="text-sm text-blue-600 hover:text-blue-700">View All →</button>
+              <button className="text-sm text-protocall-blue hover:text-protocall-blue">View All →</button>
             </Link>
           </div>
         </CardHeader>
         <CardContent>
           {recentSessions.length === 0 ? (
             <div className="text-center py-8">
-              <TrendingUp className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No sessions yet</p>
-              <p className="text-sm text-gray-500 mt-2">Create your first pledge session to get started</p>
+              <TrendingUp className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <p className="text-subtle">No sessions yet</p>
+              <p className="text-sm text-muted-foreground mt-2">Create your first pledge session to get started</p>
             </div>
           ) : (
             <div className="space-y-4">
               {recentSessions.map((session) => (
-                <div key={session.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div key={session.id} className="flex items-center justify-between p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
-                      <p className="font-semibold text-gray-900">{session.stock_symbol}</p>
+                      <p className="font-semibold text-foreground">{session.stock_symbol}</p>
                       <Badge className={getStatusColor(session.status)}>
                         {session.status.replace('_', ' ').toUpperCase()}
                       </Badge>
                     </div>
-                    <p className="text-sm text-gray-600">{session.stock_name}</p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-sm text-subtle">{session.stock_name}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
                       {session.total_pledges || 0} pledges • ₹{(session.total_pledge_value || 0).toLocaleString()} value
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       {new Date(session.created_date).toLocaleDateString()}
                     </p>
                   </div>
@@ -237,40 +237,40 @@ export default function AdvisorPledgeOverview({ user, advisorProfile, accessRequ
           <div className="flex justify-between items-center">
             <CardTitle>Recent Commission Earnings</CardTitle>
             <Link to={createPageUrl('AdvisorPledgeManagement') + '?section=commissions'}>
-              <button className="text-sm text-blue-600 hover:text-blue-700">View All →</button>
+              <button className="text-sm text-protocall-blue hover:text-protocall-blue">View All →</button>
             </Link>
           </div>
         </CardHeader>
         <CardContent>
           {recentCommissions.length === 0 ? (
             <div className="text-center py-8">
-              <DollarSign className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No commission records yet</p>
-              <p className="text-sm text-gray-500 mt-2">Execute pledge sessions to start earning commission</p>
+              <DollarSign className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-subtle">No commission records yet</p>
+              <p className="text-sm text-muted-foreground mt-2">Execute pledge sessions to start earning commission</p>
             </div>
           ) : (
             <div className="space-y-4">
               {recentCommissions.map((commission) => (
-                <div key={commission.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div key={commission.id} className="flex items-center justify-between p-4 bg-surface-2 rounded-lg">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
                       <p className="font-semibold">{commission.stock_symbol}</p>
-                      <Badge className={commission.payout_status === 'processed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
+                      <Badge className={commission.payout_status === 'processed' ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-hold-muted text-hold-muted-foreground'}>
                         {commission.payout_status === 'processed' ? <CheckCircle className="w-3 h-3 inline mr-1" /> : <Clock className="w-3 h-3 inline mr-1" />}
                         {commission.payout_status.toUpperCase()}
                       </Badge>
                     </div>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-subtle">
                       {commission.commission_type === 'convenience_fee' && 'Convenience Fee'}
                       {commission.commission_type === 'trading_profit' && 'Trading Profit'}
                       {commission.commission_type === 'both' && 'Combined Commission'}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xl font-bold text-green-600">
+                    <p className="text-xl font-bold text-buy-muted-foreground">
                       +₹{commission.advisor_commission_amount.toLocaleString()}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       {new Date(commission.created_date).toLocaleDateString()}
                     </p>
                   </div>

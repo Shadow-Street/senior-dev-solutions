@@ -172,12 +172,12 @@ export default function FeedbackAndSupport({ user }) {
 
   const getStatusConfig = (status) => {
     const configs = {
-      new: { color: 'bg-blue-100 text-blue-800', icon: Clock, label: 'New' },
-      under_review: { color: 'bg-yellow-100 text-yellow-800', icon: Eye, label: 'Under Review' },
-      in_progress: { color: 'bg-yellow-100 text-yellow-800', icon: Eye, label: 'In Progress' },
-      implemented: { color: 'bg-green-100 text-green-800', icon: CheckCircle, label: 'Implemented' },
-      resolved: { color: 'bg-green-100 text-green-800', icon: CheckCircle, label: 'Resolved' },
-      rejected: { color: 'bg-red-100 text-red-800', icon: XCircle, label: 'Rejected' }
+      new: { color: 'bg-premium-muted text-protocall-blue', icon: Clock, label: 'New' },
+      under_review: { color: 'bg-hold-muted text-hold-muted-foreground', icon: Eye, label: 'Under Review' },
+      in_progress: { color: 'bg-hold-muted text-hold-muted-foreground', icon: Eye, label: 'In Progress' },
+      implemented: { color: 'bg-buy-muted text-buy-muted-foreground', icon: CheckCircle, label: 'Implemented' },
+      resolved: { color: 'bg-buy-muted text-buy-muted-foreground', icon: CheckCircle, label: 'Resolved' },
+      rejected: { color: 'bg-sell-muted text-sell-muted-foreground', icon: XCircle, label: 'Rejected' }
     };
     return configs[status] || configs.new;
   };
@@ -190,8 +190,8 @@ export default function FeedbackAndSupport({ user }) {
             <Icon className="w-4 h-4 text-white" />
           </div>
           <div>
-            <p className="text-xs text-slate-500">{title}</p>
-            <p className="text-lg font-bold text-slate-800">{value}</p>
+            <p className="text-xs text-muted-foreground">{title}</p>
+            <p className="text-lg font-bold text-foreground">{value}</p>
           </div>
         </div>
       </CardContent>
@@ -201,7 +201,7 @@ export default function FeedbackAndSupport({ user }) {
   const renderTable = (data, type) => (
     <div className="overflow-x-auto">
       <table className="w-full text-sm text-left">
-        <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+        <thead className="text-xs text-subtle uppercase bg-surface-2">
           <tr>
             <th scope="col" className="px-6 py-3">Contact Info</th>
             <th scope="col" className="px-6 py-3">Content Preview</th>
@@ -218,15 +218,15 @@ export default function FeedbackAndSupport({ user }) {
             const content = type === 'feedback' ? item.feedback_text : item.message;
 
             return (
-              <tr key={item.id} className="bg-white border-b hover:bg-slate-50">
+              <tr key={item.id} className="bg-white border-b hover:bg-surface-2">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-semibold">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center text-white text-sm font-semibold">
                       {displayName?.charAt(0)?.toUpperCase() || 'U'}
                     </div>
                     <div>
                       <div className="font-semibold">{displayName}</div>
-                      <div className="text-xs text-slate-500">{item.email}</div>
+                      <div className="text-xs text-muted-foreground">{item.email}</div>
                       {type === 'feedback' && item.user_role && (
                         <Badge variant="outline" className="text-xs mt-1">
                           {item.user_role}
@@ -249,7 +249,7 @@ export default function FeedbackAndSupport({ user }) {
                     {statusConfig.label}
                   </Badge>
                 </td>
-                <td className="px-6 py-4 text-slate-500">
+                <td className="px-6 py-4 text-muted-foreground">
                   <div>{new Date(item.created_date).toLocaleDateString()}</div>
                   <div className="text-xs">{new Date(item.created_date).toLocaleTimeString()}</div>
                 </td>
@@ -265,10 +265,10 @@ export default function FeedbackAndSupport({ user }) {
       </table>
       {data.length === 0 && !isLoading && (
         <div className="text-center py-8">
-          <div className="text-slate-400 mb-2">
+          <div className="text-muted-foreground mb-2">
             {type === 'feedback' ? <MessageSquare className="w-12 h-12 mx-auto" /> : <HelpCircle className="w-12 h-12 mx-auto" />}
           </div>
-          <p className="text-slate-500">No {type} items found.</p>
+          <p className="text-muted-foreground">No {type} items found.</p>
         </div>
       )}
     </div>
@@ -279,18 +279,18 @@ export default function FeedbackAndSupport({ user }) {
   }
 
   return (
-    <div className="p-6 bg-slate-50 min-h-full space-y-6">
+    <div className="p-6 bg-surface-2 min-h-full space-y-6">
       {/* Header with Search and Filters */}
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <HelpCircle className="w-5 h-5 text-indigo-600" />
+            <HelpCircle className="w-5 h-5 text-protocall-blue" />
             Support & Feedback Management
           </CardTitle>
 
           <div className="flex flex-col md:flex-row gap-4 mt-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Search by name, email, or content..."
                 value={searchTerm}
@@ -321,19 +321,19 @@ export default function FeedbackAndSupport({ user }) {
         <TabsList className="grid grid-cols-3 w-full max-w-2xl bg-transparent p-1 rounded-xl gap-2">
           <TabsTrigger 
             value="feedback" 
-            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md"
+            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
           >
             <MessageSquare className="w-4 h-4" /> User Feedback ({stats.feedbackStats.total})
           </TabsTrigger>
           <TabsTrigger 
             value="inquiries" 
-            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md"
+            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
           >
             <HelpCircle className="w-4 h-4" /> Support Inquiries ({stats.inquiryStats.total})
           </TabsTrigger>
           <TabsTrigger 
             value="reviews" 
-            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md"
+            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
           >
             <Eye className="w-4 h-4" /> Reviews
           </TabsTrigger>
@@ -342,11 +342,11 @@ export default function FeedbackAndSupport({ user }) {
         <TabsContent value="feedback" className="mt-4">
           {/* Feedback Stats */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <StatCard title="Total Feedback" value={stats.feedbackStats.total} icon={MessageSquare} color="bg-blue-500" />
-            <StatCard title="New" value={stats.feedbackStats.new} icon={Clock} color="bg-blue-500" />
-            <StatCard title="Under Review" value={stats.feedbackStats.underReview} icon={Eye} color="bg-yellow-500" />
-            <StatCard title="Implemented" value={stats.feedbackStats.implemented} icon={CheckCircle} color="bg-green-500" />
-            <StatCard title="Rejected" value={stats.feedbackStats.rejected} icon={XCircle} color="bg-red-500" />
+            <StatCard title="Total Feedback" value={stats.feedbackStats.total} icon={MessageSquare} color="bg-protocall-blue" />
+            <StatCard title="New" value={stats.feedbackStats.new} icon={Clock} color="bg-protocall-blue" />
+            <StatCard title="Under Review" value={stats.feedbackStats.underReview} icon={Eye} color="bg-hold" />
+            <StatCard title="Implemented" value={stats.feedbackStats.implemented} icon={CheckCircle} color="bg-buy" />
+            <StatCard title="Rejected" value={stats.feedbackStats.rejected} icon={XCircle} color="bg-sell" />
           </div>
 
           <Card className="shadow-lg border-0 bg-white mt-4">
@@ -362,10 +362,10 @@ export default function FeedbackAndSupport({ user }) {
         <TabsContent value="inquiries" className="mt-4">
           {/* Inquiry Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard title="Total Inquiries" value={stats.inquiryStats.total} icon={HelpCircle} color="bg-purple-500" />
-            <StatCard title="New" value={stats.inquiryStats.new} icon={Clock} color="bg-blue-500" />
-            <StatCard title="In Progress" value={stats.inquiryStats.inProgress} icon={Eye} color="bg-yellow-500" />
-            <StatCard title="Resolved" value={stats.inquiryStats.resolved} icon={CheckCircle} color="bg-green-500" />
+            <StatCard title="Total Inquiries" value={stats.inquiryStats.total} icon={HelpCircle} color="bg-primary" />
+            <StatCard title="New" value={stats.inquiryStats.new} icon={Clock} color="bg-protocall-blue" />
+            <StatCard title="In Progress" value={stats.inquiryStats.inProgress} icon={Eye} color="bg-hold" />
+            <StatCard title="Resolved" value={stats.inquiryStats.resolved} icon={CheckCircle} color="bg-buy" />
           </div>
 
           <Card className="shadow-lg border-0 bg-white mt-4">
@@ -398,11 +398,11 @@ export default function FeedbackAndSupport({ user }) {
           {selectedItem && (
             <div className="space-y-4 max-h-[60vh] overflow-y-auto p-1">
               {/* Content Display */}
-              <div className="bg-slate-50 p-4 rounded-lg">
+              <div className="bg-surface-2 p-4 rounded-lg">
                 <h4 className="font-semibold mb-2">
                   {selectedItem.type === 'feedback' ? 'Feedback Content:' : 'Message Content:'}
                 </h4>
-                <p className="text-sm text-slate-700 whitespace-pre-wrap">
+                <p className="text-sm text-subtle whitespace-pre-wrap">
                   {selectedItem.type === 'feedback' ? selectedItem.feedback_text : selectedItem.message}
                 </p>
                 {selectedItem.type === 'inquiry' && selectedItem.subject && (
@@ -413,7 +413,7 @@ export default function FeedbackAndSupport({ user }) {
               </div>
 
               {/* User Info */}
-              <div className="bg-blue-50 p-4 rounded-lg">
+              <div className="bg-premium-muted p-4 rounded-lg">
                 <h4 className="font-semibold mb-2">Contact Information:</h4>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div><strong>Name:</strong> {selectedItem.type === 'feedback' ? selectedItem.name : selectedItem.full_name}</div>
@@ -452,7 +452,7 @@ export default function FeedbackAndSupport({ user }) {
                     <>
                       <Button
                         variant="ghost"
-                        className="text-yellow-600 hover:text-yellow-800"
+                        className="text-hold-muted-foreground hover:text-hold-muted-foreground"
                         onClick={() => handleStatusUpdate('under_review')}
                       >
                         <Eye className="w-4 h-4 mr-2" />
@@ -460,7 +460,7 @@ export default function FeedbackAndSupport({ user }) {
                       </Button>
                       <Button
                         variant="ghost"
-                        className="text-green-600 hover:text-green-800"
+                        className="text-buy-muted-foreground hover:text-buy-muted-foreground"
                         onClick={() => handleStatusUpdate('implemented')}
                       >
                         <CheckCircle className="w-4 h-4 mr-2" />
@@ -468,7 +468,7 @@ export default function FeedbackAndSupport({ user }) {
                       </Button>
                       <Button
                         variant="ghost"
-                        className="text-red-600 hover:text-red-800"
+                        className="text-sell-muted-foreground hover:text-sell-muted-foreground"
                         onClick={() => handleStatusUpdate('rejected')}
                       >
                         <XCircle className="w-4 h-4 mr-2" />
@@ -479,14 +479,14 @@ export default function FeedbackAndSupport({ user }) {
                     <>
                       <Button
                         variant="ghost"
-                        className="text-yellow-600 hover:text-yellow-800"
+                        className="text-hold-muted-foreground hover:text-hold-muted-foreground"
                         onClick={() => handleStatusUpdate('in_progress')}
                       >
                         <Eye className="w-4 h-4 mr-2" />
                         In Progress
                       </Button>
                       <Button
-                        className="bg-green-600 hover:bg-green-700"
+                        className="bg-buy hover:bg-buy"
                         onClick={() => handleStatusUpdate('resolved')}
                       >
                         <CheckCircle className="w-4 h-4 mr-2" />

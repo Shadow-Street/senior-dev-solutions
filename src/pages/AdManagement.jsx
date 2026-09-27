@@ -40,13 +40,13 @@ import CreateCampaignForm from '../components/vendor/CreateCampaignForm';
 import { UploadFile } from '@/api/integrations';
 
 const statusConfig = {
-  pending: { label: 'Pending', icon: Clock, color: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
-  active: { label: 'Active', icon: PlayCircle, color: 'bg-green-100 text-green-800 border-green-200' },
-  rejected: { label: 'Rejected', icon: XCircle, color: 'bg-red-100 text-red-800 border-red-200' },
-  paused: { label: 'Paused', icon: PauseCircle, color: 'bg-gray-100 text-gray-800 border-gray-200' },
-  expired: { label: 'Expired', icon: AlertTriangle, color: 'bg-blue-100 text-blue-800 border-blue-200' },
-  completed: { label: 'Completed', icon: CheckCircle, color: 'bg-purple-100 text-purple-800 border-purple-200' },
-  budget_exhausted: { label: 'Budget Exhausted', icon: AlertTriangle, color: 'bg-orange-100 text-orange-800 border-orange-200' }
+  pending: { label: 'Pending', icon: Clock, color: 'bg-hold-muted text-hold-muted-foreground border-hold/30' },
+  active: { label: 'Active', icon: PlayCircle, color: 'bg-buy-muted text-buy-muted-foreground border-buy/30' },
+  rejected: { label: 'Rejected', icon: XCircle, color: 'bg-sell-muted text-sell-muted-foreground border-sell/30' },
+  paused: { label: 'Paused', icon: PauseCircle, color: 'bg-surface-2 text-foreground border-border' },
+  expired: { label: 'Expired', icon: AlertTriangle, color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light' },
+  completed: { label: 'Completed', icon: CheckCircle, color: 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light' },
+  budget_exhausted: { label: 'Budget Exhausted', icon: AlertTriangle, color: 'bg-hold-muted text-hold-muted-foreground border-hold/30' }
 };
 
 const SECTOR_OPTIONS = [
@@ -267,7 +267,7 @@ function EditCampaignModal({ campaign, isOpen, onClose, onSave }) {
       <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Edit className="w-5 h-5 text-blue-600" />
+            <Edit className="w-5 h-5 text-protocall-blue" />
             Edit Campaign: {campaign.title}
           </DialogTitle>
           <DialogDescription>
@@ -331,9 +331,9 @@ function EditCampaignModal({ campaign, isOpen, onClose, onSave }) {
                   disabled={isUploading}
                 />
                 <Label htmlFor="creative-upload" className="cursor-pointer">
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 transition-colors">
-                    <Upload className="w-6 h-6 mx-auto mb-2 text-gray-400" />
-                    <p className="text-sm text-gray-600">
+                  <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-protocall-blue transition-colors">
+                    <Upload className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
+                    <p className="text-sm text-subtle">
                       {isUploading ? 'Uploading...' : 'Click to upload new image'}
                     </p>
                   </div>
@@ -517,7 +517,7 @@ function EditCampaignModal({ campaign, isOpen, onClose, onSave }) {
                       onCheckedChange={(checked) => handlePlacementChange(key, checked)}
                     />
                     <Label htmlFor={`placement-${key}`} className="text-sm">
-                      {label} {premium && <span className="text-amber-600">⭐</span>}
+                      {label} {premium && <span className="text-hold-muted-foreground">⭐</span>}
                     </Label>
                   </div>
                 ))}
@@ -527,23 +527,23 @@ function EditCampaignModal({ campaign, isOpen, onClose, onSave }) {
 
           {/* Pricing Summary */}
           {['weekly', 'monthly'].includes(formData.billing_model) && (
-            <Card className="bg-blue-50 border-blue-200">
+            <Card className="bg-premium-muted border-protocall-premium-light">
               <CardContent className="p-4">
-                <h4 className="font-semibold text-blue-800 mb-2">Pricing Summary</h4>
+                <h4 className="font-semibold text-protocall-blue mb-2">Pricing Summary</h4>
                 <div className="text-sm space-y-1">
                   <div className="flex justify-between">
                     <span>Base Fee:</span>
                     <span>₹{pricing.baseFee.toFixed(2)}</span>
                   </div>
                   {pricing.hasPremiumPlacements && (
-                    <div className="flex justify-between text-amber-600">
+                    <div className="flex justify-between text-hold-muted-foreground">
                       <span>Placement Surcharge (5%):</span>
                       <span>+₹{pricing.surcharge.toFixed(2)}</span>
                     </div>
                   )}
                   <div className="flex justify-between font-bold border-t pt-1">
                     <span>Total:</span>
-                    <span className="text-green-600">₹{pricing.totalFee.toFixed(2)}</span>
+                    <span className="text-buy-muted-foreground">₹{pricing.totalFee.toFixed(2)}</span>
                   </div>
                 </div>
               </CardContent>
@@ -644,7 +644,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 9999 }}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Megaphone className="w-5 h-5 text-blue-600" />
+            <Megaphone className="w-5 h-5 text-protocall-blue" />
             Campaign Review: {campaign.title}
           </DialogTitle>
           <DialogDescription>
@@ -668,7 +668,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
                   />
                 </div>
               ) : (
-                <div className="h-32 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500">
+                <div className="h-32 bg-surface-2 rounded-lg flex items-center justify-center text-muted-foreground">
                   No creative uploaded
                 </div>
               )}
@@ -685,7 +685,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
                 <p><strong>Vendor:</strong> {campaign.vendor?.company_name || 'Unknown'}</p>
                 <p><strong>Description:</strong> {campaign.description || 'No description'}</p>
                 <p><strong>CTA Link:</strong> 
-                  <a href={campaign.cta_link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline ml-1 break-all">
+                  <a href={campaign.cta_link} target="_blank" rel="noopener noreferrer" className="text-protocall-premium-light hover:underline ml-1 break-all">
                     {campaign.cta_link}
                   </a>
                 </p>
@@ -712,13 +712,13 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
                 )}
                 
                 {['weekly', 'monthly'].includes(campaign.billing_model) && (
-                  <div className="p-3 bg-slate-50 rounded border">
+                  <div className="p-3 bg-surface-2 rounded border">
                     <div className="flex justify-between"><span>Base Fee:</span> <span>₹{billingInfo.baseFee.toFixed(2)}</span></div>
                     {billingInfo.hasPremiumPlacements && (
-                      <div className="flex justify-between text-amber-600"><span>Surcharge (5%):</span> <span>+₹{billingInfo.surcharge.toFixed(2)}</span></div>
+                      <div className="flex justify-between text-hold-muted-foreground"><span>Surcharge (5%):</span> <span>+₹{billingInfo.surcharge.toFixed(2)}</span></div>
                     )}
                     <div className="flex justify-between font-bold border-t pt-2 mt-2">
-                      <span>Total:</span> <span className="text-green-600">₹{billingInfo.totalFee.toFixed(2)}</span>
+                      <span>Total:</span> <span className="text-buy-muted-foreground">₹{billingInfo.totalFee.toFixed(2)}</span>
                     </div>
                   </div>
                 )}
@@ -756,7 +756,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
               </CardHeader>
               <CardContent className="text-sm">
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-gray-500" />
+                  <Calendar className="w-4 h-4 text-muted-foreground" />
                   <span>
                     {campaign.start_date ? format(new Date(campaign.start_date), 'PPP') : 'Not set'} → {' '}
                     {campaign.end_date ? format(new Date(campaign.end_date), 'PPP') : 'Not set'}
@@ -768,13 +768,13 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
 
           {/* Edit History */}
           {campaign.is_edited && (
-            <Card className="bg-orange-50 border-orange-200">
+            <Card className="bg-hold-muted border-hold/30">
               <CardHeader>
-                <CardTitle className="text-base text-orange-800">Edited Campaign</CardTitle>
+                <CardTitle className="text-base text-hold-muted-foreground">Edited Campaign</CardTitle>
               </CardHeader>
               <CardContent className="text-sm">
                 <p><strong>Edit Reason:</strong> {campaign.edit_reason || 'No reason provided'}</p>
-                <p className="text-orange-600 font-medium">This campaign requires re-approval after editing.</p>
+                <p className="text-protocall-ink/75 font-medium">This campaign requires re-approval after editing.</p>
               </CardContent>
             </Card>
           )}
@@ -796,11 +796,11 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
 
           {/* Previous Rejection Reason */}
           {campaign.status === 'rejected' && campaign.rejection_reason && (
-            <Card className="bg-red-50 border-red-200">
+            <Card className="bg-sell-muted border-sell/30">
               <CardHeader>
-                <CardTitle className="text-base text-red-800">Rejection Reason</CardTitle>
+                <CardTitle className="text-base text-sell-muted-foreground">Rejection Reason</CardTitle>
               </CardHeader>
-              <CardContent className="text-sm text-red-700">
+              <CardContent className="text-sm text-sell-muted-foreground">
                 <p>{campaign.rejection_reason}</p>
               </CardContent>
             </Card>
@@ -824,7 +824,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
                 {isProcessing ? 'Processing...' : 'Reject'}
               </Button>
               <Button 
-                className="bg-green-600 hover:bg-green-700" 
+                className="bg-buy hover:bg-buy" 
                 onClick={() => handleAction('approve')}
                 disabled={isProcessing}
               >
@@ -847,7 +847,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
           
           {campaign.status === 'paused' && (
             <Button 
-              className="bg-green-600 hover:bg-green-700" 
+              className="bg-buy hover:bg-buy" 
               onClick={() => handleAction('resume')}
               disabled={isProcessing}
             >
@@ -1175,9 +1175,9 @@ Thank you for your business!
           <Icon className={`w-6 h-6 ${color.text}`} />
         </div>
         <div>
-          <p className="text-sm text-gray-500">{title}</p>
-          <p className="text-2xl font-bold text-gray-800">{value}</p>
-          {change && <p className="text-xs text-gray-400">{change}</p>}
+          <p className="text-sm text-muted-foreground">{title}</p>
+          <p className="text-2xl font-bold text-foreground">{value}</p>
+          {change && <p className="text-xs text-muted-foreground">{change}</p>}
         </div>
       </CardContent>
     </Card>
@@ -1185,9 +1185,9 @@ Thank you for your business!
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-900">
+      <div className="flex h-screen items-center justify-center bg-protocall-ink">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
           <p className="text-white">Loading Ad Management...</p>
         </div>
       </div>
@@ -1197,7 +1197,7 @@ Thank you for your business!
   return (
     <div className="space-y-6">
       {/* Header Card */}
-      <Card className="shadow-lg border-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+      <Card className="shadow-lg border-0 bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
         <CardHeader>
           <div className="flex justify-between items-start">
             <div>
@@ -1205,7 +1205,7 @@ Thank you for your business!
                 <Megaphone className="w-8 h-8" />
                 Ad Management & Monetization
               </CardTitle>
-              <CardDescription className="text-blue-100">
+              <CardDescription className="text-white/80">
                 Oversee vendor ad campaigns, track performance, and manage revenue.
               </CardDescription>
             </div>
@@ -1227,27 +1227,27 @@ Thank you for your business!
           title="Total Revenue" 
           value={`₹${(stats?.totalRevenue || 0).toLocaleString()}`} 
           icon={DollarSign} 
-          color={{bg: 'bg-green-100', text: 'text-green-600'}} 
+          color={{bg: 'bg-buy-muted', text: 'text-buy-muted-foreground'}} 
           change="All-time ad revenue" 
         />
         <StatCard 
           title="Active Campaigns" 
           value={stats?.activeCampaigns || 0} 
           icon={Activity} 
-          color={{bg: 'bg-blue-100', text: 'text-blue-600'}} 
+          color={{bg: 'bg-premium-muted', text: 'text-protocall-blue'}} 
           change={`${stats?.pendingCampaigns || 0} pending review`} 
         />
         <StatCard 
           title="Total Impressions" 
           value={(stats?.totalImpressions || 0).toLocaleString()} 
           icon={Eye} 
-          color={{bg: 'bg-purple-100', text: 'text-purple-600'}} 
+          color={{bg: 'bg-premium-muted', text: 'text-protocall-premium-text'}} 
         />
         <StatCard 
           title="Click-Through Rate" 
           value={`${(stats?.ctr || 0).toFixed(2)}%`} 
           icon={TrendingUp} 
-          color={{bg: 'bg-pink-100', text: 'text-pink-600'}} 
+          color={{bg: 'bg-premium-muted', text: 'text-protocall-premium-text'}} 
           change={`${(stats?.totalClicks || 0).toLocaleString()} total clicks`} 
         />
       </div>
@@ -1260,14 +1260,14 @@ Thank you for your business!
                 <div className="flex gap-2">
                     <Button
                       onClick={handleCreateCampaign}
-                      className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
+                      className="bg-buy-soft hover:from-buy hover:to-buy text-buy-foreground"
                     >
                       <PlusCircle className="w-4 h-4 mr-2" />
                       Create Campaign
                     </Button>
 
                     <div className="relative w-64">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
                       <Input 
                         placeholder="Search campaigns..." 
                         className="pl-9" 
@@ -1292,7 +1292,7 @@ Thank you for your business!
         <CardContent>
             <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                    <thead className="text-xs text-subtle uppercase bg-surface-2">
                         <tr>
                             <th className="px-6 py-3 text-left">Campaign & Vendor</th>
                             <th className="px-6 py-3 text-left">Billing Model</th>
@@ -1308,12 +1308,12 @@ Thank you for your business!
                         ) : filteredCampaigns.length === 0 ? (
                             <tr><td colSpan="6" className="text-center p-8">
                               <div className="flex flex-col items-center py-8">
-                                <Megaphone className="w-16 h-16 text-gray-300 mb-4" />
-                                <h3 className="text-lg font-semibold text-gray-600 mb-2">No Campaigns Found</h3>
-                                <p className="text-gray-500 mb-4">
+                                <Megaphone className="w-16 h-16 text-muted-foreground mb-4" />
+                                <h3 className="text-lg font-semibold text-subtle mb-2">No Campaigns Found</h3>
+                                <p className="text-muted-foreground mb-4">
                                   {statusFilter !== 'all' ? `No ${statusConfig[statusFilter]?.label?.toLowerCase()} campaigns found.` : 'No campaigns created yet.'}
                                 </p>
-                                <Button onClick={handleCreateCampaign} className="bg-blue-600 hover:bg-blue-700">
+                                <Button onClick={handleCreateCampaign} className="bg-protocall-blue hover:bg-protocall-blue">
                                   <PlusCircle className="w-4 h-4 mr-2" />
                                   Create First Campaign
                                 </Button>
@@ -1322,33 +1322,33 @@ Thank you for your business!
                         ) : filteredCampaigns.map((campaign) => {
                             const StatusIcon = statusConfig[campaign.status]?.icon || Clock;
                             return (
-                              <tr key={campaign.id} className="bg-white border-b hover:bg-gray-50">
+                              <tr key={campaign.id} className="bg-white border-b hover:bg-surface-2">
                                 <td className="px-6 py-4">
                                     <div className="font-semibold">{campaign.title}</div>
-                                    <div className="text-xs text-gray-500">{campaign.vendor?.company_name || 'Unknown Vendor'}</div>
+                                    <div className="text-xs text-muted-foreground">{campaign.vendor?.company_name || 'Unknown Vendor'}</div>
                                     {campaign.is_edited && (
-                                      <Badge variant="outline" className="text-xs mt-1 text-orange-600 border-orange-200">
+                                      <Badge variant="outline" className="text-xs mt-1 text-hold-muted-foreground border-hold/30">
                                         Edited - Needs Review
                                       </Badge>
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
                                   <div className="font-medium">{campaign.billing_model?.toUpperCase()}</div>
-                                  <div className="text-xs text-gray-500 font-mono">
+                                  <div className="text-xs text-muted-foreground font-mono">
                                     {campaign.billing_model === 'cpc' && `₹${campaign.cpc_rate}/click`}
                                     {campaign.billing_model === 'weekly' && `₹${campaign.weekly_fee}/week`}
                                     {campaign.billing_model === 'monthly' && `₹${campaign.monthly_fee}/month`}
                                   </div>
                                 </td>
                                 <td className="px-6 py-4">
-                                  <div className="flex items-center gap-1 text-xs text-gray-600">
+                                  <div className="flex items-center gap-1 text-xs text-subtle">
                                     <Calendar className="w-3 h-3" />
                                     {campaign.start_date && campaign.end_date ? (
                                       <>
                                         {format(new Date(campaign.start_date), 'MMM d')} → {format(new Date(campaign.end_date), 'MMM d')}
                                       </>
                                     ) : (
-                                      <span className="text-gray-400">Not scheduled</span>
+                                      <span className="text-muted-foreground">Not scheduled</span>
                                     )}
                                   </div>
                                 </td>
@@ -1407,7 +1407,7 @@ Thank you for your business!
                   formatter={(value) => [`₹${value.toLocaleString()}`, 'Revenue']}
                 />
                 <Legend />
-                <Line type="monotone" dataKey="revenue" stroke="#8b5cf6" name="Revenue (₹)" strokeWidth={2} />
+                <Line type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" name="Revenue (₹)" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
@@ -1425,7 +1425,7 @@ Thank you for your business!
         <CardContent>
             <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                    <thead className="text-xs text-subtle uppercase bg-surface-2">
                         <tr>
                             <th className="px-6 py-3 text-left">Invoice ID</th>
                             <th className="px-6 py-3 text-left">Campaign</th>
@@ -1438,16 +1438,16 @@ Thank you for your business!
                     </thead>
                     <tbody>
                         {billingRecords.length === 0 ? (
-                            <tr><td colSpan="7" className="text-center p-8 text-gray-500">No billing records found.</td></tr>
+                            <tr><td colSpan="7" className="text-center p-8 text-muted-foreground">No billing records found.</td></tr>
                         ) : billingRecords.map((record) => (
-                            <tr key={record.id} className="bg-white border-b hover:bg-gray-50">
+                            <tr key={record.id} className="bg-white border-b hover:bg-surface-2">
                                 <td className="px-6 py-4 font-mono text-xs">{record.invoice_number || record.id.substring(0, 8)}...</td>
                                 <td className="px-6 py-4 font-semibold">{record.campaign?.title || 'N/A'}</td>
-                                <td className="px-6 py-4 text-gray-600">{record.vendor?.company_name || 'N/A'}</td>
+                                <td className="px-6 py-4 text-subtle">{record.vendor?.company_name || 'N/A'}</td>
                                 <td className="px-6 py-4 font-bold">₹{(record.amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                                 <td className="px-6 py-4">{format(new Date(record.created_date), 'MMM d, yyyy')}</td>
                                 <td className="px-6 py-4">
-                                  <Badge variant="outline" className={`${record.payment_status === 'paid' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200'}`}>
+                                  <Badge variant="outline" className={`${record.payment_status === 'paid' ? 'bg-buy-muted text-buy-muted-foreground border-buy/30' : 'bg-hold-muted text-hold-muted-foreground border-hold/30'}`}>
                                     {record.payment_status}
                                   </Badge>
                                 </td>
@@ -1470,7 +1470,7 @@ Thank you for your business!
         <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Megaphone className="w-6 h-6 text-purple-600" />
+              <Megaphone className="w-6 h-6 text-protocall-premium-text" />
               Create Platform Ad Campaign
             </DialogTitle>
           </DialogHeader>
@@ -1482,8 +1482,8 @@ Thank you for your business!
               isAdmin={true}
             />
           ) : (
-            <div className="p-8 text-center text-gray-500">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <div className="p-8 text-center text-muted-foreground">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-protocall-blue mx-auto mb-4"></div>
               Loading admin vendor information...
             </div>
           )}

@@ -59,13 +59,13 @@ export default function AdvisorRecommendedPolls({ stockSymbol, user }) {
 
   const getWinningVote = (poll) => {
     const votes = [
-      { type: 'Buy', count: poll.buy_votes || 0, icon: <TrendingUp className="w-3 h-3 text-green-600" /> },
-      { type: 'Sell', count: poll.sell_votes || 0, icon: <TrendingDown className="w-3 h-3 text-red-600" /> },
-      { type: 'Hold', count: poll.hold_votes || 0, icon: <Minus className="w-3 h-3 text-yellow-600" /> },
+      { type: 'Buy', count: poll.buy_votes || 0, icon: <TrendingUp className="w-3 h-3 text-buy-muted-foreground" /> },
+      { type: 'Sell', count: poll.sell_votes || 0, icon: <TrendingDown className="w-3 h-3 text-sell-muted-foreground" /> },
+      { type: 'Hold', count: poll.hold_votes || 0, icon: <Minus className="w-3 h-3 text-hold-muted-foreground" /> },
     ];
     
     if (poll.total_votes === 0) {
-      return { type: 'No votes', icon: <BarChart3 className="w-3 h-3 text-slate-500" /> };
+      return { type: 'No votes', icon: <BarChart3 className="w-3 h-3 text-muted-foreground" /> };
     }
 
     return votes.reduce((a, b) => a.count > b.count ? a : b);
@@ -91,10 +91,10 @@ export default function AdvisorRecommendedPolls({ stockSymbol, user }) {
 
   return (
     <Card className="shadow-lg border-0 bg-white">
-      <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
+      <CardHeader className="border-b bg-surface-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-slate-900">
-            <BarChart3 className="w-5 h-5 text-blue-600" />
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <BarChart3 className="w-5 h-5 text-protocall-blue" />
             Community Polls
           </CardTitle>
           <Link to={createPageUrl("Polls")}>
@@ -106,10 +106,10 @@ export default function AdvisorRecommendedPolls({ stockSymbol, user }) {
       </CardHeader>
       <CardContent className="p-6 space-y-3">
         {polls.map((poll) => (
-          <Link to={createPageUrl(`Polls?poll_id=${poll.id}`)} key={poll.id} className="block p-3 rounded-lg hover:bg-slate-50 transition-colors">
+          <Link to={createPageUrl(`Polls?poll_id=${poll.id}`)} key={poll.id} className="block p-3 rounded-lg hover:bg-surface-2 transition-colors">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <p className="font-semibold text-sm text-slate-800">{poll.title}</p>
+                <p className="font-semibold text-sm text-foreground">{poll.title}</p>
                 <Badge variant="outline" className="text-xs font-semibold mt-1">{poll.stock_symbol}</Badge>
               </div>
               <div className="flex items-center gap-2 text-sm font-semibold">

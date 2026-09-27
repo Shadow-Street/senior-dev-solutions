@@ -126,34 +126,34 @@ export default function EventRefundManager({ organizerId }) {
     switch (status) {
       case 'pending':
         return (
-          <Badge className="bg-yellow-100 text-yellow-800">
+          <Badge className="bg-hold-muted text-hold-muted-foreground">
             <Clock className="w-3 h-3 mr-1" />
             Pending Your Review
           </Badge>
         );
       case 'approved':
         return (
-          <Badge className="bg-orange-100 text-orange-800">
+          <Badge className="bg-hold-muted text-hold-muted-foreground">
             <Clock className="w-3 h-3 mr-1" />
             Pending Admin Approval
           </Badge>
         );
       case 'processing':
         return (
-          <Badge className="bg-blue-100 text-blue-800">
+          <Badge className="bg-premium-muted text-protocall-blue">
             Processing
           </Badge>
         );
       case 'processed':
         return (
-          <Badge className="bg-green-100 text-green-800">
+          <Badge className="bg-buy-muted text-buy-muted-foreground">
             <CheckCircle className="w-3 h-3 mr-1" />
             Processed
           </Badge>
         );
       case 'rejected':
         return (
-          <Badge className="bg-red-100 text-red-800">
+          <Badge className="bg-sell-muted text-sell-muted-foreground">
             <XCircle className="w-3 h-3 mr-1" />
             Rejected
           </Badge>
@@ -166,7 +166,7 @@ export default function EventRefundManager({ organizerId }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -182,15 +182,15 @@ export default function EventRefundManager({ organizerId }) {
         {pendingRefunds.length > 0 ? (
           <div className="space-y-4">
             {pendingRefunds.map(refund => (
-              <Card key={refund.id} className="border-yellow-200 bg-yellow-50">
+              <Card key={refund.id} className="border-hold/30 bg-hold-muted">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h4 className="font-semibold text-gray-900">{refund.related_entity_name}</h4>
+                        <h4 className="font-semibold text-foreground">{refund.related_entity_name}</h4>
                         {getStatusBadge(refund.status)}
                       </div>
-                      <div className="space-y-1 text-sm text-gray-600">
+                      <div className="space-y-1 text-sm text-subtle">
                         <p><strong>User:</strong> {refund.user_name} ({refund.user_email})</p>
                         <p><strong>Amount:</strong> ₹{refund.refund_amount.toLocaleString()}</p>
                         <p><strong>Requested:</strong> {format(new Date(refund.created_date), 'PPP')}</p>
@@ -201,7 +201,7 @@ export default function EventRefundManager({ organizerId }) {
                       <Button
                         size="sm"
                         onClick={() => handleReview(refund, 'approve')}
-                        className="bg-green-600 hover:bg-green-700"
+                        className="bg-buy hover:bg-buy"
                       >
                         <CheckCircle className="w-4 h-4 mr-2" />
                         Approve
@@ -210,7 +210,7 @@ export default function EventRefundManager({ organizerId }) {
                         size="sm"
                         variant="outline"
                         onClick={() => handleReview(refund, 'reject')}
-                        className="border-red-300 text-red-700 hover:bg-red-50"
+                        className="border-sell/30 text-sell-muted-foreground hover:bg-sell-muted"
                       >
                         <XCircle className="w-4 h-4 mr-2" />
                         Reject
@@ -224,8 +224,8 @@ export default function EventRefundManager({ organizerId }) {
         ) : (
           <Card>
             <CardContent className="p-12 text-center">
-              <Clock className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">No pending refund requests</p>
+              <Clock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No pending refund requests</p>
             </CardContent>
           </Card>
         )}
@@ -242,15 +242,15 @@ export default function EventRefundManager({ organizerId }) {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h4 className="font-semibold text-gray-900">{refund.related_entity_name}</h4>
+                        <h4 className="font-semibold text-foreground">{refund.related_entity_name}</h4>
                         {getStatusBadge(refund.status)}
                       </div>
-                      <div className="space-y-1 text-sm text-gray-600">
+                      <div className="space-y-1 text-sm text-subtle">
                         <p><strong>User:</strong> {refund.user_name}</p>
                         <p><strong>Amount:</strong> ₹{refund.refund_amount.toLocaleString()}</p>
                         <p><strong>Reviewed:</strong> {format(new Date(refund.processed_date || refund.created_date), 'PPP')}</p>
                         {refund.rejection_reason && (
-                          <p className="text-red-600"><strong>Rejection Reason:</strong> {refund.rejection_reason}</p>
+                          <p className="text-sell-muted-foreground"><strong>Rejection Reason:</strong> {refund.rejection_reason}</p>
                         )}
                       </div>
                     </div>
@@ -262,8 +262,8 @@ export default function EventRefundManager({ organizerId }) {
         ) : (
           <Card>
             <CardContent className="p-12 text-center">
-              <CheckCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">No reviewed refunds yet</p>
+              <CheckCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No reviewed refunds yet</p>
             </CardContent>
           </Card>
         )}
@@ -279,7 +279,7 @@ export default function EventRefundManager({ organizerId }) {
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
-              <div className="p-4 bg-slate-50 rounded-lg">
+              <div className="p-4 bg-surface-2 rounded-lg">
                 <p className="text-sm"><strong>Event:</strong> {selectedRefund?.related_entity_name}</p>
                 <p className="text-sm"><strong>User:</strong> {selectedRefund?.user_name}</p>
                 <p className="text-sm"><strong>Amount:</strong> ₹{selectedRefund?.refund_amount.toLocaleString()}</p>
@@ -306,7 +306,7 @@ export default function EventRefundManager({ organizerId }) {
               <Button
                 onClick={submitReview}
                 disabled={isProcessing || (reviewAction === 'reject' && !reviewNotes.trim())}
-                className={reviewAction === 'approve' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}
+                className={reviewAction === 'approve' ? 'bg-buy hover:bg-buy' : 'bg-sell hover:bg-sell'}
               >
                 {isProcessing ? (
                   <>

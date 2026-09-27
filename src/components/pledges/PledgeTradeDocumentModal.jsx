@@ -47,19 +47,19 @@ const PledgeTradeDocumentModal = ({ isOpen, onClose, type, execution, sellExecut
           <div className="flex justify-between items-center">
             <div>
               <h3 className="font-bold text-lg">Protocol Finance</h3>
-              <p className="text-sm text-gray-500">Your Partner in Collective Trading</p>
+              <p className="text-sm text-muted-foreground">Your Partner in Collective Trading</p>
             </div>
             <Badge variant={isReceipt ? "default" : "secondary"}>{isReceipt ? "PAID" : "EXECUTED"}</Badge>
           </div>
           <Separator />
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-sm font-semibold text-gray-500">BILLED TO</p>
+              <p className="text-sm font-semibold text-muted-foreground">BILLED TO</p>
               <p className="font-medium">{pledge.user_name || 'Valued User'}</p>
-              <p className="text-sm text-gray-600">{pledge.user_email || 'email not available'}</p>
+              <p className="text-sm text-subtle">{pledge.user_email || 'email not available'}</p>
             </div>
             <div className="text-right">
-              <p className="text-sm font-semibold text-gray-500">Date of Issue</p>
+              <p className="text-sm font-semibold text-muted-foreground">Date of Issue</p>
               <p className="font-medium">{new Date(isReceipt ? pledge.created_date : execution.created_date).toLocaleDateString()}</p>
             </div>
           </div>
@@ -68,7 +68,7 @@ const PledgeTradeDocumentModal = ({ isOpen, onClose, type, execution, sellExecut
             {isReceipt ? (
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b bg-gray-50">
+                  <tr className="border-b bg-surface-2">
                     <th className="text-left font-semibold p-3">Description</th>
                     <th className="text-right font-semibold p-3">Amount</th>
                   </tr>
@@ -83,7 +83,7 @@ const PledgeTradeDocumentModal = ({ isOpen, onClose, type, execution, sellExecut
             ) : (
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b bg-gray-50">
+                  <tr className="border-b bg-surface-2">
                     <th className="text-left font-semibold p-3">Description</th>
                     <th className="text-right font-semibold p-3">Qty</th>
                     <th className="text-right font-semibold p-3">Unit Price</th>
@@ -91,14 +91,14 @@ const PledgeTradeDocumentModal = ({ isOpen, onClose, type, execution, sellExecut
                   </tr>
                 </thead>
                 <tbody>
-                    <tr className="text-green-700">
+                    <tr className="text-buy-muted-foreground">
                       <td className="p-3">Buy Execution: {execution.stock_symbol}</td>
                       <td className="text-right p-3">{execution.executed_qty}</td>
                       <td className="text-right p-3">₹{execution.executed_price.toFixed(2)}</td>
                       <td className="text-right p-3">₹{buyValue.toFixed(2)}</td>
                     </tr>
                     {sellExecution && (
-                      <tr className="border-t text-red-700">
+                      <tr className="border-t text-sell-muted-foreground">
                         <td className="p-3">Sell Execution: {sellExecution.stock_symbol}</td>
                         <td className="text-right p-3">{sellExecution.executed_qty}</td>
                         <td className="text-right p-3">₹{sellExecution.executed_price.toFixed(2)}</td>
@@ -114,22 +114,22 @@ const PledgeTradeDocumentModal = ({ isOpen, onClose, type, execution, sellExecut
             <div className="w-full md:w-1/2 space-y-2">
               {!isReceipt && isCompletedCycle && (
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Gross Sale</span>
+                  <span className="text-subtle">Gross Sale</span>
                   <span className="font-medium">₹{sellValue.toFixed(2)}</span>
                 </div>
               )}
               
               {!isReceipt && (
                  <div className="flex justify-between">
-                    <span className="text-gray-600">Cost Basis (Buy)</span>
-                    <span className="font-medium text-red-600">- ₹{buyValue.toFixed(2)}</span>
+                    <span className="text-subtle">Cost Basis (Buy)</span>
+                    <span className="font-medium text-sell-muted-foreground">- ₹{buyValue.toFixed(2)}</span>
                   </div>
               )}
 
               {!isReceipt && isCompletedCycle && (
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Gross Profit</span>
-                  <span className={`font-medium ${profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <span className="text-subtle">Gross Profit</span>
+                  <span className={`font-medium ${profit >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
                     ₹{profit.toFixed(2)}
                   </span>
                 </div>
@@ -137,8 +137,8 @@ const PledgeTradeDocumentModal = ({ isOpen, onClose, type, execution, sellExecut
               
               {platformCommission > 0 && !isReceipt && (
                  <div className="flex justify-between">
-                    <span className="text-gray-600">Platform Commission ({session.commission_rate_override}%)</span>
-                    <span className="font-medium text-red-600">- ₹{platformCommission.toFixed(2)}</span>
+                    <span className="text-subtle">Platform Commission ({session.commission_rate_override}%)</span>
+                    <span className="font-medium text-sell-muted-foreground">- ₹{platformCommission.toFixed(2)}</span>
                   </div>
               )}
               <Separator />

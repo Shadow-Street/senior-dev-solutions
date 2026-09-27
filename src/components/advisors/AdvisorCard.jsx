@@ -70,8 +70,8 @@ export default function AdvisorCard({ advisor, onSubscribe, userSubscriptions })
   const isSubscribed = userSubscriptions?.some(sub => sub.advisor_id === advisor.id);
 
   return (
-    <Card className="flex flex-col hover:shadow-xl transition-all duration-300 rounded-xl overflow-hidden bg-white border border-gray-200">
-      <CardHeader className="text-center p-6 bg-gradient-to-br from-slate-50 to-blue-50 rounded-t-xl">
+    <Card className="flex flex-col hover:shadow-xl transition-all duration-300 rounded-xl overflow-hidden bg-white border border-border">
+      <CardHeader className="text-center p-6 bg-surface-2 rounded-t-xl">
         <div className="flex justify-center mb-4">
           <img
             src={advisor.profile_image_url || `https://avatar.vercel.sh/${advisor.display_name}.png`}
@@ -82,14 +82,14 @@ export default function AdvisorCard({ advisor, onSubscribe, userSubscriptions })
 
         {/* Advisor Name and Badges */}
         <div className="space-y-2">
-          <CardTitle className="text-xl font-bold text-slate-800">
+          <CardTitle className="text-xl font-bold text-foreground">
             {advisor.display_name}
           </CardTitle>
 
           {/* Trust Badges */}
           <div className="flex flex-wrap items-center justify-center gap-2">
             {/* SEBI Verified Badge */}
-            <Badge className="bg-green-500 hover:bg-green-600 text-white text-xs font-medium px-3 py-1 rounded-xl flex items-center gap-1 shadow-md">
+            <Badge className="bg-buy hover:bg-buy text-buy-foreground text-xs font-medium px-3 py-1 rounded-xl flex items-center gap-1 shadow-md">
               <Shield className="w-3 h-3" />
               SEBI Verified
             </Badge>
@@ -98,9 +98,9 @@ export default function AdvisorCard({ advisor, onSubscribe, userSubscriptions })
             {averageRating > 0 &&
               <Badge
                 variant="outline"
-                className="bg-amber-50 border-amber-200 text-amber-800 text-xs font-bold px-3 py-1 rounded-xl flex items-center gap-1 shadow-sm">
+                className="bg-hold-muted border-hold/30 text-hold-muted-foreground text-xs font-bold px-3 py-1 rounded-xl flex items-center gap-1 shadow-sm">
 
-                <Star className="w-3 h-3 fill-current text-amber-500" />
+                <Star className="w-3 h-3 fill-current text-hold" />
                 {averageRating}/5
               </Badge>
             }
@@ -110,32 +110,32 @@ export default function AdvisorCard({ advisor, onSubscribe, userSubscriptions })
 
       <CardContent className="p-6 flex-1 space-y-4">
         {/* Bio */}
-        <p className="text-sm text-slate-600 text-center leading-relaxed">
+        <p className="text-sm text-subtle text-center leading-relaxed">
           {truncatedBio}
         </p>
 
         {/* Specialization Tags */}
         <div className="flex flex-wrap gap-2 justify-center">
           {advisor.specialization?.slice(0, 2).map((spec) =>
-            <Badge key={spec} variant="secondary" className="text-xs bg-blue-100 text-blue-700 rounded-lg px-2 py-1">
+            <Badge key={spec} variant="secondary" className="text-xs bg-premium-muted text-protocall-blue rounded-lg px-2 py-1">
               {spec}
             </Badge>
           )}
         </div>
 
         {/* Stats */}
-        <div className="flex justify-around pt-4 border-t border-slate-100">
+        <div className="flex justify-around pt-4 border-t border-divider">
           <div className="text-center">
-            <p className="font-bold text-lg text-slate-800">{advisor.follower_count || 0}</p>
-            <p className="text-xs text-slate-500">Subscribers</p>
+            <p className="font-bold text-lg text-foreground">{advisor.follower_count || 0}</p>
+            <p className="text-xs text-muted-foreground">Subscribers</p>
           </div>
           <div className="text-center">
-            <p className="font-bold text-lg text-slate-800">{reviewCount}</p>
-            <p className="text-xs text-slate-500">Reviews</p>
+            <p className="font-bold text-lg text-foreground">{reviewCount}</p>
+            <p className="text-xs text-muted-foreground">Reviews</p>
           </div>
           <div className="text-center">
-            <p className="font-bold text-lg text-slate-800">{advisor.success_rate || 'N/A'}%</p>
-            <p className="text-xs text-slate-500">Success Rate</p>
+            <p className="font-bold text-lg text-foreground">{advisor.success_rate || 'N/A'}%</p>
+            <p className="text-xs text-muted-foreground">Success Rate</p>
           </div>
         </div>
 
@@ -144,8 +144,8 @@ export default function AdvisorCard({ advisor, onSubscribe, userSubscriptions })
           <Button
             onClick={() => hasFeatureAccess ? onSubscribe(advisor) : null}
             className={`w-full h-10 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 mt-4 ${hasFeatureAccess
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:shadow-lg hover:scale-105'
-                : 'bg-gray-300 text-gray-700 cursor-not-allowed'
+                ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white hover:shadow-lg hover:scale-105'
+                : 'bg-border text-subtle cursor-not-allowed'
               }`}
             disabled={!hasFeatureAccess}
           >
@@ -164,17 +164,17 @@ export default function AdvisorCard({ advisor, onSubscribe, userSubscriptions })
         )}
       </CardContent>
 
-      <CardFooter className="flex flex-col p-6 bg-gradient-to-br from-slate-50 to-slate-100 rounded-b-xl">
+      <CardFooter className="flex flex-col p-6 bg-surface-2 rounded-b-xl">
         {/* Pricing */}
         <div className="text-center mb-4">
-          <span className="text-2xl font-bold text-slate-800">₹{displayPlan.price.toLocaleString()}</span>
-          <span className="text-slate-500 ml-1">/{displayPlan.interval.replace('ly', '')}</span>
+          <span className="text-2xl font-bold text-foreground">₹{displayPlan.price.toLocaleString()}</span>
+          <span className="text-muted-foreground ml-1">/{displayPlan.interval.replace('ly', '')}</span>
         </div>
 
         {/* Subscribed State Button */}
         {isSubscribed && (
           <Link to={createPageUrl(`AdvisorProfile?id=${advisor.id}`)} className="w-full">
-            <Button className="w-full h-10 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 hover:shadow-lg hover:scale-105">
+            <Button className="w-full h-10 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-buy-soft text-buy-foreground hover:from-buy hover:to-buy hover:shadow-lg hover:scale-105">
               <CheckCircle className="w-4 h-4 mr-2" />
               Subscribed - View Profile
             </Button>

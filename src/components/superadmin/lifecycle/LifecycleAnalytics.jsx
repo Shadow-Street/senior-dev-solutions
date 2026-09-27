@@ -62,8 +62,8 @@ export default function LifecycleAnalytics({ user }) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading analytics...</p>
+          <div className="w-12 h-12 border-4 border-protocall-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-subtle">Loading analytics...</p>
         </div>
       </div>
     );
@@ -77,10 +77,10 @@ export default function LifecycleAnalytics({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Total Modules</p>
-                <p className="text-3xl font-bold text-slate-900">{analytics.totalModules}</p>
+                <p className="text-sm text-muted-foreground">Total Modules</p>
+                <p className="text-3xl font-bold text-foreground">{analytics.totalModules}</p>
               </div>
-              <Activity className="w-12 h-12 text-blue-600" />
+              <Activity className="w-12 h-12 text-protocall-blue" />
             </div>
           </CardContent>
         </Card>
@@ -89,10 +89,10 @@ export default function LifecycleAnalytics({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Live Modules</p>
-                <p className="text-3xl font-bold text-green-600">{analytics.byStatus.live || 0}</p>
+                <p className="text-sm text-muted-foreground">Live Modules</p>
+                <p className="text-3xl font-bold text-buy-muted-foreground">{analytics.byStatus.live || 0}</p>
               </div>
-              <CheckCircle className="w-12 h-12 text-green-600" />
+              <CheckCircle className="w-12 h-12 text-buy-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -101,10 +101,10 @@ export default function LifecycleAnalytics({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">In Development</p>
-                <p className="text-3xl font-bold text-purple-600">{analytics.byStatus.placeholder || 0}</p>
+                <p className="text-sm text-muted-foreground">In Development</p>
+                <p className="text-3xl font-bold text-protocall-premium-text">{analytics.byStatus.placeholder || 0}</p>
               </div>
-              <Clock className="w-12 h-12 text-purple-600" />
+              <Clock className="w-12 h-12 text-protocall-premium-text" />
             </div>
           </CardContent>
         </Card>
@@ -113,12 +113,12 @@ export default function LifecycleAnalytics({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Recent Changes</p>
-                <p className="text-3xl font-bold text-blue-600">{analytics.recentChanges}</p>
+                <p className="text-sm text-muted-foreground">Recent Changes</p>
+                <p className="text-3xl font-bold text-protocall-blue">{analytics.recentChanges}</p>
               </div>
-              <TrendingUp className="w-12 h-12 text-blue-600" />
+              <TrendingUp className="w-12 h-12 text-protocall-blue" />
             </div>
-            <p className="text-xs text-slate-500 mt-2">Last 7 days</p>
+            <p className="text-xs text-muted-foreground mt-2">Last 7 days</p>
           </CardContent>
         </Card>
       </div>
@@ -133,8 +133,8 @@ export default function LifecycleAnalytics({ user }) {
             <div className="space-y-3">
               {Object.entries(analytics.byType).map(([type, count]) => (
                 <div key={type} className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600 capitalize">{type}</span>
-                  <span className="font-semibold text-slate-900">{count}</span>
+                  <span className="text-sm text-subtle capitalize">{type}</span>
+                  <span className="font-semibold text-foreground">{count}</span>
                 </div>
               ))}
             </div>
@@ -149,8 +149,8 @@ export default function LifecycleAnalytics({ user }) {
             <div className="space-y-3">
               {Object.entries(analytics.byStatus).map(([status, count]) => (
                 <div key={status} className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600 capitalize">{status}</span>
-                  <span className="font-semibold text-slate-900">{count}</span>
+                  <span className="text-sm text-subtle capitalize">{status}</span>
+                  <span className="font-semibold text-foreground">{count}</span>
                 </div>
               ))}
             </div>
@@ -165,8 +165,8 @@ export default function LifecycleAnalytics({ user }) {
             <div className="space-y-3">
               {Object.entries(analytics.byTier).map(([tier, count]) => (
                 <div key={tier} className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600 capitalize">{tier}</span>
-                  <span className="font-semibold text-slate-900">{count}</span>
+                  <span className="text-sm text-subtle capitalize">{tier}</span>
+                  <span className="font-semibold text-foreground">{count}</span>
                 </div>
               ))}
             </div>

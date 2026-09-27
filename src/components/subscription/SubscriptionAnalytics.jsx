@@ -85,7 +85,7 @@ export default function SubscriptionAnalytics() {
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
             </div>
         );
     }
@@ -99,8 +99,8 @@ export default function SubscriptionAnalytics() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-bold text-gray-900">Subscription & Billing</h1>
-                <p className="text-gray-600 mt-1">Manage your subscription, view invoices, and track your usage</p>
+                <h1 className="text-3xl font-bold text-foreground">Subscription & Billing</h1>
+                <p className="text-subtle mt-1">Manage your subscription, view invoices, and track your usage</p>
             </div>
 
             {/* Overview Stats */}
@@ -109,13 +109,13 @@ export default function SubscriptionAnalytics() {
                     <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-medium text-gray-600">Current Plan</p>
-                                <p className="text-2xl font-bold text-gray-900 mt-1">
+                                <p className="text-sm font-medium text-subtle">Current Plan</p>
+                                <p className="text-2xl font-bold text-foreground mt-1">
                                     {currentSubscription?.plan_type || 'Free'}
                                 </p>
                             </div>
-                            <div className="p-3 bg-indigo-100 rounded-full">
-                                <CreditCard className="w-6 h-6 text-indigo-600" />
+                            <div className="p-3 bg-premium-muted rounded-full">
+                                <CreditCard className="w-6 h-6 text-protocall-blue" />
                             </div>
                         </div>
                     </CardContent>
@@ -125,13 +125,13 @@ export default function SubscriptionAnalytics() {
                     <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-medium text-gray-600">Total Spent</p>
-                                <p className="text-2xl font-bold text-gray-900 mt-1">
+                                <p className="text-sm font-medium text-subtle">Total Spent</p>
+                                <p className="text-2xl font-bold text-foreground mt-1">
                                     {analytics?.totalSpent || 0}
                                 </p>
                             </div>
-                            <div className="p-3 bg-green-100 rounded-full">
-                                <TrendingUp className="w-6 h-6 text-green-600" />
+                            <div className="p-3 bg-buy-muted rounded-full">
+                                <TrendingUp className="w-6 h-6 text-buy-muted-foreground" />
                             </div>
                         </div>
                     </CardContent>
@@ -141,11 +141,11 @@ export default function SubscriptionAnalytics() {
                     <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-medium text-gray-600">Days Remaining</p>
-                                <p className="text-2xl font-bold text-gray-900 mt-1">{daysRemaining}</p>
+                                <p className="text-sm font-medium text-subtle">Days Remaining</p>
+                                <p className="text-2xl font-bold text-foreground mt-1">{daysRemaining}</p>
                             </div>
-                            <div className="p-3 bg-blue-100 rounded-full">
-                                <Calendar className="w-6 h-6 text-blue-600" />
+                            <div className="p-3 bg-premium-muted rounded-full">
+                                <Calendar className="w-6 h-6 text-protocall-blue" />
                             </div>
                         </div>
                     </CardContent>
@@ -155,16 +155,16 @@ export default function SubscriptionAnalytics() {
                     <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-medium text-gray-600">Auto-renew</p>
-                                <p className="text-2xl font-bold text-gray-900 mt-1">
+                                <p className="text-sm font-medium text-subtle">Auto-renew</p>
+                                <p className="text-2xl font-bold text-foreground mt-1">
                                     {autopayStatus?.autopayEnabled ? 'ON' : 'OFF'}
                                 </p>
                             </div>
-                            <div className={`p-3 rounded-full ${autopayStatus?.autopayEnabled ? 'bg-green-100' : 'bg-gray-100'}`}>
+                            <div className={`p-3 rounded-full ${autopayStatus?.autopayEnabled ? 'bg-buy-muted' : 'bg-surface-2'}`}>
                                 {autopayStatus?.autopayEnabled ? (
-                                    <CheckCircle2 className="w-6 h-6 text-green-600" />
+                                    <CheckCircle2 className="w-6 h-6 text-buy-muted-foreground" />
                                 ) : (
-                                    <AlertCircle className="w-6 h-6 text-gray-600" />
+                                    <AlertCircle className="w-6 h-6 text-subtle" />
                                 )}
                             </div>
                         </div>
@@ -181,21 +181,21 @@ export default function SubscriptionAnalytics() {
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <p className="text-sm text-gray-600">Plan Name</p>
+                                <p className="text-sm text-subtle">Plan Name</p>
                                 <p className="text-lg font-semibold">{currentSubscription.plan_type}</p>
                             </div>
                             <div>
-                                <p className="text-sm text-gray-600">Billing Cycle</p>
+                                <p className="text-sm text-subtle">Billing Cycle</p>
                                 <p className="text-lg font-semibold capitalize">{currentSubscription.billing_cycle || 'Monthly'}</p>
                             </div>
                             <div>
-                                <p className="text-sm text-gray-600">Start Date</p>
+                                <p className="text-sm text-subtle">Start Date</p>
                                 <p className="text-lg font-semibold">
                                     {new Date(currentSubscription.start_date).toLocaleDateString()}
                                 </p>
                             </div>
                             <div>
-                                <p className="text-sm text-gray-600">End Date</p>
+                                <p className="text-sm text-subtle">End Date</p>
                                 <p className="text-lg font-semibold">
                                     {new Date(currentSubscription.end_date).toLocaleDateString()}
                                 </p>
@@ -204,7 +204,7 @@ export default function SubscriptionAnalytics() {
 
                         <div>
                             <div className="flex justify-between text-sm mb-2">
-                                <span className="text-gray-600">Subscription Progress</span>
+                                <span className="text-subtle">Subscription Progress</span>
                                 <span className="font-medium">{daysRemaining} days remaining</span>
                             </div>
                             <Progress
@@ -214,12 +214,12 @@ export default function SubscriptionAnalytics() {
                         </div>
 
                         {autopayStatus?.cancelAtPeriodEnd && (
-                            <div className="bg-amber-50 border-2 border-amber-200 rounded-lg p-4">
+                            <div className="bg-hold-muted border-2 border-hold/30 rounded-lg p-4">
                                 <div className="flex items-start gap-3">
-                                    <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                                    <AlertCircle className="w-5 h-5 text-hold-muted-foreground mt-0.5 flex-shrink-0" />
                                     <div>
-                                        <h4 className="font-semibold text-amber-900">Subscription Cancelled</h4>
-                                        <p className="text-sm text-amber-800 mt-1">
+                                        <h4 className="font-semibold text-hold-muted-foreground">Subscription Cancelled</h4>
+                                        <p className="text-sm text-hold-muted-foreground mt-1">
                                             Your subscription will end on {new Date(currentSubscription.end_date).toLocaleDateString()}.
                                             You can reactivate it anytime before the end date.
                                         </p>
@@ -241,8 +241,8 @@ export default function SubscriptionAnalytics() {
                 </CardHeader>
                 <CardContent>
                     {invoices.length === 0 ? (
-                        <div className="text-center py-8 text-gray-500">
-                            <FileText className="w-12 h-12 mx-auto text-gray-300 mb-2" />
+                        <div className="text-center py-8 text-muted-foreground">
+                            <FileText className="w-12 h-12 mx-auto text-muted-foreground mb-2" />
                             <p>No invoices yet</p>
                         </div>
                     ) : (
@@ -250,31 +250,31 @@ export default function SubscriptionAnalytics() {
                             <table className="w-full">
                                 <thead>
                                     <tr className="border-b">
-                                        <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Invoice #</th>
-                                        <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Date</th>
-                                        <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Plan</th>
-                                        <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700">Amount</th>
-                                        <th className="text-center py-3 px-4 text-sm font-semibold text-gray-700">Status</th>
-                                        <th className="text-center py-3 px-4 text-sm font-semibold text-gray-700">Action</th>
+                                        <th className="text-left py-3 px-4 text-sm font-semibold text-subtle">Invoice #</th>
+                                        <th className="text-left py-3 px-4 text-sm font-semibold text-subtle">Date</th>
+                                        <th className="text-left py-3 px-4 text-sm font-semibold text-subtle">Plan</th>
+                                        <th className="text-right py-3 px-4 text-sm font-semibold text-subtle">Amount</th>
+                                        <th className="text-center py-3 px-4 text-sm font-semibold text-subtle">Status</th>
+                                        <th className="text-center py-3 px-4 text-sm font-semibold text-subtle">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {invoices.map((invoice) => (
-                                        <tr key={invoice.id} className="border-b hover:bg-gray-50">
-                                            <td className="py-3 px-4 text-sm font-medium text-gray-900">
+                                        <tr key={invoice.id} className="border-b hover:bg-surface-2">
+                                            <td className="py-3 px-4 text-sm font-medium text-foreground">
                                                 {invoice.invoice_number}
                                             </td>
-                                            <td className="py-3 px-4 text-sm text-gray-600">
+                                            <td className="py-3 px-4 text-sm text-subtle">
                                                 {new Date(invoice.issued_date).toLocaleDateString()}
                                             </td>
-                                            <td className="py-3 px-4 text-sm text-gray-600">
+                                            <td className="py-3 px-4 text-sm text-subtle">
                                                 {invoice.plan_name}
                                             </td>
-                                            <td className="py-3 px-4 text-sm text-right font-medium text-gray-900">
+                                            <td className="py-3 px-4 text-sm text-right font-medium text-foreground">
                                                 {parseFloat(invoice.total_amount).toFixed(2)}
                                             </td>
                                             <td className="py-3 px-4 text-center">
-                                                <Badge className={invoice.status === 'paid' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}>
+                                                <Badge className={invoice.status === 'paid' ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-surface-2 text-subtle'}>
                                                     {invoice.status}
                                                 </Badge>
                                             </td>

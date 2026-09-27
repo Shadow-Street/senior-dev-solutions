@@ -93,7 +93,7 @@ export default function InvestorLayout({ children, currentView }) { // Changed a
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
-        <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
       </div>
     );
   }
@@ -129,7 +129,7 @@ export default function InvestorLayout({ children, currentView }) { // Changed a
                   <span className="font-medium text-sm">{item.label}</span>
                 </div>
                 {item.badge > 0 && (
-                  <Badge className="bg-red-500 text-white text-xs px-2 py-0.5 min-w-[20px] h-5 flex items-center justify-center animate-pulse">
+                  <Badge className="bg-protocall-sell-text text-white text-xs px-2 py-0.5 min-w-[20px] h-5 flex items-center justify-center animate-pulse">
                     {item.badge}
                   </Badge>
                 )}
@@ -162,12 +162,12 @@ export default function InvestorLayout({ children, currentView }) { // Changed a
         <header className="h-20 bg-card border-b border-border flex items-center justify-between px-8 shadow-sm">
           <div>
             <h1 className="text-2xl font-bold text-foreground">Investment Dashboard</h1>
-            <p className="text-sm text-slate-500">Manage your portfolio</p>
+            <p className="text-sm text-muted-foreground">Manage your portfolio</p>
           </div>
 
           <div className="flex items-center gap-4">
             {/* Status Badge */}
-            <Badge className={investorStatus === 'active' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-gray-100 text-gray-800 border-gray-200'}>
+            <Badge className={investorStatus === 'active' ? 'bg-buy-muted text-buy-muted-foreground border-buy/30' : 'bg-surface-2 text-foreground border-border'}>
               {investorStatus === 'active' ? (
                 <>
                   <CheckCircle className="w-3 h-3 mr-1" />
@@ -184,7 +184,7 @@ export default function InvestorLayout({ children, currentView }) { // Changed a
             {/* Profile Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-100 transition-all">
+                <button className="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-2 transition-all">
                   <Avatar className="w-10 h-10">
                     <AvatarImage src={investor?.profile_image_url} alt={investor?.full_name} />
                     <AvatarFallback className="bg-primary text-primary-foreground">
@@ -193,9 +193,9 @@ export default function InvestorLayout({ children, currentView }) { // Changed a
                   </Avatar>
                   <div className="text-left hidden md:block">
                     <p className="text-sm font-semibold text-foreground">{investor?.full_name}</p>
-                    <p className="text-xs text-slate-500">{investor?.investor_code}</p>
+                    <p className="text-xs text-muted-foreground">{investor?.investor_code}</p>
                   </div>
-                  <ChevronDown className="w-4 h-4 text-slate-400" />
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-80">
@@ -204,50 +204,50 @@ export default function InvestorLayout({ children, currentView }) { // Changed a
 
                 <div className="px-2 py-3 space-y-3">
                   <div>
-                    <p className="text-xs text-slate-500">Full Name</p>
+                    <p className="text-xs text-muted-foreground">Full Name</p>
                     <p className="font-medium text-sm">{investor?.full_name}</p>
                   </div>
 
                   <div>
-                    <p className="text-xs text-slate-500">Email</p>
+                    <p className="text-xs text-muted-foreground">Email</p>
                     <p className="font-medium text-sm">{investor?.email}</p>
                   </div>
 
                   <div>
-                    <p className="text-xs text-slate-500">Phone</p>
+                    <p className="text-xs text-muted-foreground">Phone</p>
                     <p className="font-medium text-sm">{investor?.mobile_number || 'Not provided'}</p>
                   </div>
 
                   {investor?.bank_account_number && (
                     <div>
-                      <p className="text-xs text-slate-500">Bank Account</p>
+                      <p className="text-xs text-muted-foreground">Bank Account</p>
                       <p className="font-medium text-sm">****{investor.bank_account_number.slice(-4)}</p>
-                      <p className="text-xs text-slate-500">{investor.bank_name} - {investor.bank_ifsc_code}</p>
+                      <p className="text-xs text-muted-foreground">{investor.bank_name} - {investor.bank_ifsc_code}</p>
                     </div>
                   )}
 
                   {investor?.upi_id && (
                     <div>
-                      <p className="text-xs text-slate-500">UPI ID</p>
+                      <p className="text-xs text-muted-foreground">UPI ID</p>
                       <p className="font-medium text-sm">{investor.upi_id}</p>
                     </div>
                   )}
 
                   <div>
-                    <p className="text-xs text-slate-500">Profit Distribution</p>
+                    <p className="text-xs text-muted-foreground">Profit Distribution</p>
                     <p className="font-medium text-sm capitalize">{investor?.profit_distribution_plan || 'Not set'}</p>
                   </div>
 
                   <div>
-                    <p className="text-xs text-slate-500">KYC Status</p>
-                    <Badge className={investor?.kyc_status === 'verified' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
+                    <p className="text-xs text-muted-foreground">KYC Status</p>
+                    <Badge className={investor?.kyc_status === 'verified' ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-hold-muted text-hold-muted-foreground'}>
                       {investor?.kyc_status || 'Pending'}
                     </Badge>
                   </div>
                 </div>
 
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+                <DropdownMenuItem onClick={handleLogout} className="text-sell-muted-foreground">
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
                 </DropdownMenuItem>

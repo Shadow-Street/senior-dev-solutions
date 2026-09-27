@@ -14,42 +14,42 @@ export default function LiveExecutionStatus({ execution }) {
       case 'pending':
         return {
           icon: Clock,
-          color: 'bg-gray-100 text-gray-700 border-gray-200',
+          color: 'bg-surface-2 text-subtle border-border',
           label: 'Pending Execution',
           animate: false
         };
       case 'partial':
         return {
           icon: Loader2,
-          color: 'bg-blue-100 text-blue-700 border-blue-200',
+          color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
           label: 'Partially Executed',
           animate: true
         };
       case 'completed':
         return {
           icon: CheckCircle,
-          color: 'bg-green-100 text-green-700 border-green-200',
+          color: 'bg-buy-muted text-buy-muted-foreground border-buy/30',
           label: 'Executed Successfully',
           animate: false
         };
       case 'failed':
         return {
           icon: AlertCircle,
-          color: 'bg-red-100 text-red-700 border-red-200',
+          color: 'bg-sell-muted text-sell-muted-foreground border-sell/30',
           label: 'Execution Failed',
           animate: false
         };
       case 'cancelled':
         return {
           icon: AlertCircle,
-          color: 'bg-orange-100 text-orange-700 border-orange-200',
+          color: 'bg-hold-muted text-hold-muted-foreground border-hold/30',
           label: 'Cancelled',
           animate: false
         };
       default:
         return {
           icon: Clock,
-          color: 'bg-gray-100 text-gray-700 border-gray-200',
+          color: 'bg-surface-2 text-subtle border-border',
           label: status,
           animate: false
         };
@@ -75,29 +75,29 @@ export default function LiveExecutionStatus({ execution }) {
 
       {/* Execution Details */}
       {execution.status === 'completed' && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-3 space-y-2">
+        <div className="bg-buy-muted border border-buy/30 rounded-lg p-3 space-y-2">
           <div className="flex justify-between items-center text-sm">
-            <span className="text-gray-600">Executed Qty:</span>
-            <span className="font-semibold text-gray-900">{execution.executed_qty}</span>
+            <span className="text-subtle">Executed Qty:</span>
+            <span className="font-semibold text-foreground">{execution.executed_qty}</span>
           </div>
           <div className="flex justify-between items-center text-sm">
-            <span className="text-gray-600">Execution Price:</span>
-            <span className="font-semibold text-gray-900">₹{execution.executed_price?.toFixed(2)}</span>
+            <span className="text-subtle">Execution Price:</span>
+            <span className="font-semibold text-foreground">₹{execution.executed_price?.toFixed(2)}</span>
           </div>
           <div className="flex justify-between items-center text-sm">
-            <span className="text-gray-600">Total Value:</span>
-            <span className="font-semibold text-gray-900">
+            <span className="text-subtle">Total Value:</span>
+            <span className="font-semibold text-foreground">
               ₹{(execution.total_execution_value || 0).toFixed(2)}
             </span>
           </div>
           
           {hasProfitLoss && profitLoss !== 0 && (
             <div className={`flex justify-between items-center text-sm pt-2 border-t ${
-              isProfitable ? 'border-green-300' : 'border-red-300'
+              isProfitable ? 'border-buy/30' : 'border-sell/30'
             }`}>
-              <span className="text-gray-600">P&L:</span>
+              <span className="text-subtle">P&L:</span>
               <span className={`font-bold flex items-center gap-1 ${
-                isProfitable ? 'text-green-600' : 'text-red-600'
+                isProfitable ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'
               }`}>
                 {isProfitable ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                 {isProfitable ? '+' : ''}₹{profitLoss.toFixed(2)}
@@ -106,7 +106,7 @@ export default function LiveExecutionStatus({ execution }) {
           )}
 
           {execution.executed_at && (
-            <div className="text-xs text-gray-500 pt-1">
+            <div className="text-xs text-muted-foreground pt-1">
               Executed: {new Date(execution.executed_at).toLocaleString()}
             </div>
           )}
@@ -115,20 +115,20 @@ export default function LiveExecutionStatus({ execution }) {
 
       {/* Partial Execution */}
       {execution.status === 'partial' && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <div className="flex items-center gap-2 text-sm text-blue-700 mb-2">
+        <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-3">
+          <div className="flex items-center gap-2 text-sm text-protocall-blue mb-2">
             <Loader2 className="w-4 h-4 animate-spin" />
             <span className="font-medium">Execution in progress...</span>
           </div>
           <div className="flex justify-between items-center text-sm">
-            <span className="text-gray-600">Executed:</span>
-            <span className="font-semibold text-gray-900">
+            <span className="text-subtle">Executed:</span>
+            <span className="font-semibold text-foreground">
               {execution.executed_qty} / {execution.pledged_qty}
             </span>
           </div>
-          <div className="w-full bg-blue-200 rounded-full h-2 mt-2">
+          <div className="w-full bg-protocall-blue rounded-full h-2 mt-2">
             <div
-              className="bg-blue-600 h-2 rounded-full transition-all duration-500"
+              className="bg-protocall-blue h-2 rounded-full transition-all duration-500"
               style={{ 
                 width: `${((execution.executed_qty / execution.pledged_qty) * 100)}%` 
               }}
@@ -139,15 +139,15 @@ export default function LiveExecutionStatus({ execution }) {
 
       {/* Failed Execution */}
       {execution.status === 'failed' && execution.error_message && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-          <p className="text-sm text-red-700 font-medium mb-1">Execution Failed</p>
-          <p className="text-xs text-red-600">{execution.error_message}</p>
+        <div className="bg-sell-muted border border-sell/30 rounded-lg p-3">
+          <p className="text-sm text-sell-muted-foreground font-medium mb-1">Execution Failed</p>
+          <p className="text-xs text-sell-muted-foreground">{execution.error_message}</p>
         </div>
       )}
 
       {/* Broker Order ID */}
       {execution.broker_order_id && (
-        <div className="text-xs text-gray-500">
+        <div className="text-xs text-muted-foreground">
           Order ID: <span className="font-mono">{execution.broker_order_id}</span>
         </div>
       )}

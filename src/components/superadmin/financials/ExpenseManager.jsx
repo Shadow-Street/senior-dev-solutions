@@ -43,17 +43,17 @@ const expenseCategories = ["Salary", "Marketing", "Operations", "Infrastructure"
 const getCategoryColor = (category) => {
   switch (category) {
     case 'Salary':
-      return 'bg-blue-100 text-blue-800';
+      return 'bg-premium-muted text-protocall-blue';
     case 'Marketing':
-      return 'bg-green-100 text-green-800';
+      return 'bg-buy-muted text-buy-muted-foreground';
     case 'Operations':
-      return 'bg-purple-100 text-purple-800';
+      return 'bg-premium-muted text-protocall-premium-text';
     case 'Infrastructure':
-      return 'bg-yellow-100 text-yellow-800';
+      return 'bg-hold-muted text-hold-muted-foreground';
     case 'Miscellaneous':
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-surface-2 text-foreground';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-surface-2 text-foreground';
   }
 };
 
@@ -131,14 +131,14 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
         <CardHeader>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-hold rounded-lg flex items-center justify-center">
                 <Receipt className="w-5 h-5 text-white" />
               </div>
               <div>
-                <CardTitle className="text-xl bg-gradient-to-r from-orange-700 to-orange-600 bg-clip-text text-transparent">
+                <CardTitle className="text-xl bg-hold bg-clip-text text-transparent">
                   Expense Management
                 </CardTitle>
-                <p className="text-sm text-slate-600 font-normal mt-0.5">
+                <p className="text-sm text-subtle font-normal mt-0.5">
                   Track and manage company expenses
                 </p>
               </div>
@@ -146,7 +146,7 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
             {canEdit && (
               <Button
                 onClick={handleAdd} // Call handleAdd for new expense
-                className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg shadow-orange-500/25 transition-all duration-200"
+                className="bg-hold hover:from-hold hover:to-hold text-hold-foreground shadow-lg shadow-hold/30/25 transition-all duration-200"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Expense
@@ -157,16 +157,16 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
           {/* Search and Filter */}
           <div className="flex items-center gap-4 mt-6 pt-4 border-t">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Search expenses by description or category..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 border-slate-200 focus:border-orange-400 focus:ring-orange-400"
+                className="pl-10 border-border focus:border-hold focus:ring-hold/30"
               />
             </div>
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-[180px] border-slate-200 focus:border-orange-400 focus:ring-orange-400">
+              <SelectTrigger className="w-[180px] border-border focus:border-hold focus:ring-hold/30">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
@@ -186,29 +186,29 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b bg-gradient-to-r from-slate-50 to-slate-100">
-                  <th className="p-4 text-left font-semibold text-slate-700">Description</th>
-                  <th className="p-4 text-left font-semibold text-slate-700">Category</th>
-                  <th className="p-4 text-right font-semibold text-slate-700">Amount</th>
-                  <th className="p-4 text-left font-semibold text-slate-700">Date</th>
-                  <th className="p-4 text-left font-semibold text-slate-700">Added By</th>
-                  {canEdit && <th className="p-4 text-right font-semibold text-slate-700">Actions</th>}
+                <tr className="border-b bg-surface-2">
+                  <th className="p-4 text-left font-semibold text-subtle">Description</th>
+                  <th className="p-4 text-left font-semibold text-subtle">Category</th>
+                  <th className="p-4 text-right font-semibold text-subtle">Amount</th>
+                  <th className="p-4 text-left font-semibold text-subtle">Date</th>
+                  <th className="p-4 text-left font-semibold text-subtle">Added By</th>
+                  {canEdit && <th className="p-4 text-right font-semibold text-subtle">Actions</th>}
                 </tr>
               </thead>
               <tbody>
                 {filteredExpenses.length > 0 ? filteredExpenses.map(expense => (
-                  <tr key={expense.id} className="border-b transition-colors hover:bg-gradient-to-r hover:from-slate-50 hover:to-transparent">
-                    <td className="p-4 font-medium text-slate-900">{expense.description}</td>
+                  <tr key={expense.id} className="border-b transition-colors hover:bg-gradient-to-r hover:from-surface-2 hover:to-transparent">
+                    <td className="p-4 font-medium text-foreground">{expense.description}</td>
                     <td className="p-4">
                       <Badge className={`${getCategoryColor(expense.category)} border-0`}>
                         {expense.category}
                       </Badge>
                     </td>
-                    <td className="p-4 text-right font-bold text-slate-900">₹{expense.amount.toLocaleString('en-IN')}</td>
-                    <td className="p-4 text-slate-600">
+                    <td className="p-4 text-right font-bold text-foreground">₹{expense.amount.toLocaleString('en-IN')}</td>
+                    <td className="p-4 text-subtle">
                       {new Date(expense.expense_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </td>
-                    <td className="p-4 text-slate-600 text-sm">{expense.added_by_admin_name}</td>
+                    <td className="p-4 text-subtle text-sm">{expense.added_by_admin_name}</td>
                     {canEdit && (
                       <td className="p-4 text-right">
                         <div className="flex justify-end gap-2">
@@ -216,7 +216,7 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
                             variant="ghost"
                             size="sm"
                             onClick={() => handleEdit(expense)} // Call handleEdit for existing expense
-                            className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                            className="text-protocall-blue hover:text-protocall-blue hover:bg-premium-muted"
                           >
                             <Edit className="w-4 h-4" />
                           </Button>
@@ -224,7 +224,7 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDelete(expense.id)}
-                            className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                            className="text-sell-muted-foreground hover:text-sell-muted-foreground hover:bg-sell-muted"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -235,9 +235,9 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
                 )) : (
                   <tr className="border-b">
                     <td colSpan={canEdit ? 6 : 5} className="text-center py-12">
-                      <Receipt className="mx-auto h-12 w-12 text-slate-400" />
-                      <h3 className="mt-2 text-sm font-medium text-slate-900">No expenses found</h3>
-                      <p className="mt-1 text-sm text-slate-500">Try adjusting your search or filter criteria.</p>
+                      <Receipt className="mx-auto h-12 w-12 text-muted-foreground" />
+                      <h3 className="mt-2 text-sm font-medium text-foreground">No expenses found</h3>
+                      <p className="mt-1 text-sm text-muted-foreground">Try adjusting your search or filter criteria.</p>
                     </td>
                   </tr>
                 )}
@@ -252,7 +252,7 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-hold rounded-lg flex items-center justify-center">
                 <Plus className="w-4 h-4 text-white" />
               </div>
               {editingExpense ? 'Edit Expense' : 'Add New Expense'}
@@ -317,13 +317,13 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
                 type="button"
                 variant="outline"
                 onClick={closeModal} // Call closeModal
-                className="border-slate-300 text-slate-700 hover:bg-slate-50"
+                className="border-border text-subtle hover:bg-surface-2"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-md"
+                className="bg-hold hover:from-hold hover:to-hold text-hold-foreground shadow-md"
               >
                 {editingExpense ? 'Update' : 'Add'} Expense
               </Button>

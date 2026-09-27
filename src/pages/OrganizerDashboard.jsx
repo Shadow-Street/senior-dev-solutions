@@ -281,12 +281,12 @@ export default function OrganizerDashboard() {
 
   const getStatusBadge = (status) => {
     const config = {
-      pending_approval: { color: 'bg-amber-500/10 text-amber-700 border-amber-500/20', label: 'Pending Approval', icon: Clock },
-      approved: { color: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20', label: 'Approved', icon: CheckCircle },
-      scheduled: { color: 'bg-blue-500/10 text-blue-700 border-blue-500/20', label: 'Scheduled', icon: Calendar },
-      completed: { color: 'bg-purple-500/10 text-purple-700 border-purple-500/20', label: 'Completed', icon: CheckCircle },
-      cancelled: { color: 'bg-red-500/10 text-red-700 border-red-500/20', label: 'Cancelled', icon: XCircle },
-      rejected: { color: 'bg-red-500/10 text-red-700 border-red-500/20', label: 'Rejected', icon: XCircle }
+      pending_approval: { color: 'bg-hold/10 text-hold-muted-foreground border-hold/20', label: 'Pending Approval', icon: Clock },
+      approved: { color: 'bg-buy/10 text-buy-muted-foreground border-buy/20', label: 'Approved', icon: CheckCircle },
+      scheduled: { color: 'bg-protocall-blue/10 text-protocall-blue border-protocall-blue/20', label: 'Scheduled', icon: Calendar },
+      completed: { color: 'bg-primary/10 text-protocall-premium-text border-primary/20', label: 'Completed', icon: CheckCircle },
+      cancelled: { color: 'bg-sell/10 text-sell-muted-foreground border-sell/20', label: 'Cancelled', icon: XCircle },
+      rejected: { color: 'bg-sell/10 text-sell-muted-foreground border-sell/20', label: 'Rejected', icon: XCircle }
     };
     const { color, label, icon: Icon } = config[status] || config.pending_approval;
     return (
@@ -308,10 +308,10 @@ export default function OrganizerDashboard() {
   });
 
   const statusChartData = [
-    { name: 'Approved', value: stats.activeEvents, color: '#10B981' },
-    { name: 'Pending', value: stats.pendingApproval, color: '#F59E0B' },
-    { name: 'Completed', value: stats.completedEvents, color: '#8B5CF6' },
-    { name: 'Cancelled', value: stats.cancelledEvents, color: '#EF4444' }
+    { name: 'Approved', value: stats.activeEvents, color: 'hsl(var(--chart-2))' },
+    { name: 'Pending', value: stats.pendingApproval, color: 'hsl(var(--chart-5))' },
+    { name: 'Completed', value: stats.completedEvents, color: 'hsl(var(--primary))' },
+    { name: 'Cancelled', value: stats.cancelledEvents, color: 'hsl(var(--chart-3))' }
   ];
 
   const attendanceData = events.slice(0, 6).map(event => {
@@ -326,14 +326,14 @@ export default function OrganizerDashboard() {
   if (isLoading) {
     return (
       <AdvisorLayout activePage="organizer-overview">
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+        <div className="flex items-center justify-center min-h-screen bg-surface-2">
           <div className="text-center">
             <div className="relative w-20 h-20 mx-auto mb-6">
-              <div className="absolute inset-0 border-4 border-purple-200 rounded-full"></div>
-              <div className="absolute inset-0 border-4 border-purple-600 rounded-full border-t-transparent animate-spin"></div>
+              <div className="absolute inset-0 border-4 border-protocall-premium-light rounded-full"></div>
+              <div className="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin"></div>
             </div>
-            <p className="text-lg font-semibold text-slate-700">Loading Event Organizer Dashboard...</p>
-            <p className="text-sm text-slate-500 mt-2">Please wait while we fetch your data</p>
+            <p className="text-lg font-semibold text-subtle">Loading Event Organizer Dashboard...</p>
+            <p className="text-sm text-muted-foreground mt-2">Please wait while we fetch your data</p>
           </div>
         </div>
       </AdvisorLayout>
@@ -342,13 +342,13 @@ export default function OrganizerDashboard() {
 
   return (
     <AdvisorLayout activePage={selectedTab === 'dashboard' ? 'organizer-overview' : selectedTab === 'events' ? 'organizer-events' : selectedTab === 'analytics' ? 'organizer-analytics' : selectedTab === 'financials' ? 'organizer-financials' : selectedTab === 'reviews' ? 'organizer-reviews' : 'organizer-overview'}>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
+      <div className="min-h-screen bg-surface-2">
         <div className="p-8">
           <div className="max-w-7xl mx-auto space-y-8">
             
             {/* Hero Header Section - Only show on dashboard tab */}
             {selectedTab === 'dashboard' && (
-              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 p-8 shadow-2xl">
+              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-protocall-deep via-protocall-grape to-protocall-blue p-8 shadow-2xl">
                 <div className="absolute inset-0 bg-black/10"></div>
                 <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
                 <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
@@ -361,21 +361,21 @@ export default function OrganizerDashboard() {
                       </div>
                       <div>
                         <h1 className="text-3xl font-bold text-white">Event Organizer Dashboard</h1>
-                        <p className="text-blue-100 mt-1">Manage your events and track performance</p>
+                        <p className="text-protocall-blue mt-1">Manage your events and track performance</p>
                       </div>
                     </div>
                     
                     <div className="flex items-center gap-6 mt-6">
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                        <div className="w-3 h-3 bg-buy rounded-full animate-pulse"></div>
                         <span className="text-sm text-white/90">{stats.activeEvents} Active Events</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Award className="w-4 h-4 text-yellow-300" />
+                        <Award className="w-4 h-4 text-hold" />
                         <span className="text-sm text-white/90">{stats.averageRating}/5 Rating</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-blue-300" />
+                        <Users className="w-4 h-4 text-protocall-premium-light" />
                         <span className="text-sm text-white/90">{stats.totalAttendees} Total Attendees</span>
                       </div>
                     </div>
@@ -384,7 +384,7 @@ export default function OrganizerDashboard() {
                   <Button 
                     onClick={() => setShowCreateModal(true)} 
                     size="lg"
-                    className="bg-white text-purple-600 hover:bg-white/90 shadow-xl hover:shadow-2xl transition-all duration-300 font-semibold px-8 py-6 text-base"
+                    className="bg-white text-protocall-premium-text hover:bg-white/90 shadow-xl hover:shadow-2xl transition-all duration-300 font-semibold px-8 py-6 text-base"
                   >
                     <CalendarPlus className="w-5 h-5 mr-2" />
                     Create New Event
@@ -398,7 +398,7 @@ export default function OrganizerDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Total Revenue */}
                 <Card className="relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-300 group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-green-600 opacity-90"></div>
+                  <div className="absolute inset-0 bg-buy-soft opacity-90"></div>
                   <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
                   <CardContent className="relative z-10 p-6">
                     <div className="flex items-start justify-between mb-4">
@@ -411,9 +411,9 @@ export default function OrganizerDashboard() {
                       </Badge>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-emerald-100 mb-1">Total Revenue</p>
+                      <p className="text-sm font-medium text-buy-muted-foreground mb-1">Total Revenue</p>
                       <p className="text-3xl font-bold text-white mb-1">₹{(stats.totalRevenue / 1000).toFixed(1)}k</p>
-                      <p className="text-xs text-emerald-200">₹{Math.round(stats.totalRevenue / (stats.totalTicketsSold || 1))}/ticket avg</p>
+                      <p className="text-xs text-buy-muted-foreground">₹{Math.round(stats.totalRevenue / (stats.totalTicketsSold || 1))}/ticket avg</p>
                     </div>
                     <Progress value={75} className="h-1.5 mt-4 bg-white/20" indicatorClassName="bg-white" />
                   </CardContent>
@@ -421,7 +421,7 @@ export default function OrganizerDashboard() {
 
                 {/* Total Attendees */}
                 <Card className="relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-300 group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-indigo-600 opacity-90"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-protocall-deep to-protocall-blue opacity-90"></div>
                   <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
                   <CardContent className="relative z-10 p-6">
                     <div className="flex items-start justify-between mb-4">
@@ -434,9 +434,9 @@ export default function OrganizerDashboard() {
                       </Badge>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-blue-100 mb-1">Total Attendees</p>
+                      <p className="text-sm font-medium text-protocall-blue mb-1">Total Attendees</p>
                       <p className="text-3xl font-bold text-white mb-1">{stats.totalAttendees}</p>
-                      <p className="text-xs text-blue-200">{stats.averageAttendance} avg per event</p>
+                      <p className="text-xs text-protocall-premium-light">{stats.averageAttendance} avg per event</p>
                     </div>
                     <Progress value={60} className="h-1.5 mt-4 bg-white/20" indicatorClassName="bg-white" />
                   </CardContent>
@@ -444,7 +444,7 @@ export default function OrganizerDashboard() {
 
                 {/* Upcoming Events */}
                 <Card className="relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-300 group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-600 opacity-90"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-protocall-deep to-protocall-blue opacity-90"></div>
                   <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
                   <CardContent className="relative z-10 p-6">
                     <div className="flex items-start justify-between mb-4">
@@ -457,9 +457,9 @@ export default function OrganizerDashboard() {
                       </Badge>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-purple-100 mb-1">Upcoming Events</p>
+                      <p className="text-sm font-medium text-protocall-premium-text mb-1">Upcoming Events</p>
                       <p className="text-3xl font-bold text-white mb-1">{stats.upcomingEvents}</p>
-                      <p className="text-xs text-purple-200">{stats.pendingApproval} pending approval</p>
+                      <p className="text-xs text-protocall-premium-light">{stats.pendingApproval} pending approval</p>
                     </div>
                     <Progress value={40} className="h-1.5 mt-4 bg-white/20" indicatorClassName="bg-white" />
                   </CardContent>
@@ -467,7 +467,7 @@ export default function OrganizerDashboard() {
 
                 {/* Average Rating */}
                 <Card className="relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-300 group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500 to-orange-600 opacity-90"></div>
+                  <div className="absolute inset-0 bg-hold opacity-90"></div>
                   <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
                   <CardContent className="relative z-10 p-6">
                     <div className="flex items-start justify-between mb-4">
@@ -480,9 +480,9 @@ export default function OrganizerDashboard() {
                       </Badge>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-amber-100 mb-1">Average Rating</p>
+                      <p className="text-sm font-medium text-hold-muted-foreground mb-1">Average Rating</p>
                       <p className="text-3xl font-bold text-white mb-1">{stats.averageRating}<span className="text-xl">/5</span></p>
-                      <p className="text-xs text-amber-200">From {stats.totalEvents} events</p>
+                      <p className="text-xs text-hold-muted-foreground">From {stats.totalEvents} events</p>
                     </div>
                     <Progress value={stats.averageRating * 20} className="h-1.5 mt-4 bg-white/20" indicatorClassName="bg-white" />
                   </CardContent>
@@ -509,25 +509,11 @@ export default function OrganizerDashboard() {
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-xs font-medium text-slate-600">Total Events</p>
-                          <p className="text-2xl font-bold text-slate-900 mt-1">{stats.totalEvents}</p>
+                          <p className="text-xs font-medium text-subtle">Total Events</p>
+                          <p className="text-2xl font-bold text-foreground mt-1">{stats.totalEvents}</p>
                         </div>
-                        <div className="p-3 bg-blue-50 rounded-xl">
-                          <Calendar className="w-5 h-5 text-blue-600" />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-white/80 backdrop-blur-sm">
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-xs font-medium text-slate-600">Completed</p>
-                          <p className="text-2xl font-bold text-slate-900 mt-1">{stats.completedEvents}</p>
-                        </div>
-                        <div className="p-3 bg-green-50 rounded-xl">
-                          <CheckCircle className="w-5 h-5 text-green-600" />
+                        <div className="p-3 bg-premium-muted rounded-xl">
+                          <Calendar className="w-5 h-5 text-protocall-blue" />
                         </div>
                       </div>
                     </CardContent>
@@ -537,11 +523,11 @@ export default function OrganizerDashboard() {
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-xs font-medium text-slate-600">Tickets Sold</p>
-                          <p className="text-2xl font-bold text-slate-900 mt-1">{stats.totalTicketsSold}</p>
+                          <p className="text-xs font-medium text-subtle">Completed</p>
+                          <p className="text-2xl font-bold text-foreground mt-1">{stats.completedEvents}</p>
                         </div>
-                        <div className="p-3 bg-purple-50 rounded-xl">
-                          <Ticket className="w-5 h-5 text-purple-600" />
+                        <div className="p-3 bg-buy-muted rounded-xl">
+                          <CheckCircle className="w-5 h-5 text-buy-muted-foreground" />
                         </div>
                       </div>
                     </CardContent>
@@ -551,11 +537,25 @@ export default function OrganizerDashboard() {
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-xs font-medium text-slate-600">Conversion</p>
-                          <p className="text-2xl font-bold text-slate-900 mt-1">{stats.conversionRate}%</p>
+                          <p className="text-xs font-medium text-subtle">Tickets Sold</p>
+                          <p className="text-2xl font-bold text-foreground mt-1">{stats.totalTicketsSold}</p>
                         </div>
-                        <div className="p-3 bg-amber-50 rounded-xl">
-                          <Target className="w-5 h-5 text-amber-600" />
+                        <div className="p-3 bg-premium-muted rounded-xl">
+                          <Ticket className="w-5 h-5 text-protocall-premium-text" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-white/80 backdrop-blur-sm">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs font-medium text-subtle">Conversion</p>
+                          <p className="text-2xl font-bold text-foreground mt-1">{stats.conversionRate}%</p>
+                        </div>
+                        <div className="p-3 bg-hold-muted rounded-xl">
+                          <Target className="w-5 h-5 text-hold-muted-foreground" />
                         </div>
                       </div>
                     </CardContent>
@@ -564,14 +564,14 @@ export default function OrganizerDashboard() {
 
                 {/* Recent Events */}
                 <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-                  <CardHeader className="border-b border-slate-100">
+                  <CardHeader className="border-b border-divider">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-xl font-bold text-slate-900">Recent Events</CardTitle>
+                      <CardTitle className="text-xl font-bold text-foreground">Recent Events</CardTitle>
                       <Button 
                         variant="outline" 
                         size="sm"
                         onClick={() => setSelectedTab('events')}
-                        className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                        className="text-protocall-premium-text border-protocall-premium-light hover:bg-premium-muted"
                       >
                         View All
                       </Button>
@@ -581,25 +581,25 @@ export default function OrganizerDashboard() {
                     {events.length > 0 ? (
                       <div className="space-y-4">
                         {events.slice(0, 5).map((event) => (
-                          <div key={event.id} className="group p-5 bg-gradient-to-r from-slate-50 to-white rounded-2xl border border-slate-200 hover:border-purple-300 hover:shadow-lg transition-all duration-300">
+                          <div key={event.id} className="group p-5 bg-gradient-to-r from-surface-2 to-white rounded-2xl border border-border hover:border-protocall-premium-light hover:shadow-lg transition-all duration-300">
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
                                 <div className="flex items-center gap-3 mb-3">
-                                  <h4 className="font-bold text-slate-900 text-lg group-hover:text-purple-600 transition-colors">{event.title}</h4>
+                                  <h4 className="font-bold text-foreground text-lg group-hover:text-protocall-premium-text transition-colors">{event.title}</h4>
                                   {getStatusBadge(event.status)}
                                 </div>
-                                <div className="flex items-center gap-6 text-sm text-slate-600">
+                                <div className="flex items-center gap-6 text-sm text-subtle">
                                   <span className="flex items-center gap-2">
-                                    <Calendar className="w-4 h-4 text-blue-500" />
+                                    <Calendar className="w-4 h-4 text-protocall-premium-light" />
                                     {format(new Date(event.event_date), 'MMM dd, yyyy')}
                                   </span>
                                   <span className="flex items-center gap-2">
-                                    <MapPin className="w-4 h-4 text-red-500" />
+                                    <MapPin className="w-4 h-4 text-sell" />
                                     {event.location}
                                   </span>
                                   {event.ticket_price > 0 && (
                                     <span className="flex items-center gap-2">
-                                      <Ticket className="w-4 h-4 text-green-500" />
+                                      <Ticket className="w-4 h-4 text-positive" />
                                       ₹{event.ticket_price}
                                     </span>
                                   )}
@@ -613,7 +613,7 @@ export default function OrganizerDashboard() {
                                     setSelectedEvent(event);
                                     setShowAttendeesModal(true);
                                   }}
-                                  className="hover:bg-blue-50 hover:text-blue-600"
+                                  className="hover:bg-premium-muted hover:text-protocall-blue"
                                 >
                                   <Eye className="w-4 h-4 mr-1" />
                                   View
@@ -625,7 +625,7 @@ export default function OrganizerDashboard() {
                                     setSelectedEvent(event);
                                     setShowEditModal(true);
                                   }}
-                                  className="hover:bg-purple-50 hover:text-purple-600"
+                                  className="hover:bg-premium-muted hover:text-protocall-premium-text"
                                 >
                                   <Edit className="w-4 h-4 mr-1" />
                                   Edit
@@ -637,12 +637,12 @@ export default function OrganizerDashboard() {
                       </div>
                     ) : (
                       <div className="text-center py-16">
-                        <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <Calendar className="w-10 h-10 text-purple-600" />
+                        <div className="w-20 h-20 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Calendar className="w-10 h-10 text-protocall-premium-text" />
                         </div>
-                        <h3 className="text-xl font-bold text-slate-900 mb-2">No events created yet</h3>
-                        <p className="text-slate-600 mb-6">Start organizing your first event and grow your community</p>
-                        <Button onClick={() => setShowCreateModal(true)} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+                        <h3 className="text-xl font-bold text-foreground mb-2">No events created yet</h3>
+                        <p className="text-subtle mb-6">Start organizing your first event and grow your community</p>
+                        <Button onClick={() => setShowCreateModal(true)} className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
                           <CalendarPlus className="w-5 h-5 mr-2" />
                           Create Your First Event
                         </Button>
@@ -656,10 +656,10 @@ export default function OrganizerDashboard() {
               <TabsContent value="events" className="space-y-6 mt-0">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h2 className="text-2xl font-bold text-slate-800">My Events</h2>
-                    <p className="text-sm text-slate-600 mt-1">Manage and track all your events</p>
+                    <h2 className="text-2xl font-bold text-foreground">My Events</h2>
+                    <p className="text-sm text-subtle mt-1">Manage and track all your events</p>
                   </div>
-                  <Button onClick={() => setShowCreateModal(true)} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-lg">
+                  <Button onClick={() => setShowCreateModal(true)} className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue shadow-lg">
                     <CalendarPlus className="w-4 h-4 mr-2" />
                     Create Event
                   </Button>
@@ -674,15 +674,15 @@ export default function OrganizerDashboard() {
                       
                       return (
                         <Card key={event.id} className="group border-0 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden bg-white">
-                          <div className="h-2 bg-gradient-to-r from-purple-500 via-blue-500 to-indigo-500"></div>
+                          <div className="h-2 bg-gradient-to-r from-protocall-deep via-protocall-grape to-protocall-blue"></div>
                           <CardContent className="p-0">
                             {/* Event Image/Header */}
-                            <div className="relative h-40 bg-gradient-to-br from-purple-100 via-blue-100 to-indigo-100 overflow-hidden">
+                            <div className="relative h-40 bg-surface-2 overflow-hidden">
                               {event.image_url ? (
                                 <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" />
                               ) : (
                                 <div className="absolute inset-0 flex items-center justify-center">
-                                  <Calendar className="w-16 h-16 text-purple-300" />
+                                  <Calendar className="w-16 h-16 text-protocall-premium-light" />
                                 </div>
                               )}
                               <div className="absolute top-3 right-3">
@@ -692,22 +692,22 @@ export default function OrganizerDashboard() {
 
                             <div className="p-6 space-y-4">
                               {/* Title */}
-                              <h3 className="font-bold text-lg text-slate-900 line-clamp-2 group-hover:text-purple-600 transition-colors min-h-[3.5rem]">
+                              <h3 className="font-bold text-lg text-foreground line-clamp-2 group-hover:text-protocall-premium-text transition-colors min-h-[3.5rem]">
                                 {event.title}
                               </h3>
 
                               {/* Event Details */}
-                              <div className="space-y-2.5 text-sm text-slate-600">
+                              <div className="space-y-2.5 text-sm text-subtle">
                                 <div className="flex items-center gap-2">
-                                  <Calendar className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                                  <Calendar className="w-4 h-4 text-protocall-premium-light flex-shrink-0" />
                                   <span className="truncate">{format(new Date(event.event_date), 'MMM dd, yyyy - HH:mm')}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <MapPin className="w-4 h-4 text-red-500 flex-shrink-0" />
+                                  <MapPin className="w-4 h-4 text-sell flex-shrink-0" />
                                   <span className="line-clamp-1">{event.location}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <Ticket className="w-4 h-4 text-green-500 flex-shrink-0" />
+                                  <Ticket className="w-4 h-4 text-positive flex-shrink-0" />
                                   <span>{event.ticket_price > 0 ? `₹${event.ticket_price}` : 'Free Event'}</span>
                                 </div>
                               </div>
@@ -715,16 +715,16 @@ export default function OrganizerDashboard() {
                               {/* Stats Row */}
                               <div className="grid grid-cols-3 gap-3 pt-4 border-t">
                                 <div className="text-center">
-                                  <p className="text-lg font-bold text-blue-600">{eventAttendees.length}</p>
-                                  <p className="text-xs text-slate-500">Attendees</p>
+                                  <p className="text-lg font-bold text-protocall-blue">{eventAttendees.length}</p>
+                                  <p className="text-xs text-muted-foreground">Attendees</p>
                                 </div>
                                 <div className="text-center border-x">
-                                  <p className="text-lg font-bold text-green-600">{eventTickets.length}</p>
-                                  <p className="text-xs text-slate-500">Tickets</p>
+                                  <p className="text-lg font-bold text-buy-muted-foreground">{eventTickets.length}</p>
+                                  <p className="text-xs text-muted-foreground">Tickets</p>
                                 </div>
                                 <div className="text-center">
-                                  <p className="text-lg font-bold text-purple-600">₹{(eventRevenue / 1000).toFixed(1)}k</p>
-                                  <p className="text-xs text-slate-500">Revenue</p>
+                                  <p className="text-lg font-bold text-protocall-premium-text">₹{(eventRevenue / 1000).toFixed(1)}k</p>
+                                  <p className="text-xs text-muted-foreground">Revenue</p>
                                 </div>
                               </div>
 
@@ -737,7 +737,7 @@ export default function OrganizerDashboard() {
                                     setSelectedEvent(event);
                                     setShowAttendeesModal(true);
                                   }} 
-                                  className="hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300"
+                                  className="hover:bg-premium-muted hover:text-protocall-blue hover:border-protocall-premium-light"
                                 >
                                   <Eye className="w-3 h-3 mr-1" />
                                   View
@@ -749,7 +749,7 @@ export default function OrganizerDashboard() {
                                     setSelectedEvent(event);
                                     setShowEditModal(true);
                                   }} 
-                                  className="hover:bg-purple-50 hover:text-purple-600 hover:border-purple-300"
+                                  className="hover:bg-premium-muted hover:text-protocall-premium-text hover:border-protocall-premium-light"
                                 >
                                   <Edit className="w-3 h-3 mr-1" />
                                   Edit
@@ -758,7 +758,7 @@ export default function OrganizerDashboard() {
                                   size="sm" 
                                   variant="outline" 
                                   onClick={() => handleCloneEvent(event)}
-                                  className="hover:bg-green-50 hover:text-green-600 hover:border-green-300"
+                                  className="hover:bg-buy-muted hover:text-buy-muted-foreground hover:border-buy/30"
                                 >
                                   <Copy className="w-3 h-3 mr-1" />
                                   Clone
@@ -767,7 +767,7 @@ export default function OrganizerDashboard() {
                                   size="sm" 
                                   variant="outline" 
                                   onClick={() => handleDeleteEvent(event.id)}
-                                  className="hover:bg-red-50 hover:text-red-600 hover:border-red-300"
+                                  className="hover:bg-sell-muted hover:text-sell-muted-foreground hover:border-sell/30"
                                 >
                                   <Trash2 className="w-3 h-3 mr-1" />
                                   Delete
@@ -782,12 +782,12 @@ export default function OrganizerDashboard() {
                 ) : (
                   <Card className="border-0 shadow-xl">
                     <CardContent className="p-16 text-center">
-                      <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Calendar className="w-10 h-10 text-purple-600" />
+                      <div className="w-20 h-20 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Calendar className="w-10 h-10 text-protocall-premium-text" />
                       </div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-2">No events created yet</h3>
-                      <p className="text-slate-600 mb-6">Start organizing your first event and grow your community</p>
-                      <Button onClick={() => setShowCreateModal(true)} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+                      <h3 className="text-xl font-bold text-foreground mb-2">No events created yet</h3>
+                      <p className="text-subtle mb-6">Start organizing your first event and grow your community</p>
+                      <Button onClick={() => setShowCreateModal(true)} className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
                         <CalendarPlus className="w-5 h-5 mr-2" />
                         Create Your First Event
                       </Button>
@@ -829,8 +829,8 @@ export default function OrganizerDashboard() {
                     onClick={() => setFinancialTab('overview')}
                     className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${
                       financialTab === 'overview' 
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105' 
-                        : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
+                        ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg hover:shadow-xl hover:scale-105' 
+                        : 'bg-surface-2 text-subtle hover:from-surface-2 hover:to-surface-2 hover:shadow-md border border-protocall-premium-light'
                     }`}
                   >
                     <DollarSign className="w-5 h-5 mr-2 inline-block" />
@@ -840,8 +840,8 @@ export default function OrganizerDashboard() {
                     onClick={() => setFinancialTab('payouts')}
                     className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${
                       financialTab === 'payouts' 
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105' 
-                        : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
+                        ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg hover:shadow-xl hover:scale-105' 
+                        : 'bg-surface-2 text-subtle hover:from-surface-2 hover:to-surface-2 hover:shadow-md border border-protocall-premium-light'
                     }`}
                   >
                     <Wallet className="w-5 h-5 mr-2 inline-block" />
@@ -851,8 +851,8 @@ export default function OrganizerDashboard() {
                     onClick={() => setFinancialTab('refunds')}
                     className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${
                       financialTab === 'refunds' 
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105' 
-                        : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
+                        ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg hover:shadow-xl hover:scale-105' 
+                        : 'bg-surface-2 text-subtle hover:from-surface-2 hover:to-surface-2 hover:shadow-md border border-protocall-premium-light'
                     }`}
                   >
                     <TrendingDown className="w-5 h-5 mr-2 inline-block" /> {/* Using TrendingDown for refunds */}
@@ -862,8 +862,8 @@ export default function OrganizerDashboard() {
                     onClick={() => setFinancialTab('promo-codes')}
                     className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${
                       financialTab === 'promo-codes' 
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105' 
-                        : 'bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-md border border-blue-200'
+                        ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg hover:shadow-xl hover:scale-105' 
+                        : 'bg-surface-2 text-subtle hover:from-surface-2 hover:to-surface-2 hover:shadow-md border border-protocall-premium-light'
                     }`}
                   >
                     <Sparkles className="w-5 h-5 mr-2 inline-block" />
@@ -875,11 +875,11 @@ export default function OrganizerDashboard() {
                 {financialTab === 'overview' && (
                   <div className="space-y-6">
                     <div className="flex justify-between items-center">
-                      <h2 className="text-2xl font-bold text-slate-800">Financial Overview</h2>
+                      <h2 className="text-2xl font-bold text-foreground">Financial Overview</h2>
                       <Button 
                         onClick={() => setFinancialTab('payouts')}
                         disabled={stats.totalRevenue <= 0}
-                        className="bg-green-600 hover:bg-green-700"
+                        className="bg-buy hover:bg-buy"
                       >
                         <Wallet className="w-4 h-4 mr-2" />
                         Request Payout
@@ -898,11 +898,11 @@ export default function OrganizerDashboard() {
                 {financialTab === 'payouts' && (
                   <div className="space-y-6">
                     <div className="flex justify-between items-center">
-                      <h2 className="text-2xl font-bold text-slate-800">Payout Requests</h2>
+                      <h2 className="text-2xl font-bold text-foreground">Payout Requests</h2>
                       <Button 
                         onClick={() => toast.info('Payout request feature coming soon')}
                         disabled={stats.totalRevenue <= 0}
-                        className="bg-green-600 hover:bg-green-700"
+                        className="bg-buy hover:bg-buy"
                       >
                         <Wallet className="w-4 h-4 mr-2" />
                         Request Payout
@@ -913,10 +913,10 @@ export default function OrganizerDashboard() {
                       <Card>
                         <CardContent className="p-6">
                           <div className="flex items-center">
-                            <Wallet className="w-8 h-8 text-green-600" />
+                            <Wallet className="w-8 h-8 text-buy-muted-foreground" />
                             <div className="ml-4">
-                              <p className="text-sm font-medium text-slate-600">Available Balance</p>
-                              <p className="text-2xl font-bold text-slate-900">₹{(stats.totalRevenue * 0.8).toLocaleString()}</p>
+                              <p className="text-sm font-medium text-subtle">Available Balance</p>
+                              <p className="text-2xl font-bold text-foreground">₹{(stats.totalRevenue * 0.8).toLocaleString()}</p>
                             </div>
                           </div>
                         </CardContent>
@@ -925,10 +925,10 @@ export default function OrganizerDashboard() {
                       <Card>
                         <CardContent className="p-6">
                           <div className="flex items-center">
-                            <Clock className="w-8 h-8 text-orange-600" />
+                            <Clock className="w-8 h-8 text-hold-muted-foreground" />
                             <div className="ml-4">
-                              <p className="text-sm font-medium text-slate-600">Pending Payouts</p>
-                              <p className="text-2xl font-bold text-slate-900">₹0</p>
+                              <p className="text-sm font-medium text-subtle">Pending Payouts</p>
+                              <p className="text-2xl font-bold text-foreground">₹0</p>
                             </div>
                           </div>
                         </CardContent>
@@ -937,10 +937,10 @@ export default function OrganizerDashboard() {
                       <Card>
                         <CardContent className="p-6">
                           <div className="flex items-center">
-                            <TrendingUp className="w-8 h-8 text-blue-600" />
+                            <TrendingUp className="w-8 h-8 text-protocall-blue" />
                             <div className="ml-4">
-                              <p className="text-sm font-medium text-slate-600">Total Earned</p>
-                              <p className="text-2xl font-bold text-slate-900">₹{(stats.totalRevenue * 0.8).toLocaleString()}</p>
+                              <p className="text-sm font-medium text-subtle">Total Earned</p>
+                              <p className="text-2xl font-bold text-foreground">₹{(stats.totalRevenue * 0.8).toLocaleString()}</p>
                             </div>
                           </div>
                         </CardContent>
@@ -949,10 +949,10 @@ export default function OrganizerDashboard() {
 
                     <Card>
                       <CardContent className="p-8 text-center">
-                        <Wallet className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                        <p className="text-slate-600">No payout requests yet.</p>
+                        <Wallet className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                        <p className="text-subtle">No payout requests yet.</p>
                         {stats.totalRevenue > 0 && (
-                          <Button onClick={() => toast.info('Payout request feature coming soon')} className="mt-4 bg-green-600 hover:bg-green-700">
+                          <Button onClick={() => toast.info('Payout request feature coming soon')} className="mt-4 bg-buy hover:bg-buy">
                             Request Your First Payout
                           </Button>
                         )}
@@ -964,7 +964,7 @@ export default function OrganizerDashboard() {
                 {/* Refund Management Tab */}
                 {financialTab === 'refunds' && (
                   <div className="space-y-6">
-                    <h2 className="text-2xl font-bold text-slate-800">Refund Management</h2>
+                    <h2 className="text-2xl font-bold text-foreground">Refund Management</h2>
                     <EventRefundManager 
                       events={events}
                       tickets={tickets}
@@ -978,7 +978,7 @@ export default function OrganizerDashboard() {
                 {/* Promo Code Management Tab */}
                 {financialTab === 'promo-codes' && (
                   <div className="space-y-6">
-                    <h2 className="text-2xl font-bold text-slate-800">Promo Code Management</h2>
+                    <h2 className="text-2xl font-bold text-foreground">Promo Code Management</h2>
                     <PromoCodeManager
                       events={events}
                       organizerId={user?.id}
@@ -990,12 +990,12 @@ export default function OrganizerDashboard() {
 
               {/* Reviews Tab */}
               <TabsContent value="reviews" className="mt-0 space-y-6">
-                <h2 className="text-2xl font-bold text-slate-800">Event Reviews & Ratings</h2>
+                <h2 className="text-2xl font-bold text-foreground">Event Reviews & Ratings</h2>
                 <Card className="border-0 shadow-xl">
                   <CardContent className="p-8 text-center">
-                    <Star className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                    <p className="text-slate-600">Event reviews feature coming soon</p>
-                    <p className="text-sm text-slate-500 mt-2">Track attendee feedback and ratings for your events</p>
+                    <Star className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-subtle">Event reviews feature coming soon</p>
+                    <p className="text-sm text-muted-foreground mt-2">Track attendee feedback and ratings for your events</p>
                   </CardContent>
                 </Card>
               </TabsContent>
