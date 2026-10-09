@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, adminMiddleware } = require("../middleware/auth");
 
 // ChatBots CRUD
 const chatbotController = createCrudController(db.ChatBot, {
@@ -19,7 +19,8 @@ router.get('/active', async (req, res) => {
     });
     res.json(bots);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[chatbot.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -32,16 +33,16 @@ router.get('/type/:type', async (req, res) => {
     });
     res.json(bot);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[chatbot.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// CRUD routes
-createCrudRoutes(router, chatbotController);
 
 // Bot Conversations sub-routes
 const conversationRouter = express.Router();
 const conversationController = createCrudController(db.BotConversation, {
+  ownership: 'user_id',
   defaultOrderBy: 'created_at',
   defaultOrder: 'DESC'
 });
@@ -56,7 +57,8 @@ conversationRouter.get('/my-conversations', authMiddleware, async (req, res) => 
     });
     res.json(conversations);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[chatbot.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -85,11 +87,18 @@ conversationRouter.post('/send', authMiddleware, async (req, res) => {
     
     res.status(201).json({ userMessage, botResponse });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[chatbot.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-createCrudRoutes(conversationRouter, conversationController);
+createCrudRoutes(conversationRouter, conversationController, [authMiddleware]);
 router.use('/conversations', conversationRouter);
+
+
+// CRUD LAST — the generated '/:id' route must not shadow the sub-routers
+// mounted above. Registered earlier, '/clients', '/participants' and the
+// like were matched as an id and answered 404 'Record not found'.
+createCrudRoutes(router, chatbotController, { read: [authMiddleware, adminMiddleware], write: [authMiddleware, adminMiddleware] });
 
 module.exports = router;

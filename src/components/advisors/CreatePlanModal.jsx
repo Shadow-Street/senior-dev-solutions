@@ -132,7 +132,7 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
           <DialogTitle className="flex items-center gap-2">
             {isEditMode ? (
               <>
-                <Edit className="w-5 h-5 text-protocall-blue" />
+                <Edit className="w-5 h-5 text-primary" />
                 Edit Subscription Plan
               </>
             ) : (
@@ -291,7 +291,7 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
           </div>
 
           <div className="bg-premium-muted p-4 rounded-lg">
-            <p className="text-sm text-protocall-blue">
+            <p className="text-sm text-primary">
               <strong>Note:</strong> {isEditMode 
                 ? 'Changes will be applied immediately. Existing subscribers will see the updated plan details.' 
                 : 'This plan will be immediately available for users to subscribe. You can deactivate it anytime from the plans list.'}
@@ -305,7 +305,7 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
             <Button 
               type="submit" 
               disabled={isSubmitting}
-              className={isEditMode ? "bg-protocall-blue hover:bg-protocall-blue" : "bg-buy hover:bg-buy"}
+              className={isEditMode ? "bg-primary hover:bg-primary" : "bg-buy text-buy-foreground hover:bg-buy-soft"}
             >
               {isSubmitting ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Plan' : 'Create Plan')}
             </Button>

@@ -175,7 +175,7 @@ export default function EventApprovalQueue({ events, onUpdate, permissions }) {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                         <div className="flex items-center gap-2 text-subtle">
-                          <Calendar className="w-4 h-4 text-protocall-blue" />
+                          <Calendar className="w-4 h-4 text-primary" />
                           {new Date(event.event_date).toLocaleDateString('en-IN', {
                             weekday: 'short',
                             month: 'short',

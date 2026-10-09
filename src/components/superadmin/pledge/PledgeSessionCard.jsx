@@ -65,9 +65,9 @@ export default function PledgeSessionCard({
     draft: { label: 'Draft', color: 'bg-surface-2 text-foreground', icon: <FileText className="w-3 h-3 mr-1" /> },
     active: { label: 'Active', color: 'bg-buy-muted text-buy-muted-foreground', icon: <Activity className="w-3 h-3 mr-1" /> },
     closed: { label: 'Closed', color: 'bg-hold-muted text-hold-muted-foreground', icon: <Clock className="w-3 h-3 mr-1" /> },
-    executing: { label: 'Executing', color: 'bg-premium-muted text-protocall-blue', icon: <Loader2 className="w-3 h-3 mr-1 animate-spin" /> },
+    executing: { label: 'Executing', color: 'bg-premium-muted text-primary', icon: <Loader2 className="w-3 h-3 mr-1 animate-spin" /> },
     // CHANGED: icon for awaiting_sell_execution from TrendingUp to Clock as per outline
-    awaiting_sell_execution: { label: 'Awaiting Sell', color: 'bg-premium-muted text-protocall-blue', icon: <Clock className="w-3 h-3 mr-1" /> },
+    awaiting_sell_execution: { label: 'Awaiting Sell', color: 'bg-premium-muted text-primary', icon: <Clock className="w-3 h-3 mr-1" /> },
     completed: { label: 'Completed', color: 'bg-premium-muted text-protocall-premium-text', icon: <CheckCircle className="w-3 h-3 mr-1" /> },
     cancelled: { label: 'Cancelled', color: 'bg-sell-muted text-sell-muted-foreground', icon: <XCircle className="w-3 h-3 mr-1" /> },
   };
@@ -85,7 +85,7 @@ export default function PledgeSessionCard({
       label: 'SELL ONLY'
     },
     buy_sell_cycle: {
-      color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+      color: 'bg-premium-muted text-primary border-protocall-premium-light',
       icon: Repeat,
       label: 'BUY & SELL'
     },
@@ -123,7 +123,7 @@ export default function PledgeSessionCard({
                     ) : (
                       <TrendingDown className="w-3 h-3 text-sell" />
                     )}
-                    <span className={`text-xs font-semibold ${mockPriceChange > 0 ? 'text-positive' : 'text-sell'}`}>
+                    <span className={`text-xs font-semibold ${mockPriceChange > 0 ? 'text-positive' : 'text-sell-muted-foreground'}`}>
                       {mockPriceChange > 0 ? '+' : '-'}{mockPricePercent}%
                     </span>
                   </div>
@@ -141,7 +141,7 @@ export default function PledgeSessionCard({
                 </Badge>
 
                 {session.allow_amo && (
-                  <Badge className="bg-premium-muted text-protocall-blue border-0">
+                  <Badge className="bg-premium-muted text-primary border-0">
                     <Moon className="w-3 h-3 mr-1" />
                     AMO
                   </Badge>
@@ -184,8 +184,8 @@ export default function PledgeSessionCard({
                 {session.status === 'active' && (
                   <>
                     <DropdownMenuItem onClick={() => onExecute(session)}>
-                      <Play className="w-4 h-4 mr-2 text-protocall-blue" />
-                      <span className="text-protocall-blue">Execute Now</span>
+                      <Play className="w-4 h-4 mr-2 text-primary" />
+                      <span className="text-primary">Execute Now</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={onClose}>
                       <StopCircle className="w-4 h-4 mr-2 text-hold-muted-foreground" />
@@ -215,7 +215,7 @@ export default function PledgeSessionCard({
         <CardContent className="p-6 space-y-4">
           {/* Display stock symbol and status badge pair in CardContent */}
           <div className="flex justify-between items-center text-sm">
-            <Badge variant="outline" className="font-mono text-protocall-blue bg-premium-muted border-protocall-premium-light">
+            <Badge variant="outline" className="font-mono text-primary bg-premium-muted border-protocall-premium-light">
               {session.stock_symbol}
             </Badge>
             <Badge variant="outline" className={cn("font-semibold text-xs", sessionStatus.color)}>
@@ -227,11 +227,11 @@ export default function PledgeSessionCard({
           {/* Special highlighted panel for 'awaiting_sell_execution' status */}
           {session.status === 'awaiting_sell_execution' && (
             <div className="p-3 bg-premium-muted border border-protocall-premium-light rounded-lg">
-              <h4 className="font-semibold text-sm text-protocall-blue flex items-center gap-2">
+              <h4 className="font-semibold text-sm text-primary flex items-center gap-2">
                 <TrendingUp className="w-4 h-4" />
                 Sell Phase Active
               </h4>
-              <p className="text-xs text-protocall-blue mt-1">
+              <p className="text-xs text-primary mt-1">
                 Buy orders are complete and positions are now live. You can monitor and manage sell executions from the <b className="font-bold">"Executions"</b> tab.
               </p>
             </div>
@@ -241,11 +241,11 @@ export default function PledgeSessionCard({
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-premium-muted p-4 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <Users className="w-5 h-5 text-protocall-blue" />
-                <span className="text-xs text-protocall-blue font-semibold">TOTAL</span>
+                <Users className="w-5 h-5 text-primary" />
+                <span className="text-xs text-primary font-semibold">TOTAL</span>
               </div>
-              <p className="text-2xl font-bold text-protocall-blue">{session.total_pledges || 0}</p>
-              <p className="text-xs text-protocall-blue">Total Pledges</p>
+              <p className="text-2xl font-bold text-primary">{session.total_pledges || 0}</p>
+              <p className="text-xs text-primary">Total Pledges</p>
               <div className="mt-2 flex gap-2 text-xs">
                 <span className="text-buy-muted-foreground">Buy: {session.buy_pledges_count || 0}</span>
                 <span className="text-sell-muted-foreground">Sell: {session.sell_pledges_count || 0}</span>
@@ -374,7 +374,7 @@ export default function PledgeSessionCard({
             {session.status === 'draft' && (
               <Button
                 size="sm"
-                className="flex-1 bg-buy-soft hover:from-buy hover:to-buy"
+                className="flex-1 bg-buy-soft text-buy-foreground hover:bg-buy"
                 onClick={onActivate}
               >
                 <Play className="w-4 h-4 mr-2" />
@@ -418,8 +418,8 @@ export default function PledgeSessionCard({
             {/* Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-premium-muted p-4 rounded-lg">
-                <p className="text-xs text-protocall-blue mb-1">Total Pledges</p>
-                <p className="text-2xl font-bold text-protocall-blue">{session.total_pledges || 0}</p>
+                <p className="text-xs text-primary mb-1">Total Pledges</p>
+                <p className="text-2xl font-bold text-primary">{session.total_pledges || 0}</p>
               </div>
               <div className="bg-buy-muted p-4 rounded-lg">
                 <p className="text-xs text-buy-muted-foreground mb-1">Total Value</p>
@@ -495,13 +495,13 @@ export default function PledgeSessionCard({
             {/* Badges */}
             <div className="flex flex-wrap gap-2">
               {session.is_advisor_recommended && (
-                <Badge className="bg-premium-muted text-protocall-blue">SEBI Advisor Recommended</Badge>
+                <Badge className="bg-premium-muted text-primary">SEBI Advisor Recommended</Badge>
               )}
               {session.is_analyst_certified && (
                 <Badge className="bg-buy-muted text-buy-muted-foreground">Analyst Certified</Badge>
               )}
               {session.allow_amo && (
-                <Badge className="bg-premium-muted text-protocall-blue">
+                <Badge className="bg-premium-muted text-primary">
                   <Moon className="w-3 h-3 mr-1" />
                   AMO Enabled
                 </Badge>

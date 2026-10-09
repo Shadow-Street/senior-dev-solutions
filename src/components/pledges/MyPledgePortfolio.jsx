@@ -721,7 +721,7 @@ export default function MyPledgePortfolio({ user }) {
           </div>
 
           <div className="mt-3 flex items-center justify-between flex-wrap gap-2">
-            <div className="text-xs text-protocall-blue">
+            <div className="text-xs text-primary">
               Last updated: {new Date(lastUpdate).toLocaleTimeString()}
             </div>
             {pollingError && (
@@ -743,35 +743,35 @@ export default function MyPledgePortfolio({ user }) {
         <TabsList className="grid w-full grid-cols-5 bg-transparent border-0 rounded-xl shadow-sm gap-2 p-1">
           <TabsTrigger
             value="active" // MODIFIED: was "pledge"
-            className="bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
+            className="bg-surface-2 text-primary hover:from-surface-2 hover:to-surface-2 data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
           >
             <Target className="w-4 h-4 mr-2" />
             Active Sessions
           </TabsTrigger>
           <TabsTrigger
             value="my-pledges" // MODIFIED: was "committed"
-            className="bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
+            className="bg-surface-2 text-primary hover:from-surface-2 hover:to-surface-2 data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
           >
             <Users className="w-4 h-4 mr-2" />
             My Pledges
           </TabsTrigger>
           <TabsTrigger
             value="executed"
-            className="bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
+            className="bg-surface-2 text-primary hover:from-surface-2 hover:to-surface-2 data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
           >
             <CheckCircle className="w-4 h-4 mr-2" />
             Executed
           </TabsTrigger>
           <TabsTrigger
             value="payments"
-            className="bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
+            className="bg-surface-2 text-primary hover:from-surface-2 hover:to-surface-2 data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
           >
             <CreditCard className="w-4 h-4 mr-2" />
             Payments
           </TabsTrigger>
           <TabsTrigger
             value="audit"
-            className="bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
+            className="bg-surface-2 text-primary hover:from-surface-2 hover:to-surface-2 data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white transition-all duration-300 rounded-lg font-semibold shadow-sm"
           >
             <Activity className="w-4 h-4 mr-2" />
             Audit Log
@@ -809,7 +809,7 @@ export default function MyPledgePortfolio({ user }) {
 
                 return (
                   <Card key={session.id} className="relative rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden bg-gradient-to-br from-white to-surface-2 flex flex-col">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-protocall-blue opacity-10 rounded-full transform translate-x-10 -translate-y-10 z-0"></div>
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-primary opacity-10 rounded-full transform translate-x-10 -translate-y-10 z-0"></div>
                     <CardHeader className="pb-3 relative z-10">
                       {/* Stock Name & Price Section */}
                       <div className="flex items-start justify-between mb-3">
@@ -894,7 +894,7 @@ export default function MyPledgePortfolio({ user }) {
                           <div className="text-sm text-buy-muted-foreground space-y-1">
                             <p><strong>Qty:</strong> {userPledge.qty} shares</p>
                             <p><strong>Price:</strong> ₹{userPledge.price_target}</p>
-                            <p><strong>Status:</strong> {userPledge.status.replace(/_/g, ' ').toUpperCase()}</p>
+                            <p><strong>Status:</strong> {(userPledge.status || 'unknown').replace(/_/g, ' ').toUpperCase()}</p>
                           </div>
                         </div>
                       ) : (
@@ -1012,7 +1012,7 @@ export default function MyPledgePortfolio({ user }) {
             <CardHeader>
               <div className="flex justify-between items-center flex-wrap gap-2">
                 <CardTitle className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-protocall-blue" />
+                  <FileText className="w-5 h-5 text-primary" />
                   Pledge Audit Log
                 </CardTitle>
                 <Button onClick={handleExportAuditLogs} variant="outline" size="sm">

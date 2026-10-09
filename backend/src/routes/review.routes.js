@@ -2,10 +2,11 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, optionalAuthenticate } = require("../middleware/auth");
 
 // Reviews CRUD
 const reviewController = createCrudController(db.Review, {
+  ownership: { field: 'user_id', publicRead: true },
   defaultOrderBy: 'created_at',
   defaultOrder: 'DESC'
 });
@@ -25,7 +26,8 @@ router.get('/entity/:type/:entityId', async (req, res) => {
     });
     res.json(reviews);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[review.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -49,7 +51,8 @@ router.get('/rating/:type/:entityId', async (req, res) => {
       count: parseInt(result?.dataValues?.count || 0)
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[review.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -84,11 +87,12 @@ router.post('/submit', authMiddleware, async (req, res) => {
     
     res.status(201).json(review);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[review.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 // CRUD routes
-createCrudRoutes(router, reviewController);
+createCrudRoutes(router, reviewController, { read: [optionalAuthenticate], write: [authMiddleware] });
 
 module.exports = router;

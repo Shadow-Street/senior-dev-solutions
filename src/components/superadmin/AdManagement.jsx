@@ -45,7 +45,7 @@ const statusConfig = {
   active: { label: 'Active', icon: PlayCircle, color: 'bg-buy-muted text-buy-muted-foreground border-buy/30' },
   rejected: { label: 'Rejected', icon: XCircle, color: 'bg-sell-muted text-sell-muted-foreground border-sell/30' },
   paused: { label: 'Paused', icon: PauseCircle, color: 'bg-surface-2 text-foreground border-border' },
-  expired: { label: 'Expired', icon: AlertTriangle, color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light' },
+  expired: { label: 'Expired', icon: AlertTriangle, color: 'bg-premium-muted text-primary border-protocall-premium-light' },
   completed: { label: 'Completed', icon: CheckCircle, color: 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light' },
   budget_exhausted: { label: 'Budget Exhausted', icon: AlertTriangle, color: 'bg-hold-muted text-hold-muted-foreground border-hold/30' }
 };
@@ -221,7 +221,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Megaphone className="w-5 h-5 text-protocall-blue" />
+            <Megaphone className="w-5 h-5 text-primary" />
             Campaign Review: {campaign.title}
           </DialogTitle>
           <DialogDescription>
@@ -351,7 +351,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
                 {isProcessing ? 'Processing...' : 'Reject'}
               </Button>
               <Button 
-                className="bg-buy hover:bg-buy" 
+                className="bg-buy text-buy-foreground hover:bg-buy-soft" 
                 onClick={() => handleAction('approve')}
                 disabled={isProcessing}
               >
@@ -374,7 +374,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
           
           {campaign.status === 'paused' && (
             <Button 
-              className="bg-buy hover:bg-buy" 
+              className="bg-buy text-buy-foreground hover:bg-buy-soft" 
               onClick={() => handleAction('resume')}
               disabled={isProcessing}
             >
@@ -643,7 +643,7 @@ export default function AdManagement({ user }) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-subtle">Loading Ad Management...</p>
         </div>
       </div>
@@ -658,7 +658,7 @@ export default function AdManagement({ user }) {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-2xl flex items-center gap-2">
-                <Megaphone className="w-6 h-6 text-protocall-blue" />
+                <Megaphone className="w-6 h-6 text-primary" />
                 Ad Campaign Management
               </CardTitle>
               <p className="text-subtle mt-1">Manage vendor ad campaigns and track performance</p>
@@ -680,7 +680,7 @@ export default function AdManagement({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-protocall-ink/75 text-sm font-medium">Total Revenue</p>
+                <p className="text-protocall-ink/85 text-sm font-medium">Total Revenue</p>
                 <p className="text-3xl font-bold mt-2">₹{(stats.totalRevenue / 1000).toFixed(1)}k</p>
               </div>
               <DollarSign className="w-12 h-12 opacity-20" />

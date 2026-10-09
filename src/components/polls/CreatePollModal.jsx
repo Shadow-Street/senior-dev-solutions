@@ -293,7 +293,7 @@ export default function CreatePollModal({ open, onClose, room, user, onCreatePol
                 <input
                   type="file"
                   id="image_upload"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
                   onChange={handleImageUpload}
                   className="hidden"
                   disabled={isUploadingImage}

@@ -19,6 +19,7 @@ import { createPageUrl } from "@/utils";
 import ProfileGeneralSettings from "../components/profile/ProfileGeneralSettings";
 import ProfileReferralSection from "../components/profile/ProfileReferralSection";
 import ProfileSubscriptionSection from "../components/profile/ProfileSubscriptionSection";
+import ProfileBillingSection from "../components/profile/ProfileBillingSection";
 import ProfileTrustScore from "../components/profile/ProfileTrustScore";
 import ProfileCreditsSection from "../components/profile/ProfileCreditsSection";
 
@@ -58,41 +59,41 @@ export default function Profile() {
         </div>
 
         {/* Profile Tabs */}
-        <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+        <Card className="border border-border bg-card shadow-sm">
           <CardContent className="p-6">
             <Tabs defaultValue="general" className="space-y-6">
               <TabsList className="w-full bg-transparent rounded-none h-auto p-0 grid grid-cols-5 gap-2">
                 <TabsTrigger
                   value="general"
-                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg bg-background text-protocall-blue"
+                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg bg-card text-primary"
                 >
                   <Settings className="w-4 h-4" />
                   <span className="hidden sm:inline">General</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="referrals"
-                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg bg-background text-protocall-blue"
+                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg bg-card text-primary"
                 >
                   <Award className="w-4 h-4" />
                   <span className="hidden sm:inline">Referrals</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="subscription"
-                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg bg-background text-protocall-blue"
+                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg bg-card text-primary"
                 >
                   <Crown className="w-4 h-4" />
                   <span className="hidden sm:inline">Subscription</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="trust-score"
-                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg bg-background text-protocall-blue"
+                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg bg-card text-primary"
                 >
                   <Shield className="w-4 h-4" />
                   <span className="hidden sm:inline">Trust Score</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="credits"
-                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg bg-background text-protocall-blue"
+                  className="justify-center whitespace-nowrap text-xs sm:text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 px-3 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg bg-card text-primary"
                 >
                   <Star className="w-4 h-4" />
                   <span className="hidden sm:inline">Credits</span>
@@ -111,7 +112,8 @@ export default function Profile() {
                 />
               </TabsContent>
 
-              <TabsContent value="subscription" className="mt-6">
+              <TabsContent value="subscription" className="mt-6 space-y-5">
+                <ProfileBillingSection subscription={subscription} />
                 <ProfileSubscriptionSection subscription={subscription} />
               </TabsContent>
 

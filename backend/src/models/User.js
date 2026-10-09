@@ -13,6 +13,15 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING(100),
         allowNull: false,
       },
+      // The UI reads `display_name` in 334 places and the Profile screen writes
+      // it (User.updateMyUserData({ display_name })). Without the column the
+      // save was accepted and silently discarded, and every one of those reads
+      // rendered empty. Backfilled from `name` for existing rows — see
+      // table.sql, because sync() does not add columns to existing tables.
+      display_name: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+      },
       email: {
         type: DataTypes.STRING(150),
         allowNull: false,

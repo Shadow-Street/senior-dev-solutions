@@ -151,7 +151,7 @@ export default function SellStockModal({
                 onChange={(e) => setQuantity(e.target.value)}
                 className={errors.quantity ? "border-sell" : ""}
               />
-              {errors.quantity && <p className="text-xs text-sell">{errors.quantity}</p>}
+              {errors.quantity && <p className="text-xs text-sell-muted-foreground">{errors.quantity}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="sell-price">Sell Price per Share (₹)</Label>
@@ -162,7 +162,7 @@ export default function SellStockModal({
                 onChange={(e) => setSellPrice(e.target.value)}
                 className={errors.sellPrice ? "border-sell" : ""}
               />
-              {errors.sellPrice && <p className="text-xs text-sell">{errors.sellPrice}</p>}
+              {errors.sellPrice && <p className="text-xs text-sell-muted-foreground">{errors.sellPrice}</p>}
             </div>
           </div>
 
@@ -183,7 +183,7 @@ export default function SellStockModal({
                 <Calendar mode="single" selected={sellDate} onSelect={setSellDate} initialFocus />
               </PopoverContent>
             </Popover>
-            {errors.sellDate && <p className="text-xs text-sell">{errors.sellDate}</p>}
+            {errors.sellDate && <p className="text-xs text-sell-muted-foreground">{errors.sellDate}</p>}
           </div>
 
           {/* Profit/Loss Preview */}

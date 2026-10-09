@@ -6,6 +6,7 @@ const { authMiddleware } = require("../middleware/auth");
 
 // Referrals CRUD
 const referralController = createCrudController(db.Referral, {
+  ownership: 'referrer_id',
   defaultOrderBy: 'created_at',
   defaultOrder: 'DESC'
 });
@@ -24,7 +25,8 @@ router.get('/my-referrals', authMiddleware, async (req, res) => {
     });
     res.json(referrals);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[referral.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -49,7 +51,8 @@ router.get('/my-stats', authMiddleware, async (req, res) => {
       earnings: earnings || 0
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[referral.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -65,7 +68,8 @@ router.post('/generate-code', authMiddleware, async (req, res) => {
     
     res.json({ code });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[referral.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -105,17 +109,22 @@ router.post('/apply', authMiddleware, async (req, res) => {
     
     res.status(201).json(referral);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[referral.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// CRUD routes
-createCrudRoutes(router, referralController);
 
 // Referral Badges sub-routes
 const badgeRouter = express.Router();
 const badgeController = createCrudController(db.ReferralBadge);
-createCrudRoutes(badgeRouter, badgeController);
+createCrudRoutes(badgeRouter, badgeController, [authMiddleware]);
 router.use('/badges', badgeRouter);
+
+
+// CRUD LAST — the generated '/:id' route must not shadow the sub-routers
+// mounted above. Registered earlier, '/clients', '/participants' and the
+// like were matched as an id and answered 404 'Record not found'.
+createCrudRoutes(router, referralController, [authMiddleware]);
 
 module.exports = router;

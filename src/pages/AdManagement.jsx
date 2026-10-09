@@ -38,13 +38,14 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tool
 import { format } from 'date-fns';
 import CreateCampaignForm from '../components/vendor/CreateCampaignForm';
 import { UploadFile } from '@/api/integrations';
+import { useAuth } from '@/components/context/AuthContext';
 
 const statusConfig = {
   pending: { label: 'Pending', icon: Clock, color: 'bg-hold-muted text-hold-muted-foreground border-hold/30' },
   active: { label: 'Active', icon: PlayCircle, color: 'bg-buy-muted text-buy-muted-foreground border-buy/30' },
   rejected: { label: 'Rejected', icon: XCircle, color: 'bg-sell-muted text-sell-muted-foreground border-sell/30' },
   paused: { label: 'Paused', icon: PauseCircle, color: 'bg-surface-2 text-foreground border-border' },
-  expired: { label: 'Expired', icon: AlertTriangle, color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light' },
+  expired: { label: 'Expired', icon: AlertTriangle, color: 'bg-premium-muted text-primary border-protocall-premium-light' },
   completed: { label: 'Completed', icon: CheckCircle, color: 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light' },
   budget_exhausted: { label: 'Budget Exhausted', icon: AlertTriangle, color: 'bg-hold-muted text-hold-muted-foreground border-hold/30' }
 };
@@ -267,7 +268,7 @@ function EditCampaignModal({ campaign, isOpen, onClose, onSave }) {
       <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Edit className="w-5 h-5 text-protocall-blue" />
+            <Edit className="w-5 h-5 text-primary" />
             Edit Campaign: {campaign.title}
           </DialogTitle>
           <DialogDescription>
@@ -324,14 +325,14 @@ function EditCampaignModal({ campaign, isOpen, onClose, onSave }) {
               <div>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
                   onChange={handleFileUpload}
                   className="hidden"
                   id="creative-upload"
                   disabled={isUploading}
                 />
                 <Label htmlFor="creative-upload" className="cursor-pointer">
-                  <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-protocall-blue transition-colors">
+                  <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-primary transition-colors">
                     <Upload className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
                     <p className="text-sm text-subtle">
                       {isUploading ? 'Uploading...' : 'Click to upload new image'}
@@ -529,7 +530,7 @@ function EditCampaignModal({ campaign, isOpen, onClose, onSave }) {
           {['weekly', 'monthly'].includes(formData.billing_model) && (
             <Card className="bg-premium-muted border-protocall-premium-light">
               <CardContent className="p-4">
-                <h4 className="font-semibold text-protocall-blue mb-2">Pricing Summary</h4>
+                <h4 className="font-semibold text-primary mb-2">Pricing Summary</h4>
                 <div className="text-sm space-y-1">
                   <div className="flex justify-between">
                     <span>Base Fee:</span>
@@ -644,7 +645,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 9999 }}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Megaphone className="w-5 h-5 text-protocall-blue" />
+            <Megaphone className="w-5 h-5 text-primary" />
             Campaign Review: {campaign.title}
           </DialogTitle>
           <DialogDescription>
@@ -774,7 +775,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
               </CardHeader>
               <CardContent className="text-sm">
                 <p><strong>Edit Reason:</strong> {campaign.edit_reason || 'No reason provided'}</p>
-                <p className="text-protocall-ink/75 font-medium">This campaign requires re-approval after editing.</p>
+                <p className="text-protocall-ink/85 font-medium">This campaign requires re-approval after editing.</p>
               </CardContent>
             </Card>
           )}
@@ -824,7 +825,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
                 {isProcessing ? 'Processing...' : 'Reject'}
               </Button>
               <Button 
-                className="bg-buy hover:bg-buy" 
+                className="bg-buy text-buy-foreground hover:bg-buy-soft" 
                 onClick={() => handleAction('approve')}
                 disabled={isProcessing}
               >
@@ -847,7 +848,7 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
           
           {campaign.status === 'paused' && (
             <Button 
-              className="bg-buy hover:bg-buy" 
+              className="bg-buy text-buy-foreground hover:bg-buy-soft" 
               onClick={() => handleAction('resume')}
               disabled={isProcessing}
             >
@@ -883,7 +884,9 @@ function CampaignDetailsModal({ campaign, isOpen, onClose, onStatusUpdate, onEdi
   );
 }
 
-export default function AdManagement({ user }) {
+export default function AdManagement() {
+  // Routed as <AdManagement /> with no props; the user comes from auth context.
+  const { user } = useAuth();
   const [campaigns, setCampaigns] = useState([]);
   const [filteredCampaigns, setFilteredCampaigns] = useState([]);
   const [vendors, setVendors] = useState([]);
@@ -900,6 +903,7 @@ export default function AdManagement({ user }) {
   const [adminVendor, setAdminVendor] = useState(null);
 
   const loadAdData = useCallback(async () => {
+    if (!user?.id) { setIsLoading(false); return; }
     setIsLoading(true);
     try {
       const [campaignData, vendorData, transactionData, billingData] = await Promise.all([
@@ -929,10 +933,10 @@ export default function AdManagement({ user }) {
       setBillingRecords(enrichedBillingRecords);
 
       // Create or find admin vendor for campaign creation
-      let adminVendorRecord = vendorData.find(v => v.company_name === 'Platform Admin' && v.user_id === user.id);
+      let adminVendorRecord = vendorData.find(v => v.company_name === 'Platform Admin' && v.user_id === user?.id);
       if (!adminVendorRecord) {
         adminVendorRecord = await Vendor.create({
-          user_id: user.id,
+          user_id: user?.id,
           company_name: 'Platform Admin',
           website: 'https://protocol.com',
           status: 'approved',
@@ -947,7 +951,7 @@ export default function AdManagement({ user }) {
     } finally {
       setIsLoading(false);
     }
-  }, [user.id]);
+  }, [user?.id]);
 
   useEffect(() => {
     loadAdData();
@@ -1187,7 +1191,7 @@ Thank you for your business!
     return (
       <div className="flex h-screen items-center justify-center bg-protocall-ink">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-white">Loading Ad Management...</p>
         </div>
       </div>
@@ -1234,7 +1238,7 @@ Thank you for your business!
           title="Active Campaigns" 
           value={stats?.activeCampaigns || 0} 
           icon={Activity} 
-          color={{bg: 'bg-premium-muted', text: 'text-protocall-blue'}} 
+          color={{bg: 'bg-premium-muted', text: 'text-primary'}} 
           change={`${stats?.pendingCampaigns || 0} pending review`} 
         />
         <StatCard 
@@ -1313,7 +1317,7 @@ Thank you for your business!
                                 <p className="text-muted-foreground mb-4">
                                   {statusFilter !== 'all' ? `No ${statusConfig[statusFilter]?.label?.toLowerCase()} campaigns found.` : 'No campaigns created yet.'}
                                 </p>
-                                <Button onClick={handleCreateCampaign} className="bg-protocall-blue hover:bg-protocall-blue">
+                                <Button onClick={handleCreateCampaign} className="bg-primary hover:bg-primary">
                                   <PlusCircle className="w-4 h-4 mr-2" />
                                   Create First Campaign
                                 </Button>
@@ -1483,7 +1487,7 @@ Thank you for your business!
             />
           ) : (
             <div className="p-8 text-center text-muted-foreground">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
               Loading admin vendor information...
             </div>
           )}

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, adminMiddleware } = require("../middleware/auth");
 
 // Roles CRUD
 const roleController = createCrudController(db.Role, {
@@ -18,7 +18,8 @@ router.get('/all', async (req, res) => {
     });
     res.json(roles);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[role.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -26,20 +27,20 @@ router.get('/all', async (req, res) => {
 const templateRouter = express.Router();
 createCrudRoutes(templateRouter, createCrudController(db.RoleTemplate, {
   defaultOrderBy: 'created_at', defaultOrder: 'DESC'
-}), [authMiddleware]);
+}), [authMiddleware, adminMiddleware]);
 router.use('/templates', templateRouter);
 
 // Template -> permission mappings
 const templatePermRouter = express.Router();
-createCrudRoutes(templatePermRouter, createCrudController(db.RoleTemplatePermission), [authMiddleware]);
+createCrudRoutes(templatePermRouter, createCrudController(db.RoleTemplatePermission), [authMiddleware, adminMiddleware]);
 router.use('/template-permissions', templatePermRouter);
 
 // Role -> permission mappings
 const rolePermRouter = express.Router();
-createCrudRoutes(rolePermRouter, createCrudController(db.RolePermission), [authMiddleware]);
+createCrudRoutes(rolePermRouter, createCrudController(db.RolePermission), [authMiddleware, adminMiddleware]);
 router.use('/permissions', rolePermRouter);
 
 // CRUD LAST — '/:id' must not shadow the sub-routers above.
-createCrudRoutes(router, roleController);
+createCrudRoutes(router, roleController, { read: [authMiddleware, adminMiddleware], write: [authMiddleware, adminMiddleware] });
 
 module.exports = router;

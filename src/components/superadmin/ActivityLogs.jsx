@@ -38,21 +38,21 @@ import { toast } from 'sonner';
 // Action color mapping for visual indicators
 const actionColors = {
   'USER_CREATED': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
-  'USER_UPDATED': 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+  'USER_UPDATED': 'bg-premium-muted text-primary border-protocall-premium-light',
   'USER_DELETED': 'bg-sell-muted text-sell-muted-foreground border-sell/30',
   'USER_ROLE_CHANGED': 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light',
-  'USER_INVITED': 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+  'USER_INVITED': 'bg-premium-muted text-primary border-protocall-premium-light',
   'POLL_CREATED': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
-  'POLL_UPDATED': 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+  'POLL_UPDATED': 'bg-premium-muted text-primary border-protocall-premium-light',
   'POLL_DELETED': 'bg-sell-muted text-sell-muted-foreground border-sell/30',
   'POLL_SUSPENDED': 'bg-hold-muted text-hold-muted-foreground border-hold/30',
   'CHATROOM_CREATED': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
-  'CHATROOM_UPDATED': 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+  'CHATROOM_UPDATED': 'bg-premium-muted text-primary border-protocall-premium-light',
   'CHATROOM_DELETED': 'bg-sell-muted text-sell-muted-foreground border-sell/30',
   'CONTENT_MODERATED': 'bg-hold-muted text-hold-muted-foreground border-hold/30',
-  'SETTING_UPDATED': 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+  'SETTING_UPDATED': 'bg-premium-muted text-primary border-protocall-premium-light',
   'ROLE_CREATED': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
-  'ROLE_UPDATED': 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+  'ROLE_UPDATED': 'bg-premium-muted text-primary border-protocall-premium-light',
   'PERMISSION_GRANTED': 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light',
   'PERMISSION_REVOKED': 'bg-sell-muted text-sell-muted-foreground border-sell/30',
   'EVENT_APPROVED': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
@@ -280,7 +280,7 @@ export default function ActivityLogs({ user }) {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-lg text-subtle font-medium">Loading Activity Logs...</p>
         </div>
       </div>
@@ -506,7 +506,7 @@ export default function ActivityLogs({ user }) {
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
                               <div className="w-8 h-8 rounded-full bg-premium-muted flex items-center justify-center">
-                                <UserIcon className="w-4 h-4 text-protocall-blue" />
+                                <UserIcon className="w-4 h-4 text-primary" />
                               </div>
                               <div>
                                 <div className="font-medium text-foreground">{log.admin_name}</div>

@@ -61,7 +61,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['basic', 'premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("ChatRooms")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><MessageSquare className="w-8 h-8 text-protocall-blue mb-2" /><h3 className="font-bold text-lg">Chat Rooms</h3><p className="text-sm text-subtle">Join community discussions</p></div></Link>
+    component: () => <Link to={createPageUrl("ChatRooms")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><MessageSquare className="w-8 h-8 text-primary mb-2" /><h3 className="font-bold text-lg">Chat Rooms</h3><p className="text-sm text-subtle">Join community discussions</p></div></Link>
   },
   basic_stock_discussions: {
     key: 'basic_stock_discussions',
@@ -94,7 +94,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['basic', 'premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("Dashboard")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><TrendingUp className="w-8 h-8 text-protocall-blue mb-2" /><h3 className="font-bold text-lg">Market Overview</h3><p className="text-sm text-subtle">Daily market insights</p></div></Link>
+    component: () => <Link to={createPageUrl("Dashboard")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><TrendingUp className="w-8 h-8 text-primary mb-2" /><h3 className="font-bold text-lg">Market Overview</h3><p className="text-sm text-subtle">Daily market insights</p></div></Link>
   },
   basic_trading_tips: {
     key: 'basic_trading_tips',
@@ -140,7 +140,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("Polls")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><Calendar className="w-8 h-8 text-protocall-blue mb-2" /><h3 className="font-bold text-lg">Community Poll</h3><p className="text-sm text-subtle">Vote with the community</p></div></Link>
+    component: () => <Link to={createPageUrl("Polls")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><Calendar className="w-8 h-8 text-primary mb-2" /><h3 className="font-bold text-lg">Community Poll</h3><p className="text-sm text-subtle">Vote with the community</p></div></Link>
   },
   admin_recommendations: {
     key: 'admin_recommendations',
@@ -162,7 +162,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("Advisors")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><Award className="w-8 h-8 text-protocall-blue mb-2" /><h3 className="font-bold text-lg">SEBI Advisors</h3><p className="text-sm text-subtle">Subscribe to verified advisors</p></div></Link>
+    component: () => <Link to={createPageUrl("Advisors")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><Award className="w-8 h-8 text-primary mb-2" /><h3 className="font-bold text-lg">SEBI Advisors</h3><p className="text-sm text-subtle">Subscribe to verified advisors</p></div></Link>
   },
   exclusive_finfluencer_content: {
     key: 'exclusive_finfluencer_content',
@@ -184,7 +184,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("PledgePool")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><Target className="w-8 h-8 text-protocall-blue mb-2" /><h3 className="font-bold text-lg">Pledge Pool</h3><p className="text-sm text-subtle">Community trading pledges</p></div></Link>
+    component: () => <Link to={createPageUrl("PledgePool")} className="block"><div className="p-6 bg-premium-muted border-2 border-protocall-premium-light rounded-xl hover:shadow-lg transition-all"><Target className="w-8 h-8 text-primary mb-2" /><h3 className="font-bold text-lg">Pledge Pool</h3><p className="text-sm text-subtle">Community trading pledges</p></div></Link>
   },
   advanced_analytics: {
     key: 'advanced_analytics',

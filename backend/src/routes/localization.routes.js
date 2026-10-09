@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
 
+const { adminMiddleware, authMiddleware, optionalAuthenticate } = require("../middleware/auth");
 // Localization CRUD
 const localizationController = createCrudController(db.Localization);
 
@@ -24,7 +25,8 @@ router.get('/language/:lang', async (req, res) => {
     
     res.json(result);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[localization.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -36,7 +38,8 @@ router.get('/category/:category', async (req, res) => {
     });
     res.json(translations);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[localization.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -56,10 +59,11 @@ router.post('/bulk', async (req, res) => {
     
     res.json({ success: true, count: translations.length });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[localization.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-createCrudRoutes(router, localizationController);
+createCrudRoutes(router, localizationController, { read: [optionalAuthenticate], write: [authMiddleware, adminMiddleware] });
 
 module.exports = router;

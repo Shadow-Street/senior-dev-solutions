@@ -203,7 +203,7 @@ export default function RefundManagement({ user }) {
   const getStatusBadge = (status) => {
     const config = {
       pending: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending' },
-      approved: { color: 'bg-premium-muted text-protocall-blue', label: 'Approved' },
+      approved: { color: 'bg-premium-muted text-primary', label: 'Approved' },
       rejected: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Rejected' },
       processing: { color: 'bg-premium-muted text-protocall-premium-text', label: 'Processing' },
       processed: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Processed' },
@@ -228,7 +228,7 @@ export default function RefundManagement({ user }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -258,10 +258,10 @@ export default function RefundManagement({ user }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-protocall-blue font-medium">Total Refunds</p>
-                <p className="text-3xl font-bold text-protocall-blue mt-1">{stats.totalRefunds}</p>
+                <p className="text-sm text-primary font-medium">Total Refunds</p>
+                <p className="text-3xl font-bold text-primary mt-1">{stats.totalRefunds}</p>
               </div>
-              <RotateCcw className="w-10 h-10 text-protocall-blue opacity-50" />
+              <RotateCcw className="w-10 h-10 text-primary opacity-50" />
             </div>
           </CardContent>
         </Card>

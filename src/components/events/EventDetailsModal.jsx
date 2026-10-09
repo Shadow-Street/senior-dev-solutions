@@ -178,7 +178,7 @@ export default function EventDetailsModal({
       },
       'processing': {
         text: 'Refund Processing',
-        color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+        color: 'bg-premium-muted text-primary border-protocall-premium-light',
         icon: '🔄'
       },
       'processed': {
@@ -241,7 +241,7 @@ export default function EventDetailsModal({
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <Calendar className="w-6 h-6 text-protocall-blue" />
+              <Calendar className="w-6 h-6 text-primary" />
               {event.title}
             </DialogTitle>
           </DialogHeader>
@@ -279,9 +279,9 @@ export default function EventDetailsModal({
                   </Badge>
                 )}
                 {userRSVP && (
-                  <Badge variant="outline" className="text-protocall-blue">
+                  <Badge variant="outline" className="text-primary">
                     <CheckCircle className="w-3 h-3 mr-1" />
-                    Your RSVP: {userRSVP.rsvp_status.toUpperCase()}
+                    Your RSVP: {(userRSVP.rsvp_status || 'unknown').toUpperCase()}
                   </Badge>
                 )}
                 {eventRating.count > 0 && (
@@ -387,7 +387,7 @@ export default function EventDetailsModal({
                       {event.location?.includes('http') ? 'Online Event' : event.location || 'Location TBD'}
                     </p>
                     {event.location?.includes('http') && (
-                      <Button variant="link" size="sm" className="p-0 h-auto text-protocall-blue" asChild>
+                      <Button variant="link" size="sm" className="p-0 h-auto text-primary" asChild>
                         <a href={event.location} target="_blank" rel="noopener noreferrer">
                           <ExternalLink className="w-3 h-3 mr-1" />
                           Join Meeting
@@ -418,15 +418,15 @@ export default function EventDetailsModal({
 
               {/* Ticket Price */}
               {event.is_premium && (event.ticket_price || 0) > 0 && !userTicket && (
-                <div className="p-4 bg-premium-muted rounded-lg border-l-4 border-protocall-blue">
+                <div className="p-4 bg-premium-muted rounded-lg border-l-4 border-primary">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-semibold text-protocall-blue">Premium Event</h3>
-                      <p className="text-sm text-protocall-blue">
+                      <h3 className="font-semibold text-primary">Premium Event</h3>
+                      <p className="text-sm text-primary">
                         ₹{(event.ticket_price || 0).toLocaleString()} per ticket
                       </p>
                     </div>
-                    <Ticket className="w-8 h-8 text-protocall-blue" />
+                    <Ticket className="w-8 h-8 text-primary" />
                   </div>
                 </div>
               )}
@@ -453,7 +453,7 @@ export default function EventDetailsModal({
                       variant={userRSVP?.rsvp_status === 'yes' ? 'default' : 'outline'}
                       onClick={() => handleRSVP('yes')}
                       disabled={isRSVPing}
-                      className={userRSVP?.rsvp_status === 'yes' ? 'bg-buy hover:bg-buy' : ''}
+                      className={userRSVP?.rsvp_status === 'yes' ? 'bg-buy text-buy-foreground hover:bg-buy-soft' : ''}
                     >
                       <CheckCircle className="w-4 h-4 mr-2" />
                       Yes, I'll attend
@@ -482,11 +482,11 @@ export default function EventDetailsModal({
 
               {/* Review Button for Past Events */}
               {canLeaveReview() && (
-                <div className="p-4 bg-premium-muted rounded-lg border-l-4 border-protocall-blue">
+                <div className="p-4 bg-premium-muted rounded-lg border-l-4 border-primary">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-semibold text-protocall-blue mb-1">Share Your Experience</h3>
-                      <p className="text-sm text-protocall-blue">
+                      <h3 className="font-semibold text-primary mb-1">Share Your Experience</h3>
+                      <p className="text-sm text-primary">
                         Help others by leaving a review for this event
                       </p>
                     </div>
@@ -536,7 +536,7 @@ export default function EventDetailsModal({
                       {event.is_premium && (event.ticket_price || 0) > 0 && (
                         <Button 
                           onClick={() => onTicketPurchase(event)}
-                          className="bg-protocall-blue hover:bg-protocall-blue"
+                          className="bg-primary hover:bg-primary"
                         >
                           <Ticket className="w-4 h-4 mr-2" />
                           Buy Ticket - ₹{(event.ticket_price || 0).toLocaleString()}

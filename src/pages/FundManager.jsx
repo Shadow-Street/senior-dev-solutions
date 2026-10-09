@@ -162,7 +162,7 @@ function DashboardHomeView({ stats, investors, transactions, allocations, pendin
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue rounded-2xl p-8 text-white">
         <h1 className="text-3xl font-bold mb-2">Fund Manager Dashboard</h1>
-        <p className="text-protocall-blue">Complete overview of all fund operations and investor activities</p>
+        <p className="text-primary">Complete overview of all fund operations and investor activities</p>
       </div>
 
       {/* Key Stats Grid */}
@@ -171,7 +171,7 @@ function DashboardHomeView({ stats, investors, transactions, allocations, pendin
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-premium-muted rounded-lg">
-                <IndianRupee className="w-6 h-6 text-protocall-blue" /> {/* Changed to IndianRupee */}
+                <IndianRupee className="w-6 h-6 text-primary" /> {/* Changed to IndianRupee */}
               </div>
               <Badge variant="outline" className="text-xs">Total AUM</Badge>
             </div>
@@ -184,7 +184,7 @@ function DashboardHomeView({ stats, investors, transactions, allocations, pendin
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-premium-muted rounded-lg">
-                <FileText className="w-6 h-6 text-protocall-blue" />
+                <FileText className="w-6 h-6 text-primary" />
               </div>
               <Badge variant="outline" className="text-xs">Active</Badge>
             </div>
@@ -258,7 +258,7 @@ function DashboardHomeView({ stats, investors, transactions, allocations, pendin
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
             <div className="p-3 bg-premium-muted rounded-lg">
-              <Target className="w-6 h-6 text-protocall-blue" />
+              <Target className="w-6 h-6 text-primary" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground mb-1">Pending Fund Allocations</p>
@@ -297,7 +297,7 @@ function DashboardHomeView({ stats, investors, transactions, allocations, pendin
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-protocall-blue" />
+              <Activity className="w-5 h-5 text-primary" />
               Recent Transaction Activity
             </CardTitle>
           </CardHeader>
@@ -379,7 +379,7 @@ function DashboardHomeView({ stats, investors, transactions, allocations, pendin
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <div className="w-10 h-10 rounded-full bg-premium-muted flex items-center justify-center">
-                        <UserCheck className="w-5 h-5 text-protocall-blue" />
+                        <UserCheck className="w-5 h-5 text-primary" />
                       </div>
                       <div>
                         <p className="font-semibold text-foreground">{inv.full_name}</p>
@@ -492,7 +492,7 @@ function AllocationsView({ onUpdate }) {
     return (
       <div className="flex items-center justify-center h-full p-12">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-protocall-blue mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
           <p className="text-subtle">Loading allocations...</p>
         </div>
       </div>
@@ -558,7 +558,7 @@ function AllocationsView({ onUpdate }) {
                         return (
                           <tr key={alloc.id} className="hover:bg-surface-2">
                             <td className="px-4 py-4">
-                              <span className="text-sm font-bold text-protocall-blue">
+                              <span className="text-sm font-bold text-primary">
                                 {getInvestorCode(alloc.investor_id)}
                               </span>
                             </td>
@@ -574,7 +574,7 @@ function AllocationsView({ onUpdate }) {
                             <td className="px-4 py-4 text-sm text-subtle">
                               {(alloc.units_held || 0).toFixed(4)}
                             </td>
-                            <td className="px-4 py-4 text-sm font-semibold text-protocall-blue">
+                            <td className="px-4 py-4 text-sm font-semibold text-primary">
                               ₹{(alloc.total_invested || 0).toLocaleString('en-IN')}
                             </td>
                             <td className="px-4 py-4 text-sm font-semibold text-buy-muted-foreground">
@@ -585,7 +585,7 @@ function AllocationsView({ onUpdate }) {
                                 <span className={`font-semibold text-sm ${profitLoss >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
                                   {profitLoss >= 0 ? '+' : ''}₹{Math.abs(profitLoss).toLocaleString('en-IN')}
                                 </span>
-                                <span className={`text-xs ${profitLoss >= 0 ? 'text-positive' : 'text-sell'}`}>
+                                <span className={`text-xs ${profitLoss >= 0 ? 'text-positive' : 'text-sell-muted-foreground'}`}>
                                   {profitLoss >= 0 ? '+' : ''}{profitLossPercent}%
                                 </span>
                               </div>
@@ -620,7 +620,7 @@ function AllocationsView({ onUpdate }) {
           <Card className="border-0 shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Target className="w-5 h-5 text-protocall-blue" />
+                <Target className="w-5 h-5 text-primary" />
                 Pending Fund Allocation Requests
               </CardTitle>
             </CardHeader>
@@ -663,7 +663,7 @@ function AllocationsView({ onUpdate }) {
                               })}
                             </td>
                             <td className="px-4 py-4">
-                              <span className="text-sm font-bold text-protocall-blue">
+                              <span className="text-sm font-bold text-primary">
                                 {getInvestorCode(request.investor_id)}
                               </span>
                             </td>
@@ -676,7 +676,7 @@ function AllocationsView({ onUpdate }) {
                                 <span className="text-xs font-mono text-muted-foreground">{planInfo.code}</span>
                               </div>
                             </td>
-                            <td className="px-4 py-4 text-sm font-bold text-protocall-blue">
+                            <td className="px-4 py-4 text-sm font-bold text-primary">
                               ₹{(request.requested_amount || 0).toLocaleString('en-IN')}
                             </td>
                             <td className="px-4 py-4">
@@ -810,7 +810,7 @@ function PayoutManagement({ onUpdate }) {
       case 'pending':
         return <Clock className="w-4 h-4 text-hold-muted-foreground" />;
       case 'approved':
-        return <CheckCircle className="w-4 h-4 text-protocall-blue" />;
+        return <CheckCircle className="w-4 h-4 text-primary" />;
       case 'processed':
         return <CheckCircle className="w-4 h-4 text-buy-muted-foreground" />;
       case 'rejected':
@@ -825,7 +825,7 @@ function PayoutManagement({ onUpdate }) {
       case 'pending':
         return 'bg-hold-muted text-hold-muted-foreground border-hold/30';
       case 'approved':
-        return 'bg-premium-muted text-protocall-blue border-protocall-premium-light';
+        return 'bg-premium-muted text-primary border-protocall-premium-light';
       case 'processed':
         return 'bg-buy-muted text-buy-muted-foreground border-buy/30';
       case 'rejected':
@@ -1012,7 +1012,7 @@ function PayoutManagement({ onUpdate }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -1165,7 +1165,7 @@ function PayoutManagement({ onUpdate }) {
             <Button variant="outline" onClick={() => setShowApproveModal(false)} disabled={isProcessing}>
               Cancel
             </Button>
-            <Button onClick={confirmApprove} disabled={isProcessing} className="bg-buy hover:bg-buy">
+            <Button onClick={confirmApprove} disabled={isProcessing} className="bg-buy text-buy-foreground hover:bg-buy-soft">
               {isProcessing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
               Confirm Approval
             </Button>
@@ -1219,8 +1219,8 @@ function PayoutManagement({ onUpdate }) {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
-              <h4 className="font-semibold text-protocall-blue mb-2">Bank Details:</h4>
-              <div className="text-sm text-protocall-blue space-y-1">
+              <h4 className="font-semibold text-primary mb-2">Bank Details:</h4>
+              <div className="text-sm text-primary space-y-1">
                 <p>A/C: {selectedRequest?.bank_account_number}</p>
                 <p>IFSC: {selectedRequest?.bank_ifsc_code}</p>
                 <p>Bank: {selectedRequest?.bank_name}</p>
@@ -1244,7 +1244,7 @@ function PayoutManagement({ onUpdate }) {
             <Button variant="outline" onClick={() => setShowProcessModal(false)} disabled={isProcessing}>
               Cancel
             </Button>
-            <Button onClick={confirmProcessPayout} disabled={isProcessing || !utrNumber.trim()} className="bg-protocall-blue hover:bg-protocall-blue">
+            <Button onClick={confirmProcessPayout} disabled={isProcessing || !utrNumber.trim()} className="bg-primary hover:bg-primary">
               {isProcessing ? <Loader2 className="w-4 h-4 mr-2" /> : <Wallet className="w-4 h-4 mr-2" />}
               Process Payout
             </Button>
@@ -1306,7 +1306,7 @@ function WithdrawalManagementContent({ onUpdate }) {
       case 'pending':
         return <Clock className="w-4 h-4 text-hold-muted-foreground" />;
       case 'approved':
-        return <CheckCircle className="w-4 h-4 text-protocall-blue" />;
+        return <CheckCircle className="w-4 h-4 text-primary" />;
       case 'processed':
         return <CheckCircle className="w-4 h-4 text-buy-muted-foreground" />;
       case 'rejected':
@@ -1321,7 +1321,7 @@ function WithdrawalManagementContent({ onUpdate }) {
       case 'pending':
         return 'bg-hold-muted text-hold-muted-foreground border-hold/30';
       case 'approved':
-        return 'bg-premium-muted text-protocall-blue border-protocall-premium-light';
+        return 'bg-premium-muted text-primary border-protocall-premium-light';
       case 'processed':
         return 'bg-buy-muted text-buy-muted-foreground border-buy/30';
       case 'rejected':
@@ -1575,7 +1575,7 @@ function WithdrawalManagementContent({ onUpdate }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -1730,7 +1730,7 @@ function WithdrawalManagementContent({ onUpdate }) {
             <Button variant="outline" onClick={() => setShowApproveModal(false)} disabled={isProcessing}>
               Cancel
             </Button>
-            <Button onClick={confirmApprove} disabled={isProcessing} className="bg-buy hover:bg-buy">
+            <Button onClick={confirmApprove} disabled={isProcessing} className="bg-buy text-buy-foreground hover:bg-buy-soft">
               {isProcessing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
               Confirm Approval
             </Button>
@@ -1802,7 +1802,7 @@ function WithdrawalManagementContent({ onUpdate }) {
             <Button variant="outline" onClick={() => setShowProcessModal(false)} disabled={isProcessing}>
               Cancel
             </Button>
-            <Button onClick={confirmProcessWithdrawal} disabled={isProcessing || !processingNotes.trim()} className="bg-protocall-blue hover:bg-protocall-blue">
+            <Button onClick={confirmProcessWithdrawal} disabled={isProcessing || !processingNotes.trim()} className="bg-primary hover:bg-primary">
               {isProcessing ? <Loader2 className="w-4 h-4 mr-2" /> : <Download className="w-4 h-4 mr-2" />}
               Complete Processing
             </Button>
@@ -1884,7 +1884,7 @@ function KYCApprovalModal({ investor, wallet, isOpen, onClose, onUpdate }) {
       <DialogContent className="sm:max-w-[700px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-protocall-blue" />
+            <Shield className="w-5 h-5 text-primary" />
             Review Investor KYC: {investor.full_name}
           </DialogTitle>
           <DialogDescription>
@@ -1934,14 +1934,14 @@ function KYCApprovalModal({ investor, wallet, isOpen, onClose, onUpdate }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {investor.kyc_documents?.pan_card_url && (
                 <a href={investor.kyc_documents.pan_card_url} target="_blank" rel="noopener noreferrer" className="block p-4 border rounded-lg hover:bg-surface-2 transition-colors">
-                  <FileText className="w-6 h-6 text-protocall-blue mb-2" />
+                  <FileText className="w-6 h-6 text-primary mb-2" />
                   <p className="font-medium text-sm">PAN Card</p>
                   <p className="text-xs text-muted-foreground truncate">{investor.kyc_documents.pan_card_url}</p>
                 </a>
               )}
               {investor.kyc_documents?.address_proof_url && (
                 <a href={investor.kyc_documents.address_proof_url} target="_blank" rel="noopener noreferrer" className="block p-4 border rounded-lg hover:bg-surface-2 transition-colors">
-                  <FileText className="w-6 h-6 text-protocall-blue mb-2" />
+                  <FileText className="w-6 h-6 text-primary mb-2" />
                   <p className="font-medium text-sm">Address Proof</p>
                   <p className="text-xs text-muted-foreground truncate">{investor.kyc_documents.address_proof_url}</p>
                 </a>
@@ -1985,7 +1985,7 @@ function KYCApprovalModal({ investor, wallet, isOpen, onClose, onUpdate }) {
             </Button>
           )}
           {investor.kyc_status !== 'verified' && (
-            <Button onClick={handleVerifyKYC} disabled={isProcessing} className="bg-buy hover:bg-buy">
+            <Button onClick={handleVerifyKYC} disabled={isProcessing} className="bg-buy text-buy-foreground hover:bg-buy-soft">
               {isProcessing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle className="w-4 h-4 mr-2" />}
               Verify KYC
             </Button>
@@ -2189,7 +2189,7 @@ function InvestorsAndKYCManager({ onUpdate }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -2225,7 +2225,7 @@ function InvestorsAndKYCManager({ onUpdate }) {
                     <div key={idx} className="bg-white border border-sell/30 rounded p-3">
                       <div className="flex items-center justify-between flex-wrap gap-2">
                         <div>
-                          <p className="font-medium text-sm text-foreground">{primaryInv.full_name} (<span className="font-mono text-protocall-blue">{primaryInv.investor_code}</span>)</p>
+                          <p className="font-medium text-sm text-foreground">{primaryInv.full_name} (<span className="font-mono text-primary">{primaryInv.investor_code}</span>)</p>
                           <p className="text-xs text-subtle">
                             Duplicates: {duplicateInvCodes || 'None found (Primary only)'}
                           </p>
@@ -2547,7 +2547,7 @@ function SettingsView() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full p-12">
-        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
+        <Loader2 className="w-12 h-12 animate-spin text-primary" />
       </div>
     );
   }
@@ -2578,7 +2578,7 @@ function SettingsView() {
                   onChange={(e) => setSettings({ ...settings, withdrawals_enabled: e.target.checked })}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-border peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ring rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-protocall-blue"></div>
+                <div className="w-11 h-6 bg-border peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ring rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
               </label>
             </div>
 
@@ -2594,7 +2594,7 @@ function SettingsView() {
                   onChange={(e) => setSettings({ ...settings, payouts_enabled: e.target.checked })}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-border peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ring rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-protocall-blue"></div>
+                <div className="w-11 h-6 bg-border peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ring rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
               </label>
             </div>
 
@@ -2610,7 +2610,7 @@ function SettingsView() {
                   onChange={(e) => setSettings({ ...settings, auto_approve_small_amounts: e.target.checked })}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-border peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ring rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-protocall-blue"></div>
+                <div className="w-11 h-6 bg-border peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ring rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
               </label>
             </div>
           </div>
@@ -2798,14 +2798,14 @@ function SupportView() {
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <LifeBuoy className="w-5 h-5 text-protocall-blue" />
+              <LifeBuoy className="w-5 h-5 text-primary" />
               Contact Support
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
-              <h3 className="font-semibold text-protocall-blue mb-2">📧 Email Support</h3>
-              <p className="text-sm text-protocall-blue">fundmanager@protocol.in</p>
+              <h3 className="font-semibold text-primary mb-2">📧 Email Support</h3>
+              <p className="text-sm text-primary">fundmanager@protocol.in</p>
             </div>
 
             <div className="p-4 bg-buy-muted rounded-lg border border-buy/30">
@@ -3132,7 +3132,7 @@ export default function FundManager() {
     return (
       <div className="flex h-screen items-center justify-center bg-surface-2">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-protocall-blue mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
           <p className="text-subtle font-medium">Loading Fund Manager...</p>
           <p className="text-muted-foreground text-sm mt-2">Please wait while we fetch your data</p>
         </div>
@@ -3148,7 +3148,7 @@ export default function FundManager() {
         <div className="h-20 flex items-center justify-center border-b border-border bg-gradient-to-r from-protocall-deep to-protocall-blue p-4">
           <div className="text-center">
             <h1 className="text-xl font-bold text-white">Fund Manager</h1>
-            <p className="text-xs text-protocall-blue">Investment Platform</p>
+            <p className="text-xs text-primary">Investment Platform</p>
           </div>
         </div>
 

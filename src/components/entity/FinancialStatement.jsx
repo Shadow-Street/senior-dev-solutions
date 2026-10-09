@@ -500,7 +500,7 @@ export default function FinancialStatement({ entityType, entityId, entityName })
               <tr>
                 <td>${format(new Date(p.date), 'MMM dd, yyyy')}</td>
                 <td>₹${p.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                <td><span class="status-badge status-${p.status}">${p.status.toUpperCase()}</span></td>
+                <td><span class="status-badge status-${p.status}">${(p.status || 'unknown').toUpperCase()}</span></td>
                 <td>${p.method || 'N/A'}</td>
                 <td>${p.processedDate ? format(new Date(p.processedDate), 'MMM dd, yyyy') : 'N/A'}</td>
                 <td>${p.reference || 'N/A'}</td>
@@ -531,7 +531,7 @@ export default function FinancialStatement({ entityType, entityId, entityName })
     return (
       <Card className="shadow-lg">
         <CardContent className="p-8 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-subtle">Loading financial statement...</p>
         </CardContent>
       </Card>
@@ -559,7 +559,7 @@ export default function FinancialStatement({ entityType, entityId, entityName })
           <div className="flex justify-between items-center">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <Receipt className="w-6 h-6 text-protocall-blue" />
+                <Receipt className="w-6 h-6 text-primary" />
                 Financial Statement
               </CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
@@ -636,7 +636,7 @@ export default function FinancialStatement({ entityType, entityId, entityName })
                 </p>
               </div>
               <div className="p-3 bg-premium-muted rounded-xl">
-                <DollarSign className="w-6 h-6 text-protocall-blue" />
+                <DollarSign className="w-6 h-6 text-primary" />
               </div>
             </div>
           </CardContent>
@@ -718,7 +718,7 @@ export default function FinancialStatement({ entityType, entityId, entityName })
                       </td>
                       <td className="p-3 text-sm text-foreground">{earning.description}</td>
                       <td className="p-3">
-                        <span className="px-2 py-1 text-xs rounded-full bg-premium-muted text-protocall-blue">
+                        <span className="px-2 py-1 text-xs rounded-full bg-premium-muted text-primary">
                           {earning.type}
                         </span>
                       </td>
@@ -778,10 +778,10 @@ export default function FinancialStatement({ entityType, entityId, entityName })
                         <span className={`px-2 py-1 text-xs rounded-full font-semibold ${
                           payout.status === 'processed' ? 'bg-buy-muted text-buy-muted-foreground' :
                           payout.status === 'pending' ? 'bg-hold-muted text-hold-muted-foreground' :
-                          payout.status === 'approved' ? 'bg-premium-muted text-protocall-blue' :
+                          payout.status === 'approved' ? 'bg-premium-muted text-primary' :
                           'bg-sell-muted text-sell-muted-foreground'
                         }`}>
-                          {payout.status.toUpperCase()}
+                          {(payout.status || 'unknown').toUpperCase()}
                         </span>
                       </td>
                       <td className="p-3 text-sm text-subtle">{payout.method || 'N/A'}</td>

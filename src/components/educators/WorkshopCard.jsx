@@ -32,7 +32,7 @@ export default function WorkshopCard({ workshop, educator, canAccessPremium }) {
         LIVE NOW
       </Badge>;
     } else if (isUpcoming) {
-      return <Badge className="bg-protocall-blue text-white">
+      return <Badge className="bg-primary text-white">
         UPCOMING
       </Badge>;
     } else {
@@ -100,15 +100,15 @@ export default function WorkshopCard({ workshop, educator, canAccessPremium }) {
 
         {/* Workshop Schedule */}
         <div className="bg-premium-muted p-3 rounded-lg">
-          <div className="flex items-center gap-2 text-protocall-blue font-medium text-sm">
+          <div className="flex items-center gap-2 text-primary font-medium text-sm">
             <Calendar className="w-4 h-4" />
             <span>{format(workshopDate, 'MMM d, yyyy')}</span>
           </div>
-          <div className="flex items-center gap-2 text-protocall-blue text-sm mt-1">
+          <div className="flex items-center gap-2 text-primary text-sm mt-1">
             <Clock className="w-4 h-4" />
             <span>{format(workshopDate, 'h:mm a')} - {format(workshopEndTime, 'h:mm a')}</span>
           </div>
-          <div className="text-xs text-protocall-blue mt-1">
+          <div className="text-xs text-primary mt-1">
             Duration: {workshop.duration_hours} hours
           </div>
         </div>

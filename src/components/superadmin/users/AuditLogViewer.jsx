@@ -83,7 +83,7 @@ export default function AuditLogViewer() {
                     </td>
                     <td className="px-6 py-4 font-medium">{log.admin_name}</td>
                     <td className="px-6 py-4">
-                      <span className="px-2 py-1 text-xs font-semibold bg-premium-muted text-protocall-blue rounded-full">
+                      <span className="px-2 py-1 text-xs font-semibold bg-premium-muted text-primary rounded-full">
                         {log.action}
                       </span>
                     </td>

@@ -97,9 +97,9 @@ export default function PMOverview({ pmProfile }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-protocall-ink/75 text-sm">Total Revenue</p>
+                <p className="text-protocall-ink/85 text-sm">Total Revenue</p>
                 <p className="text-3xl font-bold mt-2">₹{(stats.totalRevenue / 1000).toFixed(0)}K</p>
-                <p className="text-protocall-ink/75 text-xs mt-1">From Performance Fees</p>
+                <p className="text-protocall-ink/85 text-xs mt-1">From Performance Fees</p>
               </div>
               <DollarSign className="w-12 h-12 opacity-80" />
             </div>
@@ -125,7 +125,7 @@ export default function PMOverview({ pmProfile }) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-protocall-blue" />
+              <BarChart3 className="w-5 h-5 text-primary" />
               AUM Growth Trend
             </CardTitle>
           </CardHeader>
@@ -181,9 +181,9 @@ export default function PMOverview({ pmProfile }) {
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-premium-muted p-4 rounded-lg">
-              <Users className="w-6 h-6 text-protocall-blue mb-2" />
-              <p className="text-2xl font-bold text-protocall-blue">{stats.totalClients}</p>
-              <p className="text-sm text-protocall-blue">Active Clients</p>
+              <Users className="w-6 h-6 text-primary mb-2" />
+              <p className="text-2xl font-bold text-primary">{stats.totalClients}</p>
+              <p className="text-sm text-primary">Active Clients</p>
             </div>
             <div className="bg-buy-muted p-4 rounded-lg">
               <Target className="w-6 h-6 text-buy-muted-foreground mb-2" />

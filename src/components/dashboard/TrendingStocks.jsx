@@ -27,7 +27,7 @@ export default function TrendingStocks({ stocks = [] }) {
       <Card className="shadow-lg border border-border bg-card">
         <CardHeader className="border-b border-divider bg-surface-2">
           <CardTitle className="flex items-center gap-2 text-foreground">
-            <TrendingUp className="w-5 h-5 text-protocall-blue" />
+            <TrendingUp className="w-5 h-5 text-primary" />
             Trending Stocks
           </CardTitle>
         </CardHeader>
@@ -43,7 +43,7 @@ export default function TrendingStocks({ stocks = [] }) {
       <CardHeader className="border-b border-divider bg-surface-2">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-foreground">
-            <TrendingUp className="w-5 h-5 text-protocall-blue" />
+            <TrendingUp className="w-5 h-5 text-primary" />
             Trending Stocks
           </CardTitle>
           <Badge variant="outline" className="animate-pulse bg-buy text-buy-foreground border-transparent">
@@ -95,7 +95,7 @@ export default function TrendingStocks({ stocks = [] }) {
                 <Button
                   onClick={() => handleDiscuss(stock)}
                   variant="outline"
-                  className="flex-1 h-8 text-xs hover:bg-protocall-premium-bg hover:text-protocall-blue hover:border-protocall-premium-light"
+                  className="flex-1 h-8 text-xs hover:bg-protocall-premium-bg hover:text-primary hover:border-protocall-premium-light"
                 >
                   <MessageSquare className="w-3 h-3 mr-1" /> Chat
                 </Button>

@@ -185,7 +185,7 @@ export default function IntegrationsManager({ user }) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-protocall-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-subtle">Loading integrations...</p>
         </div>
       </div>
@@ -223,7 +223,7 @@ export default function IntegrationsManager({ user }) {
                 <p className="text-sm text-muted-foreground">Total Integrations</p>
                 <p className="text-3xl font-bold text-foreground">{stats.total}</p>
               </div>
-              <Plug className="w-12 h-12 text-protocall-blue" />
+              <Plug className="w-12 h-12 text-primary" />
             </div>
           </CardContent>
         </Card>
@@ -290,7 +290,7 @@ export default function IntegrationsManager({ user }) {
           ))}
         </div>
 
-        <Button onClick={() => { setEditingIntegration(null); setShowModal(true); }} className="bg-protocall-blue hover:bg-protocall-blue">
+        <Button onClick={() => { setEditingIntegration(null); setShowModal(true); }} className="bg-primary hover:bg-primary">
           <Plus className="w-4 h-4 mr-2" />
           Add Integration
         </Button>
@@ -304,7 +304,7 @@ export default function IntegrationsManager({ user }) {
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <div className="p-2 bg-premium-muted rounded-lg">
-                    <Link2 className="w-5 h-5 text-protocall-blue" />
+                    <Link2 className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-foreground">{integration.feature_name}</h3>
@@ -321,7 +321,7 @@ export default function IntegrationsManager({ user }) {
 
               <div className="flex items-center gap-2 mb-3">
                 {integration.visible_to_users ? (
-                  <Badge variant="outline" className="bg-premium-muted text-protocall-blue border-protocall-premium-light text-xs">
+                  <Badge variant="outline" className="bg-premium-muted text-primary border-protocall-premium-light text-xs">
                     <Eye className="w-3 h-3 mr-1" />
                     Enabled
                   </Badge>

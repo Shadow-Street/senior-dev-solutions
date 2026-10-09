@@ -52,7 +52,7 @@ export default function MyPMInvestments() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -66,7 +66,7 @@ export default function MyPMInvestments() {
               <Briefcase className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-2xl font-semibold text-foreground mb-2">No PM Investments Yet</h3>
               <p className="text-subtle mb-6">You haven't invested with any Portfolio Managers yet.</p>
-              <a href="/PortfolioManagers" className="inline-block bg-protocall-blue hover:bg-protocall-blue text-white px-6 py-3 rounded-lg font-semibold">
+              <a href="/PortfolioManagers" className="inline-block bg-primary hover:bg-primary text-white px-6 py-3 rounded-lg font-semibold">
                 Browse Portfolio Managers
               </a>
             </CardContent>
@@ -82,7 +82,7 @@ export default function MyPMInvestments() {
         {/* Header */}
         <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue rounded-xl p-8 text-white shadow-lg">
           <h1 className="text-3xl font-bold mb-2">My PM Investments</h1>
-          <p className="text-protocall-blue">Track your professionally managed portfolios</p>
+          <p className="text-primary">Track your professionally managed portfolios</p>
         </div>
 
         {/* PM Clients List */}
@@ -122,9 +122,9 @@ export default function MyPMInvestments() {
                     <TabsContent value="overview" className="mt-6">
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div className="bg-premium-muted p-4 rounded-lg">
-                          <DollarSign className="w-5 h-5 text-protocall-blue mb-2" />
-                          <p className="text-sm text-protocall-blue">Invested</p>
-                          <p className="text-2xl font-bold text-protocall-blue">
+                          <DollarSign className="w-5 h-5 text-primary mb-2" />
+                          <p className="text-sm text-primary">Invested</p>
+                          <p className="text-2xl font-bold text-primary">
                             ₹{(client.invested_amount / 1000).toFixed(0)}K
                           </p>
                         </div>
@@ -212,7 +212,7 @@ export default function MyPMInvestments() {
                             <div key={invoice.id} className="bg-white border rounded-lg p-4">
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                  <FileText className="w-5 h-5 text-protocall-blue" />
+                                  <FileText className="w-5 h-5 text-primary" />
                                   <div>
                                     <h4 className="font-semibold text-foreground">{invoice.invoice_number}</h4>
                                     <p className="text-sm text-subtle">

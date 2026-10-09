@@ -84,7 +84,7 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <UserPlus className="w-5 h-5 text-protocall-blue" />
+            <UserPlus className="w-5 h-5 text-primary" />
             Create New User Account
           </DialogTitle>
           <DialogDescription>

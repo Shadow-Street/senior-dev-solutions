@@ -119,7 +119,7 @@ export default function PagesManager({ user }) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-protocall-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-subtle">Loading pages...</p>
         </div>
       </div>
@@ -140,7 +140,7 @@ export default function PagesManager({ user }) {
                 <p className="text-sm text-muted-foreground">Total Pages</p>
                 <p className="text-3xl font-bold text-foreground">{stats.total}</p>
               </div>
-              <FileText className="w-12 h-12 text-protocall-blue" />
+              <FileText className="w-12 h-12 text-primary" />
             </div>
           </CardContent>
         </Card>
@@ -207,7 +207,7 @@ export default function PagesManager({ user }) {
           ))}
         </div>
 
-        <Button onClick={() => { setEditingPage(null); setShowModal(true); }} className="bg-protocall-blue hover:bg-protocall-blue">
+        <Button onClick={() => { setEditingPage(null); setShowModal(true); }} className="bg-primary hover:bg-primary">
           <Plus className="w-4 h-4 mr-2" />
           Add New Page
         </Button>
@@ -230,10 +230,10 @@ export default function PagesManager({ user }) {
                     <h3 className="font-semibold text-foreground">{page.feature_name}</h3>
                     <Badge className={`${getStatusColor(page.status)} border flex items-center gap-1`}>
                       {getStatusIcon(page.status)}
-                      {page.status.charAt(0).toUpperCase() + page.status.slice(1)}
+                      {(page.status || 'unknown').charAt(0).toUpperCase() + (page.status || 'unknown').slice(1)}
                     </Badge>
                     {page.visible_to_users ? (
-                      <Badge variant="outline" className="bg-premium-muted text-protocall-blue border-protocall-premium-light">
+                      <Badge variant="outline" className="bg-premium-muted text-primary border-protocall-premium-light">
                         <Eye className="w-3 h-3 mr-1" />
                         Visible
                       </Badge>

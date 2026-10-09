@@ -251,7 +251,7 @@ Generated on: ${format(new Date(), 'PPpp')}
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-protocall-blue" />
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
           <p className="text-subtle">Loading financial data...</p>
         </div>
       </div>
@@ -273,7 +273,7 @@ Generated on: ${format(new Date(), 'PPpp')}
       <Card className="border-0 shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-protocall-blue" />
+            <FileText className="w-5 h-5 text-primary" />
             Financial Reports
           </CardTitle>
           <CardDescription>
@@ -342,12 +342,12 @@ Generated on: ${format(new Date(), 'PPpp')}
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-protocall-blue">Gross Revenue</p>
-                <p className="text-2xl font-bold text-protocall-blue mt-1">
+                <p className="text-sm font-medium text-primary">Gross Revenue</p>
+                <p className="text-2xl font-bold text-primary mt-1">
                   ₹{(reportData.summary.totalGrossRevenue / 1000).toFixed(1)}k
                 </p>
               </div>
-              <div className="p-3 bg-protocall-blue rounded-lg">
+              <div className="p-3 bg-primary rounded-lg">
                 <DollarSign className="w-6 h-6 text-white" />
               </div>
             </div>

@@ -2,10 +2,12 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, optionalAuthenticate } = require("../middleware/auth");
 
 // Finfluencers CRUD
 const finfluencerController = createCrudController(db.FinInfluencer, {
+  ownership: { field: 'user_id', publicRead: true },
+  protectedFields: ['status', 'rating', 'follower_count'],
   defaultOrderBy: 'created_at',
   defaultOrder: 'DESC'
 });
@@ -20,7 +22,8 @@ router.get('/featured', async (req, res) => {
     });
     res.json(finfluencers);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[finfluencer.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -35,7 +38,8 @@ router.get('/top', async (req, res) => {
     });
     res.json(finfluencers);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[finfluencer.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -56,11 +60,12 @@ router.post('/:id/follow', authMiddleware, async (req, res) => {
     
     res.status(201).json(subscription);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[finfluencer.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 // CRUD routes
-createCrudRoutes(router, finfluencerController);
+createCrudRoutes(router, finfluencerController, { read: [optionalAuthenticate], write: [authMiddleware] });
 
 module.exports = router;

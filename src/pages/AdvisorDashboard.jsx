@@ -460,7 +460,7 @@ export default function AdvisorDashboard() {
       active: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Active' },
       cancelled: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Cancelled' },
       pending: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending' },
-      approved: { color: 'bg-premium-muted text-protocall-blue', label: 'Approved' },
+      approved: { color: 'bg-premium-muted text-primary', label: 'Approved' },
       processed: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Processed' },
       rejected: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Rejected' },
       pending_approval: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending Approval' }
@@ -659,7 +659,7 @@ export default function AdvisorDashboard() {
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <Button onClick={() => setShowCreatePost(true)} className="bg-protocall-blue hover:bg-protocall-blue">
+                  <Button onClick={() => setShowCreatePost(true)} className="bg-primary hover:bg-primary">
                     <PlusCircle className="w-4 h-4 mr-2" />
                     Create Advisory
                   </Button>
@@ -670,7 +670,7 @@ export default function AdvisorDashboard() {
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
-                      <Users className="w-8 h-8 text-protocall-blue" />
+                      <Users className="w-8 h-8 text-primary" />
                       <div className="ml-4">
                         <p className="text-sm font-medium text-subtle">Active Subscribers</p>
                         <p className="text-2xl font-bold text-foreground">{stats.activeSubscribers}</p>
@@ -739,7 +739,7 @@ export default function AdvisorDashboard() {
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <FileText className="w-8 h-8 text-protocall-blue" />
+                          <FileText className="w-8 h-8 text-primary" />
                           <div>
                             <p className="font-semibold text-foreground">Total Posts</p>
                             <p className="text-sm text-muted-foreground">Published advisories</p>
@@ -786,7 +786,7 @@ export default function AdvisorDashboard() {
             <TabsContent value="posts" className="space-y-4 mt-0">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-foreground">My Posts</h2>
-                <Button onClick={() => setShowCreatePost(true)} className="bg-protocall-blue hover:bg-protocall-blue">
+                <Button onClick={() => setShowCreatePost(true)} className="bg-primary hover:bg-primary">
                   <PlusCircle className="w-4 h-4 mr-2" />
                   Create Advisory
                 </Button>
@@ -822,7 +822,7 @@ export default function AdvisorDashboard() {
                           {post.stock_symbol && (
                             <div className="bg-surface-2 rounded-lg p-3 border border-protocall-premium-light">
                               <p className="text-xs text-subtle mb-1">Stock Symbol</p>
-                              <p className="text-xl font-bold text-protocall-blue">{post.stock_symbol}</p>
+                              <p className="text-xl font-bold text-primary">{post.stock_symbol}</p>
                             </div>
                           )}
 
@@ -848,7 +848,7 @@ export default function AdvisorDashboard() {
                           </p>
 
                           <div className="flex items-center justify-between pt-3 border-t">
-                            <Badge className={post.required_plan_id ? 'bg-premium-muted text-protocall-premium-text' : 'bg-premium-muted text-protocall-blue'}>
+                            <Badge className={post.required_plan_id ? 'bg-premium-muted text-protocall-premium-text' : 'bg-premium-muted text-primary'}>
                               {getPlanNameForPost(post.required_plan_id)}
                             </Badge>
                             <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -875,7 +875,7 @@ export default function AdvisorDashboard() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleViewPostStats(post)}
-                              className="h-8 border-protocall-premium-light text-protocall-blue hover:bg-premium-muted"
+                              className="h-8 border-protocall-premium-light text-primary hover:bg-premium-muted"
                             >
                               <BarChart3 className="w-3 h-3 mr-1" />
                               Stats
@@ -914,7 +914,7 @@ export default function AdvisorDashboard() {
                   </p>
                 </div>
                 {plans.length < 3 ? (
-                  <Button onClick={handleCreateNewPlan} className="bg-buy hover:bg-buy">
+                  <Button onClick={handleCreateNewPlan} className="bg-buy text-buy-foreground hover:bg-buy-soft">
                     <PlusCircle className="w-4 h-4 mr-2" />
                     Create New Plan
                   </Button>
@@ -944,7 +944,7 @@ export default function AdvisorDashboard() {
                               {plan.is_active ? 'Active' : 'Inactive'}
                             </Badge>
                             {activeSubs > 0 && (
-                              <Badge className="bg-white/90 text-protocall-blue border-0">
+                              <Badge className="bg-white/90 text-primary border-0">
                                 {activeSubs} Subscriber{activeSubs > 1 ? 's' : ''}
                               </Badge>
                             )}
@@ -974,7 +974,7 @@ export default function AdvisorDashboard() {
                           {plan.monthly_post_limit && (
                             <div className="bg-premium-muted rounded-lg p-3 mb-4 border border-protocall-premium-light">
                               <p className="text-xs text-subtle mb-1 text-center">Monthly Post Limit</p>
-                              <p className="text-lg font-bold text-protocall-blue text-center">
+                              <p className="text-lg font-bold text-primary text-center">
                                 {plan.monthly_post_limit} Posts/Month
                               </p>
                             </div>
@@ -1034,7 +1034,7 @@ export default function AdvisorDashboard() {
                       <CardContent className="p-8 text-center">
                         <CreditCard className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                         <p className="text-subtle">No subscription plans created yet.</p>
-                        <Button onClick={handleCreateNewPlan} className="mt-4 bg-buy hover:bg-buy">
+                        <Button onClick={handleCreateNewPlan} className="mt-4 bg-buy text-buy-foreground hover:bg-buy-soft">
                           Create Your First Plan
                         </Button>
                       </CardContent>
@@ -1091,7 +1091,7 @@ export default function AdvisorDashboard() {
                     <Button
                       onClick={() => setShowPayoutRequest(true)}
                       disabled={stats.availableBalance <= 0}
-                      className="bg-buy hover:bg-buy"
+                      className="bg-buy text-buy-foreground hover:bg-buy-soft"
                     >
                       <Wallet className="w-4 h-4 mr-2" />
                       Request Payout
@@ -1113,7 +1113,7 @@ export default function AdvisorDashboard() {
                     <Button
                       onClick={() => setShowPayoutRequest(true)}
                       disabled={stats.availableBalance <= 0}
-                      className="bg-buy hover:bg-buy"
+                      className="bg-buy text-buy-foreground hover:bg-buy-soft"
                     >
                       <Wallet className="w-4 h-4 mr-2" />
                       Request Payout
@@ -1148,7 +1148,7 @@ export default function AdvisorDashboard() {
                     <Card>
                       <CardContent className="p-6">
                         <div className="flex items-center">
-                          <TrendingUp className="w-8 h-8 text-protocall-blue" />
+                          <TrendingUp className="w-8 h-8 text-primary" />
                           <div className="ml-4">
                             <p className="text-sm font-medium text-subtle">Total Earned</p>
                             <p className="text-2xl font-bold text-foreground">₹{stats.totalEarnings.toLocaleString()}</p>
@@ -1183,7 +1183,7 @@ export default function AdvisorDashboard() {
                           <Wallet className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                           <p className="text-subtle">No payout requests yet.</p>
                           {stats.availableBalance > 0 && (
-                            <Button onClick={() => setShowPayoutRequest(true)} className="mt-4 bg-buy hover:bg-buy">
+                            <Button onClick={() => setShowPayoutRequest(true)} className="mt-4 bg-buy text-buy-foreground hover:bg-buy-soft">
                               Request Your First Payout
                             </Button>
                           )}
@@ -1215,7 +1215,7 @@ export default function AdvisorDashboard() {
                   <CardContent className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                       <div className="text-center p-4 bg-premium-muted rounded-xl">
-                        <div className="text-3xl font-bold text-protocall-blue">{posts.length}</div>
+                        <div className="text-3xl font-bold text-primary">{posts.length}</div>
                         <div className="text-sm text-subtle mt-1">Total Posts</div>
                       </div>
                       <div className="text-center p-4 bg-buy-muted rounded-xl">
@@ -1287,14 +1287,14 @@ export default function AdvisorDashboard() {
                               </div>
                               <div className="flex items-center gap-4">
                                 <div className="text-right">
-                                  <p className="font-bold text-protocall-blue">{post.view_count || 0}</p>
+                                  <p className="font-bold text-primary">{post.view_count || 0}</p>
                                   <p className="text-xs text-muted-foreground">views</p>
                                 </div>
                                 <Button
                                   size="sm"
                                   variant="outline"
                                   onClick={() => handleViewPostStats(post)}
-                                  className="border-protocall-premium-light text-protocall-blue hover:bg-premium-muted"
+                                  className="border-protocall-premium-light text-primary hover:bg-premium-muted"
                                 >
                                   <BarChart3 className="w-3 h-3 mr-1" />
                                   Details
@@ -1328,7 +1328,7 @@ export default function AdvisorDashboard() {
                           <div key={plan.id} className="p-4 bg-surface-2 rounded-lg">
                             <div className="flex items-center justify-between mb-2">
                               <h4 className="font-semibold text-foreground">{plan.name}</h4>
-                              <Badge className="bg-premium-muted text-protocall-blue">
+                              <Badge className="bg-premium-muted text-primary">
                                 {planSubs.length} subscribers
                               </Badge>
                             </div>
@@ -1427,7 +1427,7 @@ export default function AdvisorDashboard() {
                     <Input
                       id="profile-image"
                       type="file"
-                      accept="image/*"
+                      accept="image/jpeg,image/png,image/gif,image/webp"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) handleProfileImageUpload(file);
@@ -1527,7 +1527,6 @@ export default function AdvisorDashboard() {
                 setViewingPostStats(null);
               }}
               post={viewingPostStats}
-              advisorId={advisor.id}
             />
           )}
         </div>

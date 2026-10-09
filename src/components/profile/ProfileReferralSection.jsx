@@ -105,7 +105,7 @@ export default function ProfileReferralSection({ user, referrals, badges }) {
       </div>
 
       {/* Badge Progress */}
-      <Card className="bg-surface-2 border-protocall-premium-light">
+      <Card className="bg-card border-protocall-premium-light">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-protocall-premium-text">
             <Crown className="w-5 h-5" />
@@ -144,7 +144,7 @@ export default function ProfileReferralSection({ user, referrals, badges }) {
 
       {/* Referral Link */}
       <Card>
-        <CardHeader className="bg-surface-2">
+        <CardHeader className="bg-card border-b border-divider">
           <CardTitle className="flex items-center gap-2 text-buy-muted-foreground">
             <Share2 className="w-5 h-5" />
             Your Referral Link
@@ -170,7 +170,7 @@ export default function ProfileReferralSection({ user, referrals, badges }) {
           <div className="flex gap-3">
             <Button 
               onClick={shareViaWhatsApp} 
-              className="bg-buy hover:bg-buy flex-1"
+              className="bg-buy text-buy-foreground hover:bg-buy-soft flex-1"
             >
               <MessageSquare className="w-4 h-4 mr-2" />
               WhatsApp

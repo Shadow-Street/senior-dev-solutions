@@ -68,7 +68,7 @@ export default function ReadReceiptIndicator({
             <ul className="space-y-0.5">
               {readers.map((reader, idx) => (
                 <li key={reader.id || idx} className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-protocall-blue" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                   {reader.display_name || 'Unknown User'}
                 </li>
               ))}

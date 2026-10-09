@@ -19,11 +19,11 @@ const StatCard = ({ title, value, icon: Icon, color }) => (
 export default function PollOverview({ polls, stats }) {
 
   const overviewData = [
-    { title: 'Total Polls', value: stats?.total || 0, icon: Vote, color: { bg: 'bg-premium-muted', iconBg: 'bg-premium-muted', iconText: 'text-protocall-blue' } },
+    { title: 'Total Polls', value: stats?.total || 0, icon: Vote, color: { bg: 'bg-premium-muted', iconBg: 'bg-premium-muted', iconText: 'text-primary' } },
     { title: 'Active Polls', value: stats?.active || 0, icon: CheckCircle, color: { bg: 'bg-buy-muted', iconBg: 'bg-buy-muted', iconText: 'text-buy-muted-foreground' } },
     { title: 'Premium Polls', value: stats?.premium || 0, icon: Crown, color: { bg: 'bg-premium-muted', iconBg: 'bg-premium-muted', iconText: 'text-protocall-premium-text' } },
     { title: 'Total Votes', value: stats?.totalVotes || 0, icon: Users, color: { bg: 'bg-hold-muted', iconBg: 'bg-hold-muted', iconText: 'text-hold-muted-foreground' } },
-    { title: 'Avg. Votes', value: stats?.avgVotes || 0, icon: TrendingUp, color: { bg: 'bg-premium-muted', iconBg: 'bg-premium-muted', iconText: 'text-protocall-blue' } }
+    { title: 'Avg. Votes', value: stats?.avgVotes || 0, icon: TrendingUp, color: { bg: 'bg-premium-muted', iconBg: 'bg-premium-muted', iconText: 'text-primary' } }
   ];
 
   const topPolls = [...polls]

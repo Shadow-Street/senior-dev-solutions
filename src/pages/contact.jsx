@@ -63,7 +63,7 @@ export default function ContactPage() {
           <Card className="shadow-lg border-0 bg-white">
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
-                <Phone className="w-6 h-6 text-protocall-blue" />
+                <Phone className="w-6 h-6 text-primary" />
                 Get in Touch
               </CardTitle>
             </CardHeader>
@@ -71,7 +71,7 @@ export default function ContactPage() {
               {settings.support_email && (
                 <div className="flex items-start gap-4">
                   <div className="p-3 rounded-full bg-premium-muted flex-shrink-0">
-                    <Mail className="w-6 h-6 text-protocall-blue" />
+                    <Mail className="w-6 h-6 text-primary" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-foreground">Email Support</h3>

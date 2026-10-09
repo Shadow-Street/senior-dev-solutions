@@ -60,7 +60,7 @@ export default function EventReviewsSection({ eventId, currentUser }) {
   if (isLoading) {
     return (
       <div className="text-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-protocall-blue mx-auto"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
       </div>
     );
   }
@@ -208,7 +208,7 @@ export default function EventReviewsSection({ eventId, currentUser }) {
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="text-subtle hover:text-protocall-blue h-8 px-3"
+                          className="text-subtle hover:text-primary h-8 px-3"
                         >
                           <ThumbsUp className="w-4 h-4 mr-1" />
                           Helpful {review.helpful_count > 0 && `(${review.helpful_count})`}

@@ -171,7 +171,7 @@ export default function WithdrawalRequestModal({ investor, wallet, allocations, 
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent>
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         </DialogContent>
       </Dialog>
@@ -242,7 +242,7 @@ export default function WithdrawalRequestModal({ investor, wallet, allocations, 
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
                         <p className="text-subtle">Total Invested</p>
-                        <p className="font-bold text-protocall-blue">₹{selectedAllocation.total_invested.toLocaleString('en-IN')}</p>
+                        <p className="font-bold text-primary">₹{selectedAllocation.total_invested.toLocaleString('en-IN')}</p>
                       </div>
                       <div>
                         <p className="text-subtle">Current Value</p>

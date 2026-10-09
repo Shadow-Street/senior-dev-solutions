@@ -22,7 +22,7 @@ export default function Cookies() {
             <Cookie className="w-10 h-10" />
             <h1 className="text-4xl font-bold">Cookies Policy</h1>
           </div>
-          <p className="text-protocall-blue text-lg">
+          <p className="text-primary text-lg">
             Last Updated: January 1, 2025
           </p>
         </div>
@@ -33,10 +33,10 @@ export default function Cookies() {
         {/* Cookie Notice Banner */}
         <Card className="mb-8 border-protocall-premium-light bg-premium-muted p-6">
           <div className="flex items-start gap-4">
-            <Cookie className="w-6 h-6 text-protocall-blue flex-shrink-0 mt-1" />
+            <Cookie className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
             <div>
-              <h3 className="text-lg font-bold text-protocall-blue mb-2">What Are Cookies?</h3>
-              <p className="text-sm text-protocall-blue leading-relaxed">
+              <h3 className="text-lg font-bold text-primary mb-2">What Are Cookies?</h3>
+              <p className="text-sm text-primary leading-relaxed">
                 Cookies are small text files that are placed on your device when you visit our website. 
                 They help us provide you with a better experience by remembering your preferences and understanding 
                 how you use our platform.
@@ -52,7 +52,7 @@ export default function Cookies() {
               <FileText className="w-5 h-5" />
               Table of Contents
             </h3>
-            <ol className="space-y-1 text-sm text-protocall-blue">
+            <ol className="space-y-1 text-sm text-primary">
               <li><a href="#introduction" className="hover:underline">1. Introduction</a></li>
               <li><a href="#what-are-cookies" className="hover:underline">2. What Are Cookies?</a></li>
               <li><a href="#types-we-use" className="hover:underline">3. Types of Cookies We Use</a></li>
@@ -80,7 +80,7 @@ export default function Cookies() {
                 tracking technologies on our website and platform (collectively, the "Platform").
               </p>
               <p>
-                This policy should be read together with our <Link to={createPageUrl('Privacy')} className="text-protocall-blue hover:underline font-semibold">Privacy Policy</Link>, 
+                This policy should be read together with our <Link to={createPageUrl('Privacy')} className="text-primary hover:underline font-semibold">Privacy Policy</Link>, 
                 which provides more information about how we collect, use, and protect your personal information.
               </p>
               <p>
@@ -154,20 +154,20 @@ export default function Cookies() {
 
               <Card className="bg-premium-muted border-protocall-premium-light p-4 mt-4">
                 <div className="flex items-start gap-3">
-                  <Settings className="w-6 h-6 text-protocall-blue flex-shrink-0 mt-1" />
+                  <Settings className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
                   <div>
-                    <h4 className="font-bold text-lg text-protocall-blue mb-2">3.2 Performance and Analytics Cookies</h4>
-                    <p className="text-sm text-protocall-blue mb-2">
+                    <h4 className="font-bold text-lg text-primary mb-2">3.2 Performance and Analytics Cookies</h4>
+                    <p className="text-sm text-primary mb-2">
                       Help us understand how visitors use our Platform so we can improve it.
                     </p>
-                    <ul className="list-disc pl-6 space-y-1 text-sm text-protocall-blue">
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-primary">
                       <li>Number of visitors and page views</li>
                       <li>How users navigate through the Platform</li>
                       <li>Which features are most popular</li>
                       <li>Error tracking and performance monitoring</li>
                       <li>A/B testing and optimization</li>
                     </ul>
-                    <p className="text-xs text-protocall-blue mt-2 italic">
+                    <p className="text-xs text-primary mt-2 italic">
                       These cookies do not collect information that identifies you personally. 
                       All information is aggregated and anonymous.
                     </p>
@@ -440,7 +440,7 @@ export default function Cookies() {
                   <strong>Google Analytics:</strong> Tracks website traffic and user behavior
                   <br />
                   <span className="text-sm text-subtle">
-                    Privacy Policy: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">https://policies.google.com/privacy</a>
+                    Privacy Policy: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">https://policies.google.com/privacy</a>
                   </span>
                 </li>
               </ul>
@@ -451,14 +451,14 @@ export default function Cookies() {
                   <strong>Google Ads:</strong> Delivers targeted advertisements
                   <br />
                   <span className="text-sm text-subtle">
-                    Opt-out: <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">https://adssettings.google.com</a>
+                    Opt-out: <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">https://adssettings.google.com</a>
                   </span>
                 </li>
                 <li>
                   <strong>Facebook Pixel:</strong> Tracks conversions and delivers targeted ads
                   <br />
                   <span className="text-sm text-subtle">
-                    Privacy Policy: <a href="https://www.facebook.com/privacy/explanation" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">https://www.facebook.com/privacy/explanation</a>
+                    Privacy Policy: <a href="https://www.facebook.com/privacy/explanation" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">https://www.facebook.com/privacy/explanation</a>
                   </span>
                 </li>
               </ul>
@@ -469,14 +469,14 @@ export default function Cookies() {
                   <strong>Razorpay:</strong> Secure payment processing for subscriptions and purchases
                   <br />
                   <span className="text-sm text-subtle">
-                    Privacy Policy: <a href="https://razorpay.com/privacy/" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">https://razorpay.com/privacy/</a>
+                    Privacy Policy: <a href="https://razorpay.com/privacy/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">https://razorpay.com/privacy/</a>
                   </span>
                 </li>
                 <li>
                   <strong>Stripe:</strong> Alternative payment gateway
                   <br />
                   <span className="text-sm text-subtle">
-                    Privacy Policy: <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">https://stripe.com/privacy</a>
+                    Privacy Policy: <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">https://stripe.com/privacy</a>
                   </span>
                 </li>
               </ul>
@@ -487,7 +487,7 @@ export default function Cookies() {
                   <strong>Cloudflare:</strong> Content delivery network and DDoS protection
                   <br />
                   <span className="text-sm text-subtle">
-                    Privacy Policy: <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">https://www.cloudflare.com/privacypolicy/</a>
+                    Privacy Policy: <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">https://www.cloudflare.com/privacypolicy/</a>
                   </span>
                 </li>
               </ul>
@@ -528,7 +528,7 @@ export default function Cookies() {
                   <p className="text-sm">
                     Settings → Privacy and security → Cookies and other site data
                   </p>
-                  <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline text-sm">
+                  <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-sm">
                     Learn more →
                   </a>
                 </Card>
@@ -538,7 +538,7 @@ export default function Cookies() {
                   <p className="text-sm">
                     Settings → Privacy & Security → Cookies and Site Data
                   </p>
-                  <a href="https://support.mozilla.org/en-US/kb/enhanced-tracking-protection-firefox-desktop" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline text-sm">
+                  <a href="https://support.mozilla.org/en-US/kb/enhanced-tracking-protection-firefox-desktop" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-sm">
                     Learn more →
                   </a>
                 </Card>
@@ -548,7 +548,7 @@ export default function Cookies() {
                   <p className="text-sm">
                     Preferences → Privacy → Cookies and website data
                   </p>
-                  <a href="https://support.apple.com/guide/safari/manage-cookies-sfri11471/mac" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline text-sm">
+                  <a href="https://support.apple.com/guide/safari/manage-cookies-sfri11471/mac" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-sm">
                     Learn more →
                   </a>
                 </Card>
@@ -558,7 +558,7 @@ export default function Cookies() {
                   <p className="text-sm">
                     Settings → Privacy, search, and services → Cookies and site permissions
                   </p>
-                  <a href="https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline text-sm">
+                  <a href="https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-sm">
                     Learn more →
                   </a>
                 </Card>
@@ -575,19 +575,19 @@ export default function Cookies() {
               <ul className="list-disc pl-6 space-y-2">
                 <li>
                   <strong>Network Advertising Initiative (NAI):</strong>{' '}
-                  <a href="https://optout.networkadvertising.org/" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">
+                  <a href="https://optout.networkadvertising.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                     https://optout.networkadvertising.org/
                   </a>
                 </li>
                 <li>
                   <strong>Digital Advertising Alliance (DAA):</strong>{' '}
-                  <a href="https://optout.aboutads.info/" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">
+                  <a href="https://optout.aboutads.info/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                     https://optout.aboutads.info/
                   </a>
                 </li>
                 <li>
                   <strong>European Interactive Digital Advertising Alliance (EDAA):</strong>{' '}
-                  <a href="https://www.youronlinechoices.com/" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">
+                  <a href="https://www.youronlinechoices.com/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                     https://www.youronlinechoices.com/
                   </a>
                 </li>
@@ -598,7 +598,7 @@ export default function Cookies() {
                 You can prevent Google Analytics from tracking your activity by installing the 
                 Google Analytics Opt-out Browser Add-on:
               </p>
-              <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">
+              <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                 https://tools.google.com/dlpage/gaoptout
               </a>
             </div>
@@ -806,17 +806,17 @@ export default function Cookies() {
               <p>For more information about cookies and online privacy:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>
-                  <a href="https://www.allaboutcookies.org/" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">
+                  <a href="https://www.allaboutcookies.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                     All About Cookies
                   </a> - Comprehensive information about cookies
                 </li>
                 <li>
-                  <a href="https://www.youronlinechoices.eu/" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">
+                  <a href="https://www.youronlinechoices.eu/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                     Your Online Choices
                   </a> - Control behavioral advertising
                 </li>
                 <li>
-                  <a href="https://ico.org.uk/for-the-public/online/cookies/" target="_blank" rel="noopener noreferrer" className="text-protocall-blue hover:underline">
+                  <a href="https://ico.org.uk/for-the-public/online/cookies/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                     ICO Cookies Guidance
                   </a> - UK Information Commissioner's Office guidance
                 </li>
@@ -835,7 +835,7 @@ export default function Cookies() {
                   at any time through your browser settings. We're committed to transparency about how we use cookies 
                   to enhance your experience on Protocall.
                 </p>
-                <p className="text-sm text-protocall-blue">
+                <p className="text-sm text-primary">
                   BY USING PROTOCALL, YOU ACKNOWLEDGE THAT YOU HAVE READ AND UNDERSTOOD THIS COOKIES POLICY AND 
                   CONSENT TO THE USE OF COOKIES AS DESCRIBED HEREIN.
                 </p>
@@ -855,7 +855,7 @@ export default function Cookies() {
           </Link>
           <Link to={createPageUrl('Terms')}>
             <Card className="p-6 hover:shadow-lg transition-all cursor-pointer h-full">
-              <FileText className="w-8 h-8 text-protocall-blue mb-3" />
+              <FileText className="w-8 h-8 text-primary mb-3" />
               <h3 className="font-bold mb-2">Terms of Service</h3>
               <p className="text-sm text-subtle">Review our terms and conditions</p>
             </Card>

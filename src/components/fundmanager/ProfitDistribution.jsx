@@ -299,7 +299,7 @@ export default function ProfitDistribution({ onUpdate }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
         <p className="ml-4 text-subtle">Loading Profit Distribution Data...</p>
       </div>
     );
@@ -315,7 +315,7 @@ export default function ProfitDistribution({ onUpdate }) {
       {/* Debug and Actions Panel */}
       <Card className="bg-premium-muted border-protocall-premium-light">
         <CardHeader className="cursor-pointer" onClick={() => setShowDebug(!showDebug)}>
-          <CardTitle className="flex items-center gap-2 text-protocall-blue">
+          <CardTitle className="flex items-center gap-2 text-primary">
             <Bug className="w-5 h-5" />
             Debug Information & Quick Actions
             <Badge variant={showDebug ? "default" : "outline"}>{showDebug ? 'Hide' : 'Show'}</Badge>
@@ -324,7 +324,7 @@ export default function ProfitDistribution({ onUpdate }) {
         {showDebug && (
           <CardContent className="space-y-4 pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Button onClick={generateSampleData} disabled={isGeneratingSampleData || isClearingData} className="w-full bg-buy hover:bg-buy">
+                <Button onClick={generateSampleData} disabled={isGeneratingSampleData || isClearingData} className="w-full bg-buy text-buy-foreground hover:bg-buy-soft">
                   {isGeneratingSampleData ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Database className="w-4 h-4 mr-2" />}
                   Generate Sample Data Now
                 </Button>
@@ -334,11 +334,11 @@ export default function ProfitDistribution({ onUpdate }) {
                 </Button>
             </div>
             <div className="bg-white p-4 rounded-lg border border-protocall-premium-light">
-                <h4 className="font-semibold text-protocall-blue mb-2">New: Automated Payout Trigger</h4>
-                <p className="text-sm text-protocall-blue mb-3">
+                <h4 className="font-semibold text-primary mb-2">New: Automated Payout Trigger</h4>
+                <p className="text-sm text-primary mb-3">
                   Click this to run the "automatic" monthly profit distribution for all fund plans that have auto-payout enabled.
                 </p>
-                <Button onClick={triggerAutoPayout} disabled={isAutomating} className="w-full bg-protocall-blue hover:bg-protocall-blue">
+                <Button onClick={triggerAutoPayout} disabled={isAutomating} className="w-full bg-primary hover:bg-primary">
                   {isAutomating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ChevronsRight className="w-4 h-4 mr-2" />}
                   Trigger Monthly Auto-Payout
                 </Button>

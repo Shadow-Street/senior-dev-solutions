@@ -463,7 +463,7 @@ export default function ExportManager({
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl">
-            <Download className="w-6 h-6 text-protocall-blue" />
+            <Download className="w-6 h-6 text-primary" />
             Export Data
           </DialogTitle>
           <DialogDescription>
@@ -613,10 +613,10 @@ export default function ExportManager({
           {/* Export Summary */}
           <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-protocall-blue mt-0.5 flex-shrink-0" />
+              <CheckCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
               <div className="text-sm">
-                <p className="font-semibold text-protocall-blue mb-1">Export Summary</p>
-                <ul className="text-protocall-blue space-y-1">
+                <p className="font-semibold text-primary mb-1">Export Summary</p>
+                <ul className="text-primary space-y-1">
                   <li>• Format: <span className="font-medium">{exportFormat.toUpperCase()}</span></li>
                   <li>• Data Type: <span className="font-medium">{exportType}</span></li>
                   <li>• Date Range: <span className="font-medium">

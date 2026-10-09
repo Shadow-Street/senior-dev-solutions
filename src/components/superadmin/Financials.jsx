@@ -451,7 +451,7 @@ export default function Financials() {
                 <Button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
+                  className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
                   variant="ghost"
                   style={isActive ? {
                     background: 'linear-gradient(to right, rgb(59 130 246), rgb(147 51 234))',
@@ -459,7 +459,7 @@ export default function Financials() {
                     boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
                   } : {}}
                 >
-                  <tab.icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-protocall-blue'}`} />
+                  <tab.icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-primary'}`} />
                   <span className="text-sm">{tab.name}</span>
                 </Button>
               );

@@ -126,7 +126,7 @@ export default function FixSidebarOrderPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-surface-2 p-6 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }

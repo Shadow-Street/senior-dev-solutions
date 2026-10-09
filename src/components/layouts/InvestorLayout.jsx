@@ -93,7 +93,7 @@ export default function InvestorLayout({ children, currentView }) { // Changed a
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
-        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
+        <Loader2 className="w-12 h-12 animate-spin text-primary" />
       </div>
     );
   }

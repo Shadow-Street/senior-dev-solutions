@@ -64,7 +64,7 @@ export default function LiveStockTicker({ stockSymbol, onPriceUpdate }) {
       <Card className="bg-surface-2 border-0">
         <CardContent className="p-4">
           <div className="flex items-center justify-center">
-            <RefreshCw className="w-5 h-5 animate-spin text-protocall-blue" />
+            <RefreshCw className="w-5 h-5 animate-spin text-primary" />
             <span className="ml-2 text-sm text-subtle">Loading {stockSymbol} price...</span>
           </div>
         </CardContent>

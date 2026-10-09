@@ -67,7 +67,7 @@ const SuperAdminDashboard = () => {
         <div className="min-h-screen bg-protocall-ink text-white p-6">
             <header className="mb-8 flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold bg-protocall-blue bg-clip-text text-transparent">
+                    <h1 className="text-3xl font-bold bg-primary bg-clip-text text-transparent">
                         Super Admin Command Center
                     </h1>
                     <p className="text-muted-foreground">System Overview & Control</p>
@@ -181,7 +181,7 @@ const SuperAdminDashboard = () => {
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
-                                                        className={user.status === 'banned' ? "text-positive hover:text-positive" : "text-sell hover:text-sell"}
+                                                        className={user.status === 'banned' ? "text-positive hover:text-positive" : "text-sell-muted-foreground hover:text-sell-muted-foreground"}
                                                         onClick={() => handleBanUser(user.id, user.status)}
                                                     >
                                                         {user.status === 'banned' ? <UserCheck className="h-4 w-4" /> : <UserX className="h-4 w-4" />}

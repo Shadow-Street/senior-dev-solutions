@@ -89,7 +89,7 @@ export default function PMTradeConsole({ pmProfile }) {
   const getStatusBadge = (status) => {
     const config = {
       pending: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending' },
-      placed: { color: 'bg-premium-muted text-protocall-blue', label: 'Placed' },
+      placed: { color: 'bg-premium-muted text-primary', label: 'Placed' },
       executed: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Executed' },
       cancelled: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Cancelled' },
       rejected: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Rejected' }
@@ -108,7 +108,7 @@ export default function PMTradeConsole({ pmProfile }) {
       <Card className="bg-surface-2">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <ShoppingCart className="w-5 h-5 text-protocall-blue" />
+            <ShoppingCart className="w-5 h-5 text-primary" />
             Place Trade Order
           </CardTitle>
         </CardHeader>
@@ -210,7 +210,7 @@ export default function PMTradeConsole({ pmProfile }) {
               Clear
             </Button>
             <Button
-              className="bg-protocall-blue hover:bg-protocall-blue"
+              className="bg-primary hover:bg-primary"
               onClick={handlePlaceOrder}
             >
               Place Order

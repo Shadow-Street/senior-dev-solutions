@@ -178,7 +178,7 @@ export default function FinfluencerPricingCommission() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -247,13 +247,13 @@ export default function FinfluencerPricingCommission() {
           {/* Commission Calculation Example */}
           <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-5">
             <div className="flex items-start gap-3">
-              <Info className="w-5 h-5 text-protocall-blue mt-0.5 flex-shrink-0" />
+              <Info className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
               <div className="flex-1">
-                <h4 className="font-semibold text-protocall-blue mb-2">Commission Calculation Example</h4>
-                <p className="text-sm text-protocall-blue mb-2">
+                <h4 className="font-semibold text-primary mb-2">Commission Calculation Example</h4>
+                <p className="text-sm text-primary mb-2">
                   For a ₹1,000 course sale at {globalCommissionRate}% commission:
                 </p>
-                <ul className="text-sm text-protocall-blue space-y-1">
+                <ul className="text-sm text-primary space-y-1">
                   <li>• <span className="font-medium">Platform Fee:</span> ₹{platformFee.toFixed(2)}</li>
                   <li>• <span className="font-medium">Finfluencer Payout:</span> ₹{finfluencerPayout.toFixed(2)}</li>
                 </ul>
@@ -281,10 +281,10 @@ export default function FinfluencerPricingCommission() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-protocall-blue font-medium mb-1">Total Revenue</p>
-                <p className="text-2xl font-bold text-protocall-blue">₹{overallStats.totalGross.toLocaleString()}</p>
+                <p className="text-xs text-primary font-medium mb-1">Total Revenue</p>
+                <p className="text-2xl font-bold text-primary">₹{overallStats.totalGross.toLocaleString()}</p>
               </div>
-              <DollarSign className="w-10 h-10 text-protocall-blue opacity-70" />
+              <DollarSign className="w-10 h-10 text-primary opacity-70" />
             </div>
           </CardContent>
         </Card>
@@ -411,8 +411,8 @@ function FinfluencerOverrideCard({ finfluencer, stats, globalRate, onSave }) {
 
             <div className="grid grid-cols-3 gap-3">
               <div className="bg-premium-muted rounded-lg p-2">
-                <p className="text-xs text-protocall-blue">Total Revenue</p>
-                <p className="font-bold text-protocall-blue">₹{stats.totalGross.toLocaleString()}</p>
+                <p className="text-xs text-primary">Total Revenue</p>
+                <p className="font-bold text-primary">₹{stats.totalGross.toLocaleString()}</p>
               </div>
               <div className="bg-premium-muted rounded-lg p-2">
                 <p className="text-xs text-protocall-premium-text">Commission</p>

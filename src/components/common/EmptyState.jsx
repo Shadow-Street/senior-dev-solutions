@@ -17,7 +17,7 @@ export default function EmptyState({
         <h3 className="text-xl font-semibold text-subtle mb-2">{title}</h3>
         <p className="text-muted-foreground mb-6 max-w-md">{description}</p>
         {actionLabel && onAction && (
-          <Button onClick={onAction} className="bg-protocall-blue hover:bg-protocall-blue">
+          <Button onClick={onAction} className="bg-primary hover:bg-primary">
             {actionLabel}
           </Button>
         )}

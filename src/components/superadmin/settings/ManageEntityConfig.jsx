@@ -17,8 +17,8 @@ const AVAILABLE_ICONS = [
 ];
 
 const AVAILABLE_COLORS = [
-  'text-protocall-blue', 'text-buy-muted-foreground', 'text-protocall-premium-text', 'text-sell-muted-foreground', 
-  'text-hold-muted-foreground', 'text-protocall-blue', 'text-protocall-premium-text', 'text-protocall-blue'
+  'text-primary', 'text-buy-muted-foreground', 'text-protocall-premium-text', 'text-sell-muted-foreground', 
+  'text-hold-muted-foreground', 'text-primary', 'text-protocall-premium-text', 'text-primary'
 ];
 
 export default function ManageEntityConfig({ settings, onChange, refreshEntityConfigs }) {
@@ -56,7 +56,7 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
       display_name: 'Educators',
       description: 'Financial education specialists',
       icon_name: 'GraduationCap',
-      color: 'text-protocall-blue',
+      color: 'text-primary',
       enabled: true,
       user_visible: true,
       admin_visible: true,
@@ -76,7 +76,7 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
     display_name: '',
     description: '',
     icon_name: 'Shield',
-    color: 'text-protocall-blue',
+    color: 'text-primary',
     enabled: true,
     user_visible: false,
     admin_visible: true,
@@ -108,7 +108,7 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
       display_name: '',
       description: '',
       icon_name: 'Shield',
-      color: 'text-protocall-blue',
+      color: 'text-primary',
       enabled: true,
       user_visible: false,
       admin_visible: true,
@@ -225,7 +225,7 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
                             {entity.enabled ? 'Enabled' : 'Disabled'}
                           </Badge>
                           {entity.user_visible && (
-                            <Badge className="bg-premium-muted text-protocall-blue border-protocall-premium-light">
+                            <Badge className="bg-premium-muted text-primary border-protocall-premium-light">
                               User Visible
                             </Badge>
                           )}
@@ -265,7 +265,7 @@ export default function ManageEntityConfig({ settings, onChange, refreshEntityCo
                         variant="ghost"
                         size="sm"
                         onClick={() => handleOpenModal(entity)}
-                        className="text-protocall-blue hover:text-protocall-blue hover:bg-premium-muted"
+                        className="text-primary hover:text-primary hover:bg-premium-muted"
                       >
                         <Edit className="w-4 h-4" />
                       </Button>

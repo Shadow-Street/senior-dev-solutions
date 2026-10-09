@@ -69,7 +69,7 @@ export default function SubscriberAnalytics({ subscriptions, plans }) {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <Users className="w-8 h-8 text-protocall-blue" />
+              <Users className="w-8 h-8 text-primary" />
               <div className="ml-4">
                 <p className="text-sm font-medium text-subtle">Total Subscribers</p>
                 <p className="text-2xl font-bold text-foreground">{subscriptions.length}</p>
@@ -180,7 +180,7 @@ export default function SubscriberAnalytics({ subscriptions, plans }) {
 
                             {sub.auto_renew && sub.status === 'active' && (
                               <div className="mt-3">
-                                <Badge className="bg-premium-muted text-protocall-blue border-0 text-xs">
+                                <Badge className="bg-premium-muted text-primary border-0 text-xs">
                                   <CheckCircle className="w-3 h-3 mr-1" />
                                   Auto-Renew Enabled
                                 </Badge>

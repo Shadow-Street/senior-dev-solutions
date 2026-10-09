@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -43,6 +43,53 @@ import PremiumAccessOverlay from '../common/PremiumAccessOverlay';
 export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDetails, onDelete, onEdit, isLocked, userPledge, onShare }) {
   const { settings, isLoading: settingsLoading } = usePlatformSettings();
   const subscriptionContext = useSubscription();
+  // A poll image that 404s should disappear, not leave an empty frame.
+  const [imageFailed, setImageFailed] = useState(false);
+  // Whether this cell shows an ad.
+  //
+  // This was `Math.random() < 0.2` evaluated inline during render, so the
+  // ad appeared and vanished on every re-render — casting a vote could make
+  // it pop in or out and visibly reflow the grid. Deriving it from the poll
+  // id keeps roughly the same 1-in-5 rate while staying stable for a given
+  // poll, which is also what render purity requires.
+  const showAd = useMemo(() => {
+    const id = String(poll?.id ?? '');
+    if (!id) return false;
+    let hash = 0;
+    for (let i = 0; i < id.length; i += 1) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+    return hash % 5 === 0;
+  }, [poll?.id]);
+
+  /**
+   * Per-card accent colour.
+   *
+   * Decorative, not semantic: a poll carries several sentiments at once (buy,
+   * sell, hold), so one colour cannot stand for its result, and using the
+   * buy/sell palette here would imply a recommendation the poll does not make.
+   * The five tones are the AA-safe tile colours already in the palette — the
+   * same ones the dashboard uses — so no new hue enters the design.
+   *
+   * Derived from the poll id rather than the render order, so a card keeps its
+   * colour when the list is filtered, sorted or re-rendered. Picking by index
+   * would make every card change colour as soon as a search narrowed the grid.
+   */
+  const tone = useMemo(() => {
+    const TONES = ['purple', 'blue', 'green', 'orange', 'ink'];
+    const id = String(poll?.id ?? '');
+    if (!id) return TONES[0];
+    let hash = 0;
+    for (let i = 0; i < id.length; i += 1) hash = (hash * 33 + id.charCodeAt(i)) >>> 0;
+    return TONES[hash % TONES.length];
+  }, [poll?.id]);
+
+  const toneClasses = {
+    purple: { bar: 'bg-tile-purple', disc: 'bg-tile-purple', ring: 'group-hover:ring-tile-purple/30' },
+    blue:   { bar: 'bg-tile-blue',   disc: 'bg-tile-blue',   ring: 'group-hover:ring-tile-blue/30' },
+    green:  { bar: 'bg-tile-green',  disc: 'bg-tile-green',  ring: 'group-hover:ring-tile-green/30' },
+    orange: { bar: 'bg-tile-orange', disc: 'bg-tile-orange', ring: 'group-hover:ring-tile-orange/30' },
+    ink:    { bar: 'bg-tile-ink',    disc: 'bg-tile-ink',     ring: 'group-hover:ring-tile-ink/30' },
+  }[tone];
+
   const [hasAccess, setHasAccess] = useState(false);
   const [isCheckingAccess, setIsCheckingAccess] = useState(true);
 
@@ -146,7 +193,7 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
   if (pollOptions.length > 0) {
     pollOptions.forEach((option, index) => {
       const voteCount = pollVotes[index] || 0;
-      const colors = colorMap[option] || { color: 'text-protocall-blue', bgColor: 'bg-protocall-blue' };
+      const colors = colorMap[option] || { color: 'text-primary', bgColor: 'bg-primary' };
       voteData[index] = {
         icon: iconMap[option] || Star,
         ...colors,
@@ -318,8 +365,13 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
   }
 
   return (
-    <div className="space-y-4">
-      {Math.random() < 0.2 && (
+    // flex column rather than space-y, which adds margins that fight the
+    // layout. Deliberately no h-full: a percentage height on a grid item
+    // resolves against the grid *area*, so it re-stretched cells back to the
+    // tallest in the row and undid the grid's items-start — which is what left
+    // a 344px empty band inside cards sitting beside an ad.
+    <div className="flex flex-col gap-4">
+      {showAd && (
         <AdDisplay
           placement="polls"
           userContext={{ stock_symbol: poll.stock_symbol }}
@@ -327,8 +379,21 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
       )}
 
       <TooltipProvider>
-        <Card className={`transition-all duration-300 border-0 relative group ${isBoosted ? 'ring-2 ring-hold shadow-xl' : ''
-          } ${isPremiumDesign ? "overflow-hidden shadow-lg bg-gradient-to-br from-white to-surface-2 hover:shadow-xl transform hover:-translate-y-1" : "bg-white hover:shadow-lg"} ${isLocked ? 'locked-poll-card' : ''}`}>
+        {/* h-full + flex column: the grid already stretches every card in a row
+            to the same height, but the content was top-aligned inside it, so
+            the vote bars, stats and action buttons landed at different heights
+            from card to card. Making the card a column lets the block below be
+            pinned to the bottom, which is what lines the rows up. */}
+        <Card className={`flex flex-col overflow-hidden transition-all duration-300 border-0 relative group ${isBoosted ? 'ring-2 ring-hold shadow-xl' : ''
+          } ${isPremiumDesign ? "shadow-lg bg-gradient-to-br from-white to-surface-2 hover:shadow-xl transform hover:-translate-y-1" : "bg-white hover:shadow-lg"} ${isLocked ? 'locked-poll-card' : ''}`}>
+
+          {/* Per-card accent. overflow-hidden on the Card keeps it inside the
+              rounded corners. Boosted polls already carry a ring, so the bar
+              sits under it rather than competing with it. */}
+          <div
+            aria-hidden="true"
+            className={`absolute inset-x-0 top-0 h-1.5 z-20 ${toneClasses.bar}`}
+          />
 
           {poll.is_premium && !canAccessPollContent && !isAdmin && (
             <PremiumAccessOverlay
@@ -345,11 +410,27 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-protocall-grape to-protocall-blue opacity-10 rounded-full transform translate-x-16 -translate-y-16 z-0"></div>
           )}
 
-          <div className="relative z-10 p-4 space-y-4">
+          {/* gap-4, not space-y-4: the space-y selector
+              (`.space-y-4 > :not([hidden]) ~ :not([hidden])`) outranks the
+              `mt-auto` below it and was silently resetting it to 16px, so the
+              bottom-anchoring never took effect. gap sets no margins. */}
+          <div className="relative z-10 flex flex-1 flex-col gap-4 p-4">
             {/* Header */}
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  {/* White on these five tones measures 5.02:1 or better, so
+                      the initial stays legible on every one of them. */}
+                  <span
+                    aria-hidden="true"
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg
+                                text-sm font-bold text-tile-foreground shadow-sm
+                                transition-transform duration-300 group-hover:scale-105
+                                motion-reduce:transform-none motion-reduce:transition-none
+                                ${toneClasses.disc}`}
+                  >
+                    {String(poll.stock_symbol || '?').charAt(0).toUpperCase()}
+                  </span>
                   <CardTitle className="text-lg font-bold text-foreground leading-tight">
                     {poll.stock_symbol}
                   </CardTitle>
@@ -397,12 +478,12 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem onClick={handleSharePoll}>
-                        <Share2 className="w-4 h-4 mr-2 text-protocall-blue" />
+                        <Share2 className="w-4 h-4 mr-2 text-primary" />
                         Share Poll
                       </DropdownMenuItem>
                       {canEditDelete && onEdit && (
                         <DropdownMenuItem onClick={() => onEdit(poll)}>
-                          <Edit className="w-4 h-4 mr-2 text-protocall-blue" />
+                          <Edit className="w-4 h-4 mr-2 text-primary" />
                           Edit Poll
                         </DropdownMenuItem>
                       )}
@@ -422,12 +503,17 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
               {poll.title}
             </p>
 
-            {localPollData.image_url && (
+            {localPollData.image_url && !imageFailed && (
               <div className="mt-3 rounded-lg overflow-hidden border border-border">
                 <img
                   src={localPollData.image_url}
                   alt="Poll visual"
-                  className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+                  loading="lazy"
+                  // A missing file used to leave a 192px empty frame with the
+                  // alt text in it, which both looked broken and threw the row
+                  // out of alignment. Drop the figure instead.
+                  onError={() => setImageFailed(true)}
+                  className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300 cursor-pointer motion-reduce:transform-none"
                   onClick={() => window.open(localPollData.image_url, '_blank')}
                 />
               </div>
@@ -480,8 +566,11 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
               </Button>
             </div>
 
-            {/* Action Buttons */}
-            <div className="mt-4">
+            {/* Action Buttons — mt-auto pins just this block to the bottom, so
+                the primary control lines up across a row while everything above
+                it still flows from the top. Anchoring the whole results block
+                instead left a large empty band in the middle of shorter cards. */}
+            <div className="mt-auto pt-4">
               {isExpired ? (
                 <div className="text-center p-4 bg-surface-2 rounded-lg">
                   <Badge className="bg-muted-foreground text-white text-sm px-3 py-1">
@@ -512,9 +601,9 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
                         }
 
                         const voteType = data.label.toLowerCase();
-                        let votedClass = 'bg-protocall-blue';
+                        let votedClass = 'bg-primary';
                         if (voteType.includes('buy') || voteType.includes('bullish') || voteType.includes('yes')) {
-                          votedClass = 'bg-buy hover:bg-buy';
+                          votedClass = 'bg-buy text-buy-foreground hover:bg-buy-soft';
                         } else if (voteType.includes('sell') || voteType.includes('bearish') || voteType.includes('no')) {
                           votedClass = 'bg-sell hover:bg-sell';
                         } else {

@@ -6,6 +6,7 @@ const { authMiddleware } = require("../middleware/auth");
 
 // Reports CRUD
 const reportController = createCrudController(db.Report, {
+  ownership: 'user_id',
   defaultOrderBy: 'created_at',
   defaultOrder: 'DESC'
 });
@@ -19,7 +20,8 @@ router.get('/my-reports', authMiddleware, async (req, res) => {
     });
     res.json(reports);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[report.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -45,11 +47,12 @@ router.post('/generate', authMiddleware, async (req, res) => {
     
     res.status(201).json(report);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[report.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 // CRUD routes
-createCrudRoutes(router, reportController);
+createCrudRoutes(router, reportController, [authMiddleware]);
 
 module.exports = router;

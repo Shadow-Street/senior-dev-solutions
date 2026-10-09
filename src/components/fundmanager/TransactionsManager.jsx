@@ -45,14 +45,14 @@ export default function TransactionsManager({ onUpdate }) {
       pending: 'bg-hold-muted text-hold-muted-foreground',
       failed: 'bg-sell-muted text-sell-muted-foreground',
       cancelled: 'bg-surface-2 text-foreground',
-      processing: 'bg-premium-muted text-protocall-blue',
+      processing: 'bg-premium-muted text-primary',
     };
     return <Badge className={colors[status] || 'bg-surface-2'}>{status}</Badge>;
   };
   
   const getTypeBadge = (type) => {
     const colors = {
-      wallet_deposit: 'bg-premium-muted text-protocall-blue',
+      wallet_deposit: 'bg-premium-muted text-primary',
       purchase: 'bg-buy-muted text-buy-muted-foreground',
       redemption: 'bg-hold-muted text-hold-muted-foreground',
       profit_payout: 'bg-premium-muted text-protocall-premium-text',
@@ -63,7 +63,7 @@ export default function TransactionsManager({ onUpdate }) {
   }
 
   if (isLoading) {
-    return <div className="flex justify-center items-center p-12"><Loader2 className="w-8 h-8 animate-spin text-protocall-blue" /><p className="ml-4">Loading Transactions...</p></div>;
+    return <div className="flex justify-center items-center p-12"><Loader2 className="w-8 h-8 animate-spin text-primary" /><p className="ml-4">Loading Transactions...</p></div>;
   }
 
   return (

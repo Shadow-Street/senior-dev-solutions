@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, adminMiddleware, optionalAuthenticate } = require("../middleware/auth");
 
 // News CRUD
 const NewsController = require("../controllers/NewsController");
@@ -27,7 +27,8 @@ router.get('/stock/:symbol', async (req, res) => {
     });
     res.json(news);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[news.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -42,11 +43,12 @@ router.get('/categories', async (req, res) => {
     });
     res.json(categories.map(c => c.category).filter(Boolean));
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[news.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 // CRUD routes
-createCrudRoutes(router, NewsController);
+createCrudRoutes(router, NewsController, { read: [optionalAuthenticate], write: [authMiddleware, adminMiddleware] });
 
 module.exports = router;

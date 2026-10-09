@@ -1,160 +1,244 @@
 const express = require("express");
-const router = express.Router();
-const multer = require("multer");
-const path = require("path");
 const fs = require("fs");
-const { authMiddleware } = require("../middleware/auth");
+const path = require("path");
+const multer = require("multer");
+const router = express.Router();
 
-const { S3Client } = require('@aws-sdk/client-s3');
-const multerS3 = require('multer-s3');
+const { authMiddleware, optionalAuthenticate } = require("../middleware/auth");
+const storage = require("../services/StorageService");
 
-// Configure S3
-const s3Config = {
-  region: process.env.AWS_REGION || 'us-east-1',
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+/**
+ * Document upload and retrieval.
+ *
+ * Objects live in S3 (or on local disk with the identical key layout when S3 is
+ * not configured) and are never world-readable. Every read goes through
+ * /view/:key here, which applies the prefix rule in StorageService.canReadKey
+ * before redirecting to a short-lived presigned URL.
+ */
+
+/**
+ * File type gate.
+ *
+ * `file.mimetype` comes from the client's Content-Type and can be set to
+ * anything, so it is necessary but not sufficient: the extension has to agree
+ * with it as well. A .html or .svg renamed to image/png is rejected here rather
+ * than being stored and later served back to a browser.
+ */
+const ALLOWED_MIME = new Map([
+  ["image/jpeg", [".jpg", ".jpeg"]],
+  ["image/png", [".png"]],
+  ["image/gif", [".gif"]],
+  ["image/webp", [".webp"]],
+  ["application/pdf", [".pdf"]],
+  ["video/mp4", [".mp4"]],
+  ["text/csv", [".csv"]],
+  ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", [".xlsx"]],
+  ["application/vnd.openxmlformats-officedocument.wordprocessingml.document", [".docx"]],
+]);
+
+const fileFilter = (req, file, cb) => {
+  const allowedExts = ALLOWED_MIME.get(file.mimetype);
+  if (!allowedExts) {
+    return cb(new Error(`Unsupported file type: ${file.mimetype}`), false);
   }
+  const ext = path.extname(String(file.originalname || "")).toLowerCase();
+  if (!allowedExts.includes(ext)) {
+    return cb(
+      new Error(`File extension "${ext || "(none)"}" does not match ${file.mimetype}`),
+      false
+    );
+  }
+  cb(null, true);
 };
 
-const hasS3Keys = process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY;
-let s3;
-
-if (hasS3Keys) {
-  try {
-    s3 = new S3Client(s3Config);
-    console.log("AWS S3 Configured");
-  } catch (error) {
-    console.error("AWS S3 Configuration Error:", error);
-  }
-}
-
-// Configure Storage Engine
-const storage = hasS3Keys ? multerS3({
-  s3: s3,
-  bucket: process.env.AWS_BUCKET_NAME || 'my-app-uploads',
-  acl: 'public-read',
-  contentType: multerS3.AUTO_CONTENT_TYPE,
-  metadata: function (req, file, cb) {
-    cb(null, { fieldName: file.fieldname });
-  },
-  key: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, `uploads/${uniqueSuffix}-${file.originalname}`);
-  }
-}) : multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, '../../uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + '-' + file.originalname);
-  }
-});
-
 const upload = multer({
-  storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf', 'video/mp4'];
-    if (allowedTypes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error('Invalid file type'), false);
+  storage: storage.createStorage(),
+  limits: { fileSize: 10 * 1024 * 1024, files: 10 },
+  fileFilter,
+});
+
+/** Shape returned for an uploaded file. The key is the durable identifier. */
+const describe = (file, req) => {
+  const key = storage.keyOf(file);
+  if (!key) {
+    // Should not happen; surfaced rather than throwing an unhandled TypeError
+    // that would take the process down mid-request.
+    throw new Error("Upload succeeded but no storage key was recorded");
+  }
+  return {
+    key,
+    url: storage.publicUrlForKey(key, req),
+    is_private: key.startsWith("private/"),
+    filename: path.basename(key),
+    originalname: file.originalname,
+    mimetype: file.mimetype,
+    size: file.size,
+    storage: storage.s3Enabled ? "s3" : "local",
+  };
+};
+
+/** Multer rejections (type, size) are client errors, not 500s. */
+const handleUpload = (handler) => (req, res) =>
+  handler(req, res, (err) => {
+    if (err) return res.status(400).json({ error: err.message });
+  });
+
+// ---------------------------------------------------------------------------
+// Upload
+// ---------------------------------------------------------------------------
+router.post("/upload", authMiddleware, (req, res) => {
+  upload.single("file")(req, res, (err) => {
+    if (err) return res.status(400).json({ error: err.message });
+    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+    res.json(describe(req.file, req));
+  });
+});
+
+router.post("/upload-multiple", authMiddleware, (req, res) => {
+  upload.array("files", 10)(req, res, (err) => {
+    if (err) return res.status(400).json({ error: err.message });
+    if (!req.files?.length) {
+      return res.status(400).json({ error: "No files uploaded" });
     }
+    // Previously this hardcoded `/uploads/<filename>`, so with S3 enabled every
+    // multi-upload returned a URL that pointed at nothing.
+    res.json({ files: req.files.map((f) => describe(f, req)) });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Read
+// ---------------------------------------------------------------------------
+/**
+ * Serves a stored object.
+ *
+ * optionalAuthenticate rather than authMiddleware: `public/` keys (profile
+ * images, campaign creatives) have to load in an <img> tag, which cannot send a
+ * bearer token. Their uuid makes them unguessable. `private/` keys still require
+ * a session and an ownership match, enforced by canReadKey.
+ *
+ * A miss returns 404 whether the object is absent or merely not ours, so keys
+ * cannot be probed for existence.
+ */
+router.get("/view/*", optionalAuthenticate, async (req, res) => {
+  const key = req.params[0];
+
+  if (!storage.canReadKey(key, req.user)) {
+    return res.status(404).json({ error: "File not found" });
+  }
+
+  try {
+    if (!(await storage.objectExists(key))) {
+      return res.status(404).json({ error: "File not found" });
+    }
+
+    if (storage.s3Enabled) {
+      const signed = await storage.signedUrlForKey(key);
+      return res.redirect(302, signed);
+    }
+
+    // Local fallback: stream it, so private files are not exposed by the
+    // static middleware.
+    return res.sendFile(storage.localPathForKey(key));
+  } catch (error) {
+    console.error(`[files] view failed for ${key}:`, error.message);
+    return res.status(500).json({ error: "Could not retrieve file" });
   }
 });
 
-// Upload file
-router.post('/upload', authMiddleware, upload.single('file'), (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
-    }
+/**
+ * Hands back a time-limited direct URL for a key the caller may read.
+ *
+ * This replaces a placeholder that returned `/api/files/upload?filename=...`
+ * and called it a signed URL — it carried no signature and granted nothing.
+ */
+router.post("/signed-url", authMiddleware, async (req, res) => {
+  const { key } = req.body || {};
 
-    // If S3, location is the URL. If local, filename needs path.
-    const fileUrl = req.file.location || `/uploads/${req.file.filename}`;
+  if (!storage.canReadKey(key, req.user)) {
+    return res.status(404).json({ error: "File not found" });
+  }
+  if (!(await storage.objectExists(key))) {
+    return res.status(404).json({ error: "File not found" });
+  }
 
-    res.json({
-      url: fileUrl,
-      filename: req.file.filename,
-      originalname: req.file.originalname,
-      mimetype: req.file.mimetype,
-      size: req.file.size
+  if (!storage.s3Enabled) {
+    return res.json({
+      url: storage.publicUrlForKey(key, req),
+      expires_in: null,
+      storage: "local",
     });
+  }
+
+  try {
+    const url = await storage.signedUrlForKey(key);
+    res.json({ url, expires_in: storage.SIGNED_URL_TTL, storage: "s3" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(`[files] signing failed for ${key}:`, error.message);
+    res.status(500).json({ error: "Could not sign file URL" });
   }
 });
 
-// Upload multiple files
-router.post('/upload-multiple', authMiddleware, upload.array('files', 10), (req, res) => {
+// Kept for older callers that still post to /create-signed-url.
+router.post("/create-signed-url", authMiddleware, (req, res, next) => {
+  req.url = "/signed-url";
+  router.handle(req, res, next);
+});
+
+// ---------------------------------------------------------------------------
+// Delete
+// ---------------------------------------------------------------------------
+/**
+ * Deletes a stored object.
+ *
+ * The key arrives in the path and is checked with the same ownership rule as a
+ * read. The previous version joined an unvalidated `:filename` onto the uploads
+ * directory, so `../../` escaped it and any authenticated user could delete any
+ * file on the server — including another user's documents and source files.
+ */
+router.delete("/object/*", authMiddleware, async (req, res) => {
+  const key = req.params[0];
+
+  if (!storage.canReadKey(key, req.user)) {
+    return res.status(404).json({ error: "File not found" });
+  }
+  // Only the owner or staff may remove a private document; a public asset needs
+  // staff, since its key alone does not establish who uploaded it.
+  const isStaff = ["admin", "super_admin", "sub_admin"].includes(
+    req.user.app_role || req.user.role
+  );
+  if (key.startsWith("public/") && !isStaff) {
+    return res.status(403).json({ error: "Not permitted to delete this file" });
+  }
+
   try {
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ error: 'No files uploaded' });
+    if (!(await storage.objectExists(key))) {
+      return res.status(404).json({ error: "File not found" });
     }
-
-    const files = req.files.map(file => ({
-      url: `/uploads/${file.filename}`,
-      filename: file.filename,
-      originalname: file.originalname,
-      mimetype: file.mimetype,
-      size: file.size
-    }));
-
-    res.json({ files });
+    await storage.deleteObject(key);
+    res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(`[files] delete failed for ${key}:`, error.message);
+    res.status(500).json({ error: "Could not delete file" });
   }
 });
 
-// Create signed URL (placeholder)
-router.post('/create-signed-url', authMiddleware, (req, res) => {
-  try {
-    const { filename, contentType } = req.body;
-    // In production, generate actual signed URL for cloud storage
-    const signedUrl = `/api/files/upload?filename=${encodeURIComponent(filename)}`;
+// ---------------------------------------------------------------------------
+// Diagnostics (staff only) — confirms which backend is live without leaking keys
+// ---------------------------------------------------------------------------
+router.get("/storage-status", authMiddleware, (req, res) => {
+  const isStaff = ["admin", "super_admin", "sub_admin"].includes(
+    req.user.app_role || req.user.role
+  );
+  if (!isStaff) return res.status(403).json({ error: "Admin access required" });
 
-    res.json({ signedUrl, publicUrl: `/uploads/${filename}` });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Extract data from file (placeholder)
-router.post('/extract-data', authMiddleware, (req, res) => {
-  try {
-    const { fileUrl, extractionType } = req.body;
-    // In production, implement actual file data extraction
-    res.json({
-      success: true,
-      message: 'Data extraction placeholder',
-      data: {}
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Delete file
-router.delete('/:filename', authMiddleware, (req, res) => {
-  try {
-    const { filename } = req.params;
-    const filePath = path.join(__dirname, '../../uploads', filename);
-
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-      res.json({ success: true });
-    } else {
-      res.status(404).json({ error: 'File not found' });
-    }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+  res.json({
+    backend: storage.s3Enabled ? "s3" : "local",
+    bucket: storage.s3Enabled ? storage.BUCKET : null,
+    region: storage.s3Enabled ? storage.REGION : null,
+    signed_url_ttl_seconds: storage.SIGNED_URL_TTL,
+    allowed_extensions: [...storage.ALLOWED_EXTENSIONS],
+  });
 });
 
 module.exports = router;

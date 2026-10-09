@@ -246,7 +246,7 @@ export default function PremiumRoomPanel({ adminUser }) {
                         )}
                         
                         {room.is_private && (
-                          <Badge className="bg-premium-muted text-protocall-blue">
+                          <Badge className="bg-premium-muted text-primary">
                             <Lock className="w-3 h-3 mr-1" />
                             Private
                           </Badge>

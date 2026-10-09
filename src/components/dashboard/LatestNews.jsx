@@ -65,7 +65,7 @@ export default function LatestNews() {
     <Card className="shadow-lg border border-border bg-card">
       <CardHeader className="border-b border-divider bg-surface-2">
         <CardTitle className="flex items-center gap-2 text-foreground">
-          <Newspaper className="w-5 h-5 text-protocall-blue" />
+          <Newspaper className="w-5 h-5 text-primary" />
           Latest Market News
         </CardTitle>
         <p className="text-sm text-subtle">Stay updated with breaking market news and analysis</p>

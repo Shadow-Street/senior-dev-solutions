@@ -25,7 +25,11 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     try {
       const user = JSON.parse(userStr);
       setIsAuthenticated(true);
-      setUserRole(user.role);
+      // Same precedence as the backend's adminMiddleware and every other
+      // role check in the app: app_role first, then role. Reading `role`
+      // alone locked advisors out of their own dashboard, because approval
+      // promotes `app_role` and leaves `role` at its registration value.
+      setUserRole(user.app_role || user.role);
     } catch (error) {
       console.error('Error parsing user data:', error);
       setIsAuthenticated(false);

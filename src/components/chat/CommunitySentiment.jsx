@@ -32,7 +32,7 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader className="border-b bg-surface-2">
           <CardTitle className="flex items-center gap-2 text-foreground">
-            <BarChart3 className="w-5 h-5 text-protocall-blue" />
+            <BarChart3 className="w-5 h-5 text-primary" />
             Community Sentiment
           </CardTitle>
         </CardHeader>
@@ -51,7 +51,7 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader className="border-b bg-surface-2">
           <CardTitle className="flex items-center gap-2 text-foreground">
-            <BarChart3 className="w-5 h-5 text-protocall-blue" />
+            <BarChart3 className="w-5 h-5 text-primary" />
             Community Sentiment
           </CardTitle>
         </CardHeader>
@@ -65,7 +65,7 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
             {user && (
               <div className="mt-4">
                 <Link to={createPageUrl("Polls")}>
-                  <Button size="sm" className="bg-protocall-blue hover:bg-protocall-blue">
+                  <Button size="sm" className="bg-primary hover:bg-primary">
                     <Plus className="w-4 h-4 mr-1" />
                     Create Poll
                   </Button>
@@ -89,7 +89,7 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4">
-          <div className="text-center py-8 text-sell">
+          <div className="text-center py-8 text-sell-muted-foreground">
             <BarChart3 className="w-12 h-12 mx-auto mb-3 text-sell" />
             <p className="text-sm font-medium">Poll Suspended</p>
             <p className="text-xs mt-1">This poll has been disabled by admin</p>
@@ -218,7 +218,7 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
         <CardHeader className="border-b bg-surface-2">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-foreground">
-              <BarChart3 className="w-5 h-5 text-protocall-blue" />
+              <BarChart3 className="w-5 h-5 text-primary" />
               Community Sentiment
               <Crown className="w-4 h-4 text-protocall-premium-text" />
             </CardTitle>
@@ -265,13 +265,13 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
         {/* Premium Overlay */}
         <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
           <div className="text-center p-4">
-            <div className="inline-flex items-center justify-center bg-gradient-to-r from-protocall-deep to-protocall-blue text-white rounded-full p-3 mb-3">
+            <div className="inline-flex items-center justify-center bg-gradient-to-r from-primary to-protocall-grape text-white rounded-full p-3 mb-3">
               <Crown className="w-6 h-6" />
             </div>
             <h3 className="font-bold text-foreground mb-2">Expert Insights</h3>
             <p className="text-sm text-subtle mb-4">Unlock admin recommendations and sentiment analysis</p>
             <Link to={createPageUrl("Subscription")}>
-              <Button size="sm" className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
+              <Button size="sm" className="bg-gradient-to-r from-primary to-protocall-grape hover:from-primary hover:to-protocall-grape">
                 <Crown className="w-4 h-4 mr-2" />
                 Upgrade to Premium
               </Button>
@@ -295,7 +295,7 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
       <CardHeader className="border-b bg-surface-2">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-foreground">
-            <BarChart3 className="w-5 h-5 text-protocall-blue" />
+            <BarChart3 className="w-5 h-5 text-primary" />
             Community Sentiment
             {isPremiumPoll && ( // This refers to polls explicitly marked as is_premium
               <Crown className="w-4 h-4 text-protocall-premium-text" />
@@ -379,7 +379,7 @@ export default function CommunitySentiment({ stockSymbol, pollData, user, userVo
                   size="sm" 
                   onClick={() => onVote(voteType)}
                   className={`flex-1 ${
-                    ['buy', 'bullish', 'yes'].includes(voteType) ? 'bg-buy hover:bg-buy' :
+                    ['buy', 'bullish', 'yes'].includes(voteType) ? 'bg-buy text-buy-foreground hover:bg-buy-soft' :
                     ['sell', 'bearish', 'no'].includes(voteType) ? 'bg-sell hover:bg-sell' :
                     'bg-hold hover:bg-hold'
                   } text-white`}

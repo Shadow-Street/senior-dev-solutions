@@ -68,10 +68,10 @@ export default function ManageSite({ settings, onChange }) {
       {/* Info Banner */}
       <div className="bg-premium-muted border border-protocall-premium-light rounded-xl p-4">
         <div className="flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-protocall-blue mt-0.5 flex-shrink-0" />
+          <AlertCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
           <div>
-            <h4 className="font-semibold text-protocall-blue">Site Configuration</h4>
-            <p className="text-sm text-protocall-blue mt-1">
+            <h4 className="font-semibold text-primary">Site Configuration</h4>
+            <p className="text-sm text-primary mt-1">
               Configure your platform's basic information and social media presence. These settings appear across your application.
             </p>
           </div>
@@ -95,13 +95,13 @@ export default function ManageSite({ settings, onChange }) {
           {/* Basic Information Section */}
           <div>
             <h4 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Building className="w-5 h-5 text-protocall-blue" />
+              <Building className="w-5 h-5 text-primary" />
               Platform Details
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="site_name" className="text-sm font-semibold text-subtle flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-protocall-blue" />
+                  <Globe className="w-4 h-4 text-primary" />
                   Platform Name
                 </Label>
                 <Input
@@ -109,7 +109,7 @@ export default function ManageSite({ settings, onChange }) {
                   value={localSettings.site_name}
                   onChange={(e) => handleInputChange('site_name', e.target.value)}
                   placeholder="Enter platform name"
-                  className="border-border focus:border-protocall-blue focus:ring-2 focus:ring-protocall-premium-light rounded-lg"
+                  className="border-border focus:border-primary focus:ring-2 focus:ring-protocall-premium-light rounded-lg"
                 />
               </div>
 
@@ -159,7 +159,7 @@ export default function ManageSite({ settings, onChange }) {
 
             <div className="space-y-2 mt-6"> {/* Added top margin for description to separate from other inputs */}
               <Label htmlFor="site_description" className="text-sm font-semibold text-subtle flex items-center gap-2">
-                <Building className="w-4 h-4 text-protocall-blue" />
+                <Building className="w-4 h-4 text-primary" />
                 Platform Description
               </Label>
               <Textarea
@@ -168,7 +168,7 @@ export default function ManageSite({ settings, onChange }) {
                 onChange={(e) => handleInputChange('site_description', e.target.value)}
                 placeholder="Brief description of your platform"
                 rows={3}
-                className="border-border focus:border-protocall-blue focus:ring-2 focus:ring-protocall-premium-light rounded-lg resize-none"
+                className="border-border focus:border-primary focus:ring-2 focus:ring-protocall-premium-light rounded-lg resize-none"
               />
             </div>
           </div>
@@ -182,7 +182,7 @@ export default function ManageSite({ settings, onChange }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="facebook_url" className="text-sm font-semibold text-subtle flex items-center gap-2">
-                  <Facebook className="w-4 h-4 text-protocall-blue" />
+                  <Facebook className="w-4 h-4 text-primary" />
                   Facebook Page
                 </Label>
                 <Input
@@ -190,7 +190,7 @@ export default function ManageSite({ settings, onChange }) {
                   value={localSettings.facebook_url}
                   onChange={(e) => handleInputChange('facebook_url', e.target.value)}
                   placeholder="https://facebook.com/yourpage"
-                  className="border-border focus:border-protocall-blue focus:ring-2 focus:ring-protocall-premium-light rounded-lg"
+                  className="border-border focus:border-primary focus:ring-2 focus:ring-protocall-premium-light rounded-lg"
                 />
               </div>
 
@@ -204,7 +204,7 @@ export default function ManageSite({ settings, onChange }) {
                   value={localSettings.twitter_url}
                   onChange={(e) => handleInputChange('twitter_url', e.target.value)}
                   placeholder="https://twitter.com/yourhandle"
-                  className="border-border focus:border-protocall-blue focus:ring-2 focus:ring-protocall-premium-light rounded-lg"
+                  className="border-border focus:border-primary focus:ring-2 focus:ring-protocall-premium-light rounded-lg"
                 />
               </div>
 
@@ -224,7 +224,7 @@ export default function ManageSite({ settings, onChange }) {
 
               <div className="space-y-2">
                 <Label htmlFor="linkedin_url" className="text-sm font-semibold text-subtle flex items-center gap-2">
-                  <Linkedin className="w-4 h-4 text-protocall-blue" />
+                  <Linkedin className="w-4 h-4 text-primary" />
                   LinkedIn Company Page
                 </Label>
                 <Input
@@ -232,7 +232,7 @@ export default function ManageSite({ settings, onChange }) {
                   value={localSettings.linkedin_url}
                   onChange={(e) => handleInputChange('linkedin_url', e.target.value)}
                   placeholder="https://linkedin.com/company/yourcompany"
-                  className="border-border focus:border-protocall-blue focus:ring-2 focus:ring-protocall-premium-light rounded-lg"
+                  className="border-border focus:border-primary focus:ring-2 focus:ring-protocall-premium-light rounded-lg"
                 />
               </div>
 

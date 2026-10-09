@@ -106,7 +106,7 @@ export default function RealTimeActivityMonitor() {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-lg text-subtle font-medium">Loading Live Activity...</p>
         </div>
       </div>
@@ -187,7 +187,7 @@ export default function RealTimeActivityMonitor() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-protocall-blue" />
+              <MessageSquare className="w-5 h-5 text-primary" />
               Live Message Stream
               <Badge className="bg-buy-muted text-buy-muted-foreground ml-auto">
                 <div className="w-2 h-2 bg-buy rounded-full animate-pulse mr-2"></div>
@@ -206,7 +206,7 @@ export default function RealTimeActivityMonitor() {
                 liveData.recentMessages.map((message, index) => (
                   <div key={message.id || index} className="flex items-start gap-3 p-3 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
                     <div className="w-8 h-8 rounded-full bg-premium-muted flex items-center justify-center flex-shrink-0">
-                      <MessageSquare className="w-4 h-4 text-protocall-blue" />
+                      <MessageSquare className="w-4 h-4 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">

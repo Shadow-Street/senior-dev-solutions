@@ -205,7 +205,7 @@ export default function RefundAnalytics({ refunds, permissions }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-protocall-blue" />
+              <AlertCircle className="w-5 h-5 text-primary" />
               Refund Reasons
             </CardTitle>
           </CardHeader>
@@ -255,7 +255,7 @@ export default function RefundAnalytics({ refunds, permissions }) {
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Clock className="w-5 h-5 text-protocall-blue" />
+            <Clock className="w-5 h-5 text-primary" />
             Recent Refund Requests
           </CardTitle>
         </CardHeader>

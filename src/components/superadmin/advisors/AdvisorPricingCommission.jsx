@@ -100,7 +100,7 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -163,10 +163,10 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
 
           <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-protocall-blue flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-semibold text-protocall-blue">Commission Calculation Example</p>
-                <p className="text-xs text-protocall-blue mt-1">
+                <p className="text-sm font-semibold text-primary">Commission Calculation Example</p>
+                <p className="text-xs text-primary mt-1">
                   For a ₹1,000 subscription at {globalRate}% commission:
                   <br />
                   • Platform Fee: ₹{((1000 * globalRate) / 100).toFixed(2)}
@@ -203,7 +203,7 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
       <Card className="shadow-lg border-0">
         <CardHeader className="bg-surface-2">
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-protocall-blue" />
+            <TrendingUp className="w-5 h-5 text-primary" />
             Advisor-Specific Commission Overrides
           </CardTitle>
           <p className="text-sm text-subtle mt-2">
@@ -230,7 +230,7 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <h4 className="font-semibold text-foreground">{advisor.display_name}</h4>
-                          <Badge className="bg-premium-muted text-protocall-blue text-xs">
+                          <Badge className="bg-premium-muted text-primary text-xs">
                             SEBI: {advisor.sebi_registration_number}
                           </Badge>
                         </div>
@@ -256,7 +256,7 @@ export default function AdvisorPricingCommission({ refreshEntityConfigs }) {
                           <div className="bg-surface-2 rounded-lg p-3">
                             <p className="text-xs text-subtle mb-1">Effective Rate</p>
                             <div className="flex items-center gap-2">
-                              <Badge className={overrideValue ? 'bg-premium-muted text-protocall-premium-text' : 'bg-premium-muted text-protocall-blue'}>
+                              <Badge className={overrideValue ? 'bg-premium-muted text-protocall-premium-text' : 'bg-premium-muted text-primary'}>
                                 {effectiveRate}%
                               </Badge>
                               {overrideValue ? (

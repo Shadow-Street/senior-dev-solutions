@@ -139,7 +139,7 @@ export default function CreateCourseModal({ open, onClose, onCreate, editingCour
           {/* Revenue Breakdown */}
           {coursePrice > 0 && (
             <div className="bg-premium-muted p-3 rounded-lg mt-4">
-              <h4 className="font-medium text-protocall-blue mb-2">Revenue Breakdown (per enrollment)</h4>
+              <h4 className="font-medium text-primary mb-2">Revenue Breakdown (per enrollment)</h4>
               <div className="text-sm space-y-1">
                 <div className="flex justify-between">
                   <span>Course Price:</span>

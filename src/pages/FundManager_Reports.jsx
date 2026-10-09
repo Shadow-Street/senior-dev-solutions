@@ -272,7 +272,7 @@ export default function FundManagerReports() {
     return (
       <FundManagerLayout currentView="reports">
         <div className="flex items-center justify-center h-full">
-          <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
+          <Loader2 className="w-12 h-12 animate-spin text-primary" />
         </div>
       </FundManagerLayout>
     );
@@ -303,10 +303,10 @@ export default function FundManagerReports() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-protocall-blue font-medium">Total Investors</p>
-                  <p className="text-3xl font-bold text-protocall-blue mt-2">{stats.totalInvestors}</p>
+                  <p className="text-sm text-primary font-medium">Total Investors</p>
+                  <p className="text-3xl font-bold text-primary mt-2">{stats.totalInvestors}</p>
                 </div>
-                <Users className="w-12 h-12 text-protocall-blue opacity-50" />
+                <Users className="w-12 h-12 text-primary opacity-50" />
               </div>
             </CardContent>
           </Card>

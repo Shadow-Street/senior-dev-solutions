@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, adminMiddleware } = require("../middleware/auth");
 
 // Module Approval Requests
 const approvalRouter = express.Router();
@@ -20,7 +20,8 @@ approvalRouter.get('/pending', authMiddleware, async (req, res) => {
     });
     res.json(requests);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[module.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -42,7 +43,8 @@ approvalRouter.put('/:id/approve', authMiddleware, async (req, res) => {
     
     res.json(request);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[module.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -66,11 +68,12 @@ approvalRouter.put('/:id/reject', authMiddleware, async (req, res) => {
     
     res.json(request);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[module.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-createCrudRoutes(approvalRouter, approvalController);
+createCrudRoutes(approvalRouter, approvalController, { read: [authMiddleware, adminMiddleware], write: [authMiddleware, adminMiddleware] });
 router.use('/approvals', approvalRouter);
 
 module.exports = router;

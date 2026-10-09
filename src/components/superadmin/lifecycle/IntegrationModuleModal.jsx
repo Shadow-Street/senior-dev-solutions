@@ -95,7 +95,7 @@ export default function IntegrationModuleModal({ integration, user, onClose, onS
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="feature_key">Integration Key <span className="text-sell">*</span></Label>
+              <Label htmlFor="feature_key">Integration Key <span className="text-sell-muted-foreground">*</span></Label>
               <Input
                 id="feature_key"
                 value={formData.feature_key}
@@ -107,7 +107,7 @@ export default function IntegrationModuleModal({ integration, user, onClose, onS
             </div>
 
             <div>
-              <Label htmlFor="feature_name">Integration Name <span className="text-sell">*</span></Label>
+              <Label htmlFor="feature_name">Integration Name <span className="text-sell-muted-foreground">*</span></Label>
               <Input
                 id="feature_name"
                 value={formData.feature_name}
@@ -236,7 +236,7 @@ export default function IntegrationModuleModal({ integration, user, onClose, onS
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting} className="bg-protocall-blue hover:bg-protocall-blue">
+            <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary">
               {isSubmitting ? 'Saving...' : integration ? 'Update Integration' : 'Create Integration'}
             </Button>
           </div>

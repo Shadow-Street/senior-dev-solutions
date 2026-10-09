@@ -49,7 +49,8 @@ router.get('/my-rooms', authMiddleware, async (req, res) => {
     const rooms = participations.map(p => p.ChatRoom);
     res.json(rooms);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[chat.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -62,7 +63,8 @@ router.get('/public', async (req, res) => {
     });
     res.json(rooms);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[chat.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -90,7 +92,8 @@ router.post('/:id/join', authMiddleware, async (req, res) => {
 
     res.status(201).json(participant);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[chat.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -106,17 +109,42 @@ router.post('/:id/leave', authMiddleware, async (req, res) => {
 
     res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[chat.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// CRUD routes
-createCrudRoutes(router, chatRoomController, [authMiddleware]);
 
 // Participants sub-routes
 const participantRouter = express.Router();
 const participantController = createCrudController(db.ChatRoomParticipant);
-createCrudRoutes(participantRouter, participantController);
+createCrudRoutes(participantRouter, participantController, [authMiddleware]);
 router.use('/participants', participantRouter);
+
+
+// Paid per-room subscriptions. Mounted before the CRUD block below for the
+// same reason as /participants: a generated '/:id' would otherwise match
+// '/subscriptions' as an id. A member sees their own; staff see all, which is
+// what the Premium and Access panels in Chat Room Management list.
+const roomSubRouter = express.Router();
+createCrudRoutes(
+  roomSubRouter,
+  createCrudController(db.RoomSubscription, {
+    defaultOrderBy: 'created_at',
+    defaultOrder: 'DESC',
+    ownership: 'user_id',
+    // Whether a subscription is active, and what was paid, is settled by the
+    // payment flow and staff — not asserted by the subscriber.
+    protectedFields: ['status', 'amount_paid', 'payment_reference', 'expires_at'],
+  }),
+  { read: [authMiddleware], write: [authMiddleware] }
+);
+router.use('/subscriptions', roomSubRouter);
+
+
+// CRUD LAST — the generated '/:id' route must not shadow the sub-routers
+// mounted above. Registered earlier, '/clients', '/participants' and the
+// like were matched as an id and answered 404 'Record not found'.
+createCrudRoutes(router, chatRoomController, [authMiddleware]);
 
 module.exports = router;

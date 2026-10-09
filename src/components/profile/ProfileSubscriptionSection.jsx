@@ -108,7 +108,7 @@ export default function ProfileSubscriptionSection({ subscription }) {
 
   if (!subscription) {
     return (
-      <Card className="bg-surface-2 border-border">
+      <Card className="bg-card border-border">
         <CardHeader>
           <CardTitle className="text-subtle">No Active Subscription</CardTitle>
         </CardHeader>
@@ -152,7 +152,7 @@ export default function ProfileSubscriptionSection({ subscription }) {
               <span>Your Current Plan</span>
             </div>
             <Badge className="bg-white/20 text-white border-white/30">
-              {subscription.status.toUpperCase()}
+              {(subscription.status || 'unknown').toUpperCase()}
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -181,7 +181,7 @@ export default function ProfileSubscriptionSection({ subscription }) {
 
       {/* Plan Features */}
       <Card>
-        <CardHeader className="bg-surface-2">
+        <CardHeader className="bg-card border-b border-divider">
           <CardTitle>Plan Features</CardTitle>
         </CardHeader>
         <CardContent className="pt-4">
@@ -194,10 +194,10 @@ export default function ProfileSubscriptionSection({ subscription }) {
               {/* Show Inheritance Summary First (if applicable) */}
               {parentPlanName && (
                 <div className="flex items-start gap-3 p-3 bg-premium-muted rounded-lg border border-protocall-premium-light mb-4">
-                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-protocall-blue flex items-center justify-center mt-0.5">
+                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-primary flex items-center justify-center mt-0.5">
                     <Shield className="w-3 h-3 text-white" />
                   </div>
-                  <span className="text-sm text-protocall-blue font-semibold leading-relaxed">
+                  <span className="text-sm text-primary font-semibold leading-relaxed">
                     Includes All {parentPlanName} Features
                   </span>
                 </div>
@@ -231,7 +231,7 @@ export default function ProfileSubscriptionSection({ subscription }) {
 
       {/* Upgrade Option */}
       {subscription.plan_type !== 'vip' && (
-        <Card className="bg-surface-2 border-protocall-premium-light">
+        <Card className="bg-card border-protocall-premium-light">
           <CardContent className="p-6 text-center">
             <h3 className="font-semibold text-lg mb-2">Want More Features?</h3>
             <p className="text-subtle mb-4">Upgrade to unlock advanced trading tools and exclusive content</p>

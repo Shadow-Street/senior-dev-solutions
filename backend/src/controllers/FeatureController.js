@@ -17,7 +17,7 @@ class FeatureController {
       return res.status(200).json(features);
     } catch (error) {
       console.error("List features error:", error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -36,7 +36,7 @@ class FeatureController {
       return res.status(200).json(feature);
     } catch (error) {
       console.error("Get feature error:", error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -45,13 +45,15 @@ class FeatureController {
       const { key } = req.params;
       const updates = req.body;
 
-      const [updated] = await FeatureConfig.update(updates, {
-        where: { feature_key: key }
-      });
-
-      if (!updated) {
+      // Sequelize's affected-row count is 0 both when the record is missing and
+      // when the new values equal the stored ones, so treating 0 as 'not found'
+      // turned every no-op save into a 404. Check existence, then update.
+      const existingFeature = await FeatureConfig.findOne({ where: { feature_key: key } });
+      if (!existingFeature) {
         return res.status(404).json({ error: "Feature not found" });
       }
+
+      await FeatureConfig.update(updates, { where: { feature_key: key } });
 
       const feature = await FeatureConfig.findOne({
         where: { feature_key: key }

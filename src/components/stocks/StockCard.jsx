@@ -260,13 +260,13 @@ export default function StockCard({ stock, onRemove, onSell, showRemove = false,
             {/* Navigation Buttons */}
             <div className="grid grid-cols-2 gap-2 mb-3">
               <Link to={createPageUrl("ChatRooms", { stockSymbol: stock.symbol })}>
-                <Button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg">
+                <Button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-surface-2 text-primary hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg">
                   <MessageSquare className="w-3 h-3" />
                   Chat
                 </Button>
               </Link>
               <Link to={createPageUrl("Polls", { stockSymbol: stock.symbol })}>
-                <Button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg">
+                <Button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-surface-2 text-primary hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg">
                   <BarChart3 className="w-3 h-3" />
                   Poll
                 </Button>

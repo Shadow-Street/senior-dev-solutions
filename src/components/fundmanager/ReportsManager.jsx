@@ -165,7 +165,7 @@ export default function ReportsManager() {
     return (
       <div className="flex justify-center items-center h-full p-12">
         <div className="text-center">
-            <Loader2 className="w-12 h-12 animate-spin text-protocall-blue mx-auto mb-4" />
+            <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
             <p className="text-subtle font-medium">Generating Reports...</p>
         </div>
       </div>
@@ -260,7 +260,7 @@ export default function ReportsManager() {
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-protocall-blue">+ {formatCurrency(reportData.aumGrowth.reduce((acc, item) => acc + item.aum, 0))}</div>
+            <div className="text-2xl font-bold text-primary">+ {formatCurrency(reportData.aumGrowth.reduce((acc, item) => acc + item.aum, 0))}</div>
             <p className="text-xs text-muted-foreground">Based on new investments this year</p>
           </CardContent>
         </Card>
@@ -374,7 +374,7 @@ export default function ReportsManager() {
                               {reportData.largestInvestors.map(inv => (
                                   <tr key={inv.id} className="border-b">
                                       <td className="py-3 text-sm">{inv.name}</td>
-                                      <td className="py-3 text-right text-sm font-semibold text-protocall-blue">
+                                      <td className="py-3 text-right text-sm font-semibold text-primary">
                                           {formatCurrency(inv.totalInvested)}
                                       </td>
                                   </tr>

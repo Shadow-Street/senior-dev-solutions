@@ -65,7 +65,7 @@ export default function MessageModerationPanel({ room, messages, users, onClose,
           {/* Message Count */}
           <div className="flex items-center justify-between">
             <Badge variant="outline">{filteredMessages.length} messages</Badge>
-            <Badge className="bg-premium-muted text-protocall-blue">
+            <Badge className="bg-premium-muted text-primary">
               {room.participant_count || 0} participants
             </Badge>
           </div>
@@ -99,7 +99,7 @@ export default function MessageModerationPanel({ room, messages, users, onClose,
                       <p className="text-sm text-subtle whitespace-pre-wrap">{msg.content}</p>
                       
                       {msg.file_url && (
-                        <div className="mt-2 flex items-center gap-2 text-xs text-protocall-blue">
+                        <div className="mt-2 flex items-center gap-2 text-xs text-primary">
                           {msg.file_url.match(/\.(jpg|jpeg|png|gif)$/i) ? (
                             <ImageIcon className="w-4 h-4" />
                           ) : (

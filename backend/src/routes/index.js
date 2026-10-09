@@ -38,6 +38,7 @@ const router = express.Router();
 router.use("/auth", authRoutes);
 router.use("/users", userRoutes);
 router.use("/roles", require("./role.routes"));
+router.use("/permissions", require("./permission.routes"));
 
 // Admin Routes
 router.use("/admin", require("./admin.routes"));
@@ -71,6 +72,7 @@ router.use("/advisors", advisorRoutes);
 router.use("/finfluencers", finfluencerRoutes);
 router.use("/influencers", require("./influencer.routes"));
 router.use("/courses", courseRoutes);
+router.use("/educators", require("./educator.routes"));
 router.use("/news", newsRoutes);
 
 // Community

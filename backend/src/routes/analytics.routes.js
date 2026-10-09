@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, adminMiddleware, optionalAuthenticate } = require("../middleware/auth");
 
 // Analytics Events
 const eventRouter = express.Router();
@@ -26,7 +26,8 @@ eventRouter.post('/track', async (req, res) => {
     
     res.status(201).json(event);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[analytics.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -58,11 +59,12 @@ eventRouter.get('/counts', authMiddleware, async (req, res) => {
     
     res.json(counts);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[analytics.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-createCrudRoutes(eventRouter, eventController);
+createCrudRoutes(eventRouter, eventController, { read: [authMiddleware, adminMiddleware], create: [optionalAuthenticate], write: [authMiddleware, adminMiddleware] });
 router.use('/events', eventRouter);
 
 module.exports = router;

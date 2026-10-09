@@ -191,7 +191,7 @@ export default function InviteSystemPanel({ adminUser }) {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-lg text-subtle font-medium">Loading Invite System...</p>
         </div>
       </div>
@@ -301,7 +301,7 @@ export default function InviteSystemPanel({ adminUser }) {
                           {invite.invite_code}
                         </Badge>
                         <Badge className={`text-xs ${
-                          invite.invite_type === 'single_use' ? 'bg-premium-muted text-protocall-blue' :
+                          invite.invite_type === 'single_use' ? 'bg-premium-muted text-primary' :
                           invite.invite_type === 'multi_use' ? 'bg-premium-muted text-protocall-premium-text' :
                           'bg-buy-muted text-buy-muted-foreground'
                         }`}>
@@ -315,7 +315,7 @@ export default function InviteSystemPanel({ adminUser }) {
                           </Badge>
                         )}
                         {invite.assigned_role === 'moderator' && (
-                          <Badge className="bg-premium-muted text-protocall-blue text-xs">Moderator</Badge>
+                          <Badge className="bg-premium-muted text-primary text-xs">Moderator</Badge>
                         )}
                       </div>
 

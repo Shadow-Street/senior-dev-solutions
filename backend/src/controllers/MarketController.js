@@ -58,7 +58,7 @@ exports.getMarketData = async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching market data:', error.message);
-        res.status(502).json({ error: 'Failed to fetch market data', detail: error.message });
+        res.status(502).json({ error: 'Failed to fetch market data' });
     }
 };
 
@@ -79,7 +79,7 @@ exports.getCandles = async (req, res) => {
         res.json({ symbol: symbol.toUpperCase(), resolution, series });
     } catch (error) {
         console.error('Error fetching candles:', error.message);
-        res.status(502).json({ error: 'Failed to fetch candles', detail: error.message });
+        res.status(502).json({ error: 'Failed to fetch candles' });
     }
 };
 
@@ -95,7 +95,8 @@ exports.getStockPrice = async (req, res) => {
         if (error.message === 'Stock not found') {
             return res.status(404).json({ error: "Stock not found" });
         }
-        res.status(500).json({ error: error.message });
+        console.error('[MarketController.js] request failed:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
 
@@ -108,6 +109,7 @@ exports.search = async (req, res) => {
         const results = await FinDataService.searchStocks(q);
         res.json(results);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('[MarketController.js] request failed:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 };

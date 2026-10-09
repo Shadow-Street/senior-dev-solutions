@@ -187,17 +187,17 @@ export default function TypingIndicator({ roomId, currentUserId }) {
             <motion.span
               animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ duration: 1.5, repeat: Infinity, delay: 0 }}
-              className="w-2 h-2 bg-protocall-blue rounded-full"
+              className="w-2 h-2 bg-primary rounded-full"
             />
             <motion.span
               animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
-              className="w-2 h-2 bg-protocall-blue rounded-full"
+              className="w-2 h-2 bg-primary rounded-full"
             />
             <motion.span
               animate={{ opacity: [0.4, 1, 0.4] }}
               transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
-              className="w-2 h-2 bg-protocall-blue rounded-full"
+              className="w-2 h-2 bg-primary rounded-full"
             />
           </div>
           <span className="italic">{typingText}</span>

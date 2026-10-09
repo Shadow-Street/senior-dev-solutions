@@ -112,11 +112,11 @@ export default function RiskDisclosureModal({ isOpen, onClose, onAccept, session
 
             {/* Platform Disclaimers */}
             <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
-              <h3 className="font-semibold text-protocall-blue mb-2 flex items-center gap-2">
+              <h3 className="font-semibold text-primary mb-2 flex items-center gap-2">
                 <FileText className="w-5 h-5" />
                 Platform Disclaimers
               </h3>
-              <ul className="text-sm text-protocall-blue space-y-2 list-disc list-inside">
+              <ul className="text-sm text-primary space-y-2 list-disc list-inside">
                 <li>This platform facilitates trade execution but does not provide investment advice</li>
                 <li>We are not responsible for market losses or execution failures beyond our control</li>
                 <li>All investment decisions are your own responsibility</li>

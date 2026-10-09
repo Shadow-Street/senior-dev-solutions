@@ -88,7 +88,7 @@ export default function PostPreviewModal({ open, onClose, post, advisor }) {
                       post.recommendation_type === 'buy' ? 'bg-buy-muted text-buy-muted-foreground border-buy/30' :
                       post.recommendation_type === 'sell' ? 'bg-sell-muted text-sell-muted-foreground border-sell/30' :
                       post.recommendation_type === 'hold' ? 'bg-hold-muted text-hold-muted-foreground border-hold/30' :
-                      'bg-premium-muted text-protocall-blue border-protocall-premium-light'
+                      'bg-premium-muted text-primary border-protocall-premium-light'
                     }`}
                   >
                     {getRecommendationIcon(post.recommendation_type)}

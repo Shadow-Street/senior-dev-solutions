@@ -83,7 +83,7 @@ export default function RevenueForecastChart({ events, tickets, stats }) {
         <Card className="bg-gradient-to-br from-protocall-deep to-protocall-blue text-white">
           <CardContent className="p-5">
             <TrendingUp className="w-8 h-8 mb-2 text-white/80" />
-            <p className="text-sm text-protocall-blue">Projected Annual Revenue</p>
+            <p className="text-sm text-primary">Projected Annual Revenue</p>
             <p className="text-3xl font-bold mt-1">₹{(projectedAnnualRevenue / 1000).toFixed(1)}k</p>
           </CardContent>
         </Card>
@@ -111,7 +111,7 @@ export default function RevenueForecastChart({ events, tickets, stats }) {
       <Card className="shadow-lg border-0">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-protocall-blue" />
+            <TrendingUp className="w-5 h-5 text-primary" />
             Revenue Forecast (12 Months)
           </CardTitle>
           <p className="text-sm text-subtle">Historical data + AI-powered forecast based on your trends</p>
@@ -160,7 +160,7 @@ export default function RevenueForecastChart({ events, tickets, stats }) {
           </ResponsiveContainer>
 
           <div className="mt-4 p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
-            <p className="text-sm text-protocall-blue">
+            <p className="text-sm text-primary">
               <strong>💡 Forecast Insights:</strong> Based on your current growth trend (+{expectedGrowth.toFixed(1)}% month-over-month), 
               you're projected to earn ₹{(projectedAnnualRevenue / 1000).toFixed(1)}k in the next 12 months. 
               Keep creating quality events to maintain this trajectory!

@@ -182,7 +182,7 @@ export default function PledgeManagement({ user }) {
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'sessions'
                 ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
-                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
+                : 'bg-surface-2 text-primary hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">
@@ -200,7 +200,7 @@ export default function PledgeManagement({ user }) {
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'access'
                 ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
-                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
+                : 'bg-surface-2 text-primary hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">
@@ -218,7 +218,7 @@ export default function PledgeManagement({ user }) {
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'advisor-access'
                 ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
-                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
+                : 'bg-surface-2 text-primary hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">
@@ -236,7 +236,7 @@ export default function PledgeManagement({ user }) {
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'executions'
                 ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
-                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
+                : 'bg-surface-2 text-primary hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">
@@ -254,7 +254,7 @@ export default function PledgeManagement({ user }) {
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'analytics'
                 ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
-                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
+                : 'bg-surface-2 text-primary hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">

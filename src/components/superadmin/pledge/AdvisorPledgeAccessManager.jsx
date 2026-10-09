@@ -132,7 +132,7 @@ export default function AdvisorPledgeAccessManager({ user }) {
 
   const getVolumeBadge = (volume) => {
     const config = {
-      low: 'bg-premium-muted text-protocall-blue',
+      low: 'bg-premium-muted text-primary',
       medium: 'bg-premium-muted text-protocall-premium-text',
       high: 'bg-hold-muted text-hold-muted-foreground',
       very_high: 'bg-sell-muted text-sell-muted-foreground'
@@ -143,7 +143,7 @@ export default function AdvisorPledgeAccessManager({ user }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
         <span className="ml-3 text-subtle">Loading advisor requests...</span>
       </div>
     );
@@ -223,7 +223,7 @@ export default function AdvisorPledgeAccessManager({ user }) {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-3">
-                      <Shield className="w-6 h-6 text-protocall-blue" />
+                      <Shield className="w-6 h-6 text-primary" />
                       <div>
                         <h3 className="text-lg font-bold text-foreground">{request.advisor_name}</h3>
                         <p className="text-sm text-subtle">SEBI: {request.sebi_registration || 'N/A'}</p>
@@ -233,8 +233,8 @@ export default function AdvisorPledgeAccessManager({ user }) {
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                       <div className="p-3 bg-premium-muted rounded-lg">
-                        <p className="text-xs text-protocall-blue mb-1">Experience</p>
-                        <p className="font-semibold text-protocall-blue">{request.experience_years || 0} years</p>
+                        <p className="text-xs text-primary mb-1">Experience</p>
+                        <p className="font-semibold text-primary">{request.experience_years || 0} years</p>
                       </div>
                       <div className="p-3 bg-premium-muted rounded-lg">
                         <p className="text-xs text-protocall-premium-text mb-1">Trading Volume</p>
@@ -289,7 +289,7 @@ export default function AdvisorPledgeAccessManager({ user }) {
                       <>
                         <Button
                           onClick={() => handleApprove(request)}
-                          className="bg-buy hover:bg-buy"
+                          className="bg-buy text-buy-foreground hover:bg-buy-soft"
                         >
                           <CheckCircle className="w-4 h-4 mr-2" />
                           Approve
@@ -325,20 +325,20 @@ export default function AdvisorPledgeAccessManager({ user }) {
             <div className="space-y-6">
               <div className="p-4 bg-premium-muted border border-protocall-premium-light rounded-lg">
                 <div className="flex items-center gap-3 mb-2">
-                  <Shield className="w-5 h-5 text-protocall-blue" />
-                  <h3 className="font-semibold text-protocall-blue">{selectedRequest.advisor_name}</h3>
+                  <Shield className="w-5 h-5 text-primary" />
+                  <h3 className="font-semibold text-primary">{selectedRequest.advisor_name}</h3>
                 </div>
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
-                    <p className="text-protocall-blue">Experience:</p>
+                    <p className="text-primary">Experience:</p>
                     <p className="font-semibold">{selectedRequest.experience_years || 0} years</p>
                   </div>
                   <div>
-                    <p className="text-protocall-blue">Volume Estimate:</p>
+                    <p className="text-primary">Volume Estimate:</p>
                     <p className="font-semibold">{selectedRequest.trading_volume_estimate.replace('_', ' ')}</p>
                   </div>
                   <div className="col-span-2">
-                    <p className="text-protocall-blue">Requested Rate:</p>
+                    <p className="text-primary">Requested Rate:</p>
                     <p className="font-semibold">{selectedRequest.commission_rate_requested || 0}%</p>
                   </div>
                 </div>
@@ -409,7 +409,7 @@ export default function AdvisorPledgeAccessManager({ user }) {
                 <Button
                   onClick={() => handleSubmitReview(true)}
                   disabled={isProcessing}
-                  className="bg-buy hover:bg-buy"
+                  className="bg-buy text-buy-foreground hover:bg-buy-soft"
                 >
                   {isProcessing ? (
                     <Loader2 className="w-4 h-4 animate-spin mr-2" />

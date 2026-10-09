@@ -56,7 +56,7 @@ export default function RiskDisclosure() {
               <FileText className="w-5 h-5" />
               Table of Contents
             </h3>
-            <ol className="space-y-1 text-sm text-protocall-blue">
+            <ol className="space-y-1 text-sm text-primary">
               <li><a href="#general" className="hover:underline">1. General Investment Risks</a></li>
               <li><a href="#market" className="hover:underline">2. Market Risks</a></li>
               <li><a href="#platform" className="hover:underline">3. Platform-Specific Risks</a></li>
@@ -919,7 +919,7 @@ export default function RiskDisclosure() {
         <div className="grid md:grid-cols-3 gap-4 mt-8">
           <Link to={createPageUrl('Terms')}>
             <Card className="p-6 hover:shadow-lg transition-all cursor-pointer h-full">
-              <FileText className="w-8 h-8 text-protocall-blue mb-3" />
+              <FileText className="w-8 h-8 text-primary mb-3" />
               <h3 className="font-bold mb-2">Terms of Service</h3>
               <p className="text-sm text-subtle">Review our terms and conditions</p>
             </Card>

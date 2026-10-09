@@ -23,11 +23,8 @@ import {
   Shield,
   Star,
   Sparkles,
-  Wallet,
-  Edit3,
   Bell,
   ChevronDown,
-  UserRound,
 } from "lucide-react";
 import { Toaster } from "sonner";
 
@@ -41,12 +38,10 @@ const NAV_ITEMS = [
   { key: "dashboard", title: "Dashboard", url: createPageUrl("Dashboard"), icon: LayoutDashboard },
   { key: "my_portfolio", title: "My Portfolio", url: createPageUrl("MyPortfolio"), icon: Briefcase },
   { key: "chat_rooms", title: "Stock Chat Rooms", url: createPageUrl("ChatRooms"), icon: MessageSquare },
-  { key: "pledge_pool", title: "Pledge Pool", url: createPageUrl("PledgePool"), icon: Wallet, comingSoon: true },
   { key: "community_poll", title: "Community Poll", url: createPageUrl("Polls"), icon: BarChart3 },
-  { key: "advisors", title: "Advisors", url: createPageUrl("Advisors"), icon: Shield, comingSoon: true },
+  { key: "advisors", title: "Advisors", url: createPageUrl("Advisors"), icon: Shield },
   { key: "influencers", title: "Influencers", url: createPageUrl("Finfluencers"), icon: Star, comingSoon: true },
   { key: "subscription", title: "Subscription Plans", url: createPageUrl("Subscription"), icon: Sparkles },
-  { key: "profile", title: "My Profile", url: createPageUrl("Profile"), icon: UserRound },
 ];
 
 const COMING_SOON_BADGE =
@@ -116,7 +111,14 @@ function InnerLayout({ children, currentPageName }) {
   const isSuperAdminPage =
     location.pathname === createPageUrl("SuperAdmin") || currentPageName === "SuperAdmin";
 
-  if (isLandingPage || isPublicContentPage || isSuperAdminPage) {
+  // Portal pages ship their own navigation shell. Wrapping them in the app
+  // sidebar would render two sidebars and two headers on the same screen.
+  const PORTAL_PAGES = ["AdvisorDashboard"];
+  const isPortalPage = PORTAL_PAGES.some(
+    (page) => location.pathname === createPageUrl(page) || currentPageName === page
+  );
+
+  if (isLandingPage || isPublicContentPage || isSuperAdminPage || isPortalPage) {
     return <>{children}</>;
   }
 
@@ -161,52 +163,36 @@ function InnerLayout({ children, currentPageName }) {
             </SidebarHeader>
 
             <SidebarContent className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-3">
-              <div className="mb-2">
-                <Link to={createPageUrl("Profile")} className="block">
-                  <div className="group relative cursor-pointer rounded-lg bg-sidebar-dark p-3 text-sidebar-foreground shadow-md transition-all duration-200 hover:bg-sidebar-accent">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sidebar-primary text-sm font-semibold text-sidebar-primary-foreground">
-                        {displayUser.display_name?.charAt(0)?.toUpperCase() || "U"}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-sidebar-foreground">
-                          {displayUser.display_name || "Trader"}
-                        </p>
-                      </div>
-                      <div className="opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                        <Edit3 className="h-4 w-4 text-sidebar-foreground" />
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-
               <SidebarGroup>
                 <SidebarGroupLabel className="px-2 py-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted-foreground">
                   Trading Hub
                 </SidebarGroupLabel>
                 <SidebarMenu>
-                  {NAV_ITEMS.map((item) =>
-                    item.comingSoon ? (
-                      renderComingSoonItem(item)
-                    ) : (
+                  {NAV_ITEMS.map((item) => {
+                    if (item.comingSoon) return renderComingSoonItem(item);
+                    const isActive = location.pathname === item.url;
+                    return (
                       <SidebarMenuItem key={item.key}>
                         <SidebarMenuButton
                           asChild
-                          className={`mb-1 rounded-xl text-sidebar-foreground transition-all duration-200 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground ${
-                            location.pathname === item.url
+                          className={`group/nav mb-1 rounded-xl text-sidebar-foreground transition-all duration-200 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground ${
+                            isActive
                               ? "bg-sidebar-primary font-semibold text-sidebar-primary-foreground shadow-md"
                               : ""
                           }`}
                         >
                           <Link to={item.url} className="flex items-center gap-3 px-3 py-2.5">
-                            <item.icon className="h-4 w-4 shrink-0" />
+                            <item.icon
+                              className={`h-4 w-4 shrink-0 transition-colors duration-200 ${
+                                isActive ? "text-buy" : "group-hover/nav:text-buy"
+                              }`}
+                            />
                             <span className="truncate">{item.title}</span>
                           </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
-                    )
-                  )}
+                    );
+                  })}
                 </SidebarMenu>
               </SidebarGroup>
             </SidebarContent>

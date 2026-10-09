@@ -50,7 +50,7 @@ const getNotificationIcon = (category) => {
 
 const getNotificationColor = (category, priority) => {
   if (priority === 'critical') return 'text-sell-muted-foreground bg-sell-muted';
-  if (priority === 'important') return 'text-protocall-blue bg-premium-muted';
+  if (priority === 'important') return 'text-primary bg-premium-muted';
   
   switch (category) {
     case 'security':
@@ -60,7 +60,7 @@ const getNotificationColor = (category, priority) => {
     case 'advisor_post':
       return 'text-buy-muted-foreground bg-buy-muted';
     case 'price_alert':
-      return 'text-protocall-blue bg-premium-muted';
+      return 'text-primary bg-premium-muted';
     case 'profit_alert':
       return 'text-buy-muted-foreground bg-buy-muted';
     case 'loss_alert':
@@ -110,7 +110,7 @@ export default function NotificationItem({ notification, onMarkAsRead }) {
             </h4>
             
             {!notification.is_read && (
-              <div className="w-2 h-2 bg-protocall-blue rounded-full flex-shrink-0" />
+              <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
             )}
           </div>
           
@@ -129,7 +129,7 @@ export default function NotificationItem({ notification, onMarkAsRead }) {
               variant="outline" 
               className={`text-xs capitalize ${
                 notification.priority === 'critical' ? 'border-sell/30 text-sell-muted-foreground' :
-                notification.priority === 'important' ? 'border-protocall-premium-light text-protocall-blue' :
+                notification.priority === 'important' ? 'border-protocall-premium-light text-primary' :
                 'border-border text-subtle'
               }`}
             >

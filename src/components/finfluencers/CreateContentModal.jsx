@@ -276,7 +276,7 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
                   <Input
                     id="thumbnail-upload"
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/gif,image/webp"
                     className="hidden"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
@@ -314,10 +314,10 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
             {formData.stock_mentions.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-3">
                 {formData.stock_mentions.map((stock, idx) => (
-                  <Badge key={idx} className="bg-premium-muted text-protocall-blue border-protocall-premium-light flex items-center gap-1">
+                  <Badge key={idx} className="bg-premium-muted text-primary border-protocall-premium-light flex items-center gap-1">
                     {stock}
                     <X
-                      className="w-3 h-3 cursor-pointer hover:text-protocall-blue"
+                      className="w-3 h-3 cursor-pointer hover:text-primary"
                       onClick={() => removeStock(stock)}
                     />
                   </Badge>
@@ -378,11 +378,11 @@ export default function CreateContentModal({ open, onClose, onCreate }) {
 
           {/* Content Guidelines */}
           <div className="bg-premium-muted p-4 rounded-lg border border-protocall-premium-light">
-            <h4 className="font-semibold text-protocall-blue mb-2 flex items-center gap-2">
+            <h4 className="font-semibold text-primary mb-2 flex items-center gap-2">
               <FileText className="w-4 h-4" />
               Content Publishing Guidelines
             </h4>
-            <ul className="text-sm text-protocall-blue space-y-1">
+            <ul className="text-sm text-primary space-y-1">
               <li>• Videos: Use YouTube, Vimeo, or any embed-compatible link</li>
               <li>• Thumbnails: Upload eye-catching images (1280x720px recommended)</li>
               <li>• Stock mentions: Tag relevant stocks for better discoverability</li>

@@ -154,7 +154,7 @@ const ReviewRequestModal = ({ isOpen, onClose, request, onUpdateStatus }) => {
                 Reject
               </Button>
               <Button
-                className="bg-buy hover:bg-buy"
+                className="bg-buy text-buy-foreground hover:bg-buy-soft"
                 onClick={() => handleStatusUpdate('approved')}
               >
                 <CheckCircle className="w-4 h-4 mr-2" />
@@ -268,7 +268,7 @@ export default function PledgeAccessRequests({ requests = [], onRequestUpdate, o
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
         <span className="ml-4 text-subtle">Loading access requests...</span>
       </div>
     );
@@ -288,7 +288,7 @@ export default function PledgeAccessRequests({ requests = [], onRequestUpdate, o
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <ShieldQuestion className="w-6 h-6 text-protocall-blue" />
+                <ShieldQuestion className="w-6 h-6 text-primary" />
                 Pledge Access Requests
               </CardTitle>
               <p className="text-sm text-muted-foreground mt-1">Review and manage user requests for pledge trading access.</p>
@@ -349,8 +349,8 @@ export default function PledgeAccessRequests({ requests = [], onRequestUpdate, o
               ) : (
                 <TableRow>
                   <TableCell colSpan={4}>
-                    <Alert className="bg-premium-muted border-protocall-premium-light text-protocall-blue">
-                      <ShieldQuestion className="h-4 w-4 text-protocall-blue" />
+                    <Alert className="bg-premium-muted border-protocall-premium-light text-primary">
+                      <ShieldQuestion className="h-4 w-4 text-primary" />
                       <AlertTitle>No Requests Found</AlertTitle>
                       <AlertDescription>
                         There are no access requests matching your current filters.

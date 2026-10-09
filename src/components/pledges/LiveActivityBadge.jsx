@@ -34,7 +34,7 @@ export default function LiveActivityBadge({ sessionId, className = '' }) {
       )}
       
       {recentPledges > 0 && (
-        <Badge variant="outline" className="text-xs border-protocall-premium-light text-protocall-blue">
+        <Badge variant="outline" className="text-xs border-protocall-premium-light text-primary">
           <Activity className="w-3 h-3 mr-1" />
           {recentPledges} {recentPledges === 1 ? 'pledge' : 'pledges'} (5min)
         </Badge>

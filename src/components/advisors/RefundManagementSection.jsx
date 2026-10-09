@@ -53,7 +53,7 @@ export default function RefundManagementSection({ advisorId }) {
   const getStatusBadge = (status) => {
     const config = {
       pending: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending', icon: Clock },
-      approved: { color: 'bg-premium-muted text-protocall-blue', label: 'Approved', icon: CheckCircle },
+      approved: { color: 'bg-premium-muted text-primary', label: 'Approved', icon: CheckCircle },
       rejected: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Rejected', icon: XCircle },
       processing: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Processing', icon: RefreshCw },
       processed: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Processed', icon: CheckCircle },
@@ -87,7 +87,7 @@ export default function RefundManagementSection({ advisorId }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -111,7 +111,7 @@ export default function RefundManagementSection({ advisorId }) {
                 <p className="text-sm text-subtle">Total Refunds</p>
                 <p className="text-2xl font-bold text-foreground">{stats.total}</p>
               </div>
-              <DollarSign className="w-8 h-8 text-protocall-blue" />
+              <DollarSign className="w-8 h-8 text-primary" />
             </div>
           </CardContent>
         </Card>
@@ -167,7 +167,7 @@ export default function RefundManagementSection({ advisorId }) {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2 bg-white border border-border rounded-md text-sm font-normal text-subtle focus:outline-none focus:ring-2 focus:ring-ring focus:border-protocall-blue"
+          className="px-4 py-2 bg-white border border-border rounded-md text-sm font-normal text-subtle focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary"
         >
           <option value="all">All Status</option>
           <option value="pending">Pending</option>

@@ -167,7 +167,7 @@ export default function PledgeAccessRequestModal({
           {/* Demat Account Information */}
           <div className="bg-surface-2 rounded-xl p-6 space-y-4">
             <h3 className="font-semibold text-lg text-foreground flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-protocall-blue" />
+              <CheckCircle className="w-5 h-5 text-primary" />
               Account Information
             </h3>
             
@@ -314,7 +314,7 @@ export default function PledgeAccessRequestModal({
                   id="consent"
                   checked={formData.consent_given}
                   onChange={(e) => handleInputChange('consent_given', e.target.checked)}
-                  className="mt-1 w-4 h-4 text-protocall-blue rounded"
+                  className="mt-1 w-4 h-4 text-primary rounded"
                 />
                 <label htmlFor="consent" className="text-sm text-subtle leading-relaxed">
                   I understand and consent to the following:

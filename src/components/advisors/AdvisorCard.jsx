@@ -117,7 +117,7 @@ export default function AdvisorCard({ advisor, onSubscribe, userSubscriptions })
         {/* Specialization Tags */}
         <div className="flex flex-wrap gap-2 justify-center">
           {advisor.specialization?.slice(0, 2).map((spec) =>
-            <Badge key={spec} variant="secondary" className="text-xs bg-premium-muted text-protocall-blue rounded-lg px-2 py-1">
+            <Badge key={spec} variant="secondary" className="text-xs bg-premium-muted text-primary rounded-lg px-2 py-1">
               {spec}
             </Badge>
           )}

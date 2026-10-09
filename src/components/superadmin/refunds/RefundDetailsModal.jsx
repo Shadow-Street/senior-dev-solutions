@@ -25,8 +25,8 @@ export default function RefundDetailsModal({ refund, onClose, onProcess }) {
   const getStatusColor = (status) => {
     const colors = {
       pending: 'bg-hold-muted text-hold-muted-foreground border-hold/30',
-      approved: 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
-      processing: 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+      approved: 'bg-premium-muted text-primary border-protocall-premium-light',
+      processing: 'bg-premium-muted text-primary border-protocall-premium-light',
       processed: 'bg-buy-muted text-buy-muted-foreground border-buy/30',
       failed: 'bg-sell-muted text-sell-muted-foreground border-sell/30',
       rejected: 'bg-sell-muted text-sell-muted-foreground border-sell/30'
@@ -39,7 +39,7 @@ export default function RefundDetailsModal({ refund, onClose, onProcess }) {
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
-            <FileText className="w-6 h-6 text-protocall-blue" />
+            <FileText className="w-6 h-6 text-primary" />
             Refund Request Details
           </DialogTitle>
         </DialogHeader>
@@ -50,7 +50,7 @@ export default function RefundDetailsModal({ refund, onClose, onProcess }) {
             <div>
               <p className="text-sm text-subtle mb-1">Current Status</p>
               <Badge className={`${getStatusColor(refund.status)} border text-base px-3 py-1`}>
-                {refund.status.toUpperCase()}
+                {(refund.status || 'unknown').toUpperCase()}
               </Badge>
             </div>
             <div className="text-right">
@@ -120,7 +120,7 @@ export default function RefundDetailsModal({ refund, onClose, onProcess }) {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Refund Amount</p>
-                <p className="text-xl font-bold text-protocall-blue">
+                <p className="text-xl font-bold text-primary">
                   ₹{(refund.refund_amount || 0).toLocaleString('en-IN')}
                 </p>
               </div>
@@ -217,7 +217,7 @@ export default function RefundDetailsModal({ refund, onClose, onProcess }) {
               <div className="space-y-2">
                 {refund.refund_timeline.map((event, index) => (
                   <div key={index} className="flex items-start gap-3 p-3 bg-surface-2 rounded-lg">
-                    <div className="w-2 h-2 rounded-full bg-protocall-blue mt-2"></div>
+                    <div className="w-2 h-2 rounded-full bg-primary mt-2"></div>
                     <div className="flex-1">
                       <p className="text-sm font-medium">{event.action}</p>
                       <p className="text-xs text-muted-foreground">{event.timestamp}</p>
@@ -234,7 +234,7 @@ export default function RefundDetailsModal({ refund, onClose, onProcess }) {
             Close
           </Button>
           {refund.status === 'pending' && (
-            <Button onClick={onProcess} className="bg-protocall-blue hover:bg-protocall-blue">
+            <Button onClick={onProcess} className="bg-primary hover:bg-primary">
               Process Refund
             </Button>
           )}

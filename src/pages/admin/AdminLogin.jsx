@@ -51,7 +51,7 @@ const AdminLogin = () => {
         <div className="min-h-screen flex items-center justify-center bg-protocall-sidebar-bg text-white p-4 relative overflow-hidden">
             {/* Background Effects */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-protocall-blue/20 rounded-full blur-[100px]"></div>
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[100px]"></div>
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[100px]"></div>
             </div>
 
@@ -80,7 +80,7 @@ const AdminLogin = () => {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                className="bg-protocall-ink/50 border-protocall-ink/50 focus:border-protocall-blue/50 focus:ring-ring/20 text-white placeholder:text-subtle h-10"
+                                className="bg-protocall-ink/50 border-protocall-ink/50 focus:border-primary/50 focus:ring-ring/20 text-white placeholder:text-subtle h-10"
                             />
                         </div>
                         <div className="space-y-2">
@@ -91,7 +91,7 @@ const AdminLogin = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                className="bg-protocall-ink/50 border-protocall-ink/50 focus:border-protocall-blue/50 focus:ring-ring/20 text-white h-10"
+                                className="bg-protocall-ink/50 border-protocall-ink/50 focus:border-primary/50 focus:ring-ring/20 text-white h-10"
                             />
                         </div>
                         <Button

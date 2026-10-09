@@ -143,7 +143,7 @@ export default function FAQSection() {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <HelpCircle className="w-8 h-8 text-protocall-blue" />
+            <HelpCircle className="w-8 h-8 text-primary" />
             <h2 className="text-4xl font-bold bg-gradient-to-r from-protocall-deep to-protocall-blue bg-clip-text text-transparent">
               Frequently Asked Questions
             </h2>
@@ -171,7 +171,7 @@ export default function FAQSection() {
                 </div>
                 <div className={`flex-shrink-0 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>
                   {isExpanded ? (
-                    <ChevronUp className="w-6 h-6 text-protocall-blue" />
+                    <ChevronUp className="w-6 h-6 text-primary" />
                   ) : (
                     <ChevronDown className="w-6 h-6 text-muted-foreground" />
                   )}
@@ -220,7 +220,7 @@ export default function FAQSection() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <a
                 href="mailto:support@protocall.in"
-                className="inline-flex items-center justify-center px-6 py-3 bg-white text-protocall-blue font-semibold rounded-full hover:bg-premium-muted transition-colors w-full sm:w-auto"
+                className="inline-flex items-center justify-center px-6 py-3 bg-white text-primary font-semibold rounded-full hover:bg-premium-muted transition-colors w-full sm:w-auto"
               >
                 Email Support
               </a>

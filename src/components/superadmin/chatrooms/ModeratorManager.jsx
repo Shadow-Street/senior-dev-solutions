@@ -66,7 +66,7 @@ export default function ModeratorManager({ room, users, onClose, onRefresh }) {
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-protocall-blue" />
+            <Shield className="w-5 h-5 text-primary" />
             Manage Moderators - "{room.name}"
           </DialogTitle>
           <DialogDescription>
@@ -86,7 +86,7 @@ export default function ModeratorManager({ room, users, onClose, onRefresh }) {
                   return (
                     <div key={mod.user_id} className="flex items-center justify-between bg-premium-muted p-3 rounded-lg">
                       <div className="flex items-center gap-3">
-                        <Shield className="w-4 h-4 text-protocall-blue" />
+                        <Shield className="w-4 h-4 text-primary" />
                         <div>
                           <p className="font-medium text-sm">{user.display_name}</p>
                           <p className="text-xs text-muted-foreground">{user.email}</p>
@@ -136,7 +136,7 @@ export default function ModeratorManager({ room, users, onClose, onRefresh }) {
                   variant="ghost"
                   size="sm"
                   onClick={() => handleAddModerator(user.id)}
-                  className="text-protocall-blue hover:text-protocall-blue"
+                  className="text-primary hover:text-primary"
                 >
                   <Plus className="w-4 h-4 mr-1" />
                   Add

@@ -168,7 +168,7 @@ export default function FinfluencerLayout({ children, activePage }) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-subtle">Loading...</p>
         </div>
       </div>
@@ -338,14 +338,14 @@ export default function FinfluencerLayout({ children, activePage }) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-premium-muted flex items-center justify-center">
-                  <Star className="w-5 h-5 text-protocall-blue" />
+                  <Star className="w-5 h-5 text-primary" />
                 </div>
-                <span className="font-bold text-base text-protocall-blue">Finfluencer Portal</span>
+                <span className="font-bold text-base text-primary">Finfluencer Portal</span>
               </div>
               <Link to={createPageUrl('Dashboard')}>
                 <Button 
                   variant="outline" 
-                  className="bg-white hover:bg-surface-2 border-protocall-premium-light text-protocall-blue hover:text-protocall-blue font-semibold shadow-sm hover:shadow-md transition-all"
+                  className="bg-white hover:bg-surface-2 border-protocall-premium-light text-primary hover:text-primary font-semibold shadow-sm hover:shadow-md transition-all"
                 >
                   <Home className="w-4 h-4 mr-2" />
                   Go to Main Dashboard

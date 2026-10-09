@@ -97,6 +97,16 @@ export default {
   				muted: 'hsl(var(--loss-muted))',
   				'muted-foreground': 'hsl(var(--loss-muted-foreground))'
   			},
+  			/* Solid stat-tile fills; see --tile-* in index.css for why these
+  			   are deeper than the matching brand colours. */
+  			tile: {
+  				green: 'hsl(var(--tile-green))',
+  				blue: 'hsl(var(--tile-blue))',
+  				purple: 'hsl(var(--tile-purple))',
+  				orange: 'hsl(var(--tile-orange))',
+  				ink: 'hsl(var(--tile-ink))',
+  				foreground: 'hsl(var(--tile-foreground))'
+  			},
   			premium: {
   				DEFAULT: 'hsl(var(--premium))',
   				foreground: 'hsl(var(--premium-foreground))',
@@ -185,6 +195,13 @@ export default {
   				'linear-gradient(100deg, #101018 0%, #6D28D9 38%, #3529BF 68%, #D1CDFF 100%)'
   		},
   		keyframes: {
+  			/* Slow idle drift for stat-tile icons. Small on purpose: it should
+  			   read as "alive", not as something demanding attention. Disabled
+  			   via motion-reduce: at the call site. */
+  			'tile-float': {
+  				'0%, 100%': { transform: 'translateY(0)' },
+  				'50%': { transform: 'translateY(-3px)' }
+  			},
   			'accordion-down': {
   				from: {
   					height: '0'
@@ -203,6 +220,7 @@ export default {
   			}
   		},
   		animation: {
+  			'tile-float': 'tile-float 3.5s ease-in-out infinite',
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
   		}

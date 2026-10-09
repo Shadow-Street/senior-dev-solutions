@@ -120,7 +120,7 @@ export default function QRCheckInSystem({ event, tickets, onUpdate }) {
           <CardContent className="p-4">
             <Users className="w-8 h-8 mb-2 text-white/80" />
             <p className="text-2xl font-bold">{totalTickets}</p>
-            <p className="text-sm text-protocall-blue">Total Tickets</p>
+            <p className="text-sm text-primary">Total Tickets</p>
           </CardContent>
         </Card>
 
@@ -200,7 +200,7 @@ export default function QRCheckInSystem({ event, tickets, onUpdate }) {
                       <Button
                         size="sm"
                         onClick={() => handleManualCheckIn(ticket)}
-                        className="bg-protocall-blue hover:bg-protocall-blue"
+                        className="bg-primary hover:bg-primary"
                       >
                         <CheckCircle className="w-4 h-4 mr-1" />
                         Check In

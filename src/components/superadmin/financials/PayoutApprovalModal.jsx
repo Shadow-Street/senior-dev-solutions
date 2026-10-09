@@ -98,7 +98,7 @@ export default function PayoutApprovalModal({
                 <p className="text-sm text-subtle">Status</p>
                 <Badge className={
                   payout.status === 'processed' ? 'bg-buy-muted text-buy-muted-foreground' :
-                  payout.status === 'approved' ? 'bg-premium-muted text-protocall-blue' :
+                  payout.status === 'approved' ? 'bg-premium-muted text-primary' :
                   payout.status === 'rejected' ? 'bg-sell-muted text-sell-muted-foreground' :
                   'bg-hold-muted text-hold-muted-foreground'
                 }>
@@ -111,24 +111,24 @@ export default function PayoutApprovalModal({
           {/* Payout Method Details */}
           <div className="bg-premium-muted p-4 rounded-lg">
             <h3 className="font-semibold mb-3 flex items-center gap-2">
-              <PayoutMethodIcon className="w-5 h-5 text-protocall-blue" />
+              <PayoutMethodIcon className="w-5 h-5 text-primary" />
               Payout Method: {payout.payout_method.replace('_', ' ').toUpperCase()}
             </h3>
             
             {payout.payout_method === 'bank_transfer' && payout.bank_details && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-protocall-blue">Account Holder</p>
+                  <p className="text-sm text-primary">Account Holder</p>
                   <p className="font-medium">{payout.bank_details.account_holder_name}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-protocall-blue">Account Number</p>
+                  <p className="text-sm text-primary">Account Number</p>
                   <p className="font-medium font-mono">
                     {payout.bank_details.account_number.replace(/.(?=.{4})/g, '*')}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-protocall-blue">IFSC Code</p>
+                  <p className="text-sm text-primary">IFSC Code</p>
                   <p className="font-medium font-mono">{payout.bank_details.ifsc_code}</p>
                 </div>
               </div>
@@ -136,14 +136,14 @@ export default function PayoutApprovalModal({
 
             {payout.payout_method === 'upi' && payout.upi_id && (
               <div>
-                <p className="text-sm text-protocall-blue">UPI ID</p>
+                <p className="text-sm text-primary">UPI ID</p>
                 <p className="font-medium font-mono">{payout.upi_id}</p>
               </div>
             )}
 
             {payout.payout_method === 'paypal' && payout.paypal_email && (
               <div>
-                <p className="text-sm text-protocall-blue">PayPal Email</p>
+                <p className="text-sm text-primary">PayPal Email</p>
                 <p className="font-medium">{payout.paypal_email}</p>
               </div>
             )}
@@ -208,7 +208,7 @@ export default function PayoutApprovalModal({
                 <Button
                   onClick={handleApprove}
                   disabled={isProcessing}
-                  className="bg-buy hover:bg-buy"
+                  className="bg-buy text-buy-foreground hover:bg-buy-soft"
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
                   {isProcessing ? 'Processing...' : 'Approve Payout'}

@@ -219,7 +219,7 @@ export default function ActivityTracker({ currentAdmin }) {
           <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
             <div>
               <CardTitle className="flex items-center gap-2 text-2xl">
-                <Activity className="w-7 h-7 text-protocall-blue" />
+                <Activity className="w-7 h-7 text-primary" />
                 User Activity & Location Tracker
               </CardTitle>
               <CardDescription className="mt-1">

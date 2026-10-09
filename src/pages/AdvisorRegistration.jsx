@@ -126,8 +126,15 @@ export default function AdvisorRegistration() {
                 return;
             }
 
-            // Step 1: Upload the SEBI document
-            const { file_url } = await UploadFile({ file });
+            // Step 1: Upload the SEBI document.
+            // is_private matters here: this is a regulatory identity document,
+            // and without the flag it was stored under a public/ key that
+            // anyone with the URL could read.
+            const { file_url } = await UploadFile({
+                file,
+                is_private: true,
+                folder: 'sebi-certificates',
+            });
 
             // Step 2: Create the Advisor record with dynamic approval status
             const advisorData = {
@@ -136,7 +143,9 @@ export default function AdvisorRegistration() {
                 bio: formData.bio,
                 sebi_registration_number: formData.sebiNumber,
                 sebi_document_url: file_url,
-                status: settings.advisorApprovalRequired ? 'pending_approval' : 'approved',
+                // status is intentionally not sent: it is a protected field and
+                // the server decides it from the platform setting, so an
+                // applicant cannot submit themselves as approved.
             };
 
             const newAdvisor = await Advisor.create(advisorData);
@@ -164,7 +173,7 @@ export default function AdvisorRegistration() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-surface-2">
                 <Card className="w-full max-w-md text-center p-8">
-                    <Loader2 className="w-12 h-12 mx-auto mb-4 animate-spin text-protocall-blue" />
+                    <Loader2 className="w-12 h-12 mx-auto mb-4 animate-spin text-primary" />
                     <p className="text-subtle">Checking your advisor status...</p>
                 </Card>
             </div>
@@ -258,7 +267,7 @@ export default function AdvisorRegistration() {
                                 <div className="flex justify-between">
                                     <span className="text-subtle">Status:</span>
                                     <Badge className={`${config.bgColor} ${config.color} border-0`}>
-                                        {approvalStatus.replace('_', ' ').toUpperCase()}
+                                        {(approvalStatus || 'pending_approval').replace('_', ' ').toUpperCase()}
                                     </Badge>
                                 </div>
                                 <div className="flex justify-between">
@@ -344,7 +353,7 @@ export default function AdvisorRegistration() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-subtle mb-2">
-                                    Full Name <span className="text-sell">*</span>
+                                    Full Name <span className="text-sell-muted-foreground">*</span>
                                 </label>
                                 <Input
                                     name="fullName"
@@ -356,7 +365,7 @@ export default function AdvisorRegistration() {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-subtle mb-2">
-                                    SEBI Registration Number <span className="text-sell">*</span>
+                                    SEBI Registration Number <span className="text-sell-muted-foreground">*</span>
                                 </label>
                                 <Input
                                     name="sebiNumber"
@@ -384,7 +393,7 @@ export default function AdvisorRegistration() {
                         {/* Enhanced File Upload */}
                         <div>
                             <label className="block text-sm font-medium text-subtle mb-2">
-                                SEBI Certificate <span className="text-sell">*</span>
+                                SEBI Certificate <span className="text-sell-muted-foreground">*</span>
                             </label>
                             <div className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 ${fileName ? 'border-buy/30 bg-buy-muted' : 'border-border border-dashed'} rounded-md transition-colors`}>
                                 <div className="space-y-1 text-center">
@@ -395,7 +404,7 @@ export default function AdvisorRegistration() {
                                                 <p className="font-semibold text-buy-muted-foreground">{fileName}</p>
                                                 <p className="text-xs text-muted-foreground mt-1">File uploaded successfully ✓</p>
                                             </div>
-                                            <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-protocall-blue hover:text-protocall-premium-light">
+                                            <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-protocall-premium-light">
                                                 <span className="text-sm">Change file</span>
                                                 <input
                                                     id="file-upload"
@@ -411,7 +420,7 @@ export default function AdvisorRegistration() {
                                         <>
                                             <UploadCloud className="mx-auto h-12 w-12 text-muted-foreground" />
                                             <div className="flex text-sm text-subtle">
-                                                <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-protocall-blue hover:text-protocall-premium-light focus-within:outline-none">
+                                                <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-protocall-premium-light focus-within:outline-none">
                                                     <span>Upload a file</span>
                                                     <input
                                                         id="file-upload"

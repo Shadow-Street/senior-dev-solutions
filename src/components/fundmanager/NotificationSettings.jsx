@@ -151,7 +151,7 @@ export default function NotificationSettings({ user, isOpen, onClose }) {
       <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
-            <Bell className="w-6 h-6 text-protocall-blue" />
+            <Bell className="w-6 h-6 text-primary" />
             Notification Preferences
           </DialogTitle>
           <DialogDescription>
@@ -161,7 +161,7 @@ export default function NotificationSettings({ user, isOpen, onClose }) {
 
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : (
           <div className="space-y-4 py-4">
@@ -170,7 +170,7 @@ export default function NotificationSettings({ user, isOpen, onClose }) {
               <div className="col-span-6"></div>
               <div className="col-span-2 flex items-center justify-center">
                 <div className="text-center">
-                  <Bell className="w-5 h-5 text-protocall-blue mx-auto mb-1" />
+                  <Bell className="w-5 h-5 text-primary mx-auto mb-1" />
                   <span className="text-xs font-semibold text-subtle">In-App</span>
                 </div>
               </div>

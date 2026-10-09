@@ -2,12 +2,13 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, adminMiddleware, optionalAuthenticate } = require("../middleware/auth");
 
 // Subscriptions CRUD
 const subscriptionController = createCrudController(db.Subscription, {
   defaultOrderBy: 'created_at',
   defaultOrder: 'DESC',
+  ownership: 'user_id',
   include: [
     { model: db.User },
     { model: db.SubscriptionPlan }
@@ -26,7 +27,8 @@ router.get('/my-subscription', authMiddleware, async (req, res) => {
     });
     res.json(subscription);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[subscription.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -76,7 +78,8 @@ router.get('/autopay/status', authMiddleware, async (req, res) => {
       cancelAtPeriodEnd: subscription.cancelAtPeriodEnd
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[subscription.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -146,7 +149,8 @@ router.get('/my-analytics', authMiddleware, async (req, res) => {
     const stats = await SubscriptionService.getSubscriptionStats(req.user.id);
     res.json(stats);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[subscription.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -155,7 +159,8 @@ router.get('/my-history', authMiddleware, async (req, res) => {
     const history = await SubscriptionService.getUserSubscriptionHistory(req.user.id);
     res.json(history);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[subscription.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -163,26 +168,25 @@ router.get('/my-history', authMiddleware, async (req, res) => {
 router.get('/my-invoices', authMiddleware, async (req, res) => {
   try {
     const invoices = await InvoiceService.getUserInvoices(req.user.id);
-    console.log("/my-invoices", invoices);
     res.json(invoices);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[subscription.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 router.get('/invoice/:id/download', authMiddleware, async (req, res) => {
   try {
-    const { invoiceId } = req.params;
-    const { filepath, invoice } = await InvoiceService.downloadInvoice(req.params.id);
-
-    // Verify user owns this invoice
-    if (invoice.user_id !== req.user.id) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
+    // Ownership is enforced inside the service, before any file work happens.
+    const { filepath, invoice } = await InvoiceService.downloadInvoice(req.params.id, req.user);
     res.download(filepath, `${invoice.invoice_number}.pdf`);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    // Not-found and not-yours are deliberately indistinguishable.
+    if (/not found/i.test(error.message)) {
+      return res.status(404).json({ error: 'Invoice not found' });
+    }
+    console.error('Invoice download failed:', error.message);
+    res.status(500).json({ error: 'Could not download invoice' });
   }
 });
 
@@ -203,13 +207,13 @@ promoRouter.post('/validate', async (req, res) => {
   }
 });
 
-createCrudRoutes(promoRouter, promoController);
+createCrudRoutes(promoRouter, promoController, { read: [authMiddleware, adminMiddleware], write: [authMiddleware, adminMiddleware] });
 router.use('/promo-codes', promoRouter);
 
 // Transactions sub-routes
 const transactionRouter = express.Router();
-const transactionController = createCrudController(db.SubscriptionTransaction);
-createCrudRoutes(transactionRouter, transactionController);
+const transactionController = createCrudController(db.SubscriptionTransaction, { ownership: 'user_id' });
+createCrudRoutes(transactionRouter, transactionController, [authMiddleware]);
 router.use('/transactions', transactionRouter);
 
 // Plans sub-routes
@@ -224,10 +228,10 @@ const planController = createCrudController(db.SubscriptionPlan, {
     return data;
   }
 });
-createCrudRoutes(planRouter, planController);
+createCrudRoutes(planRouter, planController, { read: [optionalAuthenticate], write: [authMiddleware, adminMiddleware] });
 router.use('/plans', planRouter);
 
 // CRUD routes - MOVED TO BOTTOM to avoid shadowing sub-routes
-createCrudRoutes(router, subscriptionController);
+createCrudRoutes(router, subscriptionController, [authMiddleware]);
 
 module.exports = router;

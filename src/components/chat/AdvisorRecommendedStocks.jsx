@@ -85,7 +85,7 @@ export default function AdvisorRecommendedStocks() {
     switch (type) {
       case 'buy': return <TrendingUp className="w-3 h-3 text-buy-muted-foreground" />;
       case 'sell': return <TrendingDown className="w-3 h-3 text-sell-muted-foreground" />;
-      default: return <Shield className="w-3 h-3 text-protocall-blue" />;
+      default: return <Shield className="w-3 h-3 text-primary" />;
     }
   };
 
@@ -93,7 +93,7 @@ export default function AdvisorRecommendedStocks() {
     switch (type) {
       case 'buy': return 'bg-buy-muted text-buy-muted-foreground border-buy/30';
       case 'sell': return 'bg-sell-muted text-sell-muted-foreground border-sell/30';
-      default: return 'bg-premium-muted text-protocall-blue border-protocall-premium-light';
+      default: return 'bg-premium-muted text-primary border-protocall-premium-light';
     }
   };
 
@@ -119,7 +119,7 @@ export default function AdvisorRecommendedStocks() {
           {recommendations.slice(0, 2).map((rec) => (
             <div key={rec.id} className="p-3 rounded-lg border bg-gradient-to-r from-white to-surface-2 hover:shadow-sm transition-all">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-protocall-grape flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
                   {rec.advisor_image ? (
                     <img src={rec.advisor_image} alt={rec.advisor_name} className="w-8 h-8 rounded-full object-cover" />
                   ) : (
@@ -162,7 +162,7 @@ export default function AdvisorRecommendedStocks() {
       {!hasAccess && (
         <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center rounded-lg">
           <div className="text-center p-3">
-            <div className="inline-flex items-center justify-center bg-gradient-to-r from-protocall-deep to-protocall-blue text-white rounded-full p-2 mb-2">
+            <div className="inline-flex items-center justify-center bg-gradient-to-r from-primary to-protocall-grape text-white rounded-full p-2 mb-2">
               <Lock className="w-4 h-4" />
             </div>
             <h4 className="font-bold text-foreground text-sm mb-1">Advisor Picks</h4>

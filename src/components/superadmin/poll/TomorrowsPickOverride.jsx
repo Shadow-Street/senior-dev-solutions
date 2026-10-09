@@ -263,11 +263,11 @@ export default function TomorrowsPickOverride({ user }) {
 
         {!isOverrideActive && (
           <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
-            <div className="flex items-center gap-2 text-protocall-blue mb-2">
+            <div className="flex items-center gap-2 text-primary mb-2">
               <TrendingUp className="w-4 h-4" />
               <span className="font-semibold text-sm">Auto Mode Active</span>
             </div>
-            <p className="text-xs text-protocall-blue">
+            <p className="text-xs text-primary">
               System automatically selects the most recommended stock by advisors or highest voted by community.
             </p>
           </div>

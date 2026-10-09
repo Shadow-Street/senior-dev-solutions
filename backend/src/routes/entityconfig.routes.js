@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, adminMiddleware, optionalAuthenticate } = require("../middleware/auth");
 
 // Entity Configs CRUD
 const configController = createCrudController(db.EntityConfig, {
@@ -19,7 +19,8 @@ router.get('/type/:type', async (req, res) => {
     });
     res.json(config || { entity_type: type, config: {} });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[entityconfig.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -38,11 +39,12 @@ router.put('/type/:type', authMiddleware, async (req, res) => {
     
     res.json(entityConfig);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[entityconfig.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 // CRUD routes
-createCrudRoutes(router, configController);
+createCrudRoutes(router, configController, { read: [optionalAuthenticate], write: [authMiddleware, adminMiddleware] });
 
 module.exports = router;

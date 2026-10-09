@@ -140,7 +140,7 @@ export default function InvestmentRequestModal({ investor, fundPlan, wallet, isO
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Briefcase className="w-5 h-5 text-protocall-blue" />
+            <Briefcase className="w-5 h-5 text-primary" />
             Investment Request
           </DialogTitle>
           <DialogDescription>
@@ -152,10 +152,10 @@ export default function InvestmentRequestModal({ investor, fundPlan, wallet, isO
           {/* Wallet Balance Display */}
           <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-protocall-blue font-medium">Available Wallet Balance</span>
-              <WalletIcon className="w-4 h-4 text-protocall-blue" />
+              <span className="text-sm text-primary font-medium">Available Wallet Balance</span>
+              <WalletIcon className="w-4 h-4 text-primary" />
             </div>
-            <p className="text-2xl font-bold text-protocall-blue">₹{availableBalance.toLocaleString('en-IN')}</p>
+            <p className="text-2xl font-bold text-primary">₹{availableBalance.toLocaleString('en-IN')}</p>
           </div>
 
           {/* Investment Amount */}

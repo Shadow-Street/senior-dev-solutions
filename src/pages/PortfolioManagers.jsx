@@ -52,7 +52,7 @@ export default function PortfolioManagers() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -68,7 +68,7 @@ export default function PortfolioManagers() {
             </div>
             <div>
               <h1 className="text-3xl font-bold">Portfolio Managers</h1>
-              <p className="text-protocall-blue mt-1">SEBI Registered Portfolio Managers</p>
+              <p className="text-primary mt-1">SEBI Registered Portfolio Managers</p>
             </div>
           </div>
         </div>
@@ -126,9 +126,9 @@ export default function PortfolioManagers() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-premium-muted p-3 rounded-lg">
-                      <Users className="w-4 h-4 text-protocall-blue mb-1" />
-                      <p className="text-xs text-protocall-blue">Clients</p>
-                      <p className="text-lg font-bold text-protocall-blue">{pm.total_clients || 0}</p>
+                      <Users className="w-4 h-4 text-primary mb-1" />
+                      <p className="text-xs text-primary">Clients</p>
+                      <p className="text-lg font-bold text-primary">{pm.total_clients || 0}</p>
                     </div>
                     <div className="bg-buy-muted p-3 rounded-lg">
                       <TrendingUp className="w-4 h-4 text-buy-muted-foreground mb-1" />
@@ -164,7 +164,7 @@ export default function PortfolioManagers() {
                   </div>
 
                   <Button
-                    className="w-full bg-protocall-blue hover:bg-protocall-blue"
+                    className="w-full bg-primary hover:bg-primary"
                     onClick={() => handleApplyAsClient(pm.id)}
                   >
                     Become a Client

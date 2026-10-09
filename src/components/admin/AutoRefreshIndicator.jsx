@@ -69,7 +69,7 @@ export default function AutoRefreshIndicator({
 
         {hasNewData && (
           <Badge 
-            className="bg-protocall-blue text-white cursor-pointer hover:bg-protocall-blue"
+            className="bg-primary text-white cursor-pointer hover:bg-primary"
             onClick={onClearNewData}
           >
             New Data Available - Click to Dismiss

@@ -19,7 +19,11 @@ export default function AdminSubscriptionManager() {
 
   const fetchAnalytics = async () => {
     try {
-      const { data } = await apiClient.get('/admin/subscriptions/analytics');
+      // The endpoint is /admin/subscription-analytics; this called
+      // /admin/subscriptions/analytics and 404'd, so the Analytics tab showed
+      // "Failed to load analytics" every time. The backend already returns
+      // exactly the shape this component reads.
+      const { data } = await apiClient.get('/admin/subscription-analytics');
       setStats(data);
     } catch (error) {
       toast.error("Failed to load analytics");
@@ -44,7 +48,7 @@ export default function AdminSubscriptionManager() {
             <Loader2 className="w-24 h-24" />
           </div>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-protocall-blue uppercase tracking-wider">Total Revenue (ARR)</CardTitle>
+            <CardTitle className="text-sm font-semibold text-primary uppercase tracking-wider">Total Revenue (ARR)</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">₹{stats?.financials?.arr?.toLocaleString()}</div>
@@ -106,9 +110,9 @@ export default function AdminSubscriptionManager() {
             <TableBody>
               {stats?.charts?.coupons?.map((coupon, index) => (
                 <TableRow key={coupon.coupon_used} className="hover:bg-surface-2/50 transition-colors border-divider">
-                  <TableCell className="font-semibold text-protocall-blue pl-6 border-l-4 border-l-transparent hover:border-l-indigo-500 py-4">
+                  <TableCell className="font-semibold text-primary pl-6 border-l-4 border-l-transparent hover:border-l-indigo-500 py-4">
                     <div className="flex items-center gap-2">
-                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-premium-muted text-protocall-blue text-xs flex items-center justify-center font-bold">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-premium-muted text-primary text-xs flex items-center justify-center font-bold">
                         {index + 1}
                       </span>
                       {coupon.coupon_used}

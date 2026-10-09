@@ -645,7 +645,7 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
                             )
                           }
                           {user.id === currentAdmin?.id && (
-                            <DropdownMenuItem disabled className="text-xs bg-premium-muted text-protocall-blue">
+                            <DropdownMenuItem disabled className="text-xs bg-premium-muted text-primary">
                               You (Cannot manage yourself)
                             </DropdownMenuItem>
                           )}
@@ -743,7 +743,7 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
                 </div>
                 
                 <div className="mt-3 p-2 bg-premium-muted rounded-lg">
-                  <p className="text-xs text-protocall-blue">
+                  <p className="text-xs text-primary">
                     Valid Range: 0.00 - 100.00 | 
                     Max Increase: +{(100 - (selectedUser.trust_score || 50)).toFixed(2)} | 
                     Max Decrease: -{((selectedUser.trust_score || 50)).toFixed(2)}
@@ -796,7 +796,7 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
                   )}
                   
                   {(100 - (selectedUser.trust_score || 50)) > 0 && (
-                    <Button variant="outline" size="sm" className="text-protocall-blue font-semibold" onClick={() => handleTrustScoreChange(100 - (selectedUser.trust_score || 50))}>
+                    <Button variant="outline" size="sm" className="text-primary font-semibold" onClick={() => handleTrustScoreChange(100 - (selectedUser.trust_score || 50))}>
                       MAX (+{(100 - (selectedUser.trust_score || 50)).toFixed(0)})
                     </Button>
                   )}
@@ -810,7 +810,7 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
 
               <div>
                 <Label htmlFor="reason" className="block text-sm font-medium text-subtle mb-2">
-                  Reason for Change <span className="text-sell">*</span>
+                  Reason for Change <span className="text-sell-muted-foreground">*</span>
                 </Label>
                 <Textarea
                   id="reason"
@@ -829,7 +829,7 @@ export default function UserTable({ users, currentAdmin, onUsersUpdate }) {
               <Button 
                 onClick={handleSaveTrustScore} 
                 disabled={!adjustmentReason.trim() || scoreChange === 0 || isLoading}
-                className={scoreChange > 0 ? 'bg-buy hover:bg-buy' : (scoreChange < 0 ? 'bg-sell hover:bg-sell' : 'bg-muted-foreground')}
+                className={scoreChange > 0 ? 'bg-buy text-buy-foreground hover:bg-buy-soft' : (scoreChange < 0 ? 'bg-sell hover:bg-sell' : 'bg-muted-foreground')}
               >
                 {isLoading ? 'Saving...' : (scoreChange > 0 ? 'Increase' : (scoreChange < 0 ? 'Decrease' : 'Update'))} Trust Score
               </Button>

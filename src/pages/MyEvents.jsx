@@ -99,7 +99,7 @@ export default function MyEventsPage() {
       pending_approval: { color: 'bg-hold-muted text-hold-muted-foreground border-hold/30', label: 'Pending Approval' },
       approved: { color: 'bg-buy-muted text-buy-muted-foreground border-buy/30', label: 'Approved' },
       rejected: { color: 'bg-sell-muted text-sell-muted-foreground border-sell/30', label: 'Rejected' },
-      scheduled: { color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light', label: 'Scheduled' },
+      scheduled: { color: 'bg-premium-muted text-primary border-protocall-premium-light', label: 'Scheduled' },
       completed: { color: 'bg-surface-2 text-foreground border-border', label: 'Completed' },
       cancelled: { color: 'bg-sell-muted text-sell-muted-foreground border-sell/30', label: 'Cancelled' }
     };
@@ -110,7 +110,7 @@ export default function MyEventsPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -136,7 +136,7 @@ export default function MyEventsPage() {
             <div className="flex gap-3 mt-4 md:mt-0">
               <Button
                 onClick={() => setShowCreateModal(true)}
-                className="bg-protocall-blue hover:bg-protocall-blue"
+                className="bg-primary hover:bg-primary"
               >
                 <Plus className="w-5 h-5 mr-2" />
                 Create Event
@@ -208,7 +208,7 @@ export default function MyEventsPage() {
                   <p className="text-3xl font-bold text-foreground">{myEvents.length}</p>
                 </div>
                 <div className="w-12 h-12 bg-premium-muted rounded-full flex items-center justify-center">
-                  <CalendarIcon className="w-6 h-6 text-protocall-blue" />
+                  <CalendarIcon className="w-6 h-6 text-primary" />
                 </div>
               </div>
             </CardContent>

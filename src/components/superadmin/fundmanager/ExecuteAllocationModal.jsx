@@ -210,7 +210,7 @@ export default function ExecuteAllocationModal({ isOpen, onClose, request, inves
               </div>
               <div>
                 <p className="text-subtle">Investment Amount</p>
-                <p className="font-bold text-protocall-blue">₹{request.requested_amount.toLocaleString('en-IN')}</p>
+                <p className="font-bold text-primary">₹{request.requested_amount.toLocaleString('en-IN')}</p>
               </div>
             </div>
           </div>
@@ -233,7 +233,7 @@ export default function ExecuteAllocationModal({ isOpen, onClose, request, inves
           {/* Calculated Units */}
           <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
             <Label>Units to be Allocated</Label>
-            <p className="text-3xl font-bold text-protocall-blue mt-1">{units.toFixed(4)}</p>
+            <p className="text-3xl font-bold text-primary mt-1">{units.toFixed(4)}</p>
             <p className="text-xs text-subtle mt-1">
               Calculation: ₹{request.requested_amount.toLocaleString('en-IN')} ÷ ₹{nav} = {units.toFixed(4)} units
             </p>

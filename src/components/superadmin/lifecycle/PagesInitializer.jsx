@@ -247,7 +247,7 @@ export default function PagesInitializer() {
     <Card className="border-2 border-protocall-premium-light bg-surface-2">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <FileText className="w-5 h-5 text-protocall-blue" />
+          <FileText className="w-5 h-5 text-primary" />
           Pages Auto-Initialization
         </CardTitle>
         <p className="text-sm text-subtle">
@@ -273,7 +273,7 @@ export default function PagesInitializer() {
         <Button
           onClick={initializePages}
           disabled={isInitializing}
-          className="w-full bg-protocall-blue hover:bg-protocall-blue"
+          className="w-full bg-primary hover:bg-primary"
           size="lg"
         >
           {isInitializing ? (

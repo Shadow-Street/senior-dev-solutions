@@ -59,7 +59,7 @@ export default function FeatureDetailModal({ feature, onClose, onEdit }) {
                'VIP Elite'}
             </Badge>
             {feature.visible_to_users ? (
-              <Badge variant="outline" className="bg-premium-muted text-protocall-blue border-protocall-premium-light">
+              <Badge variant="outline" className="bg-premium-muted text-primary border-protocall-premium-light">
                 <Eye className="w-3 h-3 mr-1" />
                 Visible to Users
               </Badge>
@@ -97,7 +97,7 @@ export default function FeatureDetailModal({ feature, onClose, onEdit }) {
           )}
 
           {feature.documentation_url && (
-            <div className="flex items-center gap-2 text-sm text-protocall-blue">
+            <div className="flex items-center gap-2 text-sm text-primary">
               <FileText className="w-4 h-4" />
               <a href={feature.documentation_url} target="_blank" rel="noopener noreferrer" className="hover:underline">
                 View Documentation

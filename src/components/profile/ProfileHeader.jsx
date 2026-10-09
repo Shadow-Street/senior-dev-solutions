@@ -23,7 +23,7 @@ export default function ProfileHeader({ user, subscription, referrals }) {
 
   return (
     <>
-      <Card className="w-full bg-white/80 backdrop-blur-sm border-0 shadow-lg mb-6">
+      <Card className="w-full bg-card border-0 shadow-lg mb-6">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <Avatar className="w-16 h-16 border-2 border-white shadow-md">

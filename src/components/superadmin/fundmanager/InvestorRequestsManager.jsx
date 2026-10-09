@@ -244,7 +244,7 @@ export default function InvestorRequestsManager({ onUpdate }) {
   const getStatusBadge = (status) => {
     const config = {
       pending: { label: 'Pending', className: 'bg-hold-muted text-hold-muted-foreground' },
-      under_review: { label: 'Under Review', className: 'bg-premium-muted text-protocall-blue' },
+      under_review: { label: 'Under Review', className: 'bg-premium-muted text-primary' },
       approved: { label: 'Approved', className: 'bg-buy-muted text-buy-muted-foreground' },
       rejected: { label: 'Rejected', className: 'bg-sell-muted text-sell-muted-foreground' }
     };
@@ -263,7 +263,7 @@ export default function InvestorRequestsManager({ onUpdate }) {
     const config = {
       beginner: {
         label: 'Beginner',
-        className: 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+        className: 'bg-premium-muted text-primary border-protocall-premium-light',
         description: '0-2 years'
       },
       intermediate: {
@@ -291,7 +291,7 @@ export default function InvestorRequestsManager({ onUpdate }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -406,7 +406,7 @@ export default function InvestorRequestsManager({ onUpdate }) {
                       </TableCell>
                       <TableCell>
                         {investorCode ? (
-                          <Badge className="bg-premium-muted text-protocall-blue font-mono">
+                          <Badge className="bg-premium-muted text-primary font-mono">
                             {investorCode}
                           </Badge>
                         ) : (
@@ -427,7 +427,7 @@ export default function InvestorRequestsManager({ onUpdate }) {
                             <>
                               <Button
                                 size="sm"
-                                className="bg-buy hover:bg-buy"
+                                className="bg-buy text-buy-foreground hover:bg-buy-soft"
                                 onClick={() => {
                                   setSelectedRequest(request);
                                   setShowApprovalModal(true);
@@ -465,7 +465,7 @@ export default function InvestorRequestsManager({ onUpdate }) {
             <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="text-2xl flex items-center gap-2">
-                  <UserIcon className="w-6 h-6 text-protocall-blue" />
+                  <UserIcon className="w-6 h-6 text-primary" />
                   Investor Profile
                 </DialogTitle>
                 <p className="text-sm text-subtle mt-1">
@@ -475,7 +475,7 @@ export default function InvestorRequestsManager({ onUpdate }) {
               <div className="space-y-6">
                 {/* Personal Information */}
                 <div className="bg-surface-2 border border-protocall-premium-light rounded-lg p-5">
-                  <h3 className="font-semibold text-protocall-blue mb-3 flex items-center gap-2">
+                  <h3 className="font-semibold text-primary mb-3 flex items-center gap-2">
                     <UserIcon className="w-5 h-5" />
                     Personal Information
                   </h3>
@@ -508,7 +508,7 @@ export default function InvestorRequestsManager({ onUpdate }) {
                       <>
                         <div>
                           <Label className="text-sm text-subtle">Investor Code</Label>
-                          <Badge className="bg-premium-muted text-protocall-blue font-mono mt-1">
+                          <Badge className="bg-premium-muted text-primary font-mono mt-1">
                             {selectedInvestorProfile.investor_code}
                           </Badge>
                         </div>
@@ -718,7 +718,7 @@ export default function InvestorRequestsManager({ onUpdate }) {
 
                 {/* Data Source Indicator */}
                 <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-3">
-                  <p className="text-xs text-protocall-blue">
+                  <p className="text-xs text-primary">
                     {selectedInvestorProfile ? (
                       <>
                         <CheckCircle className="w-3 h-3 inline mr-1" />
@@ -770,7 +770,7 @@ export default function InvestorRequestsManager({ onUpdate }) {
                 <Button variant="outline" onClick={() => setShowApprovalModal(false)} disabled={isProcessing}>
                   Cancel
                 </Button>
-                <Button onClick={handleApprove} disabled={isProcessing} className="bg-buy hover:bg-buy">
+                <Button onClick={handleApprove} disabled={isProcessing} className="bg-buy text-buy-foreground hover:bg-buy-soft">
                   {isProcessing ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />

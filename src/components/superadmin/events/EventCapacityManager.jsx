@@ -214,13 +214,13 @@ export default function EventCapacityManager({ event, attendees, onUpdate }) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
-              <Users className="w-6 h-6 text-protocall-blue" />
+              <Users className="w-6 h-6 text-primary" />
               Event Capacity Management
             </CardTitle>
             <Button
               onClick={() => setShowSettingsModal(true)}
               variant="outline"
-              className="border-2 border-protocall-blue text-protocall-blue hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2"
+              className="border-2 border-primary text-primary hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2"
             >
               <Settings className="w-4 h-4 mr-2" />
               Configure

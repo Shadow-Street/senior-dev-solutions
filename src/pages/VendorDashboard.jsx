@@ -39,7 +39,7 @@ const statusConfig = {
   active: { label: 'Live Campaign', icon: PlayCircle, color: 'bg-buy-muted text-buy-muted-foreground border-buy/30' },
   rejected: { label: 'Rejected', icon: XCircle, color: 'bg-sell-muted text-sell-muted-foreground border-sell/30' },
   paused: { label: 'Paused', icon: AlertTriangle, color: 'bg-surface-2 text-foreground border-border' },
-  expired: { label: 'Expired', icon: AlertTriangle, color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light' },
+  expired: { label: 'Expired', icon: AlertTriangle, color: 'bg-premium-muted text-primary border-protocall-premium-light' },
   completed: { label: 'Completed', icon: CheckCircle, color: 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light' },
 };
 
@@ -118,7 +118,7 @@ function AnalyticsModal({ campaign }) {
     <DialogContent>
       <DialogHeader>
         <DialogTitle className="flex items-center gap-2">
-          <BarChart2 className="w-6 h-6 text-protocall-blue" />
+          <BarChart2 className="w-6 h-6 text-primary" />
           Campaign Analytics: {campaign.title}
         </DialogTitle>
         <DialogDescription>
@@ -176,7 +176,7 @@ function EditCampaignModal({ campaign, vendor, isOpen, onClose, onSuccess }) {
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Megaphone className="w-6 h-6 text-protocall-blue" />
+            <Megaphone className="w-6 h-6 text-primary" />
             Edit Campaign: {campaign.title}
           </DialogTitle>
           <DialogDescription>
@@ -472,7 +472,7 @@ export default function VendorDashboard() {
     return (
       <div className="flex h-screen items-center justify-center bg-protocall-ink">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-white">Loading Vendor Dashboard...</p>
         </div>
       </div>
@@ -497,7 +497,7 @@ export default function VendorDashboard() {
               <h1 className="text-3xl font-bold mb-2">
                 {isAdminView ? 'Ad Campaign Overview' : 'Vendor Dashboard'}
               </h1>
-              <p className="text-protocall-blue">
+              <p className="text-primary">
                 {isAdminView ? 'Monitor all vendor advertising campaigns' : 'Manage your advertising campaigns and track performance'}
               </p>
             </div>
@@ -513,28 +513,28 @@ export default function VendorDashboard() {
           <TabsList className="grid w-full grid-cols-4 bg-transparent p-1 rounded-xl gap-2">
             <TabsTrigger 
               value="overview" 
-              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-12 px-6 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-3 py-3 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
+              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-12 px-6 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-3 py-3 transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
             >
               <BarChart3 className="w-5 h-5" />
               Overview
             </TabsTrigger>
             <TabsTrigger 
               value="campaigns" 
-              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-12 px-6 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-3 py-3 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
+              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-12 px-6 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-3 py-3 transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
             >
               <Megaphone className="w-5 h-5" />
               My Campaigns
             </TabsTrigger>
             <TabsTrigger 
               value="financials" 
-              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-12 px-6 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-3 py-3 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
+              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-12 px-6 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-3 py-3 transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
             >
               <Receipt className="w-5 h-5" />
               Financials
             </TabsTrigger>
             <TabsTrigger 
               value="create" 
-              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-12 px-6 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-3 py-3 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
+              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-12 px-6 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-3 py-3 transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
             >
               <PlusCircle className="w-5 h-5" />
               Create Campaign
@@ -549,7 +549,7 @@ export default function VendorDashboard() {
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-premium-muted rounded-lg">
-                      <BarChart3 className="w-6 h-6 text-protocall-blue" />
+                      <BarChart3 className="w-6 h-6 text-primary" />
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Total Campaigns</p>
@@ -623,7 +623,7 @@ export default function VendorDashboard() {
                     </div>
                     <Button 
                       onClick={() => setIsAddFundsModalOpen(true)}
-                      className="w-full bg-buy-soft hover:from-buy hover:to-buy"
+                      className="w-full bg-buy-soft text-buy-foreground hover:bg-buy"
                     >
                       <IndianRupee className="w-4 h-4 mr-2" /> {/* Changed to IndianRupee icon */}
                       Add Funds
@@ -726,7 +726,7 @@ export default function VendorDashboard() {
                                   <span>📈 {campaign.target_stocks.slice(0,2).join(', ')}</span>
                                 )}
                               </div>
-                              <div className="text-xs text-protocall-blue mt-1">
+                              <div className="text-xs text-primary mt-1">
                                 📍 {campaign.placement_locations?.join(', ') || 'Global'}
                               </div>
                             </td>
@@ -810,7 +810,7 @@ export default function VendorDashboard() {
                                       variant="outline"
                                       size="sm"
                                       onClick={() => handleEditCampaign(campaign)}
-                                      className="text-protocall-blue hover:text-protocall-blue"
+                                      className="text-primary hover:text-primary"
                                     >
                                       Edit
                                     </Button>

@@ -15,7 +15,7 @@ class UserController {
       return res.status(200).json(user);
     } catch (error) {
       console.error("Get user error:", error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -28,13 +28,15 @@ class UserController {
       delete updates.password;
       delete updates.email;
 
-      const [updated] = await User.update(updates, {
-        where: { id: userId }
-      });
-
-      if (!updated) {
+      // Sequelize's affected-row count is 0 both when the record is missing and
+      // when the new values equal the stored ones, so treating 0 as 'not found'
+      // turned every no-op save into a 404. Check existence, then update.
+      const existingSelf = await User.findByPk(userId);
+      if (!existingSelf) {
         return res.status(404).json({ error: "User not found" });
       }
+
+      await User.update(updates, { where: { id: userId } });
 
       const user = await User.findByPk(userId, {
         attributes: { exclude: ['password'] }
@@ -43,7 +45,7 @@ class UserController {
       return res.status(200).json(user);
     } catch (error) {
       console.error("Update user error:", error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -67,13 +69,17 @@ class UserController {
       delete updates.password;
       // delete updates.email; // Admins might need to update email? Leaving commented for now as 'delete' is safer default.
 
-      const [updated] = await User.update(updates, {
-        where: { id }
-      });
-
-      if (!updated) {
+      // Sequelize reports the number of rows it actually changed, which is 0
+      // both when the user does not exist and when the submitted values match
+      // what is already stored. Treating 0 as "not found" turned every no-op
+      // save — and every save of a field the model does not define — into a
+      // 404. Decide on existence first, then update.
+      const existing = await User.findByPk(id);
+      if (!existing) {
         return res.status(404).json({ error: "User not found" });
       }
+
+      await User.update(updates, { where: { id } });
 
       const user = await User.findByPk(id, {
         attributes: { exclude: ['password'] }
@@ -82,7 +88,7 @@ class UserController {
       return res.status(200).json(user);
     } catch (error) {
       console.error("Update user by ID error:", error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -106,7 +112,7 @@ class UserController {
       return res.status(200).json(users);
     } catch (error) {
       console.error("List users error:", error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 }

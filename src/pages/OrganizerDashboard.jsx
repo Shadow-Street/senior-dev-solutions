@@ -283,7 +283,7 @@ export default function OrganizerDashboard() {
     const config = {
       pending_approval: { color: 'bg-hold/10 text-hold-muted-foreground border-hold/20', label: 'Pending Approval', icon: Clock },
       approved: { color: 'bg-buy/10 text-buy-muted-foreground border-buy/20', label: 'Approved', icon: CheckCircle },
-      scheduled: { color: 'bg-protocall-blue/10 text-protocall-blue border-protocall-blue/20', label: 'Scheduled', icon: Calendar },
+      scheduled: { color: 'bg-primary/10 text-primary border-primary/20', label: 'Scheduled', icon: Calendar },
       completed: { color: 'bg-primary/10 text-protocall-premium-text border-primary/20', label: 'Completed', icon: CheckCircle },
       cancelled: { color: 'bg-sell/10 text-sell-muted-foreground border-sell/20', label: 'Cancelled', icon: XCircle },
       rejected: { color: 'bg-sell/10 text-sell-muted-foreground border-sell/20', label: 'Rejected', icon: XCircle }
@@ -361,7 +361,7 @@ export default function OrganizerDashboard() {
                       </div>
                       <div>
                         <h1 className="text-3xl font-bold text-white">Event Organizer Dashboard</h1>
-                        <p className="text-protocall-blue mt-1">Manage your events and track performance</p>
+                        <p className="text-primary mt-1">Manage your events and track performance</p>
                       </div>
                     </div>
                     
@@ -434,7 +434,7 @@ export default function OrganizerDashboard() {
                       </Badge>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-protocall-blue mb-1">Total Attendees</p>
+                      <p className="text-sm font-medium text-primary mb-1">Total Attendees</p>
                       <p className="text-3xl font-bold text-white mb-1">{stats.totalAttendees}</p>
                       <p className="text-xs text-protocall-premium-light">{stats.averageAttendance} avg per event</p>
                     </div>
@@ -513,7 +513,7 @@ export default function OrganizerDashboard() {
                           <p className="text-2xl font-bold text-foreground mt-1">{stats.totalEvents}</p>
                         </div>
                         <div className="p-3 bg-premium-muted rounded-xl">
-                          <Calendar className="w-5 h-5 text-protocall-blue" />
+                          <Calendar className="w-5 h-5 text-primary" />
                         </div>
                       </div>
                     </CardContent>
@@ -613,7 +613,7 @@ export default function OrganizerDashboard() {
                                     setSelectedEvent(event);
                                     setShowAttendeesModal(true);
                                   }}
-                                  className="hover:bg-premium-muted hover:text-protocall-blue"
+                                  className="hover:bg-premium-muted hover:text-primary"
                                 >
                                   <Eye className="w-4 h-4 mr-1" />
                                   View
@@ -715,7 +715,7 @@ export default function OrganizerDashboard() {
                               {/* Stats Row */}
                               <div className="grid grid-cols-3 gap-3 pt-4 border-t">
                                 <div className="text-center">
-                                  <p className="text-lg font-bold text-protocall-blue">{eventAttendees.length}</p>
+                                  <p className="text-lg font-bold text-primary">{eventAttendees.length}</p>
                                   <p className="text-xs text-muted-foreground">Attendees</p>
                                 </div>
                                 <div className="text-center border-x">
@@ -737,7 +737,7 @@ export default function OrganizerDashboard() {
                                     setSelectedEvent(event);
                                     setShowAttendeesModal(true);
                                   }} 
-                                  className="hover:bg-premium-muted hover:text-protocall-blue hover:border-protocall-premium-light"
+                                  className="hover:bg-premium-muted hover:text-primary hover:border-protocall-premium-light"
                                 >
                                   <Eye className="w-3 h-3 mr-1" />
                                   View
@@ -879,7 +879,7 @@ export default function OrganizerDashboard() {
                       <Button 
                         onClick={() => setFinancialTab('payouts')}
                         disabled={stats.totalRevenue <= 0}
-                        className="bg-buy hover:bg-buy"
+                        className="bg-buy text-buy-foreground hover:bg-buy-soft"
                       >
                         <Wallet className="w-4 h-4 mr-2" />
                         Request Payout
@@ -902,7 +902,7 @@ export default function OrganizerDashboard() {
                       <Button 
                         onClick={() => toast.info('Payout request feature coming soon')}
                         disabled={stats.totalRevenue <= 0}
-                        className="bg-buy hover:bg-buy"
+                        className="bg-buy text-buy-foreground hover:bg-buy-soft"
                       >
                         <Wallet className="w-4 h-4 mr-2" />
                         Request Payout
@@ -937,7 +937,7 @@ export default function OrganizerDashboard() {
                       <Card>
                         <CardContent className="p-6">
                           <div className="flex items-center">
-                            <TrendingUp className="w-8 h-8 text-protocall-blue" />
+                            <TrendingUp className="w-8 h-8 text-primary" />
                             <div className="ml-4">
                               <p className="text-sm font-medium text-subtle">Total Earned</p>
                               <p className="text-2xl font-bold text-foreground">₹{(stats.totalRevenue * 0.8).toLocaleString()}</p>
@@ -952,7 +952,7 @@ export default function OrganizerDashboard() {
                         <Wallet className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                         <p className="text-subtle">No payout requests yet.</p>
                         {stats.totalRevenue > 0 && (
-                          <Button onClick={() => toast.info('Payout request feature coming soon')} className="mt-4 bg-buy hover:bg-buy">
+                          <Button onClick={() => toast.info('Payout request feature coming soon')} className="mt-4 bg-buy text-buy-foreground hover:bg-buy-soft">
                             Request Your First Payout
                           </Button>
                         )}

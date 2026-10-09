@@ -60,14 +60,14 @@ export default function PostLimitTracker({ posts, plans }) {
     if (stat.is_unlimited) return <CheckCircle className="w-5 h-5 text-buy-muted-foreground" />;
     if (stat.is_over_limit) return <AlertCircle className="w-5 h-5 text-sell-muted-foreground" />;
     if (stat.is_near_limit) return <Clock className="w-5 h-5 text-hold-muted-foreground" />;
-    return <CheckCircle className="w-5 h-5 text-protocall-blue" />;
+    return <CheckCircle className="w-5 h-5 text-primary" />;
   };
 
   const getProgressColor = (stat) => {
     if (stat.is_unlimited) return 'bg-buy';
     if (stat.is_over_limit) return 'bg-sell';
     if (stat.is_near_limit) return 'bg-hold';
-    return 'bg-protocall-blue';
+    return 'bg-primary';
   };
 
   return (
@@ -83,10 +83,10 @@ export default function PostLimitTracker({ posts, plans }) {
         {totalThisMonth === 0 && posts.length > 0 && (
           <div className="mb-6 bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
             <div className="flex items-start gap-2">
-              <Info className="w-5 h-5 text-protocall-blue flex-shrink-0 mt-0.5" />
+              <Info className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-semibold text-protocall-blue">No posts created this month yet</p>
-                <p className="text-xs text-protocall-blue mt-1">
+                <p className="text-sm font-semibold text-primary">No posts created this month yet</p>
+                <p className="text-xs text-primary mt-1">
                   You have {posts.length} total post{posts.length !== 1 ? 's' : ''} from previous months. 
                   This tracker shows only posts created in {format(new Date(), 'MMMM yyyy')}.
                 </p>
@@ -111,7 +111,7 @@ export default function PostLimitTracker({ posts, plans }) {
                       <p className="text-sm text-subtle">
                         {stat.posts_this_month} / {stat.monthly_limit} posts
                         {stat.remaining !== null && stat.remaining >= 0 && (
-                          <span className="ml-2 text-protocall-blue font-medium">
+                          <span className="ml-2 text-primary font-medium">
                             ({stat.remaining} remaining)
                           </span>
                         )}
@@ -129,7 +129,7 @@ export default function PostLimitTracker({ posts, plans }) {
                   <Badge className={
                     stat.is_over_limit ? 'bg-sell-muted text-sell-muted-foreground' :
                     stat.is_near_limit ? 'bg-hold-muted text-hold-muted-foreground' :
-                    'bg-premium-muted text-protocall-blue'
+                    'bg-premium-muted text-primary'
                   }>
                     {Math.round(stat.percentage)}%
                   </Badge>

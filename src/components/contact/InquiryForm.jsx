@@ -139,7 +139,7 @@ export default function InquiryForm() {
               I am not a robot
             </Label>
           </div>
-          <Button type="submit" className="w-full bg-protocall-blue hover:bg-protocall-blue" disabled={isSubmitting}>
+          <Button type="submit" className="w-full bg-primary hover:bg-primary" disabled={isSubmitting}>
             {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
             Send Inquiry
           </Button>

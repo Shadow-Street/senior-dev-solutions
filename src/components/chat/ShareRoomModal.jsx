@@ -121,8 +121,8 @@ export default function ShareRoomModal({ open, onClose, room, shareLink: propSha
 
                     {/* Instagram Instructions - Blue Box */}
                     <div className="bg-premium-muted rounded-xl p-4 border border-protocall-premium-light">
-                        <h4 className="font-semibold text-protocall-blue mb-2 text-sm">How to share on Instagram:</h4>
-                        <ol className="text-sm text-protocall-blue space-y-1 list-decimal list-inside">
+                        <h4 className="font-semibold text-primary mb-2 text-sm">How to share on Instagram:</h4>
+                        <ol className="text-sm text-primary space-y-1 list-decimal list-inside">
                             <li>Click "Instagram" button above to copy the link</li>
                             <li>Open Instagram and create a new Story or Post</li>
                             <li>Add text and paste the link</li>

@@ -79,26 +79,26 @@ export default function SuperAdmin() {
   };
 
   const tabs = useMemo(() => [
-    { value: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, description: 'Analytics & Overview', component: DashboardHome, color: 'text-protocall-blue' },
+    { value: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, description: 'Analytics & Overview', component: DashboardHome, color: 'text-primary' },
     { value: 'users', label: 'User Management', icon: Users, description: 'Manage All Users', component: UserManagement, color: 'text-buy-muted-foreground' },
     { value: 'Advisor', label: 'Stock Advisors', icon: Shield, description: 'SEBI Advisor Approvals', component: AdvisorManagement, color: 'text-protocall-premium-text' },
-    { value: 'pms', label: 'Portfolio Managers', icon: Briefcase, description: 'SEBI PM Approvals & Management', component: PMSManagement, color: 'text-protocall-blue' },
+    { value: 'pms', label: 'Portfolio Managers', icon: Briefcase, description: 'SEBI PM Approvals & Management', component: PMSManagement, color: 'text-primary' },
     { value: 'FinInfluencer', label: 'Finfluencers', icon: Star, description: 'Manage Content Creators', component: FinfluencerManagement, color: 'text-hold' },
-    { value: 'chatrooms', label: 'Chat Room Management', icon: MessageSquare, description: 'Manage Chat Rooms & Messages', component: ChatRoomManagement, color: 'text-protocall-blue' },
+    { value: 'chatrooms', label: 'Chat Room Management', icon: MessageSquare, description: 'Manage Chat Rooms & Messages', component: ChatRoomManagement, color: 'text-primary' },
     { value: 'content', label: 'Content Moderation', icon: MessageSquare, description: 'Review Flagged Content', component: ContentModeration, color: 'text-sell-muted-foreground' },
-    { value: 'polls', label: 'Polls & Pledges', icon: BarChart3, description: 'Manage Community Polls & Pledges', component: PollManagement, color: 'text-protocall-blue' },
+    { value: 'polls', label: 'Polls & Pledges', icon: BarChart3, description: 'Manage Community Polls & Pledges', component: PollManagement, color: 'text-primary' },
     { value: 'pledge-management', label: 'Pledge Management', icon: Target, description: 'Manage Pledge Sessions & Executions', component: PledgeManagement, color: 'text-protocall-premium-text' },
     { value: 'ad-management', label: 'Ad Management', icon: Megaphone, description: 'Manage Vendor Ad Campaigns', component: AdManagement, color: 'text-positive' },
     { value: 'events', label: 'Events Management', icon: CalendarDays, description: 'Organize and manage community events', component: EventsManagement, color: 'text-protocall-premium-light' },
     { value: 'announcements', label: 'Announcements', icon: Megaphone, description: 'Manage platform-wide announcements', component: AnnouncementManagement, color: 'text-hold' },
-    { value: 'lifecycle', label: 'Product Lifecycle Manager', icon: TrendingUp, description: 'Manage features, pages, and releases', component: ProductLifecycleManager, color: 'text-protocall-blue' },
+    { value: 'lifecycle', label: 'Product Lifecycle Manager', icon: TrendingUp, description: 'Manage features, pages, and releases', component: ProductLifecycleManager, color: 'text-primary' },
     { value: 'feature-hub', label: 'Feature Hub Content', icon: Package, description: 'Manage Feature Hub sections & items', component: FeatureHubContent, color: 'text-protocall-premium-text' },
     { value: 'financials', label: 'Financials', icon: DollarSign, description: 'Revenue & Payouts', component: Financials, color: 'text-hold-muted-foreground' },
     { value: 'subscriptions', label: 'Subscriptions', icon: CreditCard, description: 'Plans, Pricing & Promos', component: SubscriptionManagement, color: 'text-sell-muted-foreground' },
     { value: 'refunds', label: 'Refund Management', icon: CreditCard, description: 'Process and track user refunds', component: RefundManagement, color: 'text-hold-muted-foreground' },
     { value: 'alerts', label: 'System Alerts', icon: Bell, description: 'Monitor System Alerts', component: AlertsManagement, color: 'text-hold-muted-foreground' },
-    { value: 'activity-logs', label: 'Activity Logs', icon: Activity, description: 'Complete audit trail of admin actions', component: ActivityLogs, color: 'text-protocall-blue' },
-    { value: 'feedback', label: 'Feedback & Support', icon: MessageSquare, description: 'Feedback, Inquiries & Reviews', component: FeedbackAndSupport, color: 'text-protocall-blue' },
+    { value: 'activity-logs', label: 'Activity Logs', icon: Activity, description: 'Complete audit trail of admin actions', component: ActivityLogs, color: 'text-primary' },
+    { value: 'feedback', label: 'Feedback & Support', icon: MessageSquare, description: 'Feedback, Inquiries & Reviews', component: FeedbackAndSupport, color: 'text-primary' },
     { value: 'settings', label: 'Platform Settings', icon: Settings, description: 'Platform Configuration', component: PlatformSettings, color: 'text-subtle' },
   ], []);
 
@@ -106,7 +106,7 @@ export default function SuperAdmin() {
     return (
       <div className="flex h-screen items-center justify-center bg-surface-2">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-subtle">Loading Super Admin Panel...</p>
         </div>
       </div>
@@ -119,11 +119,11 @@ export default function SuperAdmin() {
   }
 
   return (
-    <div className="min-h-screen bg-surface-2 flex font-sans">
+    <div className="min-h-screen bg-surface-2 flex flex-col md:flex-row font-sans">
       <EnsureSuperAdminRoles />
 
       {/* Sidebar */}
-      <aside className="w-72 bg-protocall-sidebar-bg text-white flex-shrink-0 flex flex-col shadow-2xl z-20">
+      <aside className="w-full md:w-72 bg-protocall-sidebar-bg text-white flex-shrink-0 flex flex-col shadow-2xl z-20">
         {/* Sidebar Header */}
         <div className="h-20 flex items-center px-6 bg-gradient-to-r from-protocall-deep to-protocall-blue shadow-lg">
           <div className="flex items-center gap-3">
@@ -133,8 +133,8 @@ export default function SuperAdmin() {
         </div>
 
         {/* Navigation */}
-        <div className="flex-1 overflow-y-auto py-6 px-3 space-y-1 custom-scrollbar">
-          <div className="px-4 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+        <div className="max-h-64 md:max-h-none flex-1 overflow-y-auto py-6 px-3 space-y-1 custom-scrollbar">
+          <div className="px-4 mb-2 text-xs font-semibold text-sidebar-muted-foreground uppercase tracking-wider">
             Administration
           </div>
 
@@ -149,14 +149,14 @@ export default function SuperAdmin() {
                     value={tab.value}
                     className={`w-full justify-start px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 border-none ${isActive
                       ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg shadow-protocall-deep/30/20'
-                      : 'text-muted-foreground hover:bg-protocall-ink hover:text-white'
+                      : 'text-sidebar-muted-foreground hover:bg-protocall-ink hover:text-white'
                       }`}
                   >
-                    <Icon className={`w-5 h-5 mr-3 ${isActive ? 'text-white' : 'text-muted-foreground'}`} />
+                    <Icon className={`w-5 h-5 mr-3 ${isActive ? 'text-white' : 'text-sidebar-muted-foreground'}`} />
                     <div className="flex flex-col items-start">
                       <span className="font-semibold">{tab.label}</span>
                       {/* Description hidden for compactness in sidebar, or can be kept if desired */}
-                      <span className={`text-[10px] ${isActive ? 'text-protocall-blue' : 'text-subtle hidden group-hover:block'}`}>{tab.description}</span>
+                      <span className={`text-[10px] ${isActive ? 'text-white/80' : 'text-sidebar-muted-foreground hidden group-hover:block'}`}>{tab.description}</span>
                     </div>
                   </TabsTrigger>
                 );
@@ -178,7 +178,7 @@ export default function SuperAdmin() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-white truncate">{currentUser?.display_name || 'Admin'}</p>
-              <p className="text-xs text-muted-foreground truncate">{currentUser?.email}</p>
+              <p className="text-xs text-sidebar-muted-foreground truncate">{currentUser?.email}</p>
             </div>
           </div>
           <button
@@ -192,7 +192,7 @@ export default function SuperAdmin() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col bg-surface-2 h-screen overflow-hidden">
+      <main className="flex-1 flex flex-col bg-surface-2 min-h-screen md:h-screen overflow-hidden">
         {/* Top Header */}
         <header className="h-20 bg-white border-b border-border flex items-center justify-between px-8 shadow-sm z-10">
           <div className="flex items-center gap-4">
@@ -200,7 +200,7 @@ export default function SuperAdmin() {
               {(() => {
                 const currentTab = tabs.find(t => t.value === activeTab);
                 const Icon = currentTab?.icon || LayoutDashboard;
-                return <Icon className="w-6 h-6 text-protocall-blue" />;
+                return <Icon className="w-6 h-6 text-primary" />;
               })()}
             </div>
             <div>
@@ -214,14 +214,14 @@ export default function SuperAdmin() {
               <Activity className="w-4 h-4" />
               <span>System Healthy</span>
             </div>
-            <Badge variant="secondary" className="bg-premium-muted text-protocall-blue hover:bg-premium-muted">
+            <Badge variant="secondary" className="bg-premium-muted text-primary hover:bg-premium-muted">
               {currentUser?.app_role}
             </Badge>
           </div>
         </header>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
           <div className="max-w-7xl mx-auto pb-10">
             {(() => {
               const CurrentComponent = tabs.find(tab => tab.value === activeTab)?.component;

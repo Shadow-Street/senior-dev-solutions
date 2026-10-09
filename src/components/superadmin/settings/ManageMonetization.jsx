@@ -93,10 +93,10 @@ export default function ManageMonetization({ settings, onChange, onSaveSpecificS
       {/* Info Banner */}
       <div className="bg-premium-muted border border-protocall-premium-light rounded-xl p-4">
         <div className="flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-protocall-blue mt-0.5 flex-shrink-0" />
+          <AlertCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
           <div>
-            <h4 className="font-semibold text-protocall-blue">Global Monetization Settings</h4>
-            <p className="text-sm text-protocall-blue mt-1">
+            <h4 className="font-semibold text-primary">Global Monetization Settings</h4>
+            <p className="text-sm text-primary mt-1">
               These settings apply globally across Events, Finfluencers, Advisors, and Ad Campaigns. Individual modules can have custom rates.
             </p>
           </div>

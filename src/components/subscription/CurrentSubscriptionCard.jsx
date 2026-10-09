@@ -129,7 +129,7 @@ export default function CurrentSubscriptionCard({ subscription, onRenew, onCance
                         {isExpired ? (
                             <Button
                                 onClick={onRenew}
-                                className="flex-1 bg-protocall-blue hover:bg-protocall-blue text-white font-semibold py-6 text-md shadow-md transition-all rounded-xl"
+                                className="flex-1 bg-primary hover:bg-primary text-white font-semibold py-6 text-md shadow-md transition-all rounded-xl"
                             >
                                 Renew Subscription
                                 <CheckCircle2 className="ml-2 w-5 h-5" />

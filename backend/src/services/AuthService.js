@@ -1,8 +1,158 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const { Op } = require("sequelize");
 const { User, OauthToken } = require("../models");
 
+/**
+ * Token lifetimes.
+ *
+ * The access token used to live 7 days, which meant a stolen one was useful for
+ * a week and there was nothing a refresh token could add. It is now short, and
+ * the refresh token — which can be revoked server-side — carries the session.
+ * Both are overridable so deployments can tune them without a code change.
+ */
+const ACCESS_TTL = process.env.JWT_ACCESS_TTL || "15m";
+const REFRESH_TTL = process.env.JWT_REFRESH_TTL || "30d";
+const REFRESH_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+/** Refresh tokens are stored only as a hash; see the OauthToken model. */
+const hashToken = (raw) =>
+  crypto.createHash("sha256").update(String(raw)).digest("hex");
+
+const userPayload = (user) => ({
+  id: user.id,
+  name: user.name,
+  display_name: user.display_name,
+  email: user.email,
+  role: user.role,
+  app_role: user.app_role,
+  is_premium: user.is_premium,
+  profile_image_url: user.profile_image_url,
+});
+
 class AuthService {
+  /**
+   * Issues an access/refresh pair and records the refresh hash.
+   *
+   * `context` carries a coarse client fingerprint so a user can later be shown
+   * their active sessions; it is never used to make an auth decision, since
+   * both values are client-controlled.
+   */
+  static async issueTokens(user, context = {}) {
+    const accessToken = jwt.sign(
+      { id: user.id, role: user.role, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: ACCESS_TTL }
+    );
+
+    const refreshToken = jwt.sign(
+      { id: user.id, type: "refresh", jti: crypto.randomUUID() },
+      process.env.JWT_REFRESH_SECRET,
+      { expiresIn: REFRESH_TTL }
+    );
+
+    await OauthToken.create({
+      user_id: user.id,
+      token_hash: hashToken(refreshToken),
+      expiresAt: new Date(Date.now() + REFRESH_TTL_MS),
+      user_agent: String(context.userAgent || "").slice(0, 255) || null,
+      ip_address: String(context.ip || "").slice(0, 64) || null,
+    });
+
+    return { accessToken, refreshToken };
+  }
+
+  /**
+   * Exchanges a refresh token for a fresh pair, rotating it.
+   *
+   * Reuse is treated as theft. If a token arrives that was already rotated or
+   * logged out, the value has been in two places at once, so every refresh
+   * token for that user is revoked and they must sign in again — better one
+   * forced login than an attacker holding a live session.
+   */
+  static async rotateRefreshToken(rawToken, context = {}) {
+    if (!rawToken) throw new Error("Refresh token required");
+
+    let decoded;
+    try {
+      decoded = jwt.verify(rawToken, process.env.JWT_REFRESH_SECRET);
+    } catch {
+      throw new Error("Invalid or expired refresh token");
+    }
+    if (decoded.type !== "refresh") {
+      // An access token must not be usable here.
+      throw new Error("Invalid or expired refresh token");
+    }
+
+    const tokenHash = hashToken(rawToken);
+    const record = await OauthToken.findOne({ where: { token_hash: tokenHash } });
+
+    if (!record) throw new Error("Invalid or expired refresh token");
+
+    if (record.revoked_at) {
+      // Distinguish theft from a stale client.
+      //
+      // A token that was *rotated* (so it has a successor) and then presented
+      // again means the value existed in two places: revoke the whole family.
+      // A token revoked by an ordinary logout is just a tab that did not get
+      // the memo — refusing it is enough. Treating both the same way meant
+      // logging out on one device could knock out every other device.
+      if (record.replaced_by_hash) {
+        await OauthToken.update(
+          { revoked_at: new Date() },
+          { where: { user_id: record.user_id, revoked_at: null } }
+        );
+        throw new Error("Refresh token reuse detected; all sessions revoked");
+      }
+      throw new Error("Invalid or expired refresh token");
+    }
+
+    if (new Date(record.expiresAt).getTime() <= Date.now()) {
+      throw new Error("Invalid or expired refresh token");
+    }
+
+    const user = await User.findByPk(record.user_id);
+    if (!user) throw new Error("Invalid or expired refresh token");
+
+    const issued = await this.issueTokens(user, context);
+
+    record.revoked_at = new Date();
+    record.replaced_by_hash = hashToken(issued.refreshToken);
+    await record.save();
+
+    return { ...issued, user: userPayload(user) };
+  }
+
+  /** Revokes one session. Unknown or already-revoked tokens succeed quietly. */
+  static async revokeRefreshToken(rawToken) {
+    if (!rawToken) return;
+    await OauthToken.update(
+      { revoked_at: new Date() },
+      { where: { token_hash: hashToken(rawToken), revoked_at: null } }
+    );
+  }
+
+  /** Revokes every session for a user (password change, admin action). */
+  static async revokeAllForUser(userId) {
+    await OauthToken.update(
+      { revoked_at: new Date() },
+      { where: { user_id: userId, revoked_at: null } }
+    );
+  }
+
+  /** Drops rows that are expired or long revoked, so the table does not grow forever. */
+  static async pruneTokens() {
+    const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    return OauthToken.destroy({
+      where: {
+        [Op.or]: [
+          { expiresAt: { [Op.lt]: new Date() } },
+          { revoked_at: { [Op.lt]: cutoff } },
+        ],
+      },
+    });
+  }
   static async getUser(email) {
     const where = { email };
     // if (role) {
@@ -11,47 +161,31 @@ class AuthService {
     return User.findOne({ where });
   }
 
-  static async login(email, password) {
+  static async login(email, password, context = {}) {
     const user = await this.getUser(email);
-    console.log("User found", user);
     if (!user) {
-      console.log("User not found");
       throw new Error("User not found");
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      console.log("Incorrect password");
-     
       throw new Error("Incorrect password");
     }
 
-    const accessToken = jwt.sign(
-      { id: user.id, role: user.role, email },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    // One place issues tokens, so lifetimes and the stored hash cannot drift
+    // between the password and Google paths.
+    const { accessToken, refreshToken } = await this.issueTokens(user, context);
 
-    const refreshToken = jwt.sign(
-      { id: user.id, role: user.role, email },
-      process.env.JWT_REFRESH_SECRET,
-      { expiresIn: "30d" }
-    );
-
-    await OauthToken.create({
-      user_id: user.id,
-      refresh_token: refreshToken,
-      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    });
-
-    console.log("Login successful", accessToken, refreshToken, user);
+    // Deliberately not logged: this printed both tokens in clear text, so
+    // anyone with log access held live credentials.
     return {
       accessToken,
       refreshToken,
       user: {
         id: user.id,
         name: user.name,
+        display_name: user.display_name,
         email: user.email,
         role: user.role,
         app_role: user.app_role,
@@ -80,7 +214,7 @@ class AuthService {
     return this.login(email, password, role);
   }
 
-  static async googleLogin(token, role = 'user') {
+  static async googleLogin(token, role = 'user', context = {}) {
     const { OAuth2Client } = require('google-auth-library');
     const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -114,23 +248,9 @@ class AuthService {
     }
 
     // Generate tokens
-    const accessToken = jwt.sign(
-      { id: user.id, role: user.role, email },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    const refreshToken = jwt.sign(
-      { id: user.id, role: user.role, email },
-      process.env.JWT_REFRESH_SECRET,
-      { expiresIn: "30d" }
-    );
-
-    await OauthToken.create({
-      user_id: user.id,
-      refresh_token: refreshToken,
-      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    });
+    // One place issues tokens, so lifetimes and the stored hash cannot drift
+    // between the password and Google paths.
+    const { accessToken, refreshToken } = await this.issueTokens(user, context);
 
     return {
       accessToken,
@@ -138,6 +258,7 @@ class AuthService {
       user: {
         id: user.id,
         name: user.name,
+        display_name: user.display_name,
         email: user.email,
         role: user.role,
         app_role: user.app_role,

@@ -505,7 +505,7 @@ export default function ProfitPayoutManager({ onUpdate }) {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-12 space-y-4">
-        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
+        <Loader2 className="w-12 h-12 animate-spin text-primary" />
         <p className="text-subtle">Loading profit payout data...</p>
       </div>
     );
@@ -542,7 +542,7 @@ export default function ProfitPayoutManager({ onUpdate }) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-white rounded-lg p-4 border-2 border-protocall-premium-light shadow">
               <p className="text-subtle text-sm font-semibold">Total Allocations</p>
-              <p className="text-3xl font-bold text-protocall-blue">{allocations.length}</p>
+              <p className="text-3xl font-bold text-primary">{allocations.length}</p>
             </div>
             <div className="bg-white rounded-lg p-4 border-2 border-buy/30 shadow">
               <p className="text-subtle text-sm font-semibold">Active Allocations</p>
@@ -606,7 +606,7 @@ export default function ProfitPayoutManager({ onUpdate }) {
               onClick={loadData}
               variant="outline"
               size="lg"
-              className="border-2 border-protocall-blue text-protocall-blue hover:bg-premium-muted font-semibold py-6"
+              className="border-2 border-primary text-primary hover:bg-premium-muted font-semibold py-6"
             >
               <RefreshCw className="w-5 h-5 mr-2" />
               Refresh Data
@@ -626,13 +626,13 @@ export default function ProfitPayoutManager({ onUpdate }) {
             <Button
               onClick={handleInitiatePayout}
               disabled={eligibleAllocations.length === 0}
-              className="bg-white text-protocall-blue hover:bg-premium-muted font-semibold shadow-lg"
+              className="bg-white text-primary hover:bg-premium-muted font-semibold shadow-lg"
             >
               <Send className="w-5 h-5 mr-2" />
               Initiate New Profit Payout
             </Button>
           </div>
-          <p className="text-protocall-blue mt-2">
+          <p className="text-primary mt-2">
             Distribute profits to investors from their active fund allocations
           </p>
         </CardHeader>
@@ -644,9 +644,9 @@ export default function ProfitPayoutManager({ onUpdate }) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-subtle text-sm font-semibold mb-1">Eligible Allocations</p>
-                    <p className="text-4xl font-bold text-protocall-blue">{eligibleAllocations.length}</p>
+                    <p className="text-4xl font-bold text-primary">{eligibleAllocations.length}</p>
                   </div>
-                  <Users className="w-12 h-12 text-protocall-blue opacity-50" />
+                  <Users className="w-12 h-12 text-primary opacity-50" />
                 </div>
               </CardContent>
             </Card>
@@ -719,7 +719,7 @@ export default function ProfitPayoutManager({ onUpdate }) {
                             </p>
                           </td>
                           <td className="py-4 px-4 text-right">
-                            <p className="font-semibold text-protocall-blue">
+                            <p className="font-semibold text-primary">
                               ₹{(alloc.current_value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                             </p>
                           </td>
@@ -833,7 +833,7 @@ export default function ProfitPayoutManager({ onUpdate }) {
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-subtle">Eligible Allocations:</p>
-                  <p className="text-xl font-bold text-protocall-blue">{eligibleAllocations.length}</p>
+                  <p className="text-xl font-bold text-primary">{eligibleAllocations.length}</p>
                 </div>
                 <div>
                   <p className="text-subtle">Total Distributable:</p>

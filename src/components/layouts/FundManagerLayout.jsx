@@ -79,7 +79,7 @@ export default function FundManagerLayout({ children, activePage }) {
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
-        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
+        <Loader2 className="w-12 h-12 animate-spin text-primary" />
       </div>
     );
   }
@@ -128,7 +128,7 @@ export default function FundManagerLayout({ children, activePage }) {
           </button>
 
           <div className="text-center p-4 bg-sidebar-dark rounded-lg border border-divider">
-            <Shield className="w-8 h-8 mx-auto text-protocall-blue mb-2" />
+            <Shield className="w-8 h-8 mx-auto text-primary mb-2" />
             <h3 className="font-bold text-sidebar-foreground">Protocol</h3>
             <p className="text-xs text-sidebar-muted-foreground">Fund Management System</p>
           </div>

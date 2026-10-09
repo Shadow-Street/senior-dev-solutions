@@ -43,7 +43,7 @@ const expenseCategories = ["Salary", "Marketing", "Operations", "Infrastructure"
 const getCategoryColor = (category) => {
   switch (category) {
     case 'Salary':
-      return 'bg-premium-muted text-protocall-blue';
+      return 'bg-premium-muted text-primary';
     case 'Marketing':
       return 'bg-buy-muted text-buy-muted-foreground';
     case 'Operations':
@@ -216,7 +216,7 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
                             variant="ghost"
                             size="sm"
                             onClick={() => handleEdit(expense)} // Call handleEdit for existing expense
-                            className="text-protocall-blue hover:text-protocall-blue hover:bg-premium-muted"
+                            className="text-primary hover:text-primary hover:bg-premium-muted"
                           >
                             <Edit className="w-4 h-4" />
                           </Button>

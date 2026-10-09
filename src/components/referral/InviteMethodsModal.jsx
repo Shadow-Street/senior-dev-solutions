@@ -61,11 +61,11 @@ export default function InviteMethodsModal({ open, onClose, referralLink, referr
           <div className="space-y-3">
             <Label className="text-sm font-semibold">Quick Share</Label>
             <div className="grid grid-cols-2 gap-3">
-              <Button onClick={handleWhatsAppShare} className="bg-buy hover:bg-buy">
+              <Button onClick={handleWhatsAppShare} className="bg-buy text-buy-foreground hover:bg-buy-soft">
                 <MessageSquare className="w-4 h-4 mr-2" />
                 WhatsApp
               </Button>
-              <Button onClick={handleTelegramShare} className="bg-protocall-blue hover:bg-protocall-blue">
+              <Button onClick={handleTelegramShare} className="bg-primary hover:bg-primary">
                 <MessageSquare className="w-4 h-4 mr-2" />
                 Telegram
               </Button>

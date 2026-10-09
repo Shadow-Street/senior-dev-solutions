@@ -125,7 +125,7 @@ export default function PMSManagement({ user }) {
                 <p className="text-sm text-subtle">Total PMs</p>
                 <p className="text-2xl font-bold">{portfolioManagers.length}</p>
               </div>
-              <Briefcase className="w-8 h-8 text-protocall-blue" />
+              <Briefcase className="w-8 h-8 text-primary" />
             </div>
           </CardContent>
         </Card>
@@ -304,7 +304,7 @@ function PMCard({ pm, onApprove, onReject, onSuspend, onViewDetails }) {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-3">
-              <Briefcase className="w-6 h-6 text-protocall-blue" />
+              <Briefcase className="w-6 h-6 text-primary" />
               <div>
                 <h3 className="text-lg font-bold text-foreground">{pm.display_name}</h3>
                 <p className="text-sm text-subtle">SEBI: {pm.sebi_registration_number}</p>
@@ -314,8 +314,8 @@ function PMCard({ pm, onApprove, onReject, onSuspend, onViewDetails }) {
 
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="bg-premium-muted p-3 rounded-lg">
-                <p className="text-xs text-protocall-blue mb-1">Total AUM</p>
-                <p className="text-lg font-bold text-protocall-blue">
+                <p className="text-xs text-primary mb-1">Total AUM</p>
+                <p className="text-lg font-bold text-primary">
                   ₹{((pm.total_aum || 0) / 10000000).toFixed(2)}Cr
                 </p>
               </div>
@@ -340,7 +340,7 @@ function PMCard({ pm, onApprove, onReject, onSuspend, onViewDetails }) {
 
             {pm.status === 'pending_approval' && onApprove && onReject && (
               <>
-                <Button size="sm" onClick={() => onApprove(pm.id)} className="bg-buy hover:bg-buy">
+                <Button size="sm" onClick={() => onApprove(pm.id)} className="bg-buy text-buy-foreground hover:bg-buy-soft">
                   <CheckCircle className="w-4 h-4 mr-2" />
                   Approve
                 </Button>

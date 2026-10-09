@@ -122,9 +122,31 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
     }
   };
 
+  /**
+   * Approval has to move two records, not one.
+   *
+   * `/AdvisorDashboard` is gated on the *user's* app_role, so setting only
+   * Advisor.status left an approved advisor unable to open their own dashboard.
+   * Approval therefore also marks the profile verified (the SEBI badge the
+   * investor-facing pages read) and promotes the owning user to 'advisor';
+   * rejection and suspension demote them back, or a suspended advisor would
+   * keep working dashboard access.
+   */
+  const setOwnerRole = async (advisorId, appRole) => {
+    const advisor = advisors.find(a => a.id === advisorId);
+    if (!advisor?.user_id) return;
+    try {
+      await User.update(advisor.user_id, { app_role: appRole });
+    } catch (error) {
+      console.error(`Could not set app_role=${appRole} for user ${advisor.user_id}:`, error);
+      toast.error('Status saved, but the account role could not be updated.');
+    }
+  };
+
   const handleApprove = async (advisorId) => {
     try {
-      await Advisor.update(advisorId, { status: 'approved' });
+      await Advisor.update(advisorId, { status: 'approved', verified: true });
+      await setOwnerRole(advisorId, 'advisor');
       toast.success('Advisor approved successfully');
       loadAdvisors();
     } catch (error) {
@@ -135,7 +157,8 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
 
   const handleReject = async (advisorId) => {
     try {
-      await Advisor.update(advisorId, { status: 'rejected' });
+      await Advisor.update(advisorId, { status: 'rejected', verified: false });
+      await setOwnerRole(advisorId, 'user');
       toast.success('Advisor application rejected');
       loadAdvisors();
     } catch (error) {
@@ -146,7 +169,8 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
 
   const handleSuspend = async (advisorId) => {
     try {
-      await Advisor.update(advisorId, { status: 'suspended' });
+      await Advisor.update(advisorId, { status: 'suspended', verified: false });
+      await setOwnerRole(advisorId, 'user');
       toast.success('Advisor suspended');
       loadAdvisors();
     } catch (error) {
@@ -197,7 +221,7 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -224,7 +248,7 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'overview'
                 ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
-                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
+                : 'bg-surface-2 text-primary hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">
@@ -242,7 +266,7 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'pricing'
                 ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
-                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
+                : 'bg-surface-2 text-primary hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">
@@ -260,7 +284,7 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'payouts'
                 ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
-                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
+                : 'bg-surface-2 text-primary hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">
@@ -301,7 +325,7 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
                     <p className="text-sm text-subtle">Total Advisors</p>
                     <p className="text-2xl font-bold">{advisors.length}</p>
                   </div>
-                  <ShieldCheck className="w-8 h-8 text-protocall-blue" />
+                  <ShieldCheck className="w-8 h-8 text-primary" />
                 </div>
               </CardContent>
             </Card>
@@ -360,7 +384,7 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
                         <div className="flex items-center gap-3 mb-2">
                           <h3 className="text-xl font-bold text-foreground">{advisor.display_name}</h3>
                           {getStatusBadge(advisor.status)}
-                          <Badge className="bg-premium-muted text-protocall-blue border-0">
+                          <Badge className="bg-premium-muted text-primary border-0">
                             SEBI: {advisor.sebi_registration_number}
                           </Badge>
                         </div>
@@ -370,13 +394,13 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                           <div className="bg-premium-muted rounded-lg p-3">
                             <div className="flex items-center gap-2 mb-1">
-                              <Users className="w-4 h-4 text-protocall-blue" />
-                              <p className="text-xs text-protocall-blue font-medium">Subscribers</p>
+                              <Users className="w-4 h-4 text-primary" />
+                              <p className="text-xs text-primary font-medium">Subscribers</p>
                             </div>
-                            <p className="text-lg font-bold text-protocall-blue">
+                            <p className="text-lg font-bold text-primary">
                               {stats.activeSubscribers || 0} / {stats.totalSubscribers || 0}
                             </p>
-                            <p className="text-xs text-protocall-blue">Active / Total</p>
+                            <p className="text-xs text-primary">Active / Total</p>
                           </div>
 
                           <div className="bg-buy-muted rounded-lg p-3">
@@ -412,16 +436,16 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
                         <div className="bg-surface-2 rounded-lg p-3 mb-4">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <BarChart3 className="w-4 h-4 text-protocall-blue" />
+                              <BarChart3 className="w-4 h-4 text-primary" />
                               <span className="text-sm font-medium text-subtle">Avg Engagement Score:</span>
                             </div>
-                            <Badge className="bg-protocall-blue text-white">
+                            <Badge className="bg-primary text-white">
                               {stats.avgEngagement || 0}/100
                             </Badge>
                           </div>
                           <div className="flex items-center justify-between mt-2">
                             <span className="text-xs text-subtle">Active Recommendations:</span>
-                            <span className="text-sm font-bold text-protocall-blue">{stats.activeRecommendations || 0}</span>
+                            <span className="text-sm font-bold text-primary">{stats.activeRecommendations || 0}</span>
                           </div>
                         </div>
 
@@ -441,7 +465,7 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
                             setSelectedAdvisor(advisor);
                             setShowDetailsModal(true);
                           }}
-                          className="text-protocall-blue border-protocall-blue hover:bg-premium-muted"
+                          className="text-primary border-primary hover:bg-premium-muted"
                         >
                           <Eye className="w-4 h-4 mr-2" />
                           View Details
@@ -449,7 +473,7 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
 
                         {advisor.status === 'pending_approval' && (
                           <>
-                            <Button onClick={() => handleApprove(advisor.id)} className="bg-buy hover:bg-buy">
+                            <Button onClick={() => handleApprove(advisor.id)} className="bg-buy text-buy-foreground hover:bg-buy-soft">
                               <CheckCircle className="w-4 h-4 mr-2" />
                               Approve
                             </Button>
@@ -468,7 +492,7 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
                         )}
 
                         {advisor.status === 'suspended' && (
-                          <Button onClick={() => handleApprove(advisor.id)} className="bg-buy hover:bg-buy">
+                          <Button onClick={() => handleApprove(advisor.id)} className="bg-buy text-buy-foreground hover:bg-buy-soft">
                             <CheckCircle className="w-4 h-4 mr-2" />
                             Reactivate
                           </Button>
@@ -491,7 +515,7 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
                             setSelectedAdvisor(advisor);
                             setShowDetailsModal(false); // Make sure this is false to show Analytics modal
                           }}
-                          className="text-protocall-blue border-protocall-blue hover:bg-premium-muted"
+                          className="text-primary border-primary hover:bg-premium-muted"
                         >
                           <BarChart3 className="w-4 h-4 mr-2" />
                           Analytics
@@ -614,7 +638,7 @@ function AdvisorDetailsModal({ advisor, stats, onClose }) {
 
         {isLoading ? (
           <div className="flex items-center justify-center p-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
         ) : (
           <div className="space-y-6">
@@ -660,9 +684,9 @@ function AdvisorDetailsModal({ advisor, stats, onClose }) {
               </CardHeader>
               <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-premium-muted p-3 rounded-lg">
-                  <Users className="w-5 h-5 text-protocall-blue mb-2" />
-                  <p className="text-xs text-protocall-blue">Active Subscribers</p>
-                  <p className="text-2xl font-bold text-protocall-blue">{stats?.activeSubscribers || 0}</p>
+                  <Users className="w-5 h-5 text-primary mb-2" />
+                  <p className="text-xs text-primary">Active Subscribers</p>
+                  <p className="text-2xl font-bold text-primary">{stats?.activeSubscribers || 0}</p>
                 </div>
                 <div className="bg-buy-muted p-3 rounded-lg">
                   <FileText className="w-5 h-5 text-buy-muted-foreground mb-2" />
@@ -755,7 +779,7 @@ function AdvisorAnalyticsModal({ advisor, stats, onClose }) {
         <CardContent className="p-6">
           {isLoading ? (
             <div className="flex items-center justify-center p-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
           ) : (
             <Tabs defaultValue="overview" className="w-full">
@@ -769,9 +793,9 @@ function AdvisorAnalyticsModal({ advisor, stats, onClose }) {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <Card className="bg-premium-muted">
                     <CardContent className="p-4">
-                      <Users className="w-6 h-6 text-protocall-blue mb-2" />
-                      <p className="text-2xl font-bold text-protocall-blue">{stats?.activeSubscribers || 0}</p>
-                      <p className="text-xs text-protocall-blue">Active Subscribers</p>
+                      <Users className="w-6 h-6 text-primary mb-2" />
+                      <p className="text-2xl font-bold text-primary">{stats?.activeSubscribers || 0}</p>
+                      <p className="text-xs text-primary">Active Subscribers</p>
                     </CardContent>
                   </Card>
 
@@ -929,7 +953,7 @@ function AdvisorPayoutsSection({ advisors, advisorStats }) {
   const getStatusBadge = (status) => {
     const config = {
       pending: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending' },
-      approved: { color: 'bg-premium-muted text-protocall-blue', label: 'Approved' },
+      approved: { color: 'bg-premium-muted text-primary', label: 'Approved' },
       processed: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Processed' },
       rejected: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Rejected' }
     };
@@ -940,7 +964,7 @@ function AdvisorPayoutsSection({ advisors, advisorStats }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -953,11 +977,11 @@ function AdvisorPayoutsSection({ advisors, advisorStats }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-protocall-blue font-semibold mb-1">Gross Earnings</p>
-                <p className="text-3xl font-bold text-protocall-blue">₹{totalGrossEarnings.toLocaleString()}</p>
-                <p className="text-xs text-protocall-blue mt-1">Total subscription revenue</p>
+                <p className="text-sm text-primary font-semibold mb-1">Gross Earnings</p>
+                <p className="text-3xl font-bold text-primary">₹{totalGrossEarnings.toLocaleString()}</p>
+                <p className="text-xs text-primary mt-1">Total subscription revenue</p>
               </div>
-              <DollarSign className="w-12 h-12 text-protocall-blue opacity-70" />
+              <DollarSign className="w-12 h-12 text-primary opacity-70" />
             </div>
           </CardContent>
         </Card>
@@ -998,7 +1022,7 @@ function AdvisorPayoutsSection({ advisors, advisorStats }) {
                 <p className="text-sm text-subtle">Total Requests</p>
                 <p className="text-2xl font-bold">{safePayoutRequests.length}</p>
               </div>
-              <Wallet className="w-8 h-8 text-protocall-blue" />
+              <Wallet className="w-8 h-8 text-primary" />
             </div>
           </CardContent>
         </Card>
@@ -1020,7 +1044,7 @@ function AdvisorPayoutsSection({ advisors, advisorStats }) {
                 <p className="text-sm text-subtle">Approved</p>
                 <p className="text-2xl font-bold">₹{totalApproved.toLocaleString()}</p>
               </div>
-              <CheckCircle className="w-8 h-8 text-protocall-blue" />
+              <CheckCircle className="w-8 h-8 text-primary" />
             </div>
           </CardContent>
         </Card>
@@ -1093,7 +1117,7 @@ function AdvisorPayoutsSection({ advisors, advisorStats }) {
                           </div>
                           {payout.admin_notes && (
                             <div className="mt-3 p-3 bg-premium-muted rounded-lg">
-                              <p className="text-xs text-protocall-blue font-medium">Admin Notes:</p>
+                              <p className="text-xs text-primary font-medium">Admin Notes:</p>
                               <p className="text-sm text-subtle">{payout.admin_notes}</p>
                             </div>
                           )}

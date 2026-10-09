@@ -311,7 +311,7 @@ export default function RoleTemplateManager({ currentAdmin }) {
                           <Badge className={template.is_active ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-surface-2 text-foreground'}>
                             {template.is_active ? 'Active' : 'Inactive'}
                           </Badge>
-                          <Badge variant="outline" className="bg-premium-muted text-protocall-blue">
+                          <Badge variant="outline" className="bg-premium-muted text-primary">
                             <Users className="w-3 h-3 mr-1" />
                             {template.user_count} users
                           </Badge>

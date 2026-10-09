@@ -198,7 +198,7 @@ export default function UniversalPaymentModal({
               <div className="space-y-2">
                 <h3 className="font-semibold text-foreground">{description}</h3>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold text-protocall-blue">
+                  <span className="text-3xl font-bold text-primary">
                     {currency === 'INR' ? '₹' : '$'}{amount.toLocaleString()}
                   </span>
                   {metadata.discount_amount > 0 && (
@@ -224,7 +224,7 @@ export default function UniversalPaymentModal({
               <button
                 onClick={() => setPaymentMode('mock')}
                 className={`w-full p-4 rounded-lg border-2 transition-all text-left ${paymentMode === 'mock'
-                  ? 'border-protocall-blue bg-premium-muted'
+                  ? 'border-primary bg-premium-muted'
                   : 'border-border hover:border-border'
                   }`}
               >
@@ -237,7 +237,7 @@ export default function UniversalPaymentModal({
                     <p className="text-xs text-muted-foreground">Instant test payment - no real money</p>
                   </div>
                   {paymentMode === 'mock' && (
-                    <CheckCircle className="w-5 h-5 text-protocall-blue" />
+                    <CheckCircle className="w-5 h-5 text-primary" />
                   )}
                 </div>
               </button>
@@ -246,20 +246,20 @@ export default function UniversalPaymentModal({
               <button
                 onClick={() => setPaymentMode('razorpay')}
                 className={`w-full p-4 rounded-lg border-2 transition-all text-left ${paymentMode === 'razorpay'
-                  ? 'border-protocall-blue bg-premium-muted'
+                  ? 'border-primary bg-premium-muted'
                   : 'border-border hover:border-border'
                   }`}
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-premium-muted flex items-center justify-center">
-                    <span className="font-bold text-protocall-blue text-xs">R</span>
+                    <span className="font-bold text-primary text-xs">R</span>
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold text-foreground">Payment via Razorpay</p>
                     <p className="text-xs text-muted-foreground">Cards, UPI, Net Banking & More</p>
                   </div>
                   {paymentMode === 'razorpay' && (
-                    <CheckCircle className="w-5 h-5 text-protocall-blue" />
+                    <CheckCircle className="w-5 h-5 text-primary" />
                   )}
                 </div>
               </button>
@@ -302,7 +302,7 @@ export default function UniversalPaymentModal({
               Secure Payment
             </div>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <CheckCircle className="w-4 h-4 text-protocall-blue" />
+              <CheckCircle className="w-4 h-4 text-primary" />
               256-bit SSL
             </div>
           </div>

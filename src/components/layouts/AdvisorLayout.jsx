@@ -368,16 +368,18 @@ export default function AdvisorLayout({ children, currentPageName }) { // Rename
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-subtle">Loading...</p>
         </div>
       </div>
     );
   }
 
-  // Clone children and pass user as prop
+  // Pass the resolved user down to component children.
+  // A string `type` means a host element (<div>, <section>): injecting a custom
+  // prop there leaks it into the DOM and React warns about the unknown attribute.
   const childrenWithProps = React.Children.map(children, child => {
-    if (React.isValidElement(child)) {
+    if (React.isValidElement(child) && typeof child.type !== 'string') {
       return React.cloneElement(child, { layoutUser: user });
     }
     return child;
@@ -447,7 +449,7 @@ export default function AdvisorLayout({ children, currentPageName }) { // Rename
                 <Collapsible open={pledgeOpen} onOpenChange={setPledgeOpen}>
                   <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2 rounded-lg bg-sidebar-dark hover:bg-sidebar-accent transition-all">
                     <div className="flex items-center gap-2">
-                      <Crown className="w-4 h-4 text-protocall-blue" />
+                      <Crown className="w-4 h-4 text-primary" />
                       <span className="font-semibold text-sm text-sidebar-foreground">Pledge Management</span>
                     </div>
                     <ChevronDown className={`w-4 h-4 text-sidebar-muted-foreground transition-transform ${pledgeOpen ? 'rotate-180' : ''}`} />

@@ -51,16 +51,16 @@ export default function ProfileTrustScore({ user }) {
 
       {/* Score Breakdown */}
       <Card>
-        <CardHeader className="bg-surface-2">
+        <CardHeader className="bg-card border-b border-divider">
           <CardTitle>How Trust Score Works</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4">
             <div className="bg-premium-muted my-1 p-3 flex items-start gap-3 rounded-lg">
-              <Users className="w-5 h-5 text-protocall-blue mt-0.5" />
+              <Users className="w-5 h-5 text-primary mt-0.5" />
               <div>
-                <h4 className="font-semibold text-protocall-blue">Community Participation</h4>
-                <p className="text-sm text-protocall-blue">Active engagement in chat rooms and polls increases your score</p>
+                <h4 className="font-semibold text-primary">Community Participation</h4>
+                <p className="text-sm text-primary">Active engagement in chat rooms and polls increases your score</p>
               </div>
             </div>
             
@@ -81,7 +81,7 @@ export default function ProfileTrustScore({ user }) {
             </div>
           </div>
 
-          <div className="mt-6 p-4 bg-surface-2 rounded-lg">
+          <div className="mt-6 p-4 bg-card rounded-lg">
             <h4 className="font-semibold mb-2">Trust Score Ranges:</h4>
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, optionalAuthenticate } = require("../middleware/auth");
 
 // Influencer Posts
 const postRouter = express.Router();
@@ -22,7 +22,8 @@ postRouter.get('/by-influencer/:influencerId', async (req, res) => {
     });
     res.json(posts);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[influencer.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -38,7 +39,8 @@ postRouter.get('/feed', async (req, res) => {
     });
     res.json(posts);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[influencer.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -55,7 +57,8 @@ postRouter.get('/trending', async (req, res) => {
     });
     res.json(posts);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[influencer.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -70,11 +73,12 @@ postRouter.post('/:id/like', authMiddleware, async (req, res) => {
     await post.increment('likes_count');
     res.json({ success: true, likes_count: (post.likes_count || 0) + 1 });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[influencer.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-createCrudRoutes(postRouter, postController);
+createCrudRoutes(postRouter, postController, { read: [optionalAuthenticate], write: [authMiddleware] });
 router.use('/posts', postRouter);
 
 module.exports = router;

@@ -2,15 +2,9 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models'); // Adjust path as needed
 const { createCrudController, createCrudRoutes } = require('../utils/crudController');
-const { authMiddleware } = require('../middleware/auth');
+const { authMiddleware, adminMiddleware } = require("../middleware/auth");
 
-// Middleware to ensure admin/super_admin access for sensitive operations
-const adminMiddleware = (req, res, next) => {
-    if (!req.user || !['admin', 'super_admin'].includes(req.user.app_role)) {
-        return res.status(403).json({ error: 'Access denied. Admin privileges required.' });
-    }
-    next();
-};
+// Admin gating uses the shared middleware (checks app_role, role and is_admin).
 
 // --- Room Automation Routes ---
 const automationRouter = express.Router();
@@ -18,7 +12,7 @@ const automationController = createCrudController(db.RoomAutomation, {
     defaultOrderBy: 'created_at',
     defaultOrder: 'DESC'
 });
-createCrudRoutes(automationRouter, automationController);
+createCrudRoutes(automationRouter, automationController, { read: [authMiddleware, adminMiddleware], write: [authMiddleware, adminMiddleware] });
 router.use('/automations', authMiddleware, adminMiddleware, automationRouter);
 
 
@@ -28,7 +22,7 @@ const ruleController = createCrudController(db.ModerationRule, {
     defaultOrderBy: 'created_at',
     defaultOrder: 'DESC'
 });
-createCrudRoutes(ruleRouter, ruleController);
+createCrudRoutes(ruleRouter, ruleController, { read: [authMiddleware, adminMiddleware], write: [authMiddleware, adminMiddleware] });
 router.use('/rules', authMiddleware, adminMiddleware, ruleRouter);
 
 
@@ -62,11 +56,12 @@ inviteRouter.post('/generate', async (req, res) => {
 
         res.status(201).json(invite);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('[chat_management.routes.js] request failed:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
-createCrudRoutes(inviteRouter, inviteController);
+createCrudRoutes(inviteRouter, inviteController, [authMiddleware]);
 router.use('/invites', authMiddleware, adminMiddleware, inviteRouter);
 
 
@@ -76,7 +71,7 @@ const vipController = createCrudController(db.VIPFeature, {
     defaultOrderBy: 'id',
     defaultOrder: 'ASC'
 });
-createCrudRoutes(vipRouter, vipController);
+createCrudRoutes(vipRouter, vipController, { read: [authMiddleware, adminMiddleware], write: [authMiddleware, adminMiddleware] });
 router.use('/vip-features', authMiddleware, adminMiddleware, vipRouter);
 
 module.exports = router;

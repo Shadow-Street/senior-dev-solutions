@@ -141,7 +141,7 @@ export default function KYCApprovalModal({ investor, wallet, isOpen, onClose, on
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-subtle">
-                  <User className="w-5 h-5 text-protocall-blue" />
+                  <User className="w-5 h-5 text-primary" />
                   <div>
                     <p className="text-xs text-muted-foreground">Full Name</p>
                     <p className="font-semibold">{investor.full_name}</p>
@@ -167,8 +167,8 @@ export default function KYCApprovalModal({ investor, wallet, isOpen, onClose, on
 
               <div className="space-y-3">
                 <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-3">
-                  <p className="text-xs text-protocall-blue mb-1">Investor Code</p>
-                  <p className="font-bold text-protocall-blue font-mono">{investor.investor_code}</p>
+                  <p className="text-xs text-primary mb-1">Investor Code</p>
+                  <p className="font-bold text-primary font-mono">{investor.investor_code}</p>
                 </div>
 
                 {wallet && (
@@ -195,7 +195,7 @@ export default function KYCApprovalModal({ investor, wallet, isOpen, onClose, on
             {/* KYC Documents Section */}
             <div className="border-t pt-4">
               <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-protocall-blue" />
+                <FileText className="w-5 h-5 text-primary" />
                 KYC Documents
               </h3>
 
@@ -215,7 +215,7 @@ export default function KYCApprovalModal({ investor, wallet, isOpen, onClose, on
                           href={investor.pan_document_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-4 py-2 bg-protocall-blue text-white rounded-lg hover:bg-protocall-blue transition-colors"
+                          className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary transition-colors"
                         >
                           <ExternalLink className="w-4 h-4" />
                           View Document
@@ -287,7 +287,7 @@ export default function KYCApprovalModal({ investor, wallet, isOpen, onClose, on
                 <Button
                   onClick={() => setShowApproveConfirm(true)}
                   disabled={isProcessing}
-                  className="bg-buy hover:bg-buy"
+                  className="bg-buy text-buy-foreground hover:bg-buy-soft"
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
                   Approve KYC
@@ -315,7 +315,7 @@ export default function KYCApprovalModal({ investor, wallet, isOpen, onClose, on
               <p className="text-sm text-buy-muted-foreground">{investor.email}</p>
               <p className="text-xs text-buy-muted-foreground mt-1">Code: {investor.investor_code}</p>
             </div>
-            <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-3 text-sm text-protocall-blue">
+            <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-3 text-sm text-primary">
               <p className="font-semibold mb-1">After approval:</p>
               <ul className="list-disc list-inside space-y-1">
                 <li>Investor can request wallet payouts</li>
@@ -329,7 +329,7 @@ export default function KYCApprovalModal({ investor, wallet, isOpen, onClose, on
             <Button variant="outline" onClick={() => setShowApproveConfirm(false)} disabled={isProcessing}>
               Cancel
             </Button>
-            <Button onClick={handleApprove} disabled={isProcessing} className="bg-buy hover:bg-buy">
+            <Button onClick={handleApprove} disabled={isProcessing} className="bg-buy text-buy-foreground hover:bg-buy-soft">
               {isProcessing ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />

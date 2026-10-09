@@ -217,7 +217,7 @@ export default function ChatRoomManagement({ user }) {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-lg text-subtle font-medium">Loading Chat Room Management...</p>
         </div>
       </div>
@@ -245,7 +245,7 @@ export default function ChatRoomManagement({ user }) {
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
-          <Button onClick={() => setShowCreateModal(true)} className="bg-protocall-blue hover:bg-protocall-blue">
+          <Button onClick={() => setShowCreateModal(true)} className="bg-primary hover:bg-primary">
             <Plus className="w-4 h-4 mr-2" />
             Create Room
           </Button>

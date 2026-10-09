@@ -23,30 +23,116 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Handle token expiration
+// ---------------------------------------------------------------------------
+// Token refresh
+// ---------------------------------------------------------------------------
+/**
+ * Access tokens are short-lived now, so an expired one is a normal event rather
+ * than a session ending. On the first 401 that says the token expired, the
+ * client exchanges its refresh token for a new pair and replays the original
+ * request once.
+ *
+ * Single-flight: a page typically fires several requests at once, and all of
+ * them will 401 together. Without a shared promise each would start its own
+ * refresh, and because refreshing *rotates* the token, the first to land would
+ * invalidate the others — which the server correctly reads as token reuse and
+ * punishes by revoking every session. So one refresh runs and the rest await it.
+ */
+const TOKEN_FAILURE = /invalid or expired token|user not found|no authentication token|jwt expired/i;
+const REUSE_DETECTED = /reuse detected/i;
+
+let refreshPromise = null;
+
+const endSession = () => {
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('user');
+  const path = window.location.pathname;
+  if (path !== '/login' && path !== '/register') {
+    window.location.href = '/login';
+  }
+};
+
+const refreshAccessToken = () => {
+  if (refreshPromise) return refreshPromise;
+
+  refreshPromise = (async () => {
+    const refreshToken = localStorage.getItem('refreshToken');
+    // A bare axios call, not apiClient: going through this instance would
+    // attach the dead access token and recurse through this interceptor.
+    const { data } = await axios.post(
+      `${API_BASE_URL}/auth/refresh`,
+      refreshToken ? { refreshToken } : {},
+      { withCredentials: true, headers: { 'Content-Type': 'application/json' } }
+    );
+    if (data?.accessToken) localStorage.setItem('accessToken', data.accessToken);
+    if (data?.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
+    if (data?.user) localStorage.setItem('user', JSON.stringify(data.user));
+    return data.accessToken;
+  })().finally(() => {
+    // Cleared regardless of outcome so a later 401 can try again.
+    refreshPromise = null;
+  });
+
+  return refreshPromise;
+};
+
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
-      // Only redirect if not already on login/register pages
-      const currentPath = window.location.pathname;
-      if (currentPath !== '/login' && currentPath !== '/register') {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('user');
-        window.location.href = '/login';
+    const status = error.response?.status;
+    const original = error.config || {};
+    const body = error.response?.data || {};
+    const message = String(body.error || body.message || '');
+    const path = window.location.pathname;
+    const onAuthPage = path === '/login' || path === '/register';
+    const isRefreshCall = String(original.url || '').includes('/auth/refresh');
+
+    if (status !== 401 || onAuthPage || isRefreshCall) {
+      if (status === 401 && !onAuthPage && !isRefreshCall) {
+        console.warn(`401 from ${original.url || 'request'}: ${message || 'no message'}`);
       }
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
+
+    // A resource-level refusal is not a session problem: the caller handles it.
+    if (!TOKEN_FAILURE.test(message)) {
+      console.warn(`401 from ${original.url || 'request'}: ${message || 'no message'}`);
+      return Promise.reject(error);
+    }
+
+    // The token expired. Refresh once, then replay this request.
+    if (original.__retried) {
+      endSession();
+      return Promise.reject(error);
+    }
+
+    try {
+      const token = await refreshAccessToken();
+      original.__retried = true;
+      original.headers = { ...(original.headers || {}), Authorization: `Bearer ${token}` };
+      return apiClient(original);
+    } catch (refreshError) {
+      const refreshMessage = String(refreshError?.response?.data?.error || '');
+      if (REUSE_DETECTED.test(refreshMessage)) {
+        console.error('Refresh token reuse detected — all sessions revoked.');
+      }
+      endSession();
+      return Promise.reject(error);
+    }
   }
 );
-
-// Auth API
 // Auth API
 export const authAPI = {
   async login(email, password, role = 'user') {
     const response = await apiClient.post('/auth/login', { email, password, role });
     if (response.data.accessToken) {
       localStorage.setItem('accessToken', response.data.accessToken);
+      // Without this the refresh token was issued and then thrown away, so the
+      // session simply died when the access token expired.
+      if (response.data.refreshToken) {
+        localStorage.setItem('refreshToken', response.data.refreshToken);
+      }
       localStorage.setItem('user', JSON.stringify(response.data.user));
     }
     return response.data;
@@ -56,6 +142,11 @@ export const authAPI = {
     const response = await apiClient.post('/auth/google', { token, role });
     if (response.data.accessToken) {
       localStorage.setItem('accessToken', response.data.accessToken);
+      // Without this the refresh token was issued and then thrown away, so the
+      // session simply died when the access token expired.
+      if (response.data.refreshToken) {
+        localStorage.setItem('refreshToken', response.data.refreshToken);
+      }
       localStorage.setItem('user', JSON.stringify(response.data.user));
     }
     return response.data;
@@ -65,6 +156,11 @@ export const authAPI = {
     const response = await apiClient.post('/auth/register', { email, password, name, role });
     if (response.data.accessToken) {
       localStorage.setItem('accessToken', response.data.accessToken);
+      // Without this the refresh token was issued and then thrown away, so the
+      // session simply died when the access token expired.
+      if (response.data.refreshToken) {
+        localStorage.setItem('refreshToken', response.data.refreshToken);
+      }
       localStorage.setItem('user', JSON.stringify(response.data.user));
     }
     return response.data;
@@ -75,9 +171,25 @@ export const authAPI = {
     return response.data;
   },
 
-  logout() {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('user');
+  /**
+   * Ends the session on the server as well as locally.
+   *
+   * Clearing localStorage alone left the refresh token valid for 30 days, so
+   * anyone who had captured it could keep minting access tokens after the user
+   * believed they had logged out. Local state is cleared regardless of whether
+   * the revoke call succeeds.
+   */
+  async logout() {
+    const refreshToken = localStorage.getItem('refreshToken');
+    try {
+      await apiClient.post('/auth/logout', refreshToken ? { refreshToken } : {});
+    } catch {
+      // Offline or already-invalid token: the local clear below still applies.
+    } finally {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+    }
   },
 };
 

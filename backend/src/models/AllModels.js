@@ -42,7 +42,7 @@ module.exports = {
     pledge_id: DataTypes.UUID,
     user_id: DataTypes.UUID,
     amount: DataTypes.DECIMAL(10, 2),
-    status: DataTypes.STRING,
+    status: { type: DataTypes.STRING, defaultValue: 'pending' },
     payment_method: DataTypes.STRING,
     transaction_id: DataTypes.STRING
   }),
@@ -50,7 +50,7 @@ module.exports = {
     advisor_id: DataTypes.UUID,
     user_id: DataTypes.UUID,
     pledge_id: DataTypes.UUID,
-    status: DataTypes.STRING,
+    status: { type: DataTypes.STRING, defaultValue: 'pending' },
     requested_at: DataTypes.DATE,
     responded_at: DataTypes.DATE
   }),
@@ -61,6 +61,23 @@ module.exports = {
     stock_symbol: DataTypes.STRING,
     percentage: DataTypes.DECIMAL(5, 2),
     allocation_type: DataTypes.STRING
+  }),
+  // One investor's capital placed into one fund plan. Distinct from
+  // FundAllocation above, which splits a fund across stocks by percentage —
+  // the UI's ExecuteAllocationModal writes this shape and there was no model
+  // or table behind it, so every allocation it executed returned 404.
+  InvestmentAllocation: createModel('investment_allocations', {
+    investor_id: DataTypes.UUID,
+    fund_plan_id: DataTypes.UUID,
+    investment_request_id: DataTypes.UUID,
+    allocation_amount: DataTypes.DECIMAL(15, 2),
+    allocation_date: DataTypes.DATE,
+    nav_at_allocation: DataTypes.DECIMAL(15, 4),
+    units_allocated: DataTypes.DECIMAL(15, 4),
+    current_value: DataTypes.DECIMAL(15, 2),
+    profit_earned: { type: DataTypes.DECIMAL(15, 2), defaultValue: 0 },
+    days_held: { type: DataTypes.INTEGER, defaultValue: 0 },
+    status: { type: DataTypes.STRING, defaultValue: 'active' }
   }),
   FundPlan: createModel('fund_plans', {
     name: DataTypes.STRING,
@@ -87,21 +104,21 @@ module.exports = {
     user_id: DataTypes.UUID,
     wallet_id: DataTypes.UUID,
     amount: DataTypes.DECIMAL(15, 2),
-    status: DataTypes.STRING,
+    status: { type: DataTypes.STRING, defaultValue: 'pending' },
     bank_details: DataTypes.JSON,
     processed_at: DataTypes.DATE
   }),
   FundPayoutRequest: createModel('fund_payout_requests', {
     user_id: DataTypes.UUID,
     amount: DataTypes.DECIMAL(15, 2),
-    status: DataTypes.STRING,
+    status: { type: DataTypes.STRING, defaultValue: 'pending' },
     payout_method: DataTypes.STRING,
     processed_at: DataTypes.DATE
   }),
   FundInvoice: createModel('fund_invoices', {
     user_id: DataTypes.UUID,
     amount: DataTypes.DECIMAL(15, 2),
-    status: DataTypes.STRING,
+    status: { type: DataTypes.STRING, defaultValue: 'pending' },
     invoice_number: DataTypes.STRING,
     due_date: DataTypes.DATE,
     paid_at: DataTypes.DATE
@@ -117,22 +134,33 @@ module.exports = {
   }),
   Advisor: createModel('advisors', {
     user_id: DataTypes.UUID,
+    // The UI reads `display_name` in 28 places and `name` in none; `name` is
+    // retained so existing rows keep their value.
     name: DataTypes.STRING,
+    display_name: DataTypes.STRING,
     avatar_url: DataTypes.STRING,
+    profile_image_url: DataTypes.STRING,
     bio: DataTypes.TEXT,
     rating: DataTypes.DECIMAL(3, 2),
     total_clients: DataTypes.INTEGER,
     total_earnings: DataTypes.DECIMAL(15, 2),
     specialization: DataTypes.JSON,
-    status: DataTypes.STRING,
-    verified: DataTypes.BOOLEAN
+    status: { type: DataTypes.STRING, defaultValue: 'pending_approval' }, // pending_approval | approved | rejected | suspended
+    verified: DataTypes.BOOLEAN,
+    // SEBI registration is a regulatory requirement for Indian advisors and
+    // drives the admin approval queue.
+    sebi_registration_number: DataTypes.STRING,
+    sebi_document_url: DataTypes.STRING,
+    rejection_reason: DataTypes.TEXT,
+    follower_count: { type: DataTypes.INTEGER, defaultValue: 0 },
+    success_rate: DataTypes.DECIMAL(5, 2)
   }),
   PortfolioManager: createModel('portfolio_managers', {
     user_id: DataTypes.UUID,
     display_name: DataTypes.STRING,
     sebi_registration_number: DataTypes.STRING,
     bio: DataTypes.TEXT,
-    status: DataTypes.STRING,
+    status: { type: DataTypes.STRING, defaultValue: 'pending_approval' },
     profile_image_url: DataTypes.STRING,
     total_aum: DataTypes.DECIMAL(15, 2),
     active_clients: DataTypes.INTEGER,
@@ -336,12 +364,35 @@ module.exports = {
     avatar_url: DataTypes.STRING,
     bio: DataTypes.TEXT,
     follower_count: DataTypes.INTEGER,
-    status: DataTypes.STRING,
+    status: { type: DataTypes.STRING, defaultValue: 'pending_approval' },
     is_featured: DataTypes.BOOLEAN,
     social_links: DataTypes.JSON,
     specialization: DataTypes.JSON,
     rating: DataTypes.DECIMAL(3, 2),
     total_subscribers: DataTypes.INTEGER
+  }),
+  // Educators. The /Educators page reads this entity and had no model or route
+  // behind it, so Educator.filter() always came back empty and the page fell
+  // back to three fabricated instructors. Field names follow what the UI reads.
+  Educator: createModel('educators', {
+    user_id: DataTypes.UUID,
+    display_name: DataTypes.STRING,
+    bio: DataTypes.TEXT,
+    profile_image_url: DataTypes.STRING,
+    specialization: DataTypes.JSON,
+    certification: DataTypes.JSON,
+    social_links: DataTypes.JSON,
+    course_price_range: DataTypes.JSON,
+    teaching_style: DataTypes.STRING,
+    experience_years: DataTypes.INTEGER,
+    // Credibility signals shown to learners: derived or admin-set, never
+    // writable by the educator themselves (see protectedFields on the route).
+    student_count: { type: DataTypes.INTEGER, defaultValue: 0 },
+    success_rate: DataTypes.DECIMAL(5, 2),
+    rating: DataTypes.DECIMAL(3, 2),
+    verified: { type: DataTypes.BOOLEAN, defaultValue: false },
+    status: DataTypes.STRING,          // pending | approved | rejected | suspended
+    rejection_reason: DataTypes.TEXT
   }),
   Course: createModel('courses', {
     title: DataTypes.STRING,
@@ -1007,6 +1058,20 @@ module.exports = {
 
   // Refund Request
   // Chat Room Management & Automation
+  // Paid access to a single premium chat room, distinct from the platform-wide
+  // Subscription. RoomAccessControl already checks for one of these before
+  // granting entry to a paid room, and two superadmin panels list them, but no
+  // model or table existed — so /api/chatrooms/subscriptions 404'd and the
+  // Premium and Access panels in Chat Room Management came up empty.
+  RoomSubscription: createModel('room_subscriptions', {
+    user_id: DataTypes.UUID,
+    room_id: DataTypes.UUID,
+    status: { type: DataTypes.STRING, defaultValue: 'active' },
+    start_date: DataTypes.DATE,
+    expires_at: DataTypes.DATE,
+    amount_paid: DataTypes.DECIMAL(15, 2),
+    payment_reference: DataTypes.STRING
+  }),
   RoomAutomation: createModel('room_automations', {
     chat_room_id: DataTypes.UUID,
     trigger_type: DataTypes.STRING, // e.g., 'user_join', 'time_schedule', 'keyword'

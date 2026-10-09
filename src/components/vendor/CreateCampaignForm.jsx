@@ -184,7 +184,7 @@ export default function CreateCampaignForm({ vendor, onSuccess, onCancel, isAdmi
         <h1 className="text-3xl font-bold mb-2">
           {isAdmin ? 'Create Admin Campaign' : 'Create New Ad Campaign'}
         </h1>
-        <p className="text-protocall-blue">
+        <p className="text-primary">
           {isAdmin ? 'Create promotional campaigns for the platform' : 'Reach thousands of active traders and investors'}
         </p>
       </div>
@@ -194,7 +194,7 @@ export default function CreateCampaignForm({ vendor, onSuccess, onCancel, isAdmi
         <Card className="shadow-lg border-0">
           <CardHeader className="bg-surface-2">
             <CardTitle className="flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-protocall-blue" />
+              <DollarSign className="w-5 h-5 text-primary" />
               Campaign Details
             </CardTitle>
           </CardHeader>
@@ -266,7 +266,7 @@ export default function CreateCampaignForm({ vendor, onSuccess, onCancel, isAdmi
                     <input 
                       type="file" 
                       className="hidden" 
-                      accept="image/*"
+                      accept="image/jpeg,image/png,image/gif,image/webp"
                       onChange={handleFileUpload}
                       disabled={isUploading}
                     />

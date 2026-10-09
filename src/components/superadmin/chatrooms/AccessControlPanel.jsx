@@ -147,7 +147,7 @@ export default function AccessControlPanel() {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-lg text-subtle font-medium">Loading Access Control...</p>
         </div>
       </div>
@@ -162,7 +162,7 @@ export default function AccessControlPanel() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Shield className="w-5 h-5 text-protocall-blue" />
+                <Shield className="w-5 h-5 text-primary" />
                 Tiered Access Control
               </h3>
               <p className="text-sm text-subtle">Manage room access permissions and user whitelists</p>
@@ -226,12 +226,12 @@ export default function AccessControlPanel() {
               <div className="space-y-3">
                 {rooms.filter(r => r.is_private).map(room => (
                   <div key={room.id} className="flex items-center gap-4 p-4 bg-premium-muted rounded-lg">
-                    <Lock className="w-10 h-10 text-protocall-blue" />
+                    <Lock className="w-10 h-10 text-primary" />
                     <div className="flex-1">
                       <p className="font-medium text-foreground">{room.name}</p>
                       <p className="text-sm text-subtle">{getAccessSummary(room)}</p>
                     </div>
-                    <Badge className="bg-premium-muted text-protocall-blue">
+                    <Badge className="bg-premium-muted text-primary">
                       {room.allowed_user_ids?.length || 0} users
                     </Badge>
                     <Button variant="outline" size="sm" onClick={() => handleManageAccess(room)}>
@@ -301,7 +301,7 @@ export default function AccessControlPanel() {
                   </Badge>
                 )}
                 {selectedRoom.is_private && (
-                  <Badge className="bg-premium-muted text-protocall-blue">
+                  <Badge className="bg-premium-muted text-primary">
                     <Lock className="w-3 h-3 mr-1" />
                     Private
                   </Badge>
@@ -361,7 +361,7 @@ export default function AccessControlPanel() {
                                 {user.profile_image_url ? (
                                   <img src={user.profile_image_url} alt={user.display_name} className="w-10 h-10 rounded-full" />
                                 ) : (
-                                  <Users className="w-5 h-5 text-protocall-blue" />
+                                  <Users className="w-5 h-5 text-primary" />
                                 )}
                               </div>
                               <div>

@@ -77,14 +77,17 @@ export function AuthProvider({ children }) {
         }
     };
 
-    const logout = () => {
+    // authAPI.logout now revokes the refresh token on the server, so it has to
+    // be awaited; fire-and-forget left the session alive server-side.
+    const logout = async () => {
         try {
-            authAPI.logout();
+            await authAPI.logout();
         } catch (error) {
             console.error('Logout error:', error);
         } finally {
             setUser(null);
             localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
             localStorage.removeItem('user');
             toast.success('Logged out successfully');
             navigate('/login');

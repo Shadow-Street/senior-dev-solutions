@@ -7,7 +7,7 @@ class AuthController {
   static async login(req, res) {
     try {
       const { email, password, role, recaptchaToken } = req.body;
-      console.log(`login ${email} req.body`, req.body);
+      // Not logged: req.body carries the plaintext password.
 
       const requiredFields = [
         "email",
@@ -27,13 +27,13 @@ class AuthController {
       const { accessToken, refreshToken, user } = await AuthService.login(
         email,
         password,
-        role
+        { userAgent: req.get("user-agent"), ip: req.ip }
       );
 
       AuthController.setAuthCookies(res, accessToken, refreshToken);
 
       req.session.user = { email, accessToken };
-      console.log("Login successful", accessToken, refreshToken, user);
+      // Not logged: this printed both tokens in clear text.
 
       return res
         .status(200)
@@ -93,6 +93,9 @@ static async me(req, res) {
       attributes: [
         "id",
         "name",
+        // The UI reads display_name everywhere; omitting it here meant the
+        // session user arrived without the field the whole app renders.
+        "display_name",
         "email",
         "role",
         "app_role",
@@ -124,6 +127,69 @@ static async me(req, res) {
   }
 }
 
+
+
+  /**
+   * Exchanges a refresh token for a new pair.
+   *
+   * The token is read from the httpOnly cookie first and the body second, so a
+   * cookie-based client never has to put it in JavaScript's reach, while the
+   * SPA (which keeps tokens in localStorage) can still refresh.
+   *
+   * Always 401 on failure, with the cookies cleared, so a client that has been
+   * revoked stops retrying and falls back to the login screen.
+   */
+  static async refresh(req, res) {
+    try {
+      const rawToken = req.cookies?.refreshToken || req.body?.refreshToken;
+      if (!rawToken) {
+        return res.status(401).json({ error: "Refresh token required" });
+      }
+
+      const { accessToken, refreshToken, user } =
+        await AuthService.rotateRefreshToken(rawToken, {
+          userAgent: req.get("user-agent"),
+          ip: req.ip,
+        });
+
+      AuthController.setAuthCookies(res, accessToken, refreshToken);
+      return res.status(200).json({ accessToken, refreshToken, user });
+    } catch (error) {
+      // Reuse detection is worth recording; the token value itself is not.
+      console.warn("Refresh failed:", error.message);
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+      return res.status(401).json({ error: error.message });
+    }
+  }
+
+  /** Ends this session by revoking its refresh token server-side. */
+  static async logout(req, res) {
+    try {
+      const rawToken = req.cookies?.refreshToken || req.body?.refreshToken;
+      await AuthService.revokeRefreshToken(rawToken);
+      if (req.session) req.session.destroy(() => {});
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+      return res.status(200).json({ message: "Logged out" });
+    } catch (error) {
+      console.error("Logout error:", error);
+      return res.status(200).json({ message: "Logged out" });
+    }
+  }
+
+  /** Signs the user out of every device. */
+  static async logoutAll(req, res) {
+    try {
+      await AuthService.revokeAllForUser(req.user.id);
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+      return res.status(200).json({ message: "All sessions revoked" });
+    } catch (error) {
+      console.error("Logout-all error:", error);
+      return res.status(500).json({ error: "Could not revoke sessions" });
+    }
+  }
 
   static setAuthCookies(res, accessToken, refreshToken) {
     const isProd = process.env.NODE_ENV === "production";

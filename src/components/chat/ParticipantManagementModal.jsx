@@ -301,7 +301,7 @@ export default function ParticipantManagementModal({ open, onClose, room, curren
               filter === 'all' ? 'bg-premium-muted border-protocall-premium-light' : 'bg-surface-2 border-border hover:bg-surface-2'
             }`}
           >
-            <Users className="w-5 h-5 text-protocall-blue mx-auto mb-1" />
+            <Users className="w-5 h-5 text-primary mx-auto mb-1" />
             <p className="text-2xl font-bold text-foreground">{stats.total}</p>
             <p className="text-xs text-subtle">Total</p>
           </button>
@@ -366,7 +366,7 @@ export default function ParticipantManagementModal({ open, onClose, room, curren
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {isLoading ? (
             <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-protocall-blue mx-auto"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
             </div>
           ) : filteredParticipants.length === 0 ? (
             <div className="text-center py-8">
@@ -407,7 +407,7 @@ export default function ParticipantManagementModal({ open, onClose, room, curren
                       )}
                       
                       {participant.role === 'admin' && (
-                        <Badge className="bg-premium-muted text-protocall-blue">
+                        <Badge className="bg-premium-muted text-primary">
                           <Crown className="w-3 h-3 mr-1" />
                           Admin
                         </Badge>
@@ -497,7 +497,7 @@ export default function ParticipantManagementModal({ open, onClose, room, curren
                             size="sm"
                             variant="outline"
                             onClick={() => handleKick(participant)}
-                            className="text-protocall-blue hover:text-protocall-blue"
+                            className="text-primary hover:text-primary"
                           >
                             Kick
                           </Button>

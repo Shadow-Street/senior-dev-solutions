@@ -305,14 +305,14 @@ export default function AlertsManagement({ user }) {
   };
 
   const severityConfig = {
-    info: { color: 'bg-premium-muted text-protocall-blue', icon: '🔵' },
+    info: { color: 'bg-premium-muted text-primary', icon: '🔵' },
     warning: { color: 'bg-hold-muted text-hold-muted-foreground', icon: '⚠️' },
     critical: { color: 'bg-sell-muted text-sell-muted-foreground', icon: '🔴' }
   };
 
   const statusConfig = {
     pending: { color: 'bg-hold-muted text-hold-muted-foreground', icon: Clock },
-    acknowledged: { color: 'bg-premium-muted text-protocall-blue', icon: Eye },
+    acknowledged: { color: 'bg-premium-muted text-primary', icon: Eye },
     resolved: { color: 'bg-buy-muted text-buy-muted-foreground', icon: CheckCircle },
     dismissed: { color: 'bg-surface-2 text-foreground', icon: X }
   };
@@ -364,8 +364,8 @@ export default function AlertsManagement({ user }) {
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
             <div className="bg-premium-muted p-4 rounded-lg">
-              <p className="text-sm text-protocall-blue">Total Alerts</p>
-              <p className="text-2xl font-bold text-protocall-blue">{stats.total}</p>
+              <p className="text-sm text-primary">Total Alerts</p>
+              <p className="text-2xl font-bold text-primary">{stats.total}</p>
             </div>
             <div className="bg-hold-muted p-4 rounded-lg">
               <p className="text-sm text-hold-muted-foreground">Pending</p>
@@ -472,10 +472,10 @@ export default function AlertsManagement({ user }) {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-2 bg-transparent p-1 rounded-xl gap-2">
-          <TabsTrigger value="active" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md">
+          <TabsTrigger value="active" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md">
             <BellRing className="w-4 h-4" /> Active Alerts ({stats.pending})
           </TabsTrigger>
-          <TabsTrigger value="history" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md">
+          <TabsTrigger value="history" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md">
             <History className="w-4 h-4" /> Alert History ({stats.resolved})
           </TabsTrigger>
         </TabsList>
@@ -599,13 +599,13 @@ export default function AlertsManagement({ user }) {
                     </Button>
                     <Button
                       variant="ghost"
-                      className="text-protocall-blue"
+                      className="text-primary"
                       onClick={() => handleResolveAlert(selectedAlert.id, 'acknowledged')}
                     >
                       Acknowledge
                     </Button>
                     <Button
-                      className="bg-buy hover:bg-buy"
+                      className="bg-buy text-buy-foreground hover:bg-buy-soft"
                       onClick={() => handleResolveAlert(selectedAlert.id, 'resolved')}
                     >
                       <CheckCircle className="w-4 h-4 mr-2" />

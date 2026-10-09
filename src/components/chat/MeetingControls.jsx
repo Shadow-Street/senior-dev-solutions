@@ -131,7 +131,7 @@ export default function MeetingControls({ chatRoomId, stockSymbol, onMeetingStar
                   size="sm"
                   variant="secondary"
                   onClick={() => window.open(activeMeeting.meeting_url, '_blank')}
-                  className="bg-white text-protocall-blue hover:bg-premium-muted"
+                  className="bg-white text-primary hover:bg-premium-muted"
                 >
                   <Video className="w-4 h-4 mr-2" />
                   Join
@@ -166,7 +166,7 @@ export default function MeetingControls({ chatRoomId, stockSymbol, onMeetingStar
                 }}
                 disabled={isLoading}
                 size="sm"
-                className="bg-protocall-blue hover:bg-protocall-blue"
+                className="bg-primary hover:bg-primary"
               >
                 <Video className="w-4 h-4 mr-2" />
                 Start

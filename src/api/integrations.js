@@ -13,16 +13,26 @@ export async function UploadFile({ file, ...extra } = {}) {
   const formData = new FormData();
   formData.append("file", file);
 
-  // Pass through any extra fields for backend to use (e.g., folder, is_private)
+  // Routing fields (folder, is_private) go in the query string, not the form
+  // body. The server has to pick a storage key while the multipart stream is
+  // still being read, and body fields that follow the file part are not
+  // available yet at that point — sending is_private as a form field meant a
+  // private document could be stored as public. They are also appended to the
+  // body for any server that still reads them there.
+  const params = new URLSearchParams();
   Object.entries(extra).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
+      params.append(key, String(value));
       formData.append(key, value);
     }
   });
 
-  const response = await apiClient.post("/files/upload", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const query = params.toString();
+  const response = await apiClient.post(
+    query ? `/files/upload?${query}` : "/files/upload",
+    formData,
+    { headers: { "Content-Type": "multipart/form-data" } }
+  );
 
   // Map backend 'url' to frontend expected 'file_url'
   return {

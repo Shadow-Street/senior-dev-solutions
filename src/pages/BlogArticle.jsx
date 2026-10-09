@@ -200,7 +200,7 @@ export default function BlogArticlePage() {
 
   const getCategoryColor = (category) => {
     switch(category) {
-      case 'education': return 'bg-premium-muted text-protocall-blue';
+      case 'education': return 'bg-premium-muted text-primary';
       case 'strategy': return 'bg-premium-muted text-protocall-premium-text';
       case 'technical': return 'bg-hold-muted text-hold-muted-foreground';
       case 'tax': return 'bg-buy-muted text-buy-muted-foreground';
@@ -377,7 +377,7 @@ export default function BlogArticlePage() {
             </p>
             <Button
               onClick={() => navigate(createPageUrl('Blogs'))}
-              className="bg-white text-protocall-blue hover:bg-premium-muted"
+              className="bg-white text-primary hover:bg-premium-muted"
             >
               View All Articles
             </Button>

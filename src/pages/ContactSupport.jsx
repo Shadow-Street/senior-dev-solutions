@@ -86,7 +86,7 @@ export default function ContactSupport() {
             <MessageCircle className="w-10 h-10" />
             <h1 className="text-4xl font-bold">Contact Support</h1>
           </div>
-          <p className="text-protocall-blue text-lg">
+          <p className="text-primary text-lg">
             We're here to help. Get in touch with our team 24/7
           </p>
         </div>
@@ -105,7 +105,7 @@ export default function ContactSupport() {
               <p className="text-sm text-subtle mb-2">24/7 Phone Support</p>
               <a 
                 href={`tel:${settings.contact_phone || '+918045678900'}`}
-                className="text-lg font-semibold text-protocall-blue hover:text-protocall-blue"
+                className="text-lg font-semibold text-primary hover:text-primary"
               >
                 {settings.contact_phone || '+91-80-4567-8900'}
               </a>
@@ -113,13 +113,13 @@ export default function ContactSupport() {
 
             <Card className="p-6 bg-white shadow-lg border-0">
               <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <Mail className="w-5 h-5 text-protocall-blue" />
+                <Mail className="w-5 h-5 text-primary" />
                 Email Us
               </h3>
               <p className="text-sm text-subtle mb-2">General Inquiries</p>
               <a 
                 href={`mailto:${settings.contact_email || 'support@protocall.in'}`}
-                className="text-protocall-blue hover:text-protocall-blue break-all"
+                className="text-primary hover:text-primary break-all"
               >
                 {settings.contact_email || 'support@protocall.in'}
               </a>
@@ -127,7 +127,7 @@ export default function ContactSupport() {
                 <p className="text-sm text-subtle mb-1">Support Team</p>
                 <a 
                   href={`mailto:${settings.support_email || 'help@protocall.in'}`}
-                  className="text-protocall-blue hover:text-protocall-blue break-all"
+                  className="text-primary hover:text-primary break-all"
                 >
                   {settings.support_email || 'help@protocall.in'}
                 </a>
@@ -181,7 +181,7 @@ export default function ContactSupport() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="full_name" className="text-sm font-semibold flex items-center gap-2">
-                      Full Name <span className="text-sell">*</span>
+                      Full Name <span className="text-sell-muted-foreground">*</span>
                     </Label>
                     <Input
                       id="full_name"
@@ -189,13 +189,13 @@ export default function ContactSupport() {
                       onChange={(e) => handleInputChange('full_name', e.target.value)}
                       placeholder="Enter your full name"
                       required
-                      className="border-border focus:border-protocall-blue focus:ring-2 focus:ring-protocall-premium-light"
+                      className="border-border focus:border-primary focus:ring-2 focus:ring-protocall-premium-light"
                     />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-sm font-semibold flex items-center gap-2">
-                      Email Address <span className="text-sell">*</span>
+                      Email Address <span className="text-sell-muted-foreground">*</span>
                     </Label>
                     <Input
                       id="email"
@@ -204,7 +204,7 @@ export default function ContactSupport() {
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       placeholder="your.email@example.com"
                       required
-                      className="border-border focus:border-protocall-blue focus:ring-2 focus:ring-protocall-premium-light"
+                      className="border-border focus:border-primary focus:ring-2 focus:ring-protocall-premium-light"
                     />
                   </div>
                 </div>
@@ -219,19 +219,19 @@ export default function ContactSupport() {
                       value={formData.mobile_number}
                       onChange={(e) => handleInputChange('mobile_number', e.target.value)}
                       placeholder="+91 98765 43210"
-                      className="border-border focus:border-protocall-blue focus:ring-2 focus:ring-protocall-premium-light"
+                      className="border-border focus:border-primary focus:ring-2 focus:ring-protocall-premium-light"
                     />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="subject" className="text-sm font-semibold flex items-center gap-2">
-                      Subject <span className="text-sell">*</span>
+                      Subject <span className="text-sell-muted-foreground">*</span>
                     </Label>
                     <select
                       id="subject"
                       value={formData.subject}
                       onChange={(e) => handleInputChange('subject', e.target.value)}
-                      className="w-full px-3 py-2 border border-border rounded-lg focus:border-protocall-blue focus:ring-2 focus:ring-protocall-premium-light focus:outline-none"
+                      className="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-protocall-premium-light focus:outline-none"
                       required
                     >
                       <option value="general_inquiry">General Inquiry</option>
@@ -244,7 +244,7 @@ export default function ContactSupport() {
 
                 <div className="space-y-2">
                   <Label htmlFor="message" className="text-sm font-semibold flex items-center gap-2">
-                    Message <span className="text-sell">*</span>
+                    Message <span className="text-sell-muted-foreground">*</span>
                   </Label>
                   <Textarea
                     id="message"
@@ -253,14 +253,14 @@ export default function ContactSupport() {
                     placeholder="Tell us how we can help you..."
                     rows={6}
                     required
-                    className="border-border focus:border-protocall-blue focus:ring-2 focus:ring-protocall-premium-light resize-none"
+                    className="border-border focus:border-primary focus:ring-2 focus:ring-protocall-premium-light resize-none"
                   />
                 </div>
 
                 <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
                   <div className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-protocall-blue flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-protocall-blue">
+                    <AlertCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <div className="text-sm text-primary">
                       <p className="font-semibold mb-1">Privacy Notice</p>
                       <p>
                         Your information will be used only to respond to your inquiry. 
@@ -315,13 +315,13 @@ export default function ContactSupport() {
           <Card className="p-6 hover:shadow-lg transition-all cursor-pointer border-0 bg-white">
             <div className="text-center">
               <div className="w-16 h-16 rounded-full bg-premium-muted flex items-center justify-center mx-auto mb-4">
-                <MessageCircle className="w-8 h-8 text-protocall-blue" />
+                <MessageCircle className="w-8 h-8 text-primary" />
               </div>
               <h3 className="font-bold text-lg mb-2">Live Chat</h3>
               <p className="text-sm text-subtle mb-4">
                 Chat with our support team in real-time
               </p>
-              <Button className="w-full bg-protocall-blue hover:bg-protocall-blue">
+              <Button className="w-full bg-primary hover:bg-primary">
                 Start Chat
               </Button>
             </div>
@@ -354,7 +354,7 @@ export default function ContactSupport() {
                 24/7 phone support for urgent issues
               </p>
               <a href={`tel:${settings.contact_phone || '+918045678900'}`}>
-                <Button className="w-full bg-buy hover:bg-buy">
+                <Button className="w-full bg-buy text-buy-foreground hover:bg-buy-soft">
                   Call Now
                 </Button>
               </a>
@@ -365,7 +365,7 @@ export default function ContactSupport() {
         {/* Support Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12">
           <Card className="p-6 text-center bg-white shadow-md border-0">
-            <div className="text-3xl font-bold text-protocall-blue mb-2">{'<24h'}</div>
+            <div className="text-3xl font-bold text-primary mb-2">{'<24h'}</div>
             <p className="text-sm text-subtle">Average Response Time</p>
           </Card>
 

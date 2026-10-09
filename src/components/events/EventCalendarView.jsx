@@ -65,7 +65,7 @@ export default function EventCalendarView({
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-protocall-blue" />
+            <Calendar className="w-5 h-5 text-primary" />
             Events Calendar
           </CardTitle>
           <div className="flex items-center gap-2">
@@ -110,7 +110,7 @@ export default function EventCalendarView({
                 <div className={`
                   text-sm font-medium mb-1
                   ${isCurrentMonth(day) ? 'text-foreground' : 'text-muted-foreground'}
-                  ${isToday(day) ? 'text-protocall-blue font-bold' : ''}
+                  ${isToday(day) ? 'text-primary font-bold' : ''}
                 `}>
                   {format(day, 'd')}
                 </div>

@@ -65,7 +65,7 @@ export default function SubscriptionRefundModal({ subscription, onClose, onSucce
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <DollarSign className="w-5 h-5 text-protocall-blue" />
+            <DollarSign className="w-5 h-5 text-primary" />
             Request Subscription Refund
           </DialogTitle>
         </DialogHeader>

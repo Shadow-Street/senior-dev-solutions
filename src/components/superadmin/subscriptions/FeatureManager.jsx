@@ -162,7 +162,7 @@ export default function FeatureManager({ permissions }) {
     switch (tier) {
       case 'vip': return 'bg-hold-muted text-hold-muted-foreground border-hold/30';
       case 'premium': return 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light';
-      default: return 'bg-premium-muted text-protocall-blue border-protocall-premium-light';
+      default: return 'bg-premium-muted text-primary border-protocall-premium-light';
     }
   };
 
@@ -173,7 +173,7 @@ export default function FeatureManager({ permissions }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -195,7 +195,7 @@ export default function FeatureManager({ permissions }) {
             Create and manage features that appear in subscription plan editors
           </p>
         </div>
-        <Button onClick={handleCreate} className="bg-protocall-blue hover:bg-protocall-blue">
+        <Button onClick={handleCreate} className="bg-primary hover:bg-primary">
           <Plus className="w-4 h-4 mr-2" />
           Add New Feature
         </Button>
@@ -205,14 +205,14 @@ export default function FeatureManager({ permissions }) {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="bg-surface-2 border-protocall-premium-light">
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-protocall-blue">{features.length}</div>
-            <div className="text-sm text-protocall-blue">Total Features</div>
+            <div className="text-2xl font-bold text-primary">{features.length}</div>
+            <div className="text-sm text-primary">Total Features</div>
           </CardContent>
         </Card>
         <Card className="bg-surface-2 border-protocall-premium-light">
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-protocall-blue">{featuresByTier.basic.length}</div>
-            <div className="text-sm text-protocall-blue">Basic Features</div>
+            <div className="text-2xl font-bold text-primary">{featuresByTier.basic.length}</div>
+            <div className="text-sm text-primary">Basic Features</div>
           </CardContent>
         </Card>
         <Card className="bg-surface-2 border-protocall-premium-light">
@@ -234,7 +234,7 @@ export default function FeatureManager({ permissions }) {
         {/* Basic Features */}
         <Card className="bg-premium-muted border-2 border-protocall-premium-light">
           <CardHeader className="bg-premium-muted border-b border-protocall-premium-light">
-            <CardTitle className="flex items-center gap-2 text-protocall-blue">
+            <CardTitle className="flex items-center gap-2 text-primary">
               <Shield className="w-5 h-5" />
               Basic Tier Features ({featuresByTier.basic.length})
             </CardTitle>
@@ -466,7 +466,7 @@ export default function FeatureManager({ permissions }) {
             <Button
               onClick={handleSave}
               disabled={isSaving || !formData.feature_key || !formData.feature_name}
-              className="bg-protocall-blue hover:bg-protocall-blue"
+              className="bg-primary hover:bg-primary"
             >
               {isSaving ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />

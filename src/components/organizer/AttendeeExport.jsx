@@ -132,7 +132,7 @@ export default function AttendeeExport({ event, tickets, attendees, checkIns }) 
           <div className="space-y-6">
             <Card className="bg-premium-muted border-protocall-premium-light">
               <CardContent className="p-4">
-                <h4 className="font-semibold text-protocall-blue mb-3">Include Data From:</h4>
+                <h4 className="font-semibold text-primary mb-3">Include Data From:</h4>
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <Checkbox
@@ -214,7 +214,7 @@ export default function AttendeeExport({ event, tickets, attendees, checkIns }) 
               <Button type="button" variant="outline" onClick={() => setShowExportModal(false)}>
                 Cancel
               </Button>
-              <Button onClick={exportToCSV} className="bg-buy hover:bg-buy">
+              <Button onClick={exportToCSV} className="bg-buy text-buy-foreground hover:bg-buy-soft">
                 <Download className="w-4 h-4 mr-2" />
                 Export to CSV
               </Button>

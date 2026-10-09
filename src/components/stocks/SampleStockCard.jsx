@@ -193,20 +193,20 @@ export default function SampleStockCard() {
           {/* Action Buttons */}
           <div className="grid grid-cols-3 gap-2">
             <Link to={createPageUrl("ChatRooms")}>
-              <Button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg">
+              <Button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-surface-2 text-primary hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg">
                 <MessageSquare className="w-3 h-3" />
                 Chat
               </Button>
             </Link>
             <Link to={createPageUrl("Polls")}>
-              <Button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg">
+              <Button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-surface-2 text-primary hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg">
                 <BarChart3 className="w-3 h-3" />
                 Poll
               </Button>
             </Link>
             <Button
               onClick={() => setShowAlertModal(true)}
-              className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg relative">
+              className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl font-semibold text-sm shadow-md transition-all duration-300 bg-surface-2 text-primary hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg relative">
               <Bell className="w-3 h-3" />
               Alert
               {/* Sample alert badge */}

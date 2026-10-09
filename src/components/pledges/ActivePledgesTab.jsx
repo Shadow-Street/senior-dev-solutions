@@ -10,8 +10,8 @@ const ActivePledgesTab = ({ sessions, pledges, stockPrices, onPledge, onPay, onR
   const sessionStatusConfig = {
     active: { label: 'Pledging Open', color: 'bg-buy-muted text-buy-muted-foreground' },
     closed: { label: 'Pledging Closed', color: 'bg-hold-muted text-hold-muted-foreground' },
-    executing: { label: 'Executing...', color: 'bg-premium-muted text-protocall-blue animate-pulse' },
-    awaiting_sell_execution: { label: 'Buy Order Executed', color: 'bg-premium-muted text-protocall-blue font-semibold' },
+    executing: { label: 'Executing...', color: 'bg-premium-muted text-primary animate-pulse' },
+    awaiting_sell_execution: { label: 'Buy Order Executed', color: 'bg-premium-muted text-primary font-semibold' },
     completed: { label: 'Completed', color: 'bg-surface-2 text-foreground' },
     cancelled: { label: 'Cancelled', color: 'bg-sell-muted text-sell-muted-foreground' },
   };
@@ -84,7 +84,7 @@ const ActivePledgesTab = ({ sessions, pledges, stockPrices, onPledge, onPay, onR
               </div>
 
               {session.status === 'awaiting_sell_execution' && (
-                <div className="mt-4 text-sm text-protocall-blue p-3 bg-premium-muted rounded-lg border border-protocall-premium-light">
+                <div className="mt-4 text-sm text-primary p-3 bg-premium-muted rounded-lg border border-protocall-premium-light">
                   <p className="font-semibold">Your buy order for this pledge is complete.</p>
                   <p className="text-xs mt-1">The sell order will be executed by the admin based on market conditions. Monitor the 'Executed' tab for final P/L results once the cycle is finished.</p>
                 </div>

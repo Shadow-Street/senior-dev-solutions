@@ -54,7 +54,7 @@ export default function RefundRequestSection({ ticket, event, user, onRefundRequ
         );
       case 'processing':
         return (
-          <Badge className="bg-premium-muted text-protocall-blue border-protocall-premium-light">
+          <Badge className="bg-premium-muted text-primary border-protocall-premium-light">
             <Clock className="w-3 h-3 mr-1" />
             Processing Refund
           </Badge>
@@ -114,9 +114,9 @@ export default function RefundRequestSection({ ticket, event, user, onRefundRequ
     <>
       <div className="mt-4 p-3 bg-premium-muted border border-protocall-premium-light rounded-lg">
         <div className="flex items-start gap-2 mb-2">
-          <AlertCircle className="w-4 h-4 text-protocall-blue mt-0.5" />
+          <AlertCircle className="w-4 h-4 text-primary mt-0.5" />
           <div className="flex-1">
-            <p className="text-sm text-protocall-blue mb-2">
+            <p className="text-sm text-primary mb-2">
               Since you've updated your RSVP to <strong>"No"</strong>, you can request a refund for your ticket.
             </p>
             <Button

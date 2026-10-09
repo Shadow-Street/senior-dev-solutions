@@ -249,7 +249,7 @@ export default function ProcessRefundModal({ refund, currentUser, onClose, onSuc
               parseFloat(refundAmount) <= 0 || 
               parseFloat(refundAmount) > refund.original_amount
             }
-            className="bg-buy hover:bg-buy"
+            className="bg-buy text-buy-foreground hover:bg-buy-soft"
           >
             {isProcessing && action === 'approve' ? (
               <>

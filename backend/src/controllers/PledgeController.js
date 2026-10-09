@@ -34,7 +34,7 @@ class PledgeController {
       return res.status(200).json(pledges);
     } catch (error) {
       console.error("List pledges error:", error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -43,13 +43,15 @@ class PledgeController {
       const { id } = req.params;
       const updates = req.body;
 
-      const [updated] = await Pledge.update(updates, {
-        where: { id }
-      });
-
-      if (!updated) {
+      // Sequelize's affected-row count is 0 both when the record is missing and
+      // when the new values equal the stored ones, so treating 0 as 'not found'
+      // turned every no-op save into a 404. Check existence, then update.
+      const existingPledge = await Pledge.findByPk(id);
+      if (!existingPledge) {
         return res.status(404).json({ error: "Pledge not found" });
       }
+
+      await Pledge.update(updates, { where: { id } });
 
       const pledge = await Pledge.findByPk(id);
       return res.status(200).json(pledge);
@@ -88,7 +90,7 @@ class PledgeController {
       return res.status(200).json(sessions);
     } catch (error) {
       console.error("List sessions error:", error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -97,13 +99,15 @@ class PledgeController {
       const { id } = req.params;
       const updates = req.body;
 
-      const [updated] = await PledgeSession.update(updates, {
-        where: { id }
-      });
-
-      if (!updated) {
+      // Sequelize's affected-row count is 0 both when the record is missing and
+      // when the new values equal the stored ones, so treating 0 as 'not found'
+      // turned every no-op save into a 404. Check existence, then update.
+      const existingSession = await PledgeSession.findByPk(id);
+      if (!existingSession) {
         return res.status(404).json({ error: "Session not found" });
       }
+
+      await PledgeSession.update(updates, { where: { id } });
 
       const session = await PledgeSession.findByPk(id);
       return res.status(200).json(session);
@@ -142,7 +146,7 @@ class PledgeController {
       return res.status(200).json(records);
     } catch (error) {
       console.error("List execution records error:", error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -178,7 +182,7 @@ class PledgeController {
       return res.status(200).json(requests);
     } catch (error) {
       console.error("List access requests error:", error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 }

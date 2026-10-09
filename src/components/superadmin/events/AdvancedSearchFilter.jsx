@@ -76,7 +76,7 @@ export default function AdvancedSearchFilter({
       id: 'upcoming',
       name: 'Upcoming Events',
       icon: Clock,
-      color: 'bg-premium-muted text-protocall-blue hover:bg-premium-muted',
+      color: 'bg-premium-muted text-primary hover:bg-premium-muted',
       filters: { status: 'approved', dateFrom: new Date() }
     },
     {
@@ -111,7 +111,7 @@ export default function AdvancedSearchFilter({
       id: 'popular',
       name: 'Popular (50+ Attendees)',
       icon: TrendingUp,
-      color: 'bg-premium-muted text-protocall-blue hover:bg-premium-muted',
+      color: 'bg-premium-muted text-primary hover:bg-premium-muted',
       filters: { attendeeMin: '50' }
     }
   ];
@@ -343,7 +343,7 @@ export default function AdvancedSearchFilter({
           <CardHeader className="bg-surface-2">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
-                <Filter className="w-5 h-5 text-protocall-blue" />
+                <Filter className="w-5 h-5 text-primary" />
                 Advanced Filters
               </CardTitle>
               <Button
@@ -576,8 +576,8 @@ export default function AdvancedSearchFilter({
               <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4 mt-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Filter className="w-4 h-4 text-protocall-blue" />
-                    <span className="text-sm font-semibold text-protocall-blue">
+                    <Filter className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-semibold text-primary">
                       {activeFiltersCount} filter{activeFiltersCount > 1 ? 's' : ''} active
                     </span>
                   </div>

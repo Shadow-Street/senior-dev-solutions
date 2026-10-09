@@ -85,7 +85,7 @@ export default function NewsPage() {
 
   const getCategoryColor = (category) => {
     switch(category) {
-      case 'earnings': return 'bg-premium-muted text-protocall-blue';
+      case 'earnings': return 'bg-premium-muted text-primary';
       case 'regulation': return 'bg-premium-muted text-protocall-premium-text';
       case 'sector': return 'bg-hold-muted text-hold-muted-foreground';
       case 'market': return 'bg-buy-muted text-buy-muted-foreground';
@@ -105,7 +105,7 @@ export default function NewsPage() {
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Newspaper className="w-8 h-8 text-protocall-blue" />
+            <Newspaper className="w-8 h-8 text-primary" />
             <h1 className="text-4xl font-bold bg-gradient-to-r from-protocall-deep to-protocall-blue bg-clip-text text-transparent">
               Market News
             </h1>

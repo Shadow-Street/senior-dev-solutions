@@ -68,7 +68,7 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
       {/* Search Bar with enhanced design */}
       <div className="flex gap-2">
         <div className="relative flex-1 group">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 group-focus-within:text-protocall-blue transition-colors" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 group-focus-within:text-primary transition-colors" />
           <Input
             placeholder="Search messages..."
             value={searchTerm}
@@ -107,7 +107,7 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
                     exit={{ scale: 0 }}
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   >
-                    <Badge className="ml-2 bg-protocall-blue text-white h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs shadow-md">
+                    <Badge className="ml-2 bg-primary text-white h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs shadow-md">
                       {activeFilterCount}
                     </Badge>
                   </motion.div>

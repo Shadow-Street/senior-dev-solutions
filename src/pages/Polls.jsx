@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import StatTile from "@/components/common/StatTile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -322,54 +323,36 @@ export default function Polls() {
           </div>
         </div>
 
+        {/* Four distinct tones, matching the Dashboard and Portfolio rows.
+            Three of these were previously the same purple, and the labels used
+            text-white/80 — an opacity that drops the contrast below the 4.5:1
+            floor on the lighter fills. StatTile keeps the text at full white
+            and takes its hierarchy from size and weight instead. */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="border-0 bg-protocall-blue text-white shadow-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-white/80">Polls Voted</p>
-                  <p className="text-xl font-bold">{userStats.pollsVoted}</p>
-                </div>
-                <Check className="w-6 h-6 text-white/80" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 bg-buy text-buy-foreground shadow-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-buy-foreground/75">Active Participants</p>
-                  <p className="text-xl font-bold">{userStats.activeParticipants}</p>
-                </div>
-                <Users className="w-6 h-6 text-buy-foreground/70" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 bg-primary text-primary-foreground shadow-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-white/80">My Won Polls</p>
-                  <p className="text-xl font-bold">{userStats.wonPolls}</p>
-                </div>
-                <Star className="w-6 h-6 text-white/80" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 bg-protocall-deep text-white shadow-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-white/80">Success Rate</p>
-                  <p className="text-xl font-bold">{userStats.successRate}%</p>
-                </div>
-                <Award className="w-6 h-6 text-white/80" />
-              </div>
-            </CardContent>
-          </Card>
+          <StatTile
+            title="Polls Voted"
+            value={userStats.pollsVoted}
+            icon={Check}
+            tone="purple"
+          />
+          <StatTile
+            title="Active Participants"
+            value={userStats.activeParticipants}
+            icon={Users}
+            tone="green"
+          />
+          <StatTile
+            title="My Won Polls"
+            value={userStats.wonPolls}
+            icon={Star}
+            tone="blue"
+          />
+          <StatTile
+            title="Success Rate"
+            value={`${userStats.successRate}%`}
+            icon={Award}
+            tone="orange"
+          />
         </div>
 
         <div className="bg-card rounded-xl shadow-sm border border-border p-4 space-y-4">
@@ -412,7 +395,7 @@ export default function Polls() {
                 size="sm"
                 className={`h-9 px-4 rounded-full font-semibold transition-all duration-200 flex items-center gap-2 ${filter === filterOption.value
                   ? `bg-gradient-to-r ${filterOption.color} text-white shadow-lg scale-105`
-                  : 'bg-background text-protocall-blue hover:from-surface-2 hover:to-surface-2'
+                  : 'bg-background text-primary hover:from-surface-2 hover:to-surface-2'
                   }`}
               >
                 <filterOption.icon className="w-4 h-4" />
@@ -424,7 +407,7 @@ export default function Polls() {
 
         {/* Loading State */}
         {isLoading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <PollCardSkeleton key={i} />
             ))}
@@ -451,8 +434,12 @@ export default function Polls() {
         )}
 
         {/* Polls Grid */}
+        {/* items-start: a cell that also carries an ad is much taller than a
+            plain poll, and with the default stretch it dragged every card in
+            that row to the same height, leaving a large empty band inside the
+            shorter ones. Each cell now takes the height it needs. */}
         {!isLoading && filteredPolls.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             {filteredPolls.map((poll) => (
               <PollCard
                 key={poll.id}

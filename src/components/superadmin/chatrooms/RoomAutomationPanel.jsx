@@ -162,7 +162,7 @@ export default function RoomAutomationPanel({ adminUser }) {
   };
 
   const scheduleTypeConfig = {
-    announcement: { icon: MessageSquare, color: 'text-protocall-blue', label: 'Announcement' },
+    announcement: { icon: MessageSquare, color: 'text-primary', label: 'Announcement' },
     meeting: { icon: Video, color: 'text-protocall-premium-text', label: 'Meeting' },
     open_close: { icon: Clock, color: 'text-buy-muted-foreground', label: 'Open/Close' },
     read_only_toggle: { icon: Edit, color: 'text-hold-muted-foreground', label: 'Read-Only Toggle' },
@@ -173,7 +173,7 @@ export default function RoomAutomationPanel({ adminUser }) {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-lg text-subtle font-medium">Loading Automation...</p>
         </div>
       </div>

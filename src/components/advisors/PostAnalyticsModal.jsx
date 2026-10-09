@@ -1,3 +1,4 @@
+import apiClient from '@/lib/apiClient';
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Card, CardContent } from '@/components/ui/card';
@@ -16,11 +17,10 @@ import {
   XCircle,
   Calendar
 } from 'lucide-react';
-import { AdvisorSubscription } from '@/lib/apiClient';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 
-export default function PostAnalyticsModal({ open, onClose, post, advisorId }) {
+export default function PostAnalyticsModal({ open, onClose, post }) {
   const [viewers, setViewers] = useState([]);
   const [subscribers, setSubscribers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -45,11 +45,13 @@ export default function PostAnalyticsModal({ open, onClose, post, advisorId }) {
   const loadAnalytics = async () => {
     setIsLoading(true);
     try {
-      // Get all subscribers
-      const allSubscribers = await AdvisorSubscription.filter({
-        advisor_id: advisorId
-      });
-      setSubscribers(allSubscribers);
+      // Subscribers to this advisor's own plans. The generic subscription CRUD
+      // is scoped to the caller's own rows, so this uses the advisor-scoped
+      // endpoint instead.
+      const { data: allSubscribers } = await apiClient.get(
+        '/advisors/subscriptions/my-subscribers'
+      );
+      setSubscribers(Array.isArray(allSubscribers) ? allSubscribers : []);
 
       // Parse unique viewers from post
       const uniqueViewerIds = post.unique_viewers || [];
@@ -130,7 +132,7 @@ export default function PostAnalyticsModal({ open, onClose, post, advisorId }) {
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-protocall-blue" />
+            <Users className="w-5 h-5 text-primary" />
             Post Analytics: {post.title}
           </DialogTitle>
         </DialogHeader>
@@ -139,7 +141,7 @@ export default function PostAnalyticsModal({ open, onClose, post, advisorId }) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <Card className="border-protocall-premium-light bg-premium-muted">
             <CardContent className="p-4 text-center">
-              <div className="text-3xl font-bold text-protocall-blue">{stats.totalViews}</div>
+              <div className="text-3xl font-bold text-primary">{stats.totalViews}</div>
               <div className="text-xs text-subtle mt-1">Total Views</div>
             </CardContent>
           </Card>

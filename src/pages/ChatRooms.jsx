@@ -196,7 +196,7 @@ export default function ChatRooms() {
                 onClick={() => setFilter(filterOption.value)}
                 variant="ghost"
                 className={`h-9 rounded-full font-medium transition-all duration-300 px-4 ${filter === filterOption.value
-                  ? 'bg-protocall-blue text-white shadow-md hover:bg-protocall-blue'
+                  ? 'bg-primary text-white shadow-md hover:bg-primary'
                   : 'bg-white text-subtle hover:bg-surface-2 hover:text-foreground shadow-sm border border-border'
                   }`}
               >
@@ -250,7 +250,7 @@ export default function ChatRooms() {
                 : "Be the first to create a chat room!"}
             </p>
             {chatRooms.length === 0 && (
-              <Button onClick={() => setShowCreateModal(true)} className="bg-primary hover:bg-protocall-blue">
+              <Button onClick={() => setShowCreateModal(true)} className="bg-primary hover:bg-primary">
                 <Plus className="w-4 h-4 mr-2" />
                 Create First Room
               </Button>

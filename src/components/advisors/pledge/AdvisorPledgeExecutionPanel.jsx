@@ -63,7 +63,7 @@ export default function AdvisorPledgeExecutionPanel({ user, advisorProfile, acce
 
   const getStatusBadge = (status) => {
     const config = {
-      'approved': { color: 'bg-premium-muted text-protocall-blue', text: 'Approved - Ready to Start' },
+      'approved': { color: 'bg-premium-muted text-primary', text: 'Approved - Ready to Start' },
       'active': { color: 'bg-buy-muted text-buy-muted-foreground', text: 'Active - Accepting Pledges' },
       'executing': { color: 'bg-premium-muted text-protocall-premium-text', text: 'Executing Trades' },
       'awaiting_sell_execution': { color: 'bg-hold-muted text-hold-muted-foreground', text: 'Awaiting Sell Execution' },
@@ -76,7 +76,7 @@ export default function AdvisorPledgeExecutionPanel({ user, advisorProfile, acce
   if (isLoading) {
     return (
       <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
       </div>
     );
   }
@@ -84,8 +84,8 @@ export default function AdvisorPledgeExecutionPanel({ user, advisorProfile, acce
   return (
     <div className="space-y-6">
       <Alert className="bg-premium-muted border-protocall-premium-light">
-        <AlertCircle className="h-4 w-4 text-protocall-blue" />
-        <AlertDescription className="text-protocall-blue">
+        <AlertCircle className="h-4 w-4 text-primary" />
+        <AlertDescription className="text-primary">
           <strong>Execution Authority:</strong> Only SuperAdmin can execute trades.
           Once SuperAdmin approves and executes your sessions, you'll earn your commission automatically.
         </AlertDescription>
@@ -138,7 +138,7 @@ export default function AdvisorPledgeExecutionPanel({ user, advisorProfile, acce
 
                   {session.status === 'approved' && (
                     <div className="mt-4 p-3 bg-premium-muted border border-protocall-premium-light rounded-lg">
-                      <p className="text-sm text-protocall-blue">
+                      <p className="text-sm text-primary">
                         ✅ Session approved! SuperAdmin will execute when market conditions are optimal.
                       </p>
                     </div>

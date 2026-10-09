@@ -121,7 +121,7 @@ export default function VideoCard({ video, influencer, canAccessPremium }) {
           ) : (
             <Button 
               onClick={handleWatch}
-              className="w-full bg-protocall-blue hover:bg-protocall-blue"
+              className="w-full bg-primary hover:bg-primary"
             >
               <Play className="w-4 h-4 mr-2" />
               Watch Now

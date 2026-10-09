@@ -45,7 +45,7 @@ export default function LiveSessionStats({ session, stats }) {
       {/* Live Stats */}
       <div className="grid grid-cols-3 gap-4 mt-3">
         <div className="flex items-center gap-2">
-          <Users className="w-4 h-4 text-protocall-blue" />
+          <Users className="w-4 h-4 text-primary" />
           <div>
             <p className="text-xs text-muted-foreground">Pledgers</p>
             <p className="text-sm font-semibold text-foreground">

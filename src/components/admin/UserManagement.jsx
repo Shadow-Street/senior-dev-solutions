@@ -76,7 +76,7 @@ export default function UserManagement({ users, currentUser, onUserUpdated }) {
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7">
                 <CardTitle className="text-xl font-bold flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-protocall-blue" />
+                    <Shield className="w-5 h-5 text-primary" />
                     User Management
                 </CardTitle>
                 <div className="flex gap-2">
@@ -153,7 +153,7 @@ export default function UserManagement({ users, currentUser, onUserUpdated }) {
                                         <tr key={user.id} className="hover:bg-surface-2/50 transition-colors">
                                             <td className="px-4 py-3">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 rounded-full bg-premium-muted flex items-center justify-center text-protocall-blue font-bold text-xs">
+                                                    <div className="w-8 h-8 rounded-full bg-premium-muted flex items-center justify-center text-primary font-bold text-xs">
                                                         {user.display_name?.[0]?.toUpperCase() || 'U'}
                                                     </div>
                                                     <div>
@@ -200,7 +200,7 @@ export default function UserManagement({ users, currentUser, onUserUpdated }) {
                                                             {user.is_premium ? 'Remove Premium' : 'Grant Premium'}
                                                         </DropdownMenuItem>
                                                         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                                            <Edit className="w-4 h-4 mr-2 text-protocall-blue" />
+                                                            <Edit className="w-4 h-4 mr-2 text-primary" />
                                                             <Select onValueChange={(val) => handleRoleChange(user.id, val)}>
                                                                 <SelectTrigger className="border-0 h-6 p-0 focus:ring-0">
                                                                     <SelectValue placeholder="Change Role" />

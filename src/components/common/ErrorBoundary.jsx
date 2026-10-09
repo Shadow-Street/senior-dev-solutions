@@ -64,7 +64,7 @@ class ErrorBoundary extends React.Component {
         return (
           <div className="flex items-center justify-center min-h-[400px] p-6">
             <div className="text-center space-y-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
               <p className="text-subtle">Recovering from error... Attempt {errorCount}/2</p>
             </div>
           </div>

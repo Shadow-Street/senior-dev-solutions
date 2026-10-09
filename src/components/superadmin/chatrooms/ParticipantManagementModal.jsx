@@ -241,7 +241,7 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
   const roleConfig = {
     admin: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Admin', icon: Shield },
     moderator: { color: 'bg-premium-muted text-protocall-premium-text', label: 'Moderator', icon: Shield },
-    member: { color: 'bg-premium-muted text-protocall-blue', label: 'Member', icon: Users }
+    member: { color: 'bg-premium-muted text-primary', label: 'Member', icon: Users }
   };
 
   return (
@@ -249,7 +249,7 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-protocall-blue" />
+            <Users className="w-5 h-5 text-primary" />
             Participant Management - {chatRoom?.name}
           </DialogTitle>
           <DialogDescription>
@@ -261,8 +261,8 @@ export default function ParticipantManagementModal({ open, onClose, chatRoom, ad
           {/* Stats */}
           <div className="grid grid-cols-4 gap-3">
             <div className="bg-premium-muted p-3 rounded-lg">
-              <p className="text-xs text-protocall-blue">Total Participants</p>
-              <p className="text-xl font-bold text-protocall-blue">{participants.length}</p>
+              <p className="text-xs text-primary">Total Participants</p>
+              <p className="text-xl font-bold text-primary">{participants.length}</p>
             </div>
             <div className="bg-premium-muted p-3 rounded-lg">
               <p className="text-xs text-protocall-premium-text">Moderators</p>

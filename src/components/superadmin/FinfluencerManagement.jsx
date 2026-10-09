@@ -276,7 +276,7 @@ export default function FinfluencerManagement() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -303,7 +303,7 @@ export default function FinfluencerManagement() {
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'overview'
                 ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
-                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
+                : 'bg-surface-2 text-primary hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">
@@ -321,7 +321,7 @@ export default function FinfluencerManagement() {
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'pricing'
                 ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
-                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
+                : 'bg-surface-2 text-primary hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">
@@ -339,7 +339,7 @@ export default function FinfluencerManagement() {
             <Card className={`w-full border-0 rounded-full transition-all duration-300 ${
               activeTab === 'payouts'
                 ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg' 
-                : 'bg-surface-2 text-protocall-blue hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
+                : 'bg-surface-2 text-primary hover:from-surface-2 hover:to-surface-2 hover:shadow-md'
             }`}>
               <CardContent className="p-2.5">
                 <div className="flex items-center gap-2 justify-center">
@@ -415,7 +415,7 @@ export default function FinfluencerManagement() {
                       ₹{Object.values(finfluencerStats).reduce((sum, stat) => sum + (stat?.totalEarnings || 0), 0).toLocaleString()}
                     </p>
                   </div>
-                  <DollarSign className="w-8 h-8 text-protocall-blue" />
+                  <DollarSign className="w-8 h-8 text-primary" />
                 </div>
               </CardContent>
             </Card>
@@ -440,7 +440,7 @@ export default function FinfluencerManagement() {
                           <h3 className="text-xl font-bold text-foreground">{finfluencer.display_name}</h3>
                           {getStatusBadge(finfluencer.status)}
                           {finfluencer.verified && (
-                            <Badge className="bg-premium-muted text-protocall-blue border-0">
+                            <Badge className="bg-premium-muted text-primary border-0">
                               <CheckCircle className="w-3 h-3 mr-1" />
                               Verified
                             </Badge>
@@ -452,13 +452,13 @@ export default function FinfluencerManagement() {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                           <div className="bg-premium-muted rounded-lg p-3">
                             <div className="flex items-center gap-2 mb-1">
-                              <FileText className="w-4 h-4 text-protocall-blue" />
-                              <p className="text-xs text-protocall-blue font-medium">Courses</p>
+                              <FileText className="w-4 h-4 text-primary" />
+                              <p className="text-xs text-primary font-medium">Courses</p>
                             </div>
-                            <p className="text-lg font-bold text-protocall-blue">
+                            <p className="text-lg font-bold text-primary">
                               {stats.activeCourses || 0} / {stats.totalCourses || 0}
                             </p>
-                            <p className="text-xs text-protocall-blue">Active / Total</p>
+                            <p className="text-xs text-primary">Active / Total</p>
                           </div>
 
                           <div className="bg-buy-muted rounded-lg p-3">
@@ -502,7 +502,7 @@ export default function FinfluencerManagement() {
                         <Button
                           variant="outline"
                           onClick={() => openDetailsModal(finfluencer)}
-                          className="text-protocall-blue border-protocall-blue hover:bg-premium-muted"
+                          className="text-primary border-primary hover:bg-premium-muted"
                         >
                           <Eye className="w-4 h-4 mr-2" />
                           View Details
@@ -510,7 +510,7 @@ export default function FinfluencerManagement() {
 
                         {finfluencer.status === 'pending' && (
                           <>
-                            <Button onClick={() => handleStatusChange(finfluencer.id, 'approved')} className="bg-buy hover:bg-buy">
+                            <Button onClick={() => handleStatusChange(finfluencer.id, 'approved')} className="bg-buy text-buy-foreground hover:bg-buy-soft">
                               <CheckCircle className="w-4 h-4 mr-2" />
                               Approve
                             </Button>
@@ -529,7 +529,7 @@ export default function FinfluencerManagement() {
                         )}
 
                         {finfluencer.status === 'suspended' && (
-                          <Button onClick={() => handleStatusChange(finfluencer.id, 'approved')} className="bg-buy hover:bg-buy">
+                          <Button onClick={() => handleStatusChange(finfluencer.id, 'approved')} className="bg-buy text-buy-foreground hover:bg-buy-soft">
                             <CheckCircle className="w-4 h-4 mr-2" />
                             Reactivate
                           </Button>
@@ -541,7 +541,7 @@ export default function FinfluencerManagement() {
                             setSelectedFinfluencer(finfluencer);
                             setShowDetailsModal(false);
                           }}
-                          className="text-protocall-blue border-protocall-blue hover:bg-premium-muted"
+                          className="text-primary border-primary hover:bg-premium-muted"
                         >
                           <BarChart3 className="w-4 h-4 mr-2" />
                           Analytics
@@ -672,7 +672,7 @@ function FinfluencerDetailsModal({ finfluencer, stats, onClose, reviewNotes, set
 
         {isLoading ? (
           <div className="flex items-center justify-center p-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
         ) : (
           <div className="space-y-6">
@@ -718,9 +718,9 @@ function FinfluencerDetailsModal({ finfluencer, stats, onClose, reviewNotes, set
               </CardHeader>
               <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-premium-muted p-3 rounded-lg">
-                  <FileText className="w-5 h-5 text-protocall-blue mb-2" />
-                  <p className="text-xs text-protocall-blue">Total Courses</p>
-                  <p className="text-2xl font-bold text-protocall-blue">{stats?.totalCourses || 0}</p>
+                  <FileText className="w-5 h-5 text-primary mb-2" />
+                  <p className="text-xs text-primary">Total Courses</p>
+                  <p className="text-2xl font-bold text-primary">{stats?.totalCourses || 0}</p>
                 </div>
                 <div className="bg-buy-muted p-3 rounded-lg">
                   <Users className="w-5 h-5 text-buy-muted-foreground mb-2" />
@@ -807,7 +807,7 @@ function FinfluencerDetailsModal({ finfluencer, stats, onClose, reviewNotes, set
                   Reject Application
                 </Button>
                 <Button
-                  className="bg-buy hover:bg-buy"
+                  className="bg-buy text-buy-foreground hover:bg-buy-soft"
                   onClick={() => handleStatusChange(finfluencer.id, 'approved')}
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
@@ -838,7 +838,7 @@ function FinfluencerDetailsModal({ finfluencer, stats, onClose, reviewNotes, set
                   Close
                 </Button>
                 <Button
-                  className="bg-buy hover:bg-buy"
+                  className="bg-buy text-buy-foreground hover:bg-buy-soft"
                   onClick={() => handleStatusChange(finfluencer.id, 'approved')}
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
@@ -896,7 +896,7 @@ function FinfluencerAnalyticsModal({ finfluencer, stats, onClose }) {
         <CardContent className="p-6">
           {isLoading ? (
             <div className="flex items-center justify-center p-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
           ) : (
             <Tabs defaultValue="overview" className="w-full">
@@ -910,9 +910,9 @@ function FinfluencerAnalyticsModal({ finfluencer, stats, onClose }) {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <Card className="bg-premium-muted">
                     <CardContent className="p-4">
-                      <FileText className="w-6 h-6 text-protocall-blue mb-2" />
-                      <p className="text-2xl font-bold text-protocall-blue">{stats?.totalCourses || 0}</p>
-                      <p className="text-xs text-protocall-blue">Total Courses</p>
+                      <FileText className="w-6 h-6 text-primary mb-2" />
+                      <p className="text-2xl font-bold text-primary">{stats?.totalCourses || 0}</p>
+                      <p className="text-xs text-primary">Total Courses</p>
                     </CardContent>
                   </Card>
 
@@ -985,7 +985,7 @@ function FinfluencerAnalyticsModal({ finfluencer, stats, onClose }) {
                           </p>
                         </div>
                         <div className="text-right">
-                          <Badge className={enrollment.enrollment_status === 'completed' ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-premium-muted text-protocall-blue'}>
+                          <Badge className={enrollment.enrollment_status === 'completed' ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-premium-muted text-primary'}>
                             {enrollment.enrollment_status}
                           </Badge>
                           {enrollment.rating && (
@@ -1057,7 +1057,7 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
   const getStatusBadge = (status) => {
     const config = {
       pending: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending' },
-      approved: { color: 'bg-premium-muted text-protocall-blue', label: 'Approved' },
+      approved: { color: 'bg-premium-muted text-primary', label: 'Approved' },
       processed: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Processed' },
       rejected: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Rejected' }
     };
@@ -1068,7 +1068,7 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -1080,11 +1080,11 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-protocall-blue font-semibold mb-1">Gross Earnings</p>
-                <p className="text-3xl font-bold text-protocall-blue">₹{totalGrossEarnings.toLocaleString()}</p>
-                <p className="text-xs text-protocall-blue mt-1">Total course revenue</p>
+                <p className="text-sm text-primary font-semibold mb-1">Gross Earnings</p>
+                <p className="text-3xl font-bold text-primary">₹{totalGrossEarnings.toLocaleString()}</p>
+                <p className="text-xs text-primary mt-1">Total course revenue</p>
               </div>
-              <DollarSign className="w-12 h-12 text-protocall-blue opacity-70" />
+              <DollarSign className="w-12 h-12 text-primary opacity-70" />
             </div>
           </CardContent>
         </Card>
@@ -1124,7 +1124,7 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
                 <p className="text-sm text-subtle">Total Requests</p>
                 <p className="text-2xl font-bold">{safePayoutRequests.length}</p>
               </div>
-              <Wallet className="w-8 h-8 text-protocall-blue" />
+              <Wallet className="w-8 h-8 text-primary" />
             </div>
           </CardContent>
         </Card>
@@ -1146,7 +1146,7 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
                 <p className="text-sm text-subtle">Approved</p>
                 <p className="text-2xl font-bold">₹{totalApproved.toLocaleString()}</p>
               </div>
-              <CheckCircle className="w-8 h-8 text-protocall-blue" />
+              <CheckCircle className="w-8 h-8 text-primary" />
             </div>
           </CardContent>
         </Card>
@@ -1219,7 +1219,7 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
                           </div>
                           {payout.admin_notes && (
                             <div className="mt-3 p-3 bg-premium-muted rounded-lg">
-                              <p className="text-xs text-protocall-blue font-medium">Admin Notes:</p>
+                              <p className="text-xs text-primary font-medium">Admin Notes:</p>
                               <p className="text-sm text-subtle">{payout.admin_notes}</p>
                             </div>
                           )}

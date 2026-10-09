@@ -136,7 +136,7 @@ export default function NotificationBell({ user }) {
           <CardHeader className="border-b border-border pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Bell className="w-5 h-5 text-protocall-blue" />
+                <Bell className="w-5 h-5 text-primary" />
                 Notifications
                 {unreadCount > 0 && (
                   <Badge className="bg-sell-muted text-sell-muted-foreground">{unreadCount} new</Badge>
@@ -154,7 +154,7 @@ export default function NotificationBell({ user }) {
           <CardContent className="p-0">
             {isLoading ? (
               <div className="flex items-center justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
               </div>
             ) : notifications.length === 0 ? (
               <div className="py-12 text-center text-muted-foreground">
@@ -169,7 +169,7 @@ export default function NotificationBell({ user }) {
                       onClick={handleMarkAllAsRead}
                       variant="ghost"
                       size="sm"
-                      className="w-full text-protocall-blue hover:text-protocall-blue hover:bg-premium-muted"
+                      className="w-full text-primary hover:text-primary hover:bg-premium-muted"
                     >
                       <Check className="w-4 h-4 mr-2" />
                       Mark all as read

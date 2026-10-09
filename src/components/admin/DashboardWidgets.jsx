@@ -5,7 +5,7 @@ import { ArrowUp, ArrowDown } from 'lucide-react';
 
 export const StatCard = ({ title, value, icon: Icon, trend, trendValue, color = "blue" }) => {
     const colorClasses = {
-        blue: "bg-premium-muted text-protocall-blue",
+        blue: "bg-premium-muted text-primary",
         purple: "bg-premium-muted text-protocall-premium-text",
         green: "bg-buy-muted text-buy-muted-foreground",
         red: "bg-sell-muted text-sell-muted-foreground",

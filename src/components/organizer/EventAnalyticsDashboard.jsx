@@ -252,11 +252,11 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-protocall-ink/75 text-sm">Total Revenue</p>
+                    <p className="text-protocall-ink/85 text-sm">Total Revenue</p>
                     <p className="text-4xl font-bold mt-2">₹{(analytics.totalRevenue / 1000).toFixed(1)}k</p>
-                    <p className="text-protocall-ink/75 text-xs mt-1">Avg: ₹{Math.round(analytics.averageTicketPrice)}/ticket</p>
+                    <p className="text-protocall-ink/85 text-xs mt-1">Avg: ₹{Math.round(analytics.averageTicketPrice)}/ticket</p>
                   </div>
-                  <DollarSign className="w-12 h-12 text-protocall-ink/75" />
+                  <DollarSign className="w-12 h-12 text-protocall-ink/85" />
                 </div>
               </CardContent>
             </Card>
@@ -291,11 +291,11 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-protocall-ink/75 text-sm">Avg Rating</p>
+                    <p className="text-protocall-ink/85 text-sm">Avg Rating</p>
                     <p className="text-4xl font-bold mt-2">{analytics.averageRating.toFixed(1)}⭐</p>
-                    <p className="text-protocall-ink/75 text-xs mt-1">{analytics.totalReviews} reviews</p>
+                    <p className="text-protocall-ink/85 text-xs mt-1">{analytics.totalReviews} reviews</p>
                   </div>
-                  <Star className="w-12 h-12 text-protocall-ink/75" />
+                  <Star className="w-12 h-12 text-protocall-ink/85" />
                 </div>
               </CardContent>
             </Card>
@@ -309,7 +309,7 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
                     <p className="text-sm text-subtle">Upcoming Events</p>
                     <p className="text-2xl font-bold text-foreground">{analytics.upcomingEvents}</p>
                   </div>
-                  <Calendar className="w-8 h-8 text-protocall-blue" />
+                  <Calendar className="w-8 h-8 text-primary" />
                 </div>
               </CardContent>
             </Card>
@@ -381,7 +381,7 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
             <Card className="shadow-lg border-0 bg-white">
               <CardHeader className="border-b bg-surface-2">
                 <CardTitle className="flex items-center gap-2">
-                  <Ticket className="w-5 h-5 text-protocall-blue" />
+                  <Ticket className="w-5 h-5 text-primary" />
                   Ticket Sales Trend
                 </CardTitle>
               </CardHeader>
@@ -516,7 +516,7 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
           <Card className="shadow-lg border-0 bg-surface-2">
             <CardHeader className="border-b">
               <CardTitle className="flex items-center gap-2">
-                <Award className="w-5 h-5 text-protocall-blue" />
+                <Award className="w-5 h-5 text-primary" />
                 Performance Insights
               </CardTitle>
             </CardHeader>
@@ -537,7 +537,7 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
                 <div className="bg-white p-4 rounded-lg shadow-sm">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-10 h-10 rounded-full bg-premium-muted flex items-center justify-center">
-                      <Users className="w-5 h-5 text-protocall-blue" />
+                      <Users className="w-5 h-5 text-primary" />
                     </div>
                     <p className="font-semibold text-foreground">Audience Growth</p>
                   </div>
@@ -567,7 +567,7 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
             <CardHeader className="border-b bg-surface-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-protocall-blue" />
+                  <Activity className="w-5 h-5 text-primary" />
                   Event Activity & Audit Logs
                 </CardTitle>
                 <Badge variant="outline" className="text-subtle">
@@ -578,7 +578,7 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
             <CardContent className="p-6">
               {isLoadingLogs ? (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
                   <p className="text-subtle">Loading audit logs...</p>
                 </div>
               ) : auditLogs.length > 0 ? (
@@ -588,7 +588,7 @@ export default function EventAnalyticsDashboard({ events, tickets, attendees, st
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <div className="p-2 bg-premium-muted rounded-lg">
-                            {log.action.includes('CREATE') && <CalendarPlus className="w-4 h-4 text-protocall-blue" />}
+                            {log.action.includes('CREATE') && <CalendarPlus className="w-4 h-4 text-primary" />}
                             {log.action.includes('UPDATE') && <Edit className="w-4 h-4 text-protocall-premium-text" />}
                             {log.action.includes('DELETE') && <Trash2 className="w-4 h-4 text-sell-muted-foreground" />}
                             {log.action.includes('APPROVE') && <CheckCircle className="w-4 h-4 text-buy-muted-foreground" />}

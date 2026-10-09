@@ -31,7 +31,7 @@ export default function RealtimeNotificationBell({ userId, categories = [] }) {
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           {unreadCount > 0 ? (
-            <BellRing className="w-5 h-5 animate-pulse text-protocall-blue" />
+            <BellRing className="w-5 h-5 animate-pulse text-primary" />
           ) : (
             <Bell className="w-5 h-5" />
           )}
@@ -69,7 +69,7 @@ export default function RealtimeNotificationBell({ userId, categories = [] }) {
                   className="p-3 rounded-lg hover:bg-surface-2 cursor-pointer transition-colors border border-divider"
                 >
                   <div className="flex items-start gap-2">
-                    <div className="w-2 h-2 bg-protocall-blue rounded-full mt-2" />
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2" />
                     <div className="flex-1 min-w-0">
                       {notif.title && (
                         <h4 className="font-medium text-sm text-foreground truncate">

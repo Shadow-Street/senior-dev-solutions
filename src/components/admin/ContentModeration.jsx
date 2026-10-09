@@ -90,7 +90,7 @@ export default function ContentModeration({ polls = [], onPollUpdated, currentUs
                         variant={filterStatus === 'flagged' ? 'secondary' : 'ghost'}
                         size="sm"
                         onClick={() => setFilterStatus('flagged')}
-                        className="text-sell hover:text-sell-muted-foreground hover:bg-sell-muted"
+                        className="text-sell-muted-foreground hover:bg-sell-muted hover:text-sell-muted-foreground"
                     >Flagged</Button>
                 </div>
             </div>
@@ -163,7 +163,7 @@ export default function ContentModeration({ polls = [], onPollUpdated, currentUs
                                 <Button
                                     size="sm"
                                     variant="ghost"
-                                    className="text-sell hover:text-sell-muted-foreground hover:bg-sell-muted"
+                                    className="text-sell-muted-foreground hover:bg-sell-muted hover:text-sell-muted-foreground"
                                     onClick={() => handleAction('delete', poll)}
                                 >
                                     <Trash2 className="w-4 h-4" />

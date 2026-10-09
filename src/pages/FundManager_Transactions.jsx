@@ -35,7 +35,7 @@ function TransactionsContent() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
+        <Loader2 className="w-12 h-12 animate-spin text-primary" />
       </div>
     );
   }
@@ -75,7 +75,7 @@ function TransactionsContent() {
                       <DollarSign className={`w-5 h-5 ${
                         txn.transaction_type === 'purchase' ? 'text-buy-muted-foreground' :
                         txn.transaction_type === 'redemption' ? 'text-hold-muted-foreground' :
-                        'text-protocall-blue'
+                        'text-primary'
                       }`} />
                     </div>
                     <div>

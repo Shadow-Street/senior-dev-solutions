@@ -88,7 +88,7 @@ export default function AdvisorPledgeAnalytics({ user, advisorProfile }) {
   if (isLoading) {
     return (
       <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
       </div>
     );
   }
@@ -101,7 +101,7 @@ export default function AdvisorPledgeAnalytics({ user, advisorProfile }) {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <Target className="w-8 h-8 text-protocall-blue" />
+              <Target className="w-8 h-8 text-primary" />
               <div className="ml-4">
                 <p className="text-sm font-medium text-subtle">Total Sessions</p>
                 <p className="text-2xl font-bold text-foreground">{stats.totalSessions}</p>
@@ -149,7 +149,7 @@ export default function AdvisorPledgeAnalytics({ user, advisorProfile }) {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <Target className="w-8 h-8 text-protocall-blue" />
+              <Target className="w-8 h-8 text-primary" />
               <div className="ml-4">
                 <p className="text-sm font-medium text-subtle">Executions</p>
                 <p className="text-2xl font-bold text-foreground">{stats.totalExecutions}</p>
@@ -205,7 +205,7 @@ export default function AdvisorPledgeAnalytics({ user, advisorProfile }) {
               </div>
               <div className="w-full bg-border rounded-full h-2">
                 <div
-                  className="bg-protocall-blue h-2 rounded-full"
+                  className="bg-primary h-2 rounded-full"
                   style={{ width: `${stats.totalPledges > 0 ? (stats.totalExecutions / stats.totalPledges) * 100 : 0}%` }}
                 />
               </div>

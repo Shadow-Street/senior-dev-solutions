@@ -463,7 +463,7 @@ export default function FeaturedEventsManager({ events, onUpdate, onViewDetails 
                             </Badge>
                           )}
                           <Badge className={`text-xs ${
-                            event.status === 'approved' ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-premium-muted text-protocall-blue'
+                            event.status === 'approved' ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-premium-muted text-primary'
                           }`}>
                             {event.status}
                           </Badge>

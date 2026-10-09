@@ -82,7 +82,7 @@ exports.getPortfolio = async (req, res) => {
 
     } catch (error) {
         console.error("Error fetching portfolio:", error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
 
@@ -136,7 +136,7 @@ exports.addToPortfolio = async (req, res) => {
 
     } catch (error) {
         console.error("Error adding to portfolio:", error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
 
@@ -161,6 +161,7 @@ exports.removeFromPortfolio = async (req, res) => {
         }
 
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('[PortfolioController.js] request failed:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 };

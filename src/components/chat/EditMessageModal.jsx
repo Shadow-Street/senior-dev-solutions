@@ -91,7 +91,7 @@ export default function EditMessageModal({ open, onClose, message, onSave }) {
           <Button
             onClick={handleSave}
             disabled={isSaving || !editedContent.trim() || editedContent.length > 2000}
-            className="bg-protocall-blue hover:bg-protocall-blue"
+            className="bg-primary hover:bg-primary"
           >
             {isSaving ? (
               <>

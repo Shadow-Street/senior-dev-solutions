@@ -17,7 +17,11 @@ exports.getWatchlist = async (req, res) => {
 
         const symbols = watchlist.stocks || [];
         if (symbols.length === 0) {
-            return res.json({ ...watchlist.toJSON(), stocks: [] });
+            // Array, not a bare object: this is reached through the generic
+            // entity client as Watchlist.filter(...), whose callers index into
+            // the result. Returning an object made `list[0]` undefined and the
+            // watchlist silently stayed empty.
+            return res.json([{ ...watchlist.toJSON(), stocks: [] }]);
         }
 
         // Fetch live data
@@ -37,18 +41,21 @@ exports.getWatchlist = async (req, res) => {
             };
         });
 
-        res.json({ ...watchlist.toJSON(), stocks: enrichedStocks });
+        res.json([{ ...watchlist.toJSON(), stocks: enrichedStocks }]);
 
     } catch (error) {
         console.error("Error fetching watchlist:", error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
 
 exports.addToWatchlist = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { symbol } = req.body;
+        // Accept either spelling: the UI sends `stock_symbol`, while this
+        // endpoint originally only read `symbol`, so adding a stock always
+        // failed with 400.
+        const symbol = req.body?.symbol || req.body?.stock_symbol;
 
         if (!symbol) {
             return res.status(400).json({ error: "Symbol is required" });
@@ -79,7 +86,7 @@ exports.addToWatchlist = async (req, res) => {
 
     } catch (error) {
         console.error("Error adding to watchlist:", error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
 
@@ -106,6 +113,7 @@ exports.removeFromWatchlist = async (req, res) => {
         res.json({ message: "Stock removed from watchlist", stocks: newStocks });
 
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('[WatchlistController.js] request failed:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 };

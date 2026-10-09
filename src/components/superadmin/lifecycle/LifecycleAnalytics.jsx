@@ -62,7 +62,7 @@ export default function LifecycleAnalytics({ user }) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-protocall-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-subtle">Loading analytics...</p>
         </div>
       </div>
@@ -80,7 +80,7 @@ export default function LifecycleAnalytics({ user }) {
                 <p className="text-sm text-muted-foreground">Total Modules</p>
                 <p className="text-3xl font-bold text-foreground">{analytics.totalModules}</p>
               </div>
-              <Activity className="w-12 h-12 text-protocall-blue" />
+              <Activity className="w-12 h-12 text-primary" />
             </div>
           </CardContent>
         </Card>
@@ -114,9 +114,9 @@ export default function LifecycleAnalytics({ user }) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Recent Changes</p>
-                <p className="text-3xl font-bold text-protocall-blue">{analytics.recentChanges}</p>
+                <p className="text-3xl font-bold text-primary">{analytics.recentChanges}</p>
               </div>
-              <TrendingUp className="w-12 h-12 text-protocall-blue" />
+              <TrendingUp className="w-12 h-12 text-primary" />
             </div>
             <p className="text-xs text-muted-foreground mt-2">Last 7 days</p>
           </CardContent>

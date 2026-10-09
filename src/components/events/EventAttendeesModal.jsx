@@ -132,7 +132,7 @@ export default function EventAttendeesModal({ open, onClose, event }) { // Chang
 
         {isLoading ? (
           <div className="py-8 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
             <p className="text-subtle">Loading attendees, tickets, and check-in data...</p>
           </div>
         ) : (
@@ -228,7 +228,7 @@ export default function EventAttendeesModal({ open, onClose, event }) { // Chang
                           <div className="flex items-center gap-3">
                             {getStatusBadge(attendee.rsvp_status)}
                             {attendee.confirmed && (
-                              <Badge className="bg-premium-muted text-protocall-blue border-0">
+                              <Badge className="bg-premium-muted text-primary border-0">
                                 Admin Confirmed
                               </Badge>
                             )}
@@ -281,10 +281,10 @@ export default function EventAttendeesModal({ open, onClose, event }) { // Chang
                   />
 
                   <div className="mt-6 p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
-                    <p className="text-sm text-protocall-blue">
+                    <p className="text-sm text-primary">
                       <strong>💡 Export Tips:</strong>
                     </p>
-                    <ul className="text-sm text-protocall-blue mt-2 space-y-1 list-disc list-inside">
+                    <ul className="text-sm text-primary mt-2 space-y-1 list-disc list-inside">
                       <li>Use filters to customize your export data</li>
                       <li>Export includes all selected fields in CSV format</li>
                       <li>Perfect for email campaigns or analytics</li>

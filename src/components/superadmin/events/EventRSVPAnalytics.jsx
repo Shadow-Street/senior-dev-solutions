@@ -93,7 +93,7 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
         ['User Name', 'RSVP Status', 'Timestamp', 'Confirmed'],
         ...event.attendees.map(attendee => [
           attendee.user_name || 'N/A',
-          attendee.rsvp_status.toUpperCase(),
+          (attendee.rsvp_status || 'unknown').toUpperCase(),
           new Date(attendee.created_date).toLocaleString(),
           attendee.confirmed ? 'Yes' : 'No'
         ])
@@ -123,7 +123,7 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-protocall-blue" />
+              <Users className="w-5 h-5 text-primary" />
               <div>
                 <p className="text-sm text-subtle">Total RSVPs</p>
                 <p className="text-2xl font-bold text-foreground">{rsvpStats.total}</p>
@@ -269,7 +269,7 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
                           variant="ghost"
                           size="sm"
                           onClick={() => onViewDetails ? onViewDetails(event) : openEventDetails(event)}
-                          className="text-protocall-blue hover:text-protocall-blue hover:bg-premium-muted rounded-xl transition-all duration-300"
+                          className="text-primary hover:text-primary hover:bg-premium-muted rounded-xl transition-all duration-300"
                         >
                           <Eye className="w-4 h-4 mr-1" />
                           Details
@@ -379,7 +379,7 @@ export default function EventRSVPAnalytics({ events, attendees, currentUser, onV
                                 'bg-sell-muted text-sell-muted-foreground'
                               }
                             >
-                              {attendee.rsvp_status.toUpperCase()}
+                              {(attendee.rsvp_status || 'unknown').toUpperCase()}
                             </Badge>
                           </td>
                           <td className="p-3 text-center">

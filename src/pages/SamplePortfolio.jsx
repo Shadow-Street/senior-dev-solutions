@@ -125,7 +125,7 @@ export default function SamplePortfolio() {
           <div className="bg-white rounded-lg p-4 shadow-sm border">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-premium-muted rounded-full flex items-center justify-center">
-                <span className="text-protocall-blue font-bold text-sm">🔔</span>
+                <span className="text-primary font-bold text-sm">🔔</span>
               </div>
               <div>
                 <p className="font-semibold text-foreground">Smart Alerts</p>
@@ -201,22 +201,22 @@ export default function SamplePortfolio() {
           </div>
 
           <div className="bg-white rounded-lg p-6 shadow-sm border">
-            <h3 className="font-bold text-lg mb-4 text-protocall-blue">🔔 Smart Alerts</h3>
+            <h3 className="font-bold text-lg mb-4 text-primary">🔔 Smart Alerts</h3>
             <ul className="space-y-2 text-sm">
               <li className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-protocall-blue rounded-full"></div>
+                <div className="w-2 h-2 bg-primary rounded-full"></div>
                 Price change notifications
               </li>
               <li className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-protocall-blue rounded-full"></div>
+                <div className="w-2 h-2 bg-primary rounded-full"></div>
                 Profit/loss target alerts
               </li>
               <li className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-protocall-blue rounded-full"></div>
+                <div className="w-2 h-2 bg-primary rounded-full"></div>
                 Community consensus changes
               </li>
               <li className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-protocall-blue rounded-full"></div>
+                <div className="w-2 h-2 bg-primary rounded-full"></div>
                 Multi-channel delivery (app, email, push)
               </li>
             </ul>

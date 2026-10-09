@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import { Advisor, authAPI } from '@/lib/apiClient';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,81 +11,13 @@ import { BookUser, UserPlus, Search, Filter } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AdvisorCard from '../components/advisors/AdvisorCard';
 import { useFeatureAccess } from '../components/hooks/useFeatureAccess';
+import { useSubscription } from '../components/hooks/useSubscription';
 import { Lock, Crown } from 'lucide-react';
 import toast from 'react-hot-toast'; // Assuming react-hot-toast is used for notifications
 
-// Sample advisor data for guest mode or fallback
-const sampleAdvisors = [
-    {
-        id: 'sample-1',
-        display_name: 'Growth Guru',
-        profile_image_url: 'https://res.cloudinary.com/dtkrz40t9/image/upload/v1714571900/advisors/dummy-advisor-1.webp',
-        bio: 'Specializes in identifying high-growth stocks through in-depth fundamental analysis and sector trends. Offers long-term investment strategies.',
-        specialization: ['fundamental', 'wealth'],
-        rating: 4.7,
-        follower_count: 1850,
-        fee: 1499,
-        status: 'approved',
-    },
-    {
-        id: 'sample-2',
-        display_name: 'Market Maverick',
-        profile_image_url: 'https://res.cloudinary.com/dtkrz40t9/image/upload/v1714571900/advisors/dummy-advisor-2.webp',
-        bio: 'A master of technical charts and price action, providing precise entry and exit points for swing trading and short-term gains.',
-        specialization: ['technical', 'intraday'],
-        rating: 4.5,
-        follower_count: 1620,
-        fee: 1299,
-        status: 'approved',
-    },
-    {
-        id: 'sample-3',
-        display_name: 'Options Oracle',
-        profile_image_url: 'https://res.cloudinary.com/dtkrz40t9/image/upload/v1714571900/advisors/dummy-advisor-3.webp',
-        bio: 'Expert in options strategies, including hedging, income generation, and directional bets. Focuses on risk-adjusted returns.',
-        specialization: ['options'],
-        rating: 4.8,
-        follower_count: 2100,
-        fee: 1699,
-        status: 'approved',
-    },
-    {
-        id: 'sample-4',
-        display_name: 'Dividend Dynamo',
-        profile_image_url: 'https://res.cloudinary.com/dtkrz40t9/image/upload/v1714571900/advisors/dummy-advisor-4.webp',
-        bio: 'Helps build a robust portfolio of dividend-paying stocks for consistent passive income and long-term capital appreciation.',
-        specialization: ['fundamental', 'wealth', 'mutual'],
-        rating: 4.6,
-        follower_count: 1400,
-        fee: 1199,
-        status: 'approved',
-    },
-    {
-        id: 'sample-5',
-        display_name: 'Futures Fanatic',
-        profile_image_url: 'https://res.cloudinary.com/dtkrz40t9/image/upload/v1714571900/advisors/dummy-advisor-5.webp',
-        bio: 'Specializes in futures trading with a focus on commodities and indices. Uses quantitative models for high-probability setups.',
-        specialization: ['technical', 'intraday'],
-        rating: 4.3,
-        follower_count: 1050,
-        fee: 1399,
-        status: 'approved',
-    },
-    {
-        id: 'sample-6',
-        display_name: 'Balanced Investor',
-        profile_image_url: 'https://res.cloudinary.com/dtkrz40t9/image/upload/v1714571900/advisors/dummy-advisor-6.webp',
-        bio: 'Provides comprehensive financial planning, blending equity, debt, and mutual fund investments to achieve personalized financial goals.',
-        specialization: ['wealth', 'mutual', 'fundamental'],
-        rating: 4.9,
-        follower_count: 2300,
-        fee: 1599,
-        status: 'approved',
-    },
-];
-
 export default function Advisors() {
     const [advisors, setAdvisors] = useState([]);
+    const [advisorsError, setAdvisorsError] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [currentUser, setCurrentUser] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -95,6 +27,9 @@ export default function Advisors() {
     const [showSubscribeModal, setShowSubscribeModal] = useState(false);
 
     const { hasFeatureAccess } = useFeatureAccess('advisor_subscriptions');
+    // The page used to hardcode "no subscription", so a paying subscriber was
+    // shown the upgrade gate. Read the real state from the subscription context.
+    const subscriptionCtx = useSubscription();
 
     useEffect(() => {
         let isMounted = true;
@@ -111,55 +46,45 @@ export default function Advisors() {
             setIsLoading(true);
 
             try {
+                // `apiClient.auth` was never defined, so this threw on every load and
+                // the catch left `user` null — the page treated every visitor, including
+                // signed-in subscribers, as anonymous. authAPI.me() returns the user.
                 let user = null;
                 try {
-                    const res = await apiClient.auth.me();
-                    user = res.data;
-                } catch (error) {
-                    // console.log('User not authenticated:', error.message);
-                    user = null;
+                    user = await authAPI.me();
+                } catch {
+                    user = null;   // genuinely not signed in
                 }
 
                 if (!isMounted) return;
                 setCurrentUser(user);
 
+                // `apiClient.advisors` was never defined, so this call threw on every
+                // load, the catch swallowed it, and the page silently rendered six
+                // fabricated "SEBI verified" advisors. Use the exported entity API,
+                // and surface a real failure instead of inventing professionals: this
+                // page tells visitors every advisor shown is SEBI verified.
                 let loadedAdvisors = [];
+                let loadFailed = false;
                 try {
-                    const res = await apiClient.advisors.list({
-                        status: 'approved',
-                        limit: 50,
-                        sort: '-follower_count'
-                    });
-                    loadedAdvisors = res.data;
+                    loadedAdvisors = await Advisor.filter({ status: 'approved' }, '-follower_count', 50);
                 } catch (error) {
-                    console.log('Using sample advisors due to API error:', error.message);
-                    loadedAdvisors = [];
+                    console.error('Could not load advisors:', error);
+                    loadFailed = true;
                 }
 
                 if (!isMounted) return;
 
-                if (loadedAdvisors && loadedAdvisors.length > 0) {
-                    setAdvisors(loadedAdvisors);
-                } else {
-                    setAdvisors(sampleAdvisors);
-                }
+                setAdvisorsError(loadFailed);
+                setAdvisors(Array.isArray(loadedAdvisors) ? loadedAdvisors : []);
 
                 if (user) {
-                    if (['admin', 'super_admin'].includes(user.role)) { // normalized 'app_role' to 'role' based on User model
+                    if (['admin', 'super_admin'].includes(user.app_role || user.role)) {
                         if (isMounted) {
                             setHasSubscription(true);
                         }
-                    } else {
-                        // Check subscription via API
-                        try {
-                            // This endpoint needs to be implemented in backend or use a robust way to check
-                            // For now, we assume false unless specific logic is added
-                            // const subs = await apiClient.subscriptions.list({ user_id: user.id, status: 'active' });
-                            // setHasSubscription(subs.data.length > 0);
-                            setHasSubscription(false);
-                        } catch (error) {
-                            if (isMounted) setHasSubscription(false);
-                        }
+                    } else if (isMounted) {
+                        setHasSubscription(Boolean(subscriptionCtx?.isSubscribed));
                     }
                 } else {
                     if (isMounted) {
@@ -169,8 +94,9 @@ export default function Advisors() {
 
             } catch (error) {
                 if (isMounted) {
-                    console.log("Error during data loading, falling back to guest mode with sample data:", error.message);
-                    setAdvisors(sampleAdvisors);
+                    console.error("Error during advisor data loading:", error);
+                    setAdvisorsError(true);
+                    setAdvisors([]);
                     setCurrentUser(null);
                     setHasSubscription(false);
                 }
@@ -189,7 +115,10 @@ export default function Advisors() {
                 clearTimeout(loadingTimeout);
             }
         };
-    }, []);
+        // The subscription context resolves asynchronously, so the gate has to
+        // re-evaluate once it arrives — with an empty array a subscriber kept
+        // seeing the upgrade prompt until a manual reload.
+    }, [subscriptionCtx?.isSubscribed]);
 
     const filteredAdvisors = advisors.filter(advisor => {
         const matchesSearch = advisor.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -220,7 +149,7 @@ export default function Advisors() {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
                         <div className="flex items-center gap-3 mb-2">
-                            <BookUser className="w-8 h-8 text-protocall-blue" />
+                            <BookUser className="w-8 h-8 text-primary" />
                             <h1 className="text-4xl font-bold bg-gradient-to-r from-protocall-deep to-protocall-blue bg-clip-text text-transparent">
                                 SEBI Registered Advisors
                             </h1>
@@ -280,11 +209,15 @@ export default function Advisors() {
                     <Card className="border-0 shadow-lg rounded-xl">
                         <CardContent className="p-12 text-center">
                             <BookUser className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                            <h3 className="text-xl font-semibold text-subtle">No Advisors Found</h3>
+                            <h3 className="text-xl font-semibold text-subtle">
+                                {advisorsError ? "Advisors Could Not Be Loaded" : "No Advisors Found"}
+                            </h3>
                             <p className="text-muted-foreground mt-2">
-                                {searchTerm || specializationFilter !== 'all'
-                                    ? "Try adjusting your search or filter criteria."
-                                    : "Check back soon for a list of verified stock advisors."}
+                                {advisorsError
+                                    ? "We could not reach the advisor directory. Please try again shortly."
+                                    : searchTerm || specializationFilter !== 'all'
+                                        ? "Try adjusting your search or filter criteria."
+                                        : "Check back soon for a list of verified stock advisors."}
                             </p>
                         </CardContent>
                     </Card>
@@ -302,15 +235,15 @@ export default function Advisors() {
                     </div>
                 )}
 
-                <Card className="bg-background border-protocall-premium-light border-0 shadow-lg rounded-xl">
+                <Card className="bg-card border-protocall-premium-light border-0 shadow-lg rounded-xl">
                     <CardContent className="p-6">
                         <div className="flex items-start gap-3">
                             <div className="w-8 h-8 bg-premium-muted rounded-full flex items-center justify-center flex-shrink-0">
-                                <BookUser className="w-4 h-4 text-protocall-blue" />
+                                <BookUser className="w-4 h-4 text-primary" />
                             </div>
                             <div>
-                                <h3 className="font-semibold text-protocall-blue mb-2">Trust & Verification</h3>
-                                <p className="text-sm text-protocall-blue leading-relaxed">
+                                <h3 className="font-semibold text-primary mb-2">Trust & Verification</h3>
+                                <p className="text-sm text-primary leading-relaxed">
                                     All advisors listed here are SEBI registered and verified by our admin team.
                                     However, investments are subject to market risks. Past performance does not guarantee future results.
                                     Please consult with qualified financial advisors and make informed decisions based on your risk tolerance.

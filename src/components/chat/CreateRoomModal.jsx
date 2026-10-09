@@ -225,7 +225,7 @@ export default function CreateRoomModal({ open, onClose, onCreateRoom }) {
             >
               Cancel
             </Button>
-            <Button type="submit" className="bg-protocall-blue hover:bg-protocall-blue">
+            <Button type="submit" className="bg-primary hover:bg-primary">
               Create Room
             </Button>
           </div>

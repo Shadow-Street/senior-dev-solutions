@@ -118,7 +118,7 @@ export default function SubscriptionPage() {
   if (isLoading) {
     return (
       <div className="w-full bg-background flex items-center justify-center">
-        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
+        <Loader2 className="w-12 h-12 animate-spin text-primary" />
       </div>
     );
   }
@@ -173,11 +173,18 @@ export default function SubscriptionPage() {
               onRenew={handleRenew}
               onCancel={handleCancelSubscription}
             />
-            <div className="mb-8">
-              <UserSubscriptionHistory />
-            </div>
           </>
         )}
+
+        {/* Billing history sits outside the `subscription &&` block on purpose.
+            Invoices are historical records, so they are needed precisely after
+            a subscription lapses — for accounting, tax and disputes. Nesting
+            them under "has a current subscription" hid every past invoice from
+            anyone whose plan had ended. The component hides itself when there
+            is nothing to show. */}
+        <div className="mb-8">
+          <UserSubscriptionHistory />
+        </div>
 
         {/* Billing Cycle Toggle */}
         <div className="flex justify-center">
@@ -188,7 +195,7 @@ export default function SubscriptionPage() {
             <Switch
               checked={billingCycle === 'annually'}
               onCheckedChange={(checked) => setBillingCycle(checked ? 'annually' : 'monthly')}
-              className="data-[state=checked]:bg-protocall-blue"
+              className="data-[state=checked]:bg-primary"
             />
             <span className={`text-sm px-3 py-1 font-semibold transition-colors flex items-center gap-1 ${billingCycle === 'annually' ? 'text-foreground' : 'text-muted-foreground'}`}>
               Yearly
@@ -246,7 +253,7 @@ export default function SubscriptionPage() {
                 <AccordionTrigger className="text-left hover:no-underline py-4">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-premium-muted flex items-center justify-center flex-shrink-0">
-                      <span className="text-protocall-blue font-bold text-sm">1</span>
+                      <span className="text-primary font-bold text-sm">1</span>
                     </div>
                     <span className="font-semibold text-foreground">Can I cancel anytime?</span>
                   </div>

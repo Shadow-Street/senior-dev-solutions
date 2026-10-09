@@ -346,7 +346,7 @@ export default function AdvancedAnalyticsDashboard() {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-lg text-subtle font-medium">Loading Advanced Analytics...</p>
         </div>
       </div>
@@ -445,7 +445,7 @@ export default function AdvancedAnalyticsDashboard() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Clock className="w-5 h-5 text-protocall-blue" />
+            <Clock className="w-5 h-5 text-primary" />
             Peak Activity Hours
           </CardTitle>
         </CardHeader>
@@ -525,7 +525,7 @@ export default function AdvancedAnalyticsDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-protocall-blue" />
+              <MessageSquare className="w-5 h-5 text-primary" />
               Messages by Room (Top 10)
             </CardTitle>
           </CardHeader>
@@ -618,7 +618,7 @@ export default function AdvancedAnalyticsDashboard() {
                   <p className="text-xs text-muted-foreground">{contributor.email}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-protocall-blue">{contributor.messageCount}</p>
+                  <p className="text-2xl font-bold text-primary">{contributor.messageCount}</p>
                   <p className="text-xs text-muted-foreground">messages</p>
                 </div>
               </div>

@@ -155,7 +155,7 @@ export default function EventCard({
           </div>
         )}
 
-        <h3 className={`text-xl font-bold line-clamp-2 mb-2 group-hover:text-protocall-blue transition-colors ${
+        <h3 className={`text-xl font-bold line-clamp-2 mb-2 group-hover:text-primary transition-colors ${
           event.is_premium ? 'text-protocall-premium-text' : 'text-foreground'
         }`}>
           {event.title}
@@ -174,7 +174,7 @@ export default function EventCard({
             event.is_premium ? 'text-protocall-premium-text' : 'text-subtle'
           }`}>
             <CalendarIcon className={`w-4 h-4 ${
-              event.is_premium ? 'text-protocall-premium-text' : 'text-protocall-blue'
+              event.is_premium ? 'text-protocall-premium-text' : 'text-primary'
             }`} />
             <span className="font-medium">{formatDate(event.event_date)}</span>
           </div>
@@ -256,7 +256,7 @@ export default function EventCard({
           className={`w-full font-medium rounded-full mt-2 ${ /* Added mt-2 for spacing */
             event.is_premium
               ? 'text-protocall-premium-text hover:text-protocall-premium-text hover:bg-premium-muted'
-              : 'text-protocall-blue hover:text-protocall-blue hover:bg-premium-muted'
+              : 'text-primary hover:text-primary hover:bg-premium-muted'
           }`}
         >
           <Eye className="w-4 h-4 mr-2" />

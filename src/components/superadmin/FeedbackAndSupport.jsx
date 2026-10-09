@@ -172,7 +172,7 @@ export default function FeedbackAndSupport({ user }) {
 
   const getStatusConfig = (status) => {
     const configs = {
-      new: { color: 'bg-premium-muted text-protocall-blue', icon: Clock, label: 'New' },
+      new: { color: 'bg-premium-muted text-primary', icon: Clock, label: 'New' },
       under_review: { color: 'bg-hold-muted text-hold-muted-foreground', icon: Eye, label: 'Under Review' },
       in_progress: { color: 'bg-hold-muted text-hold-muted-foreground', icon: Eye, label: 'In Progress' },
       implemented: { color: 'bg-buy-muted text-buy-muted-foreground', icon: CheckCircle, label: 'Implemented' },
@@ -284,7 +284,7 @@ export default function FeedbackAndSupport({ user }) {
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <HelpCircle className="w-5 h-5 text-protocall-blue" />
+            <HelpCircle className="w-5 h-5 text-primary" />
             Support & Feedback Management
           </CardTitle>
 
@@ -321,19 +321,19 @@ export default function FeedbackAndSupport({ user }) {
         <TabsList className="grid grid-cols-3 w-full max-w-2xl bg-transparent p-1 rounded-xl gap-2">
           <TabsTrigger 
             value="feedback" 
-            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
+            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
           >
             <MessageSquare className="w-4 h-4" /> User Feedback ({stats.feedbackStats.total})
           </TabsTrigger>
           <TabsTrigger 
             value="inquiries" 
-            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
+            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
           >
             <HelpCircle className="w-4 h-4" /> Support Inquiries ({stats.inquiryStats.total})
           </TabsTrigger>
           <TabsTrigger 
             value="reviews" 
-            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
+            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md"
           >
             <Eye className="w-4 h-4" /> Reviews
           </TabsTrigger>
@@ -342,8 +342,8 @@ export default function FeedbackAndSupport({ user }) {
         <TabsContent value="feedback" className="mt-4">
           {/* Feedback Stats */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <StatCard title="Total Feedback" value={stats.feedbackStats.total} icon={MessageSquare} color="bg-protocall-blue" />
-            <StatCard title="New" value={stats.feedbackStats.new} icon={Clock} color="bg-protocall-blue" />
+            <StatCard title="Total Feedback" value={stats.feedbackStats.total} icon={MessageSquare} color="bg-primary" />
+            <StatCard title="New" value={stats.feedbackStats.new} icon={Clock} color="bg-primary" />
             <StatCard title="Under Review" value={stats.feedbackStats.underReview} icon={Eye} color="bg-hold" />
             <StatCard title="Implemented" value={stats.feedbackStats.implemented} icon={CheckCircle} color="bg-buy" />
             <StatCard title="Rejected" value={stats.feedbackStats.rejected} icon={XCircle} color="bg-sell" />
@@ -363,7 +363,7 @@ export default function FeedbackAndSupport({ user }) {
           {/* Inquiry Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard title="Total Inquiries" value={stats.inquiryStats.total} icon={HelpCircle} color="bg-primary" />
-            <StatCard title="New" value={stats.inquiryStats.new} icon={Clock} color="bg-protocall-blue" />
+            <StatCard title="New" value={stats.inquiryStats.new} icon={Clock} color="bg-primary" />
             <StatCard title="In Progress" value={stats.inquiryStats.inProgress} icon={Eye} color="bg-hold" />
             <StatCard title="Resolved" value={stats.inquiryStats.resolved} icon={CheckCircle} color="bg-buy" />
           </div>
@@ -486,7 +486,7 @@ export default function FeedbackAndSupport({ user }) {
                         In Progress
                       </Button>
                       <Button
-                        className="bg-buy hover:bg-buy"
+                        className="bg-buy text-buy-foreground hover:bg-buy-soft"
                         onClick={() => handleStatusUpdate('resolved')}
                       >
                         <CheckCircle className="w-4 h-4 mr-2" />

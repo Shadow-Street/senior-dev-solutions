@@ -114,7 +114,7 @@ export default function AddStockModal({ open, onClose, watchlist, onAddStock }) 
                   <Button
                     size="sm"
                     onClick={() => onAddStock(stock)}
-                    className="bg-buy hover:bg-buy"
+                    className="bg-buy text-buy-foreground hover:bg-buy-soft"
                   >
                     <Plus className="w-4 h-4 mr-1" />
                     Add

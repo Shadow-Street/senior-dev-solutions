@@ -40,7 +40,7 @@ export default function HowItWorks() {
     <section className="py-20 px-6 bg-white relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-0 left-0 w-full h-full opacity-5">
-        <div className="absolute top-10 left-10 w-64 h-64 bg-protocall-blue rounded-full blur-3xl"></div>
+        <div className="absolute top-10 left-10 w-64 h-64 bg-primary rounded-full blur-3xl"></div>
         <div className="absolute bottom-10 right-10 w-64 h-64 bg-primary rounded-full blur-3xl"></div>
       </div>
 
@@ -90,7 +90,7 @@ export default function HowItWorks() {
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-protocall-blue transition-colors">
+                  <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
                     {step.title}
                   </h3>
                   <p className="text-subtle leading-relaxed">

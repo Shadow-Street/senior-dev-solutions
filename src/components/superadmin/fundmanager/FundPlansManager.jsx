@@ -116,7 +116,7 @@ const FundPlanForm = ({ plan, onSave, onCancel }) => {
       {/* Basic Information */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-          <FileText className="w-5 h-5 text-protocall-blue" />
+          <FileText className="w-5 h-5 text-primary" />
           Basic Information
         </h3>
         
@@ -364,7 +364,7 @@ const FundPlanForm = ({ plan, onSave, onCancel }) => {
       {/* Status & Automation */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-          <Info className="w-5 h-5 text-protocall-blue" />
+          <Info className="w-5 h-5 text-primary" />
           Status & Automation
         </h3>
         
@@ -386,8 +386,8 @@ const FundPlanForm = ({ plan, onSave, onCancel }) => {
             onCheckedChange={(checked) => handleCheckboxChange('auto_payout_enabled', checked)} 
           />
           <div className="grid gap-1.5 leading-none">
-            <Label htmlFor="auto_payout_enabled" className="text-protocall-blue font-semibold">Enable Automatic Monthly Profit Payouts</Label>
-            <p className="text-sm text-protocall-blue">
+            <Label htmlFor="auto_payout_enabled" className="text-primary font-semibold">Enable Automatic Monthly Profit Payouts</Label>
+            <p className="text-sm text-primary">
               If checked, profits for this plan will be calculated and paid out automatically based on the 'Expected Monthly Return'.
             </p>
           </div>
@@ -515,7 +515,7 @@ export default function FundPlansManager({ onUpdate }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -581,7 +581,7 @@ export default function FundPlansManager({ onUpdate }) {
                       )}
                     </Badge>
                     {plan.auto_payout_enabled && (
-                      <Badge className="ml-2 bg-protocall-blue text-white">
+                      <Badge className="ml-2 bg-primary text-white">
                         <DollarSign className="w-3 h-3 mr-1" />
                         Auto-Payout
                       </Badge>
@@ -623,10 +623,10 @@ export default function FundPlansManager({ onUpdate }) {
 
                   <div className="flex items-center justify-between p-3 bg-surface-2 rounded-lg border border-protocall-premium-light">
                     <div className="flex items-center gap-2 text-subtle">
-                      <DollarSign className="w-4 h-4 text-protocall-blue" />
+                      <DollarSign className="w-4 h-4 text-primary" />
                       <span className="text-sm font-medium">Min. Investment</span>
                     </div>
-                    <span className="text-sm font-bold text-protocall-blue">₹{(plan.minimum_investment || 0).toLocaleString('en-IN')}</span>
+                    <span className="text-sm font-bold text-primary">₹{(plan.minimum_investment || 0).toLocaleString('en-IN')}</span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
@@ -670,7 +670,7 @@ export default function FundPlansManager({ onUpdate }) {
                     size="sm"
                     variant="outline"
                     onClick={() => openEditModal(plan)}
-                    className="border-2 border-protocall-premium-light text-protocall-blue hover:bg-premium-muted"
+                    className="border-2 border-protocall-premium-light text-primary hover:bg-premium-muted"
                   >
                     <Edit className="w-4 h-4" />
                   </Button>

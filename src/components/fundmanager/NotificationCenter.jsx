@@ -179,7 +179,7 @@ export default function NotificationCenter({ user, onSettingsClick }) {
           <CardHeader className="border-b border-border pb-3 bg-surface-2">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Bell className="w-5 h-5 text-protocall-blue" />
+                <Bell className="w-5 h-5 text-primary" />
                 Notification Center
                 {unreadCount > 0 && (
                   <Badge className="bg-protocall-sell-text text-white">{unreadCount} new</Badge>
@@ -221,7 +221,7 @@ export default function NotificationCenter({ user, onSettingsClick }) {
                   variant={activeFilter === filter.key ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setActiveFilter(filter.key)}
-                  className={activeFilter === filter.key ? 'bg-protocall-blue' : ''}
+                  className={activeFilter === filter.key ? 'bg-primary' : ''}
                 >
                   {filter.label}
                   {filter.count > 0 && (
@@ -237,7 +237,7 @@ export default function NotificationCenter({ user, onSettingsClick }) {
           <CardContent className="p-0 max-h-[550px] overflow-y-auto">
             {isLoading ? (
               <div className="flex items-center justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
               </div>
             ) : filteredNotifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
@@ -254,7 +254,7 @@ export default function NotificationCenter({ user, onSettingsClick }) {
                     <div
                       key={notification.id}
                       className={`p-4 hover:bg-surface-2 transition-colors ${
-                        isUnread ? 'bg-premium-muted border-l-4 border-protocall-blue' : ''
+                        isUnread ? 'bg-premium-muted border-l-4 border-primary' : ''
                       }`}
                     >
                       <div className="flex items-start gap-3">
@@ -265,10 +265,10 @@ export default function NotificationCenter({ user, onSettingsClick }) {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1">
-                              <h4 className={`font-semibold text-sm ${isUnread ? 'text-protocall-blue' : 'text-foreground'}`}>
+                              <h4 className={`font-semibold text-sm ${isUnread ? 'text-primary' : 'text-foreground'}`}>
                                 {notification.title}
                                 {isUnread && (
-                                  <Badge className="ml-2 bg-protocall-blue text-white text-xs">New</Badge>
+                                  <Badge className="ml-2 bg-primary text-white text-xs">New</Badge>
                                 )}
                               </h4>
                               <p className="text-sm text-subtle mt-1 leading-relaxed">
@@ -368,7 +368,7 @@ export default function NotificationCenter({ user, onSettingsClick }) {
               variant="ghost"
               size="sm"
               onClick={loadNotifications}
-              className="text-xs text-protocall-blue"
+              className="text-xs text-primary"
             >
               Refresh
             </Button>

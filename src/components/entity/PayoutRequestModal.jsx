@@ -240,7 +240,7 @@ export default function PayoutRequestModal({ open, onClose, onSubmit, availableB
             <Button 
               type="submit" 
               disabled={isSubmitting || !formData.requested_amount || !formData.payout_method}
-              className="bg-buy hover:bg-buy"
+              className="bg-buy text-buy-foreground hover:bg-buy-soft"
             >
               {isSubmitting ? 'Submitting...' : 'Submit Request'}
             </Button>

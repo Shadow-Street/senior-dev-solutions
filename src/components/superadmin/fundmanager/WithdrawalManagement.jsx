@@ -78,7 +78,7 @@ export default function WithdrawalManagement({ onUpdate }) {
       case 'pending':
         return <Clock className="w-4 h-4 text-hold-muted-foreground" />;
       case 'approved':
-        return <CheckCircle className="w-4 h-4 text-protocall-blue" />;
+        return <CheckCircle className="w-4 h-4 text-primary" />;
       case 'processed':
         return <CheckCircle className="w-4 h-4 text-buy-muted-foreground" />;
       case 'rejected':
@@ -93,7 +93,7 @@ export default function WithdrawalManagement({ onUpdate }) {
       case 'pending':
         return 'bg-hold-muted text-hold-muted-foreground border-hold/30';
       case 'approved':
-        return 'bg-premium-muted text-protocall-blue border-protocall-premium-light';
+        return 'bg-premium-muted text-primary border-protocall-premium-light';
       case 'processed':
         return 'bg-buy-muted text-buy-muted-foreground border-buy/30';
       case 'rejected':
@@ -337,7 +337,7 @@ export default function WithdrawalManagement({ onUpdate }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -347,10 +347,10 @@ export default function WithdrawalManagement({ onUpdate }) {
       {/* Info Banner */}
       <div className="bg-surface-2 border border-protocall-premium-light rounded-lg p-4">
         <div className="flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-protocall-blue flex-shrink-0 mt-0.5" />
-          <div className="text-sm text-protocall-blue">
+          <AlertTriangle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-primary">
             <p className="font-semibold mb-1">Withdrawal Processing Flow:</p>
-            <ol className="list-decimal list-inside space-y-1 text-protocall-blue">
+            <ol className="list-decimal list-inside space-y-1 text-primary">
               <li><strong>Pending</strong> → Click "Approve" to approve the request</li>
               <li><strong>Approved</strong> → Click "Process Payout" to credit funds to investor wallet</li>
               <li><strong>Processed</strong> → Withdrawal completed (funds in investor wallet)</li>
@@ -456,7 +456,7 @@ export default function WithdrawalManagement({ onUpdate }) {
                                   <Send className="w-4 h-4 mr-1" />
                                   Process Payout
                                 </Button>
-                                <p className="text-xs text-center text-protocall-blue font-medium">
+                                <p className="text-xs text-center text-primary font-medium">
                                   Click to credit wallet
                                 </p>
                               </div>
@@ -523,7 +523,7 @@ export default function WithdrawalManagement({ onUpdate }) {
             <Button variant="outline" onClick={() => setShowApproveModal(false)} disabled={isProcessing}>
               Cancel
             </Button>
-            <Button onClick={confirmApprove} disabled={isProcessing} className="bg-buy hover:bg-buy">
+            <Button onClick={confirmApprove} disabled={isProcessing} className="bg-buy text-buy-foreground hover:bg-buy-soft">
               {isProcessing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
               Confirm Approval
             </Button>
@@ -595,11 +595,11 @@ export default function WithdrawalManagement({ onUpdate }) {
 
                 {/* What Will Happen */}
                 <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
-                  <h4 className="font-semibold text-protocall-blue mb-2">What will happen:</h4>
+                  <h4 className="font-semibold text-primary mb-2">What will happen:</h4>
                   {selectedRequest.withdrawal_type === 'full' || 
                    selectedRequest.withdrawal_amount >= (allocations[selectedRequest.allocation_id].total_invested || 0) ? (
                     <>
-                      <ul className="text-sm text-protocall-blue space-y-1">
+                      <ul className="text-sm text-primary space-y-1">
                         <li>• Full withdrawal - Investment plan will be <strong>CLOSED</strong></li>
                         <li>• Credit ₹{selectedRequest.withdrawal_amount.toLocaleString('en-IN')} to investor's wallet</li>
                         <li>• Final investment amount: ₹0</li>
@@ -610,7 +610,7 @@ export default function WithdrawalManagement({ onUpdate }) {
                     </>
                   ) : (
                     <>
-                      <ul className="text-sm text-protocall-blue space-y-1">
+                      <ul className="text-sm text-primary space-y-1">
                         <li>• Partial withdrawal - Investment plan remains <strong>ACTIVE</strong></li>
                         <li>• Credit ₹{selectedRequest.withdrawal_amount.toLocaleString('en-IN')} to investor's wallet</li>
                         <li>• New investment amount: <strong>₹{(allocations[selectedRequest.allocation_id].total_invested - selectedRequest.withdrawal_amount).toLocaleString('en-IN')}</strong></li>
@@ -636,7 +636,7 @@ export default function WithdrawalManagement({ onUpdate }) {
             <Button variant="outline" onClick={() => setShowProcessModal(false)} disabled={isProcessing}>
               Cancel
             </Button>
-            <Button onClick={confirmProcessPayout} disabled={isProcessing} className="bg-protocall-blue hover:bg-protocall-blue">
+            <Button onClick={confirmProcessPayout} disabled={isProcessing} className="bg-primary hover:bg-primary">
               {isProcessing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
               Process Payout
             </Button>

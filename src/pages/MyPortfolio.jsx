@@ -14,6 +14,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import AddStockModal from '../components/stocks/AddStockModal';
 import AddInvestmentModal from '../components/stocks/AddInvestmentModal';
 import AlertModal from '../components/stocks/AlertModal';
+import StatTile from '@/components/common/StatTile';
 
 export default function MyPortfolio() {
     const navigate = useNavigate();
@@ -286,7 +287,7 @@ export default function MyPortfolio() {
         return (
             <div className="flex items-center justify-center w-full bg-background">
                 <div className="text-center">
-                    <div className="w-8 h-8 border-2 border-protocall-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                     <p className="text-subtle">Loading your portfolio...</p>
                 </div>
             </div>
@@ -337,14 +338,14 @@ export default function MyPortfolio() {
                         <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-premium-muted flex items-center justify-center">
-                                    <UserIcon className="w-5 h-5 text-protocall-blue" />
+                                    <UserIcon className="w-5 h-5 text-primary" />
                                 </div>
                                 <div className="flex-1">
-                                    <p className="text-sm font-semibold text-protocall-blue">Guest Mode - Sample Portfolio</p>
-                                    <p className="text-xs text-protocall-blue mt-1">Log in to create and manage your own portfolio.</p>
+                                    <p className="text-sm font-semibold text-primary">Guest Mode - Sample Portfolio</p>
+                                    <p className="text-xs text-primary mt-1">Log in to create and manage your own portfolio.</p>
                                 </div>
                                 <Link to={createPageUrl("Profile")}>
-                                    <Button size="sm" className="bg-protocall-blue hover:bg-protocall-blue">
+                                    <Button size="sm" className="bg-primary hover:bg-primary">
                                         Log In
                                     </Button>
                                 </Link>
@@ -363,77 +364,49 @@ export default function MyPortfolio() {
                             <TrendingUp className="w-8 h-8 text-white" />
                             <h1 className="text-2xl font-bold text-white">My Portfolio</h1>
                         </div>
-                        <p className="text-protocall-blue text-sm">
+                        {/* Was text-primary — Cyber Grape on the indigo hero
+                            gradient, which measures 1.1:1 and is effectively
+                            invisible. The heading beside it is already white. */}
+                        <p className="text-white/90 text-sm">
                             Track your investments and discover new opportunities
                         </p>
                     </div>
                 </div>
 
                 {/* Portfolio Summary */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                    <Card className="bg-white border-2 border-border shadow-sm hover:shadow-md transition-shadow">
-                        <CardContent className="p-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-subtle text-sm font-medium">Total Invested</p>
-                                    <p className="text-3xl font-bold text-foreground mt-2">₹{stats.totalInvested.toLocaleString('en-IN')}</p>
-                                </div>
-                                <div className="w-12 h-12 bg-buy-muted rounded-lg flex items-center justify-center">
-                                    <IndianRupee className="w-6 h-6 text-buy-muted-foreground" />
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="bg-white border-2 border-border shadow-sm hover:shadow-md transition-shadow">
-                        <CardContent className="p-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-subtle text-sm font-medium">Current Value</p>
-                                    <p className="text-3xl font-bold text-foreground mt-2">₹{stats.currentValue.toLocaleString('en-IN')}</p>
-                                </div>
-                                <div className="w-12 h-12 bg-premium-muted rounded-lg flex items-center justify-center">
-                                    <TrendingUp className="w-6 h-6 text-protocall-blue" />
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="bg-white border-2 border-border shadow-sm hover:shadow-md transition-shadow">
-                        <CardContent className="p-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-subtle text-sm font-medium">Total P/L</p>
-                                    <p className={`text-3xl font-bold mt-2 ${stats.totalPL >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
-                                        ₹{stats.totalPL.toLocaleString('en-IN')}
-                                    </p>
-                                    <p className={`text-sm mt-1 ${stats.totalPL >= 0 ? 'text-buy-muted-foreground' : 'text-sell-muted-foreground'}`}>
-                                        {stats.totalPLPercent.toFixed(2)}%
-                                    </p>
-                                </div>
-                                <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${stats.totalPL >= 0 ? 'bg-buy-muted' : 'bg-sell-muted'}`}>
-                                    {stats.totalPL >= 0 ?
-                                        <TrendingUp className="w-6 h-6 text-buy-muted-foreground" /> :
-                                        <TrendingDown className="w-6 h-6 text-sell-muted-foreground" />
-                                    }
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="bg-white border-2 border-border shadow-sm hover:shadow-md transition-shadow">
-                        <CardContent className="p-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-subtle text-sm font-medium">Watchlist Items</p>
-                                    <p className="text-3xl font-bold text-foreground mt-2">{watchlistStocks.length}</p>
-                                </div>
-                                <div className="w-12 h-12 bg-hold-muted rounded-lg flex items-center justify-center">
-                                    <Eye className="w-6 h-6 text-hold-muted-foreground" />
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                {/* Same StatTile as the dashboard, so the two summary rows keep
+                    identical height, padding and type scale. Tones follow
+                    meaning: P/L turns red when negative rather than staying
+                    decorative. */}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 sm:gap-5 mb-8">
+                    <StatTile
+                        title="Total Invested"
+                        value={`₹${stats.totalInvested.toLocaleString('en-IN')}`}
+                        sub="Capital deployed"
+                        icon={IndianRupee}
+                        tone="blue"
+                    />
+                    <StatTile
+                        title="Current Value"
+                        value={`₹${stats.currentValue.toLocaleString('en-IN')}`}
+                        sub="Live valuation"
+                        icon={TrendingUp}
+                        tone="purple"
+                    />
+                    <StatTile
+                        title="Total P/L"
+                        value={`₹${stats.totalPL.toLocaleString('en-IN')}`}
+                        sub={`${stats.totalPLPercent.toFixed(2)}% overall`}
+                        icon={stats.totalPL >= 0 ? TrendingUp : TrendingDown}
+                        tone={stats.totalPL >= 0 ? 'green' : 'orange'}
+                    />
+                    <StatTile
+                        title="Watchlist Items"
+                        value={watchlistStocks.length}
+                        sub="Tracked symbols"
+                        icon={Eye}
+                        tone="ink"
+                    />
                 </div>
 
                 {/* Navigation Tabs */}
@@ -442,14 +415,14 @@ export default function MyPortfolio() {
                         <TabsList className="bg-transparent p-1 rounded-lg grid grid-cols-2 gap-2 w-auto">
                             <TabsTrigger
                                 value="portfolio"
-                                className="bg-background text-protocall-blue px-8 py-2.5 text-sm font-semibold rounded-xl shadow-md flex items-center gap-3 transition-all duration-300 hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg">
+                                className="bg-card text-primary px-8 py-2.5 text-sm font-semibold rounded-xl shadow-md flex items-center gap-3 transition-all duration-300 hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg">
                                 <TrendingUp className="w-4 h-4" />
                                 Portfolio
                             </TabsTrigger>
 
                             <TabsTrigger
                                 value="watchlist"
-                                className="bg-background text-protocall-blue px-8 py-2.5 text-sm font-semibold rounded-xl shadow-md flex items-center gap-3 transition-all duration-300 hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg">
+                                className="bg-card text-primary px-8 py-2.5 text-sm font-semibold rounded-xl shadow-md flex items-center gap-3 transition-all duration-300 hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg">
                                 <BarChart3 className="w-4 h-4" />
                                 Watchlist
                             </TabsTrigger>
@@ -460,23 +433,23 @@ export default function MyPortfolio() {
                     <TabsContent value="portfolio" className="space-y-6">
                         {/* Compact Stats Cards */}
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                            <Card className="bg-background border-protocall-premium-light rounded-lg shadow-sm">
+                            <Card className="bg-card border-protocall-premium-light rounded-lg shadow-sm">
                                 <CardContent className="p-4">
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-protocall-blue text-xs font-medium uppercase tracking-wide">Portfolio Value</p>
-                                            <p className="text-xl font-bold text-protocall-blue mt-1">
+                                            <p className="text-primary text-xs font-medium uppercase tracking-wide">Portfolio Value</p>
+                                            <p className="text-xl font-bold text-primary mt-1">
                                                 ₹{stats.currentValue > 0 ? (stats.currentValue / 100000).toLocaleString('en-IN', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + 'L' : '0.0L'}
                                             </p>
                                         </div>
-                                        <div className="w-8 h-8 bg-protocall-blue rounded-lg flex items-center justify-center">
+                                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                                             <IndianRupee className="w-4 h-4 text-white" />
                                         </div>
                                     </div>
                                 </CardContent>
                             </Card>
 
-                            <Card className="bg-background border-protocall-premium-light rounded-lg shadow-sm">
+                            <Card className="bg-card border-protocall-premium-light rounded-lg shadow-sm">
                                 <CardContent className="p-4">
                                     <div className="flex items-center justify-between">
                                         <div>
@@ -531,7 +504,7 @@ export default function MyPortfolio() {
                                             placeholder="Search your portfolio..."
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
-                                            className="pl-10 pr-4 py-2 rounded-lg border border-border bg-white focus:border-protocall-blue focus:ring-1 focus:ring-ring transition-all duration-200"
+                                            className="pl-10 pr-4 py-2 rounded-lg border border-border bg-white focus:border-primary focus:ring-1 focus:ring-ring transition-all duration-200"
                                         />
                                     </div>
 
@@ -546,7 +519,7 @@ export default function MyPortfolio() {
                                             onClick={() => setViewMode('grid')}
                                             className={`rounded-lg px-4 py-2 font-medium transition-all duration-300 ${viewMode === 'grid' ?
                                                 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-sm' :
-                                                'bg-background text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white'}`
+                                                'bg-background text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white'}`
                                             }>
                                             <LayoutGrid className="w-4 h-4 mr-2" />
                                             Grid
@@ -555,7 +528,7 @@ export default function MyPortfolio() {
                                             onClick={() => setViewMode('list')}
                                             className={`rounded-lg px-4 py-2 font-medium transition-all duration-300 ${viewMode === 'list' ?
                                                 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-sm' :
-                                                'bg-background text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white'}`
+                                                'bg-background text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white'}`
                                             }>
                                             <List className="w-4 h-4 mr-2" />
                                             List
@@ -622,7 +595,7 @@ export default function MyPortfolio() {
 
                                             {stock.user_investment_data ? (
                                                 <div className="bg-premium-muted rounded-lg p-3 mb-3">
-                                                    <p className="text-xs font-medium text-protocall-blue mb-1">Investment Details</p>
+                                                    <p className="text-xs font-medium text-primary mb-1">Investment Details</p>
                                                     <p className="text-xs text-subtle">Qty: <span className="font-medium">{stock.user_investment_data.quantity}</span></p>
                                                     <p className="text-xs text-subtle">Avg: <span className="font-medium">₹{stock.user_investment_data.avg_buy_price.toFixed(2)}</span></p>
                                                 </div>
@@ -661,7 +634,7 @@ export default function MyPortfolio() {
                                                 <div className="grid grid-cols-2 gap-2">
                                                     <Button
                                                         onClick={() => handleChatClick(stock.symbol)}
-                                                        className="bg-premium-muted hover:bg-premium-muted text-protocall-blue hover:text-protocall-blue border-0 rounded-md text-xs py-2 font-medium transition-all duration-200">
+                                                        className="bg-premium-muted hover:bg-premium-muted text-primary hover:text-primary border-0 rounded-md text-xs py-2 font-medium transition-all duration-200">
                                                         <MessageSquare className="w-3 h-3 mr-1" />
                                                         Chat
                                                     </Button>
@@ -758,21 +731,21 @@ export default function MyPortfolio() {
                     {/* Watchlist Tab Content */}
                     <TabsContent value="watchlist" className="space-y-6">
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                            <Card className="bg-background border-protocall-premium-light rounded-lg shadow-sm">
+                            <Card className="bg-card border-protocall-premium-light rounded-lg shadow-sm">
                                 <CardContent className="p-4">
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-protocall-blue text-xs font-medium uppercase tracking-wide">Total Stocks</p>
-                                            <p className="text-xl font-bold text-protocall-blue mt-1">{filteredWatchlistStocks.length}</p>
+                                            <p className="text-primary text-xs font-medium uppercase tracking-wide">Total Stocks</p>
+                                            <p className="text-xl font-bold text-primary mt-1">{filteredWatchlistStocks.length}</p>
                                         </div>
-                                        <div className="w-8 h-8 bg-protocall-blue rounded-lg flex items-center justify-center">
+                                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                                             <Eye className="w-4 h-4 text-white" />
                                         </div>
                                     </div>
                                 </CardContent>
                             </Card>
 
-                            <Card className="bg-background border-protocall-premium-light rounded-lg shadow-sm">
+                            <Card className="bg-card border-protocall-premium-light rounded-lg shadow-sm">
                                 <CardContent className="p-4">
                                     <div className="flex items-center justify-between">
                                         <div>
@@ -829,7 +802,7 @@ export default function MyPortfolio() {
                                             placeholder="Search your watchlist..."
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
-                                            className="pl-10 pr-4 py-2 rounded-lg border border-border bg-white focus:border-protocall-blue focus:ring-1 focus:ring-ring transition-all duration-200"
+                                            className="pl-10 pr-4 py-2 rounded-lg border border-border bg-white focus:border-primary focus:ring-1 focus:ring-ring transition-all duration-200"
                                         />
                                     </div>
 
@@ -845,7 +818,7 @@ export default function MyPortfolio() {
                                             onClick={() => setViewMode('grid')}
                                             className={`rounded-lg px-4 py-2 font-medium transition-all duration-300 ${viewMode === 'grid' ?
                                                 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-sm' :
-                                                'bg-background text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white'}`
+                                                'bg-background text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white'}`
                                             }>
                                             <LayoutGrid className="w-4 h-4 mr-2" />
                                             Grid
@@ -854,7 +827,7 @@ export default function MyPortfolio() {
                                             onClick={() => setViewMode('list')}
                                             className={`rounded-lg px-4 py-2 font-medium transition-all duration-300 ${viewMode === 'list' ?
                                                 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-sm' :
-                                                'bg-background text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white'}`
+                                                'bg-background text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white'}`
                                             }>
                                             <List className="w-4 h-4 mr-2" />
                                             List
@@ -952,7 +925,7 @@ export default function MyPortfolio() {
                                                 <div className="grid grid-cols-2 gap-2">
                                                     <Button
                                                         onClick={() => handleChatClick(stock.symbol)}
-                                                        className="bg-premium-muted hover:bg-premium-muted text-protocall-blue hover:text-protocall-blue border-0 rounded-md text-xs py-2 font-medium transition-all duration-200">
+                                                        className="bg-premium-muted hover:bg-premium-muted text-primary hover:text-primary border-0 rounded-md text-xs py-2 font-medium transition-all duration-200">
                                                         <MessageSquare className="w-3 h-3 mr-1" />
                                                         Chat
                                                     </Button>

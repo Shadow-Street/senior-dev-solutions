@@ -89,9 +89,9 @@ export default function PledgeSessionManager({ user }) { // Kept user prop for a
       case 'closed':
         return { text: 'Closed', icon: XCircle, color: 'text-hold-muted-foreground' };
       case 'executing':
-        return { text: 'Executing', icon: Zap, color: 'text-protocall-blue' };
+        return { text: 'Executing', icon: Zap, color: 'text-primary' };
       case 'awaiting_sell_execution':
-        return { text: 'Awaiting Sell', icon: Repeat, color: 'text-protocall-blue' };
+        return { text: 'Awaiting Sell', icon: Repeat, color: 'text-primary' };
       case 'completed':
         return { text: 'Completed', icon: CheckCircle, color: 'text-buy-muted-foreground' };
       case 'cancelled':
@@ -110,8 +110,8 @@ export default function PledgeSessionManager({ user }) { // Kept user prop for a
       'approved': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
       'active': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
       'closed': 'bg-hold-muted text-hold-muted-foreground border-hold/30',
-      'executing': 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
-      'awaiting_sell_execution': 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+      'executing': 'bg-premium-muted text-primary border-protocall-premium-light',
+      'awaiting_sell_execution': 'bg-premium-muted text-primary border-protocall-premium-light',
       'completed': 'bg-buy-muted text-buy-muted-foreground border-buy/30',
       'cancelled': 'bg-sell-muted text-sell-muted-foreground border-sell/30',
       'rejected': 'bg-sell-muted text-sell-muted-foreground border-sell/30',
@@ -700,7 +700,7 @@ export default function PledgeSessionManager({ user }) { // Kept user prop for a
                 setEditingSession(null);
                 setShowCreateModal(true);
               }}
-              className="bg-protocall-blue hover:bg-protocall-blue w-full sm:w-auto" // Added w-full for small screens
+              className="bg-primary hover:bg-primary w-full sm:w-auto" // Added w-full for small screens
               disabled={isCreating}
             >
               {isCreating ? 'Creating...' : <> <Plus className="w-4 h-4 mr-2" /> Create Session </>}
@@ -725,7 +725,7 @@ export default function PledgeSessionManager({ user }) { // Kept user prop for a
 
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       ) : (filteredSessions || []).length === 0 ? (
         <Card>
@@ -770,7 +770,7 @@ export default function PledgeSessionManager({ user }) { // Kept user prop for a
                     )}
                     {session.execution_reason && (
                       <div className="mt-2 p-2 bg-premium-muted rounded text-sm">
-                        <strong className="text-protocall-blue">Reason:</strong> {session.execution_reason}
+                        <strong className="text-primary">Reason:</strong> {session.execution_reason}
                       </div>
                     )}
                   </div>

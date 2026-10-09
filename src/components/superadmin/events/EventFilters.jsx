@@ -79,7 +79,7 @@ export default function EventFilters({ onFilterChange, organizers = [] }) {
               placeholder="Search events by title, organizer, or location..."
               value={filters.search}
               onChange={(e) => handleFilterChange('search', e.target.value)}
-              className="pl-10 pr-4 h-12 border-2 border-border focus:border-protocall-blue rounded-xl"
+              className="pl-10 pr-4 h-12 border-2 border-border focus:border-primary rounded-xl"
             />
           </div>
           
@@ -89,13 +89,13 @@ export default function EventFilters({ onFilterChange, organizers = [] }) {
             className={`h-12 px-4 border-2 transition-all duration-300 rounded-xl ${
               isExpanded 
                 ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white border-transparent' 
-                : 'border-border hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-protocall-blue'
+                : 'border-border hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-primary'
             }`}
           >
             <SlidersHorizontal className="w-5 h-5 mr-2" />
             Filters
             {activeFiltersCount > 0 && (
-              <Badge className="ml-2 bg-white text-protocall-blue hover:bg-white">
+              <Badge className="ml-2 bg-white text-primary hover:bg-white">
                 {activeFiltersCount}
               </Badge>
             )}
@@ -123,7 +123,7 @@ export default function EventFilters({ onFilterChange, organizers = [] }) {
               <div>
                 <label className="text-sm font-semibold text-subtle mb-2 block">Status</label>
                 <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
-                  <SelectTrigger className="h-11 border-2 border-border hover:border-protocall-blue rounded-xl transition-colors">
+                  <SelectTrigger className="h-11 border-2 border-border hover:border-primary rounded-xl transition-colors">
                     <SelectValue placeholder="All Statuses" />
                   </SelectTrigger>
                   <SelectContent>
@@ -141,7 +141,7 @@ export default function EventFilters({ onFilterChange, organizers = [] }) {
               <div>
                 <label className="text-sm font-semibold text-subtle mb-2 block">Organizer</label>
                 <Select value={filters.organizer} onValueChange={(value) => handleFilterChange('organizer', value)}>
-                  <SelectTrigger className="h-11 border-2 border-border hover:border-protocall-blue rounded-xl transition-colors">
+                  <SelectTrigger className="h-11 border-2 border-border hover:border-primary rounded-xl transition-colors">
                     <SelectValue placeholder="All Organizers" />
                   </SelectTrigger>
                   <SelectContent>
@@ -158,7 +158,7 @@ export default function EventFilters({ onFilterChange, organizers = [] }) {
               <div>
                 <label className="text-sm font-semibold text-subtle mb-2 block">Event Type</label>
                 <Select value={filters.isPremium} onValueChange={(value) => handleFilterChange('isPremium', value)}>
-                  <SelectTrigger className="h-11 border-2 border-border hover:border-protocall-blue rounded-xl transition-colors">
+                  <SelectTrigger className="h-11 border-2 border-border hover:border-primary rounded-xl transition-colors">
                     <SelectValue placeholder="All Types" />
                   </SelectTrigger>
                   <SelectContent>
@@ -178,7 +178,7 @@ export default function EventFilters({ onFilterChange, organizers = [] }) {
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className="w-full h-11 justify-start text-left font-normal border-2 border-border hover:border-protocall-blue rounded-xl transition-colors"
+                      className="w-full h-11 justify-start text-left font-normal border-2 border-border hover:border-primary rounded-xl transition-colors"
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {filters.dateFrom ? format(filters.dateFrom, 'PPP') : 'Select start date'}
@@ -201,7 +201,7 @@ export default function EventFilters({ onFilterChange, organizers = [] }) {
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className="w-full h-11 justify-start text-left font-normal border-2 border-border hover:border-protocall-blue rounded-xl transition-colors"
+                      className="w-full h-11 justify-start text-left font-normal border-2 border-border hover:border-primary rounded-xl transition-colors"
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {filters.dateTo ? format(filters.dateTo, 'PPP') : 'Select end date'}
@@ -228,7 +228,7 @@ export default function EventFilters({ onFilterChange, organizers = [] }) {
                   placeholder="0"
                   value={filters.priceMin}
                   onChange={(e) => handleFilterChange('priceMin', e.target.value)}
-                  className="h-11 border-2 border-border focus:border-protocall-blue rounded-xl"
+                  className="h-11 border-2 border-border focus:border-primary rounded-xl"
                 />
               </div>
 
@@ -239,14 +239,14 @@ export default function EventFilters({ onFilterChange, organizers = [] }) {
                   placeholder="10000"
                   value={filters.priceMax}
                   onChange={(e) => handleFilterChange('priceMax', e.target.value)}
-                  className="h-11 border-2 border-border focus:border-protocall-blue rounded-xl"
+                  className="h-11 border-2 border-border focus:border-primary rounded-xl"
                 />
               </div>
 
               <div>
                 <label className="text-sm font-semibold text-subtle mb-2 block">Capacity</label>
                 <Select value={filters.capacity} onValueChange={(value) => handleFilterChange('capacity', value)}>
-                  <SelectTrigger className="h-11 border-2 border-border hover:border-protocall-blue rounded-xl transition-colors">
+                  <SelectTrigger className="h-11 border-2 border-border hover:border-primary rounded-xl transition-colors">
                     <SelectValue placeholder="Any Capacity" />
                   </SelectTrigger>
                   <SelectContent>
@@ -267,7 +267,7 @@ export default function EventFilters({ onFilterChange, organizers = [] }) {
                 <span className="text-sm font-semibold text-subtle">Active Filters:</span>
                 
                 {filters.search && (
-                  <Badge className="bg-surface-2 text-protocall-blue border-0">
+                  <Badge className="bg-surface-2 text-primary border-0">
                     Search: "{filters.search}"
                     <X 
                       className="w-3 h-3 ml-2 cursor-pointer" 
@@ -277,7 +277,7 @@ export default function EventFilters({ onFilterChange, organizers = [] }) {
                 )}
                 
                 {filters.status !== 'all' && (
-                  <Badge className="bg-surface-2 text-protocall-blue border-0">
+                  <Badge className="bg-surface-2 text-primary border-0">
                     Status: {filters.status}
                     <X 
                       className="w-3 h-3 ml-2 cursor-pointer" 
@@ -287,7 +287,7 @@ export default function EventFilters({ onFilterChange, organizers = [] }) {
                 )}
                 
                 {filters.dateFrom && (
-                  <Badge className="bg-surface-2 text-protocall-blue border-0">
+                  <Badge className="bg-surface-2 text-primary border-0">
                     From: {format(filters.dateFrom, 'MMM dd, yyyy')}
                     <X 
                       className="w-3 h-3 ml-2 cursor-pointer" 
@@ -297,7 +297,7 @@ export default function EventFilters({ onFilterChange, organizers = [] }) {
                 )}
                 
                 {filters.dateTo && (
-                  <Badge className="bg-surface-2 text-protocall-blue border-0">
+                  <Badge className="bg-surface-2 text-primary border-0">
                     To: {format(filters.dateTo, 'MMM dd, yyyy')}
                     <X 
                       className="w-3 h-3 ml-2 cursor-pointer" 
@@ -307,7 +307,7 @@ export default function EventFilters({ onFilterChange, organizers = [] }) {
                 )}
                 
                 {filters.isPremium !== 'all' && (
-                  <Badge className="bg-surface-2 text-protocall-blue border-0">
+                  <Badge className="bg-surface-2 text-primary border-0">
                     Type: {filters.isPremium === 'true' ? 'Premium' : 'Free'}
                     <X 
                       className="w-3 h-3 ml-2 cursor-pointer" 

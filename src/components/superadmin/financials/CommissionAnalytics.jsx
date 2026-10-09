@@ -189,7 +189,7 @@ export default function CommissionAnalytics({
           <h2 className="text-2xl font-bold text-foreground">Commission Analytics</h2>
           <p className="text-subtle">Track commission earnings across all revenue streams</p>
         </div>
-        <Button onClick={exportData} className="bg-buy hover:bg-buy">
+        <Button onClick={exportData} className="bg-buy text-buy-foreground hover:bg-buy-soft">
           <Download className="w-4 h-4 mr-2" />
           Export Report
         </Button>
@@ -201,10 +201,10 @@ export default function CommissionAnalytics({
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-protocall-ink/75 text-sm font-medium">Total Commission</p>
+                <p className="text-protocall-ink/85 text-sm font-medium">Total Commission</p>
                 <p className="text-3xl font-bold">₹{(analytics.total / 1000).toFixed(1)}k</p>
               </div>
-              <DollarSign className="w-8 h-8 text-protocall-ink/75" />
+              <DollarSign className="w-8 h-8 text-protocall-ink/85" />
             </div>
           </CardContent>
         </Card>
@@ -237,10 +237,10 @@ export default function CommissionAnalytics({
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-protocall-ink/75 text-sm font-medium">Event Commission</p>
+                <p className="text-protocall-ink/85 text-sm font-medium">Event Commission</p>
                 <p className="text-3xl font-bold">₹{(analytics.event.commission / 1000).toFixed(1)}k</p>
               </div>
-              <Calendar className="w-8 h-8 text-protocall-ink/75" />
+              <Calendar className="w-8 h-8 text-protocall-ink/85" />
             </div>
           </CardContent>
         </Card>
@@ -308,21 +308,21 @@ export default function CommissionAnalytics({
         <TabsList className="grid w-full grid-cols-3 bg-transparent p-1 rounded-xl gap-2">
           <TabsTrigger 
             value="finfluencers"
-            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
+            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
           >
             <Star className="w-4 h-4 mr-2" />
             Finfluencers
           </TabsTrigger>
           <TabsTrigger 
             value="advisors"
-            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
+            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
           >
             <Users className="w-4 h-4 mr-2" />
             Advisors
           </TabsTrigger>
           <TabsTrigger 
             value="events"
-            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
+            className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
           >
             <Calendar className="w-4 h-4 mr-2" />
             Events
@@ -337,8 +337,8 @@ export default function CommissionAnalytics({
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div className="bg-premium-muted p-4 rounded-lg">
-                  <h3 className="font-semibold text-protocall-blue">Gross Revenue</h3>
-                  <p className="text-2xl font-bold text-protocall-blue">₹{analytics.finfluencer.gross.toLocaleString()}</p>
+                  <h3 className="font-semibold text-primary">Gross Revenue</h3>
+                  <p className="text-2xl font-bold text-primary">₹{analytics.finfluencer.gross.toLocaleString()}</p>
                 </div>
                 <div className="bg-sell-muted p-4 rounded-lg">
                   <h3 className="font-semibold text-sell-muted-foreground">Platform Commission</h3>
@@ -350,7 +350,7 @@ export default function CommissionAnalytics({
                 </div>
               </div>
               <div className="text-center">
-                <Badge className="bg-premium-muted text-protocall-blue">
+                <Badge className="bg-premium-muted text-primary">
                   Default Rate: {commissionSettings.finfluencer?.default_rate || 25}%
                 </Badge>
               </div>

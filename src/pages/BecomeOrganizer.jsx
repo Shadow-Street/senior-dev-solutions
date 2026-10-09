@@ -162,7 +162,7 @@ export default function BecomeOrganizerPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -173,7 +173,7 @@ export default function BecomeOrganizerPage() {
     window.location.href = createPageUrl('OrganizerDashboard');
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -185,7 +185,7 @@ export default function BecomeOrganizerPage() {
       window.location.href = createPageUrl('OrganizerDashboard');
       return (
         <div className="min-h-screen flex items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       );
     }
@@ -223,7 +223,7 @@ export default function BecomeOrganizerPage() {
                     </p>
                     <Button 
                       onClick={() => window.location.href = createPageUrl('OrganizerDashboard')}
-                      className="w-full bg-buy hover:bg-buy"
+                      className="w-full bg-buy text-buy-foreground hover:bg-buy-soft"
                     >
                       Go to Organizer Dashboard
                     </Button>
@@ -253,7 +253,7 @@ export default function BecomeOrganizerPage() {
                       </p>
                       <Button 
                         onClick={() => window.location.href = createPageUrl('OrganizerDashboard')}
-                        className="w-full bg-buy hover:bg-buy"
+                        className="w-full bg-buy text-buy-foreground hover:bg-buy-soft"
                       >
                         Go to Organizer Dashboard
                       </Button>
@@ -286,7 +286,7 @@ export default function BecomeOrganizerPage() {
           <Card className="text-center">
             <CardContent className="pt-6">
               <div className="w-12 h-12 bg-premium-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-6 h-6 text-protocall-blue" />
+                <Users className="w-6 h-6 text-primary" />
               </div>
               <h3 className="font-semibold text-foreground mb-2">Reach Thousands</h3>
               <p className="text-sm text-subtle">Connect with our active community of traders and investors</p>

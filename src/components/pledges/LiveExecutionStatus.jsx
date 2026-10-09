@@ -21,7 +21,7 @@ export default function LiveExecutionStatus({ execution }) {
       case 'partial':
         return {
           icon: Loader2,
-          color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+          color: 'bg-premium-muted text-primary border-protocall-premium-light',
           label: 'Partially Executed',
           animate: true
         };
@@ -116,7 +116,7 @@ export default function LiveExecutionStatus({ execution }) {
       {/* Partial Execution */}
       {execution.status === 'partial' && (
         <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-3">
-          <div className="flex items-center gap-2 text-sm text-protocall-blue mb-2">
+          <div className="flex items-center gap-2 text-sm text-primary mb-2">
             <Loader2 className="w-4 h-4 animate-spin" />
             <span className="font-medium">Execution in progress...</span>
           </div>
@@ -126,9 +126,9 @@ export default function LiveExecutionStatus({ execution }) {
               {execution.executed_qty} / {execution.pledged_qty}
             </span>
           </div>
-          <div className="w-full bg-protocall-blue rounded-full h-2 mt-2">
+          <div className="w-full bg-primary rounded-full h-2 mt-2">
             <div
-              className="bg-protocall-blue h-2 rounded-full transition-all duration-500"
+              className="bg-primary h-2 rounded-full transition-all duration-500"
               style={{ 
                 width: `${((execution.executed_qty / execution.pledged_qty) * 100)}%` 
               }}

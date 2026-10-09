@@ -208,10 +208,10 @@ export default function FundManager_Investors() {
               <CardTitle className="text-xl font-semibold">All Investors</CardTitle>
             </CardHeader>
             <CardContent>
-              {error && <div className="text-sell text-center py-4">{error}</div>}
+              {error && <div className="text-sell-muted-foreground text-center py-4">{error}</div>}
               {isLoading ? (
                 <div className="flex items-center justify-center py-12">
-                  <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
                 </div>
               ) : investors.length === 0 ? (
                 <div className="py-12 text-center text-muted-foreground">
@@ -301,7 +301,7 @@ export default function FundManager_Investors() {
                                   size="sm"
                                   variant="outline"
                                   onClick={() => handleViewDetails(investor)}
-                                  className="border-2 border-protocall-premium-light text-protocall-blue hover:bg-premium-muted"
+                                  className="border-2 border-protocall-premium-light text-primary hover:bg-premium-muted"
                                 >
                                   <Eye className="w-4 h-4" />
                                 </Button>

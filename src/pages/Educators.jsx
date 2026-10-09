@@ -254,7 +254,7 @@ export default function Educators() {
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <GraduationCap className="w-8 h-8 text-protocall-blue" />
+            <GraduationCap className="w-8 h-8 text-primary" />
             <h1 className="text-4xl font-bold bg-gradient-to-r from-protocall-deep to-protocall-blue bg-clip-text text-transparent">
               Financial Educators
             </h1>
@@ -359,11 +359,11 @@ export default function Educators() {
           <CardContent className="p-6">
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 bg-premium-muted rounded-full flex items-center justify-center flex-shrink-0">
-                <Award className="w-4 h-4 text-protocall-blue" />
+                <Award className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold text-protocall-blue mb-2">Educational Excellence</h3>
-                <p className="text-sm text-protocall-blue">
+                <h3 className="font-semibold text-primary mb-2">Educational Excellence</h3>
+                <p className="text-sm text-primary">
                   All educators are verified professionals with relevant certifications and teaching experience.
                   Courses are designed for educational purposes and skill development. Please verify credentials
                   and choose courses that match your learning objectives and experience level.

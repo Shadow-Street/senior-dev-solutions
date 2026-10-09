@@ -93,7 +93,7 @@ class PaymentController {
 
         } catch (error) {
             console.error('Create Order Error:', error);
-            res.status(500).json({ error: error.message });
+            res.status(500).json({ error: 'Internal server error' });
         }
     }
 
@@ -196,7 +196,7 @@ class PaymentController {
 
         } catch (error) {
             console.error('Verify Payment Error:', error);
-            res.status(500).json({ error: error.message });
+            res.status(500).json({ error: 'Internal server error' });
         }
     }
 
@@ -315,7 +315,7 @@ class PaymentController {
 
         } catch (error) {
             console.error('Webhook Error:', error);
-            res.status(500).json({ error: error.message });
+            res.status(500).json({ error: 'Internal server error' });
         }
     }
 }

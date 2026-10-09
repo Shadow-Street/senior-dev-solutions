@@ -16,7 +16,7 @@ export default function ProfileCreditsSection({ user, referrals }) {
     amount: referralCredits,
     description: `${successfulReferrals} successful referrals × 100 credits`,
     icon: Award,
-    color: "text-protocall-blue"
+    color: "text-primary"
   },
   {
     title: "Trust Score Bonus",
@@ -47,7 +47,7 @@ export default function ProfileCreditsSection({ user, referrals }) {
 
       {/* Credit Sources */}
       <Card>
-        <CardHeader className="bg-surface-2">
+        <CardHeader className="bg-card border-b border-divider">
             <CardTitle>Credit Breakdown</CardTitle>
         </CardHeader>
         <CardContent className="pt-4">
@@ -56,7 +56,7 @@ export default function ProfileCreditsSection({ user, referrals }) {
             <Card key={index}>
                     <CardContent className="p-4">
                     <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-full bg-surface-2 ${source.color}`}>
+                        <div className={`p-2 rounded-full bg-card ${source.color}`}>
                         <source.icon className="w-5 h-5" />
                         </div>
                         <div className="flex-1">
@@ -77,10 +77,10 @@ export default function ProfileCreditsSection({ user, referrals }) {
       
 
       {/* How to Earn More */}
-      <Card className="bg-surface-2 border-protocall-premium-light">
-        <CardHeader className="bg-surface-2 border-b">
+      <Card className="bg-card border-protocall-premium-light">
+        <CardHeader className="bg-card border-b border-divider">
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-protocall-blue" />
+            <TrendingUp className="w-5 h-5 text-primary" />
             Earn More Credits
           </CardTitle>
         </CardHeader>

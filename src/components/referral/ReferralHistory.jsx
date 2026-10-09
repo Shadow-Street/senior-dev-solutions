@@ -9,7 +9,7 @@ export default function ReferralHistory({ referrals }) {
     if (referral.is_active_member) {
       return <Badge className="bg-buy-muted text-buy-muted-foreground border-buy/30">Active Member</Badge>;
     } else if (referral.signup_completed) {
-      return <Badge className="bg-premium-muted text-protocall-blue border-protocall-premium-light">Signed Up</Badge>;
+      return <Badge className="bg-premium-muted text-primary border-protocall-premium-light">Signed Up</Badge>;
     } else if (referral.invitee_email) {
       return <Badge className="bg-hold-muted text-hold-muted-foreground border-hold/30">Invited</Badge>;
     } else {

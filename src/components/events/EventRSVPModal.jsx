@@ -60,7 +60,7 @@ export default function EventRSVPModal({ event, open, onClose }) {
     const rows = attendees.map(attendee => [
       attendee.user_name || 'Unknown',
       attendee.user_email || 'N/A',
-      attendee.rsvp_status.toUpperCase(),
+      (attendee.rsvp_status || 'unknown').toUpperCase(),
       attendee.confirmed ? 'YES' : 'NO',
       hasTicket(attendee.user_id) ? 'YES' : 'NO',
       format(new Date(attendee.created_date), 'dd/MM/yyyy')
@@ -93,7 +93,7 @@ export default function EventRSVPModal({ event, open, onClose }) {
 
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
         ) : (
           <div className="space-y-6">
@@ -188,7 +188,7 @@ export default function EventRSVPModal({ event, open, onClose }) {
                               attendee.rsvp_status === 'maybe' ? 'bg-hold-muted text-hold-muted-foreground' :
                                 'bg-sell-muted text-sell-muted-foreground'
                           }>
-                            {attendee.rsvp_status.toUpperCase()}
+                            {(attendee.rsvp_status || 'unknown').toUpperCase()}
                           </Badge>
                         </td>
                         <td className="px-4 py-3">

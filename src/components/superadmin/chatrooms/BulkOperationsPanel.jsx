@@ -365,10 +365,10 @@ export default function BulkOperationsPanel({ chatRooms, onRefresh, adminUser })
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Copy className="w-5 h-5 text-protocall-blue" />
+            <Copy className="w-5 h-5 text-primary" />
             Bulk Operations
             {selectedRooms.length > 0 && (
-              <Badge className="bg-premium-muted text-protocall-blue">
+              <Badge className="bg-premium-muted text-primary">
                 {selectedRooms.length} rooms selected
               </Badge>
             )}
@@ -500,7 +500,7 @@ Premium Signals,premium_admin,,true,premium"
                       key={room.id}
                       className={`p-3 rounded-lg cursor-pointer transition-colors ${
                         selectedRooms.includes(room.id)
-                          ? 'bg-premium-muted border-2 border-protocall-blue'
+                          ? 'bg-premium-muted border-2 border-primary'
                           : 'bg-surface-2 hover:bg-surface-2'
                       }`}
                       onClick={() => toggleRoomSelection(room.id)}
@@ -621,7 +621,7 @@ Premium Signals,premium_admin,,true,premium"
                       key={room.id}
                       className={`p-3 rounded-lg cursor-pointer transition-colors ${
                         selectedRooms.includes(room.id)
-                          ? 'bg-premium-muted border-2 border-protocall-blue'
+                          ? 'bg-premium-muted border-2 border-primary'
                           : 'bg-surface-2 hover:bg-surface-2'
                       }`}
                       onClick={() => toggleRoomSelection(room.id)}
@@ -730,7 +730,7 @@ Premium Signals,premium_admin,,true,premium"
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5 text-protocall-blue" />
+              <FileText className="w-5 h-5 text-primary" />
               Operation Results
             </CardTitle>
           </CardHeader>

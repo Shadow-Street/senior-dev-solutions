@@ -143,8 +143,8 @@ export default function RefundApprovalModal({ request, onClose, onApprove, onRej
           {/* Warning for Approval */}
           {action === 'approve' && (
             <Alert className="bg-premium-muted border-protocall-premium-light">
-              <CheckCircle className="h-4 w-4 text-protocall-blue" />
-              <AlertDescription className="text-protocall-blue">
+              <CheckCircle className="h-4 w-4 text-primary" />
+              <AlertDescription className="text-primary">
                 <strong>Processing Refund:</strong> The refund will be processed through {request.payment_gateway} 
                 and the amount will be credited to the user's original payment method within 5-7 business days.
               </AlertDescription>
@@ -187,7 +187,7 @@ export default function RefundApprovalModal({ request, onClose, onApprove, onRej
               setTimeout(handleSubmit, 100);
             }}
             disabled={isProcessing || action === 'reject'}
-            className="bg-buy hover:bg-buy"
+            className="bg-buy text-buy-foreground hover:bg-buy-soft"
           >
             {isProcessing && action === 'approve' ? 'Processing...' : 'Approve & Process Refund'}
           </Button>

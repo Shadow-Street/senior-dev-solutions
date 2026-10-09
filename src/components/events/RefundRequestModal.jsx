@@ -68,10 +68,10 @@ export default function RefundRequestModal({ ticket, event, onClose, onSuccess }
           <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-protocall-blue font-medium">Refund Amount</p>
-                <p className="text-2xl font-bold text-protocall-blue">₹{ticket.ticket_price.toLocaleString()}</p>
+                <p className="text-sm text-primary font-medium">Refund Amount</p>
+                <p className="text-2xl font-bold text-primary">₹{ticket.ticket_price.toLocaleString()}</p>
               </div>
-              <DollarSign className="w-8 h-8 text-protocall-blue" />
+              <DollarSign className="w-8 h-8 text-primary" />
             </div>
           </div>
 
@@ -158,7 +158,7 @@ export default function RefundRequestModal({ ticket, event, onClose, onSuccess }
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-protocall-blue hover:bg-protocall-blue"
+              className="bg-primary hover:bg-primary"
             >
               {isSubmitting ? 'Submitting...' : 'Submit Request'}
             </Button>

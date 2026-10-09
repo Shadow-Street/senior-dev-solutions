@@ -13,11 +13,12 @@ import AdminPanel from "./AdminPanel";
 import AdminLogin from "./admin/AdminLogin";
 import SuperAdminDashboard from "./admin/SuperAdminDashboard";
 import Profile from "./Profile";
-import contact from "./contact";
+import Contact from "./contact";
 import Finfluencers from "./Finfluencers";
 import InfluencerProfile from "./InfluencerProfile";
 import AdvisorRegistration from "./AdvisorRegistration";
 import Advisors from "./Advisors";
+import AdvisorDashboard from "./AdvisorDashboard";
 import AdvisorProfile from "./AdvisorProfile";
 import News from "./News";
 import SamplePortfolio from "./SamplePortfolio";
@@ -71,11 +72,12 @@ const PAGES = {
     AdminLogin,
     SuperAdminDashboard,
     Profile,
-    contact,
+    contact: Contact,
     Finfluencers,
     InfluencerProfile,
     AdvisorRegistration,
     Advisors,
+    AdvisorDashboard,
     AdvisorProfile,
     News,
     SamplePortfolio,
@@ -161,11 +163,19 @@ export default function Pages() {
                             <Route path="/AdminPanel" element={<AdminPanel />} />
                             <Route path="/admin/dashboard" element={<SuperAdminDashboard />} />
                             <Route path="/Profile" element={<Profile />} />
-                            <Route path="/contact" element={<contact />} />
+                            <Route path="/contact" element={<Contact />} />
                             <Route path="/Finfluencers" element={<Finfluencers />} />
                             <Route path="/InfluencerProfile" element={<InfluencerProfile />} />
                             <Route path="/AdvisorRegistration" element={<AdvisorRegistration />} />
                             <Route path="/Advisors" element={<Advisors />} />
+                            <Route
+                              path="/AdvisorDashboard"
+                              element={
+                                <ProtectedRoute allowedRoles={["advisor", "admin", "super_admin"]}>
+                                  <AdvisorDashboard />
+                                </ProtectedRoute>
+                              }
+                            />
                             <Route path="/AdvisorProfile" element={<AdvisorProfile />} />
                             <Route path="/News" element={<News />} />
                             <Route path="/SamplePortfolio" element={<SamplePortfolio />} />

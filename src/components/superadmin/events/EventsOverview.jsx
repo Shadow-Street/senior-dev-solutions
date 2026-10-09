@@ -189,7 +189,7 @@ export default function EventsOverview({
 
   const statusConfig = {
     pending_approval: { color: 'bg-hold-muted text-hold-muted-foreground', icon: Clock, label: 'Pending' },
-    approved: { color: 'bg-premium-muted text-protocall-blue', icon: CheckCircle, label: 'Approved' },
+    approved: { color: 'bg-premium-muted text-primary', icon: CheckCircle, label: 'Approved' },
     scheduled: { color: 'bg-buy-muted text-buy-muted-foreground', icon: Calendar, label: 'Scheduled' },
     completed: { color: 'bg-premium-muted text-protocall-premium-text', icon: CheckCircle, label: 'Completed' },
     cancelled: { color: 'bg-surface-2 text-foreground', icon: XCircle, label: 'Cancelled' },
@@ -209,11 +209,11 @@ export default function EventsOverview({
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-protocall-blue">Total Events</p>
-                <p className="text-3xl font-bold text-protocall-blue">{stats.total}</p>
+                <p className="text-sm font-medium text-primary">Total Events</p>
+                <p className="text-3xl font-bold text-primary">{stats.total}</p>
               </div>
               <div className="p-3 bg-premium-muted rounded-xl">
-                <Calendar className="w-6 h-6 text-protocall-blue" />
+                <Calendar className="w-6 h-6 text-primary" />
               </div>
             </div>
           </CardContent>
@@ -308,10 +308,10 @@ export default function EventsOverview({
             <div>
               <p className="text-sm font-medium text-subtle">Automation</p>
               <p className="text-3xl font-bold text-foreground">Active</p>
-              <p className="text-sm text-protocall-blue">Reminders & Feedback</p>
+              <p className="text-sm text-primary">Reminders & Feedback</p>
             </div>
             <div className="p-3 bg-premium-muted rounded-xl">
-              <Mail className="w-6 h-6 text-protocall-blue" />
+              <Mail className="w-6 h-6 text-primary" />
             </div>
           </CardContent>
         </Card>
@@ -341,7 +341,7 @@ export default function EventsOverview({
                   >
                     <div className="flex items-center gap-4 flex-1">
                       <div className="p-3 bg-premium-muted rounded-lg">
-                        <Calendar className="w-5 h-5 text-protocall-blue" />
+                        <Calendar className="w-5 h-5 text-primary" />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
@@ -377,7 +377,7 @@ export default function EventsOverview({
                         variant="outline"
                         size="sm"
                         onClick={() => onViewDetails(event)}
-                        className="bg-transparent border-2 border-border hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-protocall-blue transition-all duration-300"
+                        className="bg-transparent border-2 border-border hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-primary transition-all duration-300"
                       >
                         <Eye className="w-4 h-4" />
                       </Button>
@@ -406,9 +406,9 @@ export default function EventsOverview({
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-protocall-blue" />
+              <Calendar className="w-5 h-5 text-primary" />
               {filters.search || filters.status !== 'all' || filters.organizer !== 'all' || filters.dateFrom || filters.dateTo || filters.isPremium !== 'all' || filters.priceMin || filters.priceMax || filters.capacity !== 'all' ? 'Filtered Events' : 'Recent Events'}
-              <Badge className="bg-surface-2 text-protocall-blue">
+              <Badge className="bg-surface-2 text-primary">
                 {recentEvents.length}
               </Badge>
             </CardTitle>
@@ -490,7 +490,7 @@ export default function EventsOverview({
                               variant="ghost"
                               size="sm"
                               onClick={() => onViewDetails(event)}
-                              className="text-protocall-blue hover:text-protocall-blue hover:bg-premium-muted rounded-xl transition-all duration-300"
+                              className="text-primary hover:text-primary hover:bg-premium-muted rounded-xl transition-all duration-300"
                             >
                               <Eye className="w-4 h-4 mr-1" />
                               View

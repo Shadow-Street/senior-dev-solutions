@@ -192,7 +192,7 @@ export default function PledgeExecutionPanel() {
       <Card>
         <CardContent className="p-6">
           <div className="flex items-center justify-center">
-            <RefreshCw className="w-6 h-6 animate-spin text-protocall-blue" />
+            <RefreshCw className="w-6 h-6 animate-spin text-primary" />
             <span className="ml-2">Loading active positions...</span>
           </div>
         </CardContent>
@@ -302,7 +302,7 @@ export default function PledgeExecutionPanel() {
                         size="sm"
                         variant="default"
                         onClick={() => handleManualExecute(pledge)}
-                        className="flex-1 bg-protocall-blue hover:bg-protocall-blue"
+                        className="flex-1 bg-primary hover:bg-primary"
                       >
                         <CheckCircle className="w-4 h-4 mr-1" />
                         Execute Now
@@ -338,7 +338,7 @@ export default function PledgeExecutionPanel() {
         <Card>
           <CardHeader className="bg-surface-2">
             <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-protocall-blue" />
+              <Users className="w-5 h-5 text-primary" />
               👨‍💼 Admin-Managed Positions ({adminManagedPositions.length})
             </CardTitle>
             <p className="text-sm text-subtle">No target set - Admin decides when to sell</p>
@@ -356,7 +356,7 @@ export default function PledgeExecutionPanel() {
                       <div>
                         <div className="flex items-center gap-2">
                           <h4 className="font-bold text-lg">{pledge.stock_symbol}</h4>
-                          <Badge variant="outline" className="bg-premium-muted text-protocall-blue">
+                          <Badge variant="outline" className="bg-premium-muted text-primary">
                             <Clock className="w-3 h-3 mr-1" />
                             {daysHeld} days
                           </Badge>
@@ -393,7 +393,7 @@ export default function PledgeExecutionPanel() {
                         size="sm"
                         variant="default"
                         onClick={() => handleManualExecute(pledge)}
-                        className="flex-1 bg-buy hover:bg-buy"
+                        className="flex-1 bg-buy text-buy-foreground hover:bg-buy-soft"
                       >
                         <CheckCircle className="w-4 h-4 mr-1" />
                         Execute Sell Now
@@ -472,7 +472,7 @@ export default function PledgeExecutionPanel() {
                 />
               </div>
               <div className="p-4 bg-premium-muted border border-protocall-premium-light rounded-lg">
-                <p className="text-sm text-protocall-blue">
+                <p className="text-sm text-primary">
                   System will monitor and auto-execute when the new target price is reached.
                   User will be notified of the change.
                 </p>
@@ -495,7 +495,7 @@ export default function PledgeExecutionPanel() {
             <Button variant="outline" onClick={() => setShowOverrideModal(false)}>
               Cancel
             </Button>
-            <Button onClick={executeOverrideAction} className="bg-protocall-blue hover:bg-protocall-blue">
+            <Button onClick={executeOverrideAction} className="bg-primary hover:bg-primary">
               Confirm
             </Button>
           </DialogFooter>

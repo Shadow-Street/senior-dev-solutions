@@ -19,7 +19,8 @@ router.get('/active', async (req, res) => {
     });
     res.json(vendors);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[vendor.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -33,11 +34,12 @@ router.get('/category/:category', async (req, res) => {
     });
     res.json(vendors);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[vendor.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 // CRUD routes
-createCrudRoutes(router, vendorController);
+createCrudRoutes(router, vendorController, [authMiddleware]);
 
 module.exports = router;

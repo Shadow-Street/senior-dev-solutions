@@ -164,11 +164,31 @@ button:focus-visible {
     --chart-grid: 229.1 26.8% 92%;         /* #E5E7F0  Chart Grid              */
 
     /* --- Sidebar & Navigation (navy — navigation surfaces only) -------- */
+    /* --- Stat tile fills ---------------------------------------------
+       Solid, white-on-colour tiles for the dashboard and portfolio
+       summaries. Each one is the AA-safe depth of a family we already
+       use, not a new hue: green from BUY, blue is --premium, purple is
+       --primary (Cyber Grape) unchanged, orange from HOLD.
+
+       They are darker than the brand fills on purpose. #56E11B carries
+       white text at 1.72:1 and #F75C03 at 3.24:1 — both unreadable — so
+       the bright values stay for backgrounds and chips, and these
+       deeper ones are used where white text sits on top. Measured with
+       white: green 5.02, blue 6.44, purple 7.10, orange 5.18.          */
+    --tile-green: 142.4 71.8% 29.2%;       /* #15803D  (5.02:1)        */
+    --tile-blue: 244.8 100% 60.8%;         /* #4737FF  = --premium     */
+    --tile-purple: 263.4 70% 50.4%;        /* #6D28D9  = --primary     */
+    --tile-orange: 17.5 88.3% 40.4%;       /* #C2410C  (5.18:1)        */
+    /* Neutral slot, so a tile whose colour is semantic (profit/loss) never
+       collides with a neighbour that just needs to look different.        */
+    --tile-ink: 240 20% 16%;               /* #21212E  (14.8:1)        */
+    --tile-foreground: 0 0% 100%;          /* #FFFFFF                  */
+
     --sidebar-background: 227.6 47.5% 12%;     /* #10162D                      */
     --sidebar-foreground: 0 0% 100%;           /* #FFFFFF                      */
     --sidebar-dark: 228 53.2% 9.2%;            /* #0B1024  Profile area        */
     --sidebar-muted-foreground: 226.5 22% 72.4%;   /* #A9B0C8 Secondary text   */
-    --sidebar-primary: 244.8 100% 60.8%;       /* #4737FF  Active Menu         */
+    --sidebar-primary: 263.4 70% 50.4%;        /* #6D28D9  Active Menu (grape) */
     --sidebar-primary-foreground: 0 0% 100%;   /* #FFFFFF                      */
     --sidebar-accent: 244.8 64.7% 45.5%;       /* #3529BF  Active Menu Hover   */
     --sidebar-accent-foreground: 0 0% 100%;    /* #FFFFFF                      */
@@ -249,11 +269,20 @@ button:focus-visible {
     --chart-grid: 227 33.3% 21.8%;         /* #252D4A                          */
 
     /* --- Sidebar (already navy in light; unchanged) -------------------- */
+    /* Stat tiles: slightly lifted on a dark page so the cards still read
+       as raised surfaces rather than holes. Contrast with white holds. */
+    --tile-green: 142.2 70.9% 35.1%;       /* #1A9949                  */
+    --tile-blue: 244.8 100% 60.8%;         /* #4737FF                  */
+    --tile-purple: 263.4 70% 50.4%;        /* #6D28D9                  */
+    --tile-orange: 21.1 83.3% 46.9%;       /* #DB5A14                  */
+    --tile-ink: 240 16% 26%;               /* #383848 — lifted on dark */
+    --tile-foreground: 0 0% 100%;
+
     --sidebar-background: 227.6 47.5% 12%;     /* #10162D                      */
     --sidebar-foreground: 0 0% 100%;
     --sidebar-dark: 228 53.2% 9.2%;            /* #0B1024                      */
     --sidebar-muted-foreground: 226.5 22% 72.4%;   /* #A9B0C8                  */
-    --sidebar-primary: 244.8 100% 60.8%;       /* #4737FF                      */
+    --sidebar-primary: 263.4 70% 50.4%;        /* #6D28D9  (grape)             */
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 244.8 64.7% 45.5%;       /* #3529BF                      */
     --sidebar-accent-foreground: 0 0% 100%;
@@ -271,4 +300,21 @@ button:focus-visible {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ------------------------------------------------------------------------
+   Recharts legend labels
+   ------------------------------------------------------------------------
+   Recharts writes the series colour onto the legend label as an inline
+   `style="color: ..."`, so the label inherits whatever the line or bar is
+   painted with. Several of our series colours are fills, not text colours:
+   on a white chart canvas --chart-2 (#56E11B) measures 1.72:1 and --chart-5
+   (#F75C03) 3.50:1, both below the 4.5:1 floor for body text.
+
+   The coloured swatch beside each label already identifies the series, so the
+   label itself is set to the normal foreground. An inline style can only be
+   beaten by !important here.
+   ------------------------------------------------------------------------ */
+.recharts-legend-item-text {
+  color: hsl(var(--foreground)) !important;
 }

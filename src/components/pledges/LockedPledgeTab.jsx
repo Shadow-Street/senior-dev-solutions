@@ -54,13 +54,13 @@ export default function LockedPledgeTab({ onOpenModal, accessRequest }) {
     if (accessRequest?.status === 'pending') {
       return {
         icon: Clock,
-        iconColor: 'text-protocall-blue',
+        iconColor: 'text-primary',
         bgColor: 'from-surface-2 to-surface-2',
         borderColor: 'border-protocall-premium-light',
         title: 'Your Application is Under Review',
         description: 'We are verifying your details and will notify you upon approval.',
         badgeText: 'Status: Pending',
-        badgeColor: 'bg-protocall-blue text-white',
+        badgeColor: 'bg-primary text-white',
       };
     }
     if (accessRequest?.status === 'rejected') {
@@ -118,10 +118,10 @@ export default function LockedPledgeTab({ onOpenModal, accessRequest }) {
                   <p className="text-subtle mt-2 text-lg">{banner.description}</p>
                    {accessRequest?.status === 'pending' && (
                     <div className="mt-4 max-w-md">
-                      <div className="relative w-full bg-protocall-blue rounded-full h-2 overflow-hidden">
-                        <div className="absolute top-0 bottom-0 bg-protocall-blue rounded-full indeterminate-bar w-1/4"></div>
+                      <div className="relative w-full bg-primary rounded-full h-2 overflow-hidden">
+                        <div className="absolute top-0 bottom-0 bg-primary rounded-full indeterminate-bar w-1/4"></div>
                       </div>
-                      <p className="text-xs text-protocall-blue mt-1.5 font-medium">Verification in progress... (Typically 24-48 hours)</p>
+                      <p className="text-xs text-primary mt-1.5 font-medium">Verification in progress... (Typically 24-48 hours)</p>
                     </div>
                   )}
                 </div>

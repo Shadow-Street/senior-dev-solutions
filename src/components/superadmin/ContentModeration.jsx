@@ -185,12 +185,12 @@ export default function ContentModeration() {
     critical: { color: 'text-sell-muted-foreground bg-sell-muted', label: 'Critical' },
     high: { color: 'text-hold-muted-foreground bg-hold-muted', label: 'High' },
     medium: { color: 'text-hold-muted-foreground bg-hold-muted', label: 'Medium' },
-    low: { color: 'text-protocall-blue bg-premium-muted', label: 'Low' }
+    low: { color: 'text-primary bg-premium-muted', label: 'Low' }
   };
 
   const statusConfig = {
     pending: { color: 'text-hold-muted-foreground bg-hold-muted', label: 'Pending Review', icon: Clock },
-    reviewed: { color: 'text-protocall-blue bg-premium-muted', label: 'Reviewed', icon: Eye },
+    reviewed: { color: 'text-primary bg-premium-muted', label: 'Reviewed', icon: Eye },
     dismissed: { color: 'text-subtle bg-surface-2', label: 'Dismissed', icon: XCircle },
     escalated: { color: 'text-sell-muted-foreground bg-sell-muted', label: 'Escalated', icon: AlertTriangle }
   };
@@ -215,8 +215,8 @@ export default function ContentModeration() {
               <p className="text-lg font-bold text-hold-muted-foreground">{stats.pending}</p>
             </div>
             <div className="bg-premium-muted p-3 rounded-lg">
-              <p className="text-xs text-protocall-blue">Reviewed</p>
-              <p className="text-lg font-bold text-protocall-blue">{stats.reviewed}</p>
+              <p className="text-xs text-primary">Reviewed</p>
+              <p className="text-lg font-bold text-primary">{stats.reviewed}</p>
             </div>
             <div className="bg-surface-2 p-3 rounded-lg">
               <p className="text-xs text-subtle">Dismissed</p>
@@ -235,8 +235,8 @@ export default function ContentModeration() {
               <p className="text-lg font-bold text-hold-muted-foreground">{stats.medium}</p>
             </div>
             <div className="bg-premium-muted p-3 rounded-lg">
-              <p className="text-xs text-protocall-blue">Low</p>
-              <p className="text-lg font-bold text-protocall-blue">{stats.low}</p>
+              <p className="text-xs text-primary">Low</p>
+              <p className="text-lg font-bold text-primary">{stats.low}</p>
             </div>
           </div>
           
@@ -508,7 +508,7 @@ export default function ContentModeration() {
                   
                   <Button
                     variant="ghost"
-                    className="text-protocall-blue hover:text-protocall-blue"
+                    className="text-primary hover:text-primary"
                     onClick={() => handleStatusUpdate(selectedLog.id, 'reviewed')}
                   >
                     <CheckCircle className="w-4 h-4 mr-2" />

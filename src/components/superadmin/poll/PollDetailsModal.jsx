@@ -113,7 +113,7 @@ export default function PollDetailsModal({ open, poll, users, votes, onClose, on
                 <DialogTitle className="text-xl mb-2">{pollData.title}</DialogTitle>
                 <DialogDescription className="flex items-center gap-2">
                   <Badge variant="outline">{pollData.stock_symbol}</Badge>
-                  <Badge className={pollData.is_premium ? 'bg-premium-muted text-protocall-premium-text' : 'bg-premium-muted text-protocall-blue'}>
+                  <Badge className={pollData.is_premium ? 'bg-premium-muted text-protocall-premium-text' : 'bg-premium-muted text-primary'}>
                     {pollData.is_premium ? 'Premium' : 'General'}
                   </Badge>
                   <Badge className={

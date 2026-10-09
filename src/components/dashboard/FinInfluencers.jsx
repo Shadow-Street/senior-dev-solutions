@@ -85,7 +85,7 @@ export default function FinInfluencers() {
                     className="w-12 h-12 rounded-full object-cover"
                   />
                   {influencer.verified && (
-                    <CheckCircle className="w-4 h-4 text-protocall-blue absolute -bottom-1 -right-1 bg-card rounded-full" />
+                    <CheckCircle className="w-4 h-4 text-primary absolute -bottom-1 -right-1 bg-card rounded-full" />
                   )}
                 </div>
               </div>

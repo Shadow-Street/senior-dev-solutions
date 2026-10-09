@@ -280,10 +280,27 @@ class InvoiceService {
     /**
      * Download invoice (return file path for streaming)
      */
-    static async downloadInvoice(invoiceId) {
+    /**
+     * Resolve an invoice's PDF on disk.
+     *
+     * `requestingUser` is required: ownership is enforced here rather than only
+     * at the route, so no future caller can reach a file by skipping the check.
+     * Staff may download any invoice; everyone else only their own.
+     */
+    static async downloadInvoice(invoiceId, requestingUser) {
         const invoice = await db.Invoice.findByPk(invoiceId);
 
         if (!invoice) {
+            throw new Error('Invoice not found');
+        }
+
+        const STAFF = ['admin', 'super_admin', 'sub_admin'];
+        const isStaff = STAFF.includes(requestingUser?.app_role || requestingUser?.role);
+        const isOwner = String(invoice.user_id) === String(requestingUser?.id);
+
+        // Report "not found" rather than "forbidden": a 403 would confirm the
+        // invoice id exists and let an attacker enumerate billing records.
+        if (!requestingUser?.id || (!isOwner && !isStaff)) {
             throw new Error('Invoice not found');
         }
 
@@ -292,7 +309,19 @@ class InvoiceService {
             await invoice.reload();
         }
 
-        const filepath = path.join(__dirname, '../../uploads/invoices', `${invoice.invoice_number}.pdf`);
+        // invoice_number reaches the filesystem, and it is writable through the
+        // API, so treat it as untrusted: allow only the generated shape and
+        // confirm the resolved path stays inside the invoices directory.
+        if (!/^INV-\d{8}-\d{4}$/.test(String(invoice.invoice_number || ''))) {
+            throw new Error('Invoice PDF file not found');
+        }
+
+        const invoiceDir = path.resolve(__dirname, '../../uploads/invoices');
+        const filepath = path.resolve(invoiceDir, `${invoice.invoice_number}.pdf`);
+
+        if (!filepath.startsWith(invoiceDir + path.sep)) {
+            throw new Error('Invoice PDF file not found');
+        }
 
         if (!fs.existsSync(filepath)) {
             throw new Error('Invoice PDF file not found');

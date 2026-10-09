@@ -76,8 +76,8 @@ export default function AdvisorPledgeSessionFormModal({ user, advisorProfile, ac
         </DialogHeader>
 
         <Alert className="bg-premium-muted border-protocall-premium-light">
-          <AlertCircle className="h-4 w-4 text-protocall-blue" />
-          <AlertDescription className="text-protocall-blue">
+          <AlertCircle className="h-4 w-4 text-primary" />
+          <AlertDescription className="text-primary">
             <strong>Note:</strong> Your session will be submitted for SuperAdmin approval before going live.
             You'll be notified once it's approved.
           </AlertDescription>

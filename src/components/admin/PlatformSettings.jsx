@@ -82,7 +82,7 @@ export default function PlatformSettings({ settings = {}, onSettingsUpdated }) {
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                        <Settings className="w-5 h-5 text-protocall-blue" />
+                        <Settings className="w-5 h-5 text-primary" />
                         Feature Toggles
                     </CardTitle>
                     <CardDescription>Enable or disable major platform features.</CardDescription>

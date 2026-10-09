@@ -103,8 +103,8 @@ export default function DisableContentCreatorsPage() {
 
         {isComplete && foundIssues.length === 0 && (
           <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-3 flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-protocall-ink/75" />
-            <span className="text-sm text-protocall-blue">No issues found. Navigation is already clean!</span>
+            <CheckCircle className="w-5 h-5 text-protocall-ink/85" />
+            <span className="text-sm text-primary">No issues found. Navigation is already clean!</span>
           </div>
         )}
 

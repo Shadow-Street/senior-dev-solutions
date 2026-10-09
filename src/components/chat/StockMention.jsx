@@ -94,7 +94,7 @@ export default function StockMention({ symbol }) {
         <div className="flex items-center gap-3 relative z-10">
           {/* Stock Icon with gradient */}
           <motion.div 
-            className="w-14 h-14 rounded-xl bg-gradient-to-br from-protocall-deep via-protocall-grape to-protocall-blue flex items-center justify-center text-white font-bold text-base flex-shrink-0 shadow-md"
+            className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary via-protocall-grape to-protocall-grape flex items-center justify-center text-white font-bold text-base flex-shrink-0 shadow-md"
             whileHover={{ scale: 1.05, rotate: 5 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
@@ -134,7 +134,7 @@ export default function StockMention({ symbol }) {
             >
               <Button 
                 size="sm" 
-                className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white border-0 shadow-md"
+                className="bg-gradient-to-r from-primary to-protocall-grape hover:from-primary hover:to-protocall-grape text-white border-0 shadow-md"
               >
                 <ExternalLink className="w-4 h-4 mr-1" />
                 View

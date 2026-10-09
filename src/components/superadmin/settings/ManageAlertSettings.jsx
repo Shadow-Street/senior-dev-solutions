@@ -183,7 +183,7 @@ export default function ManageAlertSettings({ settings, onChange }) {
   };
 
   const severityColors = {
-    info: 'bg-premium-muted text-protocall-blue',
+    info: 'bg-premium-muted text-primary',
     warning: 'bg-hold-muted text-hold-muted-foreground',
     critical: 'bg-sell-muted text-sell-muted-foreground'
   };
@@ -194,12 +194,12 @@ export default function ManageAlertSettings({ settings, onChange }) {
 
   return (
     <div className="space-y-6">
-      <div className="bg-premium-muted border-l-4 border-protocall-blue p-4 rounded-r-lg">
+      <div className="bg-premium-muted border-l-4 border-primary p-4 rounded-r-lg">
         <div className="flex items-start gap-3">
-          <Bell className="w-5 h-5 text-protocall-blue mt-1" />
+          <Bell className="w-5 h-5 text-primary mt-1" />
           <div>
-            <h4 className="font-semibold text-protocall-blue">Alert Configuration</h4>
-            <p className="text-sm text-protocall-blue">
+            <h4 className="font-semibold text-primary">Alert Configuration</h4>
+            <p className="text-sm text-primary">
               Configure thresholds and settings for automated alerts. Changes take effect immediately.
             </p>
           </div>

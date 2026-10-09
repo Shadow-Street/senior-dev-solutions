@@ -168,7 +168,7 @@ export default function ApprovalWorkflow({ user }) {
     switch (priority) {
       case 'critical': return 'bg-sell-muted text-sell-muted-foreground';
       case 'high': return 'bg-hold-muted text-hold-muted-foreground';
-      case 'medium': return 'bg-premium-muted text-protocall-blue';
+      case 'medium': return 'bg-premium-muted text-primary';
       case 'low': return 'bg-surface-2 text-foreground';
       default: return 'bg-surface-2 text-foreground';
     }
@@ -181,7 +181,7 @@ export default function ApprovalWorkflow({ user }) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-protocall-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-subtle">Loading approval requests...</p>
         </div>
       </div>
@@ -239,7 +239,7 @@ export default function ApprovalWorkflow({ user }) {
                 <p className="text-sm text-muted-foreground">Total Requests</p>
                 <p className="text-3xl font-bold text-foreground">{requests.length}</p>
               </div>
-              <FileText className="w-12 h-12 text-protocall-blue" />
+              <FileText className="w-12 h-12 text-primary" />
             </div>
           </CardContent>
         </Card>
@@ -291,7 +291,7 @@ export default function ApprovalWorkflow({ user }) {
                     <Button
                       onClick={() => handleReviewRequest(request)}
                       size="sm"
-                      className="bg-protocall-blue hover:bg-protocall-blue"
+                      className="bg-primary hover:bg-primary"
                     >
                       Review
                     </Button>
@@ -436,7 +436,7 @@ export default function ApprovalWorkflow({ user }) {
 
               <div>
                 <label className="block text-sm font-medium text-subtle mb-2">
-                  Review Notes <span className="text-sell">*</span>
+                  Review Notes <span className="text-sell-muted-foreground">*</span>
                 </label>
                 <Textarea
                   value={reviewNotes}
@@ -466,7 +466,7 @@ export default function ApprovalWorkflow({ user }) {
                 <Button
                   onClick={handleApprove}
                   disabled={isProcessing || !reviewNotes.trim()}
-                  className="bg-buy hover:bg-buy"
+                  className="bg-buy text-buy-foreground hover:bg-buy-soft"
                 >
                   <ThumbsUp className="w-4 h-4 mr-2" />
                   Approve & Apply

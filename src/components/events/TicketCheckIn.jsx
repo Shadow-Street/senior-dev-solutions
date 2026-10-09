@@ -152,14 +152,14 @@ export default function TicketCheckIn({ event, open, onClose, onUpdate }) {
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl">
-            <QrCode className="w-6 h-6 text-protocall-blue" />
+            <QrCode className="w-6 h-6 text-primary" />
             Ticket Check-In: {event.title}
           </DialogTitle>
         </DialogHeader>
 
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
         ) : (
           <div className="space-y-6">
@@ -167,7 +167,7 @@ export default function TicketCheckIn({ event, open, onClose, onUpdate }) {
             <div className="grid grid-cols-4 gap-4">
               <Card>
                 <CardContent className="p-4 text-center">
-                  <Users className="w-5 h-5 mx-auto mb-2 text-protocall-blue" />
+                  <Users className="w-5 h-5 mx-auto mb-2 text-primary" />
                   <p className="text-2xl font-bold text-foreground">{stats.totalRSVPs}</p>
                   <p className="text-xs text-subtle">Total RSVPs</p>
                 </CardContent>
@@ -322,7 +322,7 @@ export default function TicketCheckIn({ event, open, onClose, onUpdate }) {
                     size="sm"
                     variant="outline"
                     onClick={exportAttendanceCSV}
-                    className="border-protocall-premium-light text-protocall-blue hover:bg-premium-muted"
+                    className="border-protocall-premium-light text-primary hover:bg-premium-muted"
                   >
                     <Download className="w-4 h-4 mr-2" />
                     Export Report

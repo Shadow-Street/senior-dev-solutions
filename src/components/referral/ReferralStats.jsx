@@ -8,7 +8,7 @@ export default function ReferralStats({ stats }) {
       title: "Total Invites Sent",
       value: stats.totalInvites,
       icon: Users,
-      color: "bg-protocall-blue text-white",
+      color: "bg-primary text-white",
       bgColor: "bg-premium-muted"
     },
     {

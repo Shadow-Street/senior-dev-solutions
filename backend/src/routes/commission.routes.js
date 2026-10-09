@@ -6,6 +6,7 @@ const { authMiddleware, adminMiddleware } = require("../middleware/auth");
 
 // Commission Tracking CRUD
 const commissionController = createCrudController(db.CommissionTracking, {
+  ownership: 'user_id',
   defaultOrderBy: 'created_at',
   defaultOrder: 'DESC'
 });
@@ -35,7 +36,8 @@ router.get('/summary', authMiddleware, adminMiddleware, async (req, res) => {
 
     res.json(commissions);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[commission.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -57,7 +59,8 @@ router.get('/user/:userId', authMiddleware, async (req, res) => {
 
     res.json(commissions);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[commission.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -74,7 +77,8 @@ router.get('/advisor/:advisorId', authMiddleware, async (req, res) => {
 
     res.json(commissions);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[commission.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -116,23 +120,25 @@ router.post('/payout', authMiddleware, adminMiddleware, async (req, res) => {
 
     res.json({ success: true, processed: commissions.length });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[commission.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 // Commission tracking records
 const trackingRouter = express.Router();
 createCrudRoutes(trackingRouter, createCrudController(db.CommissionTracking, {
-  defaultOrderBy: 'created_at', defaultOrder: 'DESC'
-}));
+  defaultOrderBy: 'created_at', defaultOrder: 'DESC',
+  ownership: 'user_id',
+}), [authMiddleware]);
 router.use('/tracking', trackingRouter);
 
 // Commission settings
 const settingsRouter = express.Router();
-createCrudRoutes(settingsRouter, createCrudController(db.CommissionSettings));
+createCrudRoutes(settingsRouter, createCrudController(db.CommissionSettings), [authMiddleware, adminMiddleware]);
 router.use('/settings', settingsRouter);
 
 // CRUD LAST — '/:id' must not shadow the sub-routers above.
-createCrudRoutes(router, commissionController);
+createCrudRoutes(router, commissionController, [authMiddleware]);
 
 module.exports = router;

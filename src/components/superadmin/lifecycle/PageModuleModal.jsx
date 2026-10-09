@@ -235,7 +235,7 @@ export default function PageModuleModal({ page, user, onClose, onSave }) {
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-protocall-blue hover:bg-protocall-blue">
+            <Button type="submit" className="bg-primary hover:bg-primary">
               {page ? 'Update Page' : 'Create Page'}
             </Button>
           </DialogFooter>

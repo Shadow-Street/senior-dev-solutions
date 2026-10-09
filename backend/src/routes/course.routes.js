@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, adminMiddleware, optionalAuthenticate } = require("../middleware/auth");
 
 // Courses CRUD
 const courseController = createCrudController(db.Course, {
@@ -20,7 +20,8 @@ router.get('/featured', async (req, res) => {
     });
     res.json(courses);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[course.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -34,7 +35,8 @@ router.get('/category/:category', async (req, res) => {
     });
     res.json(courses);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[course.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -44,6 +46,7 @@ router.get('/category/:category', async (req, res) => {
 // Enrollments sub-routes
 const enrollmentRouter = express.Router();
 const enrollmentController = createCrudController(db.CourseEnrollment, {
+  ownership: 'user_id',
   defaultOrderBy: 'enrolled_at',
   defaultOrder: 'DESC'
 });
@@ -58,7 +61,8 @@ enrollmentRouter.get('/my-enrollments', authMiddleware, async (req, res) => {
     });
     res.json(enrollments);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[course.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -89,14 +93,15 @@ enrollmentRouter.post('/enroll', authMiddleware, async (req, res) => {
     
     res.status(201).json(enrollment);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[course.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-createCrudRoutes(enrollmentRouter, enrollmentController);
+createCrudRoutes(enrollmentRouter, enrollmentController, [authMiddleware]);
 router.use('/enrollments', enrollmentRouter);
 
 // CRUD LAST — '/:id' must not shadow the sub-routers mounted above.
-createCrudRoutes(router, courseController);
+createCrudRoutes(router, courseController, { read: [optionalAuthenticate], write: [authMiddleware, adminMiddleware] });
 
 module.exports = router;

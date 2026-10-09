@@ -29,7 +29,7 @@ export default function PageFooter() {
       name: 'Facebook',
       url: settings.facebook_url || '#',
       icon: Facebook,
-      color: 'hover:text-protocall-blue',
+      color: 'hover:text-primary',
       gradient: 'from-protocall-deep to-protocall-blue',
       shadow: 'shadow-protocall-blue/50'
     },
@@ -53,7 +53,7 @@ export default function PageFooter() {
       name: 'LinkedIn',
       url: settings.linkedin_url || '#',
       icon: Linkedin,
-      color: 'hover:text-protocall-blue',
+      color: 'hover:text-primary',
       gradient: 'from-protocall-deep to-protocall-blue',
       shadow: 'shadow-protocall-deep/50'
     },

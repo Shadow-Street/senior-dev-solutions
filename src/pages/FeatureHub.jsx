@@ -57,7 +57,7 @@ export default function FeatureHub() {
   const getStatusBadge = (status) => {
     const badges = {
       live: { label: 'Live', color: 'bg-buy-muted text-buy-muted-foreground border-buy/30', icon: CheckCircle },
-      partial: { label: 'Beta', color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light', icon: Zap },
+      partial: { label: 'Beta', color: 'bg-premium-muted text-primary border-protocall-premium-light', icon: Zap },
       placeholder: { label: 'Coming Soon', color: 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light', icon: Clock },
     };
     return badges[status] || badges.placeholder;
@@ -166,7 +166,7 @@ export default function FeatureHub() {
     return (
       <div className="min-h-screen bg-surface-2 flex items-center justify-center p-6">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-protocall-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-subtle font-medium">Loading amazing features...</p>
         </div>
       </div>
@@ -197,7 +197,7 @@ export default function FeatureHub() {
           <h1 className="text-5xl font-bold mb-4">
             Explore What's Possible
           </h1>
-          <p className="text-xl text-protocall-blue max-w-2xl mx-auto mb-8">
+          <p className="text-xl text-primary max-w-2xl mx-auto mb-8">
             Discover powerful features designed to enhance your trading journey. From basic tools to premium capabilities.
           </p>
           
@@ -205,17 +205,17 @@ export default function FeatureHub() {
           <div className="flex items-center justify-center gap-8 mt-8">
             <div className="text-center">
               <div className="text-3xl font-bold">{liveFeatures.length}</div>
-              <div className="text-sm text-protocall-blue">Live Features</div>
+              <div className="text-sm text-primary">Live Features</div>
             </div>
             <div className="w-px h-12 bg-white/20"></div>
             <div className="text-center">
               <div className="text-3xl font-bold">{upcomingFeatures.length}</div>
-              <div className="text-sm text-protocall-blue">Coming Soon</div>
+              <div className="text-sm text-primary">Coming Soon</div>
             </div>
             <div className="w-px h-12 bg-white/20"></div>
             <div className="text-center">
               <div className="text-3xl font-bold">{featuresByTier.vip.length}</div>
-              <div className="text-sm text-protocall-blue">VIP Exclusive</div>
+              <div className="text-sm text-primary">VIP Exclusive</div>
             </div>
           </div>
         </div>
@@ -257,13 +257,13 @@ export default function FeatureHub() {
           <TabsList className="grid w-full grid-cols-5 bg-transparent rounded-xl p-2 gap-2 mb-8">
             <TabsTrigger 
               value="all"
-              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 rounded-xl font-semibold shadow-md transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg"
+              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 rounded-xl font-semibold shadow-md transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg"
             >
               All Features
             </TabsTrigger>
             <TabsTrigger 
               value="basic"
-              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 rounded-xl font-semibold shadow-md transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg flex items-center gap-2"
+              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 rounded-xl font-semibold shadow-md transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg flex items-center gap-2"
             >
               <Shield className="w-4 h-4" />
               Free
@@ -284,7 +284,7 @@ export default function FeatureHub() {
             </TabsTrigger>
             <TabsTrigger 
               value="upcoming"
-              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 rounded-xl font-semibold shadow-md transition-all duration-300 bg-surface-2 text-protocall-blue hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg flex items-center gap-2"
+              className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 rounded-xl font-semibold shadow-md transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg flex items-center gap-2"
             >
               <Clock className="w-4 h-4" />
               Upcoming
@@ -301,11 +301,11 @@ export default function FeatureHub() {
           {/* Basic Features */}
           <TabsContent value="basic">
             <div className="mb-6 p-4 bg-surface-2 rounded-xl border border-protocall-premium-light">
-              <h3 className="font-semibold text-protocall-blue flex items-center gap-2">
+              <h3 className="font-semibold text-primary flex items-center gap-2">
                 <Shield className="w-5 h-5" />
                 Free Tier Features
               </h3>
-              <p className="text-sm text-protocall-blue mt-1">
+              <p className="text-sm text-primary mt-1">
                 Essential tools available to all community members at no cost.
               </p>
             </div>
@@ -349,11 +349,11 @@ export default function FeatureHub() {
           {/* Upcoming Features */}
           <TabsContent value="upcoming">
             <div className="mb-6 p-4 bg-surface-2 rounded-xl border border-protocall-premium-light">
-              <h3 className="font-semibold text-protocall-blue flex items-center gap-2">
+              <h3 className="font-semibold text-primary flex items-center gap-2">
                 <Clock className="w-5 h-5" />
                 Coming Soon
               </h3>
-              <p className="text-sm text-protocall-blue mt-1">
+              <p className="text-sm text-primary mt-1">
                 Exciting features currently in development. Stay tuned!
               </p>
             </div>

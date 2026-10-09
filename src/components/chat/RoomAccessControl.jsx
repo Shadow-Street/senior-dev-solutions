@@ -141,7 +141,7 @@ export default function RoomAccessControl({ room, children }) {
       <div className="flex items-center justify-center min-h-screen bg-surface-2 p-6">
         <Card className="max-w-md w-full">
           <CardContent className="p-8 text-center">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-r from-primary to-protocall-grape flex items-center justify-center mx-auto mb-6">
               {accessReason === 'payment_required' && <DollarSign className="w-10 h-10 text-white" />}
               {accessReason === 'not_whitelisted' && <Lock className="w-10 h-10 text-white" />}
               {accessReason === 'upgrade_required' && <Crown className="w-10 h-10 text-white" />}
@@ -175,22 +175,22 @@ export default function RoomAccessControl({ room, children }) {
             )}
 
             {accessReason === 'payment_required' && (
-              <Button className="w-full bg-buy-soft hover:from-buy hover:to-buy">
+              <Button className="w-full bg-buy-soft text-buy-foreground hover:bg-buy">
                 <DollarSign className="w-4 h-4 mr-2" />
                 Subscribe for ₹{room.room_price}/month
               </Button>
             )}
 
             {accessReason === 'not_whitelisted' && (
-              <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4 text-sm text-protocall-blue">
-                <Lock className="w-5 h-5 mx-auto mb-2 text-protocall-blue" />
+              <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4 text-sm text-primary">
+                <Lock className="w-5 h-5 mx-auto mb-2 text-primary" />
                 Contact the room administrator for an invitation
               </div>
             )}
 
             {(accessReason === 'upgrade_required' || accessReason === 'subscription_required') && (
               <Link to={createPageUrl("Subscription")}>
-                <Button className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
+                <Button className="w-full bg-gradient-to-r from-primary to-protocall-grape hover:from-primary hover:to-protocall-grape">
                   <Crown className="w-4 h-4 mr-2" />
                   Upgrade to {room.premium_tier?.toUpperCase()}
                 </Button>
@@ -199,7 +199,7 @@ export default function RoomAccessControl({ room, children }) {
 
             {accessReason === 'login_required' && (
               <Link to={createPageUrl("Profile")}>
-                <Button className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
+                <Button className="w-full bg-gradient-to-r from-primary to-protocall-grape hover:from-primary hover:to-protocall-grape">
                   <Shield className="w-4 h-4 mr-2" />
                   Login to Continue
                 </Button>

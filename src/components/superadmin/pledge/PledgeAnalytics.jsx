@@ -214,7 +214,7 @@ export default function PledgeAnalytics({ user, sessions, pledges, executions, i
         return (
             <div className="flex items-center justify-center p-12">
                 <div className="text-center">
-                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-protocall-blue" />
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
                     <p className="text-lg font-medium text-subtle">Loading analytics data...</p>
                     <p className="text-sm text-muted-foreground">Calculating comprehensive statistics</p>
                 </div>
@@ -364,7 +364,7 @@ export default function PledgeAnalytics({ user, sessions, pledges, executions, i
                 <Card className="shadow-lg border-0 bg-white">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <Activity className="w-5 h-5 text-protocall-blue" />
+                            <Activity className="w-5 h-5 text-primary" />
                             Execution Trend
                         </CardTitle>
                     </CardHeader>
@@ -395,7 +395,7 @@ export default function PledgeAnalytics({ user, sessions, pledges, executions, i
                 <Card className="shadow-lg border-0 bg-white">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <Users className="w-5 h-5 text-protocall-blue" />
+                            <Users className="w-5 h-5 text-primary" />
                             Participation Trend
                         </CardTitle>
                     </CardHeader>

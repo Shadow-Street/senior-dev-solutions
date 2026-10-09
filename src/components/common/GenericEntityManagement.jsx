@@ -130,8 +130,8 @@ export default function GenericEntityManagement({
           {/* Stats Overview */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4">
             <div className="bg-premium-muted p-3 rounded-lg">
-              <p className="text-xs text-protocall-blue">Total</p>
-              <p className="text-xl font-bold text-protocall-blue">{stats.total}</p>
+              <p className="text-xs text-primary">Total</p>
+              <p className="text-xl font-bold text-primary">{stats.total}</p>
             </div>
             <div className="bg-hold-muted p-3 rounded-lg">
               <p className="text-xs text-hold-muted-foreground">Pending</p>

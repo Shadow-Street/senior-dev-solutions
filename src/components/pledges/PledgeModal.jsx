@@ -230,12 +230,12 @@ export default function PledgeModal({
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-xl">
-              <Target className="w-6 h-6 text-protocall-blue" />
+              <Target className="w-6 h-6 text-primary" />
               Place Your Pledge - {session.stock_name}
             </DialogTitle>
             <DialogDescription>
               <div className="flex items-center gap-2 mt-2">
-                <Badge variant="outline" className="bg-premium-muted text-protocall-blue">
+                <Badge variant="outline" className="bg-premium-muted text-primary">
                   {pledgeData.stock_symbol}
                 </Badge>
                 <Badge variant="outline" className={`${
@@ -268,7 +268,7 @@ export default function PledgeModal({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="qty" className="text-sm font-medium">
-                    Quantity <span className="text-sell">*</span>
+                    Quantity <span className="text-sell-muted-foreground">*</span>
                   </Label>
                   <Input
                     id="qty"
@@ -288,7 +288,7 @@ export default function PledgeModal({
 
                 <div>
                   <Label htmlFor="price_target" className="text-sm font-medium">
-                    Buy Price <span className="text-sell">*</span>
+                    Buy Price <span className="text-sell-muted-foreground">*</span>
                   </Label>
                   <div className="flex gap-2 mt-2">
                     <Input
@@ -329,7 +329,7 @@ export default function PledgeModal({
                 <div className="flex items-center gap-2 mb-3">
                   <TrendingDown className="w-5 h-5 text-hold-muted-foreground" />
                   <h4 className="font-semibold text-hold-muted-foreground">Sell Configuration</h4>
-                  <Badge variant="outline" className="ml-auto bg-premium-muted text-protocall-blue text-xs">
+                  <Badge variant="outline" className="ml-auto bg-premium-muted text-primary text-xs">
                     Optional
                   </Badge>
                 </div>
@@ -367,10 +367,10 @@ export default function PledgeModal({
                   ) : (
                     <div className="p-3 bg-premium-muted rounded-lg border border-protocall-premium-light">
                       <div className="flex items-start gap-2">
-                        <Users className="w-5 h-5 text-protocall-blue mt-0.5 flex-shrink-0" />
+                        <Users className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                         <div>
-                          <p className="text-sm font-semibold text-protocall-blue">👨‍💼 Admin-Managed Position</p>
-                          <p className="text-xs text-protocall-blue mt-1">
+                          <p className="text-sm font-semibold text-primary">👨‍💼 Admin-Managed Position</p>
+                          <p className="text-xs text-primary mt-1">
                             Our admin will monitor market trends and execute the sell at the optimal time
                             (intraday, days, or weeks later based on market conditions).
                           </p>
@@ -407,7 +407,7 @@ export default function PledgeModal({
                 </div>
                 <div className="border-t pt-2 flex justify-between text-base">
                   <span className="font-semibold text-foreground">Total to Pay:</span>
-                  <span className="font-bold text-protocall-blue">₹{(totalPledgeValue + convenienceFee).toFixed(2)}</span>
+                  <span className="font-bold text-primary">₹{(totalPledgeValue + convenienceFee).toFixed(2)}</span>
                 </div>
               </div>
             </div>

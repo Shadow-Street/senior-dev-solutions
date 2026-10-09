@@ -29,7 +29,7 @@ const ExecutionCard = ({ execution, sellExecution, session, livePrice, pledge })
   
   const getStatusBadge = () => {
     if (isCompletedCycle) return <Badge className="bg-premium-muted text-protocall-premium-text"><CheckCircle className="w-3 h-3 mr-1" />Cycle Complete</Badge>;
-    if (isAwaitingSell) return <Badge className="bg-premium-muted text-protocall-blue animate-pulse">Awaiting Sell</Badge>;
+    if (isAwaitingSell) return <Badge className="bg-premium-muted text-primary animate-pulse">Awaiting Sell</Badge>;
     if (execution.side === 'buy') return <Badge className="bg-buy-muted text-buy-muted-foreground"><CheckCircle className="w-3 h-3 mr-1" />Buy Executed</Badge>;
     return <Badge className="bg-buy-muted text-buy-muted-foreground"><CheckCircle className="w-3 h-3 mr-1" />Sell Executed</Badge>;
   };

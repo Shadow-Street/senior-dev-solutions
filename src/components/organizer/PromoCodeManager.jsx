@@ -160,13 +160,13 @@ export default function PromoCodeManager({ event, events, organizerId, onUpdate 
                     <div className="bg-premium-muted p-3 rounded-lg">
                       <div className="flex items-center gap-2 mb-1">
                         {promo.discount_type === 'percentage' ? (
-                          <Percent className="w-4 h-4 text-protocall-blue" />
+                          <Percent className="w-4 h-4 text-primary" />
                         ) : (
-                          <DollarSign className="w-4 h-4 text-protocall-blue" />
+                          <DollarSign className="w-4 h-4 text-primary" />
                         )}
-                        <p className="text-xs text-protocall-blue font-medium">Discount</p>
+                        <p className="text-xs text-primary font-medium">Discount</p>
                       </div>
-                      <p className="text-xl font-bold text-protocall-blue">
+                      <p className="text-xl font-bold text-primary">
                         {promo.discount_type === 'percentage' ? `${promo.discount_value}%` : `₹${promo.discount_value}`}
                       </p>
                     </div>

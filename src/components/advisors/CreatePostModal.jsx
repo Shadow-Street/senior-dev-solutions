@@ -84,7 +84,7 @@ export default function CreatePostModal({ open, onClose, onCreatePost, advisorId
   const getPlanBadge = (planId) => {
     if (!planId) {
       return (
-        <Badge className="bg-premium-muted text-protocall-blue flex items-center gap-1">
+        <Badge className="bg-premium-muted text-primary flex items-center gap-1">
           <Users className="w-3 h-3" />
           All Subscribers
         </Badge>
@@ -134,7 +134,7 @@ export default function CreatePostModal({ open, onClose, onCreatePost, advisorId
               <SelectContent>
                 <SelectItem value="all">
                   <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-protocall-blue" />
+                    <Users className="w-4 h-4 text-primary" />
                     <span>All Subscribers (Any Plan)</span>
                   </div>
                 </SelectItem>
@@ -144,7 +144,7 @@ export default function CreatePostModal({ open, onClose, onCreatePost, advisorId
                       {plan.price >= 2000 ? (
                         <Crown className="w-4 h-4 text-protocall-premium-text" />
                       ) : (
-                        <Lock className="w-4 h-4 text-protocall-blue" />
+                        <Lock className="w-4 h-4 text-primary" />
                       )}
                       <span className="font-semibold">{plan.name}</span>
                       <span className="text-xs text-muted-foreground">

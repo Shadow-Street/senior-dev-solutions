@@ -373,11 +373,11 @@ export default function FinfluencerDashboard() {
       active: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Active' },
       cancelled: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Cancelled' },
       pending: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending' },
-      approved: { color: 'bg-premium-muted text-protocall-blue', label: 'Approved' },
+      approved: { color: 'bg-premium-muted text-primary', label: 'Approved' },
       processed: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Processed' },
       rejected: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Rejected' },
       live: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Live' },
-      completed: { color: 'bg-premium-muted text-protocall-blue', label: 'Completed' }
+      completed: { color: 'bg-premium-muted text-primary', label: 'Completed' }
     };
     const { color, label } = config[status] || { color: 'bg-surface-2 text-foreground', label: 'Unknown' };
     return <Badge className={`${color} border-0`}>{label}</Badge>;
@@ -549,7 +549,7 @@ export default function FinfluencerDashboard() {
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center">
-                      <Users className="w-8 h-8 text-protocall-blue" />
+                      <Users className="w-8 h-8 text-primary" />
                       <div className="ml-4">
                         <p className="text-sm font-medium text-subtle">Active Students</p>
                         <p className="text-2xl font-bold text-foreground">{stats.activeEnrollments}</p>
@@ -626,7 +626,7 @@ export default function FinfluencerDashboard() {
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <Video className="w-8 h-8 text-protocall-blue" />
+                          <Video className="w-8 h-8 text-primary" />
                           <div>
                             <p className="font-semibold text-foreground">Total Posts</p>
                             <p className="text-sm text-muted-foreground">Published content</p>
@@ -684,7 +684,7 @@ export default function FinfluencerDashboard() {
                         <CardContent className="p-5">
                           {/* Header with Badges */}
                           <div className="flex items-center gap-2 mb-4">
-                            <Badge className="bg-premium-muted text-protocall-blue border-0 font-semibold">
+                            <Badge className="bg-premium-muted text-primary border-0 font-semibold">
                               {course.course_type.replace('_', ' ').toUpperCase()}
                             </Badge>
                             {getStatusBadge(course.status)}
@@ -698,7 +698,7 @@ export default function FinfluencerDashboard() {
                           {/* Course Info Section - Blue Background */}
                           <div className="bg-premium-muted rounded-lg p-3 mb-3">
                             <p className="text-xs text-subtle mb-1">Category</p>
-                            <p className="text-sm font-semibold text-protocall-blue uppercase">
+                            <p className="text-sm font-semibold text-primary uppercase">
                               {course.category?.replace('_', ' ')}
                             </p>
                           </div>
@@ -749,7 +749,7 @@ export default function FinfluencerDashboard() {
                             </Button>
                             <Button
                               variant="outline"
-                              className="w-full text-sm text-protocall-blue border-protocall-premium-light hover:bg-premium-muted"
+                              className="w-full text-sm text-primary border-protocall-premium-light hover:bg-premium-muted"
                               onClick={() => {
                                 // For stats, maybe open a modal or navigate to a dedicated stats page
                                 toast.info('Course stats feature coming soon!');
@@ -832,7 +832,7 @@ export default function FinfluencerDashboard() {
                           <div>
                             <div className="flex items-center gap-2 mb-2">
                               {getStatusBadge(post.status)}
-                              <Badge className="bg-premium-muted text-protocall-blue">
+                              <Badge className="bg-premium-muted text-primary">
                                 {post.post_type}
                               </Badge>
                             </div>
@@ -950,7 +950,7 @@ export default function FinfluencerDashboard() {
                     <Button
                       onClick={() => setShowPayoutRequest(true)}
                       disabled={stats.availableBalance <= 0}
-                      className="bg-buy hover:bg-buy"
+                      className="bg-buy text-buy-foreground hover:bg-buy-soft"
                     >
                       <Wallet className="w-4 h-4 mr-2" />
                       Request Payout
@@ -972,7 +972,7 @@ export default function FinfluencerDashboard() {
                     <Button
                       onClick={() => setShowPayoutRequest(true)}
                       disabled={stats.availableBalance <= 0}
-                      className="bg-buy hover:bg-buy"
+                      className="bg-buy text-buy-foreground hover:bg-buy-soft"
                     >
                       <Wallet className="w-4 h-4 mr-2" />
                       Request Payout
@@ -1042,7 +1042,7 @@ export default function FinfluencerDashboard() {
                           <Wallet className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                           <p className="text-subtle">No payout requests yet.</p>
                           {stats.availableBalance > 0 && (
-                            <Button onClick={() => setShowPayoutRequest(true)} className="mt-4 bg-buy hover:bg-buy">
+                            <Button onClick={() => setShowPayoutRequest(true)} className="mt-4 bg-buy text-buy-foreground hover:bg-buy-soft">
                               Request Your First Payout
                             </Button>
                           )}
@@ -1073,7 +1073,7 @@ export default function FinfluencerDashboard() {
                         <div className="text-sm text-subtle mt-1">Total Enrollments</div>
                       </div>
                       <div className="text-center p-4 bg-premium-muted rounded-xl">
-                        <div className="text-3xl font-bold text-protocall-blue">{posts.length}</div>
+                        <div className="text-3xl font-bold text-primary">{posts.length}</div>
                         <div className="text-sm text-subtle mt-1">Content Posts</div>
                       </div>
                       <div className="text-center p-4 bg-hold-muted rounded-xl">
@@ -1204,7 +1204,7 @@ export default function FinfluencerDashboard() {
                     <Input
                       id="profile-image"
                       type="file"
-                      accept="image/*"
+                      accept="image/jpeg,image/png,image/gif,image/webp"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) handleProfileImageUpload(file);

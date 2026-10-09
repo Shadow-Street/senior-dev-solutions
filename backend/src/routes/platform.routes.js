@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, adminMiddleware, optionalAuthenticate } = require("../middleware/auth");
 
 // Platform Settings
 const settingsRouter = express.Router();
@@ -20,7 +20,8 @@ settingsRouter.get('/key/:key', async (req, res) => {
     });
     res.json(setting || { key, value: null });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[platform.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -36,7 +37,8 @@ settingsRouter.post('/bulk-get', async (req, res) => {
     settings.forEach(s => { result[s.key] = s.value; });
     res.json(result);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[platform.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -55,11 +57,12 @@ settingsRouter.put('/key/:key', authMiddleware, async (req, res) => {
 
     res.json(setting);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[platform.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-createCrudRoutes(settingsRouter, settingsController);
+createCrudRoutes(settingsRouter, settingsController, { read: [optionalAuthenticate], write: [authMiddleware, adminMiddleware] });
 router.use('/settings', settingsRouter);
 
 module.exports = router;

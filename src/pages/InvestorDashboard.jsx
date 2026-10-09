@@ -217,7 +217,7 @@ function InvestorLayout({
           {/* Title */}
           <div className="relative z-10">
             <h2 className="text-2xl font-bold text-white tracking-tight">Investor Portfolio</h2>
-            <p className="text-protocall-blue text-sm mt-1">Fund Management System</p>
+            <p className="text-primary text-sm mt-1">Fund Management System</p>
           </div>
         </div>
 
@@ -361,7 +361,7 @@ function InvestorLandingPage({ onRegisterClick }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
-                <Shield className="w-10 h-10 text-protocall-blue" />
+                <Shield className="w-10 h-10 text-primary" />
               </div>
 
               <div>
@@ -395,7 +395,7 @@ function InvestorLandingPage({ onRegisterClick }) {
           <Card className="border-0 shadow-xl">
             <CardContent className="p-6 text-center">
               <div className="w-16 h-16 bg-premium-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-8 h-8 text-protocall-blue" />
+                <Shield className="w-8 h-8 text-primary" />
               </div>
               <h3 className="text-xl font-bold text-foreground mb-2">Secure & Regulated</h3>
               <p className="text-subtle">
@@ -433,13 +433,13 @@ function InvestorLandingPage({ onRegisterClick }) {
         <Card className="border-0 shadow-2xl bg-gradient-to-r from-protocall-deep to-protocall-blue">
           <CardContent className="p-12 text-center text-white">
             <h3 className="text-3xl font-bold mb-4">Ready to Start Investing?</h3>
-            <p className="text-xl mb-8 text-protocall-blue">
+            <p className="text-xl mb-8 text-primary">
               Register now and get access to our premium investment plans
             </p>
             <Button
               onClick={onRegisterClick}
               size="lg"
-              className="bg-white text-protocall-blue hover:bg-premium-muted text-lg px-8 py-6">
+              className="bg-white text-primary hover:bg-premium-muted text-lg px-8 py-6">
 
               Request Investor Access
             </Button>
@@ -610,7 +610,7 @@ function InvestorRegistrationForm({ user, onSuccess, onLogout }) {
         <Card className="border-0 shadow-2xl">
           <CardHeader className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white rounded-t-xl">
             <CardTitle className="text-2xl">Request Investor Access</CardTitle>
-            <p className="text-protocall-blue mt-2">Fill out the form below to apply for investor registration</p>
+            <p className="text-primary mt-2">Fill out the form below to apply for investor registration</p>
           </CardHeader>
           <CardContent className="p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -678,7 +678,7 @@ function InvestorRegistrationForm({ user, onSuccess, onLogout }) {
                 </select>
               </div>
 
-              <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4 text-sm text-protocall-blue">
+              <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4 text-sm text-primary">
                 <p className="font-semibold mb-2">📋 What happens next?</p>
                 <ul className="space-y-1 text-xs">
                   <li>• Your application will be reviewed by our compliance team</li>
@@ -779,7 +779,7 @@ function DashboardHomeView({ investor, allocations, wallet, onRefresh }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
+        <Loader2 className="w-12 h-12 animate-spin text-primary" />
       </div>);
 
   }
@@ -789,7 +789,7 @@ function DashboardHomeView({ investor, allocations, wallet, onRefresh }) {
       {/* Welcome Banner */}
       <div className="bg-gradient-to-r from-protocall-deep to-protocall-blue rounded-2xl p-8 text-white">
         <h1 className="text-3xl font-bold mb-2">Welcome back, {investor?.full_name}!</h1>
-        <p className="text-protocall-blue">Investor Code: <span className="font-bold">{investor?.investor_code}</span></p>
+        <p className="text-primary">Investor Code: <span className="font-bold">{investor?.investor_code}</span></p>
       </div>
 
       {/* Portfolio Stats - Modified as per code_outline for cards */}
@@ -834,10 +834,10 @@ function DashboardHomeView({ investor, allocations, wallet, onRefresh }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-protocall-ink/75 text-sm">Available Balance</p>
+                <p className="text-protocall-ink/85 text-sm">Available Balance</p>
                 <p className="text-3xl font-bold mt-2">₹{(wallet?.available_balance || 0).toLocaleString('en-IN')}</p>
               </div>
-              <IndianRupee className="w-8 h-8 text-protocall-ink/75" />
+              <IndianRupee className="w-8 h-8 text-protocall-ink/85" />
             </div>
           </CardContent>
         </Card>
@@ -849,7 +849,7 @@ function DashboardHomeView({ investor, allocations, wallet, onRefresh }) {
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-protocall-blue" />
+              <Activity className="w-5 h-5 text-primary" />
               Portfolio Performance
             </CardTitle>
           </CardHeader>
@@ -1106,9 +1106,9 @@ function InvestmentRequestModal({ isOpen, onClose, plan, investor, wallet, onSuc
           <DialogTitle>Invest in {plan?.plan_name}</DialogTitle>
           <DialogDescription>
             <div className="mt-4 p-4 bg-surface-2 rounded-lg border border-protocall-premium-light">
-              <h4 className="font-semibold text-protocall-blue">{plan?.plan_name}</h4>
-              <p className="text-sm text-protocall-blue mt-1">Expected Return: {plan?.expected_return_percent}% per month</p>
-              <p className="text-sm text-protocall-blue mt-1">Minimum Investment: ₹{plan?.minimum_investment?.toLocaleString('en-IN')}</p>
+              <h4 className="font-semibold text-primary">{plan?.plan_name}</h4>
+              <p className="text-sm text-primary mt-1">Expected Return: {plan?.expected_return_percent}% per month</p>
+              <p className="text-sm text-primary mt-1">Minimum Investment: ₹{plan?.minimum_investment?.toLocaleString('en-IN')}</p>
             </div>
           </DialogDescription>
         </DialogHeader>
@@ -1412,11 +1412,11 @@ function BrowseFundPlansView({ investor, wallet, allocations }) {
 
                   {/* Minimum Investment */}
                   <div className="bg-premium-muted rounded-lg p-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-protocall-blue">
+                    <div className="flex items-center gap-2 text-primary">
                       <IndianRupee className="w-4 h-4" />
                       <span className="text-sm font-medium">Min. Investment</span>
                     </div>
-                    <span className="text-lg font-bold text-protocall-blue">₹{(plan.minimum_investment || 0).toLocaleString('en-IN')}</span>
+                    <span className="text-lg font-bold text-primary">₹{(plan.minimum_investment || 0).toLocaleString('en-IN')}</span>
                   </div>
 
                   {/* Period and Payout */}
@@ -1627,13 +1627,13 @@ function AllocationsView({ investor, wallet }) {
         <Card className="border-0 shadow-lg bg-surface-2">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-2">
-              <div className="p-2 bg-protocall-blue rounded-lg">
+              <div className="p-2 bg-primary rounded-lg">
                 <IndianRupee className="w-5 h-5 text-white" />
               </div>
               <Badge variant="outline" className="text-xs bg-white">Total</Badge>
             </div>
-            <p className="text-sm text-protocall-blue mb-1">Total Invested</p>
-            <p className="text-2xl font-bold text-protocall-blue">₹{totalInvested.toLocaleString('en-IN')}</p>
+            <p className="text-sm text-primary mb-1">Total Invested</p>
+            <p className="text-2xl font-bold text-primary">₹{totalInvested.toLocaleString('en-IN')}</p>
           </CardContent>
         </Card>
 
@@ -1721,7 +1721,7 @@ function AllocationsView({ investor, wallet }) {
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <h3 className="text-2xl font-bold mb-1">{plan?.plan_name || 'Unknown Plan'}</h3>
-                      <p className="text-sm text-protocall-blue">{plan?.plan_code || 'N/A'}</p>
+                      <p className="text-sm text-primary">{plan?.plan_code || 'N/A'}</p>
                     </div>
                     <Badge className="bg-buy text-buy-foreground border-0 flex items-center gap-1">
                       <CheckCircle className="w-3 h-3" />
@@ -2037,7 +2037,7 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
+        <Loader2 className="w-12 h-12 animate-spin text-primary" />
       </div>);
 
   }
@@ -2061,13 +2061,13 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
           <div className="flex items-start justify-between mb-6">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <Wallet className="w-5 h-5 text-protocall-blue" />
-                <p className="text-protocall-blue text-sm">Available Balance</p>
+                <Wallet className="w-5 h-5 text-primary" />
+                <p className="text-primary text-sm">Available Balance</p>
               </div>
               <h1 className="text-5xl font-bold">
                 ₹{(wallet?.available_balance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
               </h1>
-              <p className="text-protocall-blue text-sm mt-2">Ready for investment or withdrawal</p>
+              <p className="text-primary text-sm mt-2">Ready for investment or withdrawal</p>
             </div>
 
             {/* Request Payout Button - Top Right Corner */}
@@ -2078,7 +2078,7 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
                   investor?.kyc_status !== 'verified' ||
                   (wallet?.available_balance || 0) <= 0
                 }
-                className="bg-white text-protocall-blue hover:bg-premium-muted font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                className="bg-white text-primary hover:bg-premium-muted font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
 
                 <Download className="w-4 h-4" />
                 Request Payout
@@ -2093,7 +2093,7 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
               }
 
               {investor?.kyc_status === 'verified' && (wallet?.available_balance || 0) <= 0 &&
-                <div className="bg-protocall-blue/20 border border-protocall-premium-light/30 rounded-lg px-3 py-2 text-xs text-white max-w-[200px]">
+                <div className="bg-primary/20 border border-protocall-premium-light/30 rounded-lg px-3 py-2 text-xs text-white max-w-[200px]">
                   <AlertTriangle className="w-3 h-3 inline mr-1" />
                   No balance available
                 </div>
@@ -2105,29 +2105,29 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-6 border-t border-white/20">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Target className="w-4 h-4 text-protocall-blue" />
-                <p className="text-protocall-blue text-sm">Locked Balance</p>
+                <Target className="w-4 h-4 text-primary" />
+                <p className="text-primary text-sm">Locked Balance</p>
               </div>
               <p className="text-2xl font-bold">₹{totalInvested.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <ArrowUpRight className="w-4 h-4 text-protocall-blue" />
-                <p className="text-protocall-blue text-sm">Total Deposited</p>
+                <ArrowUpRight className="w-4 h-4 text-primary" />
+                <p className="text-primary text-sm">Total Deposited</p>
               </div>
               <p className="text-2xl font-bold">₹{(wallet?.total_deposited || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <ArrowDownRight className="w-4 h-4 text-protocall-blue" />
-                <p className="text-protocall-blue text-sm">Total Payouts</p>
+                <ArrowDownRight className="w-4 h-4 text-primary" />
+                <p className="text-primary text-sm">Total Payouts</p>
               </div>
               <p className="text-2xl font-bold">₹{totalPayouts.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Download className="w-4 h-4 text-protocall-blue" />
-                <p className="text-protocall-blue text-sm">Total Withdrawals</p>
+                <Download className="w-4 h-4 text-primary" />
+                <p className="text-primary text-sm">Total Withdrawals</p>
               </div>
               <p className="text-2xl font-bold">₹{totalWithdrawals.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
             </div>
@@ -2139,7 +2139,7 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
       <Card className="border-0 shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-protocall-blue" />
+            <CreditCard className="w-5 h-5 text-primary" />
             Add Money to Wallet
           </CardTitle>
           <p className="text-subtle mt-1">Supports INR (Indian Rupees) via UPI/Bank Transfer.</p>
@@ -2159,7 +2159,7 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
             <Button
               onClick={handleAddMoneyClick}
               disabled={!addAmount || parseFloat(addAmount) <= 0}
-              className="bg-buy-soft hover:from-buy hover:to-buy">
+              className="bg-buy-soft text-buy-foreground hover:bg-buy">
 
               <Plus className="w-4 h-4 mr-2" />
               Add Money
@@ -2186,7 +2186,7 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5 text-protocall-blue" />
+              <FileText className="w-5 h-5 text-primary" />
               Transaction History
             </CardTitle>
           </CardHeader>
@@ -2250,7 +2250,7 @@ function WalletView({ investor, wallet, allocations, onRefresh }) {
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5 text-protocall-blue" />
+              <FileText className="w-5 h-5 text-primary" />
               Invoices
             </CardTitle>
           </CardHeader>
@@ -2396,7 +2396,7 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
       case 'pending_execution':
         return <Clock className="w-4 h-4 text-hold-muted-foreground" />;
       case 'approved':
-        return <CheckCircle className="w-4 h-4 text-protocall-blue" />;
+        return <CheckCircle className="w-4 h-4 text-primary" />;
       case 'processed':
       case 'paid':
       case 'completed':
@@ -2415,7 +2415,7 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
       case 'pending_execution':
         return 'bg-hold-muted text-hold-muted-foreground border-hold/30';
       case 'approved':
-        return 'bg-premium-muted text-protocall-blue border-protocall-premium-light';
+        return 'bg-premium-muted text-primary border-protocall-premium-light';
       case 'processed':
       case 'paid':
       case 'completed':
@@ -2533,7 +2533,7 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
+        <Loader2 className="w-12 h-12 animate-spin text-primary" />
       </div>);
 
   }
@@ -2568,7 +2568,7 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
       <Card className="border-0 shadow-lg">
         <CardHeader className="bg-surface-2 border-b">
           <CardTitle className="flex items-center gap-2">
-            <FileText className="w-6 h-6 text-protocall-blue" />
+            <FileText className="w-6 h-6 text-primary" />
             All Requests
           </CardTitle>
           <p className="text-sm text-subtle mt-1">Complete history of withdrawals and payouts</p>
@@ -2614,7 +2614,7 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
                   {allRequests.map((request) =>
                     <tr key={`${request.request_type}-${request.id}`} className="border-b border-divider hover:bg-surface-2 transition-colors">
                       <td className="py-4 px-4">
-                        <Badge variant="outline" className={request.type === 'Withdrawal' ? 'bg-sell-muted text-sell-muted-foreground' : 'bg-premium-muted text-protocall-blue'}>
+                        <Badge variant="outline" className={request.type === 'Withdrawal' ? 'bg-sell-muted text-sell-muted-foreground' : 'bg-premium-muted text-primary'}>
                           {request.type}
                         </Badge>
                       </td>
@@ -2673,7 +2673,7 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
                           size="sm"
                           variant="outline"
                           onClick={() => handleViewTimeline(request, request.request_type)}
-                          className="text-protocall-blue hover:text-protocall-blue hover:bg-premium-muted">
+                          className="text-primary hover:text-primary hover:bg-premium-muted">
 
                           <FileText className="w-4 h-4 mr-1" />
                           VIEW
@@ -2694,7 +2694,7 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-protocall-blue" />
+                <FileText className="w-5 h-5 text-primary" />
                 Request Progress Timeline
               </DialogTitle>
               <DialogDescription>
@@ -2754,7 +2754,7 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
                         {step.completed ?
                           step.error ? <XCircle className="w-5 h-5 text-sell-muted-foreground" /> : <CheckCircle className="w-5 h-5 text-buy-muted-foreground" /> :
 
-                          step.active ? <Clock className="w-5 h-5 text-protocall-blue" /> : <Clock className="w-5 h-5 text-muted-foreground" />
+                          step.active ? <Clock className="w-5 h-5 text-primary" /> : <Clock className="w-5 h-5 text-muted-foreground" />
                         }
                       </div>
                       {idx < getTimeline(selectedRequest, selectedRequestType).length - 1 &&
@@ -2779,7 +2779,7 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
                         </p>
                       }
                       {step.active &&
-                        <p className="text-xs text-protocall-blue mt-1">In progress...</p>
+                        <p className="text-xs text-primary mt-1">In progress...</p>
                       }
                     </div>
                   </div>
@@ -2789,8 +2789,8 @@ function PayoutsView({ investor, wallet, allocations, onRefresh }) {
               {/* Admin Notes */}
               {selectedRequest.admin_notes &&
                 <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
-                  <p className="text-sm font-semibold text-protocall-blue mb-1">Admin Notes:</p>
-                  <p className="text-sm text-protocall-blue">{selectedRequest.admin_notes}</p>
+                  <p className="text-sm font-semibold text-primary mb-1">Admin Notes:</p>
+                  <p className="text-sm text-primary">{selectedRequest.admin_notes}</p>
                 </div>
               }
 
@@ -2964,12 +2964,12 @@ function ReportsView({ investor }) {
     const colors = {
       wallet_deposit: 'bg-buy-muted text-buy-muted-foreground',
       wallet_withdrawal: 'bg-sell-muted text-sell-muted-foreground',
-      purchase: 'bg-premium-muted text-protocall-blue',
+      purchase: 'bg-premium-muted text-primary',
       redemption: 'bg-hold-muted text-hold-muted-foreground',
       dividend: 'bg-premium-muted text-protocall-premium-text',
       profit_payout: 'bg-buy-muted text-buy-muted-foreground',
       management_fee: 'bg-surface-2 text-foreground',
-      investment_topup: 'bg-premium-muted text-protocall-blue',
+      investment_topup: 'bg-premium-muted text-primary',
       withdrawal: 'bg-hold-muted text-hold-muted-foreground'
     };
     return colors[type] || 'bg-surface-2 text-foreground';
@@ -3015,7 +3015,7 @@ function ReportsView({ investor }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
+        <Loader2 className="w-12 h-12 animate-spin text-primary" />
       </div>);
 
   }
@@ -3220,7 +3220,7 @@ function ProfileView({ investor, user, onUpdate }) {
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <UserCircle className="w-5 h-5 text-protocall-blue" />
+              <UserCircle className="w-5 h-5 text-primary" />
               Personal Information
             </CardTitle>
           </CardHeader>
@@ -3390,7 +3390,7 @@ function ProfileView({ investor, user, onUpdate }) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div>
               <p className="text-sm text-muted-foreground">Total Invested</p>
-              <p className="text-2xl font-bold text-protocall-blue">₹{(investor.total_invested || 0).toLocaleString('en-IN')}</p>
+              <p className="text-2xl font-bold text-primary">₹{(investor.total_invested || 0).toLocaleString('en-IN')}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Current Value</p>
@@ -3449,7 +3449,7 @@ function SupportView({ investor }) {
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <LifeBuoy className="w-5 h-5 text-protocall-blue" />
+              <LifeBuoy className="w-5 h-5 text-primary" />
               Contact Support
             </CardTitle>
           </CardHeader>
@@ -3503,8 +3503,8 @@ function SupportView({ investor }) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
-              <h3 className="font-semibold text-protocall-blue mb-2">📧 Email Support</h3>
-              <p className="text-sm text-protocall-blue">support@protocol.in</p>
+              <h3 className="font-semibold text-primary mb-2">📧 Email Support</h3>
+              <p className="text-sm text-primary">support@protocol.in</p>
             </div>
 
             <div className="p-4 bg-buy-muted rounded-lg border border-buy/30">
@@ -3829,7 +3829,7 @@ export default function InvestorDashboard() {
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-surface-2">
-        <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
+        <Loader2 className="w-12 h-12 animate-spin text-primary" />
       </div>);
 
   }
@@ -3858,7 +3858,7 @@ export default function InvestorDashboard() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
-                  <Shield className="w-10 h-10 text-protocall-blue" />
+                  <Shield className="w-10 h-10 text-primary" />
                 </div>
 
                 <div>
@@ -3952,11 +3952,11 @@ export default function InvestorDashboard() {
 
               {/* What Happens Next */}
               <div className="bg-premium-muted rounded-xl p-6 max-w-2xl mx-auto">
-                <h3 className="font-semibold text-protocall-blue mb-3 flex items-center gap-2 justify-center">
+                <h3 className="font-semibold text-primary mb-3 flex items-center gap-2 justify-center">
                   <AlertCircle className="w-5 h-5" />
                   What Happens Next?
                 </h3>
-                <ul className="space-y-2 text-sm text-protocall-blue text-left max-w-md mx-auto">
+                <ul className="space-y-2 text-sm text-primary text-left max-w-md mx-auto">
                   <li className="flex gap-2">
                     <span>1.</span>
                     <span>Fund Manager will review your registration details</span>

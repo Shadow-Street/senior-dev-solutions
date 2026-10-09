@@ -199,12 +199,12 @@ export default function PayoutRequestModal({ investor, wallet, isOpen, onClose, 
             <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-protocall-blue">Available Balance</p>
-                  <p className="text-2xl font-bold text-protocall-blue">
+                  <p className="text-sm text-primary">Available Balance</p>
+                  <p className="text-2xl font-bold text-primary">
                     ₹{availableBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
-                <Wallet className="w-10 h-10 text-protocall-blue" />
+                <Wallet className="w-10 h-10 text-primary" />
               </div>
             </div>
 
@@ -320,7 +320,7 @@ export default function PayoutRequestModal({ investor, wallet, isOpen, onClose, 
                 !payoutsEnabled ||
                 investor?.kyc_status !== 'verified'
               }
-              className="bg-buy-soft"
+              className="bg-buy-soft text-buy-foreground"
             >
               {isProcessing ? 'Submitting...' : 'Submit Request'}
             </Button>

@@ -60,7 +60,7 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
       <CardHeader className="border-b bg-surface-2">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-protocall-blue" />
+            <Activity className="w-5 h-5 text-primary" />
             Event Management & Automation Tools
           </CardTitle>
           <Badge variant="outline" className="text-subtle">
@@ -94,9 +94,9 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
               </div>
 
               <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
-                <Mail className="w-6 h-6 text-protocall-blue mb-2" />
-                <p className="text-sm text-protocall-blue font-medium">Reminders Sent</p>
-                <p className="text-2xl font-bold text-protocall-blue">{stats.remindersSent}</p>
+                <Mail className="w-6 h-6 text-primary mb-2" />
+                <p className="text-sm text-primary font-medium">Reminders Sent</p>
+                <p className="text-2xl font-bold text-primary">{stats.remindersSent}</p>
               </div>
 
               <div className="p-4 bg-hold-muted rounded-lg border border-hold/30">
@@ -114,7 +114,7 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
                     <Button 
                       onClick={handleSendReminders}
                       disabled={isSendingReminders}
-                      className="w-full bg-protocall-blue hover:bg-protocall-blue"
+                      className="w-full bg-primary hover:bg-primary"
                     >
                       {isSendingReminders ? 'Sending...' : 'Send Event Reminders Now'}
                     </Button>
@@ -208,8 +208,8 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
                       <p className="text-sm text-subtle mb-2">{promo.description}</p>
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div className="bg-premium-muted p-2 rounded">
-                          <p className="text-protocall-blue">Discount</p>
-                          <p className="font-semibold text-protocall-blue">
+                          <p className="text-primary">Discount</p>
+                          <p className="font-semibold text-primary">
                             {promo.discount_type === 'percentage' ? `${promo.discount_value}%` : `₹${promo.discount_value}`}
                           </p>
                         </div>
@@ -242,7 +242,7 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
               <Button 
                 onClick={handleSendReminders}
                 disabled={isSendingReminders}
-                className="bg-protocall-blue hover:bg-protocall-blue"
+                className="bg-primary hover:bg-primary"
               >
                 {isSendingReminders ? 'Sending...' : 'Trigger Reminders Now'}
               </Button>
@@ -330,8 +330,8 @@ export default function EventManagementTools({ checkIns = [], promoCodes = [], r
                       
                       <div className="grid grid-cols-4 gap-2 text-xs">
                         <div className="bg-premium-muted p-2 rounded text-center">
-                          <p className="text-protocall-blue">Content</p>
-                          <p className="font-bold text-protocall-blue">{feedback.content_quality}/5</p>
+                          <p className="text-primary">Content</p>
+                          <p className="font-bold text-primary">{feedback.content_quality}/5</p>
                         </div>
                         <div className="bg-premium-muted p-2 rounded text-center">
                           <p className="text-protocall-premium-text">Presentation</p>

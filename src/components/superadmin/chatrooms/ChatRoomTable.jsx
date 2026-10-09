@@ -126,10 +126,10 @@ export default function ChatRoomTable({ chatRooms, messages, users, onUpdate, on
   const getRoomTypeColor = (roomType) => {
     switch (roomType) {
       case 'premium': return 'bg-premium-muted text-protocall-premium-text';
-      case 'admin': return 'bg-premium-muted text-protocall-blue';
-      case 'premium_admin': return 'bg-premium-muted text-protocall-blue';
+      case 'admin': return 'bg-premium-muted text-primary';
+      case 'premium_admin': return 'bg-premium-muted text-primary';
       case 'stock_specific': return 'bg-buy-muted text-buy-muted-foreground';
-      case 'sector': return 'bg-premium-muted text-protocall-blue';
+      case 'sector': return 'bg-premium-muted text-primary';
       default: return 'bg-surface-2 text-foreground';
     }
   };
@@ -273,7 +273,7 @@ export default function ChatRoomTable({ chatRooms, messages, users, onUpdate, on
                           </Badge>
                         )}
                         {room.is_meeting_active && (
-                          <Badge className="bg-premium-muted text-protocall-blue text-xs flex items-center gap-1">
+                          <Badge className="bg-premium-muted text-primary text-xs flex items-center gap-1">
                             <Video className="w-3 h-3" />
                             Meeting
                           </Badge>
@@ -317,7 +317,7 @@ export default function ChatRoomTable({ chatRooms, messages, users, onUpdate, on
                             variant="ghost"
                             size="sm"
                             onClick={() => handleEdit(room)}
-                            className="text-protocall-blue hover:text-protocall-blue"
+                            className="text-primary hover:text-primary"
                           >
                             <Edit className="w-4 h-4" />
                           </Button>

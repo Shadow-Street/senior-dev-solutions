@@ -329,7 +329,7 @@ export default function ReviewModeration({ user }) {
                                 href={review.social_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-1 text-sm text-protocall-blue hover:text-protocall-blue"
+                                className="flex items-center gap-1 text-sm text-primary hover:text-primary"
                               >
                                 <SocialIcon size={14} />
                                 <span>View on {review.social_platform}</span>
@@ -353,7 +353,7 @@ export default function ReviewModeration({ user }) {
                             <Button
                               size="sm"
                               onClick={() => handleApprove(review)}
-                              className="bg-buy hover:bg-buy"
+                              className="bg-buy text-buy-foreground hover:bg-buy-soft"
                             >
                               <CheckCircle className="w-4 h-4 mr-1" />
                               Approve

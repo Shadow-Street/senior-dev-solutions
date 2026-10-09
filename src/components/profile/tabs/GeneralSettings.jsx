@@ -66,7 +66,7 @@ export default function GeneralSettings({ user, onUpdate }) {
               ref={fileInputRef}
               onChange={handleFileChange}
               className="hidden"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/gif,image/webp"
             />
             {newImage && (
               <Button size="sm" onClick={handleUpload} disabled={isUploading}>

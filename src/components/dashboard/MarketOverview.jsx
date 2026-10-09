@@ -38,7 +38,7 @@ export default function MarketOverview({ stocks }) {
     <Card className="shadow-lg border border-border bg-card">
       <CardHeader className="border-b border-divider bg-surface-2">
         <CardTitle className="flex items-center gap-2 text-foreground">
-          <Activity className="w-5 h-5 text-protocall-blue" />
+          <Activity className="w-5 h-5 text-primary" />
           Market Overview
         </CardTitle>
       </CardHeader>

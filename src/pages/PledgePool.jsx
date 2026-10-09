@@ -44,7 +44,7 @@ export default function PledgePool() {
         return (
             <div className="flex items-center justify-center min-h-[60vh] bg-surface-2">
                 <div className="text-center">
-                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-protocall-blue" />
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
                     <p className="text-subtle">Loading Your Pledges...</p>
                 </div>
             </div>
@@ -78,7 +78,7 @@ export default function PledgePool() {
             <div className="p-4 sm:p-6 lg:p-8 bg-surface-2 min-h-full">
                 <div className="mb-6">
                     <div className="flex items-center gap-3 mb-2">
-                        <Wallet className="w-8 h-8 text-protocall-blue" />
+                        <Wallet className="w-8 h-8 text-primary" />
                         <h1 className="text-3xl font-bold text-foreground">Pledge Pool</h1>
                     </div>
                     <p className="text-subtle text-sm ml-11">

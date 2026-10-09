@@ -24,7 +24,7 @@ export default function UserRoleBadges({ user }) {
     admin: 'bg-hold-muted text-hold-muted-foreground border-hold/30',
     advisor: 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light',
     finfluencer: 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light',
-    educator: 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+    educator: 'bg-premium-muted text-primary border-protocall-premium-light',
     organizer: 'bg-buy-muted text-buy-muted-foreground border-buy/30',
     vendor: 'bg-hold-muted text-hold-muted-foreground border-hold/30',
     trader: 'bg-surface-2 text-foreground border-border'

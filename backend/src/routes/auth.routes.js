@@ -9,4 +9,10 @@ router.post("/register", AuthController.register);
 router.post("/google", AuthController.googleLogin);
 router.get("/me", authenticate, AuthController.me);
 
+// Token lifecycle. /refresh is deliberately not behind `authenticate`: it is
+// called precisely when the access token has expired.
+router.post("/refresh", AuthController.refresh);
+router.post("/logout", AuthController.logout);
+router.post("/logout-all", authenticate, AuthController.logoutAll);
+
 module.exports = router;

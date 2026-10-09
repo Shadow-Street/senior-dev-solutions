@@ -59,7 +59,7 @@ export default function PricingPreview() {
     <section className="py-20 px-6 bg-surface-2 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-protocall-blue rounded-full blur-3xl"></div>
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary rounded-full blur-3xl"></div>
       </div>
 
@@ -170,7 +170,7 @@ export default function PricingPreview() {
             Not sure which plan to choose? Compare all features
           </p>
           <Link to={createPageUrl('Subscription')}>
-            <Button variant="outline" className="rounded-full px-8 py-6 text-lg border-2 border-protocall-blue text-protocall-blue hover:bg-premium-muted">
+            <Button variant="outline" className="rounded-full px-8 py-6 text-lg border-2 border-primary text-primary hover:bg-premium-muted">
               View Detailed Comparison
             </Button>
           </Link>

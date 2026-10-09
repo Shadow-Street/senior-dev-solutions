@@ -158,7 +158,7 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
             </p>
             {course.course_type === 'live_session' && (
               <div className="bg-premium-muted p-4 rounded-lg">
-                <p className="text-sm text-protocall-blue">
+                <p className="text-sm text-primary">
                   You'll receive meeting details via email before the session starts.
                 </p>
               </div>
@@ -256,8 +256,8 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
           {/* Live Session Info */}
           {course.course_type === 'live_session' && (
             <div className="bg-premium-muted p-4 rounded-lg">
-              <h4 className="font-semibold text-protocall-blue mb-2">Live Session Details</h4>
-              <div className="space-y-2 text-sm text-protocall-blue">
+              <h4 className="font-semibold text-primary mb-2">Live Session Details</h4>
+              <div className="space-y-2 text-sm text-primary">
                 {course.scheduled_date && (
                   <p>
                     <strong>Date & Time:</strong> {format(new Date(course.scheduled_date), 'EEEE, MMMM d, yyyy • h:mm a')}

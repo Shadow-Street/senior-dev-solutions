@@ -110,7 +110,7 @@ export default function PledgeManagementAccess({ user, advisorProfile }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-protocall-blue" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -164,7 +164,7 @@ export default function PledgeManagementAccess({ user, advisorProfile }) {
               <div>
                 <p className="text-sm text-subtle">Status</p>
                 <Badge className={config.color}>
-                  {accessRequest.status.toUpperCase()}
+                  {(accessRequest.status || 'unknown').toUpperCase()}
                 </Badge>
               </div>
               {accessRequest.status === 'approved' && (
@@ -220,7 +220,7 @@ export default function PledgeManagementAccess({ user, advisorProfile }) {
       <Card className="border-2 border-protocall-premium-light shadow-lg">
         <CardHeader className="bg-surface-2">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-protocall-blue rounded-lg">
+            <div className="p-3 bg-primary rounded-lg">
               <TrendingUp className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -233,8 +233,8 @@ export default function PledgeManagementAccess({ user, advisorProfile }) {
         </CardHeader>
         <CardContent className="pt-6">
           <Alert className="mb-6 bg-premium-muted border-protocall-premium-light">
-            <Shield className="h-4 w-4 text-protocall-blue" />
-            <AlertDescription className="text-protocall-blue">
+            <Shield className="h-4 w-4 text-primary" />
+            <AlertDescription className="text-primary">
               <strong>What you'll get:</strong>
               <ul className="list-disc ml-5 mt-2 space-y-1">
                 <li>Create and manage pledge sessions for your followers</li>

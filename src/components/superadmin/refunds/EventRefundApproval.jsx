@@ -93,7 +93,7 @@ export default function EventRefundApproval({ refund, onUpdate }) {
                 <p><strong>Requested:</strong> {format(new Date(refund.created_date), 'PPP')}</p>
                 <p><strong>User Reason:</strong> {refund.request_reason}</p>
                 {refund.admin_notes && (
-                  <p className="text-protocall-ink/75"><strong>Organizer Notes:</strong> {refund.admin_notes}</p>
+                  <p className="text-protocall-ink/85"><strong>Organizer Notes:</strong> {refund.admin_notes}</p>
                 )}
               </div>
             </div>
@@ -101,7 +101,7 @@ export default function EventRefundApproval({ refund, onUpdate }) {
               <Button
                 size="sm"
                 onClick={() => handleAction('process')}
-                className="bg-buy hover:bg-buy"
+                className="bg-buy text-buy-foreground hover:bg-buy-soft"
               >
                 <CheckCircle className="w-4 h-4 mr-2" />
                 Process Refund
@@ -158,7 +158,7 @@ export default function EventRefundApproval({ refund, onUpdate }) {
               <Button
                 onClick={submitAction}
                 disabled={isProcessing || (action === 'reject' && !notes.trim())}
-                className={action === 'process' ? 'bg-buy hover:bg-buy' : 'bg-sell hover:bg-sell'}
+                className={action === 'process' ? 'bg-buy text-buy-foreground hover:bg-buy-soft' : 'bg-sell hover:bg-sell'}
               >
                 {isProcessing ? (
                   <>

@@ -30,7 +30,7 @@ class FundController {
       return res.status(200).json(transactions);
     } catch (error) {
       console.error("List transactions error:", error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -39,13 +39,15 @@ class FundController {
       const { id } = req.params;
       const updates = req.body;
 
-      const [updated] = await FundTransaction.update(updates, {
-        where: { id }
-      });
-
-      if (!updated) {
+      // Sequelize's affected-row count is 0 both when the record is missing and
+      // when the new values equal the stored ones, so treating 0 as 'not found'
+      // turned every no-op save into a 404. Check existence, then update.
+      const existingTransaction = await FundTransaction.findByPk(id);
+      if (!existingTransaction) {
         return res.status(404).json({ error: "Transaction not found" });
       }
+
+      await FundTransaction.update(updates, { where: { id } });
 
       const transaction = await FundTransaction.findByPk(id);
       return res.status(200).json(transaction);

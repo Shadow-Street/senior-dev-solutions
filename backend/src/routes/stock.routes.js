@@ -4,6 +4,7 @@ const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
 const MarketController = require("../controllers/MarketController");
 
+const { adminMiddleware, authMiddleware, optionalAuthenticate } = require("../middleware/auth");
 const stockController = createCrudController(db.Stock, {
   defaultOrderBy: 'symbol',
   defaultOrder: 'ASC'
@@ -30,7 +31,8 @@ router.get('/search', async (req, res) => {
     });
     res.json(stocks);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[stock.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -42,11 +44,12 @@ router.get('/trending', async (req, res) => {
     });
     res.json(stocks);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[stock.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 // CRUD routes
-createCrudRoutes(router, stockController);
+createCrudRoutes(router, stockController, { read: [optionalAuthenticate], write: [authMiddleware, adminMiddleware] });
 
 module.exports = router;

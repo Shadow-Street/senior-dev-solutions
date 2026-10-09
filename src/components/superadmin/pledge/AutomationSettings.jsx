@@ -50,10 +50,10 @@ export default function AutomationSettings({ enabled, onToggle }) {
       <CardContent className="pt-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="flex items-start gap-3 p-3 bg-premium-muted rounded-lg">
-            <RefreshCw className="w-5 h-5 text-protocall-blue mt-0.5" />
+            <RefreshCw className="w-5 h-5 text-primary mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-protocall-blue">Check Interval</p>
-              <p className="text-xs text-protocall-blue mt-1">Every 30 seconds</p>
+              <p className="text-sm font-medium text-primary">Check Interval</p>
+              <p className="text-xs text-primary mt-1">Every 30 seconds</p>
             </div>
           </div>
           

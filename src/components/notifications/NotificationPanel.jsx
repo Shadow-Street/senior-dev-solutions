@@ -192,7 +192,7 @@ export default function NotificationPanel() {
 
   const getTypeColor = (type) => {
     switch (type) {
-      case 'info': return 'bg-premium-muted text-protocall-blue border-protocall-premium-light';
+      case 'info': return 'bg-premium-muted text-primary border-protocall-premium-light';
       case 'warning': return 'bg-hold-muted text-hold-muted-foreground border-hold/30';
       case 'alert': return 'bg-sell-muted text-sell-muted-foreground border-sell/30';
       default: return 'bg-surface-2 text-foreground border-border';
@@ -247,7 +247,7 @@ export default function NotificationPanel() {
                     variant="ghost" 
                     size="sm" 
                     onClick={handleEnableNotifications}
-                    className="text-protocall-blue hover:text-protocall-blue hover:bg-premium-muted"
+                    className="text-primary hover:text-primary hover:bg-premium-muted"
                   >
                     <BellOff className="w-4 h-4 mr-1" />
                     Enable Push
@@ -297,7 +297,7 @@ export default function NotificationPanel() {
                           </h4>
                           
                           {notification.status === 'unread' && (
-                            <div className="w-2 h-2 bg-protocall-blue rounded-full flex-shrink-0" />
+                            <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
                           )}
                         </div>
                         
@@ -340,8 +340,8 @@ export default function NotificationPanel() {
               <p>Notifications are currently blocked in your browser. To enable them:</p>
               
               <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4 space-y-3">
-                <h4 className="font-semibold text-protocall-blue">For Chrome/Edge:</h4>
-                <ol className="text-sm text-protocall-blue space-y-1 list-decimal list-inside">
+                <h4 className="font-semibold text-primary">For Chrome/Edge:</h4>
+                <ol className="text-sm text-primary space-y-1 list-decimal list-inside">
                   <li>Click the lock icon 🔒 in the address bar</li>
                   <li>Click "Site settings"</li>
                   <li>Find "Notifications" and set to "Allow"</li>

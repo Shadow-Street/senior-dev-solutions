@@ -178,7 +178,7 @@ export default function TicketPurchaseModal({ event, user, onClose, onSuccess })
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-foreground flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-protocall-blue" />
+              <CheckCircle className="w-5 h-5 text-primary" />
               Purchase Ticket
             </DialogTitle>
           </DialogHeader>
@@ -248,7 +248,7 @@ export default function TicketPurchaseModal({ event, user, onClose, onSuccess })
               
               <Button 
                 onClick={handlePurchase}
-                className="flex-1 bg-protocall-blue hover:bg-protocall-blue"
+                className="flex-1 bg-primary hover:bg-primary"
                 disabled={isProcessing}
               >
                 {isProcessing ? (

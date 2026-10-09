@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, adminMiddleware } = require("../middleware/auth");
 
 // Moderation Logs
 const logRouter = express.Router();
@@ -10,7 +10,7 @@ const logController = createCrudController(db.ModerationLog, {
   defaultOrderBy: 'created_at',
   defaultOrder: 'DESC'
 });
-createCrudRoutes(logRouter, logController);
+createCrudRoutes(logRouter, logController, { read: [authMiddleware, adminMiddleware], write: [authMiddleware, adminMiddleware] });
 router.use('/logs', logRouter);
 
 // Contact Inquiries
@@ -30,16 +30,18 @@ inquiryRouter.post('/submit', async (req, res) => {
     });
     res.status(201).json(inquiry);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[moderation.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-createCrudRoutes(inquiryRouter, inquiryController);
+createCrudRoutes(inquiryRouter, inquiryController, { read: [authMiddleware, adminMiddleware], create: [], write: [authMiddleware, adminMiddleware] });
 router.use('/inquiries', inquiryRouter);
 
 // Feedback
 const feedbackRouter = express.Router();
 const feedbackController = createCrudController(db.Feedback, {
+  ownership: 'user_id',
   defaultOrderBy: 'created_at',
   defaultOrder: 'DESC'
 });
@@ -55,11 +57,12 @@ feedbackRouter.post('/submit', authMiddleware, async (req, res) => {
     });
     res.status(201).json(feedback);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[moderation.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-createCrudRoutes(feedbackRouter, feedbackController);
+createCrudRoutes(feedbackRouter, feedbackController, [authMiddleware]);
 router.use('/feedback', feedbackRouter);
 
 module.exports = router;

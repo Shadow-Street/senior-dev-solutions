@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware, adminMiddleware } = require("../middleware/auth");
+const { authMiddleware, adminMiddleware, optionalAuthenticate } = require("../middleware/auth");
 
 // Static Pages CRUD
 const staticPageController = createCrudController(db.StaticPage);
@@ -18,7 +18,8 @@ router.get('/slug/:slug', async (req, res) => {
     }
     res.json(page);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[staticpage.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -32,10 +33,11 @@ router.get('/published', async (req, res) => {
     });
     res.json(pages);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[staticpage.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-createCrudRoutes(router, staticPageController);
+createCrudRoutes(router, staticPageController, { read: [optionalAuthenticate], write: [authMiddleware, adminMiddleware] });
 
 module.exports = router;

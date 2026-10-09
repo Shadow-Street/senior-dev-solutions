@@ -296,7 +296,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
 
   const statusColors = {
     pending: 'bg-hold-muted text-hold-muted-foreground',
-    approved: 'bg-premium-muted text-protocall-blue',
+    approved: 'bg-premium-muted text-primary',
     rejected: 'bg-sell-muted text-sell-muted-foreground',
     processed: 'bg-buy-muted text-buy-muted-foreground'
   };
@@ -316,7 +316,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
             {/* Status Badge */}
             <div className="flex items-center justify-between">
               <Badge className={`${statusColors[request.status]} text-sm px-3 py-1`}>
-                {request.status.toUpperCase()}
+                {(request.status || 'unknown').toUpperCase()}
               </Badge>
               <span className="text-sm text-muted-foreground">
                 Request ID: {request.id?.slice(-8)}
@@ -359,7 +359,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
 
             {/* Bank Details */}
             <div className="bg-premium-muted rounded-lg p-4 border border-protocall-premium-light">
-              <h3 className="font-semibold text-protocall-blue mb-3 flex items-center gap-2">
+              <h3 className="font-semibold text-primary mb-3 flex items-center gap-2">
                 <Building className="w-5 h-5" />
                 Bank Account Details
               </h3>
@@ -367,21 +367,21 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
                 {request.payout_method === 'bank_transfer' && request.bank_details ? (
                   <>
                     <div className="flex justify-between">
-                      <span className="text-protocall-blue">Account Holder</span>
+                      <span className="text-primary">Account Holder</span>
                       <span className="font-medium">{request.bank_details.account_holder_name}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-protocall-blue">Account Number</span>
+                      <span className="text-primary">Account Number</span>
                       <span className="font-mono font-medium">{request.bank_details.account_number}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-protocall-blue">IFSC Code</span>
+                      <span className="text-primary">IFSC Code</span>
                       <span className="font-mono font-medium">{request.bank_details.ifsc_code}</span>
                     </div>
                   </>
                 ) : request.payout_method === 'upi' ? (
                   <div className="flex justify-between">
-                    <span className="text-protocall-blue">UPI ID</span>
+                    <span className="text-primary">UPI ID</span>
                     <span className="font-medium">{request.upi_id}</span>
                   </div>
                 ) : (
@@ -434,7 +434,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
                 </Button>
                 <Button
                   onClick={() => setShowApproveConfirm(true)}
-                  className="bg-buy hover:bg-buy"
+                  className="bg-buy text-buy-foreground hover:bg-buy-soft"
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
                   Approve
@@ -490,7 +490,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
               />
             </div>
             <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-3">
-              <p className="text-sm text-protocall-blue flex items-start gap-2">
+              <p className="text-sm text-primary flex items-start gap-2">
                 <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 After approval, you can process the payout either automatically through payment gateway or manually via bank transfer.
               </p>
@@ -574,12 +574,12 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
                   onClick={() => setProcessingMethod('manual')}
                   className={`p-4 rounded-lg border-2 transition-all ${
                     processingMethod === 'manual'
-                      ? 'border-protocall-blue bg-premium-muted'
+                      ? 'border-primary bg-premium-muted'
                       : 'border-border hover:border-protocall-premium-light'
                   }`}
                 >
                   <div className="flex items-center gap-3 mb-2">
-                    <CreditCard className={`w-6 h-6 ${processingMethod === 'manual' ? 'text-protocall-blue' : 'text-muted-foreground'}`} />
+                    <CreditCard className={`w-6 h-6 ${processingMethod === 'manual' ? 'text-primary' : 'text-muted-foreground'}`} />
                     <span className="font-semibold">Manual</span>
                   </div>
                   <p className="text-xs text-subtle">Enter bank transfer UTR</p>
@@ -694,7 +694,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
               }
               className={processingMethod === 'automated' 
                 ? "bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
-                : "bg-protocall-blue hover:bg-protocall-blue"
+                : "bg-primary hover:bg-primary"
               }
             >
               {isProcessing ? (

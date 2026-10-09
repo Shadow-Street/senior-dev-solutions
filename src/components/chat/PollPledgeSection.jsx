@@ -292,7 +292,7 @@ export default function PollPledgeSection({ chatRoomId, stockSymbol, user, onPol
           <div className="flex items-center justify-between">
             {/* Updated CardTitle styles from outline */}
             <CardTitle className="text-base font-semibold flex items-center gap-2">
-              <Target className="w-4 h-4 text-protocall-blue" /> {/* Changed icon color from outline */}
+              <Target className="w-4 h-4 text-primary" /> {/* Changed icon color from outline */}
               Daily Poll & Pledge
             </CardTitle>
             {poll?.is_premium && <Badge className="text-xs bg-premium-muted text-protocall-premium-text border-0">Premium</Badge>} {/* Added from outline */}
@@ -358,7 +358,7 @@ export default function PollPledgeSection({ chatRoomId, stockSymbol, user, onPol
                       onClick={() => handleVote('buy')}
                       size="sm"
                       disabled={!user}
-                      className={cn("text-white text-xs px-2 py-1 transition-all", userVote?.vote === 'buy' ? "bg-buy ring-2 ring-buy ring-offset-1" : "bg-buy hover:bg-buy")}
+                      className={cn("text-buy-foreground text-xs px-2 py-1 transition-all", userVote?.vote === 'buy' ? "bg-buy ring-2 ring-buy ring-offset-1" : "bg-buy hover:bg-buy-soft")}
                     >
                       {userVote?.vote === 'buy' && <CheckCircle className="w-3 h-3 mr-1" />}
                       Buy
@@ -388,7 +388,7 @@ export default function PollPledgeSection({ chatRoomId, stockSymbol, user, onPol
               {!!userPledge ? (
                 <Button 
                   disabled 
-                  className="w-full py-2 rounded-xl px-4 bg-gradient-to-r from-protocall-deep to-protocall-blue text-white font-semibold shadow-md hover:from-protocall-deep hover:to-protocall-blue transition-all duration-300"
+                  className="w-full py-2 rounded-xl px-4 bg-gradient-to-r from-primary to-protocall-grape text-white font-semibold shadow-md hover:from-primary hover:to-protocall-grape transition-all duration-300"
                 >
                   PLEDGED: ₹{userPledge.amount_committed?.toLocaleString() || 'N/A'}
                 </Button>
@@ -396,7 +396,7 @@ export default function PollPledgeSection({ chatRoomId, stockSymbol, user, onPol
                 <Button 
                   onClick={handlePledgeClick}
                   disabled={!user || !pledgesEnabled}
-                  className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white font-semibold rounded-xl shadow-md transition-all duration-300"
+                  className="w-full bg-gradient-to-r from-primary to-protocall-grape hover:from-primary hover:to-protocall-grape text-white font-semibold rounded-xl shadow-md transition-all duration-300"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Make Pledge

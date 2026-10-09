@@ -97,7 +97,7 @@ export default function AdvisorPledgeOverview({ user, advisorProfile, accessRequ
   const getStatusColor = (status) => {
     const colors = {
       'pending_approval': 'bg-hold-muted text-hold-muted-foreground',
-      'approved': 'bg-premium-muted text-protocall-blue',
+      'approved': 'bg-premium-muted text-primary',
       'active': 'bg-buy-muted text-buy-muted-foreground',
       'executing': 'bg-premium-muted text-protocall-premium-text',
       'completed': 'bg-surface-2 text-foreground',
@@ -109,7 +109,7 @@ export default function AdvisorPledgeOverview({ user, advisorProfile, accessRequ
   if (isLoading) {
     return (
       <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
       </div>
     );
   }
@@ -134,7 +134,7 @@ export default function AdvisorPledgeOverview({ user, advisorProfile, accessRequ
                 <p className="text-xs text-buy-muted-foreground mt-1">{stats.activeSessions} active</p>
               </div>
               <div className="p-3 bg-premium-muted rounded-xl">
-                <Target className="w-8 h-8 text-protocall-blue" />
+                <Target className="w-8 h-8 text-primary" />
               </div>
             </div>
           </CardContent>
@@ -192,7 +192,7 @@ export default function AdvisorPledgeOverview({ user, advisorProfile, accessRequ
           <div className="flex justify-between items-center">
             <CardTitle>Recent Sessions</CardTitle>
             <Link to={createPageUrl('AdvisorPledgeManagement') + '?section=sessions'}>
-              <button className="text-sm text-protocall-blue hover:text-protocall-blue">View All →</button>
+              <button className="text-sm text-primary hover:text-primary">View All →</button>
             </Link>
           </div>
         </CardHeader>
@@ -211,7 +211,7 @@ export default function AdvisorPledgeOverview({ user, advisorProfile, accessRequ
                     <div className="flex items-center gap-3 mb-1">
                       <p className="font-semibold text-foreground">{session.stock_symbol}</p>
                       <Badge className={getStatusColor(session.status)}>
-                        {session.status.replace('_', ' ').toUpperCase()}
+                        {(session.status || 'unknown').replace('_', ' ').toUpperCase()}
                       </Badge>
                     </div>
                     <p className="text-sm text-subtle">{session.stock_name}</p>
@@ -237,7 +237,7 @@ export default function AdvisorPledgeOverview({ user, advisorProfile, accessRequ
           <div className="flex justify-between items-center">
             <CardTitle>Recent Commission Earnings</CardTitle>
             <Link to={createPageUrl('AdvisorPledgeManagement') + '?section=commissions'}>
-              <button className="text-sm text-protocall-blue hover:text-protocall-blue">View All →</button>
+              <button className="text-sm text-primary hover:text-primary">View All →</button>
             </Link>
           </div>
         </CardHeader>
@@ -257,7 +257,7 @@ export default function AdvisorPledgeOverview({ user, advisorProfile, accessRequ
                       <p className="font-semibold">{commission.stock_symbol}</p>
                       <Badge className={commission.payout_status === 'processed' ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-hold-muted text-hold-muted-foreground'}>
                         {commission.payout_status === 'processed' ? <CheckCircle className="w-3 h-3 inline mr-1" /> : <Clock className="w-3 h-3 inline mr-1" />}
-                        {commission.payout_status.toUpperCase()}
+                        {(commission.payout_status || 'unknown').toUpperCase()}
                       </Badge>
                     </div>
                     <p className="text-sm text-subtle">

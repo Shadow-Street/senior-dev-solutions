@@ -42,9 +42,9 @@ export default function CourseCard({ course, influencer, onEnroll }) {
   };
 
   const categoryColors = {
-    technical_analysis: 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+    technical_analysis: 'bg-premium-muted text-primary border-protocall-premium-light',
     fundamental_analysis: 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light',
-    options_trading: 'bg-premium-muted text-protocall-blue border-protocall-premium-light',
+    options_trading: 'bg-premium-muted text-primary border-protocall-premium-light',
     mutual_funds: 'bg-buy-muted text-buy-muted-foreground border-buy/30',
     crypto: 'bg-hold-muted text-hold-muted-foreground border-hold/30',
     portfolio_management: 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light'
@@ -103,7 +103,7 @@ export default function CourseCard({ course, influencer, onEnroll }) {
         </div>
 
         <CardHeader className="pb-3 pt-5">
-          <CardTitle className="text-xl leading-tight font-bold text-foreground group-hover:text-protocall-blue transition-colors line-clamp-2">
+          <CardTitle className="text-xl leading-tight font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
             {course.title}
           </CardTitle>
 
@@ -134,7 +134,7 @@ export default function CourseCard({ course, influencer, onEnroll }) {
           {/* Key Info Grid */}
           <div className="grid grid-cols-2 gap-3">
             <div className="flex items-center gap-2 text-sm bg-premium-muted p-2.5 rounded-lg">
-              <Clock className="w-4 h-4 text-protocall-blue" />
+              <Clock className="w-4 h-4 text-primary" />
               <span className="text-subtle font-medium">{course.duration_hours}h</span>
             </div>
             <div className="flex items-center gap-2 text-sm bg-premium-muted p-2.5 rounded-lg">
@@ -146,8 +146,8 @@ export default function CourseCard({ course, influencer, onEnroll }) {
           {/* Live Session Date */}
           {course.course_type === 'live_session' && course.scheduled_date && (
             <div className="flex items-center gap-2 text-sm bg-surface-2 p-3 rounded-lg border border-protocall-premium-light">
-              <Calendar className="w-4 h-4 text-protocall-blue" />
-              <span className="text-protocall-blue font-semibold">
+              <Calendar className="w-4 h-4 text-primary" />
+              <span className="text-primary font-semibold">
                 {format(new Date(course.scheduled_date), 'MMM d, yyyy • h:mm a')}
               </span>
             </div>

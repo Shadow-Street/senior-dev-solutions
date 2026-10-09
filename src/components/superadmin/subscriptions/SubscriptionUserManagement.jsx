@@ -132,7 +132,7 @@ export default function SubscriptionUserManagement({ permissions }) {
         return (
           <Badge className="bg-hold-muted text-hold-muted-foreground border-hold/30">
             <AlertTriangle className="w-3 h-3 mr-1" />
-            {subscription.status.toUpperCase()}
+            {(subscription.status || 'unknown').toUpperCase()}
           </Badge>
         );
     }

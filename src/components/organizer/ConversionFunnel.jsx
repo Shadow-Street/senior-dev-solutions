@@ -129,11 +129,11 @@ export default function ConversionFunnel({ events, tickets, attendees, checkIns 
         {/* Insights */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
           <div className="bg-premium-muted p-4 rounded-lg">
-            <p className="text-xs text-protocall-blue font-medium mb-1">Best Converting Stage</p>
-            <p className="text-lg font-bold text-protocall-blue">
+            <p className="text-xs text-primary font-medium mb-1">Best Converting Stage</p>
+            <p className="text-lg font-bold text-primary">
               {funnelData.reduce((max, stage) => stage.conversion > max.conversion ? stage : max).stage}
             </p>
-            <p className="text-xs text-protocall-blue">{funnelData.reduce((max, stage) => stage.conversion > max.conversion ? stage : max).conversion.toFixed(1)}% conversion</p>
+            <p className="text-xs text-primary">{funnelData.reduce((max, stage) => stage.conversion > max.conversion ? stage : max).conversion.toFixed(1)}% conversion</p>
           </div>
 
           <div className="bg-sell-muted p-4 rounded-lg">

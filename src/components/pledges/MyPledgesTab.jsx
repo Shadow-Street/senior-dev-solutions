@@ -6,8 +6,8 @@ import { FileText } from 'lucide-react';
 const statusConfig = {
   draft: { label: 'Draft', color: 'bg-surface-2 text-foreground' },
   pending_payment: { label: 'Pending Payment', color: 'bg-hold-muted text-hold-muted-foreground' },
-  paid: { label: 'Paid', color: 'bg-premium-muted text-protocall-blue' },
-  ready_for_execution: { label: 'Ready for Execution', color: 'bg-premium-muted text-protocall-blue' },
+  paid: { label: 'Paid', color: 'bg-premium-muted text-primary' },
+  ready_for_execution: { label: 'Ready for Execution', color: 'bg-premium-muted text-primary' },
   executing: { label: 'Executing', color: 'bg-premium-muted text-protocall-premium-text animate-pulse' },
   executed: { label: 'Executed', color: 'bg-buy-muted text-buy-muted-foreground' },
   failed: { label: 'Failed', color: 'bg-sell-muted text-sell-muted-foreground' },

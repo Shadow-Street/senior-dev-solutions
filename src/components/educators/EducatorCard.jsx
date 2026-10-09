@@ -44,13 +44,13 @@ export default function EducatorCard({ educator, canAccessPremium }) {
           {/* Certifications */}
           <div className="flex flex-wrap gap-1 justify-center">
             {educator.certification?.slice(0, 3).map((cert) => (
-              <Badge key={cert} className="bg-premium-muted text-protocall-blue text-xs">
+              <Badge key={cert} className="bg-premium-muted text-primary text-xs">
                 <Award className="w-3 h-3 mr-1" />
                 {cert}
               </Badge>
             ))}
             {educator.certification?.length > 3 && (
-              <Badge className="bg-premium-muted text-protocall-blue text-xs">
+              <Badge className="bg-premium-muted text-primary text-xs">
                 +{educator.certification.length - 3}
               </Badge>
             )}

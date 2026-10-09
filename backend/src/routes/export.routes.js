@@ -65,7 +65,8 @@ router.post('/', authMiddleware, async (req, res) => {
       res.status(400).json({ error: 'Unsupported format. Use csv or json.' });
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[export.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -75,7 +76,8 @@ router.get('/history', authMiddleware, async (req, res) => {
     // For now, return empty array - implement if needed
     res.json([]);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[export.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

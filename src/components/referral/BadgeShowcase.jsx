@@ -11,13 +11,13 @@ export default function BadgeShowcase({ badges }) {
   };
 
   const badgeColors = {
-    community_builder: "bg-premium-muted text-protocall-blue border-protocall-premium-light",
+    community_builder: "bg-premium-muted text-primary border-protocall-premium-light",
     community_leader: "bg-premium-muted text-protocall-premium-text border-protocall-premium-light",
     community_champion: "bg-hold-muted text-hold-muted-foreground border-hold/30"
   };
 
   const badgeBackgrounds = {
-    community_builder: "bg-protocall-blue",
+    community_builder: "bg-primary",
     community_leader: "bg-primary",
     community_champion: "bg-hold"
   };

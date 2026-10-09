@@ -14,9 +14,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import apiClient from "@/lib/apiClient";
 
 import LiveStockTicker from "./LiveStockTicker";
 import MeetingControls from "./MeetingControls";
+import VipRoomBanner from "./VipRoomBanner";
+import useChatRoomSettings from "@/components/hooks/useChatRoomSettings";
 import TrustScoreBadge from "../ui/TrustScoreBadge";
 import MessageContent from './MessageContent';
 import CreatePollModal from '../polls/CreatePollModal';
@@ -124,7 +127,11 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
     refetch
   } = useChatRoom(room?.id, user);
 
-  console.log("messages123", messages);
+
+  // Room preferences (server-persisted, localStorage-cached). Declared before
+  // any effect that reads them — a later declaration would be a TDZ error in
+  // the dependency arrays below.
+  const { settings } = useChatRoomSettings(room?.id);
 
   const [filteredMessages, setFilteredMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -215,6 +222,13 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
   useEffect(() => {
     if (isLoading) return;
 
+    // Auto-scroll is a user preference: when it is off, a new message only
+    // raises the "new messages" bar and never moves the reader's viewport.
+    if (!settings.autoScroll && !shouldScrollToBottomRef.current) {
+      if (messages.length > 0 && !isUserAtBottom()) setShowNewMessageBar(true);
+      return;
+    }
+
     const wasAtBottom = isUserAtBottom();
 
     if (wasAtBottom || shouldScrollToBottomRef.current) {
@@ -227,7 +241,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
         setShowNewMessageBar(true);
       }
     }
-  }, [messages, isLoading, isUserAtBottom, scrollToBottom]);
+  }, [messages, isLoading, isUserAtBottom, scrollToBottom, settings.autoScroll]);
 
   // Post bot welcome message on init
   const postBotMessage = useCallback(async (content) => {
@@ -429,8 +443,6 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
 
           postBotMessage('🤖 Thinking...');
           try {
-            // Using apiClient direct call or import from api/integrations if preferred, but apiClient is cleaner here
-            const apiClient = require("@/lib/apiClient").default;
             const res = await apiClient.post('/ai/chat', {
               messages: [{ role: 'user', content: query }]
             });
@@ -637,40 +649,6 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
     setActiveFilters(filters);
   };
 
-  // Settings State
-  const [settings, setSettings] = useState({
-    notificationsEnabled: true,
-    soundEnabled: true,
-    desktopNotifications: false,
-    showTypingIndicator: true,
-    showReadReceipts: true,
-    compactMode: false,
-    autoScroll: true,
-    enterToSend: true,
-    showTimestamps: true,
-  });
-
-  // Load settings
-  const loadSettings = useCallback(() => {
-    if (!room?.id) return;
-    const saved = localStorage.getItem(`chat_settings_${room.id}`);
-    if (saved) {
-      try {
-        setSettings(JSON.parse(saved));
-      } catch (e) {
-        console.error("Error parsing settings:", e);
-      }
-    }
-  }, [room?.id]);
-
-  useEffect(() => {
-    loadSettings();
-
-    // Listen for settings updates from modal
-    const handleSettingsUpdate = () => loadSettings();
-    window.addEventListener('chat-settings-updated', handleSettingsUpdate);
-    return () => window.removeEventListener('chat-settings-updated', handleSettingsUpdate);
-  }, [loadSettings]);
 
   // Notifications
   const playNotificationSound = useCallback(() => {
@@ -776,6 +754,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
       <div className="flex-1 flex flex-col max-w-7xl mx-auto w-full overflow-hidden">
         {/* Header Section */}
         <div className="flex-shrink-0 p-4 pb-2 space-y-2">
+          <VipRoomBanner room={room} />
           <LiveStockTicker stockSymbol={latestPollStockSymbol || room.stock_symbol} onPriceUpdate={setPriceData} />
           <MeetingControls
             chatRoomId={room.id}
@@ -788,14 +767,14 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
         {/* Main Content Area */}
         <div className="flex-1 flex gap-4 px-4 pb-4 min-h-0 overflow-hidden">
           {/* Chat Card */}
-          <Card className="flex-1 flex flex-col shadow-lg border-0 bg-white overflow-hidden">
+          <Card className="flex-1 flex flex-col shadow-lg border-0 bg-card overflow-hidden">
             {/* Card Header - Glass Effect */}
-            <CardHeader className="flex-shrink-0 border-b bg-white/80 backdrop-blur-md p-4 z-10 sticky top-0">
+            <CardHeader className="flex-shrink-0 border-b border-divider bg-card/80 backdrop-blur-md p-4 z-10 sticky top-0">
               <div className="flex items-center gap-3">
                 <Button
                   size="icon"
                   onClick={onBack}
-                  className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white hover:from-protocall-deep hover:to-protocall-blue h-10 w-10 flex-shrink-0 rounded-xl shadow-md transition-all duration-300 hover:scale-105"
+                  className="bg-gradient-to-r from-primary to-protocall-grape text-white hover:from-primary hover:to-protocall-grape h-10 w-10 flex-shrink-0 rounded-xl shadow-md transition-all duration-300 hover:scale-105"
                 >
                   <ArrowLeft className="w-4 h-4" />
                 </Button>
@@ -809,7 +788,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                     {/* Connection status indicator */}
                     <Badge
                       variant={isConnected ? "default" : "destructive"}
-                      className={`text-xs px-2 py-0.5 ${isConnected ? 'bg-buy' : 'bg-sell'}`}
+                      className={`text-xs px-2 py-0.5 ${isConnected ? 'bg-buy text-buy-foreground' : 'bg-sell'}`}
                     >
                       {isConnected ? (
                         <><Wifi className="w-3 h-3 mr-1" /> Live</>
@@ -823,7 +802,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                       <Button
                         size="sm"
                         onClick={() => setShowCreatePollModal(true)}
-                        className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white text-xs px-2.5 py-1 h-6 rounded-full shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 whitespace-nowrap"
+                        className="bg-gradient-to-r from-primary to-protocall-grape hover:from-primary hover:to-protocall-grape text-white text-xs px-2.5 py-1 h-6 rounded-full shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 whitespace-nowrap"
                       >
                         <Plus className="w-3 h-3" />
                         <span className="hidden sm:inline">Create Poll</span>
@@ -837,7 +816,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                 </div>
 
                 <div className="hidden md:flex items-center gap-2 flex-shrink-0">
-                  <Badge variant="outline" className="bg-premium-muted text-protocall-blue px-2 py-1">
+                  <Badge variant="outline" className="bg-premium-muted text-primary px-2 py-1">
                     <Users className="w-3 h-3 mr-1" />
                     <span className="text-xs">{room.participant_count || 0}</span>
                   </Badge>
@@ -985,14 +964,14 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                               </div>
                             )}
                             {isBot && !settings.compactMode && (
-                              <div className="text-xs font-bold mb-1 text-protocall-blue flex items-center gap-1">
+                              <div className="text-xs font-bold mb-1 text-primary flex items-center gap-1">
                                 <span>AI Assistant</span>
                               </div>
                             )}
 
                             <div className={`shadow-sm relative
                               ${isCurrentUser
-                                ? 'bg-gradient-to-br from-protocall-deep to-protocall-blue text-white rounded-2xl rounded-tr-none px-4 py-2.5 inline-block'
+                                ? 'bg-gradient-to-br from-primary to-protocall-grape text-white rounded-2xl rounded-tr-none px-4 py-2.5 inline-block'
                                 : isBot
                                   ? 'bg-surface-2 text-foreground rounded-2xl rounded-tl-none border border-border px-4 py-2.5 inline-block'
                                   : 'bg-white text-foreground rounded-2xl rounded-tl-none border border-divider px-4 py-2.5 inline-block'
@@ -1074,7 +1053,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                                     {canEditMessage(msg) && (
                                       <button
                                         onClick={() => setEditingMessage(msg)}
-                                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-premium-muted transition-colors text-left text-sm text-protocall-blue"
+                                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-premium-muted transition-colors text-left text-sm text-primary"
                                       >
                                         <Pencil className="w-4 h-4" />
                                         Edit Message
@@ -1116,10 +1095,10 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                         </div>
 
                         {isReplying && user && (
-                          <div className={`mt-2 ${isCurrentUser ? 'ml-auto' : 'ml-10'} bg-premium-muted rounded-lg p-3 border-l-4 border-protocall-blue max-w-xs md:max-w-md`}>
+                          <div className={`mt-2 ${isCurrentUser ? 'ml-auto' : 'ml-10'} bg-premium-muted rounded-lg p-3 border-l-4 border-primary max-w-xs md:max-w-md`}>
                             <div className="flex items-center gap-2 mb-2">
-                              <Reply className="w-4 h-4 text-protocall-blue" />
-                              <span className="text-xs font-semibold text-protocall-blue">
+                              <Reply className="w-4 h-4 text-primary" />
+                              <span className="text-xs font-semibold text-primary">
                                 Replying to {msgUser.display_name}
                               </span>
                               <button
@@ -1169,7 +1148,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                                 type="submit"
                                 size="sm"
                                 disabled={!newMessage.trim() || isSending}
-                                className="bg-protocall-blue hover:bg-protocall-blue"
+                                className="bg-primary hover:bg-primary"
                               >
                                 {isSending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                               </Button>
@@ -1189,7 +1168,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
                 <Button
                   onClick={() => scrollToBottom('smooth')}
-                  className="bg-protocall-blue hover:bg-protocall-blue text-white font-bold rounded-full shadow-lg animate-bounce"
+                  className="bg-primary hover:bg-primary text-white font-bold rounded-full shadow-lg animate-bounce"
                 >
                   <ArrowDown className="w-4 h-4 mr-2" />
                   New messages

@@ -140,7 +140,7 @@ export default function EventRefundManager({ organizerId }) {
         );
       case 'processing':
         return (
-          <Badge className="bg-premium-muted text-protocall-blue">
+          <Badge className="bg-premium-muted text-primary">
             Processing
           </Badge>
         );
@@ -201,7 +201,7 @@ export default function EventRefundManager({ organizerId }) {
                       <Button
                         size="sm"
                         onClick={() => handleReview(refund, 'approve')}
-                        className="bg-buy hover:bg-buy"
+                        className="bg-buy text-buy-foreground hover:bg-buy-soft"
                       >
                         <CheckCircle className="w-4 h-4 mr-2" />
                         Approve
@@ -306,7 +306,7 @@ export default function EventRefundManager({ organizerId }) {
               <Button
                 onClick={submitReview}
                 disabled={isProcessing || (reviewAction === 'reject' && !reviewNotes.trim())}
-                className={reviewAction === 'approve' ? 'bg-buy hover:bg-buy' : 'bg-sell hover:bg-sell'}
+                className={reviewAction === 'approve' ? 'bg-buy text-buy-foreground hover:bg-buy-soft' : 'bg-sell hover:bg-sell'}
               >
                 {isProcessing ? (
                   <>

@@ -146,7 +146,7 @@ export default function EventBulkActions({
               <Button
                 onClick={handleBulkExport}
                 variant="outline"
-                className="border-2 border-protocall-premium-light text-protocall-blue hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-protocall-blue shadow-md hover:shadow-lg transition-all duration-300"
+                className="border-2 border-protocall-premium-light text-primary hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-primary shadow-md hover:shadow-lg transition-all duration-300"
               >
                 <Download className="w-4 h-4 mr-2" />
                 Export
@@ -261,7 +261,7 @@ export default function EventBulkActions({
 
             <div>
               <label className="text-sm font-medium text-subtle mb-2 block">
-                Reason for Rejection <span className="text-sell">*</span>
+                Reason for Rejection <span className="text-sell-muted-foreground">*</span>
               </label>
               <Textarea
                 placeholder="Provide a clear reason for rejection..."

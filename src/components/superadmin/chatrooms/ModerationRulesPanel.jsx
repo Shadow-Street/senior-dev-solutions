@@ -187,15 +187,15 @@ export default function ModerationRulesPanel() {
   const ruleTypeConfig = {
     word_filter: { icon: MessageSquare, color: 'text-sell-muted-foreground', label: 'Word Filter' },
     spam_detection: { icon: AlertTriangle, color: 'text-hold-muted-foreground', label: 'Spam Detection' },
-    link_filter: { icon: LinkIcon, color: 'text-protocall-blue', label: 'Link Filter' },
+    link_filter: { icon: LinkIcon, color: 'text-primary', label: 'Link Filter' },
     caps_lock: { icon: MessageSquare, color: 'text-hold-muted-foreground', label: 'Caps Lock' },
     rate_limit: { icon: Clock, color: 'text-protocall-premium-text', label: 'Rate Limit' },
-    mention_limit: { icon: MessageSquare, color: 'text-protocall-blue', label: 'Mention Limit' },
+    mention_limit: { icon: MessageSquare, color: 'text-primary', label: 'Mention Limit' },
     file_restriction: { icon: FileText, color: 'text-buy-muted-foreground', label: 'File Restriction' }
   };
 
   const severityColors = {
-    low: 'bg-premium-muted text-protocall-blue',
+    low: 'bg-premium-muted text-primary',
     medium: 'bg-hold-muted text-hold-muted-foreground',
     high: 'bg-hold-muted text-hold-muted-foreground',
     critical: 'bg-sell-muted text-sell-muted-foreground'
@@ -209,7 +209,7 @@ export default function ModerationRulesPanel() {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-lg text-subtle font-medium">Loading Moderation Rules...</p>
         </div>
       </div>

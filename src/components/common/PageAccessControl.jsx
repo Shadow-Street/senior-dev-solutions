@@ -61,7 +61,7 @@ export default function PageAccessControl({ pageConfig, user, isSubscribed, reas
     },
     login_required: {
       icon: Lock,
-      iconColor: 'text-protocall-blue',
+      iconColor: 'text-primary',
       bgColor: 'from-surface-2 to-surface-2',
       title: 'Login Required',
       subtitle: 'Authentication Needed',

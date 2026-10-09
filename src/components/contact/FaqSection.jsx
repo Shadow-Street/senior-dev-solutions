@@ -57,7 +57,7 @@ export default function FaqSection() {
               <AccordionTrigger>{faq.question}</AccordionTrigger>
               <AccordionContent className="space-y-3">
                 <p>{faq.answer}</p>
-                <Link to={faq.link} className="text-protocall-blue hover:underline text-sm font-semibold">
+                <Link to={faq.link} className="text-primary hover:underline text-sm font-semibold">
                   Go to page →
                 </Link>
               </AccordionContent>

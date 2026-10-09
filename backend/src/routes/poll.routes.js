@@ -164,7 +164,8 @@ router.get('/active', async (req, res) => {
     });
     res.json(polls);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[poll.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -179,7 +180,8 @@ router.get('/room/:roomId', async (req, res) => {
     });
     res.json(polls);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[poll.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -423,7 +425,8 @@ voteRouter.get('/results/:pollId', async (req, res) => {
 
     res.json({ poll, results: votes });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[poll.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -435,7 +438,8 @@ voteRouter.get('/me', authMiddleware, async (req, res) => {
     });
     res.json(votes);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[poll.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

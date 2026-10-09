@@ -204,8 +204,8 @@ export default function CreateEventModal({ user, onClose, onSuccess }) {
             
             {!canCreatePaidEvent && (
               <Alert className="bg-premium-muted border-protocall-premium-light">
-                <Info className="h-4 w-4 text-protocall-blue" />
-                <AlertDescription className="text-sm text-protocall-blue">
+                <Info className="h-4 w-4 text-primary" />
+                <AlertDescription className="text-sm text-primary">
                   <strong>Want to create paid events?</strong> Apply to become a verified organizer to unlock:
                   <ul className="list-disc list-inside mt-2 space-y-1">
                     <li>Create paid events with ticket sales</li>
@@ -215,7 +215,7 @@ export default function CreateEventModal({ user, onClose, onSuccess }) {
                   </ul>
                   <Button
                     variant="link"
-                    className="p-0 h-auto text-protocall-blue font-semibold mt-2"
+                    className="p-0 h-auto text-primary font-semibold mt-2"
                     onClick={() => window.location.href = createPageUrl('BecomeOrganizer')}
                   >
                     Apply Now →
@@ -263,7 +263,7 @@ export default function CreateEventModal({ user, onClose, onSuccess }) {
             type="button"
             onClick={handleSubmit} 
             disabled={isSubmitting}
-            className="bg-protocall-blue hover:bg-protocall-blue"
+            className="bg-primary hover:bg-primary"
           >
             {isSubmitting ? 'Creating...' : 'Submit for Approval'}
           </Button>

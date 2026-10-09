@@ -99,8 +99,10 @@ export default function ChatRoomCard({ room, onDelete, onEdit, user, onRoomClick
 
     return (
         <Card
-            className={`${getCardGradient()} border-0 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col h-full relative ${!hasAccess ? 'overflow-hidden' : ''
-                }`}
+            className={`${getCardGradient()} group/room relative flex h-full cursor-pointer flex-col border border-transparent shadow-sm
+                transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/20
+                hover:ring-2 hover:ring-primary/25 motion-reduce:transform-none motion-reduce:transition-none
+                ${!hasAccess ? 'overflow-hidden' : ''}`}
             onClick={() => hasAccess && onRoomClick(room)}
         >
             {!hasAccess && (
@@ -133,7 +135,7 @@ export default function ChatRoomCard({ room, onDelete, onEdit, user, onRoomClick
                             <DropdownMenuContent align="end">
                                 {onEdit && (
                                     <DropdownMenuItem onClick={handleEditClick}>
-                                        <Edit className="w-4 h-4 mr-2 text-protocall-blue" />
+                                        <Edit className="w-4 h-4 mr-2 text-primary" />
                                         Edit Room
                                     </DropdownMenuItem>
                                 )}
@@ -157,7 +159,7 @@ export default function ChatRoomCard({ room, onDelete, onEdit, user, onRoomClick
 
                     {/* Admin Badge */}
                     {isAdminRoom && (
-                        <Badge className="bg-protocall-blue hover:bg-protocall-blue text-white border-0">
+                        <Badge className="bg-primary hover:bg-primary text-white border-0">
                             <Shield className="w-3 h-3 mr-1" />
                             Admin Only
                         </Badge>
@@ -230,7 +232,9 @@ export default function ChatRoomCard({ room, onDelete, onEdit, user, onRoomClick
                 {/* Buttons */}
                 <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-divider">
                     <Button
-                        className="w-full bg-premium-muted text-protocall-blue hover:bg-premium-muted hover:text-protocall-blue border-0 rounded-xl font-semibold shadow-none h-10"
+                        className="h-10 w-full rounded-xl border-0 bg-primary font-semibold text-primary-foreground shadow-sm
+                                   transition-all duration-200 hover:bg-protocall-grape hover:shadow-md
+                                   disabled:opacity-60"
                         onClick={(e) => {
                             e.stopPropagation();
                             if (!isLocked) onRoomClick(room);

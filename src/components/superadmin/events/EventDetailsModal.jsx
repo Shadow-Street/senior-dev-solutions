@@ -203,7 +203,7 @@ export default function EventDetailsModal({ event, open, onClose, onUpdate }) {
 
   const statusConfig = {
     pending_approval: { color: 'bg-hold-muted text-hold-muted-foreground', icon: Clock, label: 'Pending Approval' },
-    approved: { color: 'bg-premium-muted text-protocall-blue', icon: CheckCircle, label: 'Approved' },
+    approved: { color: 'bg-premium-muted text-primary', icon: CheckCircle, label: 'Approved' },
     rejected: { color: 'bg-sell-muted text-sell-muted-foreground', icon: XCircle, label: 'Rejected' },
     scheduled: { color: 'bg-buy-muted text-buy-muted-foreground', icon: Calendar, label: 'Scheduled' },
     cancelled: { color: 'bg-surface-2 text-foreground', icon: AlertCircle, label: 'Cancelled' },
@@ -230,7 +230,7 @@ export default function EventDetailsModal({ event, open, onClose, onUpdate }) {
 
         {isLoading ? (
           <div className="flex items-center justify-center py-12 flex-1">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden">
@@ -238,65 +238,65 @@ export default function EventDetailsModal({ event, open, onClose, onUpdate }) {
             <TabsList className="flex flex-wrap gap-2 w-full bg-transparent p-0 mb-4">
               <TabsTrigger
                 value="details"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
               >
                 Overview
               </TabsTrigger>
               <TabsTrigger
                 value="attendees"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
               >
                 Attendees ({attendees.length})
               </TabsTrigger>
               <TabsTrigger
                 value="tickets"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
               >
                 Tickets ({tickets.length})
               </TabsTrigger>
               <TabsTrigger
                 value="revenue"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
               >
                 Revenue
               </TabsTrigger>
               <TabsTrigger
                 value="refunds"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
               >
                 Refunds
               </TabsTrigger>
               <TabsTrigger
                 value="checkins"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
               >
                 <QrCode className="w-4 h-4 mr-1" />
                 Check-Ins ({checkIns.length})
               </TabsTrigger>
               <TabsTrigger
                 value="promos"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
               >
                 <Ticket className="w-4 h-4 mr-1" />
                 Promo Codes ({promoCodes.length})
               </TabsTrigger>
               <TabsTrigger
                 value="reminders"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
               >
                 <Mail className="w-4 h-4 mr-1" />
                 Reminders ({reminders.length})
               </TabsTrigger>
               <TabsTrigger
                 value="feedback"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
               >
                 <Star className="w-4 h-4 mr-1" />
                 Feedback ({feedbacks.filter(f => f.status === 'submitted').length})
               </TabsTrigger>
               <TabsTrigger
                 value="analytics"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-protocall-blue hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl font-semibold shadow-md py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg"
               >
                 <TrendingUp className="w-4 h-4 mr-1" />
                 Analytics
@@ -308,7 +308,7 @@ export default function EventDetailsModal({ event, open, onClose, onUpdate }) {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-protocall-blue" />
+                    <Calendar className="w-5 h-5 text-primary" />
                     Event Information
                   </CardTitle>
                 </CardHeader>
@@ -441,7 +441,7 @@ export default function EventDetailsModal({ event, open, onClose, onUpdate }) {
                     <Button
                       onClick={handleExportAttendees}
                       variant="outline"
-                      className="border-2 border-protocall-premium-light text-protocall-blue hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-protocall-blue rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
+                      className="border-2 border-protocall-premium-light text-primary hover:bg-gradient-to-r hover:from-surface-2 hover:to-surface-2 hover:border-primary rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
                     >
                       <Download className="w-4 h-4 mr-2" />
                       Export Attendees
@@ -457,7 +457,7 @@ export default function EventDetailsModal({ event, open, onClose, onUpdate }) {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-subtle">Total RSVPs</p>
-                        <p className="text-2xl font-bold text-protocall-blue mt-1">{attendees.length}</p>
+                        <p className="text-2xl font-bold text-primary mt-1">{attendees.length}</p>
                       </div>
                       <Users className="w-8 h-8 text-protocall-premium-light opacity-50" />
                     </div>
@@ -510,7 +510,7 @@ export default function EventDetailsModal({ event, open, onClose, onUpdate }) {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2">
-                      <Users className="w-5 h-5 text-protocall-blue" />
+                      <Users className="w-5 h-5 text-primary" />
                       Attendee List
                     </CardTitle>
                     {/* The AttendeeExport component also provides an export button */}
@@ -532,8 +532,8 @@ export default function EventDetailsModal({ event, open, onClose, onUpdate }) {
                       <p className="text-2xl font-bold text-sell-muted-foreground">{rsvpStats.no}</p>
                     </div>
                     <div className="bg-premium-muted p-4 rounded-lg border border-protocall-premium-light">
-                      <p className="text-sm text-protocall-blue">Confirmed</p>
-                      <p className="text-2xl font-bold text-protocall-blue">{rsvpStats.confirmed}</p>
+                      <p className="text-sm text-primary">Confirmed</p>
+                      <p className="text-2xl font-bold text-primary">{rsvpStats.confirmed}</p>
                     </div>
                   </div>
 
@@ -612,8 +612,8 @@ export default function EventDetailsModal({ event, open, onClose, onUpdate }) {
                   {/* Ticket Stats */}
                   <div className="grid grid-cols-4 gap-4 mb-6">
                     <div className="bg-premium-muted p-4 rounded-lg border border-protocall-premium-light">
-                      <p className="text-sm text-protocall-blue">Total</p>
-                      <p className="text-2xl font-bold text-protocall-blue">{ticketStats.total}</p>
+                      <p className="text-sm text-primary">Total</p>
+                      <p className="text-2xl font-bold text-primary">{ticketStats.total}</p>
                     </div>
                     <div className="bg-buy-muted p-4 rounded-lg border border-buy/30">
                       <p className="text-sm text-buy-muted-foreground">Active</p>
@@ -706,11 +706,11 @@ export default function EventDetailsModal({ event, open, onClose, onUpdate }) {
                         </div>
 
                         <div className="bg-surface-2 p-6 rounded-xl border border-protocall-premium-light">
-                          <p className="text-sm text-protocall-blue mb-2">Platform Commission</p>
-                          <p className="text-3xl font-bold text-protocall-blue">
+                          <p className="text-sm text-primary mb-2">Platform Commission</p>
+                          <p className="text-3xl font-bold text-primary">
                             ₹{commission.platform_commission?.toLocaleString()}
                           </p>
-                          <p className="text-xs text-protocall-blue mt-1">
+                          <p className="text-xs text-primary mt-1">
                             {commission.platform_commission_rate}% commission
                           </p>
                         </div>
@@ -783,7 +783,7 @@ export default function EventDetailsModal({ event, open, onClose, onUpdate }) {
             <TabsContent value="checkins" className="space-y-6 mt-0 flex-1 overflow-y-auto p-4">
               {isLoadingAdditional ? (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
                   <p className="text-subtle">Loading check-in data...</p>
                 </div>
               ) : (
@@ -802,7 +802,7 @@ export default function EventDetailsModal({ event, open, onClose, onUpdate }) {
             <TabsContent value="promos" className="space-y-6 mt-0 flex-1 overflow-y-auto p-4">
               {isLoadingAdditional ? (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
                   <p className="text-subtle">Loading promo codes...</p>
                 </div>
               ) : (
@@ -818,7 +818,7 @@ export default function EventDetailsModal({ event, open, onClose, onUpdate }) {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Mail className="w-5 h-5 text-protocall-blue" />
+                    <Mail className="w-5 h-5 text-primary" />
                     Automated Reminders
                   </CardTitle>
                   <p className="text-sm text-subtle">Email reminders sent to ticket holders</p>
@@ -926,8 +926,8 @@ export default function EventDetailsModal({ event, open, onClose, onUpdate }) {
 
                           {feedback.improvement_suggestions && (
                             <div className="mt-2 p-3 bg-premium-muted rounded border border-protocall-premium-light">
-                              <p className="text-xs text-protocall-blue font-medium">Suggestions:</p>
-                              <p className="text-sm text-protocall-blue">{feedback.improvement_suggestions}</p>
+                              <p className="text-xs text-primary font-medium">Suggestions:</p>
+                              <p className="text-sm text-primary">{feedback.improvement_suggestions}</p>
                             </div>
                           )}
                         </div>
@@ -964,7 +964,7 @@ export default function EventDetailsModal({ event, open, onClose, onUpdate }) {
 
                   <Card className="bg-gradient-to-br from-protocall-deep to-protocall-blue text-white">
                     <CardContent className="p-4">
-                      <p className="text-sm text-protocall-blue">Tickets Sold</p>
+                      <p className="text-sm text-primary">Tickets Sold</p>
                       <p className="text-2xl font-bold mt-1">{tickets.length}</p>
                     </CardContent>
                   </Card>
@@ -999,7 +999,7 @@ export default function EventDetailsModal({ event, open, onClose, onUpdate }) {
                   <CardContent>
                     <div className="space-y-3">
                       {[
-                        { label: 'Page Views', count: attendees.length * 10, color: 'bg-protocall-blue' },
+                        { label: 'Page Views', count: attendees.length * 10, color: 'bg-primary' },
                         { label: 'RSVPs (Yes)', count: attendees.filter(a => a.rsvp_status === 'yes').length, color: 'bg-primary' },
                         { label: 'Tickets Purchased', count: tickets.length, color: 'bg-buy' },
                         { label: 'Checked In', count: checkIns.length, color: 'bg-hold' }

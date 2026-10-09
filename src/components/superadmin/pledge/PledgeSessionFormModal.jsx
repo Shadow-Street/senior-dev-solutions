@@ -454,7 +454,7 @@ export default function PledgeSessionFormModal({ open, onClose, onSuccess, sessi
 
             <div>
               <Label htmlFor="allow_amo" className="flex items-center gap-2">
-                <Moon className="w-4 h-4 text-protocall-blue" />
+                <Moon className="w-4 h-4 text-primary" />
                 Allow AMO (After Market Orders)
               </Label>
               <div className="flex items-center gap-3 mt-2">

@@ -445,7 +445,7 @@ export default function EventAnalytics({ permissions, events: propEvents, ticket
     return (
       <div className="flex items-center justify-center p-12">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-lg text-subtle">Loading Events Reports...</p>
           <p className="text-sm text-muted-foreground mt-2">Analyzing ticket data and calculating revenue...</p>
         </div>
@@ -508,14 +508,14 @@ export default function EventAnalytics({ permissions, events: propEvents, ticket
 
         <Card className="bg-surface-2 border-protocall-premium-light">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-protocall-blue">Platform Commission</CardTitle>
+            <CardTitle className="text-sm font-medium text-primary">Platform Commission</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
               <TrendingUp className="w-8 h-8 text-protocall-premium-light mr-2" />
               <div>
-                <p className="text-2xl font-bold text-protocall-blue">₹{kpis.platformCommission.toLocaleString()}</p>
-                <p className="text-xs text-protocall-blue">
+                <p className="text-2xl font-bold text-primary">₹{kpis.platformCommission.toLocaleString()}</p>
+                <p className="text-xs text-primary">
                   {((kpis.platformCommission / (kpis.grossRevenue || 1)) * 100).toFixed(1)}% of gross
                 </p>
               </div>
@@ -656,13 +656,13 @@ export default function EventAnalytics({ permissions, events: propEvents, ticket
             </div>
 
             <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
-              <p className="text-sm text-protocall-blue font-medium mb-1">Ticket Conversion</p>
-              <p className="text-3xl font-bold text-protocall-blue">
+              <p className="text-sm text-primary font-medium mb-1">Ticket Conversion</p>
+              <p className="text-3xl font-bold text-primary">
                 {propAttendees.length > 0 && propAttendees.filter(a => a.rsvp_status?.toLowerCase() === 'yes').length > 0
                   ? Math.round((enrichedTickets.length / propAttendees.filter(a => a.rsvp_status?.toLowerCase() === 'yes').length) * 100)
                   : 0}%
               </p>
-              <p className="text-xs text-protocall-blue mt-1">
+              <p className="text-xs text-primary mt-1">
                 RSVP to paid tickets (based on 'yes' RSVPs)
               </p>
             </div>

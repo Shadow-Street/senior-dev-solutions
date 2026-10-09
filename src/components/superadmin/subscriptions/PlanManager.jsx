@@ -155,7 +155,7 @@ function AdminPlanCard({ plan, onEdit, allPlans, availableFeatures }) { // Added
     if (planName.includes('premium')) {
       return 'text-protocall-premium-text';
     }
-    return 'text-protocall-blue';
+    return 'text-primary';
   };
 
   const getCardBackground = () => {
@@ -226,8 +226,8 @@ function AdminPlanCard({ plan, onEdit, allPlans, availableFeatures }) { // Added
           {/* Parent Plan Inclusion */}
           {parentPlanName && (
             <div className="flex items-center gap-2 p-3 bg-premium-muted rounded-lg mb-3 border border-protocall-premium-light">
-              <Shield className="w-4 h-4 text-protocall-blue flex-shrink-0" />
-              <span className="text-sm font-medium text-protocall-blue">
+              <Shield className="w-4 h-4 text-primary flex-shrink-0" />
+              <span className="text-sm font-medium text-primary">
                 Includes All {parentPlanName} Features
               </span>
             </div>
@@ -418,7 +418,7 @@ export default function PlanManager({ plans, setPlans, permissions }) {
   if (featuresLoading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-protocall-blue"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         <p className="ml-3 text-subtle">Loading features...</p>
       </div>
     );
@@ -526,7 +526,7 @@ export default function PlanManager({ plans, setPlans, permissions }) {
                 {/* Basic Features */}
                 {featuresByTier.basic.length > 0 && (
                   <div className="border rounded-lg p-4 bg-premium-muted">
-                    <h4 className="font-semibold text-protocall-blue mb-3 flex items-center gap-2">
+                    <h4 className="font-semibold text-primary mb-3 flex items-center gap-2">
                       <UserCircle className="w-4 h-4" />
                       Basic Tier Features
                     </h4>

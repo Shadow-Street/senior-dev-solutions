@@ -62,10 +62,10 @@ export default function WatchlistStats({ watchlist = [], onRemove, onSetAlert, t
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-protocall-ink/75 text-sm">Gainers</p>
+                <p className="text-protocall-ink/85 text-sm">Gainers</p>
                 <p className="text-xl font-bold">{gainers}</p>
               </div>
-              <TrendingUp className="w-6 h-6 text-protocall-ink/75" />
+              <TrendingUp className="w-6 h-6 text-protocall-ink/85" />
             </div>
           </CardContent>
         </Card>

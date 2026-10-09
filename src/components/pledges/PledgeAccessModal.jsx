@@ -229,7 +229,7 @@ export default function PledgeAccessModal({ isOpen, onClose, user, onSuccess }) 
   const LoadingContent = () => (
     <div className="flex items-center justify-center py-12">
       <div className="text-center">
-        <RefreshCw className="w-8 h-8 text-protocall-blue animate-spin mx-auto mb-4" />
+        <RefreshCw className="w-8 h-8 text-primary animate-spin mx-auto mb-4" />
         <p className="text-subtle">Checking your request status...</p>
       </div>
     </div>
@@ -271,8 +271,8 @@ export default function PledgeAccessModal({ isOpen, onClose, user, onSuccess }) 
       </div>
 
       <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4 text-left">
-        <h4 className="font-semibold text-protocall-blue mb-2">What's Next?</h4>
-        <ul className="text-sm text-protocall-blue space-y-1">
+        <h4 className="font-semibold text-primary mb-2">What's Next?</h4>
+        <ul className="text-sm text-primary space-y-1">
           <li>• Our team will verify your Demat account details</li>
           <li>• Review typically takes 24-48 hours</li>
           <li>• You'll receive a notification once approved</li>
@@ -322,8 +322,8 @@ export default function PledgeAccessModal({ isOpen, onClose, user, onSuccess }) 
       </div>
 
       <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4 text-left">
-        <h4 className="font-semibold text-protocall-blue mb-2">You Can Try Again</h4>
-        <p className="text-sm text-protocall-blue">
+        <h4 className="font-semibold text-primary mb-2">You Can Try Again</h4>
+        <p className="text-sm text-primary">
           You can resubmit your request with updated information. Make sure to address the concerns mentioned above.
         </p>
       </div>
@@ -373,7 +373,7 @@ export default function PledgeAccessModal({ isOpen, onClose, user, onSuccess }) 
               <p className="text-sm text-subtle">All trades execute directly in your own Demat account with full transparency</p>
             </div>
             <div className="p-4 border rounded-lg">
-              <Zap className="w-6 h-6 text-protocall-blue mb-2" />
+              <Zap className="w-6 h-6 text-primary mb-2" />
               <h4 className="font-semibold mb-1">Coordinated Trading</h4>
               <p className="text-sm text-subtle">Participate in group buy/sell sessions for better market impact</p>
             </div>
@@ -393,28 +393,28 @@ export default function PledgeAccessModal({ isOpen, onClose, user, onSuccess }) 
         <TabsContent value="how-it-works" className="space-y-4 mt-6">
           <div className="space-y-4">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-premium-muted rounded-full flex items-center justify-center text-protocall-blue font-semibold">1</div>
+              <div className="w-8 h-8 bg-premium-muted rounded-full flex items-center justify-center text-primary font-semibold">1</div>
               <div>
                 <h4 className="font-semibold">Link Your Demat Account</h4>
                 <p className="text-sm text-subtle">Provide your Demat Account ID and broker details for secure API integration</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-premium-muted rounded-full flex items-center justify-center text-protocall-blue font-semibold">2</div>
+              <div className="w-8 h-8 bg-premium-muted rounded-full flex items-center justify-center text-primary font-semibold">2</div>
               <div>
                 <h4 className="font-semibold">Join Pledge Sessions</h4>
                 <p className="text-sm text-subtle">Participate in time-limited sessions for specific stocks with defined buy/sell targets</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-premium-muted rounded-full flex items-center justify-center text-protocall-blue font-semibold">3</div>
+              <div className="w-8 h-8 bg-premium-muted rounded-full flex items-center justify-center text-primary font-semibold">3</div>
               <div>
                 <h4 className="font-semibold">Pay Convenience Fee</h4>
                 <p className="text-sm text-subtle">Small upfront fee to confirm your pledge commitment</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-premium-muted rounded-full flex items-center justify-center text-protocall-blue font-semibold">4</div>
+              <div className="w-8 h-8 bg-premium-muted rounded-full flex items-center justify-center text-primary font-semibold">4</div>
               <div>
                 <h4 className="font-semibold">Automated Execution</h4>
                 <p className="text-sm text-subtle">Trades execute automatically in your Demat account during the session window</p>
@@ -492,8 +492,8 @@ export default function PledgeAccessModal({ isOpen, onClose, user, onSuccess }) 
       </div>
 
       <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4 text-left">
-        <h4 className="font-semibold text-protocall-blue mb-2">What happens next?</h4>
-        <ul className="text-sm text-protocall-blue space-y-1">
+        <h4 className="font-semibold text-primary mb-2">What happens next?</h4>
+        <ul className="text-sm text-primary space-y-1">
           <li>• Our team will verify your Demat account details</li>
           <li>• You'll receive a notification once approved (usually within 24-48 hours)</li>
           <li>• After approval, the "My Pledges" section will be unlocked</li>
@@ -537,7 +537,7 @@ export default function PledgeAccessModal({ isOpen, onClose, user, onSuccess }) 
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="broker">Broker <span className="text-sell">*</span></Label>
+                <Label htmlFor="broker">Broker <span className="text-sell-muted-foreground">*</span></Label>
                 <Select value={selectedBroker} onValueChange={(value) => {
                   setSelectedBroker(value);
                   // Re-validate Demat ID when broker changes, as validation rules might differ
@@ -558,7 +558,7 @@ export default function PledgeAccessModal({ isOpen, onClose, user, onSuccess }) 
               </div>
 
               <div>
-                <Label htmlFor="demat_id">Demat Account ID <span className="text-sell">*</span></Label>
+                <Label htmlFor="demat_id">Demat Account ID <span className="text-sell-muted-foreground">*</span></Label>
                 <Input
                   id="demat_id"
                   type="text"

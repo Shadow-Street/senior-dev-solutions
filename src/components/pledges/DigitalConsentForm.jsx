@@ -106,7 +106,7 @@ export default function DigitalConsentForm({ isOpen, onClose, onSign, pledgeDeta
       <DialogContent className="max-w-3xl h-[90vh] flex flex-col p-0">
         <DialogHeader className="px-6 pt-6 pb-4 border-b flex-shrink-0">
           <DialogTitle className="flex items-center gap-2 text-xl">
-            <Shield className="w-6 h-6 text-protocall-blue" />
+            <Shield className="w-6 h-6 text-primary" />
             Digital Consent & Authorization
           </DialogTitle>
           <DialogDescription>
@@ -118,7 +118,7 @@ export default function DigitalConsentForm({ isOpen, onClose, onSign, pledgeDeta
           <div className="space-y-6">
             {/* Session Information */}
             <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
-              <h3 className="font-semibold text-protocall-blue mb-2 flex items-center gap-2">
+              <h3 className="font-semibold text-primary mb-2 flex items-center gap-2">
                 <FileSignature className="w-5 h-5" />
                 Pledge Session Details
               </h3>
@@ -193,8 +193,8 @@ export default function DigitalConsentForm({ isOpen, onClose, onSign, pledgeDeta
                   className="mt-1"
                 />
                 <div className="flex-1">
-                  <p className="font-semibold text-sm mb-2 text-protocall-blue">Execution Authorization</p>
-                  <p className="text-xs text-protocall-blue leading-relaxed">
+                  <p className="font-semibold text-sm mb-2 text-primary">Execution Authorization</p>
+                  <p className="text-xs text-primary leading-relaxed">
                     I hereby authorize the platform to execute this pledge on my behalf through my linked 
                     demat account. I understand the execution will occur based on the session rules and that 
                     execution price may vary from my target price.
@@ -206,7 +206,7 @@ export default function DigitalConsentForm({ isOpen, onClose, onSign, pledgeDeta
             {/* Digital Signature */}
             <div className="space-y-3">
               <h3 className="font-semibold flex items-center gap-2">
-                <FileSignature className="w-5 h-5 text-protocall-blue" />
+                <FileSignature className="w-5 h-5 text-primary" />
                 Digital Signature
               </h3>
               <div className="border-2 border-dashed border-border rounded-lg p-4 bg-white">

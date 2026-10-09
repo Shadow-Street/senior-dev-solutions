@@ -76,7 +76,7 @@ export default function AdvisorPledgeSessionManager({ user, advisorProfile, acce
   const getStatusBadge = (status) => {
     const config = {
       'pending_approval': { color: 'bg-hold-muted text-hold-muted-foreground', icon: Clock, text: 'Pending Approval' },
-      'approved': { color: 'bg-premium-muted text-protocall-blue', icon: CheckCircle, text: 'Approved' },
+      'approved': { color: 'bg-premium-muted text-primary', icon: CheckCircle, text: 'Approved' },
       'active': { color: 'bg-buy-muted text-buy-muted-foreground', icon: TrendingUp, text: 'Active' },
       'closed': { color: 'bg-surface-2 text-foreground', icon: Clock, text: 'Closed' },
       'executing': { color: 'bg-premium-muted text-protocall-premium-text', icon: TrendingUp, text: 'Executing' },
@@ -110,7 +110,7 @@ export default function AdvisorPledgeSessionManager({ user, advisorProfile, acce
 
       {isLoading ? (
         <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
         </div>
       ) : sessions.length === 0 ? (
         <Card>

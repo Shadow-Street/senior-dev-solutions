@@ -232,7 +232,7 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
     <div className="space-y-6">
       {/* Profile Picture Section */}
       <Card>
-        <CardHeader className="bg-surface-2">
+        <CardHeader className="bg-card border-b border-divider">
           <CardTitle className="flex items-center gap-2">
             <UserIcon className="w-5 h-5" />
             Profile Picture
@@ -260,7 +260,7 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
                   ref={fileInputRef}
                   onChange={handleFileChange}
                   className="hidden"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
                 />
                 {newImage && (
                   <Button size="sm" onClick={handleUpload} disabled={isUploading}>
@@ -276,7 +276,7 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
 
       {/* Account Information */}
       <Card>
-        <CardHeader className="bg-surface-2">
+        <CardHeader className="bg-card border-b border-divider">
           <CardTitle>Account Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6 p-6">
@@ -299,7 +299,7 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
               </div>
             ) : (
               <div className="flex gap-2">
-                <Input value={user.display_name} readOnly className="bg-surface-2" />
+                <Input value={user.display_name} readOnly className="bg-card" />
                 <Button 
                   size="sm" 
                   variant="outline" 
@@ -315,7 +315,7 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
           {/* Email */}
           <div className="space-y-2">
             <Label className="text-sm font-medium text-subtle">Email</Label>
-            <Input value={user.email} readOnly className="bg-surface-2" />
+            <Input value={user.email} readOnly className="bg-card" />
             <p className="text-xs text-muted-foreground">
               Your email is managed through Google Authentication and cannot be changed here.
             </p>
@@ -328,7 +328,7 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
               <div className="space-y-3">
                 <div className="flex gap-2">
                   <div className="flex items-center gap-2 flex-1">
-                    <span className="px-3 py-2 bg-surface-2 border border-border rounded-md text-sm font-medium">+91</span>
+                    <span className="px-3 py-2 bg-card border border-border rounded-md text-sm font-medium">+91</span>
                     <Input
                       value={tempMobileNumber}
                       onChange={(e) => setTempMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
@@ -366,8 +366,8 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
             ) : (
               <div className="flex gap-2">
                 <div className="flex items-center gap-2 flex-1">
-                  <span className="px-3 py-2 bg-surface-2 border border-border rounded-md text-sm font-medium">+91</span>
-                  <Input value={mobileNumber || 'Not provided'} readOnly className="bg-surface-2 flex-1" />
+                  <span className="px-3 py-2 bg-card border border-border rounded-md text-sm font-medium">+91</span>
+                  <Input value={mobileNumber || 'Not provided'} readOnly className="bg-card flex-1" />
                 </div>
                 <Button 
                   size="sm" 
@@ -385,7 +385,7 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
 
       {/* Password Management */}
       <Card>
-        <CardHeader className="bg-surface-2">
+        <CardHeader className="bg-card border-b border-divider">
           <CardTitle className="flex items-center gap-2">
             <Lock className="w-5 h-5" />
             Password & Security
@@ -454,12 +454,12 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
 
       {/* Account Actions */}
       <Card>
-        <CardHeader className="bg-surface-2">
+        <CardHeader className="bg-card border-b border-divider">
           <CardTitle>Account Actions</CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-4">
           {/* Logout */}
-          <div className="flex items-center justify-between p-4 border border-border bg-surface-2 rounded-lg">
+          <div className="flex items-center justify-between p-4 border border-border bg-card rounded-lg">
             <div>
               <h4 className="font-semibold text-foreground">Logout</h4>
               <p className="text-sm text-subtle">Sign out of your account</p>

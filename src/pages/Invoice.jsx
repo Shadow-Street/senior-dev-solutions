@@ -68,7 +68,7 @@ export default function InvoicePage() {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p>Loading invoice...</p>
         </div>
       </div>
@@ -92,7 +92,7 @@ export default function InvoicePage() {
             <Printer className="w-4 h-4 mr-2" />
             Print
           </Button>
-          <Button onClick={handleDownload} className="bg-protocall-blue hover:bg-protocall-blue text-white">
+          <Button onClick={handleDownload} className="bg-primary hover:bg-primary text-white">
             <Download className="w-4 h-4 mr-2" />
             Save as PDF
           </Button>
@@ -110,7 +110,7 @@ export default function InvoicePage() {
                 <p className="text-subtle">Invoice #{billingRecord.invoice_number || billingRecord.id.substring(0, 8)}</p>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-protocall-blue mb-2">Protocol</div>
+                <div className="text-2xl font-bold text-primary mb-2">Protocol</div>
                 <div className="text-subtle">
                   <p>Advertising Platform</p>
                   <p>Digital Marketing Services</p>

@@ -85,7 +85,7 @@ export default function SubscriptionAnalytics() {
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
         );
     }
@@ -115,7 +115,7 @@ export default function SubscriptionAnalytics() {
                                 </p>
                             </div>
                             <div className="p-3 bg-premium-muted rounded-full">
-                                <CreditCard className="w-6 h-6 text-protocall-blue" />
+                                <CreditCard className="w-6 h-6 text-primary" />
                             </div>
                         </div>
                     </CardContent>
@@ -145,7 +145,7 @@ export default function SubscriptionAnalytics() {
                                 <p className="text-2xl font-bold text-foreground mt-1">{daysRemaining}</p>
                             </div>
                             <div className="p-3 bg-premium-muted rounded-full">
-                                <Calendar className="w-6 h-6 text-protocall-blue" />
+                                <Calendar className="w-6 h-6 text-primary" />
                             </div>
                         </div>
                     </CardContent>

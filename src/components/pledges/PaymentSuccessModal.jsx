@@ -82,7 +82,7 @@ export default function PaymentSuccessModal({
           <Card className="border-2 border-border">
             <CardContent className="p-6 space-y-4">
               <h4 className="font-bold text-foreground flex items-center gap-2">
-                <FileText className="w-5 h-5 text-protocall-blue" />
+                <FileText className="w-5 h-5 text-primary" />
                 Payment Details
               </h4>
 
@@ -125,7 +125,7 @@ export default function PaymentSuccessModal({
 
                 <div className="flex justify-between items-center py-2">
                   <span className="text-subtle">Payment Method</span>
-                  <Badge className="bg-premium-muted text-protocall-blue text-xs font-semibold uppercase">
+                  <Badge className="bg-premium-muted text-primary text-xs font-semibold uppercase">
                     {paymentDetails.method === 'test_razorpay' ? 'TEST_RAZORPAY' : paymentDetails.method}
                   </Badge>
                 </div>
@@ -162,7 +162,7 @@ export default function PaymentSuccessModal({
 
               <div className="bg-premium-muted p-4 rounded-lg mt-4">
                 <p className="text-sm text-subtle mb-1">Total Pledge Value</p>
-                <p className="font-bold text-2xl text-protocall-blue">
+                <p className="font-bold text-2xl text-primary">
                   ₹{(pledgeDetails.qty * pledgeDetails.price_target).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
               </div>

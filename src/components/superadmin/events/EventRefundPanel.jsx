@@ -216,7 +216,7 @@ export default function EventRefundPanel({ event, onUpdate }) {
   const getStatusBadge = (status) => {
     const configs = {
       pending: { color: 'bg-hold-muted text-hold-muted-foreground border-hold/30', icon: Clock, text: 'Pending Organizer' },
-      approved: { color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light', icon: CheckCircle, text: 'Approved - Pending Admin' },
+      approved: { color: 'bg-premium-muted text-primary border-protocall-premium-light', icon: CheckCircle, text: 'Approved - Pending Admin' },
       processing: { color: 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light', icon: RefreshCw, text: 'Processing' },
       processed: { color: 'bg-buy-muted text-buy-muted-foreground border-buy/30', icon: CheckCircle, text: 'Processed' },
       rejected: { color: 'bg-sell-muted text-sell-muted-foreground border-sell/30', icon: XCircle, text: 'Rejected' }
@@ -266,11 +266,11 @@ export default function EventRefundPanel({ event, onUpdate }) {
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-premium-muted rounded-lg">
-                <CheckSquare className="w-5 h-5 text-protocall-blue" />
+                <CheckSquare className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-protocall-blue font-medium">Approved</p>
-                <p className="text-2xl font-bold text-protocall-blue">{refundStats.approved}</p>
+                <p className="text-sm text-primary font-medium">Approved</p>
+                <p className="text-2xl font-bold text-primary">{refundStats.approved}</p>
               </div>
             </div>
           </CardContent>
@@ -309,7 +309,7 @@ export default function EventRefundPanel({ event, onUpdate }) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <RefreshCw className="w-5 h-5 text-protocall-blue" />
+            <RefreshCw className="w-5 h-5 text-primary" />
             Refund Requests ({refundStats.total})
           </CardTitle>
         </CardHeader>
@@ -415,7 +415,7 @@ export default function EventRefundPanel({ event, onUpdate }) {
                                 setSelectedRequest(request);
                                 setShowProcessModal(true);
                               }}
-                              className="bg-protocall-blue hover:bg-protocall-blue"
+                              className="bg-primary hover:bg-primary"
                             >
                               <RefreshCw className="w-4 h-4 mr-1" />
                               Process Refund
@@ -506,7 +506,7 @@ export default function EventRefundPanel({ event, onUpdate }) {
             <Button
               onClick={() => handleOrganizerApprove(selectedRequest)}
               disabled={isProcessing}
-              className="bg-buy hover:bg-buy"
+              className="bg-buy text-buy-foreground hover:bg-buy-soft"
             >
               {isProcessing ? (
                 <>
@@ -619,16 +619,16 @@ export default function EventRefundPanel({ event, onUpdate }) {
               <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <Label className="text-sm text-protocall-blue">User</Label>
-                    <p className="font-medium text-protocall-blue">{selectedRequest.user_name}</p>
+                    <Label className="text-sm text-primary">User</Label>
+                    <p className="font-medium text-primary">{selectedRequest.user_name}</p>
                   </div>
                   <div>
-                    <Label className="text-sm text-protocall-blue">Refund Amount</Label>
-                    <p className="font-semibold text-lg text-protocall-blue">₹{selectedRequest.refund_amount?.toLocaleString()}</p>
+                    <Label className="text-sm text-primary">Refund Amount</Label>
+                    <p className="font-semibold text-lg text-primary">₹{selectedRequest.refund_amount?.toLocaleString()}</p>
                   </div>
                   <div className="col-span-2">
-                    <Label className="text-sm text-protocall-blue">Original Payment ID</Label>
-                    <p className="font-mono text-sm text-protocall-blue">{selectedRequest.original_transaction_id}</p>
+                    <Label className="text-sm text-primary">Original Payment ID</Label>
+                    <p className="font-mono text-sm text-primary">{selectedRequest.original_transaction_id}</p>
                   </div>
                 </div>
               </div>
@@ -676,7 +676,7 @@ export default function EventRefundPanel({ event, onUpdate }) {
             <Button
               onClick={() => handleAdminProcess(selectedRequest)}
               disabled={isProcessing}
-              className="bg-protocall-blue hover:bg-protocall-blue"
+              className="bg-primary hover:bg-primary"
             >
               {isProcessing ? (
                 <>

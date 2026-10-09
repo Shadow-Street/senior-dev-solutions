@@ -51,7 +51,7 @@ export default function InfluencerCard({ influencer, canAccessPremium }) {
               </Badge>
             }
             {influencer.verified &&
-            <Badge className="bg-premium-muted text-protocall-blue text-xs">
+            <Badge className="bg-premium-muted text-primary text-xs">
                 <CheckCircle className="w-3 h-3 mr-1" />
                 Verified
               </Badge>
@@ -122,7 +122,7 @@ export default function InfluencerCard({ influencer, canAccessPremium }) {
         <div className="space-y-2">
           <Link to={createPageUrl(`InfluencerProfile?id=${influencer.id}`)}>
             <Button variant="outline" className="peer/menu-button flex w-full items-center gap-2 overflow-hidden p-2 text-left outline-none ring-sidebar-ring focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 h-8 text-sm rounded-xl mb-1 font-semibold shadow-md flex items-center gap-3 px-3 py-2.5 transition-all duration-300 
-bg-surface-2 text-protocall-blue 
+bg-surface-2 text-primary 
 hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg
 ">
               View Profile

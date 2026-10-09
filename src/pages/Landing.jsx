@@ -34,7 +34,7 @@ const TrustBadges = () => (
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="flex flex-col items-center p-6 bg-premium-muted rounded-lg shadow-sm">
-          <Shield className="w-12 h-12 text-protocall-blue mb-4" />
+          <Shield className="w-12 h-12 text-primary mb-4" />
           <h3 className="text-xl font-semibold mb-2">SEBI Registered Advisors</h3>
           <p className="text-subtle">
             Access advice only from verified and regulated professionals.
@@ -71,7 +71,7 @@ const HowItWorks = () => (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
         <div className="flex flex-col items-center p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
           <div className="w-20 h-20 rounded-full bg-premium-muted flex items-center justify-center mb-6">
-            <Lightbulb className="w-10 h-10 text-protocall-blue" />
+            <Lightbulb className="w-10 h-10 text-primary" />
           </div>
           <h3 className="text-2xl font-bold mb-3">1. Discover</h3>
           <p className="text-subtle leading-relaxed">
@@ -107,7 +107,7 @@ export default function Landing() {
     <div className="min-h-screen bg-white">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-protocall-deep to-protocall-blue flex items-center justify-center">
               <TrendingUp className="w-6 h-6 text-white" />
@@ -117,14 +117,16 @@ export default function Landing() {
             </span>
           </div>
           
-          <div className="flex items-center gap-4">
-            <Link to={createPageUrl('ContactSupport')}>
-              <Button variant="outline" className="border-protocall-blue text-protocall-blue hover:bg-premium-muted rounded-full">
+          {/* Wraps and shrinks on narrow screens: at 320px these two buttons
+              were 440px wide and clipped, so "Get Started" could not be tapped. */}
+          <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4">
+            <Link to={createPageUrl('ContactSupport')} className="shrink-0">
+              <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-premium-muted rounded-full sm:h-10 sm:px-4">
                 Contact Support
               </Button>
             </Link>
-            <Link to={createPageUrl('Dashboard')}>
-              <Button className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white shadow-lg rounded-full">
+            <Link to={createPageUrl('Dashboard')} className="shrink-0">
+              <Button size="sm" className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue text-white shadow-lg rounded-full sm:h-10 sm:px-4">
                 Get Started
               </Button>
             </Link>
@@ -134,13 +136,13 @@ export default function Landing() {
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-6 bg-surface-2 relative overflow-hidden">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-protocall-blue rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
         <div className="absolute top-40 right-10 w-72 h-72 bg-primary rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
         <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-primary rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
         
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center max-w-4xl mx-auto">
-            <Badge className="mb-6 bg-premium-muted text-protocall-blue hover:bg-premium-muted px-4 py-2 text-sm font-semibold">
+            <Badge className="mb-6 bg-premium-muted text-primary hover:bg-premium-muted px-4 py-2 text-sm font-semibold">
               🚀 India's Largest Retail Investor Community
             </Badge>
             
@@ -164,7 +166,7 @@ export default function Landing() {
                 </Button>
               </Link>
               <a href="#features">
-                <Button variant="outline" className="px-8 py-6 text-lg border-2 border-protocall-blue text-protocall-blue hover:bg-premium-muted rounded-full">
+                <Button variant="outline" className="px-8 py-6 text-lg border-2 border-primary text-primary hover:bg-premium-muted rounded-full">
                   Explore Features
                 </Button>
               </a>
@@ -176,7 +178,7 @@ export default function Landing() {
                 <span>SEBI Registered</span>
               </div>
               <div className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-protocall-blue" />
+                <Users className="w-5 h-5 text-primary" />
                 <span>10,000+ Active Traders</span>
               </div>
               <div className="flex items-center gap-2">

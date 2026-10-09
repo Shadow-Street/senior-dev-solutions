@@ -95,7 +95,7 @@ export default function PledgeExecutionHistory() {
                 </div>
 
                 {pledge.admin_notes && (
-                  <div className="mt-3 p-2 bg-premium-muted rounded text-xs text-protocall-blue">
+                  <div className="mt-3 p-2 bg-premium-muted rounded text-xs text-primary">
                     <strong>Admin Notes:</strong> {pledge.admin_notes}
                   </div>
                 )}

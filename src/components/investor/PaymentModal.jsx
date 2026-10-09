@@ -183,11 +183,11 @@ export default function PaymentModal({ isOpen, onClose, amount, investor, wallet
                 <h3 className="font-semibold text-lg text-foreground">
                   {purpose === 'wallet_deposit' ? 'Add to Wallet' : 'Investment Amount'}
                 </h3>
-                <Badge className="bg-protocall-blue">
+                <Badge className="bg-primary">
                   {purpose === 'wallet_deposit' ? 'Wallet Top-up' : 'Fund Investment'}
                 </Badge>
               </div>
-              <div className="text-3xl font-bold text-protocall-blue">₹{paymentAmount.toLocaleString('en-IN')}</div>
+              <div className="text-3xl font-bold text-primary">₹{paymentAmount.toLocaleString('en-IN')}</div>
               <p className="text-sm text-subtle mt-1">
                 {purpose === 'wallet_deposit' ? 'Instant credit to your wallet' : 'One-time payment'}
               </p>
@@ -306,7 +306,7 @@ export default function PaymentModal({ isOpen, onClose, amount, investor, wallet
                 <div className="space-y-3">
                   <Skeleton className="h-12 w-full" />
                   <div className="text-center">
-                    <Loader2 className="w-8 h-8 animate-spin text-protocall-blue mx-auto mb-2" />
+                    <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
                     <p className="text-sm text-subtle">Processing your payment...</p>
                     <p className="text-xs text-muted-foreground mt-1">Please do not close this window</p>
                   </div>

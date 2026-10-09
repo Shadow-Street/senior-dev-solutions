@@ -208,7 +208,7 @@ function FeaturedEventCard({
                 'bg-sell-muted text-sell-muted-foreground border-sell/30'
               }`}>
                 <CheckCircle className="w-3 h-3 mr-1" />
-                RSVP: {localRSVP.rsvp_status.toUpperCase()}
+                RSVP: {(localRSVP.rsvp_status || 'unknown').toUpperCase()}
               </Badge>
             )}
           </div>
@@ -249,7 +249,7 @@ function FeaturedEventCard({
             Event Ended
           </Button>
         ) : !user ? (
-          <div className="text-sm text-protocall-blue text-center py-3 bg-premium-muted rounded-full font-medium">
+          <div className="text-sm text-primary text-center py-3 bg-premium-muted rounded-full font-medium">
             🔒 Login to RSVP
           </div>
         ) : !canUserRSVP() ? (

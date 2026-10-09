@@ -160,7 +160,7 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
         <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-protocall-blue" />
+              <MessageSquare className="w-5 h-5 text-primary" />
               {room ? 'Edit Chat Room' : 'Create New Chat Room'}
             </DialogTitle>
             <DialogDescription>
@@ -204,7 +204,7 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
 
               <div>
                 <Label htmlFor="stock_symbol">
-                  Stock Symbol {formData.room_type === 'stock_specific' && <span className="text-sell">*</span>}
+                  Stock Symbol {formData.room_type === 'stock_specific' && <span className="text-sell-muted-foreground">*</span>}
                 </Label>
                 <Input
                   id="stock_symbol"
@@ -233,7 +233,7 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
                   required
                 />
                 {formData.room_type === 'stock_specific' && !room && (
-                  <p className="text-xs text-protocall-blue mt-1">
+                  <p className="text-xs text-primary mt-1">
                     💡 Tip: Room name will auto-fill with stock symbol unless manually changed.
                   </p>
                 )}
@@ -309,7 +309,7 @@ export default function ChatRoomFormModal({ open, onClose, room, onSave, user })
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-sm font-semibold text-subtle flex items-center gap-2">
-                      <Vote className="w-4 h-4 text-protocall-blue" />
+                      <Vote className="w-4 h-4 text-primary" />
                       Poll Management
                     </h3>
                     <p className="text-xs text-muted-foreground mt-1">

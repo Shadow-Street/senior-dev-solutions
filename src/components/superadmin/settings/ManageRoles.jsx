@@ -136,7 +136,7 @@ export default function ManageRoles({ settings, onChange }) {
               <CardContent className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-4">
                   <div className="p-2 rounded-lg bg-surface-2">
-                    <Shield className="w-5 h-5 text-protocall-blue" />
+                    <Shield className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">

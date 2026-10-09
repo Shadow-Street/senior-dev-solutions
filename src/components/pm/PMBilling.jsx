@@ -45,7 +45,7 @@ export default function PMBilling({ pmProfile }) {
   const getStatusBadge = (status) => {
     const config = {
       generated: { color: 'bg-surface-2 text-foreground', label: 'Generated' },
-      sent: { color: 'bg-premium-muted text-protocall-blue', label: 'Sent' },
+      sent: { color: 'bg-premium-muted text-primary', label: 'Sent' },
       paid: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Paid' },
       overdue: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Overdue' },
       cancelled: { color: 'bg-surface-2 text-foreground', label: 'Cancelled' }
@@ -66,7 +66,7 @@ export default function PMBilling({ pmProfile }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-protocall-ink/75 text-sm">Total Revenue</p>
+                <p className="text-protocall-ink/85 text-sm">Total Revenue</p>
                 <p className="text-3xl font-bold mt-2">₹{(stats.totalRevenue / 1000).toFixed(0)}K</p>
               </div>
               <DollarSign className="w-10 h-10 opacity-80" />

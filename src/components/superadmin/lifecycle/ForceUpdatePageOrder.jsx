@@ -134,7 +134,7 @@ export default function ForceUpdatePageOrder() {
             <Button
               onClick={() => window.location.reload()}
               variant="default"
-              className="w-full bg-buy hover:bg-buy text-lg py-6 animate-pulse"
+              className="w-full bg-buy text-buy-foreground hover:bg-buy-soft text-lg py-6 animate-pulse"
             >
               <RefreshCw className="w-5 h-5 mr-2" />
               🔄 REFRESH PAGE TO SEE CHANGES

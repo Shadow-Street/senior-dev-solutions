@@ -358,7 +358,7 @@ export default function AdvisorProfile() {
   const getPostPlanBadge = (postPlanId) => {
     if (!postPlanId) {
       return (
-        <Badge className="bg-premium-muted text-protocall-blue text-xs">
+        <Badge className="bg-premium-muted text-primary text-xs">
           <Users className="w-3 h-3 mr-1" />
           All Subscribers
         </Badge>
@@ -388,7 +388,7 @@ export default function AdvisorProfile() {
       target_hit: { color: 'bg-buy-muted text-buy-muted-foreground border-buy/30', label: '🎯 Target Hit', icon: '✅' },
       stop_loss_hit: { color: 'bg-sell-muted text-sell-muted-foreground border-sell/30', label: '⚠️ Stop Loss', icon: '🛑' },
       expired: { color: 'bg-surface-2 text-foreground border-border', label: 'Expired', icon: '⏰' },
-      closed: { color: 'bg-premium-muted text-protocall-blue border-protocall-premium-light', label: 'Closed', icon: '✓' }
+      closed: { color: 'bg-premium-muted text-primary border-protocall-premium-light', label: 'Closed', icon: '✓' }
     };
 
     const status = config[post.recommendation_status];
@@ -523,7 +523,7 @@ export default function AdvisorProfile() {
                 <p className="text-subtle leading-relaxed mb-4">{advisor.bio}</p>
                 <div className="flex flex-wrap gap-2">
                   {advisor.specialization?.map((spec) => (
-                    <Badge key={spec} variant="secondary" className="bg-premium-muted text-protocall-blue rounded-lg px-3 py-1">
+                    <Badge key={spec} variant="secondary" className="bg-premium-muted text-primary rounded-lg px-3 py-1">
                       {spec}
                     </Badge>
                   ))}
@@ -574,7 +574,7 @@ export default function AdvisorProfile() {
                           {plan.monthly_post_limit && (
                             <div className="bg-premium-muted rounded-lg p-3 mb-4 border border-protocall-premium-light">
                               <p className="text-xs text-subtle mb-1 text-center">Monthly Post Limit</p>
-                              <p className="text-lg font-bold text-protocall-blue text-center">
+                              <p className="text-lg font-bold text-primary text-center">
                                 {plan.monthly_post_limit} Posts/Month
                               </p>
                             </div>

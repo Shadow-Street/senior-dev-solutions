@@ -93,7 +93,7 @@ export default function LiveStockTicker({ className = "" }) {
         <CardContent className="p-0">
           <div className="flex items-center justify-between px-4 py-2 border-b border-divider">
             <div className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-protocall-blue" />
+              <Activity className="w-5 h-5 text-primary" />
               <h3 className="text-sm font-semibold text-foreground">Live Market</h3>
               <Badge
                 variant="outline"

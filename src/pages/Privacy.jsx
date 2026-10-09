@@ -22,7 +22,7 @@ export default function Privacy() {
             <Lock className="w-10 h-10" />
             <h1 className="text-4xl font-bold">Privacy Policy</h1>
           </div>
-          <p className="text-protocall-blue text-lg">
+          <p className="text-primary text-lg">
             Last Updated: January 1, 2025
           </p>
         </div>
@@ -51,7 +51,7 @@ export default function Privacy() {
               <FileText className="w-5 h-5" />
               Table of Contents
             </h3>
-            <ol className="space-y-1 text-sm text-protocall-blue">
+            <ol className="space-y-1 text-sm text-primary">
               <li><a href="#introduction" className="hover:underline">1. Introduction</a></li>
               <li><a href="#information-collected" className="hover:underline">2. Information We Collect</a></li>
               <li><a href="#how-we-use" className="hover:underline">3. How We Use Your Information</a></li>
@@ -451,7 +451,7 @@ export default function Privacy() {
                 You can control cookies through your browser settings. However, disabling cookies may affect 
                 the functionality of the Platform.
               </p>
-              <p>For more information, see our <Link to={createPageUrl('Cookies')} className="text-protocall-blue hover:underline">Cookies Policy</Link>.</p>
+              <p>For more information, see our <Link to={createPageUrl('Cookies')} className="text-primary hover:underline">Cookies Policy</Link>.</p>
             </div>
           </section>
 
@@ -717,7 +717,7 @@ export default function Privacy() {
                   with care and transparency. We continuously review and enhance our security measures to keep your 
                   data safe.
                 </p>
-                <p className="text-sm text-buy-muted-foreground">
+                <p className="text-sm text-buy-foreground/80">
                   BY USING PROTOCALL, YOU ACKNOWLEDGE THAT YOU HAVE READ AND UNDERSTOOD THIS PRIVACY POLICY AND 
                   CONSENT TO THE COLLECTION, USE, AND DISCLOSURE OF YOUR INFORMATION AS DESCRIBED HEREIN.
                 </p>
@@ -730,7 +730,7 @@ export default function Privacy() {
         <div className="grid md:grid-cols-3 gap-4 mt-8">
           <Link to={createPageUrl('Terms')}>
             <Card className="p-6 hover:shadow-lg transition-all cursor-pointer h-full">
-              <FileText className="w-8 h-8 text-protocall-blue mb-3" />
+              <FileText className="w-8 h-8 text-primary mb-3" />
               <h3 className="font-bold mb-2">Terms of Service</h3>
               <p className="text-sm text-subtle">Review our terms and conditions</p>
             </Card>

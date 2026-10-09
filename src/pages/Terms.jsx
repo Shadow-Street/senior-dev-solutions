@@ -22,7 +22,7 @@ export default function Terms() {
             <Scale className="w-10 h-10" />
             <h1 className="text-4xl font-bold">Terms of Service</h1>
           </div>
-          <p className="text-protocall-blue text-lg">
+          <p className="text-primary text-lg">
             Last Updated: January 1, 2025
           </p>
         </div>
@@ -51,7 +51,7 @@ export default function Terms() {
               <FileText className="w-5 h-5" />
               Table of Contents
             </h3>
-            <ol className="space-y-1 text-sm text-protocall-blue">
+            <ol className="space-y-1 text-sm text-primary">
               <li><a href="#acceptance" className="hover:underline">1. Acceptance of Terms</a></li>
               <li><a href="#platform" className="hover:underline">2. Platform Overview</a></li>
               <li><a href="#accounts" className="hover:underline">3. User Accounts and Registration</a></li>
@@ -774,7 +774,7 @@ export default function Terms() {
               TERMS OF SERVICE. YOU ALSO ACKNOWLEDGE THAT YOU HAVE READ AND UNDERSTOOD OUR PRIVACY POLICY AND 
               RISK DISCLOSURE STATEMENT.
             </p>
-            <p className="text-sm text-protocall-blue">
+            <p className="text-sm text-primary">
               If you do not agree to these Terms, you must not access or use the Platform.
             </p>
           </Card>
@@ -784,7 +784,7 @@ export default function Terms() {
         <div className="grid md:grid-cols-3 gap-4 mt-8">
           <Link to={createPageUrl('Privacy')}>
             <Card className="p-6 hover:shadow-lg transition-all cursor-pointer h-full">
-              <Shield className="w-8 h-8 text-protocall-blue mb-3" />
+              <Shield className="w-8 h-8 text-primary mb-3" />
               <h3 className="font-bold mb-2">Privacy Policy</h3>
               <p className="text-sm text-subtle">Learn how we protect your data</p>
             </Card>

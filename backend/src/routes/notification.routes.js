@@ -7,7 +7,8 @@ const { authMiddleware } = require("../middleware/auth");
 // Notifications CRUD
 const notificationController = createCrudController(db.Notification, {
   defaultOrderBy: 'created_at',
-  defaultOrder: 'DESC'
+  defaultOrder: 'DESC',
+  ownership: 'user_id'
 });
 
 // Get user's notifications
@@ -28,7 +29,8 @@ router.get('/my-notifications', authMiddleware, async (req, res) => {
     
     res.json(notifications);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[notification.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -41,7 +43,8 @@ router.put('/mark-all-read', authMiddleware, async (req, res) => {
     );
     res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[notification.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -53,16 +56,14 @@ router.get('/unread-count', authMiddleware, async (req, res) => {
     });
     res.json({ count });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[notification.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// CRUD routes
-createCrudRoutes(router, notificationController);
-
 // Notification Settings sub-routes
 const settingsRouter = express.Router();
-const settingsController = createCrudController(db.NotificationSetting);
+const settingsController = createCrudController(db.NotificationSetting, { ownership: 'user_id' });
 
 // Get user's notification settings
 settingsRouter.get('/my-settings', authMiddleware, async (req, res) => {
@@ -82,11 +83,15 @@ settingsRouter.get('/my-settings', authMiddleware, async (req, res) => {
     
     res.json(settings);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[notification.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-createCrudRoutes(settingsRouter, settingsController);
+createCrudRoutes(settingsRouter, settingsController, [authMiddleware]);
 router.use('/settings', settingsRouter);
+
+// CRUD LAST — '/:id' must not shadow '/settings' or the named routes above.
+createCrudRoutes(router, notificationController, [authMiddleware]);
 
 module.exports = router;

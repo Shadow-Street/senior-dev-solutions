@@ -53,13 +53,13 @@ export default function FeedbackPage() {
           </Card>
 
           <Card
-            className="border-2 border-protocall-premium-light hover:border-protocall-blue transition-colors cursor-pointer"
+            className="border-2 border-protocall-premium-light hover:border-primary transition-colors cursor-pointer"
             onClick={() => setShowReviewModal(true)}
           >
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full bg-premium-muted flex items-center justify-center">
-                  <Star className="w-6 h-6 text-protocall-blue" />
+                  <Star className="w-6 h-6 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Write a Review</h3>
@@ -77,7 +77,7 @@ export default function FeedbackPage() {
         <Card className="bg-surface-2 border-protocall-premium-light">
           <CardContent className="p-6">
             <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-protocall-blue" />
+              <MessageSquare className="w-5 h-5 text-primary" />
               What happens to your feedback?
             </h3>
             <div className="space-y-2 text-sm text-subtle">

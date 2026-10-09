@@ -281,7 +281,7 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
             {/* Reply Thread Preview */}
             {message.reply_to_message_id && (
               <motion.div
-                className="bg-surface-2 border-l-4 border-protocall-blue pl-3 py-2 mb-2 rounded-r text-xs"
+                className="bg-surface-2 border-l-4 border-primary pl-3 py-2 mb-2 rounded-r text-xs"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.2 }}
@@ -365,7 +365,7 @@ export default function MessageContent({ message, user, onReply, isInPinnedSecti
               key={emoji}
               onClick={() => handleReaction(emoji)}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${userReaction === emoji
-                  ? 'bg-protocall-blue text-white shadow-md scale-105'
+                  ? 'bg-primary text-white shadow-md scale-105'
                   : 'bg-surface-2 hover:bg-border text-subtle border border-border hover:border-border'
                 }`}
               whileHover={{ scale: 1.1 }}

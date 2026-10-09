@@ -55,7 +55,7 @@ export default function AnnouncementManagement() {
     { value: 'yellow-orange', label: 'Yellow → Orange (Alert)', preview: 'bg-gradient-to-r from-hold to-sell', use: 'Urgent alerts' },
     { value: 'purple-indigo', label: 'Purple → Indigo (Premium)', preview: 'bg-gradient-to-r from-protocall-deep to-protocall-blue', use: 'Premium features' },
     { value: 'pink-rose', label: 'Pink → Rose (Celebration)', preview: 'bg-gradient-to-r from-protocall-deep to-sell', use: 'Celebrations' },
-    { value: 'cyan-blue', label: 'Cyan → Blue (Cool)', preview: 'bg-protocall-blue', use: 'Updates' },
+    { value: 'cyan-blue', label: 'Cyan → Blue (Cool)', preview: 'bg-primary', use: 'Updates' },
   ];
 
   // Icon options
@@ -210,7 +210,7 @@ export default function AnnouncementManagement() {
       case 'success': return 'bg-buy-muted text-buy-muted-foreground';
       case 'warning': return 'bg-hold-muted text-hold-muted-foreground';
       case 'important': return 'bg-sell-muted text-sell-muted-foreground';
-      default: return 'bg-premium-muted text-protocall-blue';
+      default: return 'bg-premium-muted text-primary';
     }
   };
 
@@ -510,7 +510,7 @@ export default function AnnouncementManagement() {
       <div className="space-y-4">
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           </div>
         ) : announcements.length === 0 ? (
           <Card>

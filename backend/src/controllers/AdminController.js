@@ -169,7 +169,8 @@ class AdminController {
                 data: users.rows
             });
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            console.error('[AdminController.js] request failed:', error);
+            res.status(500).json({ error: 'Internal server error' });
         }
     }
 
@@ -199,7 +200,8 @@ class AdminController {
 
             res.json({ message: "User updated successfully", user });
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            console.error('[AdminController.js] request failed:', error);
+            res.status(500).json({ error: 'Internal server error' });
         }
     }
 }

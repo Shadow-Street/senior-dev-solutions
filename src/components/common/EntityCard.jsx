@@ -103,7 +103,7 @@ export default function EntityCard({
                 className="w-12 h-12 rounded-full object-cover ring-2 ring-white shadow-sm"
               />
               <div>
-                <h3 className="font-semibold text-foreground group-hover:text-protocall-blue transition-colors">
+                <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
                   {getDisplayName()}
                 </h3>
                 <p className="text-sm text-subtle">{getEmail()}</p>
@@ -123,7 +123,7 @@ export default function EntityCard({
                 {getRoleDisplay()}
               </Badge>
               {entity.verified && (
-                <Badge variant="outline" className="text-xs bg-premium-muted text-protocall-blue">
+                <Badge variant="outline" className="text-xs bg-premium-muted text-primary">
                   Verified
                 </Badge>
               )}

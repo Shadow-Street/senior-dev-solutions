@@ -94,7 +94,7 @@ export default function FundManager_Allocations() {
     return (
       <FundManagerLayout activePage="allocations">
         <div className="flex items-center justify-center h-full p-12">
-          <Loader2 className="w-12 h-12 animate-spin text-protocall-blue" />
+          <Loader2 className="w-12 h-12 animate-spin text-primary" />
         </div>
       </FundManagerLayout>
     );
@@ -181,7 +181,7 @@ export default function FundManager_Allocations() {
                               })}
                             </td>
                             <td className="px-4 py-4">
-                              <span className="text-sm font-bold text-protocall-blue">
+                              <span className="text-sm font-bold text-primary">
                                 {investor?.investor_code || 'N/A'}
                               </span>
                             </td>
@@ -194,7 +194,7 @@ export default function FundManager_Allocations() {
                                 <span className="text-xs text-muted-foreground">{plan?.plan_code || ''}</span>
                               </div>
                             </td>
-                            <td className="px-4 py-4 text-right text-sm font-bold text-protocall-blue">
+                            <td className="px-4 py-4 text-right text-sm font-bold text-primary">
                               ₹{(req.requested_amount || 0).toLocaleString('en-IN')}
                             </td>
                             <td className="px-4 py-4 text-right text-sm font-semibold text-buy-muted-foreground">
@@ -258,7 +258,7 @@ export default function FundManager_Allocations() {
                         return (
                           <tr key={alloc.id} className="hover:bg-surface-2">
                             <td className="px-4 py-4">
-                              <span className="text-sm font-bold text-protocall-blue">
+                              <span className="text-sm font-bold text-primary">
                                 {investor?.investor_code || 'N/A'}
                               </span>
                             </td>
@@ -274,7 +274,7 @@ export default function FundManager_Allocations() {
                             <td className="px-4 py-4 text-right text-sm text-subtle">
                               {(alloc.units_held || 0).toFixed(4)}
                             </td>
-                            <td className="px-4 py-4 text-right text-sm font-semibold text-protocall-blue">
+                            <td className="px-4 py-4 text-right text-sm font-semibold text-primary">
                               ₹{(alloc.total_invested || 0).toLocaleString('en-IN')}
                             </td>
                             <td className="px-4 py-4 text-right text-sm font-semibold text-buy-muted-foreground">
@@ -286,7 +286,7 @@ export default function FundManager_Allocations() {
                                   {profitLoss >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                                   {profitLoss >= 0 ? '+' : ''}₹{Math.abs(profitLoss).toLocaleString('en-IN')}
                                 </span>
-                                <span className={`text-xs ${profitLoss >= 0 ? 'text-positive' : 'text-sell'}`}>
+                                <span className={`text-xs ${profitLoss >= 0 ? 'text-positive' : 'text-sell-muted-foreground'}`}>
                                   {profitLoss >= 0 ? '+' : ''}{profitLossPercent}%
                                 </span>
                               </div>

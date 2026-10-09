@@ -37,7 +37,6 @@ async function authenticate(req, res, next) {
 }
 
 function adminMiddleware(req, res, next) {
-  console.log("req.user",req.user)
   if (!req.user) {
     return res.status(401).json({
       error: "Authentication required",
@@ -62,4 +61,29 @@ function adminMiddleware(req, res, next) {
   next();
 }
 
-module.exports = { authenticate, authMiddleware: authenticate, adminMiddleware };
+/**
+ * Attaches req.user when a valid token is present, but never rejects.
+ *
+ * For endpoints that are readable by anyone yet behave differently for a
+ * signed-in caller (a public catalogue where the owner also sees drafts).
+ * A malformed or expired token is treated exactly like no token — it must not
+ * grant access, and it must not 500.
+ */
+async function optionalAuthenticate(req, _res, next) {
+  try {
+    const token =
+      req.headers.authorization?.replace("Bearer ", "") || req.cookies?.accessToken;
+    if (!token) return next();
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findByPk(decoded.id, {
+      attributes: { exclude: ['password'] }
+    });
+    if (user) req.user = user;
+  } catch {
+    // Anonymous is a valid outcome here.
+  }
+  return next();
+}
+
+module.exports = { authenticate, authMiddleware: authenticate, optionalAuthenticate, adminMiddleware };

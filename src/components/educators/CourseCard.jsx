@@ -58,7 +58,7 @@ export default function CourseCard({ course, educator, canAccessPremium }) {
 
       <CardHeader className="pb-3">
         <div className="space-y-2">
-          <Badge variant="outline" className="border-protocall-premium-light bg-premium-muted text-protocall-blue">
+          <Badge variant="outline" className="border-protocall-premium-light bg-premium-muted text-primary">
             {course.category.replace('_', ' ')}
           </Badge>
           <CardTitle className="text-lg leading-tight">{course.title}</CardTitle>
@@ -98,8 +98,8 @@ export default function CourseCard({ course, educator, canAccessPremium }) {
         {/* Live Course Date */}
         {course.course_type === 'live_workshop' && course.scheduled_date && (
           <div className="flex items-center gap-2 text-sm bg-premium-muted p-2 rounded-lg">
-            <Calendar className="w-4 h-4 text-protocall-blue" />
-            <span className="text-protocall-blue font-medium">
+            <Calendar className="w-4 h-4 text-primary" />
+            <span className="text-primary font-medium">
               {format(new Date(course.scheduled_date), 'MMM d, yyyy • h:mm a')}
             </span>
           </div>
@@ -127,7 +127,7 @@ export default function CourseCard({ course, educator, canAccessPremium }) {
             </div>
             <div className="mt-2 bg-border rounded-full h-2">
               <div 
-                className="bg-protocall-blue h-2 rounded-full transition-all duration-300"
+                className="bg-primary h-2 rounded-full transition-all duration-300"
                 style={{ 
                   width: `${(course.current_enrollments / course.max_participants) * 100}%` 
                 }}

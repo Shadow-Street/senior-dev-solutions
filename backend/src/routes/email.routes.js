@@ -22,7 +22,8 @@ router.post('/send', authMiddleware, async (req, res) => {
       messageId: `msg_${Date.now()}`
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[email.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -48,7 +49,8 @@ router.post('/send-bulk', authMiddleware, async (req, res) => {
       batchId: `batch_${Date.now()}`
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[email.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -70,7 +72,8 @@ router.post('/send-template', authMiddleware, async (req, res) => {
       messageId: `msg_${Date.now()}`
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[email.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

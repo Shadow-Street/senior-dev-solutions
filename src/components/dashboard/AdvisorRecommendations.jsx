@@ -63,7 +63,7 @@ export default function AdvisorRecommendations({ recommendations }) {
       <CardHeader className="border-b border-divider bg-premium-muted">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-foreground">
-            <Shield className="w-5 h-5 text-protocall-blue" />
+            <Shield className="w-5 h-5 text-primary" />
             Advisor Picks
             <Crown className="w-4 h-4 text-protocall-premium-text" />
           </CardTitle>

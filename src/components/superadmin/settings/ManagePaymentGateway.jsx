@@ -189,7 +189,7 @@ export default function ManagePaymentGateway() {
             Configure Razorpay and Stripe API credentials for payment processing
           </p>
         </div>
-        <Button onClick={handleSave} disabled={isSaving} className="bg-buy hover:bg-buy">
+        <Button onClick={handleSave} disabled={isSaving} className="bg-buy text-buy-foreground hover:bg-buy-soft">
           {isSaving ? 'Saving...' : (
             <>
               <Save className="w-4 h-4 mr-2" />
@@ -215,7 +215,7 @@ export default function ManagePaymentGateway() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-protocall-blue" />
+            <Shield className="w-5 h-5 text-primary" />
             Default Payment Gateway
           </CardTitle>
         </CardHeader>
@@ -276,7 +276,7 @@ export default function ManagePaymentGateway() {
                 <AlertDescription className="text-sm">
                   <strong>Get your Razorpay API keys:</strong>
                   <br />
-                  1. Sign up at <a href="https://razorpay.com" target="_blank" rel="noopener noreferrer" className="text-protocall-blue underline">razorpay.com</a>
+                  1. Sign up at <a href="https://razorpay.com" target="_blank" rel="noopener noreferrer" className="text-primary underline">razorpay.com</a>
                   <br />
                   2. Go to Settings → API Keys
                   <br />
@@ -382,7 +382,7 @@ export default function ManagePaymentGateway() {
                 <AlertDescription className="text-sm">
                   <strong>Get your Stripe API keys:</strong>
                   <br />
-                  1. Sign up at <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" className="text-protocall-blue underline">stripe.com</a>
+                  1. Sign up at <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" className="text-primary underline">stripe.com</a>
                   <br />
                   2. Go to Developers → API keys
                   <br />
@@ -551,8 +551,8 @@ export default function ManagePaymentGateway() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card className="bg-premium-muted border-protocall-premium-light">
               <CardContent className="p-4">
-                <h4 className="font-semibold text-protocall-blue mb-2">Razorpay Benefits</h4>
-                <ul className="text-sm text-protocall-blue space-y-1">
+                <h4 className="font-semibold text-primary mb-2">Razorpay Benefits</h4>
+                <ul className="text-sm text-primary space-y-1">
                   <li>✓ Best for Indian customers</li>
                   <li>✓ UPI, Cards, Net Banking, Wallets</li>
                   <li>✓ Lower transaction fees (~2%)</li>

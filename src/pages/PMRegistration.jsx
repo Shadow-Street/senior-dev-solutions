@@ -56,7 +56,13 @@ export default function PMRegistration() {
     if (!file) return;
 
     try {
-      const { file_url } = await UploadFile({ file });
+      // A SEBI certificate is a regulatory identity document: without
+      // is_private it was stored under a public/ key readable by URL.
+      const { file_url } = await UploadFile({
+        file,
+        is_private: true,
+        folder: 'sebi-certificates',
+      });
       setFormData({ ...formData, sebi_document_url: file_url });
       toast.success('SEBI certificate uploaded successfully');
     } catch (error) {
@@ -98,7 +104,7 @@ export default function PMRegistration() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -117,10 +123,10 @@ export default function PMRegistration() {
                     Your Portfolio Manager application is under review by the SuperAdmin.
                   </p>
                   <div className="bg-premium-muted p-4 rounded-lg text-left">
-                    <p className="text-sm text-protocall-blue mb-2"><strong>Application Details:</strong></p>
-                    <p className="text-sm text-protocall-blue">Display Name: {existingPM.display_name}</p>
-                    <p className="text-sm text-protocall-blue">SEBI Reg: {existingPM.sebi_registration_number}</p>
-                    <p className="text-sm text-protocall-blue">Submitted: {new Date(existingPM.created_date).toLocaleDateString()}</p>
+                    <p className="text-sm text-primary mb-2"><strong>Application Details:</strong></p>
+                    <p className="text-sm text-primary">Display Name: {existingPM.display_name}</p>
+                    <p className="text-sm text-primary">SEBI Reg: {existingPM.sebi_registration_number}</p>
+                    <p className="text-sm text-primary">Submitted: {new Date(existingPM.created_date).toLocaleDateString()}</p>
                   </div>
                 </>
               )}
@@ -174,7 +180,7 @@ export default function PMRegistration() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center bg-protocall-blue text-white rounded-full p-4 mb-4">
+          <div className="inline-flex items-center justify-center bg-primary text-white rounded-full p-4 mb-4">
             <Briefcase className="w-8 h-8" />
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
@@ -342,7 +348,7 @@ export default function PMRegistration() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-protocall-blue hover:bg-protocall-blue"
+                  className="bg-primary hover:bg-primary"
                 >
                   {isSubmitting ? 'Submitting...' : 'Submit Application'}
                 </Button>
@@ -357,19 +363,19 @@ export default function PMRegistration() {
             <h3 className="font-semibold text-foreground mb-3">What happens next?</h3>
             <ul className="space-y-2 text-sm text-subtle">
               <li className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-protocall-blue mt-0.5" />
+                <CheckCircle className="w-4 h-4 text-primary mt-0.5" />
                 <span>Your application will be reviewed by our SuperAdmin team</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-protocall-blue mt-0.5" />
+                <CheckCircle className="w-4 h-4 text-primary mt-0.5" />
                 <span>We'll verify your SEBI registration and credentials</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-protocall-blue mt-0.5" />
+                <CheckCircle className="w-4 h-4 text-primary mt-0.5" />
                 <span>Once approved, you'll get access to the Portfolio Manager Dashboard</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-protocall-blue mt-0.5" />
+                <CheckCircle className="w-4 h-4 text-primary mt-0.5" />
                 <span>You can then invite clients and start managing portfolios</span>
               </li>
             </ul>

@@ -199,7 +199,7 @@ export default function AlertModal({ stock: initialStock, user, isPremium, open,
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <BellRing className="w-5 h-5 text-protocall-blue" />
+            <BellRing className="w-5 h-5 text-primary" />
             {stock ? `Stock Alerts for ${stock.symbol}` : 'Create New Stock Alert'}
           </DialogTitle>
           <DialogDescription>
@@ -329,7 +329,7 @@ export default function AlertModal({ stock: initialStock, user, isPremium, open,
 
                     <div className="flex items-center justify-between p-3 bg-premium-muted rounded-lg">
                       <div className="flex items-center gap-3">
-                        <TrendingUp className="w-5 h-5 text-protocall-blue" />
+                        <TrendingUp className="w-5 h-5 text-primary" />
                         <div>
                           <p className="font-medium">SEBI Advisor Updates</p>
                           <p className="text-sm text-muted-foreground">

@@ -12,8 +12,8 @@ const iconMap = {
 };
 
 const platformColors = {
-  facebook: 'hover:text-protocall-blue',
-  linkedin: 'hover:text-protocall-blue',
+  facebook: 'hover:text-primary',
+  linkedin: 'hover:text-primary',
   twitter: 'hover:text-protocall-premium-light',
   instagram: 'hover:text-protocall-premium-text',
   youtube: 'hover:text-sell-muted-foreground',

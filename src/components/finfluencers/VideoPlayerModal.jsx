@@ -106,7 +106,7 @@ export default function VideoPlayerModal({ open, onClose, video, influencer }) {
               <h5 className="font-semibold text-sm text-subtle mb-2">Stocks Mentioned:</h5>
               <div className="flex flex-wrap gap-2">
                 {video.stock_mentions.map(stock => (
-                  <Badge key={stock} variant="outline" className="bg-premium-muted text-protocall-blue border-protocall-premium-light">
+                  <Badge key={stock} variant="outline" className="bg-premium-muted text-primary border-protocall-premium-light">
                     {stock}
                   </Badge>
                 ))}

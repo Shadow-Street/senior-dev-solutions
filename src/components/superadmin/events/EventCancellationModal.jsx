@@ -161,7 +161,7 @@ export default function EventCancellationModal({
           {/* Cancellation Reason */}
           <div className="space-y-2">
             <Label htmlFor="reason" className="text-sm font-semibold">
-              Cancellation Reason <span className="text-sell">*</span>
+              Cancellation Reason <span className="text-sell-muted-foreground">*</span>
             </Label>
             <Textarea
               id="reason"
@@ -188,11 +188,11 @@ export default function EventCancellationModal({
                 className="mt-1"
               />
               <div className="flex-1">
-                <Label htmlFor="notify" className="flex items-center gap-2 font-semibold text-protocall-blue cursor-pointer">
+                <Label htmlFor="notify" className="flex items-center gap-2 font-semibold text-primary cursor-pointer">
                   <Mail className="w-4 h-4" />
                   Send Notification to Attendees
                 </Label>
-                <p className="text-sm text-protocall-blue mt-1">
+                <p className="text-sm text-primary mt-1">
                   All {activeTickets.length} ticket holders will receive an in-app notification about the cancellation.
                 </p>
               </div>

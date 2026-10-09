@@ -450,7 +450,7 @@ export default function DashboardHome({ setActiveTab }) {
     const onLightFill = LIGHT_FILLS.includes(colorClass);
     const fg = onLightFill ? 'text-protocall-ink' : 'text-white';
     const scrim = onLightFill ? 'bg-protocall-ink/10' : 'bg-white/20';
-    const soft = onLightFill ? 'text-protocall-ink/75' : 'text-white/80';
+    const soft = onLightFill ? 'text-protocall-ink/85' : 'text-white/80';
 
     return (
     <Card className="border-0 shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300">
@@ -494,7 +494,7 @@ export default function DashboardHome({ setActiveTab }) {
     return (
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-protocall-blue mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-lg text-subtle font-medium">Loading Advanced Analytics Dashboard...</p>
           <p className="text-sm text-muted-foreground mt-2">Aggregating platform metrics and insights</p>
         </div>
@@ -512,13 +512,13 @@ export default function DashboardHome({ setActiveTab }) {
 
         <div className="relative z-10">
           <h1 className="text-3xl font-bold mb-3 tracking-tight">Platform Analytics Dashboard</h1>
-          <p className="text-protocall-blue text-lg opacity-90">Real-time insights and comprehensive metrics for informed decision making</p>
+          <p className="text-primary text-lg opacity-90">Real-time insights and comprehensive metrics for informed decision making</p>
           <div className="flex items-center gap-6 mt-6">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 bg-buy rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></div>
               <span className="text-sm font-medium text-white/90">Live Data</span>
             </div>
-            <div className="text-sm text-protocall-blue/80">Last updated: {new Date().toLocaleTimeString()}</div>
+            <div className="text-sm text-primary/80">Last updated: {new Date().toLocaleTimeString()}</div>
           </div>
         </div>
       </div>
@@ -526,7 +526,7 @@ export default function DashboardHome({ setActiveTab }) {
       {/* Primary KPI Cards - User & Community Metrics */}
       <div>
         <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
-          <Users className="w-6 h-6 text-protocall-blue" />
+          <Users className="w-6 h-6 text-primary" />
           User & Community Metrics
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -536,7 +536,7 @@ export default function DashboardHome({ setActiveTab }) {
             subtitle="All registered users"
             icon={Users}
             change={`${stats.newRegistrationsWeek} new this week`}
-            colorClass="bg-protocall-blue"
+            colorClass="bg-primary"
           />
           <StatCard
             title="Daily Active Users"
@@ -560,7 +560,7 @@ export default function DashboardHome({ setActiveTab }) {
             subtitle={`${stats.activePollsCount} active polls`}
             icon={MessageSquare}
             change="High participation"
-            colorClass="bg-protocall-blue"
+            colorClass="bg-primary"
           />
         </div>
       </div>
@@ -586,7 +586,7 @@ export default function DashboardHome({ setActiveTab }) {
             subtitle="Platform earnings"
             icon={TrendingUp}
             change="After commissions"
-            colorClass="bg-protocall-blue"
+            colorClass="bg-primary"
           />
           <StatCard
             title="Total Gross Revenue"
@@ -610,7 +610,7 @@ export default function DashboardHome({ setActiveTab }) {
       {/* Advisor & Finfluencer Metrics */}
       <div>
         <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
-          <ShieldCheck className="w-6 h-6 text-protocall-blue" />
+          <ShieldCheck className="w-6 h-6 text-primary" />
           Advisors & Content Creators
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -620,7 +620,7 @@ export default function DashboardHome({ setActiveTab }) {
             subtitle="SEBI registered"
             icon={ShieldCheck}
             change={`${stats.pendingAdvisors} pending approval`}
-            colorClass="bg-protocall-blue"
+            colorClass="bg-primary"
           />
           <StatCard
             title="Active Finfluencers"
@@ -678,7 +678,7 @@ export default function DashboardHome({ setActiveTab }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-protocall-blue" />
+              <Users className="w-5 h-5 text-primary" />
               User Growth & Engagement
             </CardTitle>
           </CardHeader>
@@ -732,7 +732,7 @@ export default function DashboardHome({ setActiveTab }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-protocall-blue" />
+              <Users className="w-5 h-5 text-primary" />
               User Role Distribution
             </CardTitle>
           </CardHeader>
@@ -764,7 +764,7 @@ export default function DashboardHome({ setActiveTab }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-protocall-blue" />
+              <BarChart3 className="w-5 h-5 text-primary" />
               Weekly Poll Participation
             </CardTitle>
           </CardHeader>
@@ -820,7 +820,7 @@ export default function DashboardHome({ setActiveTab }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-protocall-blue" />
+              <ShieldCheck className="w-5 h-5 text-primary" />
               Top 5 Advisors by Performance
             </CardTitle>
           </CardHeader>
@@ -829,7 +829,7 @@ export default function DashboardHome({ setActiveTab }) {
               {stats.topAdvisors.slice(0, 5).map((advisor, index) => (
                 <div key={advisor.id} className="flex items-center justify-between p-4 bg-surface-2 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-premium-muted rounded-full flex items-center justify-center text-protocall-blue font-bold">
+                    <div className="w-8 h-8 bg-premium-muted rounded-full flex items-center justify-center text-primary font-bold">
                       {index + 1}
                     </div>
                     <div>
@@ -883,7 +883,7 @@ export default function DashboardHome({ setActiveTab }) {
       <Card className="shadow-lg border-0 bg-surface-2">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-protocall-blue" />
+            <Activity className="w-5 h-5 text-primary" />
             Critical Action Items & System Alerts
           </CardTitle>
         </CardHeader>
@@ -953,13 +953,13 @@ export default function DashboardHome({ setActiveTab }) {
 
             <div className="bg-premium-muted border border-protocall-premium-light rounded-xl p-5">
               <div className="flex items-center gap-3 mb-3">
-                <Eye className="w-5 h-5 text-protocall-blue" />
-                <h4 className="font-semibold text-protocall-blue">Engagement Stats</h4>
+                <Eye className="w-5 h-5 text-primary" />
+                <h4 className="font-semibold text-primary">Engagement Stats</h4>
               </div>
-              <p className="text-sm text-protocall-blue mb-2">{((stats.dailyActiveUsers / stats.totalUsers) * 100).toFixed(1)}% daily active users</p>
+              <p className="text-sm text-primary mb-2">{((stats.dailyActiveUsers / stats.totalUsers) * 100).toFixed(1)}% daily active users</p>
               <button
                 onClick={() => setActiveTab && setActiveTab('Poll Management')}
-                className="text-xs bg-protocall-blue text-white px-3 py-1 rounded-full hover:bg-protocall-blue transition-colors"
+                className="text-xs bg-primary text-white px-3 py-1 rounded-full hover:bg-primary transition-colors"
               >
                 Boost Engagement
               </button>

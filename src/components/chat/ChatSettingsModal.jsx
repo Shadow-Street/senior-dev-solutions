@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -9,73 +9,66 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Bell, Volume2, Eye, ArrowDown, MessageSquare, Moon, Sun } from 'lucide-react';
+import { AlertCircle, ArrowDown, Bell, Eye, Loader2, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
+import useChatRoomSettings from '@/components/hooks/useChatRoomSettings';
 
 export default function ChatSettingsModal({ open, onClose, roomId }) {
-  const [settings, setSettings] = useState({
-    // Notification Settings
-    notificationsEnabled: true,
-    soundEnabled: true,
-    desktopNotifications: false,
+  const { settings, updateSetting, resetSettings, isLoading, isSaving, error } =
+    useChatRoomSettings(roomId);
 
-    // Display Settings
-    showTypingIndicator: true,
-    showReadReceipts: true,
-    compactMode: false,
+  /**
+   * Desktop notifications need the browser's permission, not just a flag.
+   * Turning the switch on asks for it and refuses the change if denied, so the
+   * control never claims a capability the page does not have.
+   */
+  const handleDesktopToggle = useCallback(async (checked) => {
+    if (!checked) {
+      const r = await updateSetting('desktopNotifications', false);
+      if (r.ok) toast.success('Desktop notifications disabled');
+      return;
+    }
 
-    // Behavior Settings
-    autoScroll: true,
-    enterToSend: true,
-    showTimestamps: true,
-  });
+    if (typeof Notification === 'undefined') {
+      toast.error('This browser does not support desktop notifications.');
+      return;
+    }
 
-  // Load settings from localStorage on mount
-  useEffect(() => {
-    const savedSettings = localStorage.getItem(`chat_settings_${roomId}`);
-    if (savedSettings) {
+    let permission = Notification.permission;
+    if (permission === 'default') {
       try {
-        setSettings(JSON.parse(savedSettings));
-      } catch (error) {
-        console.error('Failed to load chat settings:', error);
+        permission = await Notification.requestPermission();
+      } catch {
+        permission = 'denied';
       }
     }
-  }, [roomId]);
 
-  // Save settings to localStorage whenever they change
-  const updateSetting = (key, value) => {
-    const newSettings = { ...settings, [key]: value };
-    setSettings(newSettings);
-    localStorage.setItem(`chat_settings_${roomId}`, JSON.stringify(newSettings));
-    console.log('[ChatSettingsModal] Settings updated:', key, '=', value);
-    console.log('[ChatSettingsModal] All settings:', newSettings);
-
-    // Dispatch event to notify ChatInterface
-    window.dispatchEvent(new Event('chat-settings-updated'));
-    console.log('[ChatSettingsModal] Dispatched chat-settings-updated event');
-
-    // Show feedback for important settings
-    if (key === 'notificationsEnabled') {
-      toast.success(value ? 'Notifications enabled' : 'Notifications disabled');
+    if (permission !== 'granted') {
+      toast.error(
+        permission === 'denied'
+          ? 'Desktop notifications are blocked in your browser settings.'
+          : 'Permission for desktop notifications was not granted.'
+      );
+      return;
     }
-  };
 
-  const handleResetSettings = () => {
-    const defaultSettings = {
-      notificationsEnabled: true,
-      soundEnabled: true,
-      desktopNotifications: false,
-      showTypingIndicator: true,
-      showReadReceipts: true,
-      compactMode: false,
-      autoScroll: true,
-      enterToSend: true,
-      showTimestamps: true,
-    };
-    setSettings(defaultSettings);
-    localStorage.setItem(`chat_settings_${roomId}`, JSON.stringify(defaultSettings));
-    toast.success('Settings reset to default');
-  };
+    const r = await updateSetting('desktopNotifications', true);
+    if (r.ok) toast.success('Desktop notifications enabled');
+    else toast.error(r.error);
+  }, [updateSetting]);
+
+  /** Every other toggle: optimistic, then confirm or surface the failure. */
+  const handleToggle = useCallback(async (key, checked, label) => {
+    const r = await updateSetting(key, checked);
+    if (r.ok) toast.success(`${label} ${checked ? 'enabled' : 'disabled'}`);
+    else toast.error(r.error || `Could not save ${label.toLowerCase()}`);
+  }, [updateSetting]);
+
+  const handleResetSettings = useCallback(async () => {
+    const r = await resetSettings();
+    if (r.ok) toast.success('Settings reset to default');
+    else toast.error(r.error || 'Could not reset settings');
+  }, [resetSettings]);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -86,6 +79,25 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
             Chat Room Settings
           </DialogTitle>
         </DialogHeader>
+
+        {isLoading && (
+          <p className="flex items-center gap-2 text-xs text-muted-foreground" role="status">
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            Loading your saved preferences…
+          </p>
+        )}
+        {isSaving && !isLoading && (
+          <p className="flex items-center gap-2 text-xs text-muted-foreground" role="status">
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            Saving…
+          </p>
+        )}
+        {error && (
+          <p className="flex items-start gap-2 rounded-md bg-hold-muted px-3 py-2 text-xs text-hold-muted-foreground" role="alert">
+            <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+            {error}
+          </p>
+        )}
 
         <div className="space-y-6 py-4">
           {/* Notification Settings */}
@@ -107,7 +119,8 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
                 <Switch
                   id="notifications"
                   checked={settings.notificationsEnabled}
-                  onCheckedChange={(checked) => updateSetting('notificationsEnabled', checked)}
+                  onCheckedChange={(checked) => handleToggle('notificationsEnabled', checked, 'Notifications')}
+                  disabled={isSaving}
                 />
               </div>
 
@@ -123,8 +136,8 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
                 <Switch
                   id="sound"
                   checked={settings.soundEnabled}
-                  onCheckedChange={(checked) => updateSetting('soundEnabled', checked)}
-                  disabled={!settings.notificationsEnabled}
+                  onCheckedChange={(checked) => handleToggle('soundEnabled', checked, 'Sound effects')}
+                  disabled={isSaving || !settings.notificationsEnabled}
                 />
               </div>
 
@@ -140,8 +153,8 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
                 <Switch
                   id="desktop"
                   checked={settings.desktopNotifications}
-                  onCheckedChange={(checked) => updateSetting('desktopNotifications', checked)}
-                  disabled={!settings.notificationsEnabled}
+                  onCheckedChange={handleDesktopToggle}
+                  disabled={isSaving || !settings.notificationsEnabled}
                 />
               </div>
             </div>
@@ -168,7 +181,8 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
                 <Switch
                   id="typing"
                   checked={settings.showTypingIndicator}
-                  onCheckedChange={(checked) => updateSetting('showTypingIndicator', checked)}
+                  onCheckedChange={(checked) => handleToggle('showTypingIndicator', checked, 'Typing indicator')}
+                  disabled={isSaving}
                 />
               </div>
 
@@ -184,7 +198,8 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
                 <Switch
                   id="timestamps"
                   checked={settings.showTimestamps}
-                  onCheckedChange={(checked) => updateSetting('showTimestamps', checked)}
+                  onCheckedChange={(checked) => handleToggle('showTimestamps', checked, 'Timestamps')}
+                  disabled={isSaving}
                 />
               </div>
 
@@ -200,7 +215,8 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
                 <Switch
                   id="compact"
                   checked={settings.compactMode}
-                  onCheckedChange={(checked) => updateSetting('compactMode', checked)}
+                  onCheckedChange={(checked) => handleToggle('compactMode', checked, 'Compact mode')}
+                  disabled={isSaving}
                 />
               </div>
             </div>
@@ -227,7 +243,8 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
                 <Switch
                   id="autoscroll"
                   checked={settings.autoScroll}
-                  onCheckedChange={(checked) => updateSetting('autoScroll', checked)}
+                  onCheckedChange={(checked) => handleToggle('autoScroll', checked, 'Auto-scroll')}
+                  disabled={isSaving}
                 />
               </div>
 
@@ -243,7 +260,8 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
                 <Switch
                   id="enter"
                   checked={settings.enterToSend}
-                  onCheckedChange={(checked) => updateSetting('enterToSend', checked)}
+                  onCheckedChange={(checked) => handleToggle('enterToSend', checked, 'Enter to send')}
+                  disabled={isSaving}
                 />
               </div>
             </div>
@@ -253,8 +271,8 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
 
           {/* Info Section */}
           <div className="bg-premium-muted rounded-lg p-4 border border-protocall-premium-light">
-            <h4 className="text-sm font-semibold text-protocall-blue mb-2">💡 Pro Tip</h4>
-            <p className="text-xs text-protocall-blue leading-relaxed">
+            <h4 className="text-sm font-semibold text-primary mb-2">💡 Pro Tip</h4>
+            <p className="text-xs text-primary leading-relaxed">
               These settings are saved per chat room and persist across sessions. You can customize each room independently.
             </p>
           </div>
@@ -270,7 +288,7 @@ export default function ChatSettingsModal({ open, onClose, roomId }) {
             </Button>
             <Button
               onClick={onClose}
-              className="flex-1 bg-gradient-to-r from-protocall-deep to-protocall-blue text-white hover:from-protocall-deep hover:to-protocall-blue"
+              className="flex-1 bg-gradient-to-r from-primary to-protocall-grape text-white hover:from-primary hover:to-protocall-grape"
             >
               Done
             </Button>

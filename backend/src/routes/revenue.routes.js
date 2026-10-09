@@ -7,6 +7,7 @@ const { authMiddleware } = require("../middleware/auth");
 // Revenue Transactions
 const transactionRouter = express.Router();
 const transactionController = createCrudController(db.RevenueTransaction, {
+  ownership: 'user_id',
   defaultOrderBy: 'created_at',
   defaultOrder: 'DESC'
 });
@@ -38,16 +39,18 @@ transactionRouter.get('/summary', authMiddleware, async (req, res) => {
     
     res.json({ total: total || 0, count, byType });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[revenue.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-createCrudRoutes(transactionRouter, transactionController);
+createCrudRoutes(transactionRouter, transactionController, [authMiddleware]);
 router.use('/transactions', transactionRouter);
 
 // Payout Requests
 const payoutRouter = express.Router();
 const payoutController = createCrudController(db.PayoutRequest, {
+  ownership: 'user_id',
   defaultOrderBy: 'created_at',
   defaultOrder: 'DESC'
 });
@@ -83,7 +86,8 @@ payoutRouter.post('/request', authMiddleware, async (req, res) => {
     
     res.status(201).json(payout);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[revenue.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -96,11 +100,12 @@ payoutRouter.get('/my-payouts', authMiddleware, async (req, res) => {
     });
     res.json(payouts);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[revenue.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-createCrudRoutes(payoutRouter, payoutController);
+createCrudRoutes(payoutRouter, payoutController, [authMiddleware]);
 router.use('/payouts', payoutRouter);
 
 module.exports = router;

@@ -38,7 +38,7 @@ export default function ExecutionDetailsModal({ execution, session, user, open, 
       case 'pending':
         return { icon: Clock, color: 'text-hold-muted-foreground', bgColor: 'bg-hold-muted', label: 'Pending' };
       case 'partial':
-        return { icon: Activity, color: 'text-protocall-blue', bgColor: 'bg-premium-muted', label: 'Partial' };
+        return { icon: Activity, color: 'text-primary', bgColor: 'bg-premium-muted', label: 'Partial' };
       case 'completed':
         return { icon: CheckCircle, color: 'text-buy-muted-foreground', bgColor: 'bg-buy-muted', label: 'Completed' };
       case 'failed':
@@ -108,7 +108,7 @@ export default function ExecutionDetailsModal({ execution, session, user, open, 
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-protocall-blue" />
+                  <Building2 className="w-5 h-5 text-primary" />
                   Stock & Session Info
                 </h3>
                 {execution.side && (
@@ -168,8 +168,8 @@ export default function ExecutionDetailsModal({ execution, session, user, open, 
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-premium-muted p-4 rounded-lg">
-                  <p className="text-xs text-protocall-blue font-medium mb-1">Pledged Qty</p>
-                  <p className="text-2xl font-bold text-protocall-blue">{execution.pledged_qty || 0}</p>
+                  <p className="text-xs text-primary font-medium mb-1">Pledged Qty</p>
+                  <p className="text-2xl font-bold text-primary">{execution.pledged_qty || 0}</p>
                 </div>
                 <div className="bg-buy-muted p-4 rounded-lg">
                   <p className="text-xs text-buy-muted-foreground font-medium mb-1">Executed Qty</p>
@@ -203,7 +203,7 @@ export default function ExecutionDetailsModal({ execution, session, user, open, 
                 <Separator />
                 <div className="flex justify-between items-center">
                   <span className="text-subtle">Platform Commission ({execution.commission_rate}%)</span>
-                  <span className="font-semibold text-protocall-blue">₹{(execution.platform_commission || 0).toLocaleString()}</span>
+                  <span className="font-semibold text-primary">₹{(execution.platform_commission || 0).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-subtle">Broker Commission</span>
@@ -222,7 +222,7 @@ export default function ExecutionDetailsModal({ execution, session, user, open, 
           <Card>
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <User className="w-5 h-5 text-protocall-blue" />
+                <User className="w-5 h-5 text-primary" />
                 User & Account Info
               </h3>
 
@@ -277,7 +277,7 @@ export default function ExecutionDetailsModal({ execution, session, user, open, 
           <Card>
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-protocall-blue" />
+                <Calendar className="w-5 h-5 text-primary" />
                 Execution Timeline
               </h3>
 
@@ -295,7 +295,7 @@ export default function ExecutionDetailsModal({ execution, session, user, open, 
                 )}
                 {execution.settlement_date && (
                   <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-protocall-blue rounded-full"></div>
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
                     <div className="flex-1">
                       <p className="text-sm font-medium text-foreground">Settlement Date</p>
                       <p className="text-xs text-subtle">

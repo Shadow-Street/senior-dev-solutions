@@ -315,7 +315,7 @@ export default function VIPFeaturesPanel() {
                         )}
 
                         {custom.priority_support && (
-                          <Badge className="bg-premium-muted text-protocall-blue">
+                          <Badge className="bg-premium-muted text-primary">
                             <Shield className="w-3 h-3 mr-1" />
                             Priority Support
                           </Badge>

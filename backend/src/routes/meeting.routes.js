@@ -23,7 +23,8 @@ router.get('/room/:roomId/active', async (req, res) => {
     });
     res.json(meeting || null);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[meeting.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -44,11 +45,12 @@ router.put('/:id/end', authMiddleware, async (req, res) => {
 
     res.json(meeting);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[meeting.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 // CRUD routes
-createCrudRoutes(router, meetingController);
+createCrudRoutes(router, meetingController, [authMiddleware]);
 
 module.exports = router;

@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import {
   TrendingUp,
@@ -8,21 +7,28 @@ import {
   BarChart3,
   Loader2,
   ArrowRight,
-  ChevronRight,
   GraduationCap,
   HandCoins,
   Sprout,
   Zap,
 } from "lucide-react";
 import { useAuth } from "@/components/context/AuthContext";
-import { User, ChatRoom, Poll, marketAPI } from "@/lib/apiClient";
+import { User, ChatRoom, Poll, marketAPI, AdvisorRecommendation } from "@/lib/apiClient";
 import { createPageUrl } from "@/utils";
+import StatTile from "@/components/common/StatTile";
 
 import LiveStockTicker from "../components/stocks/LiveStockTicker";
 import MarketOverviewPanel from "../components/dashboard/MarketOverviewPanel";
 import SponsoredPanel from "../components/dashboard/SponsoredPanel";
 import TopMovers from "../components/dashboard/TopMovers";
 import CommunityPollPanel from "../components/dashboard/CommunityPollPanel";
+import QuickActions from "../components/dashboard/QuickActions";
+import StockHeatmap from "../components/dashboard/StockHeatmap";
+import TrendingStocks from "../components/dashboard/TrendingStocks";
+import FinInfluencers from "../components/dashboard/FinInfluencers";
+import LatestNews from "../components/dashboard/LatestNews";
+import RecentActivity from "../components/dashboard/RecentActivity";
+import ReviewScroller from "../components/dashboard/ReviewScroller";
 import PageFooter from "../components/footer/PageFooter";
 
 // Hero quick-actions, matching the reference banner.
@@ -46,6 +52,7 @@ export default function Dashboard() {
     losers: [],
     indices: [],
     polls: [],
+    recommendations: [],
   });
   const [isLoading, setIsLoading] = useState(true);
   // Market data fails independently of the rest of the dashboard.
@@ -53,10 +60,11 @@ export default function Dashboard() {
 
   const loadDashboardData = useCallback(async () => {
     try {
-      const [usersData, rooms, polls, marketRes] = await Promise.all([
+      const [usersData, rooms, polls, recommendations, marketRes] = await Promise.all([
         User.list(null, 1, 0).catch(() => ({ count: 0 })),
         ChatRoom.list(null, 10, 0).catch(() => []),
         Poll.list(null, 10, 0).catch(() => []),
+        AdvisorRecommendation.list(null, 5, 0).catch(() => []),
         marketAPI.getMarketData().then(r => r?.data).catch((e) => {
           setMarketError(e?.response?.data?.error || 'Live market data is unavailable');
           return null;
@@ -77,6 +85,7 @@ export default function Dashboard() {
         losers: market.losers || [],
         indices: market.indices || [],
         polls: Array.isArray(polls) ? polls : [],
+        recommendations: Array.isArray(recommendations) ? recommendations : [],
       });
     } catch (error) {
       console.error("Error loading dashboard data:", error);
@@ -131,7 +140,7 @@ export default function Dashboard() {
                     to={to}
                     className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
                       i === 0
-                        ? "bg-protocall-blue text-white hover:bg-protocall-deep"
+                        ? "bg-primary text-white hover:bg-protocall-grape"
                         : "bg-white/10 text-white ring-1 ring-inset ring-white/20 hover:bg-white/20"
                     }`}
                   >
@@ -166,34 +175,41 @@ export default function Dashboard() {
 
         {/* ---------- Stat row ---------- */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 sm:gap-5">
-          <StatCard
+          <StatTile
             to={createPageUrl("Profile")}
             title="Active Traders"
             value={isLoading ? null : stats.totalTraders.toLocaleString("en-IN")}
             sub="+7.4% this week"
             icon={Users}
-            highlight
+            tone="green"
+            isLoading={isLoading}
           />
-          <StatCard
+          <StatTile
             to={createPageUrl("ChatRooms")}
             title="Live Chat Rooms"
             value={isLoading ? null : stats.activeRooms}
             sub="Active discussions"
             icon={MessageSquare}
+            tone="blue"
+            isLoading={isLoading}
           />
-          <StatCard
+          <StatTile
             to={createPageUrl("Polls")}
             title="Active Polls"
             value={isLoading ? null : stats.activePolls}
             sub="Community voting"
             icon={BarChart3}
+            tone="purple"
+            isLoading={isLoading}
           />
-          <StatCard
+          <StatTile
             to={createPageUrl("MyPortfolio")}
             title="Trending Stocks"
             value={isLoading ? null : stats.trendingStocksCount}
             sub="Market movers"
             icon={TrendingUp}
+            tone="orange"
+            isLoading={isLoading}
           />
         </div>
 
@@ -217,9 +233,41 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* ---------- Quick actions ---------- */}
+        <QuickActions user={user} />
+
+        {/* ---------- Community buy heatmap ---------- */}
+        <StockHeatmap polls={stats.polls} recommendations={stats.recommendations} />
+
+        {/* ----------
+            Trending Stocks — full-bleed and enlarged per §3, so it reads as the
+            primary market section rather than a sidebar widget.
+           ---------- */}
+        <section className="scroll-mt-6">
+          <TrendingStocks stocks={stats.stocks} />
+        </section>
+
+        {/* ---------- Market news + activity ---------- */}
+        <div className="grid gap-4 sm:gap-5 xl:grid-cols-3">
+          <div className="min-w-0 xl:col-span-2">
+            <LatestNews />
+          </div>
+          <div className="min-w-0">
+            <RecentActivity />
+          </div>
+        </div>
+
+        {/* ---------- FinInfluencers ---------- */}
+        <FinInfluencers />
+
+        {/* ---------- Reviews ---------- */}
+        <div className="-mx-4 sm:-mx-5 lg:-mx-6">
+          <ReviewScroller />
+        </div>
+
         {/* ---------- Footer strip ---------- */}
         <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-xl border border-border bg-surface-2 px-4 py-3 text-center text-xs font-medium text-subtle">
-          <Zap className="h-3.5 w-3.5 text-buy" />
+          <Zap className="h-3.5 w-3.5 text-positive" />
           <span>Join the conversation</span>
           <span aria-hidden="true" className="text-muted-foreground">·</span>
           <span>Share your insights</span>
@@ -234,65 +282,3 @@ export default function Dashboard() {
 }
 
 // `highlight` renders the green growth tile; the rest are white cards.
-function StatCard({ to, title, value, sub, icon: Icon, highlight = false }) {
-  return (
-    <Card
-      className={`group overflow-hidden border shadow-sm transition-shadow hover:shadow-md ${
-        highlight ? "border-transparent bg-buy" : "border-border bg-card"
-      }`}
-    >
-      <Link to={to} className="block">
-        <CardContent className="p-4 sm:p-5">
-          <div className="flex items-start justify-between gap-2">
-            <span
-              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
-                highlight ? "bg-buy-foreground/10" : "bg-premium-muted"
-              }`}
-            >
-              <Icon
-                className={`h-4 w-4 ${highlight ? "text-buy-foreground" : "text-primary"}`}
-              />
-            </span>
-            <ChevronRight
-              className={`h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5 ${
-                highlight ? "text-buy-foreground/60" : "text-muted-foreground"
-              }`}
-            />
-          </div>
-
-          <p
-            className={`mt-3 text-xs font-medium ${
-              highlight ? "text-buy-foreground/80" : "text-subtle"
-            }`}
-          >
-            {title}
-          </p>
-
-          {value === null ? (
-            <div
-              className={`mt-1 h-7 w-20 animate-pulse rounded ${
-                highlight ? "bg-buy-foreground/15" : "bg-surface-2"
-              }`}
-            />
-          ) : (
-            <p
-              className={`mt-0.5 text-2xl font-bold leading-tight ${
-                highlight ? "text-buy-foreground" : "text-foreground"
-              }`}
-            >
-              {value}
-            </p>
-          )}
-
-          <p
-            className={`mt-0.5 text-[11px] ${
-              highlight ? "font-semibold text-buy-foreground/70" : "text-muted-foreground"
-            }`}
-          >
-            {sub}
-          </p>
-        </CardContent>
-      </Link>
-    </Card>
-  );
-}

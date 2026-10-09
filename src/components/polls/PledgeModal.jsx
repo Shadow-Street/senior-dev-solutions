@@ -130,7 +130,7 @@ export default function PledgeModal({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-            <Target className="w-6 h-6 text-protocall-blue" />
+            <Target className="w-6 h-6 text-primary" />
             Make a Pledge - {session.stock_symbol}
           </DialogTitle>
           <DialogDescription>
@@ -170,7 +170,7 @@ export default function PledgeModal({
           {/* Quantity Input */}
           <div>
             <Label htmlFor="quantity" className="text-base font-semibold">
-              Quantity <span className="text-sell">*</span>
+              Quantity <span className="text-sell-muted-foreground">*</span>
             </Label>
             <Input
               id="quantity"
@@ -195,7 +195,7 @@ export default function PledgeModal({
           {/* Target Price Input */}
           <div>
             <Label htmlFor="price" className="text-base font-semibold">
-              Target Price (₹) <span className="text-sell">*</span>
+              Target Price (₹) <span className="text-sell-muted-foreground">*</span>
             </Label>
             <div className="relative mt-2">
               <IndianRupee className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
@@ -239,7 +239,7 @@ export default function PledgeModal({
 
               <div className="border-t pt-2 flex justify-between">
                 <span className="font-semibold text-foreground">Total to Pay Now</span>
-                <span className="font-bold text-lg text-protocall-blue">
+                <span className="font-bold text-lg text-primary">
                   ₹{calculatedFee.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
@@ -267,8 +267,8 @@ export default function PledgeModal({
 
           {/* Important Notice */}
           <div className="flex items-start gap-2 p-3 bg-premium-muted border border-protocall-premium-light rounded-lg">
-            <AlertCircle className="w-5 h-5 text-protocall-blue mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-protocall-blue">
+            <AlertCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+            <div className="text-sm text-primary">
               <p className="font-semibold">Important:</p>
               <p className="mt-1">
                 After payment, your pledge will be marked as "Ready for Execution". 

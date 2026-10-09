@@ -27,7 +27,8 @@ router.get('/room/:roomId', async (req, res) => {
     
     res.json(typing);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[typing.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -45,11 +46,12 @@ router.post('/set', authMiddleware, async (req, res) => {
     
     res.json(indicator);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[typing.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 // CRUD routes
-createCrudRoutes(router, typingController);
+createCrudRoutes(router, typingController, [authMiddleware]);
 
 module.exports = router;

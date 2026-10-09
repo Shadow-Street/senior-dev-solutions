@@ -102,10 +102,10 @@ export default function Overview({ data, subscriptionTransactions, refunds }) { 
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-protocall-blue font-medium">Gross Revenue</p>
-                <p className="text-3xl font-bold text-protocall-blue">₹{(data.stats.grossRevenue / 1000).toFixed(1)}k</p>
+                <p className="text-sm text-primary font-medium">Gross Revenue</p>
+                <p className="text-3xl font-bold text-primary">₹{(data.stats.grossRevenue / 1000).toFixed(1)}k</p>
               </div>
-              <TrendingUp className="w-10 h-10 text-protocall-blue opacity-50" />
+              <TrendingUp className="w-10 h-10 text-primary opacity-50" />
             </div>
           </CardContent>
         </Card>
@@ -153,7 +153,7 @@ export default function Overview({ data, subscriptionTransactions, refunds }) { 
       {/* Enhanced Secondary KPI Cards - Additional Metrics */}
       <div>
         <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
-          <BarChart3 className="w-6 h-6 text-protocall-blue" />
+          <BarChart3 className="w-6 h-6 text-primary" />
           Additional Metrics
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, adminMiddleware } = require("../middleware/auth");
 
 // Audit Logs
 const logRouter = express.Router();
@@ -25,7 +25,8 @@ logRouter.get('/entity/:type/:entityId', authMiddleware, async (req, res) => {
     });
     res.json(logs);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[audit.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -40,7 +41,8 @@ logRouter.get('/user/:userId', authMiddleware, async (req, res) => {
     });
     res.json(logs);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[audit.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -64,11 +66,12 @@ logRouter.post('/log', authMiddleware, async (req, res) => {
     
     res.status(201).json(log);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[audit.routes.js] request failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-createCrudRoutes(logRouter, logController);
+createCrudRoutes(logRouter, logController, { read: [authMiddleware, adminMiddleware], write: [authMiddleware, adminMiddleware] });
 router.use('/logs', logRouter);
 
 module.exports = router;

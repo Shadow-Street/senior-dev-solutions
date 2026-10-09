@@ -143,7 +143,7 @@ export default function BlogsPage() {
 
   const getCategoryColor = (category) => {
     switch(category) {
-      case 'education': return 'bg-premium-muted text-protocall-blue';
+      case 'education': return 'bg-premium-muted text-primary';
       case 'strategy': return 'bg-premium-muted text-protocall-premium-text';
       case 'technical': return 'bg-hold-muted text-hold-muted-foreground';
       case 'tax': return 'bg-buy-muted text-buy-muted-foreground';
@@ -186,7 +186,7 @@ export default function BlogsPage() {
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <BookOpen className="w-8 h-8 text-protocall-blue" />
+            <BookOpen className="w-8 h-8 text-primary" />
             <h1 className="text-4xl font-bold bg-gradient-to-r from-protocall-deep to-protocall-blue bg-clip-text text-transparent">
               Investment Insights & Articles
             </h1>
@@ -292,7 +292,7 @@ export default function BlogsPage() {
               </div>
 
               <CardContent className="p-6">
-                <h3 className="font-bold text-xl text-foreground mb-3 line-clamp-2 group-hover:text-protocall-blue transition-colors">
+                <h3 className="font-bold text-xl text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors">
                   {blog.title}
                 </h3>
 
@@ -349,7 +349,7 @@ export default function BlogsPage() {
                 placeholder="Enter your email"
                 className="bg-white text-foreground"
               />
-              <Button className="bg-white text-protocall-blue hover:bg-premium-muted">
+              <Button className="bg-white text-primary hover:bg-premium-muted">
                 Subscribe
               </Button>
             </div>

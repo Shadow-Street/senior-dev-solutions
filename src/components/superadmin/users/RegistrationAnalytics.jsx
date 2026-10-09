@@ -95,7 +95,7 @@ export default function RegistrationAnalytics({ users, invites, isLoading }) {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><BarChart2 className="w-5 h-5 text-protocall-blue" /> Registrations by Method</CardTitle>
+            <CardTitle className="flex items-center gap-2"><BarChart2 className="w-5 h-5 text-primary" /> Registrations by Method</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>

@@ -10,27 +10,27 @@ const AwaitingSellExecutionCard = ({ session, onExecuteSell, isExecuting }) => {
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-lg font-bold text-protocall-blue">{session.stock_symbol}</CardTitle>
-            <p className="text-sm text-protocall-blue mt-1">{session.stock_name}</p>
+            <CardTitle className="text-lg font-bold text-primary">{session.stock_symbol}</CardTitle>
+            <p className="text-sm text-primary mt-1">{session.stock_name}</p>
           </div>
-          <Badge className="bg-premium-muted text-protocall-blue font-semibold">Awaiting Sell</Badge>
+          <Badge className="bg-premium-muted text-primary font-semibold">Awaiting Sell</Badge>
         </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
-            <p className="text-xs text-protocall-blue font-semibold">BUY PLEDGES</p>
-            <p className="text-lg font-bold text-protocall-blue">{session.buy_pledges_count || 0}</p>
+            <p className="text-xs text-primary font-semibold">BUY PLEDGES</p>
+            <p className="text-lg font-bold text-primary">{session.buy_pledges_count || 0}</p>
           </div>
           <div>
-            <p className="text-xs text-protocall-blue font-semibold">BUY VALUE</p>
-            <p className="text-lg font-bold text-protocall-blue">
+            <p className="text-xs text-primary font-semibold">BUY VALUE</p>
+            <p className="text-lg font-bold text-primary">
               ₹{((session.buy_pledges_value || 0) / 1000).toFixed(1)}K
             </p>
           </div>
            <div>
-            <p className="text-xs text-protocall-blue font-semibold">PLEDGERS</p>
-            <p className="text-lg font-bold text-protocall-blue">{session.total_pledges || 0}</p>
+            <p className="text-xs text-primary font-semibold">PLEDGERS</p>
+            <p className="text-lg font-bold text-primary">{session.total_pledges || 0}</p>
           </div>
         </div>
       </CardContent>
@@ -38,7 +38,7 @@ const AwaitingSellExecutionCard = ({ session, onExecuteSell, isExecuting }) => {
         <Button
           onClick={() => onExecuteSell(session.id)}
           disabled={isExecuting}
-          className="w-full bg-protocall-blue hover:bg-protocall-blue text-white shadow-lg"
+          className="w-full bg-primary hover:bg-primary text-white shadow-lg"
         >
           {isExecuting ? (
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />

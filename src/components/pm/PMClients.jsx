@@ -70,7 +70,7 @@ export default function PMClients({ pmProfile }) {
             />
           </div>
         </div>
-        <Button className="bg-protocall-blue hover:bg-protocall-blue">
+        <Button className="bg-primary hover:bg-primary">
           <Plus className="w-4 h-4 mr-2" />
           Invite Client
         </Button>
@@ -112,8 +112,8 @@ export default function PMClients({ pmProfile }) {
 
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                         <div className="bg-premium-muted p-3 rounded-lg">
-                          <p className="text-xs text-protocall-blue mb-1">Invested</p>
-                          <p className="text-lg font-bold text-protocall-blue">
+                          <p className="text-xs text-primary mb-1">Invested</p>
+                          <p className="text-lg font-bold text-primary">
                             ₹{(client.invested_amount / 1000).toFixed(0)}K
                           </p>
                         </div>

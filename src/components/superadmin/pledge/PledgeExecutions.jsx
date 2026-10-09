@@ -140,7 +140,7 @@ export default function PledgeExecutions({ executions = [], sessions = [], pledg
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="w-6 h-6 text-protocall-blue" />
+            <TrendingUp className="w-6 h-6 text-primary" />
             Sessions Awaiting Sell-Side Execution
           </CardTitle>
           <p className="text-sm text-muted-foreground">

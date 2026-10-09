@@ -141,7 +141,7 @@ export default function PollAnalytics({ polls = [], votes = [] }) {
           value={analytics.totalEngagement}
           subtitle={`${analytics.totalVotes} votes + ${analytics.totalPledges} pledges`}
           icon={Users}
-          color={{ bg: 'bg-premium-muted', iconBg: 'bg-premium-muted', iconText: 'text-protocall-blue' }}
+          color={{ bg: 'bg-premium-muted', iconBg: 'bg-premium-muted', iconText: 'text-primary' }}
         />
         <StatCard
           title="Buy Sentiment"
@@ -211,7 +211,7 @@ export default function PollAnalytics({ polls = [], votes = [] }) {
         <Card className="shadow-lg border-0 bg-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-protocall-blue" />
+              <Calendar className="w-5 h-5 text-primary" />
               7-Day Participation Trend
             </CardTitle>
           </CardHeader>
