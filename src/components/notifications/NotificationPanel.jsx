@@ -110,15 +110,15 @@ export default function NotificationPanel() {
 
   const unreadCount = useMemo(() => {
     if (!NOTIFICATIONS_ENABLED || error) return 0;
-    return notifications.filter(n => n.status === 'unread').length;
+    return notifications.filter((n) => !n.is_read).length;
   }, [notifications, error]);
 
   const handleMarkAsRead = async (id) => {
     if (!user || error) return;
     
     try {
-      await NotificationEntity.update(id, { status: 'read' }); // FIXED: Use NotificationEntity
-      setNotifications(prev => prev.map(n => n.id === id ? { ...n, status: 'read' } : n));
+      await NotificationEntity.update(id, { is_read: true });
+      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, is_read: true } : n)));
     } catch (error) {
       if (!/aborted/i.test(error.message)) {
         toast.error("Failed to mark as read.");
@@ -129,13 +129,13 @@ export default function NotificationPanel() {
   const handleMarkAllAsRead = async () => {
     if (!user || error) return;
     
-    const unreadIds = notifications.filter(n => n.status === 'unread').map(n => n.id);
+    const unreadIds = notifications.filter((n) => !n.is_read).map((n) => n.id);
     if (unreadIds.length === 0) return;
 
     try {
       // FIXED: Use NotificationEntity
-      await Promise.all(unreadIds.map(id => NotificationEntity.update(id, { status: 'read' })));
-      setNotifications(prev => prev.map(n => ({ ...n, status: 'read' })));
+      await Promise.all(unreadIds.map((id) => NotificationEntity.update(id, { is_read: true })));
+      setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
       toast.success("All notifications marked as read.");
     } catch (error) {
       if (!/aborted/i.test(error.message)) {
@@ -282,7 +282,7 @@ export default function NotificationPanel() {
                     key={notification.id}
                     onClick={() => handleMarkAsRead(notification.id)}
                     className={`p-3 rounded-lg border cursor-pointer transition-all hover:shadow-sm ${
-                      notification.status === 'read' 
+                      notification.is_read 
                         ? 'bg-white border-border' 
                         : 'bg-premium-muted border-protocall-premium-light shadow-sm'
                     }`}
@@ -291,18 +291,18 @@ export default function NotificationPanel() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2">
                           <h4 className={`text-sm font-medium truncate ${
-                            notification.status === 'read' ? 'text-subtle' : 'text-foreground'
+                            notification.is_read ? 'text-subtle' : 'text-foreground'
                           }`}>
                             {notification.title || 'Notification'}
                           </h4>
                           
-                          {notification.status === 'unread' && (
+                          {!notification.is_read && (
                             <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
                           )}
                         </div>
                         
                         <p className={`text-xs mt-1 line-clamp-2 ${
-                          notification.status === 'read' ? 'text-muted-foreground' : 'text-subtle'
+                          notification.is_read ? 'text-muted-foreground' : 'text-subtle'
                         }`}>
                           {notification.message}
                         </p>

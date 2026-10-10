@@ -24,7 +24,7 @@ export default function ContactPage() {
   //   try {
   //     const fetchedSettings = await PlatformSetting.list();
   //     const settingsMap = fetchedSettings.reduce((acc, setting) => {
-  //       acc[setting.setting_key] = setting.setting_value;
+  //       acc[setting.key] = setting.value;
   //       return acc;
   //     }, {});
       

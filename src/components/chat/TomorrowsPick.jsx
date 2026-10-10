@@ -26,7 +26,7 @@ export default function TomorrowsPick() {
         });
 
         if (overrideSettings.length > 0) {
-          const overrideData = JSON.parse(overrideSettings[0].setting_value);
+          const overrideData = JSON.parse(overrideSettings[0].value);
           if (overrideData.active) {
             if (isMounted) {
               setPick({

@@ -236,9 +236,9 @@ export default function AdvisorProfile() {
 
     try {
       const settings = await PlatformSetting.filter({
-        setting_key: 'global_commission_rate'
+        key: 'global_commission_rate'
       });
-      const commissionRate = settings.length > 0 ? parseFloat(settings[0].setting_value) : 20;
+      const commissionRate = settings.length > 0 ? parseFloat(settings[0].value) : 20;
 
       const subData = {
         user_id: currentUser.id,

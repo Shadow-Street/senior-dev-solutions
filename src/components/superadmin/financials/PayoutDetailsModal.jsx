@@ -100,7 +100,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
       // Get payment gateway credentials from platform settings
       const settings = await PlatformSetting.list();
       const settingsMap = settings.reduce((acc, s) => {
-        acc[s.setting_key] = s.setting_value;
+        acc[s.key] = s.value;
         return acc;
       }, {});
 

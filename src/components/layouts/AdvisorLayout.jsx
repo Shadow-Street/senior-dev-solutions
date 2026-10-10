@@ -133,8 +133,8 @@ export default function AdvisorLayout({ children, currentPageName }) { // Rename
         // Process settings
         const settingsResult = results.find(r => r.type === 'settings');
         if (settingsResult) {
-          const pledgeFeatureSetting = settingsResult.data.find(s => s.setting_key === 'advisor_pledge_management_enabled');
-          setAdvisorPledgeFeatureEnabled(pledgeFeatureSetting?.setting_value === 'true');
+          const pledgeFeatureSetting = settingsResult.data.find(s => s.key === 'advisor_pledge_management_enabled');
+          setAdvisorPledgeFeatureEnabled(pledgeFeatureSetting?.value === 'true');
         }
         
         // Process advisor profile and get access request

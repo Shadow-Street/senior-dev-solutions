@@ -17,7 +17,7 @@ class PaymentService {
     try {
       const settings = await PlatformSetting.list();
       const configMap = settings.reduce((acc, setting) => {
-        acc[setting.setting_key] = setting.setting_value;
+        acc[setting.key] = setting.value;
         return acc;
       }, {});
 

@@ -36,6 +36,13 @@ module.exports = (sequelize) => {
         allowNull: false,
         defaultValue: "user",
       },
+      // Set once a registration OTP has been confirmed. Accounts that predate
+      // OTP verification are backfilled to true so nobody is locked out.
+      email_verified: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
       verify_step: {
         type: DataTypes.INTEGER,
         allowNull: false,

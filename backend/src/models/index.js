@@ -27,6 +27,7 @@ Object.keys(AllModels).forEach(modelName => {
 // Import specific models that have custom definitions
 db.User = require("./User")(sequelize);
 db.OauthToken = require("./Auth/OauthToken")(sequelize);
+db.VerificationCode = require("./Auth/VerificationCode")(sequelize);
 db.Stock = require("./Stock")(sequelize);
 db.Pledge = require("./Pledge")(sequelize);
 db.PledgeSession = require("./PledgeSession")(sequelize);

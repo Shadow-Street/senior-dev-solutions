@@ -30,12 +30,11 @@ export default function UserManagement() {
         }
         return [];
       }),
-      // Get current admin user (may be mock in testing mode)
-      User.me().catch(() => ({
-        id: 'test-admin',
-        app_role: 'super_admin',
-        display_name: 'Test Admin'
-      }))]
+      // If the session cannot be read, fall back to no admin rather than to a
+      // fabricated super-admin: the old fallback made the panel render its
+      // privileged controls precisely when the server could not confirm who
+      // the caller was.
+      User.me().catch(() => null)]
       );
       // Return the fetched data instead of setting state directly
       return { allUsers, allRoles, admin };

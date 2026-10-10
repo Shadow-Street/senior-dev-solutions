@@ -17,11 +17,11 @@ export default function PlatformSettings({ settings = {}, onSettingsUpdated }) {
         setIsLoading(true);
         try {
             // Logic mirrored from AdminPanel
-            const foundSettings = await PlatformSetting.filter({ setting_key: 'global_commission_rate' });
+            const foundSettings = await PlatformSetting.filter({ key: 'global_commission_rate' });
             if (foundSettings.length > 0) {
-                await PlatformSetting.update(foundSettings[0].id, { setting_value: commissionRate });
+                await PlatformSetting.update(foundSettings[0].id, { value: commissionRate });
             } else {
-                await PlatformSetting.create({ setting_key: 'global_commission_rate', setting_value: commissionRate });
+                await PlatformSetting.create({ key: 'global_commission_rate', value: commissionRate });
             }
             toast.success("Commission rate updated!");
             onSettingsUpdated();
@@ -35,11 +35,11 @@ export default function PlatformSettings({ settings = {}, onSettingsUpdated }) {
 
     const handleTogglePledges = async (checked) => {
         try {
-            const foundSettings = await PlatformSetting.filter({ setting_key: 'pledges_enabled' });
+            const foundSettings = await PlatformSetting.filter({ key: 'pledges_enabled' });
             if (foundSettings.length > 0) {
-                await PlatformSetting.update(foundSettings[0].id, { setting_value: checked.toString() });
+                await PlatformSetting.update(foundSettings[0].id, { value: checked.toString() });
             } else {
-                await PlatformSetting.create({ setting_key: 'pledges_enabled', setting_value: checked.toString() });
+                await PlatformSetting.create({ key: 'pledges_enabled', value: checked.toString() });
             }
             setPledgesEnabled(checked);
             toast.success(`Pledges ${checked ? 'Enabled' : 'Disabled'}`);

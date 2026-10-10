@@ -61,7 +61,7 @@ export default function ManagePaymentGateway() {
     try {
       const fetchedSettings = await PlatformSetting.list();
       const settingsMap = fetchedSettings.reduce((acc, setting) => {
-        acc[setting.setting_key] = setting.setting_value;
+        acc[setting.key] = setting.value;
         return acc;
       }, {});
 
@@ -79,17 +79,17 @@ export default function ManagePaymentGateway() {
       const settingsToSave = Object.entries(settings);
       
       for (const [key, value] of settingsToSave) {
-        const existing = await PlatformSetting.filter({ setting_key: key });
+        const existing = await PlatformSetting.filter({ key: key });
         
         if (existing.length > 0) {
           await PlatformSetting.update(existing[0].id, {
-            setting_value: value,
+            value: value,
             description: getSettingDescription(key)
           });
         } else {
           await PlatformSetting.create({
-            setting_key: key,
-            setting_value: value,
+            key: key,
+            value: value,
             description: getSettingDescription(key)
           });
         }

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '@/components/context/AuthContext';
 import { 
   Pledge, PledgeSession, Stock, Event, Subscription,
   Notification, ChatRoom, User, Poll, Course, News,
@@ -73,17 +74,21 @@ export function useApiData(entityApi, options = {}) {
 }
 
 // User hook
+/**
+ * Reads the signed-in user from the auth context rather than localStorage.
+ *
+ * The previous version trusted whatever JSON happened to be cached under
+ * `user`, with no check that it belonged to the current token and no refresh,
+ * so after switching accounts this hook kept handing components the previous
+ * account's record.
+ */
 export function useCurrentUser() {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user: authUser, loading: isLoading, refreshUser } = useAuth();
+  const [user, setUser] = useState(authUser);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
-  }, []);
+    setUser(authUser);
+  }, [authUser]);
 
   const updateUser = useCallback(async (updates) => {
     if (!user) return;
@@ -91,12 +96,14 @@ export function useCurrentUser() {
       const updated = await User.update(user.id, updates);
       const newUser = { ...user, ...updated };
       setUser(newUser);
-      localStorage.setItem('user', JSON.stringify(newUser));
+      // Re-read from the server so every other surface sees the same record
+      // instead of each one keeping its own copy.
+      await refreshUser();
       return newUser;
     } catch (err) {
       throw err;
     }
-  }, [user]);
+  }, [user, refreshUser]);
 
   const logout = useCallback(() => {
     localStorage.removeItem('accessToken');

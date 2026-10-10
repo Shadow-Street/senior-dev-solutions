@@ -44,11 +44,11 @@ export default function PollPledgeSection({ chatRoomId, stockSymbol, user, onPol
     try {
       const [userSub, pledgeSettings] = await Promise.all([
         user ? SubEntity.filter({ user_id: user.id, status: 'active' }, '-created_date', 1).catch(() => []) : [],
-        PlatformSetting.filter({ setting_key: 'pledges_enabled' }).catch(() => [])
+        PlatformSetting.filter({ key: 'pledges_enabled' }).catch(() => [])
       ]);
 
       setSubscription(userSub[0] || null);
-      setPledgesEnabled(pledgeSettings.length > 0 ? pledgeSettings[0].setting_value === 'true' : true);
+      setPledgesEnabled(pledgeSettings.length > 0 ? pledgeSettings[0].value === 'true' : true);
 
       // Load poll based on outline's criteria
       const polls = await Poll.filter({ stock_symbol: stockSymbol, poll_type: 'pledge_poll', is_active: true }, '-created_date', 1);

@@ -22,11 +22,37 @@ class UserController {
   static async update(req, res) {
     try {
       const userId = req.user.id;
-      const updates = req.body;
+      const updates = { ...req.body };
 
-      // Don't allow password updates through this endpoint
-      delete updates.password;
-      delete updates.email;
+      /**
+       * Fields nobody may set on their own account.
+       *
+       * This endpoint used to strip only `password` and `email`, so a single
+       * `PUT /users/me` with `{"app_role":"super_admin"}` promoted the caller
+       * to super admin — and `{"is_premium":true}` handed them a paid plan.
+       * Verified against a live account before this change: an ordinary user
+       * became super_admin with premium in one request.
+       *
+       * An allow-list would be safer still, but this endpoint is the generic
+       * profile save and the set of legitimate profile fields is wide and
+       * grows; a deny-list of the privilege-bearing columns is the change that
+       * can be made without breaking the screens that use it. Role changes go
+       * through the admin endpoints, which check the caller's own role.
+       */
+      const PRIVILEGE_FIELDS = [
+        "password",
+        "email",
+        "id",
+        "role",
+        "app_role",
+        "is_admin",
+        "is_premium",
+        "status",
+        "email_verified",
+        "verify_step",
+        "google_id",
+      ];
+      for (const field of PRIVILEGE_FIELDS) delete updates[field];
 
       // Sequelize's affected-row count is 0 both when the record is missing and
       // when the new values equal the stored ones, so treating 0 as 'not found'

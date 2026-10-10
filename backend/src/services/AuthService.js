@@ -173,6 +173,19 @@ class AuthService {
       throw new Error("Incorrect password");
     }
 
+    /**
+     * Registration is a two-step flow now, so an account that never confirmed
+     * its emailed code must not be able to sign in — otherwise the code is
+     * decorative. Accounts created before verification existed are backfilled
+     * to verified in table.sql, so nobody is locked out retroactively.
+     */
+    if (user.email_verified === false) {
+      const error = new Error("Confirm your email address to finish signing up.");
+      error.code = "EMAIL_NOT_VERIFIED";
+      error.email = user.email;
+      throw error;
+    }
+
     // One place issues tokens, so lifetimes and the stored hash cannot drift
     // between the password and Google paths.
     const { accessToken, refreshToken } = await this.issueTokens(user, context);
@@ -207,11 +220,22 @@ class AuthService {
       email,
       password: hashedPassword,
       name,
+      display_name: name,
       role,
-      verify_step: 1
+      verify_step: 1,
+      email_verified: false,
     });
 
-    return this.login(email, password, role);
+    /**
+     * Returns the account, not a session.
+     *
+     * This used to end with `this.login(...)`, which signed the new account in
+     * immediately. With email confirmation in the flow that is both wrong and
+     * now impossible — login refuses an unverified account, so registering
+     * would fail on its own last line. The caller sends the code and the
+     * session is issued once the code comes back.
+     */
+    return { user };
   }
 
   static async googleLogin(token, role = 'user', context = {}) {

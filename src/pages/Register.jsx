@@ -1,232 +1,374 @@
-import React, { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import apiClient from '@/lib/apiClient';
+import { useAuth } from '@/components/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Eye, EyeOff, UserPlus, Loader2 } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Check, Eye, EyeOff, Loader2, MailCheck, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
+import AuthShell from '@/components/auth/AuthShell';
 
-const Register = () => {
+/** Rules shown live, so nothing is rejected only after pressing the button. */
+const PASSWORD_RULES = [
+  { id: 'length', label: 'At least 8 characters', test: (v) => v.length >= 8 },
+  { id: 'letter', label: 'A letter', test: (v) => /[a-zA-Z]/.test(v) },
+  { id: 'number', label: 'A number', test: (v) => /\d/.test(v) },
+];
+
+const OTP_LENGTH = 6;
+
+export default function Register() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: 'user',
-    phone: ''
-  });
+  const { user, loading: authLoading, refreshUser } = useAuth();
+
+  // 'details' collects the account; 'verify' confirms the emailed code.
+  const [step, setStep] = useState('details');
+  const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+  const [code, setCode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [resendIn, setResendIn] = useState(0);
+  const codeInputRef = useRef(null);
 
-  const handleChange = (e) => {
+  useEffect(() => {
+    if (!authLoading && user) navigate('/Dashboard', { replace: true });
+  }, [authLoading, user, navigate]);
+
+  // Countdown on the resend button, so the server is not hammered and the
+  // person can see when another code is available.
+  useEffect(() => {
+    if (resendIn <= 0) return undefined;
+    const t = setTimeout(() => setResendIn((n) => n - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendIn]);
+
+  useEffect(() => {
+    if (step === 'verify') codeInputRef.current?.focus();
+  }, [step]);
+
+  const update = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
+    if (formError) setFormError('');
   };
 
-  const handleRoleChange = (value) => {
-    setFormData(prev => ({ ...prev, role: value }));
+  const passwordChecks = PASSWORD_RULES.map((r) => ({ ...r, ok: r.test(form.password) }));
+
+  const validateDetails = () => {
+    const name = form.name.trim();
+    const email = form.email.trim();
+    if (!name || !email || !form.password || !form.confirmPassword) {
+      return 'Fill in every field to continue.';
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'That email address does not look right.';
+    if (passwordChecks.some((c) => !c.ok)) return 'Your password does not meet the requirements below.';
+    if (form.password !== form.confirmPassword) return 'The two passwords do not match.';
+    return '';
   };
 
-  const validateForm = () => {
-    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
-      toast.error('Please fill in all required fields');
-      return false;
-    }
-    
-    if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters');
-      return false;
-    }
-    
-    if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
-      return false;
-    }
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      toast.error('Please enter a valid email address');
-      return false;
-    }
-    
-    return true;
-  };
-
-  const handleSubmit = async (e) => {
+  const handleDetails = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) return;
+    const problem = validateDetails();
+    if (problem) {
+      setFormError(problem);
+      return;
+    }
 
-    setIsLoading(true);
+    setIsSubmitting(true);
+    setFormError('');
     try {
-      const response = await apiClient.post('/auth/register', {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role,
-        phone: formData.phone || null
+      /**
+       * Registration no longer returns a session. The account is created
+       * unverified and a code is emailed; the session is issued once that
+       * code comes back, so the confirmation step cannot be skipped.
+       */
+      await apiClient.post('/auth/register', {
+        name: form.name.trim(),
+        email: form.email.trim().toLowerCase(),
+        password: form.password,
       });
-      
-      toast.success('Registration successful! Please login.');
-      navigate('/login');
+      setStep('verify');
+      setResendIn(45);
+      toast.success('We sent a 6-digit code to your email.');
     } catch (error) {
-      console.error('Registration error:', error);
-      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Registration failed. Please try again.';
-      toast.error(errorMessage);
+      const message =
+        error?.response?.data?.error ||
+        error?.response?.data?.message ||
+        (!error?.response
+          ? 'Cannot reach the server. Check your connection and try again.'
+          : 'Could not create your account. Please try again.');
+      setFormError(message);
+      toast.error(message);
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">Create an Account</CardTitle>
-          <CardDescription>Enter your details to get started</CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full Name *</Label>
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                placeholder="Enter your full name"
-                value={formData.name}
-                onChange={handleChange}
-                disabled={isLoading}
-                required
-              />
-            </div>
+  const handleVerify = async (e) => {
+    e.preventDefault();
+    if (code.length !== OTP_LENGTH) {
+      setFormError(`Enter the ${OTP_LENGTH}-digit code from your email.`);
+      return;
+    }
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email *</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="Enter your email"
-                value={formData.email}
-                onChange={handleChange}
-                disabled={isLoading}
-                required
-              />
-            </div>
+    setIsSubmitting(true);
+    setFormError('');
+    try {
+      const { data } = await apiClient.post('/auth/verify-otp', {
+        email: form.email.trim().toLowerCase(),
+        code,
+      });
+      if (data?.accessToken) {
+        localStorage.setItem('accessToken', data.accessToken);
+        if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
+        if (data.user) localStorage.setItem('user', JSON.stringify(data.user));
+      }
+      // Let the context adopt the new session before leaving the page.
+      await refreshUser();
+      toast.success('Your account is ready.');
+      navigate('/Dashboard', { replace: true });
+    } catch (error) {
+      const message = error?.response?.data?.error || 'That code is not correct.';
+      setFormError(message);
+      toast.error(message);
+      setCode('');
+      codeInputRef.current?.focus();
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone (Optional)</Label>
-              <Input
-                id="phone"
-                name="phone"
-                type="tel"
-                placeholder="Enter your phone number"
-                value={formData.phone}
-                onChange={handleChange}
-                disabled={isLoading}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="password">Password *</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Create a password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
+  const handleResend = async () => {
+    setIsResending(true);
+    setFormError('');
+    try {
+      await apiClient.post('/auth/resend-otp', { email: form.email.trim().toLowerCase() });
+      setResendIn(45);
+      toast.success('A new code is on its way.');
+    } catch {
+      toast.error('Could not send a new code. Try again shortly.');
+    } finally {
+      setIsResending(false);
+    }
+  };
 
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password *</Label>
-              <div className="relative">
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  placeholder="Confirm your password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
+  // --- Verification step ----------------------------------------------------
+  if (step === 'verify') {
+    return (
+      <AuthShell
+        title="Check your email"
+        subtitle={`We sent a ${OTP_LENGTH}-digit code to ${form.email.trim()}.`}
+      >
+        {formError && (
+          <div
+            role="alert"
+            className="mb-5 flex items-start gap-2.5 rounded-xl border border-destructive/30 bg-destructive/10 p-3"
+          >
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+            <p className="text-sm font-medium text-destructive">{formError}</p>
+          </div>
+        )}
 
-            <div className="space-y-2">
-              <Label htmlFor="role">Register as</Label>
-              <Select value={formData.role} onValueChange={handleRoleChange} disabled={isLoading}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="user">User</SelectItem>
-                  <SelectItem value="investor">Investor</SelectItem>
-                  <SelectItem value="advisor">Advisor</SelectItem>
-                  <SelectItem value="organizer">Event Organizer</SelectItem>
-                  <SelectItem value="finfluencer">FinInfluencer</SelectItem>
-                  <SelectItem value="vendor">Vendor</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-          
-          <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating account...
-                </>
-              ) : (
-                <>
-                  <UserPlus className="mr-2 h-4 w-4" />
-                  Create Account
-                </>
-              )}
-            </Button>
-            
-            <p className="text-sm text-muted-foreground text-center">
-              Already have an account?{' '}
-              <Link to="/login" className="text-primary hover:underline font-medium">
-                Sign in
-              </Link>
-            </p>
-          </CardFooter>
+        <div className="mb-6 flex items-center justify-center">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-premium-muted">
+            <MailCheck className="h-7 w-7 text-primary" />
+          </span>
+        </div>
+
+        <form onSubmit={handleVerify} className="space-y-5" noValidate>
+          <div className="space-y-2">
+            <Label htmlFor="code">Verification code</Label>
+            <Input
+              id="code"
+              ref={codeInputRef}
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              maxLength={OTP_LENGTH}
+              placeholder="000000"
+              value={code}
+              // Digits only, so a pasted code with spaces or dashes still works.
+              onChange={(e) => {
+                setCode(e.target.value.replace(/\D/g, '').slice(0, OTP_LENGTH));
+                if (formError) setFormError('');
+              }}
+              disabled={isSubmitting}
+              className="h-14 text-center text-2xl font-bold tracking-[0.5em] tabular-nums"
+            />
+            <p className="text-xs text-muted-foreground">The code expires in 10 minutes.</p>
+          </div>
+
+          <Button
+            type="submit"
+            disabled={isSubmitting || code.length !== OTP_LENGTH}
+            className="h-11 w-full text-base"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none" />
+                Verifying…
+              </>
+            ) : (
+              'Verify and continue'
+            )}
+          </Button>
         </form>
-      </Card>
-    </div>
-  );
-};
 
-export default Register;
+        <div className="mt-6 flex flex-col items-center gap-3 text-sm">
+          <button
+            type="button"
+            onClick={handleResend}
+            disabled={isResending || resendIn > 0}
+            className="font-medium text-primary underline-offset-4 hover:underline disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline"
+          >
+            {resendIn > 0 ? `Send a new code in ${resendIn}s` : isResending ? 'Sending…' : 'Send a new code'}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setStep('details');
+              setCode('');
+              setFormError('');
+            }}
+            className="flex items-center gap-1.5 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Use a different email
+          </button>
+        </div>
+      </AuthShell>
+    );
+  }
+
+  // --- Details step ---------------------------------------------------------
+  return (
+    <AuthShell
+      title="Create your account"
+      subtitle="Join the Protocall investor community."
+      footer={
+        <span className="text-muted-foreground">
+          Already have an account?{' '}
+          <Link to="/login" className="font-semibold text-primary underline-offset-4 hover:underline">
+            Sign in
+          </Link>
+        </span>
+      }
+    >
+      {formError && (
+        <div
+          role="alert"
+          className="mb-5 flex items-start gap-2.5 rounded-xl border border-destructive/30 bg-destructive/10 p-3"
+        >
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+          <p className="text-sm font-medium text-destructive">{formError}</p>
+        </div>
+      )}
+
+      <form onSubmit={handleDetails} className="space-y-5" noValidate>
+        <div className="space-y-2">
+          <Label htmlFor="name">Full name</Label>
+          <Input
+            id="name"
+            name="name"
+            autoComplete="name"
+            placeholder="Your name"
+            value={form.name}
+            onChange={update}
+            disabled={isSubmitting}
+            className="h-11"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            placeholder="you@example.com"
+            value={form.email}
+            onChange={update}
+            disabled={isSubmitting}
+            className="h-11"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <div className="relative">
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="new-password"
+              placeholder="Create a password"
+              value={form.password}
+              onChange={update}
+              disabled={isSubmitting}
+              className="h-11 pr-11"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute right-1 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+
+          {form.password && (
+            <ul className="mt-2 space-y-1">
+              {passwordChecks.map((c) => (
+                <li
+                  key={c.id}
+                  className={`flex items-center gap-2 text-xs ${
+                    c.ok ? 'text-buy-muted-foreground' : 'text-muted-foreground'
+                  }`}
+                >
+                  <Check className={`h-3.5 w-3.5 ${c.ok ? 'opacity-100' : 'opacity-30'}`} />
+                  {c.label}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="confirmPassword">Confirm password</Label>
+          <Input
+            id="confirmPassword"
+            name="confirmPassword"
+            type={showPassword ? 'text' : 'password'}
+            autoComplete="new-password"
+            placeholder="Repeat your password"
+            value={form.confirmPassword}
+            onChange={update}
+            disabled={isSubmitting}
+            className="h-11"
+          />
+          {form.confirmPassword && form.password !== form.confirmPassword && (
+            <p className="text-xs font-medium text-destructive">The two passwords do not match.</p>
+          )}
+        </div>
+
+        <Button type="submit" disabled={isSubmitting} className="h-11 w-full text-base">
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none" />
+              Creating your account…
+            </>
+          ) : (
+            <>
+              <UserPlus className="mr-2 h-4 w-4" />
+              Create account
+            </>
+          )}
+        </Button>
+      </form>
+    </AuthShell>
+  );
+}

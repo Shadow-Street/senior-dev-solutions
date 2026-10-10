@@ -1,120 +1,158 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { authAPI } from '@/lib/apiClient';
+import { useEffect, useState } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import apiClient from '@/lib/apiClient';
+import { useAuth } from '@/components/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { Eye, EyeOff, LogIn, Loader2 } from 'lucide-react';
+import { AlertCircle, Eye, EyeOff, Loader2, LogIn } from 'lucide-react';
 import { toast } from 'sonner';
+import AuthShell from '@/components/auth/AuthShell';
 
-// Social login icons as SVG components
-const GoogleIcon = () => (
-  <svg className="h-5 w-5" viewBox="0 0 24 24">
-    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-  </svg>
-);
+/** Where each role lands after signing in. */
+const ROLE_HOME = {
+  super_admin: '/SuperAdmin',
+  admin: '/AdminPanel',
+  sub_admin: '/AdminPanel',
+  advisor: '/AdvisorDashboard',
+  finfluencer: '/FinfluencerDashboard',
+  portfolio_manager: '/PMDashboard',
+  user: '/Dashboard',
+};
 
-const FacebookIcon = () => (
-  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="#1877F2">
-    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-  </svg>
-);
-
-const Login = () => {
+export default function Login() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    role: 'user'
-  });
+  const location = useLocation();
+  const { login, user, loading: authLoading } = useAuth();
+
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState(null);
+  /**
+   * Shown inline above the form.
+   *
+   * A toast alone was not enough here: the only Toaster mounted on this page
+   * used to be the shadcn one, which never renders sonner toasts, so a wrong
+   * password produced complete silence. An inline message cannot be missed,
+   * does not time out, and stays readable for screen readers.
+   */
+  const [formError, setFormError] = useState('');
+
+  /**
+   * Someone who already has a session should not be shown a sign-in form.
+   *
+   * This also covers the cross-tab case: sign in in one tab and a second tab
+   * sitting on /login receives the session through the storage event, so it
+   * should move on rather than keep asking for credentials.
+   */
+  useEffect(() => {
+    if (!authLoading && user) goHome(user);
+    // goHome is stable for this purpose; re-running on user/loading is enough.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authLoading, user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (formError) setFormError('');
   };
 
-  const handleRoleChange = (value) => {
-    setFormData(prev => ({ ...prev, role: value }));
+  /**
+   * Redirect by the role the *server* reported.
+   *
+   * The form used to carry a "Login as" dropdown and route on that. The
+   * backend reads the role from the account and ignores whatever the client
+   * sends, so choosing "Advisor" never granted anything — it only redirected
+   * to a dashboard the person could not open, which read as a broken login.
+   */
+  const goHome = (user) => {
+    const from = location.state?.from?.pathname;
+    if (from && !/^\/(login|register|forgot-password|reset-password)/i.test(from)) {
+      navigate(from, { replace: true });
+      return;
+    }
+    const role = user?.app_role || user?.role || 'user';
+    navigate(ROLE_HOME[role] || '/Dashboard', { replace: true });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!formData.email || !formData.password) {
-      toast.error('Please fill in all fields');
+    setFormError('');
+
+    const email = formData.email.trim();
+    if (!email || !formData.password) {
+      setFormError('Enter your email and password to continue.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setFormError('That email address does not look right.');
       return;
     }
 
     setIsLoading(true);
     try {
-      await authAPI.login(formData.email, formData.password, formData.role);
-      toast.success('Login successful!');
-      navigateByRole(formData.role);
+      // Through the auth context, not authAPI directly: calling the API on its
+      // own stored the token but left the context's `user` null, so the app
+      // shell kept rendering "Guest" and prompting for a login that had
+      // already happened.
+      const data = await login(email, formData.password);
+      toast.success('Welcome back');
+      goHome(data?.user);
     } catch (error) {
-      console.error('Login error:', error);
-      toast.error(error.response?.data?.error || error.response?.data?.message || 'Login failed. Please try again.');
+      const status = error?.response?.status;
+      const serverMessage = error?.response?.data?.error || error?.response?.data?.message;
+      const message =
+        status === 429
+          ? 'Too many attempts. Please wait a minute and try again.'
+          : !error?.response
+            ? 'Cannot reach the server. Check your connection and try again.'
+            : serverMessage || 'Sign in failed. Please try again.';
+      setFormError(message);
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const navigateByRole = (role) => {
-    const roleRoutes = {
-      admin: '/AdminPanel',
-      superadmin: '/SuperAdmin',
-      advisor: '/AdvisorDashboard',
-      investor: '/InvestorDashboard',
-      organizer: '/OrganizerDashboard',
-      finfluencer: '/FinfluencerDashboard',
-      vendor: '/VendorDashboard',
-      user: '/Dashboard'
-    };
-    navigate(roleRoutes[role] || '/Dashboard');
-  };
-
   const handleGoogleLogin = async () => {
     setSocialLoading('google');
+    setFormError('');
     try {
-      // Initialize Google OAuth - this requires the Google Identity Services library
       if (typeof google !== 'undefined' && google.accounts) {
-        google.accounts.oauth2.initTokenClient({
-          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-          scope: 'email profile',
-          callback: async (tokenResponse) => {
-            if (tokenResponse.access_token) {
+        google.accounts.oauth2
+          .initTokenClient({
+            client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+            scope: 'email profile',
+            callback: async (tokenResponse) => {
+              if (!tokenResponse.access_token) return;
               try {
                 const response = await apiClient.post('/auth/google', {
                   accessToken: tokenResponse.access_token,
-                  role: formData.role
                 });
-                
                 localStorage.setItem('accessToken', response.data.accessToken);
+                if (response.data.refreshToken) {
+                  localStorage.setItem('refreshToken', response.data.refreshToken);
+                }
                 localStorage.setItem('user', JSON.stringify(response.data.user));
-                
-                toast.success('Google login successful!');
-                navigateByRole(response.data.user.role);
+                toast.success('Welcome back');
+                goHome(response.data.user);
               } catch (error) {
-                toast.error(error.response?.data?.error || 'Google login failed');
+                const message = error.response?.data?.error || 'Google sign-in failed.';
+                setFormError(message);
+                toast.error(message);
               }
-            }
-          },
-        }).requestAccessToken();
+            },
+          })
+          .requestAccessToken();
       } else {
-        toast.error('Google Sign-In is not configured. Please add Google Client ID.');
+        const message = 'Google sign-in is not configured for this environment.';
+        setFormError(message);
+        toast.error(message);
       }
     } catch (error) {
       console.error('Google login error:', error);
-      toast.error('Google login failed. Please try again.');
+      setFormError('Google sign-in failed. Please try again.');
     } finally {
       setSocialLoading(null);
     }
@@ -122,185 +160,187 @@ const Login = () => {
 
   const handleFacebookLogin = async () => {
     setSocialLoading('facebook');
+    setFormError('');
     try {
-      // Initialize Facebook SDK login
       if (typeof FB !== 'undefined') {
-        FB.login(async (response) => {
-          if (response.authResponse) {
+        FB.login(
+          async (response) => {
+            if (!response.authResponse) return;
             try {
               const result = await apiClient.post('/auth/facebook', {
                 accessToken: response.authResponse.accessToken,
-                role: formData.role
               });
-              
               localStorage.setItem('accessToken', result.data.accessToken);
+              if (result.data.refreshToken) {
+                localStorage.setItem('refreshToken', result.data.refreshToken);
+              }
               localStorage.setItem('user', JSON.stringify(result.data.user));
-              
-              toast.success('Facebook login successful!');
-              navigateByRole(result.data.user.role);
+              toast.success('Welcome back');
+              goHome(result.data.user);
             } catch (error) {
-              toast.error(error.response?.data?.error || 'Facebook login failed');
+              const message = error.response?.data?.error || 'Facebook sign-in failed.';
+              setFormError(message);
+              toast.error(message);
             }
-          }
-        }, { scope: 'email,public_profile' });
+          },
+          { scope: 'email,public_profile' }
+        );
       } else {
-        toast.error('Facebook Sign-In is not configured. Please add Facebook App ID.');
+        const message = 'Facebook sign-in is not configured for this environment.';
+        setFormError(message);
+        toast.error(message);
       }
     } catch (error) {
       console.error('Facebook login error:', error);
-      toast.error('Facebook login failed. Please try again.');
+      setFormError('Facebook sign-in failed. Please try again.');
     } finally {
       setSocialLoading(null);
     }
   };
 
+  const busy = isLoading || Boolean(socialLoading);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-          <CardDescription>Enter your credentials to access your account</CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            {/* Social Login Buttons */}
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleGoogleLogin}
-                disabled={socialLoading !== null || isLoading}
-                className="w-full"
-              >
-                {socialLoading === 'google' ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    <GoogleIcon />
-                    <span className="ml-2">Google</span>
-                  </>
-                )}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleFacebookLogin}
-                disabled={socialLoading !== null || isLoading}
-                className="w-full"
-              >
-                {socialLoading === 'facebook' ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    <FacebookIcon />
-                    <span className="ml-2">Facebook</span>
-                  </>
-                )}
-              </Button>
-            </div>
+    <AuthShell
+      title="Welcome back"
+      subtitle="Sign in to your Protocall account."
+      footer={
+        <span className="text-muted-foreground">
+          Don&rsquo;t have an account?{' '}
+          <Link
+            to="/register"
+            className="font-semibold text-primary underline-offset-4 hover:underline"
+          >
+            Create one
+          </Link>
+        </span>
+      }
+    >
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleGoogleLogin}
+          disabled={busy}
+          className="h-11"
+        >
+          {socialLoading === 'google' ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none" />
+          ) : (
+            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.76h3.57c2.08-1.92 3.28-4.74 3.28-8.09Z" />
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.76c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23Z" />
+              <path fill="#FBBC05" d="M5.84 14.11a6.6 6.6 0 0 1 0-4.22V7.05H2.18a11 11 0 0 0 0 9.9l3.66-2.84Z" />
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 0 0 2.18 7.05l3.66 2.84c.87-2.6 3.3-4.51 6.16-4.51Z" />
+            </svg>
+          )}
+          Google
+        </Button>
 
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <Separator className="w-full" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
-              </div>
-            </div>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleFacebookLogin}
+          disabled={busy}
+          className="h-11"
+        >
+          {socialLoading === 'facebook' ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none" />
+          ) : (
+            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true">
+              <path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07Z" />
+            </svg>
+          )}
+          Facebook
+        </Button>
+      </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="Enter your email"
-                value={formData.email}
-                onChange={handleChange}
-                disabled={isLoading}
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <Link 
-                  to="/forgot-password" 
-                  className="text-xs text-primary hover:underline"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <div className="relative">
-                <Input
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter your password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center" aria-hidden="true">
+          <span className="w-full border-t border-border" />
+        </div>
+        <div className="relative flex justify-center">
+          <span className="bg-card px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            or continue with email
+          </span>
+        </div>
+      </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="role">Login as</Label>
-              <Select value={formData.role} onValueChange={handleRoleChange} disabled={isLoading}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="user">User</SelectItem>
-                  <SelectItem value="investor">Investor</SelectItem>
-                  <SelectItem value="advisor">Advisor</SelectItem>
-                  <SelectItem value="organizer">Event Organizer</SelectItem>
-                  <SelectItem value="finfluencer">FinInfluencer</SelectItem>
-                  <SelectItem value="vendor">Vendor</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="superadmin">Super Admin</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-          
-          <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={isLoading || socialLoading !== null}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                <>
-                  <LogIn className="mr-2 h-4 w-4" />
-                  Sign In
-                </>
-              )}
-            </Button>
-            
-            <p className="text-sm text-muted-foreground text-center">
-              Don't have an account?{' '}
-              <Link to="/register" className="text-primary hover:underline font-medium">
-                Sign up
-              </Link>
-            </p>
-          </CardFooter>
-        </form>
-      </Card>
-    </div>
+      {formError && (
+        <div
+          role="alert"
+          className="mb-5 flex items-start gap-2.5 rounded-xl border border-destructive/30 bg-destructive/10 p-3"
+        >
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+          <p className="text-sm font-medium text-destructive">{formError}</p>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            placeholder="you@example.com"
+            value={formData.email}
+            onChange={handleChange}
+            disabled={busy}
+            aria-invalid={Boolean(formError)}
+            className="h-11"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">Password</Label>
+            <Link
+              to="/forgot-password"
+              className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
+          <div className="relative">
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="current-password"
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={handleChange}
+              disabled={busy}
+              aria-invalid={Boolean(formError)}
+              className="h-11 pr-11"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute right-1 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+        </div>
+
+        <Button type="submit" disabled={busy} className="h-11 w-full text-base">
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none" />
+              Signing in…
+            </>
+          ) : (
+            <>
+              <LogIn className="mr-2 h-4 w-4" />
+              Sign in
+            </>
+          )}
+        </Button>
+      </form>
+    </AuthShell>
   );
-};
-
-export default Login;
+}

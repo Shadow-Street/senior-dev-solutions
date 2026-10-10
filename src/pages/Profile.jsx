@@ -15,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { useAuth } from "@/components/context/AuthContext";
 
 import ProfileGeneralSettings from "../components/profile/ProfileGeneralSettings";
 import ProfileReferralSection from "../components/profile/ProfileReferralSection";
@@ -24,22 +25,98 @@ import ProfileTrustScore from "../components/profile/ProfileTrustScore";
 import ProfileCreditsSection from "../components/profile/ProfileCreditsSection";
 
 export default function Profile() {
-  // Mock user for demo purposes - no authentication required
-  const mockUser = {
-    id: "demo-user",
-    display_name: "Demo User",
-    email: "demo@protocall.com",
-    app_role: "trader",
-    profile_image_url: null
-  };
+  /**
+   * This page used to render a hardcoded `mockUser` — "Demo User",
+   * demo@protocall.com — for every visitor, with a comment saying no
+   * authentication was required. Whoever you signed in as, the profile showed
+   * someone else's details, which is what made it look like accounts were
+   * being mixed up. Everything here now comes from the authenticated session.
+   */
+  const { user: authUser, loading: authLoading, refreshUser } = useAuth();
 
-  const [user, setUser] = useState(mockUser);
+  const [user, setUser] = useState(authUser);
   const [referrals, setReferrals] = useState([]);
   const [badges, setBadges] = useState([]);
   const [subscription, setSubscription] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Show profile immediately with mock data - no loading, no authentication
+  useEffect(() => {
+    setUser(authUser);
+  }, [authUser]);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!authUser?.id) {
+      setReferrals([]);
+      setBadges([]);
+      setSubscription(null);
+      setIsLoading(false);
+      return undefined;
+    }
+
+    // Everything is scoped to the signed-in id, so one account can never be
+    // shown another's referrals, badges or plan.
+    (async () => {
+      setIsLoading(true);
+      const [ref, bdg, sub] = await Promise.all([
+        Referral.filter({ referrer_id: authUser.id }).catch(() => []),
+        ReferralBadge.filter({ user_id: authUser.id }).catch(() => []),
+        Subscription.filter({ user_id: authUser.id }).catch(() => []),
+      ]);
+      if (cancelled) return;
+      setReferrals(Array.isArray(ref) ? ref : []);
+      setBadges(Array.isArray(bdg) ? bdg : []);
+      setSubscription(Array.isArray(sub) ? sub[0] || null : sub || null);
+      setIsLoading(false);
+    })();
+
+    return () => { cancelled = true; };
+  }, [authUser?.id]);
+
+  /** Persist a profile edit, then re-read the session so every surface agrees. */
+  const handleUserUpdate = async (updated) => {
+    setUser(updated);
+    await refreshUser();
+  };
+
+  if (authLoading) {
+    return (
+      <div className="w-full bg-background p-6">
+        <div className="mx-auto max-w-4xl space-y-6">
+          <div className="space-y-4 text-center">
+            <Skeleton className="mx-auto h-24 w-24 rounded-full" />
+            <Skeleton className="mx-auto h-7 w-48" />
+            <Skeleton className="mx-auto h-4 w-64" />
+          </div>
+          <Skeleton className="h-96 w-full rounded-xl" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!authUser) {
+    return (
+      <div className="w-full bg-background p-6">
+        <Card className="mx-auto max-w-md border border-border bg-card text-center shadow-sm">
+          <CardContent className="space-y-4 p-8">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-premium-muted">
+              <UserIcon className="h-7 w-7 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-foreground">Sign in to view your profile</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Your referrals, plan and trust score are tied to your account.
+              </p>
+            </div>
+            <Button asChild className="w-full">
+              <Link to={createPageUrl("Login")}>Sign in</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full bg-background p-6">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -101,7 +178,7 @@ export default function Profile() {
               </TabsList>
 
               <TabsContent value="general" className="mt-6">
-                <ProfileGeneralSettings user={user} onUserUpdate={setUser} />
+                <ProfileGeneralSettings user={user} onUserUpdate={handleUserUpdate} />
               </TabsContent>
 
               <TabsContent value="referrals" className="mt-6">

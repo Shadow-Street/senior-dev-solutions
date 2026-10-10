@@ -2372,12 +2372,12 @@ function SettingsView() {
         const settingsMap = {};
 
         allSettings.forEach(setting => {
-          if (setting.setting_key.startsWith('fund_')) {
-            const key = setting.setting_key.replace('fund_', '');
-            settingsMap[key] = setting.setting_value === 'true' ? true :
-              setting.setting_value === 'false' ? false :
-                !isNaN(setting.setting_value) ? parseFloat(setting.setting_value) :
-                  setting.setting_value;
+          if (setting.key.startsWith('fund_')) {
+            const key = setting.key.replace('fund_', '');
+            settingsMap[key] = setting.value === 'true' ? true :
+              setting.value === 'false' ? false :
+                !isNaN(setting.value) ? parseFloat(setting.value) :
+                  setting.value;
           }
         });
 
@@ -2423,14 +2423,14 @@ function SettingsView() {
 
   const saveSetting = async (key, value) => {
     try {
-      const existing = await PlatformSetting.filter({ setting_key: key }).catch(() => []);
+      const existing = await PlatformSetting.filter({ key: key }).catch(() => []);
 
       if (existing.length > 0) {
-        await PlatformSetting.update(existing[0].id, { setting_value: value });
+        await PlatformSetting.update(existing[0].id, { value: value });
       } else {
         await PlatformSetting.create({
-          setting_key: key,
-          setting_value: value,
+          key: key,
+          value: value,
           description: getSettingDescription(key)
         });
       }

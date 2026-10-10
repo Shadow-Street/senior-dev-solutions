@@ -48,7 +48,7 @@ export default function PlatformSettings({ refreshEntityConfigs }) {
     try {
       const fetchedSettings = await PlatformSetting.list();
       const settingsMap = fetchedSettings.reduce((acc, setting) => {
-        acc[setting.setting_key] = setting.setting_value;
+        acc[setting.key] = setting.value;
         return acc;
       }, {});
       setSettings(settingsMap);
@@ -73,12 +73,12 @@ export default function PlatformSettings({ refreshEntityConfigs }) {
     try {
       // Fetch all existing settings to find their IDs
       const existingSettings = await PlatformSetting.list();
-      const existingSettingsMap = new Map(existingSettings.map((s) => [s.setting_key, s.id]));
+      const existingSettingsMap = new Map(existingSettings.map((s) => [s.key, s.id]));
 
       const promises = Object.entries(newSettingsToSave).map(([key, value]) => {
         // Only save if the value is defined and not null
         if (value !== undefined && value !== null) {
-          const payload = { setting_key: key, setting_value: String(value) };
+          const payload = { key: key, value: String(value) };
           const existingId = existingSettingsMap.get(key);
 
           if (existingId) {
@@ -110,11 +110,11 @@ export default function PlatformSettings({ refreshEntityConfigs }) {
     setIsSaving(true);
     try {
       const existingSettings = await PlatformSetting.list();
-      const existingSettingsMap = new Map(existingSettings.map((s) => [s.setting_key, s.id]));
+      const existingSettingsMap = new Map(existingSettings.map((s) => [s.key, s.id]));
 
       const promises = Object.entries(settings).map(([key, value]) => {
         if (value !== undefined && value !== null) {
-          const payload = { setting_key: key, setting_value: String(value) };
+          const payload = { key: key, value: String(value) };
           const existingId = existingSettingsMap.get(key);
 
           if (existingId) {
@@ -126,8 +126,15 @@ export default function PlatformSettings({ refreshEntityConfigs }) {
         return Promise.resolve();
       });
 
-      await Promise.all(promises);
-      toast.success("Platform settings saved successfully!");
+      const written = (await Promise.all(promises)).filter(Boolean).length;
+      // "Saved successfully" with nothing written is worse than an error: the
+      // edit is lost and the screen says it is safe. This fires only when the
+      // panel in view has lifted its values up; otherwise it says so.
+      if (written === 0) {
+        toast.info("Nothing to save — use the Save button inside the section first.");
+      } else {
+        toast.success(`Saved ${written} setting${written === 1 ? "" : "s"}.`);
+      }
       await loadSettings();
     } catch (error) {
       console.error("Error saving settings:", error);

@@ -100,14 +100,14 @@ export const usePlatformSettings = () => {
           }
         } else {
           const settingsMap = fetchedSettings.reduce((acc, setting) => {
-            if (setting.setting_value === 'true') {
-              acc[setting.setting_key] = true;
-            } else if (setting.setting_value === 'false') {
-              acc[setting.setting_key] = false;
-            } else if (!isNaN(setting.setting_value) && setting.setting_value !== '') {
-              acc[setting.setting_key] = Number(setting.setting_value);
+            if (setting.value === 'true') {
+              acc[setting.key] = true;
+            } else if (setting.value === 'false') {
+              acc[setting.key] = false;
+            } else if (!isNaN(setting.value) && setting.value !== '') {
+              acc[setting.key] = Number(setting.value);
             } else {
-              acc[setting.setting_key] = setting.setting_value;
+              acc[setting.key] = setting.value;
             }
             return acc;
           }, {});

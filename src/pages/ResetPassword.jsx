@@ -1,285 +1,222 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import apiClient from '@/lib/apiClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Eye, EyeOff, Lock, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Check, Eye, EyeOff, KeyRound, Loader2, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
+import AuthShell from '@/components/auth/AuthShell';
 
-const ResetPassword = () => {
+const PASSWORD_RULES = [
+  { id: 'length', label: 'At least 8 characters', test: (v) => v.length >= 8 },
+  { id: 'letter', label: 'A letter', test: (v) => /[a-zA-Z]/.test(v) },
+  { id: 'number', label: 'A number', test: (v) => /\d/.test(v) },
+];
+
+export default function ResetPassword() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get('token');
-  
-  const [formData, setFormData] = useState({
-    password: '',
-    confirmPassword: '',
-    code: ''
-  });
+  const [params] = useSearchParams();
+
+  // Both come from the emailed link: /reset-password?token=…&email=…
+  const token = params.get('token') || '';
+  const email = (params.get('email') || '').toLowerCase();
+
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(true);
-  const [isValid, setIsValid] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [useCode, setUseCode] = useState(!token);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [done, setDone] = useState(false);
 
+  const checks = useMemo(
+    () => PASSWORD_RULES.map((r) => ({ ...r, ok: r.test(password) })),
+    [password]
+  );
+
+  // Send the person back to sign in shortly after a successful reset, since
+  // every existing session for the account has just been revoked.
   useEffect(() => {
-    if (token) {
-      verifyToken();
-    } else {
-      setIsVerifying(false);
-    }
-  }, [token]);
-
-  const verifyToken = async () => {
-    try {
-      await apiClient.post('/auth/verify-reset-token', { token });
-      setIsValid(true);
-    } catch (error) {
-      console.error('Invalid token:', error);
-      setIsValid(false);
-    } finally {
-      setIsVerifying(false);
-    }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const validateForm = () => {
-    if (!formData.password) {
-      toast.error('Please enter a new password');
-      return false;
-    }
-    
-    if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters');
-      return false;
-    }
-    
-    if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
-      return false;
-    }
-
-    if (useCode && !formData.code) {
-      toast.error('Please enter the reset code');
-      return false;
-    }
-    
-    return true;
-  };
+    if (!done) return undefined;
+    const t = setTimeout(() => navigate('/login', { replace: true }), 4000);
+    return () => clearTimeout(t);
+  }, [done, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) return;
 
-    setIsLoading(true);
+    if (checks.some((c) => !c.ok)) {
+      setFormError('Your new password does not meet the requirements below.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setFormError('The two passwords do not match.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setFormError('');
     try {
-      const payload = {
-        password: formData.password,
-        ...(useCode ? { code: formData.code } : { token })
-      };
-      
-      await apiClient.post('/auth/reset-password', payload);
-      setIsSuccess(true);
-      toast.success('Password reset successfully!');
-      
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
+      await apiClient.post('/auth/reset-password', { email, token, password });
+      setDone(true);
+      toast.success('Your password has been changed.');
     } catch (error) {
-      console.error('Reset password error:', error);
-      toast.error(error.response?.data?.error || 'Failed to reset password. Please try again.');
+      const message = !error?.response
+        ? 'Cannot reach the server. Check your connection and try again.'
+        : error?.response?.data?.error || 'Could not reset your password. Please try again.';
+      setFormError(message);
+      toast.error(message);
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  if (isVerifying) {
+  // A link that arrived without its parameters cannot be completed; say so
+  // rather than showing a form that is guaranteed to fail on submit.
+  if (!token || !email) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-md">
-          <CardContent className="py-10 text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-            <p className="mt-4 text-muted-foreground">Verifying reset link...</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  if (isSuccess) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1 text-center">
-            <div className="mx-auto w-12 h-12 bg-buy-muted dark:bg-buy/20 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle className="h-6 w-6 text-buy-muted-foreground" />
-            </div>
-            <CardTitle className="text-2xl font-bold">Password Reset!</CardTitle>
-            <CardDescription>
-              Your password has been successfully reset
-            </CardDescription>
-          </CardHeader>
-          <CardFooter className="justify-center">
-            <p className="text-sm text-muted-foreground">
-              Redirecting to login...
+      <AuthShell
+        title="This link is incomplete"
+        subtitle="The reset link is missing information, which usually means it was clipped by an email client."
+      >
+        <div className="space-y-4">
+          <div
+            role="alert"
+            className="flex items-start gap-2.5 rounded-xl border border-destructive/30 bg-destructive/10 p-3"
+          >
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+            <p className="text-sm font-medium text-destructive">
+              Request a new link and open it directly from the email.
             </p>
-          </CardFooter>
-        </Card>
-      </div>
+          </div>
+          <Button asChild className="h-11 w-full">
+            <Link to="/forgot-password">Request a new link</Link>
+          </Button>
+        </div>
+      </AuthShell>
     );
   }
 
-  if (token && !isValid) {
+  if (done) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1 text-center">
-            <div className="mx-auto w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mb-4">
-              <XCircle className="h-6 w-6 text-destructive" />
-            </div>
-            <CardTitle className="text-2xl font-bold">Invalid Link</CardTitle>
-            <CardDescription>
-              This password reset link is invalid or has expired
-            </CardDescription>
-          </CardHeader>
-          <CardFooter className="flex flex-col space-y-4">
-            <Button 
-              className="w-full"
-              onClick={() => navigate('/forgot-password')}
-            >
-              Request New Link
-            </Button>
-            <Link to="/login" className="text-sm text-muted-foreground hover:text-primary">
-              Back to Login
-            </Link>
-          </CardFooter>
-        </Card>
-      </div>
+      <AuthShell title="Password changed" subtitle="You can sign in with your new password now.">
+        <div className="mb-6 flex items-center justify-center">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-buy-muted">
+            <ShieldCheck className="h-7 w-7 text-buy-muted-foreground" />
+          </span>
+        </div>
+        <p className="mb-5 text-center text-sm text-muted-foreground">
+          For safety, every device that was signed in to this account has been signed out.
+        </p>
+        <Button asChild className="h-11 w-full">
+          <Link to="/login">Go to sign in</Link>
+        </Button>
+      </AuthShell>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">Reset Password</CardTitle>
-          <CardDescription>
-            {useCode ? 'Enter the code from your email and new password' : 'Enter your new password'}
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            {useCode && (
-              <div className="space-y-2">
-                <Label htmlFor="code">Reset Code</Label>
-                <Input
-                  id="code"
-                  name="code"
-                  type="text"
-                  placeholder="Enter 6-digit code"
-                  value={formData.code}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                  maxLength={6}
-                  className="text-center text-lg tracking-widest"
-                />
-              </div>
-            )}
+    <AuthShell
+      title="Choose a new password"
+      subtitle={`Setting a new password for ${email}.`}
+      footer={
+        <Link
+          to="/login"
+          className="inline-flex items-center gap-1.5 font-medium text-primary underline-offset-4 hover:underline"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back to sign in
+        </Link>
+      }
+    >
+      {formError && (
+        <div
+          role="alert"
+          className="mb-5 flex items-start gap-2.5 rounded-xl border border-destructive/30 bg-destructive/10 p-3"
+        >
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+          <p className="text-sm font-medium text-destructive">{formError}</p>
+        </div>
+      )}
 
-            <div className="space-y-2">
-              <Label htmlFor="password">New Password</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter new password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                  className="pl-10"
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
+      <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+        <div className="space-y-2">
+          <Label htmlFor="password">New password</Label>
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="new-password"
+              placeholder="Create a new password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (formError) setFormError('');
+              }}
+              disabled={isSubmitting}
+              className="h-11 pr-11"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute right-1 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+
+          {password && (
+            <ul className="mt-2 space-y-1">
+              {checks.map((c) => (
+                <li
+                  key={c.id}
+                  className={`flex items-center gap-2 text-xs ${
+                    c.ok ? 'text-buy-muted-foreground' : 'text-muted-foreground'
+                  }`}
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
+                  <Check className={`h-3.5 w-3.5 ${c.ok ? 'opacity-100' : 'opacity-30'}`} />
+                  {c.label}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  placeholder="Confirm new password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                  className="pl-10"
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-          
-          <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Resetting...
-                </>
-              ) : (
-                'Reset Password'
-              )}
-            </Button>
+        <div className="space-y-2">
+          <Label htmlFor="confirmPassword">Confirm new password</Label>
+          <Input
+            id="confirmPassword"
+            type={showPassword ? 'text' : 'password'}
+            autoComplete="new-password"
+            placeholder="Repeat your new password"
+            value={confirmPassword}
+            onChange={(e) => {
+              setConfirmPassword(e.target.value);
+              if (formError) setFormError('');
+            }}
+            disabled={isSubmitting}
+            className="h-11"
+          />
+          {confirmPassword && password !== confirmPassword && (
+            <p className="text-xs font-medium text-destructive">The two passwords do not match.</p>
+          )}
+        </div>
 
-            {!token && (
-              <button
-                type="button"
-                className="text-sm text-muted-foreground hover:text-primary"
-                onClick={() => setUseCode(!useCode)}
-              >
-                {useCode ? 'Have a reset link?' : 'Use reset code instead'}
-              </button>
-            )}
-            
-            <Link to="/login" className="text-sm text-muted-foreground hover:text-primary">
-              Back to Login
-            </Link>
-          </CardFooter>
-        </form>
-      </Card>
-    </div>
+        <Button type="submit" disabled={isSubmitting} className="h-11 w-full text-base">
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none" />
+              Saving…
+            </>
+          ) : (
+            <>
+              <KeyRound className="mr-2 h-4 w-4" />
+              Change password
+            </>
+          )}
+        </Button>
+      </form>
+    </AuthShell>
   );
-};
-
-export default ResetPassword;
+}

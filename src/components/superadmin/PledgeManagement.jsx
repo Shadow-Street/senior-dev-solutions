@@ -41,8 +41,8 @@ export default function PledgeManagement({ user }) {
   const loadSettings = async () => {
     try {
       const settings = await PlatformSetting.list().catch(() => []);
-      const advisorPledgeSetting = settings.find(s => s.setting_key === 'advisor_pledge_management_enabled');
-      setAdvisorPledgeEnabled(advisorPledgeSetting?.setting_value === 'true');
+      const advisorPledgeSetting = settings.find(s => s.key === 'advisor_pledge_management_enabled');
+      setAdvisorPledgeEnabled(advisorPledgeSetting?.value === 'true');
     } catch (error) {
       console.error('Error loading settings:', error);
     } finally {
@@ -89,16 +89,16 @@ export default function PledgeManagement({ user }) {
   const handleToggleAdvisorPledge = async (enabled) => {
     try {
       const settings = await PlatformSetting.list().catch(() => []);
-      const existingSetting = settings.find(s => s.setting_key === 'advisor_pledge_management_enabled');
+      const existingSetting = settings.find(s => s.key === 'advisor_pledge_management_enabled');
       
       if (existingSetting) {
         await PlatformSetting.update(existingSetting.id, {
-          setting_value: enabled ? 'true' : 'false'
+          value: enabled ? 'true' : 'false'
         });
       } else {
         await PlatformSetting.create({
-          setting_key: 'advisor_pledge_management_enabled',
-          setting_value: enabled ? 'true' : 'false',
+          key: 'advisor_pledge_management_enabled',
+          value: enabled ? 'true' : 'false',
           description: 'Enable/disable Advisor Pledge Management feature visibility'
         });
       }

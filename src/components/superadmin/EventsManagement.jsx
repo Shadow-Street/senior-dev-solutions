@@ -137,7 +137,7 @@ export default function EventsManagement() {
       // Batch 4: Platform settings
       const settings = await PlatformSetting.list().catch(() => []);
       const settingsMap = settings.reduce((acc, setting) => {
-        acc[setting.setting_key] = setting.setting_value;
+        acc[setting.key] = setting.value;
         return acc;
       }, {});
       setPlatformSettings(settingsMap);

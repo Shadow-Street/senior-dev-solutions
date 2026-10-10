@@ -13,6 +13,29 @@ class EmailService {
         });
     }
 
+    /**
+     * The envelope sender.
+     *
+     * This used to be built as `"<SMTP_FROM>" <SMTP_USER>`, which put the SMTP
+     * *username* inside the angle brackets. On a provider where the username
+     * is an email address that happens to work; on AWS SES it is a credential
+     * id like `inp-hv3f3p74b44mlg2l6wwfh5eh`, so every message was rejected
+     * with `501 Invalid MAIL FROM address provided` — silently, because
+     * sendEmail swallows its own errors. No email this application sent was
+     * ever delivered.
+     *
+     * The address now comes from the configured sender; the username is only
+     * a last resort, for providers where the two really are the same.
+     */
+    get fromAddress() {
+        return (
+            process.env.EMAIL_FROM ||
+            process.env.SMTP_FROM ||
+            process.env.SMTP_USER ||
+            ''
+        );
+    }
+
     async sendEmail(to, subject, html) {
         try {
             if (!process.env.SMTP_USER) {
@@ -20,8 +43,19 @@ class EmailService {
                 return;
             }
 
+            const address = this.fromAddress;
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)) {
+                // Fail loudly in the log rather than at the SMTP conversation,
+                // where the real cause is much harder to recognise.
+                console.error(
+                    `[email] EMAIL_FROM/SMTP_FROM is not a valid address ("${address}"). ` +
+                    `Not sending "${subject}".`
+                );
+                return null;
+            }
+
             const info = await this.transporter.sendMail({
-                from: `"${process.env.SMTP_FROM || 'Trading Platform'}" <${process.env.SMTP_USER}>`,
+                from: `"${process.env.EMAIL_FROM_NAME || 'Protocall'}" <${address}>`,
                 to,
                 subject,
                 html,
@@ -37,6 +71,42 @@ class EmailService {
     }
 
     // == Templates ==
+
+    /**
+     * Registration OTP.
+     *
+     * Inline styles and a table-free layout, because email clients strip
+     * stylesheets; the code is shown large and letter-spaced so it can be read
+     * off a phone and typed without transcription errors.
+     */
+    getOtpTemplate(userName, code, minutes) {
+        return `
+      <div style="font-family: Arial, Helvetica, sans-serif; max-width: 560px; margin: 0 auto; padding: 32px; border: 1px solid #E6E2D6; border-radius: 12px; background: #ffffff;">
+        <h2 style="color: #6D28D9; margin: 0 0 16px;">Confirm your email</h2>
+        <p style="color: #1D1B26; font-size: 15px;">Hi ${userName},</p>
+        <p style="color: #1D1B26; font-size: 15px;">Use this code to finish creating your Protocall account:</p>
+        <p style="font-size: 34px; font-weight: 700; letter-spacing: 10px; color: #6D28D9; background: #F2EDFE; padding: 18px; text-align: center; border-radius: 10px; margin: 24px 0;">${code}</p>
+        <p style="color: #6B6878; font-size: 14px;">The code expires in ${minutes} minutes. If you did not sign up for Protocall, you can ignore this email and nothing will happen.</p>
+        <p style="color: #6B6878; font-size: 12px; border-top: 1px solid #E6E2D6; padding-top: 16px; margin-top: 24px;">Protocall &middot; Investments are subject to market risk.</p>
+      </div>`;
+    }
+
+    /** Password reset link. The token is in the URL and never shown as text. */
+    getPasswordResetTemplate(userName, link, minutes) {
+        return `
+      <div style="font-family: Arial, Helvetica, sans-serif; max-width: 560px; margin: 0 auto; padding: 32px; border: 1px solid #E6E2D6; border-radius: 12px; background: #ffffff;">
+        <h2 style="color: #6D28D9; margin: 0 0 16px;">Reset your password</h2>
+        <p style="color: #1D1B26; font-size: 15px;">Hi ${userName},</p>
+        <p style="color: #1D1B26; font-size: 15px;">Click the button below to choose a new password.</p>
+        <p style="text-align: center; margin: 28px 0;">
+          <a href="${link}" style="background: #6D28D9; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 10px; font-weight: 700; display: inline-block;">Choose a new password</a>
+        </p>
+        <p style="color: #6B6878; font-size: 13px; word-break: break-all;">If the button does not work, paste this into your browser:<br>${link}</p>
+        <p style="color: #6B6878; font-size: 14px;">This link expires in ${minutes} minutes and can be used once. <strong>If you did not ask to reset your password, ignore this email</strong> &mdash; your current password still works.</p>
+        <p style="color: #6B6878; font-size: 12px; border-top: 1px solid #E6E2D6; padding-top: 16px; margin-top: 24px;">Protocall &middot; Investments are subject to market risk.</p>
+      </div>`;
+    }
+
 
     getWelcomeEmailTemplate(userName) {
         return `

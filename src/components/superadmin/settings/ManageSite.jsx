@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 
 import DisableContentCreatorsPage from '../lifecycle/DisableContentCreatorsPage';
 
-export default function ManageSite({ settings, onChange }) {
+export default function ManageSite({ settings, onChange, onSaveSpecificSettings }) {
   const [localSettings, setLocalSettings] = useState({
     site_name: settings?.site_name || 'Protocol',
     site_description: settings?.site_description || 'Advanced Financial Trading Platform',
@@ -40,11 +40,25 @@ export default function ManageSite({ settings, onChange }) {
     });
   }, [settings]);
 
+  /**
+   * Persist, rather than only lift state.
+   *
+   * This used to call `onChange(localSettings)` and then report success. That
+   * only copies the values into the parent's in-memory state — nothing was
+   * written, so every edit was lost on reload while the screen said it had
+   * saved. The parent already passes down a function that writes to the API;
+   * it simply was not being used.
+   */
   const handleSave = async () => {
     setIsSaving(true);
     try {
       onChange(localSettings);
-      toast.success('Site settings updated successfully!');
+      if (typeof onSaveSpecificSettings === 'function') {
+        await onSaveSpecificSettings(localSettings);
+        // The parent raises its own confirmation once the write lands.
+      } else {
+        toast.success('Site settings updated.');
+      }
     } catch (error) {
       console.error('Error saving site settings:', error);
       toast.error('Failed to save site settings');

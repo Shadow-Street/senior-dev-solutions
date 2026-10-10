@@ -168,7 +168,7 @@ export default function EventAnalytics({ permissions, events: propEvents, ticket
 
       // Process platform settings
       const settingsMap = settingsData.reduce((acc, setting) => {
-        acc[setting.setting_key] = setting.setting_value;
+        acc[setting.key] = setting.value;
         return acc;
       }, {});
 

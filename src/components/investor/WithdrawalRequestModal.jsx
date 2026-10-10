@@ -36,11 +36,11 @@ export default function WithdrawalRequestModal({ investor, wallet, allocations, 
 
       // Load settings
       const settings = await PlatformSetting.list();
-      const withdrawalsSetting = settings.find(s => s.setting_key === 'fund_withdrawals_enabled');
-      const noticePeriodSetting = settings.find(s => s.setting_key === 'fund_min_notice_period_days');
+      const withdrawalsSetting = settings.find(s => s.key === 'fund_withdrawals_enabled');
+      const noticePeriodSetting = settings.find(s => s.key === 'fund_min_notice_period_days');
 
-      setWithdrawalsEnabled(withdrawalsSetting?.setting_value !== 'false');
-      const minNoticePeriod = noticePeriodSetting ? parseInt(noticePeriodSetting.setting_value) : 30;
+      setWithdrawalsEnabled(withdrawalsSetting?.value !== 'false');
+      const minNoticePeriod = noticePeriodSetting ? parseInt(noticePeriodSetting.value) : 30;
       setNoticePeriodDays(minNoticePeriod);
 
     } catch (error) {

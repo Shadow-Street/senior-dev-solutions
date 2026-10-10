@@ -41,8 +41,8 @@ export default function PayoutRequestModal({ investor, wallet, isOpen, onClose, 
   const loadSettings = async () => {
     try {
       const settings = await PlatformSetting.list();
-      const payoutsSetting = settings.find(s => s.setting_key === 'fund_payouts_enabled');
-      setPayoutsEnabled(payoutsSetting?.setting_value !== 'false');
+      const payoutsSetting = settings.find(s => s.key === 'fund_payouts_enabled');
+      setPayoutsEnabled(payoutsSetting?.value !== 'false');
     } catch (error) {
       console.error('Error loading settings:', error);
       toast.error('Failed to load payout settings.');

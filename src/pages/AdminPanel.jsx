@@ -39,19 +39,21 @@ export default function AdminPanel() {
                 const user = await User.me();
                 if (!isMountedRef.current) return;
 
-                if (user && !user.is_admin) {
-                    // Auto-grant (dev convenience, similar to original)
-                    try {
-                        await User.updateMyUserData({ is_admin: true, app_role: 'super_admin' });
-                        setCurrentUser({ ...user, is_admin: true, app_role: 'super_admin' });
-                    } catch (e) {
-                        setCurrentUser({ ...user, is_admin: true, app_role: 'super_admin' });
-                    }
-                } else if (user) {
-                    setCurrentUser(user);
-                } else {
+                if (!user) {
                     window.location.href = createPageUrl("Dashboard");
+                    return;
                 }
+
+                /**
+                 * There was an "auto-grant (dev convenience)" branch here that
+                 * called `updateMyUserData({ is_admin: true, app_role:
+                 * 'super_admin' })` for any visitor who was not already an
+                 * admin. Merely opening /AdminPanel therefore promoted the
+                 * account to super admin, permanently, in the database. It is
+                 * removed; the route is now role-guarded, and the server
+                 * refuses privilege fields on a self-update regardless.
+                 */
+                setCurrentUser(user);
             } catch (error) {
                 console.error("Auth check failed:", error);
                 window.location.href = createPageUrl("Dashboard");
@@ -83,12 +85,12 @@ export default function AdminPanel() {
     const loadSettings = useCallback(async () => {
         // Simplified loader for critical settings
         try {
-            const p = await PlatformSetting.filter({ setting_key: 'pledges_enabled' });
-            const c = await PlatformSetting.filter({ setting_key: 'global_commission_rate' });
+            const p = await PlatformSetting.filter({ key: 'pledges_enabled' });
+            const c = await PlatformSetting.filter({ key: 'global_commission_rate' });
             if (isMountedRef.current) {
                 setPlatformSettings({
-                    pledgesEnabled: p.length > 0 ? p[0].setting_value === 'true' : false,
-                    commissionRate: c.length > 0 ? c[0].setting_value : '20'
+                    pledgesEnabled: p.length > 0 ? p[0].value === 'true' : false,
+                    commissionRate: c.length > 0 ? c[0].value : '20'
                 });
             }
         } catch (e) { console.error(e); }

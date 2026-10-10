@@ -382,3 +382,31 @@ CREATE TABLE IF NOT EXISTS room_subscriptions (
   INDEX room_subscriptions_room_id_idx (room_id),
   INDEX room_subscriptions_status_idx  (status)
 );
+
+-- ---------------------------------------------------------------------------
+-- verification_codes — registration OTP and password reset
+-- ---------------------------------------------------------------------------
+-- Only a SHA-256 hash of each code is stored, for the same reason refresh
+-- tokens are hashed: a dump of this table must not hand anyone a working code.
+-- `attempts` is what makes a six-digit OTP safe — without a ceiling, a million
+-- guesses inside the ten-minute window is not a barrier.
+CREATE TABLE IF NOT EXISTS verification_codes (
+  id          INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  user_id     CHAR(36)     NOT NULL,
+  email       VARCHAR(255) NOT NULL,
+  purpose     VARCHAR(32)  NOT NULL,
+  code_hash   VARCHAR(64)  NOT NULL,
+  expires_at  DATETIME     NOT NULL,
+  consumed_at DATETIME     NULL,
+  attempts    INT UNSIGNED NOT NULL DEFAULT 0,
+  created_at  DATETIME     NULL,
+  updated_at  DATETIME     NULL,
+  INDEX verification_codes_code_hash_idx (code_hash),
+  INDEX verification_codes_user_id_idx   (user_id),
+  INDEX verification_codes_email_purpose_idx (email, purpose)
+);
+
+-- Email confirmation state. Every account that predates OTP verification is
+-- backfilled to verified, so introducing the step locks nobody out.
+ALTER TABLE users ADD COLUMN email_verified TINYINT(1) NOT NULL DEFAULT 0 AFTER verify_step;
+UPDATE users SET email_verified = 1;

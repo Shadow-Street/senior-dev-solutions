@@ -15,20 +15,10 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
-import {
-  LayoutDashboard,
-  BarChart3,
-  Briefcase,
-  MessageSquare,
-  Shield,
-  Star,
-  Sparkles,
-  Bell,
-  ChevronDown,
-} from "lucide-react";
-import { Toaster } from "sonner";
+import { LayoutDashboard, BarChart3, Briefcase, MessageSquare, Shield, Star, Sparkles, ChevronDown } from "lucide-react";
 
 import { useAuth } from "@/components/context/AuthContext";
+import NotificationPanel from "@/components/notifications/NotificationPanel";
 import { useSubscription } from "@/components/hooks/useSubscription";
 import DashboardSearch from "@/components/dashboard/DashboardSearch";
 
@@ -124,22 +114,9 @@ function InnerLayout({ children, currentPageName }) {
 
   return (
     <>
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 4000,
-          className: "sonner-toast",
-          style: {
-            borderRadius: "12px",
-            padding: "16px",
-            fontSize: "14px",
-            fontWeight: "500",
-            boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
-            border: "none",
-          },
-        }}
-        richColors={false}
-      />
+      {/* Toaster is mounted once at the app root (App.jsx) so that pages
+          outside this shell — login, register, password reset — can raise
+          toasts too. A second one here would render every toast twice. */}
 
       <SidebarProvider defaultOpen={true}>
         {/*
@@ -226,16 +203,14 @@ function InnerLayout({ children, currentPageName }) {
                 <DashboardSearch className="order-last w-full min-w-0 sm:order-none sm:max-w-md" />
 
                 <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
-                  <button
-                    type="button"
-                    aria-label="Notifications"
-                    className="relative rounded-full p-2 text-subtle transition-colors hover:bg-surface-2 hover:text-foreground"
-                  >
-                    <Bell className="h-5 w-5" />
-                    <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-protocall-sell-text px-1 text-[10px] font-bold leading-none text-white">
-                      3
-                    </span>
-                  </button>
+                  {/* The real notification centre.
+                      What stood here was a button with no click handler and a
+                      hardcoded "3" badge — it could not be opened and the
+                      count never changed, whatever the account's actual
+                      notifications were. NotificationPanel already existed,
+                      complete with its own popover, unread count and
+                      mark-all-read, and was simply never mounted anywhere. */}
+                  <NotificationPanel />
 
                   <span className="hidden items-center gap-1.5 rounded-full border border-border bg-surface-2 px-3 py-1.5 text-xs font-medium text-foreground lg:inline-flex">
                     <span className="h-2 w-2 rounded-full bg-buy" />

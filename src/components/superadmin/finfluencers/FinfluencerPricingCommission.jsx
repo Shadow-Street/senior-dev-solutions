@@ -42,11 +42,11 @@ export default function FinfluencerPricingCommission() {
         CourseEnrollment.list('-created_date', 100).catch(() => [])
       ]);
 
-      const commissionSetting = settingsData.find(s => s.setting_key === 'finfluencer_commission_rate');
-      const thresholdSetting = settingsData.find(s => s.setting_key === 'finfluencer_min_payout_threshold');
+      const commissionSetting = settingsData.find(s => s.key === 'finfluencer_commission_rate');
+      const thresholdSetting = settingsData.find(s => s.key === 'finfluencer_min_payout_threshold');
       
-      setGlobalCommissionRate(commissionSetting?.setting_value || '25');
-      setMinimumPayoutThreshold(thresholdSetting?.setting_value || '500');
+      setGlobalCommissionRate(commissionSetting?.value || '25');
+      setMinimumPayoutThreshold(thresholdSetting?.value || '500');
       setFinfluencers(finfluencersData || []);
       setRevenues(revenuesData || []);
       setEnrollments(enrollmentsData || []);
@@ -79,31 +79,31 @@ export default function FinfluencerPricingCommission() {
       const existingSettings = await PlatformSetting.list();
       
       // Save commission rate
-      const commissionSetting = existingSettings.find(s => s.setting_key === 'finfluencer_commission_rate');
+      const commissionSetting = existingSettings.find(s => s.key === 'finfluencer_commission_rate');
       if (commissionSetting) {
         await PlatformSetting.update(commissionSetting.id, {
-          setting_value: rate.toString(),
+          value: rate.toString(),
           description: 'Platform commission percentage for finfluencer course sales'
         });
       } else {
         await PlatformSetting.create({
-          setting_key: 'finfluencer_commission_rate',
-          setting_value: rate.toString(),
+          key: 'finfluencer_commission_rate',
+          value: rate.toString(),
           description: 'Platform commission percentage for finfluencer course sales'
         });
       }
 
       // Save minimum payout threshold
-      const thresholdSettingRecord = existingSettings.find(s => s.setting_key === 'finfluencer_min_payout_threshold');
+      const thresholdSettingRecord = existingSettings.find(s => s.key === 'finfluencer_min_payout_threshold');
       if (thresholdSettingRecord) {
         await PlatformSetting.update(thresholdSettingRecord.id, {
-          setting_value: threshold.toString(),
+          value: threshold.toString(),
           description: 'Minimum amount finfluencers must earn before requesting payout'
         });
       } else {
         await PlatformSetting.create({
-          setting_key: 'finfluencer_min_payout_threshold',
-          setting_value: threshold.toString(),
+          key: 'finfluencer_min_payout_threshold',
+          value: threshold.toString(),
           description: 'Minimum amount finfluencers must earn before requesting payout'
         });
       }

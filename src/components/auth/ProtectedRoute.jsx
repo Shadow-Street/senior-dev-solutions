@@ -1,59 +1,42 @@
-import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
+import { useAuth } from '@/components/context/AuthContext';
 
+/**
+ * Gate for pages that require a session.
+ *
+ * This used to read localStorage directly, once, on mount. Two consequences:
+ * a valid token with no cached `user` object was treated as signed out and
+ * bounced to /login, and because it never re-ran, signing in from another tab
+ * left this one stuck on the login redirect. It now reads the auth context,
+ * which owns the session and keeps every tab in step.
+ */
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const location = useLocation();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userRole, setUserRole] = useState(null);
+  const { user, loading } = useAuth();
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = () => {
-    const token = localStorage.getItem('accessToken');
-    const userStr = localStorage.getItem('user');
-    
-    if (!token || !userStr) {
-      setIsAuthenticated(false);
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const user = JSON.parse(userStr);
-      setIsAuthenticated(true);
-      // Same precedence as the backend's adminMiddleware and every other
-      // role check in the app: app_role first, then role. Reading `role`
-      // alone locked advisors out of their own dashboard, because approval
-      // promotes `app_role` and leaves `role` at its registration value.
-      setUserRole(user.app_role || user.role);
-    } catch (error) {
-      console.error('Error parsing user data:', error);
-      setIsAuthenticated(false);
-    }
-    
-    setIsLoading(false);
-  };
-
-  if (isLoading) {
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-          <p className="mt-4 text-muted-foreground">Loading...</p>
+          <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary motion-reduce:animate-none" />
+          <p className="mt-4 text-muted-foreground">Loading…</p>
         </div>
       </div>
     );
   }
 
-  if (!isAuthenticated) {
+  if (!user) {
+    // `from` lets the login page send the visitor back where they were headed.
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Check role-based access if roles are specified
+  // Same precedence as the backend's adminMiddleware and every other role check
+  // in the app: app_role first, then role. Reading `role` alone locked advisors
+  // out of their own dashboard, because approval promotes `app_role` and leaves
+  // `role` at its registration value.
+  const userRole = user.app_role || user.role;
+
   if (allowedRoles.length > 0 && !allowedRoles.includes(userRole)) {
     return <Navigate to="/unauthorized" replace />;
   }
