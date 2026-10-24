@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Activity, Play, Pause } from "lucide-react";
 import { stockAPI } from "./LiveStockAPI";
+import MarketStatusBadge from "./MarketStatusBadge";
 
 // Price formatting follows the quote's own currency; the symbol universe is
 // configurable server-side, so it is not always INR.
@@ -25,7 +25,6 @@ export default function LiveStockTicker({ className = "" }) {
   const [stocks, setStocks] = useState([]);
   const [status, setStatus] = useState('loading'); // loading | ready | empty | error
   const [isPlaying, setIsPlaying] = useState(true);
-  const [marketOpen, setMarketOpen] = useState(() => stockAPI.getMarketStatus().isOpen);
 
   useEffect(() => {
     let cancelled = false;
@@ -58,7 +57,6 @@ export default function LiveStockTicker({ className = "" }) {
     };
 
     loadStocks();
-    setMarketOpen(stockAPI.getMarketStatus().isOpen);
     const refresh = setInterval(loadStocks, 60000);
     return () => { cancelled = true; clearInterval(refresh); };
   }, []);
@@ -69,8 +67,8 @@ export default function LiveStockTicker({ className = "" }) {
     const Icon = isPositive ? TrendingUp : TrendingDown;
 
     return (
-      <span className={`flex items-center text-sm font-medium ${colorClass}`}>
-        <Icon className="w-4 h-4 mr-1" />
+      <span className={`flex items-center text-sm font-semibold tabular-nums ${colorClass}`}>
+        <Icon className={`w-4 h-4 mr-1 ${isPositive ? 'text-positive' : 'text-sell'}`} />
         {isPositive ? '+' : ''}{change.toFixed(2)}%
       </span>
     );
@@ -90,51 +88,54 @@ export default function LiveStockTicker({ className = "" }) {
         `}
       </style>
       <Card className={`w-full overflow-hidden bg-card shadow-sm border border-border ${className}`}>
-        <CardContent className="p-0">
-          <div className="flex items-center justify-between px-4 py-2 border-b border-divider">
-            <div className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-primary" />
-              <h3 className="text-sm font-semibold text-foreground">Live Market</h3>
-              <Badge
-                variant="outline"
-                className={marketOpen
-                  ? 'bg-buy text-buy-foreground border-transparent'
-                  : 'bg-surface-2 text-subtle border-border'}
-              >
-                {marketOpen ? 'Market Open' : 'Market Closed'}
-              </Badge>
-            </div>
-            <button onClick={() => setIsPlaying(!isPlaying)} className="text-muted-foreground hover:text-foreground">
-              {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-            </button>
+        <CardContent className="flex items-stretch p-0">
+          {/* Label column, pinned while the quotes scroll past it. */}
+          <div className="flex shrink-0 items-center gap-2 border-r border-divider px-3 py-3 sm:px-4">
+            <Activity className="h-5 w-5 text-protocall-blue" />
+            <h3 className="hidden text-sm font-semibold text-foreground sm:block">Live Market</h3>
+            <MarketStatusBadge openLabel="Live" />
           </div>
-          {status !== 'ready' && (
-            <div className="px-4 py-3 text-sm text-muted-foreground">
-              {status === 'loading' && 'Loading live market data…'}
-              {status === 'empty' && 'No live quotes available right now.'}
-              {status === 'error' && (
-                <span className="text-sell-muted-foreground">
-                  Live market data is unavailable.
-                </span>
-              )}
-            </div>
-          )}
 
-          <div className={`relative flex overflow-x-hidden ${status === 'ready' ? '' : 'hidden'}`}>
-            <div 
-              className="py-3 flex animate-marquee whitespace-nowrap"
-              style={{ animationPlayState: isPlaying ? 'running' : 'paused' }}
-            >
-              {stocks.map((stock, index) => (
-                <div key={index} className="flex items-center mx-4 flex-shrink-0">
-                  <span className="font-semibold text-foreground text-sm">{stock.symbol}</span>
-                  <span className="ml-2 text-subtle text-sm">{formatPrice(stock)}</span>
-                  <span className="ml-2"><PriceChange change={stock.change_percent} /></span>
-                  <span className="text-muted-foreground/50 mx-4">*</span>
-                </div>
-              ))}
+          <div className="relative min-w-0 flex-1">
+            {status !== 'ready' && (
+              <div className="flex h-full items-center px-4 py-3 text-sm text-muted-foreground">
+                {status === 'loading' && 'Loading live market data…'}
+                {status === 'empty' && 'No live quotes available right now.'}
+                {status === 'error' && (
+                  <span className="text-sell-muted-foreground">
+                    Live market data is unavailable.
+                  </span>
+                )}
+              </div>
+            )}
+
+            <div className={`relative flex h-full overflow-x-hidden ${status === 'ready' ? '' : 'hidden'}`}>
+              <div
+                className="flex items-center py-3 animate-marquee whitespace-nowrap"
+                style={{ animationPlayState: isPlaying ? 'running' : 'paused' }}
+              >
+                {stocks.map((stock, index) => (
+                  <div key={index} className="mx-5 flex flex-shrink-0 items-center gap-2">
+                    <span className="text-sm font-semibold text-foreground">{stock.symbol}</span>
+                    <span className="text-sm tabular-nums text-subtle">{formatPrice(stock)}</span>
+                    <PriceChange change={stock.change_percent} />
+                  </div>
+                ))}
+              </div>
+              {/* Soft fade so quotes slide in and out instead of being cut. */}
+              <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-card to-transparent" />
+              <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-card to-transparent" />
             </div>
           </div>
+
+          <button
+            type="button"
+            onClick={() => setIsPlaying(!isPlaying)}
+            aria-label={isPlaying ? 'Pause ticker' : 'Play ticker'}
+            className="flex shrink-0 items-center border-l border-divider px-3 text-muted-foreground transition-colors hover:text-foreground"
+          >
+            {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+          </button>
         </CardContent>
       </Card>
     </>

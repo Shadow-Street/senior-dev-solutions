@@ -88,7 +88,7 @@ export default function ProfileReferralSection({ user, referrals, badges }) {
             <div className="text-xs opacity-90">Total Invites</div>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-r from-buy to-protocall-blue text-white border-0">
+        <Card className="bg-gradient-to-r from-positive to-protocall-blue text-white border-0">
           <CardContent className="p-4 text-center">
             <Star className="w-8 h-8 mx-auto mb-2" />
             <div className="text-2xl font-bold">{successfulReferrals}</div>

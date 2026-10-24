@@ -8,7 +8,7 @@ export default function TrustBadges() {
       icon: Shield,
       title: "SEBI Registered",
       description: "Verified advisors",
-      color: "from-buy to-buy-soft"
+      color: "from-positive to-tile-green"
     },
     {
       icon: Lock,

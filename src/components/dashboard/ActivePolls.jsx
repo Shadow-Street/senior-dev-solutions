@@ -1,7 +1,6 @@
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { BarChart3, ArrowRight, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -38,7 +37,7 @@ export default function ActivePolls({ polls }) {
     }
   ];
 
-  const pollData = polls.length > 0 ? polls : samplePolls;
+  const pollData = polls?.length > 0 ? polls : samplePolls;
 
   const getVoteIcon = (vote) => {
     switch(vote) {
@@ -59,28 +58,30 @@ export default function ActivePolls({ polls }) {
   };
 
   return (
-    <Card className="shadow-lg border border-border bg-card">
-      <CardHeader className="border-b border-divider bg-surface-2">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-foreground">
-            <BarChart3 className="w-5 h-5 text-primary" />
-            Active Polls
-          </CardTitle>
-          <Link to={createPageUrl("Polls")}>
-            <Button variant="ghost" size="sm">
-              View All <ArrowRight className="w-3 h-3 ml-1" />
-            </Button>
-          </Link>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6">
-        <div className="space-y-4">
+    <Card className="overflow-hidden border border-border bg-card shadow-sm">
+      <div className="flex items-center justify-between gap-2 border-b border-divider px-4 py-3.5 sm:px-5">
+        <h2 className="flex items-center gap-2 text-base font-semibold text-foreground">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-premium-muted">
+            <BarChart3 className="h-4 w-4 text-premium" />
+          </span>
+          Active Polls
+        </h2>
+        <Link
+          to={createPageUrl("Polls")}
+          className="group flex items-center gap-1 rounded-full bg-premium-muted px-3 py-1 text-xs font-semibold text-premium-muted-foreground transition-colors hover:bg-premium-light"
+        >
+          View All
+          <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+        </Link>
+      </div>
+      <CardContent className="p-4 sm:p-5">
+        <div className="space-y-3">
           {pollData.slice(0, 3).map(poll => {
             const winningVote = getWinningVote(poll);
             const totalVotes = poll.total_votes || 0;
             
             return (
-              <div key={poll.id} className="p-3 rounded-lg border border-divider bg-surface-2">
+              <div key={poll.id} className="rounded-xl border border-divider bg-card p-3 transition-colors hover:border-premium-light hover:bg-premium-muted/40">
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
                     <h4 className="font-semibold text-sm text-foreground mb-1">{poll.title}</h4>

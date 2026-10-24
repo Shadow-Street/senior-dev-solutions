@@ -238,7 +238,7 @@ export default function PledgeAnalytics({ user, sessions, pledges, executions, i
                     value={`₹${(analytics.totalPledgeValue / 1000).toFixed(0)}k`}
                     subtitle="Total pledged amount"
                     icon={DollarSign}
-                    gradient="from-buy to-buy-soft"
+                    gradient="from-positive to-tile-green"
                 />
                 <StatsCard
                     title="Execution Value"
@@ -281,7 +281,7 @@ export default function PledgeAnalytics({ user, sessions, pledges, executions, i
                     value={`₹${(analytics.totalConvenienceFees / 1000).toFixed(2)}k`}
                     subtitle="Total fees collected from pledges"
                     icon={DollarSign}
-                    gradient="from-buy to-buy-soft"
+                    gradient="from-positive to-tile-green"
                 />
                 <StatsCard
                     title="Total Revenue"

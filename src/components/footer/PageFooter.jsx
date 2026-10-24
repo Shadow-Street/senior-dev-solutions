@@ -1,8 +1,10 @@
 
 import React from "react";
 import {
-  Shield,
+  Crosshair,
   FileText,
+  Newspaper,
+  GraduationCap,
   Lock,
   Cookie,
   AlertTriangle,
@@ -29,70 +31,55 @@ export default function PageFooter() {
       name: 'Facebook',
       url: settings.facebook_url || '#',
       icon: Facebook,
-      color: 'hover:text-primary',
-      gradient: 'from-protocall-deep to-protocall-blue',
-      shadow: 'shadow-protocall-blue/50'
     },
     {
       name: 'Twitter',
       url: settings.twitter_url || '#',
       icon: Twitter,
-      color: 'hover:text-protocall-premium-light',
-      gradient: 'from-protocall-blue to-protocall-blue',
-      shadow: 'shadow-protocall-blue/50'
     },
     {
       name: 'Instagram',
       url: settings.instagram_url || '#',
       icon: Instagram,
-      color: 'hover:text-protocall-premium-text',
-      gradient: 'from-protocall-deep to-protocall-blue',
-      shadow: 'shadow-protocall-grape/50'
     },
     {
       name: 'LinkedIn',
       url: settings.linkedin_url || '#',
       icon: Linkedin,
-      color: 'hover:text-primary',
-      gradient: 'from-protocall-deep to-protocall-blue',
-      shadow: 'shadow-protocall-deep/50'
     },
     {
       name: 'YouTube',
       url: settings.youtube_url || '#',
       icon: Youtube,
-      color: 'hover:text-sell-muted-foreground',
-      gradient: 'from-sell to-sell',
-      shadow: 'shadow-sell/50'
     }
   ];
 
-  return (
-    <footer className="bg-gradient-to-r from-protocall-deep via-protocall-grape to-protocall-blue text-white">
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12 mb-8">
+  const linkClass =
+    "group flex items-center gap-2.5 text-sm text-white/80 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 rounded";
+  const iconClass = "h-4 w-4 shrink-0 text-white/70 transition-colors group-hover:text-buy";
 
-          {/* Protocol Branding Section */}
-          <div className="lg:col-span-1">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="bg-white/10 p-2 rounded-lg">
-                <Shield className="w-8 h-8 text-white" />
-              </div>
+  return (
+    <footer className="bg-[linear-gradient(90deg,#2B3AAE_0%,#3529BF_45%,#5B2A9E_100%)] text-white">
+      <div className="mx-auto max-w-7xl px-6 py-12">
+        <div className="mb-10 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1.1fr] lg:gap-8">
+
+          {/* Brand */}
+          <div>
+            <div className="mb-4 flex items-center gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-protocall-sidebar-dark ring-1 ring-white/15">
+                <Crosshair className="h-6 w-6 text-white" />
+              </span>
               <span className="text-xl font-bold">{settings.site_name || 'Protocall'}</span>
             </div>
 
-            {/* Enhanced Brand Description */}
-            <div className="mb-4 space-y-2">
-              <p className="text-white leading-relaxed">
-                India's largest retail investor community.
-              </p>
-              <p className="text-white/80 text-sm leading-relaxed">
-                Join thousands of traders and investors coming together to share insights, learn, and make smarter trading decisions. Empower your journey with real conversations, real strategies, and real growth.
-              </p>
-            </div>
+            <p className="text-lg leading-snug text-white">
+              India&apos;s largest retail investor community.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-white/80">
+              Join thousands of traders and investors coming together to share insights, learn, and make smarter trading decisions. Empower your journey with real conversations, real strategies, and real growth.
+            </p>
 
-            {/* Social Media Icons - Embossed & Highlighted */}
-            <div className="flex gap-3 mt-6">
+            <div className="mt-6 flex flex-wrap gap-2.5">
               {socialLinks.map((social) => {
                 const Icon = social.icon;
                 const hasUrl = social.url && social.url !== '#';
@@ -108,37 +95,15 @@ export default function PageFooter() {
                         e.preventDefault();
                       }
                     }}
-                    className={`
-                      group relative w-11 h-11 rounded-xl 
-                      bg-white/20 backdrop-blur-sm
-                      flex items-center justify-center 
-                      transition-all duration-300 ease-out
-                      shadow-lg hover:shadow-xl
-                      border border-white/30
-                      ${hasUrl ? 'hover:scale-110 hover:-translate-y-1 cursor-pointer' : 'opacity-70 cursor-default'}
-                      ${hasUrl ? `hover:bg-gradient-to-br hover:${social.gradient} hover:border-transparent hover:${social.shadow}` : ''}
-                      before:absolute before:inset-0 before:rounded-xl
-                      before:bg-gradient-to-br before:${social.gradient}
-                      before:opacity-0 ${hasUrl ? 'before:hover:opacity-100' : ''}
-                      before:transition-opacity before:duration-300
-                      after:absolute after:inset-0.5 after:rounded-lg
-                      after:bg-gradient-to-t after:from-white/10 after:to-transparent
-                      after:pointer-events-none
-                    `}
+                    className={`flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/10 transition-all duration-200 ${
+                      hasUrl
+                        ? 'cursor-pointer hover:-translate-y-0.5 hover:border-buy hover:bg-buy hover:text-buy-foreground'
+                        : 'cursor-default opacity-70'
+                    }`}
                     aria-label={social.name}
                     title={hasUrl ? `Follow us on ${social.name}` : `${social.name} (Coming Soon)`}
                   >
-                    {/* Icon with glow effect */}
-                    <Icon className={`
-                      w-5 h-5 relative z-10 text-white
-                      transition-all duration-300
-                      ${hasUrl ? 'group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]' : ''}
-                    `} />
-
-                    {/* Pulse animation for active links */}
-                    {hasUrl && (
-                      <span className="absolute inset-0 rounded-xl bg-white/20 animate-ping opacity-0 group-hover:opacity-75"></span>
-                    )}
+                    <Icon className="h-[18px] w-[18px]" />
                   </a>
                 );
               })}
@@ -147,157 +112,100 @@ export default function PageFooter() {
 
           {/* Legal & Compliance */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-white">Legal & Compliance</h3>
-            <div className="space-y-3">
-              <Link
-                to={createPageUrl("Terms")}
-                className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group text-sm"
-              >
-                <FileText className="w-4 h-4" />
-                <span>Terms of Service</span>
-              </Link>
-              <Link
-                to={createPageUrl("Privacy")}
-                className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group text-sm"
-              >
-                <Lock className="w-4 h-4" />
-                <span>Privacy Policy</span>
-              </Link>
-              <Link
-                to={createPageUrl("Cookies")}
-                className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group text-sm"
-              >
-                <Cookie className="w-4 h-4" />
-                <span>Cookies Policy</span>
-              </Link>
-              <Link
-                to={createPageUrl("RiskDisclosure")}
-                className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group text-sm"
-              >
-                <AlertTriangle className="w-4 h-4" />
-                <span>Risk Disclosure</span>
-              </Link>
-            </div>
+            <h3 className="mb-4 text-lg font-semibold text-white">Legal &amp; Compliance</h3>
+            <ul className="space-y-3">
+              <li><Link to={createPageUrl("Terms")} className={linkClass}><FileText className={iconClass} />Terms &amp; Conditions</Link></li>
+              <li><Link to={createPageUrl("Privacy")} className={linkClass}><Lock className={iconClass} />Privacy Policy</Link></li>
+              <li><Link to={createPageUrl("Cookies")} className={linkClass}><Cookie className={iconClass} />Cookies Policy</Link></li>
+              <li><Link to={createPageUrl("RiskDisclosure")} className={linkClass}><AlertTriangle className={iconClass} />Risk Disclosure</Link></li>
+            </ul>
           </div>
 
           {/* Content & Resources */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-white">Content & Resources</h3>
-            <div className="space-y-3">
-              <Link
-                to={createPageUrl("News")}
-                className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group text-sm"
-              >
-                <FileText className="w-4 h-4" />
-                <span>Market News</span>
-              </Link>
-              <Link
-                to={createPageUrl("Blogs")}
-                className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group text-sm"
-              >
-                <FileText className="w-4 h-4" />
-                <span>Blogs & Articles</span>
-              </Link>
-              <Link
-                to={createPageUrl("Finfluencers")}
-                className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group text-sm"
-              >
-                <FileText className="w-4 h-4" />
-                <span>Learn from Experts</span>
-              </Link>
-            </div>
+            <h3 className="mb-4 text-lg font-semibold text-white">Content &amp; Resources</h3>
+            <ul className="space-y-3">
+              <li><Link to={createPageUrl("News")} className={linkClass}><Newspaper className={iconClass} />Market News</Link></li>
+              <li><Link to={createPageUrl("Blogs")} className={linkClass}><FileText className={iconClass} />Blogs &amp; Articles</Link></li>
+              <li><Link to={createPageUrl("Finfluencers")} className={linkClass}><GraduationCap className={iconClass} />Learn from Experts</Link></li>
+            </ul>
           </div>
 
-          {/* Regulatory */}
+          {/* Regulatory — lime checks read on the brand blue (8.2:1). */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-white">Regulatory</h3>
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm">
-                <CheckCircle className="w-4 h-4 text-positive flex-shrink-0" />
-                <span className="text-white/80">SEBI Registered</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <CheckCircle className="w-4 h-4 text-positive flex-shrink-0" />
-                <span className="text-white/80">RBI Compliant</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <CheckCircle className="w-4 h-4 text-positive flex-shrink-0" />
-                <span className="text-white/80">ISO 27001 Certified</span>
-              </div>
-            </div>
+            <h3 className="mb-4 text-lg font-semibold text-white">Regulatory</h3>
+            <ul className="space-y-3">
+              {["SEBI Registered Advisors", "RBI Compliant", "ISO 27001 Certified"].map((label) => (
+                <li key={label} className="flex items-center gap-2.5 text-sm text-white/80">
+                  <CheckCircle className="h-4 w-4 shrink-0 text-buy" />
+                  {label}
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* Contact & Support */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-white">Contact & Support</h3>
-            <div className="space-y-3">
+            <h3 className="mb-4 text-lg font-semibold text-white">Contact &amp; Support</h3>
+            <ul className="space-y-3.5">
               {settings.contact_email && (
-                <a
-                  href={`mailto:${settings.contact_email}`}
-                  className="flex items-start gap-2 text-white/80 hover:text-white transition-colors group text-sm"
-                >
-                  <Mail className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <span className="block">{settings.contact_email}</span>
-                    <span className="text-xs text-white/60">General queries</span>
-                  </div>
-                </a>
+                <li>
+                  <a href={`mailto:${settings.contact_email}`} className={`${linkClass} items-start`}>
+                    <Mail className={`${iconClass} mt-0.5`} />
+                    <span>
+                      <span className="block break-all">{settings.contact_email}</span>
+                      <span className="text-xs text-white/60">General queries</span>
+                    </span>
+                  </a>
+                </li>
               )}
 
               {settings.contact_phone && (
-                <a
-                  href={`tel:${settings.contact_phone}`}
-                  className="flex items-start gap-2 text-white/80 hover:text-white transition-colors group text-sm"
-                >
-                  <Phone className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <span className="block">{settings.contact_phone}</span>
-                    <span className="text-xs text-white/60">24/7 Support</span>
-                  </div>
-                </a>
+                <li>
+                  <a href={`tel:${settings.contact_phone}`} className={`${linkClass} items-start`}>
+                    <Phone className={`${iconClass} mt-0.5`} />
+                    <span>
+                      <span className="block">{settings.contact_phone}</span>
+                      <span className="text-xs text-white/60">24/7 Support</span>
+                    </span>
+                  </a>
+                </li>
               )}
 
-              <Link
-                to={createPageUrl("ContactSupport")}
-                className="flex items-start gap-2 text-white/80 hover:text-white transition-colors group text-sm"
-              >
-                <MessageCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                <div>
-                  <span className="block">Contact Support</span>
-                  <span className="text-xs text-white/60">Get help instantly</span>
-                </div>
-              </Link>
+              <li>
+                <Link to={createPageUrl("ContactSupport")} className={`${linkClass} items-start`}>
+                  <MessageCircle className={`${iconClass} mt-0.5`} />
+                  <span>
+                    <span className="block">Contact Support</span>
+                    <span className="text-xs text-white/60">Get help instantly</span>
+                  </span>
+                </Link>
+              </li>
 
               {settings.company_address && (
-                <div className="flex items-start gap-2 text-white/80 text-sm">
-                  <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <div>
+                <li className="flex items-start gap-2.5 text-sm text-white/80">
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-white/70" />
+                  <span>
                     <span className="block">{settings.company_address}</span>
                     <span className="text-xs text-white/60">India</span>
-                  </div>
-                </div>
+                  </span>
+                </li>
               )}
-            </div>
+            </ul>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-white/10 pt-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
-            <p className="text-white/60">
-              © 2025 {settings.site_name || 'Protocall'}. All rights reserved. | India's Retail Investor Community
+        <div className="border-t border-white/15 pt-6">
+          <div className="flex flex-col items-center justify-between gap-4 text-sm md:flex-row">
+            <p className="text-center text-white/70 md:text-left">
+              © {new Date().getFullYear()} {settings.site_name || 'Protocall'}. All rights reserved. | India's Retail Investor Community
             </p>
-            <div className="flex gap-6 text-white/60">
-              <Link
-                to={createPageUrl("Sitemap")}
-                className="hover:text-white transition-colors"
-              >
+            <div className="flex gap-6 text-white/70">
+              <Link to={createPageUrl("Sitemap")} className="transition-colors hover:text-white">
                 Sitemap
               </Link>
-              <Link
-                to={createPageUrl("Accessibility")}
-                className="hover:text-white transition-colors"
-              >
+              <Link to={createPageUrl("Accessibility")} className="transition-colors hover:text-white">
                 Accessibility
               </Link>
               <span>24/7 Support</span>

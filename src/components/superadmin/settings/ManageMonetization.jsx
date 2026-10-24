@@ -250,7 +250,7 @@ export default function ManageMonetization({ settings, onChange, onSaveSpecificS
         <Button 
           onClick={handleSave} 
           disabled={isSaving}
-          className="bg-gradient-to-r from-buy to-protocall-blue hover:from-buy hover:to-protocall-blue"
+          className="bg-buy text-buy-foreground hover:bg-buy-soft"
         >
           {isSaving ? 'Saving...' : 'Save Monetization Settings'}
         </Button>

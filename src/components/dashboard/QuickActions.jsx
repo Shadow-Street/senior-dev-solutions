@@ -1,94 +1,95 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Link } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
 import { Shield, Star, Wallet, Crown, TrendingUp, MessageSquare } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 
 export default function QuickActions({ user }) {
-  console.log('🔍 QuickActions - User:', user);
-  console.log('🔍 QuickActions - App Role:', user?.app_role);
-  console.log('🔍 QuickActions - Roles:', user?.roles);
-
   // ✅ Check if user already has these roles
   const isAdvisor = user?.app_role === 'advisor' || user?.roles?.includes('advisor');
   const isFinfluencer = user?.app_role === 'finfluencer' || user?.roles?.includes('finfluencer');
 
-  console.log('✅ Is Advisor:', isAdvisor);
-  console.log('✅ Is Finfluencer:', isFinfluencer);
-
+  // Colour-coded tiles as in the Base44 reference, drawn only from the
+  // PROTOCALL palette: blue/grape for community, Neon Lime for the pledge pool
+  // (growth; ink icon on the lime), red→orange for creators, orange for upgrades.
   const quickActions = [
     {
       icon: MessageSquare,
       label: "Join Chat",
       url: createPageUrl("ChatRooms"),
       show: true,
-      gradient: "from-protocall-blue to-protocall-deep",
-      iconColor: "text-white",
+      tile: "bg-gradient-to-br from-protocall-blue to-protocall-deep text-white shadow-protocall-blue/30",
     },
     {
       icon: TrendingUp,
       label: "Vote on Polls",
       url: createPageUrl("Polls"),
       show: true,
-      gradient: "from-protocall-grape to-protocall-deep",
-      iconColor: "text-white",
+      tile: "bg-gradient-to-br from-protocall-light to-protocall-grape text-white shadow-protocall-grape/30",
     },
     {
       icon: Wallet,
       label: "Pledge Pool",
       url: createPageUrl("PledgePool"),
       show: true,
-      gradient: "from-protocall-deep to-protocall-blue",
-      iconColor: "text-white",
+      tile: "bg-buy text-buy-foreground shadow-buy/40",
     },
     {
       icon: Shield,
       label: "Become Advisor",
       url: createPageUrl("AdvisorRegistration"),
       show: !isAdvisor,
-      gradient: "from-protocall-blue to-protocall-grape",
-      iconColor: "text-white",
+      tile: "bg-gradient-to-br from-protocall-grape to-protocall-deep text-white shadow-protocall-grape/30",
     },
     {
       icon: Star,
       label: "Become Finfluencer",
       url: createPageUrl("Finfluencers"),
       show: !isFinfluencer,
-      gradient: "from-protocall-grape to-protocall-light",
-      iconColor: "text-white",
+      tile: "bg-gradient-to-br from-sell to-hold text-white shadow-sell/30",
     },
     {
       icon: Crown,
       label: "Upgrade Plan",
       url: createPageUrl("Subscription"),
       show: true,
-      gradient: "from-protocall-deep to-protocall-premium-light",
-      iconColor: "text-white",
+      tile: "bg-gradient-to-br from-hold to-hold-muted-foreground text-white shadow-hold/30",
     },
   ];
 
   return (
-    <Card className="shadow-lg border border-border bg-card">
-      <CardHeader className="border-b border-divider bg-surface-2">
-        <CardTitle className="flex items-center gap-2 text-foreground">
-          <TrendingUp className="w-5 h-5 text-primary" />
+    <Card className="overflow-hidden border border-border bg-card shadow-sm">
+      <div className="border-b border-divider px-4 py-3.5 sm:px-5">
+        <h2 className="flex items-center gap-2 text-base font-semibold text-foreground">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-premium-muted">
+            <TrendingUp className="h-4 w-4 text-premium" />
+          </span>
           Quick Actions
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-6">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        </h2>
+      </div>
+
+      <CardContent className="p-3 sm:p-4">
+        {/* auto-fit so the row stays even when role-gated tiles are hidden */}
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(92px,1fr))] gap-1 sm:gap-2">
           {quickActions.map((action, index) => (
             action.show && (
-              <button
+              <Link
                 key={action.label + index}
-                onClick={() => window.location.href = action.url}
-                className="flex flex-col items-center gap-3 p-4 rounded-xl hover:bg-surface-2 transition-all duration-200 group"
+                to={action.url}
+                className="group flex flex-col items-center gap-2.5 rounded-xl px-2 py-4 transition-colors duration-200
+                           hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.gradient} flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-200`}>
-                  <action.icon className={`w-6 h-6 ${action.iconColor}`} />
-                </div>
-                <span className="text-xs font-medium text-subtle text-center leading-tight">{action.label}</span>
-              </button>
+                <span
+                  className={`flex h-12 w-12 items-center justify-center rounded-xl shadow-md ${action.tile}
+                              transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:scale-105
+                              motion-reduce:transform-none`}
+                >
+                  <action.icon className="h-5 w-5" strokeWidth={2.25} />
+                </span>
+                <span className="text-center text-xs font-medium leading-tight text-foreground">
+                  {action.label}
+                </span>
+              </Link>
             )
           ))}
         </div>

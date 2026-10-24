@@ -18,13 +18,15 @@ const money = (value, currency = "USD") => {
 
 function MoversTable({ title, rows, positive, isLoading, error }) {
   const Icon = positive ? TrendingUp : TrendingDown;
-  const accent = positive ? "text-positive" : "text-sell-muted-foreground";
+  const iconTone = positive ? "bg-buy text-positive" : "bg-sell-muted text-sell";
 
   return (
     <Card className="overflow-hidden border border-border bg-card shadow-sm">
       <CardContent className="p-4 sm:p-5">
-        <h3 className={`mb-3 flex items-center gap-2 text-sm font-semibold ${accent}`}>
-          <Icon className="h-4 w-4" />
+        <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
+          <span className={`flex h-7 w-7 items-center justify-center rounded-lg ${iconTone}`}>
+            <Icon className="h-4 w-4" strokeWidth={2.5} />
+          </span>
           {title}
         </h3>
 
@@ -66,7 +68,7 @@ function MoversTable({ title, rows, positive, isLoading, error }) {
                       className="border-b border-divider/60 transition-colors last:border-0 hover:bg-surface-2"
                     >
                       <td className="py-2 pr-2">
-                        <span className="font-semibold text-foreground">{s.symbol}</span>
+                        <span className="text-[13px] font-semibold text-foreground">{s.symbol}</span>
                         {s.name && s.name !== s.symbol && (
                           <span className="block max-w-[10rem] truncate text-[11px] text-muted-foreground">
                             {s.name}
@@ -76,13 +78,17 @@ function MoversTable({ title, rows, positive, isLoading, error }) {
                       <td className="px-2 py-2 text-right tabular-nums text-subtle">
                         {money(s.current_price, s.currency)}
                       </td>
-                      <td
-                        className={`py-2 pl-2 text-right font-semibold tabular-nums ${
-                          pct >= 0 ? "text-positive" : "text-sell-muted-foreground"
-                        }`}
-                      >
-                        {pct >= 0 ? "+" : ""}
-                        {pct.toFixed(2)}%
+                      <td className="py-2 pl-2 text-right">
+                        <span
+                          className={`inline-flex min-w-[4.25rem] justify-center rounded-md px-2 py-0.5 text-xs font-semibold tabular-nums ${
+                            pct >= 0
+                              ? "bg-buy text-positive"
+                              : "bg-sell-muted text-sell-muted-foreground"
+                          }`}
+                        >
+                          {pct >= 0 ? "+" : ""}
+                          {pct.toFixed(2)}%
+                        </span>
                       </td>
                     </tr>
                   );

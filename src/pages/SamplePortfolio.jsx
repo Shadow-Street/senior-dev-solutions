@@ -34,7 +34,7 @@ export default function SamplePortfolio() {
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-buy to-protocall-blue bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-positive to-protocall-blue bg-clip-text text-transparent">
             Enhanced Stock Portfolio Sample
           </h1>
           <p className="text-xl text-subtle max-w-3xl mx-auto">
@@ -68,7 +68,7 @@ export default function SamplePortfolio() {
             </CardContent>
           </Card>
 
-          <Card className={`bg-gradient-to-br ${portfolioStats.totalPL >= 0 ? 'from-buy to-buy-soft' : 'from-sell to-sell'} text-white border-0 shadow-lg`}>
+          <Card className={`bg-gradient-to-br ${portfolioStats.totalPL >= 0 ? 'from-positive to-tile-green' : 'from-sell to-sell'} text-white border-0 shadow-lg`}>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>

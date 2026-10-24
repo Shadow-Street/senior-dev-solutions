@@ -308,7 +308,7 @@ export default function ProfitDistribution({ onUpdate }) {
   return (
     <div className="space-y-6">
       {/* UNMISSSABLE VISUAL CONFIRMATION BANNER */}
-      <div className="bg-gradient-to-r from-buy to-protocall-blue text-white p-4 rounded-lg text-center font-bold text-lg shadow-xl">
+      <div className="bg-gradient-to-r from-positive to-protocall-blue text-white p-4 rounded-lg text-center font-bold text-lg shadow-xl">
         PROFIT DISTRIBUTION - VERSION 4.0 (WITH AUTOMATION) LOADED
       </div>
 

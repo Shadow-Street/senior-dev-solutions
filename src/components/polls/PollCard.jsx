@@ -85,7 +85,9 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
   const toneClasses = {
     purple: { bar: 'bg-tile-purple', disc: 'bg-tile-purple', ring: 'group-hover:ring-tile-purple/30' },
     blue:   { bar: 'bg-tile-blue',   disc: 'bg-tile-blue',   ring: 'group-hover:ring-tile-blue/30' },
-    green:  { bar: 'bg-tile-green',  disc: 'bg-tile-green',  ring: 'group-hover:ring-tile-green/30' },
+    // Disc carries a white initial, so it uses the spec's deep Positive green;
+    // the accent bar is a pure fill and takes Neon Lime.
+    green:  { bar: 'bg-buy',         disc: 'bg-positive',    ring: 'group-hover:ring-buy/50' },
     orange: { bar: 'bg-tile-orange', disc: 'bg-tile-orange', ring: 'group-hover:ring-tile-orange/30' },
     ink:    { bar: 'bg-tile-ink',    disc: 'bg-tile-ink',     ring: 'group-hover:ring-tile-ink/30' },
   }[tone];
@@ -613,7 +615,7 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
                         return (
                           <Button
                             disabled
-                            className={`w-full h-12 text-base rounded-xl font-bold text-white shadow-md opacity-100 ${votedClass}`}
+                            className={`w-full h-12 text-base rounded-xl font-bold text-white shadow-md opacity-100 disabled:opacity-100 ${votedClass}`}
                           >
                             <CheckCircle className="w-5 h-5 mr-2" />
                             You voted: {data.label.toUpperCase()}

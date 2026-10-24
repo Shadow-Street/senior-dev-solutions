@@ -21,6 +21,7 @@ import { useAuth } from "@/components/context/AuthContext";
 import NotificationPanel from "@/components/notifications/NotificationPanel";
 import { useSubscription } from "@/components/hooks/useSubscription";
 import DashboardSearch from "@/components/dashboard/DashboardSearch";
+import MarketStatusBadge from "@/components/stocks/MarketStatusBadge";
 
 // Single source of truth for the primary navigation.
 // `comingSoon` items render a badge and do not navigate.
@@ -35,7 +36,7 @@ const NAV_ITEMS = [
 ];
 
 const COMING_SOON_BADGE =
-  "ml-auto shrink-0 border-transparent bg-protocall-premium-light px-1.5 text-[10px] font-semibold uppercase tracking-tight text-protocall-premium-text";
+  "ml-auto shrink-0 border-transparent bg-buy px-1.5 text-[10px] font-bold uppercase tracking-tight text-buy-foreground hover:bg-buy";
 
 // Render helper (not a component) so it follows the codebase's no-propTypes style.
 const renderComingSoonItem = (item) => {
@@ -159,11 +160,9 @@ function InnerLayout({ children, currentPageName }) {
                           }`}
                         >
                           <Link to={item.url} className="flex items-center gap-3 px-3 py-2.5">
-                            <item.icon
-                              className={`h-4 w-4 shrink-0 transition-colors duration-200 ${
-                                isActive ? "text-buy" : "group-hover/nav:text-buy"
-                              }`}
-                            />
+                            {/* Icons follow the label colour: lime is reserved
+                                for BUY / growth / live, not navigation. */}
+                            <item.icon className="h-4 w-4 shrink-0" />
                             <span className="truncate">{item.title}</span>
                           </Link>
                         </SidebarMenuButton>
@@ -196,7 +195,7 @@ function InnerLayout({ children, currentPageName }) {
           </Sidebar>
 
           <div className="flex min-w-0 flex-1 flex-col">
-            <header className="shrink-0 border-b border-border bg-card">
+            <header className="shrink-0 border-b border-border bg-background">
               <div className="flex flex-wrap items-center gap-3 px-4 py-3 sm:flex-nowrap sm:px-6">
                 <SidebarTrigger className="shrink-0 text-foreground md:hidden" />
 
@@ -212,10 +211,9 @@ function InnerLayout({ children, currentPageName }) {
                       mark-all-read, and was simply never mounted anywhere. */}
                   <NotificationPanel />
 
-                  <span className="hidden items-center gap-1.5 rounded-full border border-border bg-surface-2 px-3 py-1.5 text-xs font-medium text-foreground lg:inline-flex">
-                    <span className="h-2 w-2 rounded-full bg-buy" />
+                  <span className="hidden items-center gap-2 rounded-full border border-border bg-card py-1 pl-3 pr-1 text-xs font-medium text-foreground shadow-sm lg:inline-flex">
                     Live Market
-                    <ChevronDown className="h-3 w-3 text-muted-foreground" />
+                    <MarketStatusBadge openLabel="Open" closedLabel="Closed" />
                   </span>
 
                   <Link

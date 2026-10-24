@@ -8,7 +8,7 @@ export default function ProfileTrustScore({ user }) {
   const trustScore = user.trust_score || 50;
 
   const getScoreColor = (score) => {
-    if (score >= 80) return { color: 'text-buy-muted-foreground', bg: 'from-buy to-buy-soft', ring: 'ring-buy' };
+    if (score >= 80) return { color: 'text-buy-muted-foreground', bg: 'from-positive to-tile-green', ring: 'ring-buy' };
     if (score >= 40) return { color: 'text-hold-muted-foreground', bg: 'from-hold to-hold', ring: 'ring-hold' };
     return { color: 'text-sell-muted-foreground', bg: 'from-sell to-sell', ring: 'ring-sell' };
   };

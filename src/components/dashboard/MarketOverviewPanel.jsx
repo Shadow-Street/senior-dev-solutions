@@ -41,6 +41,11 @@ function Sparkline({ positive }) {
     : "M0 4 L10 8 L20 6 L30 13 L40 11 L50 17";
   return (
     <svg width="52" height="20" viewBox="0 0 52 20" fill="none" aria-hidden="true" className="shrink-0">
+      {/* Neon Lime is 1.15:1 on white, so the positive line sits on a thin
+          Positive Text (#193B20) keyline to stay visible. */}
+      {positive && (
+        <path d={d} stroke="hsl(var(--positive-foreground))" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+      )}
       <path d={d} stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
@@ -84,7 +89,9 @@ export default function MarketOverviewPanel({ indices = [], error = null }) {
       <CardContent className="p-4 sm:p-5">
         <div className="mb-4 flex flex-wrap items-center gap-3">
           <h2 className="flex items-center gap-2 text-base font-semibold text-foreground">
-            <Activity className="h-4 w-4 text-primary" />
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-premium-muted">
+              <Activity className="h-4 w-4 text-premium" />
+            </span>
             Market Overview
             {status === "loading" && (
               <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
@@ -92,7 +99,7 @@ export default function MarketOverviewPanel({ indices = [], error = null }) {
           </h2>
 
           <div className="ml-auto flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1 rounded-full bg-surface-2 p-0.5">
+            <div className="flex items-center gap-1 rounded-full border border-border bg-card p-0.5 shadow-sm">
               {EXCHANGES.map((ex) => (
                 <button
                   key={ex}
@@ -101,8 +108,8 @@ export default function MarketOverviewPanel({ indices = [], error = null }) {
                   aria-pressed={exchange === ex}
                   className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
                     exchange === ex
-                      ? "bg-primary text-primary-foreground"
-                      : "text-subtle hover:text-foreground"
+                      ? "bg-premium text-premium-foreground shadow-sm"
+                      : "text-subtle hover:bg-premium-muted hover:text-premium-muted-foreground"
                   }`}
                 >
                   {ex}
@@ -110,7 +117,7 @@ export default function MarketOverviewPanel({ indices = [], error = null }) {
               ))}
             </div>
 
-            <div className="flex items-center gap-1 rounded-full bg-surface-2 p-0.5">
+            <div className="flex items-center gap-1 rounded-full border border-border bg-card p-0.5 shadow-sm">
               {RANGES.map((r) => (
                 <button
                   key={r.key}
@@ -119,8 +126,8 @@ export default function MarketOverviewPanel({ indices = [], error = null }) {
                   aria-pressed={rangeKey === r.key}
                   className={`rounded-full px-2.5 py-1 text-xs font-semibold transition-colors ${
                     rangeKey === r.key
-                      ? "bg-primary text-primary-foreground"
-                      : "text-subtle hover:text-foreground"
+                      ? "bg-premium text-premium-foreground shadow-sm"
+                      : "text-subtle hover:bg-premium-muted hover:text-premium-muted-foreground"
                   }`}
                 >
                   {r.key}
@@ -131,7 +138,7 @@ export default function MarketOverviewPanel({ indices = [], error = null }) {
             <button
               type="button"
               aria-label="More options"
-              className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground"
+              className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-premium-muted hover:text-premium-muted-foreground"
             >
               <MoreHorizontal className="h-4 w-4" />
             </button>
@@ -142,19 +149,19 @@ export default function MarketOverviewPanel({ indices = [], error = null }) {
           {/* Chart */}
           <div className="h-[230px] min-w-0">
             {status === "loading" && (
-              <div className="flex h-full items-center justify-center rounded-lg bg-surface-2/60">
+              <div className="flex h-full items-center justify-center rounded-lg border border-divider bg-card">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
             )}
 
             {status === "error" && (
-              <div className="flex h-full flex-col items-center justify-center gap-2 rounded-lg bg-surface-2/60 px-4 text-center">
+              <div className="flex h-full flex-col items-center justify-center gap-2 rounded-lg border border-divider bg-card px-4 text-center">
                 <AlertCircle className="h-5 w-5 text-sell-muted-foreground" />
                 <p className="text-sm text-sell-muted-foreground">{chartError}</p>
                 <button
                   type="button"
                   onClick={loadCandles}
-                  className="mt-1 rounded-md bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground"
+                  className="mt-1 rounded-md bg-premium px-3 py-1 text-xs font-semibold text-premium-foreground"
                 >
                   Retry
                 </button>
@@ -162,7 +169,7 @@ export default function MarketOverviewPanel({ indices = [], error = null }) {
             )}
 
             {status === "empty" && (
-              <div className="flex h-full items-center justify-center rounded-lg bg-surface-2/60 px-4 text-center">
+              <div className="flex h-full items-center justify-center rounded-lg border border-divider bg-card px-4 text-center">
                 <p className="text-sm text-muted-foreground">
                   No chart data for {chartSymbol} over {rangeKey}.
                 </p>
@@ -223,15 +230,15 @@ export default function MarketOverviewPanel({ indices = [], error = null }) {
           </div>
 
           {/* Index tiles */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col divide-y divide-divider overflow-hidden rounded-xl border border-divider bg-card">
             {error ? (
-              <div className="flex items-start gap-2 rounded-lg border border-divider bg-surface-2 p-3 text-xs text-sell-muted-foreground">
+              <div className="flex items-start gap-2 p-3 text-xs text-sell-muted-foreground">
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                 <span>{error}</span>
               </div>
             ) : indices.length === 0 ? (
               Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="rounded-lg border border-divider bg-surface-2 p-3">
+                <div key={i} className="flex-1 p-3">
                   <div className="h-3 w-20 animate-pulse rounded bg-border" />
                   <div className="mt-2 h-5 w-24 animate-pulse rounded bg-border" />
                 </div>
@@ -240,20 +247,23 @@ export default function MarketOverviewPanel({ indices = [], error = null }) {
               indices.map((idx) => {
                 const positive = Number(idx.change_percent) >= 0;
                 return (
-                  <div key={idx.symbol} className="rounded-lg border border-divider bg-surface-2 p-3">
+                  <div
+                    key={idx.symbol}
+                    className="flex flex-1 flex-col justify-center px-3.5 py-3 transition-colors hover:bg-premium-muted/40"
+                  >
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-subtle">
                       {idx.label || idx.symbol}
                     </p>
                     <div className="mt-0.5 flex items-end justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="truncate text-lg font-bold leading-tight text-foreground">
+                        <p className="truncate text-lg font-bold leading-tight tabular-nums text-foreground">
                           {Number(idx.current_price || 0).toLocaleString("en-IN", {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}
                         </p>
                         <p
-                          className={`text-xs font-semibold ${
+                          className={`text-xs font-semibold tabular-nums ${
                             positive ? "text-positive" : "text-sell-muted-foreground"
                           }`}
                         >

@@ -425,7 +425,7 @@ export default function PledgeModal({
               </Button>
               <Button
                 type="submit"
-                className="flex-1 bg-gradient-to-r from-buy to-protocall-blue hover:from-buy hover:to-protocall-blue"
+                className="flex-1 bg-buy text-buy-foreground hover:bg-buy-soft"
                 disabled={isProcessing}
               >
                 {isProcessing ? (

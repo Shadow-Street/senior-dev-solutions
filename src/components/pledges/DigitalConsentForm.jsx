@@ -266,7 +266,7 @@ export default function DigitalConsentForm({ isOpen, onClose, onSign, pledgeDeta
           <Button
             onClick={handleSubmitConsent}
             disabled={!canSubmit}
-            className="bg-gradient-to-r from-buy to-protocall-blue hover:from-buy hover:to-protocall-blue"
+            className="bg-buy text-buy-foreground hover:bg-buy-soft"
           >
             <CheckCircle2 className="w-4 h-4 mr-2" />
             Submit Consent & Proceed to Payment

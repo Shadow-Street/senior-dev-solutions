@@ -171,7 +171,7 @@ export default function Overview({ data, subscriptionTransactions, refunds }) { 
             subtitle="From campaigns"
             icon={Megaphone} // Changed from TrendingUp to Megaphone as per original intent for ad revenue
             change="Advertising income"
-            gradient="from-buy via-protocall-grape to-buy-soft"
+            gradient="from-positive via-protocall-grape to-tile-green"
           />
           <StatCard 
             title="Subscription Revenue" 

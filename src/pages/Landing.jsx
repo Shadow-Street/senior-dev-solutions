@@ -276,7 +276,9 @@ export default function Landing() {
 
       {/* Reviews Section */}
       <section id="reviews" className="py-20 bg-surface-2">
-        <ReviewScroller />
+        <div className="mx-auto max-w-7xl px-6">
+          <ReviewScroller />
+        </div>
       </section>
 
       {/* FAQ Section */}

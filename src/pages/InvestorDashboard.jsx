@@ -818,7 +818,7 @@ function DashboardHomeView({ investor, allocations, wallet, onRefresh }) {
           </CardContent>
         </Card>
 
-        <Card className={`border-0 shadow-lg bg-gradient-to-br ${totalProfitLoss >= 0 ? 'from-buy to-buy-soft' : 'from-sell to-sell'} text-white`}>
+        <Card className={`border-0 shadow-lg bg-gradient-to-br ${totalProfitLoss >= 0 ? 'from-positive to-tile-green' : 'from-sell to-sell'} text-white`}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>

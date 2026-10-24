@@ -504,7 +504,7 @@ export default function PledgeAccessModal({ isOpen, onClose, user, onSuccess }) 
       <div className="flex justify-center">
         <Button
           onClick={onClose}
-          className="bg-gradient-to-r from-buy to-protocall-blue hover:from-buy hover:to-protocall-blue text-white border-0 rounded-lg shadow-lg transition-all duration-300"
+          className="bg-buy text-buy-foreground hover:bg-buy-soft border-0 rounded-lg shadow-lg transition-all duration-300"
         >
           Got it, thanks!
         </Button>
@@ -662,7 +662,7 @@ export default function PledgeAccessModal({ isOpen, onClose, user, onSuccess }) 
                 <Button
                   type="submit"
                   disabled={isSubmitting || !consentGiven || !dematValidation.isValid || !selectedBroker}
-                  className="bg-gradient-to-r from-buy to-protocall-blue hover:from-buy hover:to-protocall-blue text-white border-0 rounded-lg shadow-lg transition-all duration-300"
+                  className="bg-buy text-buy-foreground hover:bg-buy-soft border-0 rounded-lg shadow-lg transition-all duration-300"
                 >
                   {isSubmitting ? 'Submitting...' : 'Submit Request'}
                 </Button>

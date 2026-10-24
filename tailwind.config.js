@@ -155,14 +155,14 @@ export default {
   				text: '#202030',
   				muted: '#5E5E6A',
   				subtle: '#8B8D9A',
-  				/* BUY / positive / growth / live / progress — green system */
-  				green: '#56E11B',          /* Primary Bright Green   */
-  				'green-soft': '#63E52E',   /* Secondary Green        */
-  				'green-bg': '#EAFBDD',     /* green tint surface     */
-  				'green-text': '#276B10',   /* green text on light    */
-  				buy: '#56E11B',
+  				/* BUY / positive / growth / live / progress — Neon Lime (spec) */
+  				green: '#D7FF00',          /* Neon Lime              */
+  				'green-soft': '#E4FF4D',   /* lighter lime (hover)   */
+  				'green-bg': '#F6FFCC',     /* lime tint surface      */
+  				'green-text': '#193B20',   /* Positive Text          */
+  				buy: '#D7FF00',
   				'buy-foreground': '#101018',
-  				'buy-text': '#276B10',
+  				'buy-text': '#193B20',
   				/* HOLD / caution / pending */
   				hold: '#F75C03',
   				'hold-bg': '#FFF0E6',
@@ -202,6 +202,12 @@ export default {
   				'0%, 100%': { transform: 'translateY(0)' },
   				'50%': { transform: 'translateY(-3px)' }
   			},
+  			/* Endless horizontal scroll for a track whose items are rendered
+  			   twice: moving by -50% lands exactly on the start of the copy. */
+  			'marquee-x': {
+  				from: { transform: 'translateX(0)' },
+  				to: { transform: 'translateX(-50%)' }
+  			},
   			'accordion-down': {
   				from: {
   					height: '0'
@@ -221,6 +227,8 @@ export default {
   		},
   		animation: {
   			'tile-float': 'tile-float 3.5s ease-in-out infinite',
+  			'marquee-left': 'marquee-x 70s linear infinite',
+  			'marquee-right': 'marquee-x 70s linear infinite reverse',
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
   		}

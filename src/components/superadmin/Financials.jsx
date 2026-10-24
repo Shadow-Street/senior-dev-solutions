@@ -34,12 +34,12 @@ import RefundAnalytics from './financials/RefundAnalytics'; // ADDED: New compon
 
 const tabs = [
   { id: 'overview', name: 'Overview', icon: BarChart3, gradient: 'from-protocall-deep to-protocall-blue' },
-  { id: 'commission-analytics', name: 'Commission Analytics', icon: Percent, gradient: 'from-buy to-buy-soft' },
-  { id: 'subscription', name: 'Subscription Revenue', icon: CreditCard, gradient: 'from-buy to-buy-soft' },
+  { id: 'commission-analytics', name: 'Commission Analytics', icon: Percent, gradient: 'from-positive to-tile-green' },
+  { id: 'subscription', name: 'Subscription Revenue', icon: CreditCard, gradient: 'from-positive to-tile-green' },
   { id: 'refunds', name: 'Refunds', icon: RotateCcw, gradient: 'from-hold to-hold' }, // ADDED: Refunds tab
   { id: 'payouts', name: 'Payouts', icon: HandCoins, gradient: 'from-protocall-deep to-protocall-blue' },
   { id: 'expenses', name: 'Expenses', icon: Receipt, gradient: 'from-hold to-hold' },
-  { id: 'reports', name: 'Reports', icon: FileText, gradient: 'from-buy to-buy-soft' },
+  { id: 'reports', name: 'Reports', icon: FileText, gradient: 'from-positive to-tile-green' },
   { id: 'audit', name: 'Audit Log', icon: ShieldCheck, gradient: 'from-sell to-sell' }
 ];
 
@@ -424,7 +424,7 @@ export default function Financials() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-buy to-protocall-blue rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-positive to-protocall-blue rounded-xl flex items-center justify-center">
                 <DollarSign className="w-6 h-6 text-white" />
               </div>
               <div>

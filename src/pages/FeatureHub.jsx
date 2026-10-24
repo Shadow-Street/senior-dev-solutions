@@ -58,7 +58,7 @@ export default function FeatureHub() {
     const badges = {
       live: { label: 'Live', color: 'bg-buy-muted text-buy-muted-foreground border-buy/30', icon: CheckCircle },
       partial: { label: 'Beta', color: 'bg-premium-muted text-primary border-protocall-premium-light', icon: Zap },
-      placeholder: { label: 'Coming Soon', color: 'bg-premium-muted text-protocall-premium-text border-protocall-premium-light', icon: Clock },
+      placeholder: { label: 'Coming Soon', color: 'bg-buy text-buy-foreground border-transparent', icon: Clock },
     };
     return badges[status] || badges.placeholder;
   };

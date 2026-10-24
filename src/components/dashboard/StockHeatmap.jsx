@@ -41,8 +41,10 @@ export default function StockHeatmap({ polls, recommendations }) {
   }));
 
   return (
-    <Card className="shadow-lg border border-border bg-card">
-      <CardHeader className="border-b border-divider bg-surface-2 pb-4">
+    // overflow-x-clip: the hover tooltips sit below the grid (y stays
+    // visible) but must not widen the page sideways on phones.
+    <Card className="shadow-sm border border-border bg-card overflow-x-clip">
+      <CardHeader className="border-b border-divider bg-card pb-4">
         <CardTitle className="flex items-center gap-2 text-foreground">
           <Activity className="w-5 h-5 text-positive" />
           Community Buy Recommendations Heatmap
@@ -94,7 +96,7 @@ export default function StockHeatmap({ polls, recommendations }) {
         </div>
 
         {/* Professional Legend */}
-        <div className="px-6 py-4 bg-surface-2 border-t border-divider">
+        <div className="px-6 py-4 bg-card border-t border-divider">
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 bg-buy rounded-sm shadow-sm"></div>

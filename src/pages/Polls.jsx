@@ -382,26 +382,36 @@ export default function Polls() {
             </div>
           </div>
 
-          <div className="flex gap-2 flex-wrap">
+          {/* Filter tabs. All white in every state: the selected tab is marked
+              by a brand-blue outline and text rather than a fill, and hover
+              sets both background and text so the label can never vanish
+              into a matching colour (the old hover inherited the Button's
+              purple fill under purple text). */}
+          <div className="flex gap-2 flex-wrap" role="group" aria-label="Filter polls">
             {[
-              { value: "all", label: "All Polls", icon: BarChart3, color: "from-protocall-deep to-protocall-blue" },
-              { value: "premium", label: "Premium", icon: Star, color: "from-protocall-deep to-protocall-blue" },
-              { value: "free", label: "Free", icon: Users, color: "from-buy to-buy-soft" },
-              { value: "advisor", label: "Advisor", icon: Award, color: "from-protocall-deep to-protocall-blue" },
-            ].map(filterOption => (
-              <Button
-                key={filterOption.value}
-                onClick={() => setFilter(filterOption.value)}
-                size="sm"
-                className={`h-9 px-4 rounded-full font-semibold transition-all duration-200 flex items-center gap-2 ${filter === filterOption.value
-                  ? `bg-gradient-to-r ${filterOption.color} text-white shadow-lg scale-105`
-                  : 'bg-background text-primary hover:from-surface-2 hover:to-surface-2'
-                  }`}
-              >
-                <filterOption.icon className="w-4 h-4" />
-                {filterOption.label}
-              </Button>
-            ))}
+              { value: "all", label: "All Polls", icon: BarChart3 },
+              { value: "premium", label: "Premium", icon: Star },
+              { value: "free", label: "Free", icon: Users },
+              { value: "advisor", label: "Advisor", icon: Award },
+            ].map(filterOption => {
+              const selected = filter === filterOption.value;
+              return (
+                <Button
+                  key={filterOption.value}
+                  onClick={() => setFilter(filterOption.value)}
+                  size="sm"
+                  variant="outline"
+                  aria-pressed={selected}
+                  className={`h-9 px-4 rounded-full font-semibold transition-all duration-200 flex items-center gap-2 bg-card ${selected
+                    ? 'border-premium text-premium-muted-foreground ring-1 ring-premium shadow-sm hover:bg-premium-muted hover:text-premium-muted-foreground'
+                    : 'border-border text-foreground hover:border-premium-light hover:bg-premium-muted hover:text-premium-muted-foreground'
+                    }`}
+                >
+                  <filterOption.icon className={`w-4 h-4 ${selected ? 'text-premium' : 'text-muted-foreground'}`} />
+                  {filterOption.label}
+                </Button>
+              );
+            })}
           </div>
         </div>
 

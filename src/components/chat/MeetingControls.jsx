@@ -103,14 +103,14 @@ export default function MeetingControls({ chatRoomId, stockSymbol, onMeetingStar
   return (
     <>
       {activeMeeting ? (
-        <Card className="bg-gradient-to-r from-buy to-protocall-blue text-white border-0">
+        <Card className="bg-gradient-to-r from-positive to-protocall-blue text-white border-0">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-3 h-3 bg-sell rounded-full animate-pulse"></div>
                 <div>
                   <p className="font-semibold">Meeting Active</p>
-                  <p className="text-xs text-buy-muted-foreground line-clamp-1 max-w-[200px]">
+                  <p className="text-xs text-white/80 line-clamp-1 max-w-[200px]">
                     {activeMeeting.meeting_url}
                   </p>
                 </div>

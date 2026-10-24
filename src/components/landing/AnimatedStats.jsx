@@ -58,7 +58,7 @@ export default function AnimatedStats() {
       icon: Users,
       value: `${traders.toLocaleString()}+`,
       label: "Active Traders",
-      color: "from-buy to-buy-soft"
+      color: "from-positive to-tile-green"
     },
     {
       icon: Star,

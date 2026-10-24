@@ -182,7 +182,7 @@ export default function AccessControlPanel() {
             <Lock className="w-4 h-4 mr-1" />
             Private ({rooms.filter(r => r.is_private).length})
           </TabsTrigger>
-          <TabsTrigger value="paid" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-buy data-[state=active]:to-buy-soft data-[state=active]:text-white">
+          <TabsTrigger value="paid" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-buy data-[state=active]:to-buy-soft data-[state=active]:text-buy-foreground">
             <DollarSign className="w-4 h-4 mr-1" />
             Paid ({rooms.filter(r => r.is_paid).length})
           </TabsTrigger>
