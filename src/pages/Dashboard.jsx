@@ -115,7 +115,7 @@ export default function Dashboard() {
 
   return (
     <div className="w-full bg-background">
-      <div className="mx-auto w-full max-w-[1400px] space-y-4 p-4 sm:space-y-5 sm:p-5 lg:p-6">
+      <div className="mx-auto w-full max-w-[1680px] space-y-4 p-4 sm:space-y-5 sm:p-5 lg:p-6">
         {/* ---------- Hero banner ---------- */}
         <section className="relative isolate overflow-hidden rounded-2xl bg-[linear-gradient(90deg,#250B8E_0%,#2C0DA5_70%,#3914BD_100%)] text-white shadow-sm">
           {/* Bull-market artwork. It carries its own indigo field on the left,
@@ -247,9 +247,10 @@ export default function Dashboard() {
         {/* ----------
             Trending, actions and heatmap in the main column; Advisor Picks
             and Active Polls in the side column (Base44 reference layout).
-            The side column sticks while the longer main column scrolls.
+            Both columns end level: Active Polls stretches to take up any
+            height the main column has over the side column.
            ---------- */}
-        <div className="grid gap-4 sm:gap-5 xl:grid-cols-3 xl:items-start">
+        <div className="grid gap-4 sm:gap-5 xl:grid-cols-3">
           <div className="min-w-0 space-y-4 sm:space-y-5 xl:col-span-2">
             <section className="scroll-mt-6">
               <TrendingStocks stocks={stats.stocks} />
@@ -257,9 +258,11 @@ export default function Dashboard() {
             <QuickActions user={user} />
             <StockHeatmap polls={stats.polls} recommendations={stats.recommendations} />
           </div>
-          <aside className="min-w-0 space-y-4 sm:space-y-5 xl:sticky xl:top-4">
+          <aside className="flex min-w-0 flex-col gap-4 sm:gap-5">
             <AdvisorRecommendations recommendations={stats.recommendations} />
-            <ActivePolls polls={stats.polls} />
+            <div className="flex-1">
+              <ActivePolls polls={stats.polls} />
+            </div>
           </aside>
         </div>
 

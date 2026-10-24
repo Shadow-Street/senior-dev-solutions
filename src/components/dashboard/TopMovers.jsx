@@ -104,7 +104,7 @@ function MoversTable({ title, rows, positive, isLoading, error }) {
 
 export default function TopMovers({ gainers = [], losers = [], isLoading = false, error = null }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
+    <div className="grid h-full gap-4 sm:grid-cols-2 sm:gap-5">
       <MoversTable title="Top Gainers" rows={gainers} positive isLoading={isLoading} error={error} />
       <MoversTable title="Top Losers" rows={losers} positive={false} isLoading={isLoading} error={error} />
     </div>

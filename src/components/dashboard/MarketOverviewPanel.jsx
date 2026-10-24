@@ -85,7 +85,7 @@ export default function MarketOverviewPanel({ indices = [], error = null }) {
   useEffect(() => { loadCandles(); }, [loadCandles]);
 
   return (
-    <Card className="overflow-hidden border border-border bg-card shadow-sm">
+    <Card className="h-full overflow-hidden border border-border bg-card shadow-sm">
       <CardContent className="p-4 sm:p-5">
         <div className="mb-4 flex flex-wrap items-center gap-3">
           <h2 className="flex items-center gap-2 text-base font-semibold text-foreground">

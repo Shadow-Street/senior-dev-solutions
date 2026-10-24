@@ -7,6 +7,34 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { News } from "@/lib/apiClient";
 
+// The feed can return more than it was asked for; the dashboard card shows a
+// fixed number so it lines up with Recent Activity beside it. The rest is one
+// click away on the News page.
+const NEWS_LIMIT = 4;
+
+// Article image, or a branded placeholder when the feed has none or it fails
+// to load. (The old fallback pointed at source.unsplash.com, which has been
+// shut down, so it rendered as an empty gap.)
+function NewsThumb({ src }) {
+  const [failed, setFailed] = React.useState(false);
+  if (!src || failed) {
+    return (
+      <div aria-hidden="true" className="flex h-16 w-20 items-center justify-center rounded-lg bg-premium-muted">
+        <Newspaper className="h-6 w-6 text-premium" />
+      </div>
+    );
+  }
+  return (
+    <img
+      src={src}
+      alt=""
+      loading="lazy"
+      className="h-16 w-20 rounded-lg object-cover"
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
 export default function LatestNews() {
   const [news, setNews] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -15,8 +43,8 @@ export default function LatestNews() {
     const fetchNews = async () => {
       try {
         setLoading(true);
-        const data = await News.getLatest(4, 'business');
-        setNews(data);
+        const data = await News.getLatest(NEWS_LIMIT, 'business');
+        setNews(Array.isArray(data) ? data.slice(0, NEWS_LIMIT) : []);
       } catch (error) {
         console.error("Failed to fetch news:", error);
       } finally {
@@ -62,7 +90,7 @@ export default function LatestNews() {
   }
 
   return (
-    <Card className="shadow-lg border border-border bg-card">
+    <Card className="flex h-full flex-col shadow-lg border border-border bg-card">
       <CardHeader className="border-b border-divider bg-surface-2">
         <CardTitle className="flex items-center gap-2 text-foreground">
           <Newspaper className="w-5 h-5 text-primary" />
@@ -70,18 +98,13 @@ export default function LatestNews() {
         </CardTitle>
         <p className="text-sm text-subtle">Stay updated with breaking market news and analysis</p>
       </CardHeader>
-      <CardContent className="p-6">
+      <CardContent className="flex flex-1 flex-col p-6">
         <div className="space-y-4">
           {news.map((item, index) => (
             <div key={index} className="flex gap-4 p-3 rounded-xl border border-divider bg-surface-2 hover:shadow-lg transition-all duration-200 cursor-pointer">
               {/* Image */}
               <div className="flex-shrink-0">
-                <img
-                  src={item.image_url || `https://source.unsplash.com/random/300x200?finance,sig=${index}`}
-                  alt={item.title}
-                  className="w-20 h-16 rounded-lg object-cover"
-                  onError={(e) => e.target.src = 'https://source.unsplash.com/random/300x200?stock-market'}
-                />
+                <NewsThumb src={item.image_url} />
               </div>
 
               {/* Content */}
@@ -120,7 +143,7 @@ export default function LatestNews() {
           )}
         </div>
 
-        <div className="mt-4 text-center">
+        <div className="mt-auto pt-4 text-center">
           <Link to={createPageUrl("News")}>
             <Button>
               <ExternalLink className="w-4 h-4 mr-2" />

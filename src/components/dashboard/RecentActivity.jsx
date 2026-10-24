@@ -48,7 +48,7 @@ export default function RecentActivity() {
 
 
   return (
-    <Card className="shadow-lg border border-border bg-card">
+    <Card className="h-full shadow-lg border border-border bg-card">
       <CardHeader className="border-b border-divider bg-surface-2">
         <CardTitle className="flex items-center gap-2 text-foreground">
           <Activity className="w-5 h-5 text-primary" />

@@ -58,7 +58,7 @@ export default function ActivePolls({ polls }) {
   };
 
   return (
-    <Card className="overflow-hidden border border-border bg-card shadow-sm">
+    <Card className="h-full overflow-hidden border border-border bg-card shadow-sm">
       <div className="flex items-center justify-between gap-2 border-b border-divider px-4 py-3.5 sm:px-5">
         <h2 className="flex items-center gap-2 text-base font-semibold text-foreground">
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-premium-muted">
@@ -76,7 +76,7 @@ export default function ActivePolls({ polls }) {
       </div>
       <CardContent className="p-4 sm:p-5">
         <div className="space-y-3">
-          {pollData.slice(0, 3).map(poll => {
+          {pollData.slice(0, 4).map(poll => {
             const winningVote = getWinningVote(poll);
             const totalVotes = poll.total_votes || 0;
             

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef, useLayoutEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import StatTile from "@/components/common/StatTile";
 import { Button } from "@/components/ui/button";
@@ -36,8 +36,104 @@ import { useAuth } from "@/components/context/AuthContext";
 
 import { usePollSocket } from "@/hooks/usePollSocket";
 
+// Number of masonry columns, tracking the same md / lg breakpoints as the
+// grid classes (768px → 2, 1024px → 3) so the stacks and the CSS agree.
+function useColumnCount() {
+  const query = () => {
+    if (typeof window === "undefined" || !window.matchMedia) return 3;
+    if (window.matchMedia("(min-width: 1024px)").matches) return 3;
+    if (window.matchMedia("(min-width: 768px)").matches) return 2;
+    return 1;
+  };
+  const [count, setCount] = useState(query);
+
+  useEffect(() => {
+    if (!window.matchMedia) return undefined;
+    const lists = ["(min-width: 1024px)", "(min-width: 768px)"].map((q) => window.matchMedia(q));
+    const update = () => setCount(query());
+    lists.forEach((l) => l.addEventListener("change", update));
+    // Backup: some environments (device emulation, embedded webviews) resize
+    // without dispatching media-query change events. Same count = no render.
+    window.addEventListener("resize", update);
+    return () => {
+      lists.forEach((l) => l.removeEventListener("change", update));
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  return count;
+}
+
+/**
+ * Balanced masonry placement.
+ *
+ * Each card goes into whichever column is currently shortest, in list order,
+ * so newest-first still reads left to right across the top while the columns
+ * end at roughly the same height. Heights are measured from the rendered
+ * cards (they vary with ads, locks and vote buttons, so they cannot be
+ * guessed).
+ *
+ * The placement is computed once every card in the current list has been
+ * measured, and then held until the list or the column count changes. Later
+ * height changes — a vote swapping buttons for "You voted", say — do not
+ * reshuffle cards under the user's pointer. Moving a card between columns
+ * also remounts it, which is another reason not to do it after load.
+ */
+function useBalancedColumns(items, columnCount, getId) {
+  // Callback ref held in state: the grid mounts later than the list arrives
+  // (it waits for the loading flag), and the measuring effect must re-run then.
+  const [root, setRoot] = useState(null);
+  const heights = useRef(new Map());
+  const ids = items.map(getId);
+  const layoutKey = `${columnCount}|${ids.join(",")}`;
+
+  const place = () => {
+    const cols = Array.from({ length: columnCount }, () => ({ height: 0, items: [] }));
+    items.forEach((item) => {
+      const target = cols.reduce((a, b) => (b.height < a.height ? b : a));
+      target.items.push(item);
+      // Unmeasured cards count as one typical card until measured.
+      target.height += heights.current.get(getId(item)) ?? 520;
+    });
+    return cols.map((c) => c.items);
+  };
+
+  const [layout, setLayout] = useState({ key: null, settled: false, columns: [] });
+  const current = layout.key === layoutKey ? layout : { key: layoutKey, settled: false, columns: place() };
+  if (current !== layout) setLayout(current);
+
+  useLayoutEffect(() => {
+    if (!root || current.settled) return undefined;
+
+    const nodes = [...root.querySelectorAll("[data-masonry-id]")];
+    const settleIfMeasured = () => {
+      if (!ids.every((id) => heights.current.get(id) > 0)) return false;
+      setLayout({ key: layoutKey, settled: true, columns: place() });
+      return true;
+    };
+
+    // Measure synchronously first: layout effects run after DOM mutation and
+    // before paint, so offsetHeight is already correct here.
+    nodes.forEach((n) => heights.current.set(n.dataset.masonryId, n.offsetHeight));
+    if (settleIfMeasured() || typeof ResizeObserver === "undefined") return undefined;
+
+    // Fallback for cards that had no size yet (e.g. rendered while hidden).
+    const observer = new ResizeObserver((entries) => {
+      entries.forEach((e) => heights.current.set(e.target.dataset.masonryId, e.contentRect.height));
+      if (settleIfMeasured()) observer.disconnect();
+    });
+    nodes.forEach((n) => observer.observe(n));
+    return () => observer.disconnect();
+    // place/ids are derived from layoutKey; re-running on it is sufficient.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [root, layoutKey, current.settled]);
+
+  return { containerRef: setRoot, columns: current.columns };
+}
+
 export default function Polls() {
   const { user } = useAuth(); // Use AuthContext instead of localStorage
+  const columnCount = useColumnCount();
   const [polls, setPolls] = useState([]);
   const [userVotes, setUserVotes] = useState({});
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -265,6 +361,8 @@ export default function Polls() {
     });
   }, [polls, searchTerm, filter]);
 
+  const masonry = useBalancedColumns(filteredPolls, columnCount, (poll) => String(poll.id));
+
   // Calculate user stats from actual data
   const userStats = useMemo(() => {
     const pollsVoted = Object.keys(userVotes).length;
@@ -303,7 +401,7 @@ export default function Polls() {
 
   return (
     <div className="w-full bg-background p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-[1680px] mx-auto space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-protocall-ink to-protocall-blue bg-clip-text text-transparent">
@@ -443,30 +541,37 @@ export default function Polls() {
           />
         )}
 
-        {/* Polls Grid */}
-        {/* items-start: a cell that also carries an ad is much taller than a
-            plain poll, and with the default stretch it dragged every card in
-            that row to the same height, leaving a large empty band inside the
-            shorter ones. Each cell now takes the height it needs. */}
+        {/* Polls Grid — masonry.
+            Cells differ a lot in height (some carry an ad above the poll, and
+            open polls have vote buttons that closed ones do not). A row-based
+            grid either left gaps under the short cards (items-start) or
+            stretched them with empty bands (stretch). Instead each column is
+            its own stack, filled shortest-first (see useBalancedColumns). */}
         {!isLoading && filteredPolls.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-            {filteredPolls.map((poll) => (
-              <PollCard
-                key={poll.id}
-                poll={poll}
-                user={user}
-                userVote={userVotes[poll.id]}
-                onVoteSubmit={(vote) => handleVote(poll.id, vote)}
-                onPledge={() => { }}
-                onViewDetails={() => {
-                  setSelectedPoll(poll);
-                  setShowVoteModal(true);
-                }}
-                onDelete={handleDeletePoll}
-                onEdit={handleEditPoll} // ✅ Added edit handler
-                onShare={setSharePoll}
-                userPledge={null}
-              />
+          <div ref={masonry.containerRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+            {masonry.columns.map((columnPolls, col) => (
+              <div key={col} className="flex min-w-0 flex-col gap-6">
+                {columnPolls.map((poll) => (
+                  <div key={poll.id} data-masonry-id={poll.id}>
+                    <PollCard
+                      key={poll.id}
+                      poll={poll}
+                      user={user}
+                      userVote={userVotes[poll.id]}
+                      onVoteSubmit={(vote) => handleVote(poll.id, vote)}
+                      onPledge={() => { }}
+                      onViewDetails={() => {
+                        setSelectedPoll(poll);
+                        setShowVoteModal(true);
+                      }}
+                      onDelete={handleDeletePoll}
+                      onEdit={handleEditPoll} // ✅ Added edit handler
+                      onShare={setSharePoll}
+                      userPledge={null}
+                    />
+                  </div>
+                ))}
+              </div>
             ))}
           </div>
         )}

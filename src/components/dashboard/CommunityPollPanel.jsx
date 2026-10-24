@@ -35,7 +35,7 @@ export default function CommunityPollPanel({ polls = [] }) {
   const initial = String(source.stock_symbol || title).trim().charAt(0).toUpperCase() || "P";
 
   return (
-    <Card className="overflow-hidden border border-border bg-card shadow-sm">
+    <Card className="h-full overflow-hidden border border-border bg-card shadow-sm">
       <CardContent className="p-4 sm:p-5">
         <div className="mb-4 flex items-center justify-between gap-2">
           <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
