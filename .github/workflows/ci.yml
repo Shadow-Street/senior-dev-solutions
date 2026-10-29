@@ -27,7 +27,7 @@ jobs:
       - run: npm run lint:ratchet
       - run: npm run test:coverage
       - run: npm run build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: frontend-coverage
           path: coverage/lcov.info
@@ -51,7 +51,7 @@ jobs:
         run: find src scripts -name '*.js' -print0 | xargs -0 -n1 node --check
       - name: Tests (no database required)
         run: mkdir -p coverage && npm run test:coverage
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: backend-coverage
           path: backend/coverage/lcov.info
