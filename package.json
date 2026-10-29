@@ -90,7 +90,7 @@
     "baseline-browser-mapping": "^2.9.11",
     "eslint": "^9.19.0",
     "eslint-plugin-react": "^7.37.4",
-    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.4.18",
     "globals": "^15.14.0",
     "jsdom": "^26.1.0",
