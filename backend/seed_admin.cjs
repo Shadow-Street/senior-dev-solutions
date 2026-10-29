@@ -1,11 +1,14 @@
 const bcrypt = require("bcryptjs");
+require("dotenv").config();
+const { assertSafeToRun, requireEnv } = require("./scripts/lib/guard");
 const { User, sequelize } = require("./src/models");
 
 async function seedAdmin() {
     try {
-        const hashedPassword = await bcrypt.hash("admin123", 10);
+        assertSafeToRun({ script: "seed_admin.cjs" });
+        const hashedPassword = await bcrypt.hash(requireEnv("SEED_ADMIN_PASSWORD"), 12);
         const [user, created] = await User.findOrCreate({
-            where: { email: "admin@gmail.com" },
+            where: { email: requireEnv("SEED_ADMIN_EMAIL") },
             defaults: {
                 name: "Admin User",
                 password: hashedPassword,

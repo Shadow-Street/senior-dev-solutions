@@ -3,27 +3,55 @@ const router = express.Router();
 const db = require("../models");
 const { authMiddleware, adminMiddleware } = require("../middleware/auth");
 
-// Export data to CSV
-router.post('/', authMiddleware, async (req, res) => {
+/**
+ * Entity export.
+ *
+ * This was reachable by any signed-in user and exported any model by name, so
+ * `{"entity":"User"}` returned every bcrypt hash and `{"entity":"PlatformSetting"}`
+ * the payment gateway secrets. It is now admin-only, refuses credential-bearing
+ * models outright, and drops secret-looking columns from every other export.
+ */
+const BLOCKED_ENTITIES = new Set([
+  'PlatformSetting',
+  'OauthToken',
+  'VerificationCode',
+  'PasswordReset',
+  'SocialAuth',
+  'UserSession',
+]);
+const SECRET_COLUMN = /(password|token|secret|code_hash|api_key|private_key)/i;
+
+// Spreadsheet apps execute cells starting with these characters as formulas.
+// Plain numbers (including negative amounts) are left alone.
+const neutraliseFormula = (value) =>
+  /^[=+\-@\t\r]/.test(value) && !/^-?\d+(\.\d+)?$/.test(value) ? `'${value}` : value;
+
+router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
   try {
-    const { entity, format = 'csv', filters = {} } = req.body;
-    
-    // Get the model
-    const Model = db[entity];
-    if (!Model) {
-      return res.status(400).json({ error: `Unknown entity: ${entity}` });
+    const { entity, format = 'csv', filters = {} } = req.body || {};
+
+    // `db` also carries `sequelize`/`Sequelize`; only real models qualify.
+    const Model = typeof entity === 'string' && Object.prototype.hasOwnProperty.call(db, entity) ? db[entity] : null;
+    if (!Model || typeof Model.findAll !== 'function' || !Model.rawAttributes) {
+      return res.status(400).json({ error: 'Unknown entity' });
+    }
+    if (BLOCKED_ENTITIES.has(entity)) {
+      return res.status(403).json({ error: 'This entity cannot be exported' });
     }
 
-    // Build query
+    const columns = Object.keys(Model.rawAttributes).filter((c) => !SECRET_COLUMN.test(c));
+
+    // Filters only on real, non-secret columns, with plain values (no operator objects).
     const whereClause = {};
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '') {
-        whereClause[key] = value;
-      }
+    Object.entries(filters && typeof filters === 'object' ? filters : {}).forEach(([key, value]) => {
+      if (!columns.includes(key)) return;
+      if (value === undefined || value === null || value === '' || typeof value === 'object') return;
+      whereClause[key] = value;
     });
 
     const data = await Model.findAll({
       where: whereClause,
+      attributes: columns,
       limit: 10000,
       raw: true
     });
@@ -43,7 +71,7 @@ router.post('/', authMiddleware, async (req, res) => {
             if (value === null || value === undefined) return '';
             if (typeof value === 'object') value = JSON.stringify(value);
             // Escape quotes and wrap in quotes if contains comma
-            value = String(value).replace(/"/g, '""');
+            value = neutraliseFormula(String(value)).replace(/"/g, '""');
             if (value.includes(',') || value.includes('\n') || value.includes('"')) {
               value = `"${value}"`;
             }

@@ -103,8 +103,9 @@ settingsRouter.post('/bulk-get', optionalAuthenticate, async (req, res) => {
   }
 });
 
-// Upsert setting
-settingsRouter.put('/key/:key', authMiddleware, async (req, res) => {
+// Upsert setting. Admin-only: any signed-in user could previously rewrite
+// settings such as advisorApprovalRequired or razorpay_key_id.
+settingsRouter.put('/key/:key', authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const { key } = req.params;
     const { value } = req.body;

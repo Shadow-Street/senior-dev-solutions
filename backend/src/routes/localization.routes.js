@@ -43,11 +43,15 @@ router.get('/category/:category', async (req, res) => {
   }
 });
 
-// Bulk update translations
-router.post('/bulk', async (req, res) => {
+// Bulk update translations. Was unauthenticated (site-wide defacement);
+// same admin rule as the generated write routes below.
+router.post('/bulk', authMiddleware, adminMiddleware, async (req, res) => {
   try {
-    const { translations } = req.body;
-    
+    const { translations } = req.body || {};
+    if (!Array.isArray(translations)) {
+      return res.status(400).json({ error: 'translations must be an array' });
+    }
+
     for (const t of translations) {
       await db.Localization.upsert({
         key: t.key,

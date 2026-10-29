@@ -58,14 +58,16 @@ class AuthController {
 
   static async register(req, res) {
     try {
-      const { email, password, name, role } = req.body;
+      // `role` is deliberately not read from the body: a client-chosen role at
+      // sign-up was trusted by role checks that fall back from app_role to role.
+      const { email, password, name } = req.body;
       const requiredFields = ["email", "password", "name"];
       const errorMessage = validateRequiredFields(requiredFields, req.body);
       if (errorMessage) {
         return res.status(400).json({ message: errorMessage });
       }
 
-      const { user } = await AuthService.register(email, password, name, role);
+      const { user } = await AuthService.register(email, password, name, 'user');
 
       /**
        * No session is issued here any more.
@@ -91,10 +93,11 @@ class AuthController {
 
   static async googleLogin(req, res) {
     try {
-      const { token, role } = req.body;
+      const { token } = req.body;
       if (!token) return res.status(400).json({ message: "Token is required" });
 
-      const { accessToken, refreshToken, user } = await AuthService.googleLogin(token, role);
+      // Same rule as register: new Google accounts are always plain users.
+      const { accessToken, refreshToken, user } = await AuthService.googleLogin(token, 'user');
       AuthController.setAuthCookies(res, accessToken, refreshToken);
 
       // Also set session
@@ -337,11 +340,17 @@ static async me(req, res) {
 
       const user = await User.findOne({ where: { email } });
       if (user) {
+        // The link base comes from configuration only. Taking it from the
+        // Origin/Host headers let anyone request a reset for a victim with
+        // `Origin: https://attacker` and receive the victim's token there.
         const base =
           process.env.PUBLIC_APP_URL ||
-          req.get("origin") ||
-          `${req.protocol}://${req.get("host")}`;
-        await VerificationService.sendPasswordReset(user, base);
+          (process.env.NODE_ENV === "production" ? null : "http://localhost:5173");
+        if (!base) {
+          console.error("[auth] PUBLIC_APP_URL is not set; password reset email not sent");
+        } else {
+          await VerificationService.sendPasswordReset(user, base);
+        }
       }
       return res.status(200).json(sameAnswer);
     } catch (error) {

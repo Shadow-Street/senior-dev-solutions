@@ -1,4 +1,5 @@
 const db = require("../models");
+const { isSuperAdmin, checkRoleChange } = require("../utils/roles");
 const { Op } = require("sequelize");
 
 class AdminController {
@@ -181,6 +182,16 @@ class AdminController {
 
             const user = await db.User.findByPk(id);
             if (!user) return res.status(404).json({ error: "User not found" });
+
+            // Same super-admin rules as PUT /users/:id: an admin may not ban
+            // or re-role a super admin, nor make anyone one.
+            if (isSuperAdmin(user) && !isSuperAdmin(req.user)) {
+                return res.status(403).json({ error: 'Access denied' });
+            }
+            if (role !== undefined) {
+                const refused = checkRoleChange(req.user, user, { role });
+                if (refused) return res.status(refused.status).json({ error: refused.error });
+            }
 
             if (status) user.status = status;
             if (role) user.role = role;

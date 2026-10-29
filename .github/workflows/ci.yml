@@ -1,0 +1,105 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Least privilege: jobs only read the repository.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend (build, lint ratchet, tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint:ratchet
+      - run: npm run test:coverage
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: coverage/lcov.info
+          if-no-files-found: ignore
+
+  backend:
+    name: Backend (syntax, tests)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+      - name: Syntax check
+        run: find src scripts -name '*.js' -print0 | xargs -0 -n1 node --check
+      - name: Tests (no database required)
+        run: mkdir -p coverage && npm run test:coverage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/coverage/lcov.info
+          if-no-files-found: ignore
+
+  security:
+    name: Dependency audit and secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Report-only until the existing Critical/High advisories are triaged
+      # (tracked as SEC items in docs/engineering/TRACKER.md). Flip to blocking
+      # by removing continue-on-error once the backlog is cleared.
+      - name: npm audit (frontend, production deps)
+        run: npm audit --omit=dev --audit-level=high
+        continue-on-error: true
+      - name: npm audit (backend, production deps)
+        run: npm audit --omit=dev --audit-level=high
+        working-directory: backend
+        continue-on-error: true
+      - name: Gitleaks (working tree)
+        run: |
+          docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.24.0 \
+            dir /repo --redact --no-banner --exit-code 1
+
+  sonarqube:
+    name: SonarQube analysis
+    needs: [frontend, backend]
+    runs-on: ubuntu-latest
+    # Skipped until the project is created and SONAR_TOKEN is configured
+    # (see .claude/skills/sonarqube/SKILL.md).
+    if: ${{ vars.SONAR_ENABLED == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: frontend-coverage
+          path: coverage
+      - uses: actions/download-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/coverage
+      - uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}

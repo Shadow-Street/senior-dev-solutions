@@ -47,9 +47,24 @@ app.use(cors({
 }));
 
 
-app.use(express.json({ limit: '50mb' }));
+// The raw bytes are kept for the payment webhook, whose HMAC signature is
+// computed by Razorpay over the body exactly as sent.
+app.use(express.json({
+  limit: '50mb',
+  verify: (req, _res, buf) => {
+    // Case-insensitive like Express routing, so every path that reaches the
+    // webhook handler carries its raw body.
+    if (/^\/api\/payments\/webhook(\/|\?|$)/i.test(req.originalUrl)) req.rawBody = Buffer.from(buf);
+  },
+}));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
+
+// A guessable session secret lets anyone forge session cookies. The fallback
+// is tolerated for local development only.
+if (!process.env.SESSION_SECRET && process.env.NODE_ENV === 'production') {
+  throw new Error('SESSION_SECRET must be set in production');
+}
 
 app.use(
   session({
@@ -108,6 +123,19 @@ app.use("/api", routes);
 
 app.get("/", (req, res) => {
   res.json({ message: "API is running" });
+});
+
+// Central error handler. Without one, Express's default handler answered
+// errors (malformed JSON bodies among them) with an HTML stack trace whenever
+// NODE_ENV was not "production".
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  const status = Number.isInteger(err.status || err.statusCode) ? (err.status || err.statusCode) : 500;
+  if (status >= 500) console.error(`[${req.method} ${req.originalUrl}]`, err);
+  if (res.headersSent) return;
+  res.status(status).json({
+    error: status >= 500 ? 'Internal server error' : (err.expose && err.message) || 'Bad request',
+  });
 });
 
 // Create HTTP server

@@ -206,12 +206,30 @@ class PaymentController {
     static async handleWebhook(req, res) {
         const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
 
-        // Validate Signature
-        const shasum = crypto.createHmac('sha256', secret);
-        shasum.update(JSON.stringify(req.body));
-        const digest = shasum.digest('hex');
+        // With the secret unset, createHmac threw outside any try block; in an
+        // async Express 4 handler that is an unhandled rejection, which ends
+        // the Node process — one unauthenticated request took the API down.
+        if (!secret) {
+            console.error('Webhook received but RAZORPAY_WEBHOOK_SECRET is not configured');
+            return res.status(503).json({ status: 'unavailable' });
+        }
 
-        if (digest !== req.headers['x-razorpay-signature']) {
+        // Razorpay signs the exact bytes it sent, captured by the JSON parser
+        // in app.js. Re-serialising the parsed body would not reproduce them,
+        // so without the raw body the request is refused rather than guessed.
+        if (!req.rawBody) {
+            return res.status(400).json({ status: 'ignored' });
+        }
+        const expected = crypto.createHmac('sha256', secret).update(req.rawBody).digest();
+        const received = String(req.headers['x-razorpay-signature'] || '');
+
+        // Compare decoded bytes. Checking string length alone let a header with
+        // a non-ASCII byte reach timingSafeEqual with unequal buffers, which
+        // throws outside any try and left the request hanging.
+        const valid =
+            /^[0-9a-f]{64}$/i.test(received) &&
+            crypto.timingSafeEqual(Buffer.from(received, 'hex'), expected);
+        if (!valid) {
             console.error('Invalid Webhook Signature');
             return res.status(400).json({ status: 'ignored' });
         }

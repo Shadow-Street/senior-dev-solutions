@@ -1,4 +1,8 @@
 const bcrypt = require("bcryptjs");
+
+// A valid bcrypt hash (cost 10) of a random string nobody knows; used only to
+// spend the same time on unknown accounts as on real ones.
+const DUMMY_PASSWORD_HASH = bcrypt.hashSync(require("crypto").randomBytes(16).toString("hex"), 10);
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { Op } = require("sequelize");
@@ -162,15 +166,21 @@ class AuthService {
   }
 
   static async login(email, password, context = {}) {
+    // One message for both failures, so the login form cannot be used to
+    // discover which addresses have accounts (forgot-password already
+    // follows this rule).
+    // Unknown accounts still pay for a bcrypt comparison, so response time
+    // does not reveal whether the address exists.
     const user = await this.getUser(email);
-    if (!user) {
-      throw new Error("User not found");
+    if (!user || !user.password) {
+      await bcrypt.compare(String(password || ''), DUMMY_PASSWORD_HASH);
+      throw new Error("Invalid email or password");
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new Error("Incorrect password");
+      throw new Error("Invalid email or password");
     }
 
     /**

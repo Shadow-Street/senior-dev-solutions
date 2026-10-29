@@ -4,6 +4,7 @@
 
 
 const { Op } = require('sequelize');
+const { effectiveRole, ADMIN_ROLES } = require('./roles');
 
 // Helper: convert query string to proper JS type
 const parseValue = (value) => {
@@ -161,6 +162,21 @@ const createCrudController = (Model, options = {}) => {
   const STAFF_ROLES = ownershipConfig?.adminRoles || DEFAULT_ADMIN_ROLES;
   const isStaff = (req) =>
     STAFF_ROLES.includes(req.user?.app_role || req.user?.role);
+
+  /** Sends 401/403 unless the caller is staff; returns true when it did. */
+  const denyNonStaff = (req, res) => {
+    if (!req.user?.id) {
+      res.status(401).json({ error: 'Authentication required' });
+      return true;
+    }
+    // admin/super_admin only (not sub_admin): bulk writes skip every
+    // per-record rule, so they get the same bar as adminMiddleware.
+    if (!ADMIN_ROLES.includes(effectiveRole(req.user))) {
+      res.status(403).json({ error: 'Admin access required' });
+      return true;
+    }
+    return false;
+  };
 
   /** Returns an error response when the caller may not act, else null. */
   const denyUnauthenticated = (req, res, { allowPublic = false } = {}) => {
@@ -432,9 +448,16 @@ const createCrudController = (Model, options = {}) => {
       }
     },
 
-    // Bulk operations
+    // Bulk operations.
+    //
+    // These bypass every per-record rule above (ownership stamping, protected
+    // fields, hooks), so `POST /<resource>/bulk` let any signed-in user create
+    // wallets with arbitrary balances or notifications addressed to anyone.
+    // They are staff-only; the only callers are super-admin screens.
     async bulkCreate(req, res) {
       try {
+        if (denyNonStaff(req, res)) return;
+        if (!Array.isArray(req.body)) return res.status(400).json({ error: 'Expected an array of records' });
         const records = await Model.bulkCreate(req.body, { returning: true });
         res.status(201).json(records);
       } catch (error) {
@@ -445,6 +468,7 @@ const createCrudController = (Model, options = {}) => {
 
     async bulkUpdate(req, res) {
       try {
+        if (denyNonStaff(req, res)) return;
         const { ids, data } = req.body;
         await Model.update(data, { where: { id: ids } });
         const records = await Model.findAll({ where: { id: ids } });
@@ -457,6 +481,7 @@ const createCrudController = (Model, options = {}) => {
 
     async bulkDelete(req, res) {
       try {
+        if (denyNonStaff(req, res)) return;
         const { ids } = req.body;
         await Model.destroy({ where: { id: ids } });
         res.json({ success: true, message: 'Records deleted successfully' });
@@ -490,13 +515,8 @@ const createCrudRoutes = (router, controller, middleware = []) => {
     ? middleware
     : (middleware.create || middleware.write || []);
 
-  router.get('/', ...read, controller.list);
-  router.get('/:id', ...read, controller.get);
-  router.post('/', ...create, controller.create);
-  router.put('/:id', ...write, controller.update);
-  router.delete('/:id', ...write, controller.delete);
-
-  // Optional bulk operations
+  // Bulk routes first: registered after '/:id', PUT/DELETE /bulk were
+  // swallowed by update/delete with id "bulk".
   if (controller.bulkCreate) {
     router.post('/bulk', ...write, controller.bulkCreate);
   }
@@ -506,6 +526,12 @@ const createCrudRoutes = (router, controller, middleware = []) => {
   if (controller.bulkDelete) {
     router.delete('/bulk', ...write, controller.bulkDelete);
   }
+
+  router.get('/', ...read, controller.list);
+  router.get('/:id', ...read, controller.get);
+  router.post('/', ...create, controller.create);
+  router.put('/:id', ...write, controller.update);
+  router.delete('/:id', ...write, controller.delete);
 
   return router;
 };

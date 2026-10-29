@@ -1,11 +1,14 @@
 const { User } = require('./src/models');
 const bcrypt = require('bcryptjs');
+require('dotenv').config();
+const { assertSafeToRun, requireEnv } = require('./scripts/lib/guard');
 
 async function seedSuperAdmin() {
     try {
-        const email = 'myshadow.ims@gmail.com';
-        const password = 'Yasmu@009';
-        const hashedPassword = await bcrypt.hash(password, 10);
+        assertSafeToRun({ script: 'seed_superadmin.js' });
+        const email = requireEnv('SEED_SUPERADMIN_EMAIL');
+        const password = requireEnv('SEED_SUPERADMIN_PASSWORD');
+        const hashedPassword = await bcrypt.hash(password, 12);
 
         const [user, created] = await User.findOrCreate({
             where: { email },

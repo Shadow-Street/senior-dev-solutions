@@ -1,4 +1,14 @@
 require("dotenv").config();
+const { assertSafeToRun } = require("./lib/guard");
+
+// Drops every table. Never in production; always requires --confirm=<DB_NAME>.
+// Runs before the models are loaded, so a refusal touches nothing.
+try {
+  assertSafeToRun({ destructive: true, script: "reset-schema.js" });
+} catch (error) {
+  console.error(error.message);
+  process.exit(1);
+}
 const { sequelize } = require("../src/models");
 
 async function reset() {

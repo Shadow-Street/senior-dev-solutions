@@ -57,4 +57,13 @@ Thumbs.db
 # Testing & Coverage
 coverage/
 .nyc_output/
-package-lock.json
+
+# Database dumps and backups — never commit (they contain user data and
+# credential hashes). Migrations under backend/src/migrations stay tracked.
+/backup*.sql
+*.dump
+*.sql.gz
+dumps/
+
+# Claude Code local-only settings
+.claude/settings.local.json

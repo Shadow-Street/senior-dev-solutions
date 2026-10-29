@@ -6,6 +6,12 @@ const PORT = process.env.PORT || 5000;
 
 const CronService = require('./src/services/CronService');
 
+// Express 4 does not catch rejections from async handlers. Log them instead
+// of letting Node 22 terminate the whole API on the first one.
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled promise rejection:', reason);
+});
+
 async function start() {
   try {
     // Start Cron Jobs
