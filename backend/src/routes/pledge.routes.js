@@ -65,21 +65,23 @@ createCrudRoutes(
 );
 router.use("/advisor-access-requests", accessReqRouter);
 
+// Pledges and executions are a user's own trading data and every route needs
+// a login; the controller confines non-staff callers to their own rows.
 router.post("/pledges", authenticate, PledgeController.createPledge);
-router.get("/pledges", PledgeController.listPledges);
+router.get("/pledges", authenticate, PledgeController.listPledges);
 router.put("/pledges/:id", authenticate, PledgeController.updatePledge);
 
 // Session routes
 router.post("/sessions", authenticate, PledgeController.createSession);
-router.get("/sessions", PledgeController.listSessions);
+router.get("/sessions", authenticate, PledgeController.listSessions);
 router.put("/sessions/:id", authenticate, PledgeController.updateSession);
 
 // Execution record routes
 router.post("/executions", authenticate, PledgeController.createExecutionRecord);
-router.get("/executions", PledgeController.listExecutionRecords);
+router.get("/executions", authenticate, PledgeController.listExecutionRecords);
 
 // Access request routes
 router.post("/access-requests", authenticate, PledgeController.createAccessRequest);
-router.get("/access-requests", PledgeController.listAccessRequests);
+router.get("/access-requests", authenticate, PledgeController.listAccessRequests);
 
 module.exports = router;
