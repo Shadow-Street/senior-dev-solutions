@@ -25,11 +25,14 @@ export default function AdvisorPledgeSessionManager({ user, advisorProfile, acce
 
     setIsLoading(true); // Indicate loading has started
     try {
-      const options = signal ? { signal } : {}; // Prepare options to pass AbortSignal
+      // filter(filters, orderBy, limit): the third argument is the row limit.
+      // An options object with the AbortSignal used to be passed here, which
+      // was sent as a malformed `limit` query param and failed the request.
+      // Cancellation is still honoured via the signal checks around this call.
       const advisorSessions = await PledgeSession.filter(
         { created_by_advisor_id: advisorProfile.id },
         '-created_date',
-        options // Pass the options object, including the signal
+        100
       ).catch((err) => {
         // Handle AbortError specifically to avoid logging expected cancellations
         if (err?.name === 'AbortError' || err?.message?.includes('aborted')) {

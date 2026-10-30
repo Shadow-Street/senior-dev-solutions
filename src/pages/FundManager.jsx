@@ -155,7 +155,7 @@ function DashboardHomeView({ stats, investors, transactions, allocations, pendin
     value: value
   }));
 
-  const COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'];
+  const COLORS = ['#3b82f6', '#8b5cf6', '#56E11B', '#f59e0b', '#ef4444'];
 
   return (
     <div className="p-8 space-y-8">
@@ -3073,7 +3073,7 @@ export default function FundManager() {
   const handleLogout = async () => {
     try {
       await User.logout();
-      window.location.href = createPageUrl('Dashboard');
+      window.location.href = '/login';
     } catch (error) {
       console.error('Logout error:', error);
       toast.error('Failed to logout. Please try again.');

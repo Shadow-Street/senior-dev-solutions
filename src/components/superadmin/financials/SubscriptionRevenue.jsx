@@ -15,7 +15,7 @@ import {
 } from 'recharts';
 import { format } from 'date-fns';
 
-const COLORS = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444'];
+const COLORS = ['#3B82F6', '#8B5CF6', '#56E11B', '#F59E0B', '#EF4444'];
 
 export default function SubscriptionRevenue({ subscriptionTransactions, subscriptionPlans, promoCodes }) {
 

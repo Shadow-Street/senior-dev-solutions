@@ -18,7 +18,7 @@ const money = (value, currency = "USD") => {
 
 function MoversTable({ title, rows, positive, isLoading, error }) {
   const Icon = positive ? TrendingUp : TrendingDown;
-  const iconTone = positive ? "bg-buy text-positive" : "bg-sell-muted text-sell";
+  const iconTone = positive ? "bg-buy text-buy-foreground" : "bg-sell-muted text-sell";
 
   return (
     <Card className="overflow-hidden border border-border bg-card shadow-sm">
@@ -82,7 +82,7 @@ function MoversTable({ title, rows, positive, isLoading, error }) {
                         <span
                           className={`inline-flex min-w-[4.25rem] justify-center rounded-md px-2 py-0.5 text-xs font-semibold tabular-nums ${
                             pct >= 0
-                              ? "bg-buy text-positive"
+                              ? "bg-buy text-buy-foreground"
                               : "bg-sell-muted text-sell-muted-foreground"
                           }`}
                         >

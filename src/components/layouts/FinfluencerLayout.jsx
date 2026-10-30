@@ -46,8 +46,11 @@ import {
   LayoutDashboard
 } from 'lucide-react';
 import { User } from '@/api/entities';
+import { renderBrandLogo } from "@/components/common/BrandLogo";
+import { useAuth } from '@/components/context/AuthContext';
 
 export default function FinfluencerLayout({ children, activePage }) {
+  const { logout } = useAuth();
   const location = useLocation();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -71,8 +74,7 @@ export default function FinfluencerLayout({ children, activePage }) {
 
   const handleLogout = async () => {
     try {
-      await User.logout();
-      window.location.href = createPageUrl('Dashboard');
+      await logout(); // AuthContext: revoke, clear session, go to /login
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -337,9 +339,9 @@ export default function FinfluencerLayout({ children, activePage }) {
           <div className="bg-surface-2 border-b border-protocall-premium-light px-8 py-4 flex-shrink-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-premium-muted flex items-center justify-center">
-                  <Star className="w-5 h-5 text-primary" />
-                </div>
+                <span className="flex w-8 h-8 items-center justify-center rounded-lg bg-protocall-deep">
+                  {renderBrandLogo("w-6 h-6")}
+                </span>
                 <span className="font-bold text-base text-primary">Finfluencer Portal</span>
               </div>
               <Link to={createPageUrl('Dashboard')}>

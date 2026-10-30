@@ -421,7 +421,7 @@ export default function ExportManager({
               <td style="font-weight: 600;">₹${comm.gross_revenue || 0}</td>
               <td>${comm.platform_commission_rate || 0}%</td>
               <td>₹${comm.platform_commission || 0}</td>
-              <td style="color: #059669; font-weight: 600;">₹${comm.organizer_payout || 0}</td>
+              <td style="color: #276B10; font-weight: 600;">₹${comm.organizer_payout || 0}</td>
               <td>${comm.payout_status}</td>
             </tr>
           `;

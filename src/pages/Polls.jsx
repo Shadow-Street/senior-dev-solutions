@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef, useLayoutEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import StatTile from "@/components/common/StatTile";
+import pollsBanner from "@/assets/brand/polls-bull-bear.webp";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -402,24 +403,39 @@ export default function Polls() {
   return (
     <div className="w-full bg-background p-6">
       <div className="max-w-[1680px] mx-auto space-y-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-protocall-ink to-protocall-blue bg-clip-text text-transparent">
-              Community Polls
-            </h1>
-            <p className="text-subtle mt-1">Vote and make informed decisions together</p>
+        {/* Header banner: bull (BUY) vs bear (SELL) artwork, the poll's two
+            sides. A dark scrim sits under the copy so white text stays above
+            4.5:1 over both the green and the red halves. */}
+        <section className="relative isolate overflow-hidden rounded-2xl bg-protocall-ink text-white shadow-sm">
+          <img
+            src={pollsBanner}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 -z-10 h-full w-full select-none object-cover object-center"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-protocall-ink/85 via-protocall-ink/45 to-protocall-ink/80"
+          />
+          <div className="flex min-h-[150px] flex-col justify-between gap-4 p-5 sm:p-7 md:flex-row md:items-center">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight text-white">
+                Community Polls
+              </h1>
+              <p className="mt-1 text-white/90">Vote and make informed decisions together</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Badge variant="outline" className="border-white/25 bg-white/10 text-white backdrop-blur-sm">
+                <BarChart3 className="w-3 h-3 mr-1" />
+                {polls.filter(p => p.is_active).length} Active
+              </Badge>
+              <Button onClick={() => setShowCreateModal(true)} className="bg-buy text-buy-foreground font-semibold hover:bg-buy-soft">
+                <Plus className="w-4 h-4 mr-2" />
+                Create Poll
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Badge variant="outline" className="bg-premium-muted text-protocall-premium-text">
-              <BarChart3 className="w-3 h-3 mr-1" />
-              {polls.filter(p => p.is_active).length} Active
-            </Badge>
-            <Button onClick={() => setShowCreateModal(true)} className="bg-primary hover:bg-primary">
-              <Plus className="w-4 h-4 mr-2" />
-              Create Poll
-            </Button>
-          </div>
-        </div>
+        </section>
 
         {/* Four distinct tones, matching the Dashboard and Portfolio rows.
             Three of these were previously the same purple, and the labels used

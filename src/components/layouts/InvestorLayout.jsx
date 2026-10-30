@@ -19,7 +19,6 @@ import {
   FileText,
   UserCircle,
   ChevronDown,
-  Shield,
   CheckCircle,
   Clock,
   LogOut,
@@ -27,8 +26,11 @@ import {
 } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { renderBrandLogo } from "@/components/common/BrandLogo";
+import { useAuth } from '@/components/context/AuthContext';
 
 export default function InvestorLayout({ children, currentView }) { // Changed activePage to currentView
+  const { logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -78,8 +80,7 @@ export default function InvestorLayout({ children, currentView }) { // Changed a
 
   const handleLogout = async () => {
     try {
-      await User.logout();
-      navigate(createPageUrl('Login')); // Redirect to login after logout
+      await logout(); // AuthContext: revoke, clear session, go to /login
     } catch (error) {
       console.error('Logout error:', error);
       toast.error('Failed to log out');
@@ -105,7 +106,7 @@ export default function InvestorLayout({ children, currentView }) { // Changed a
         {/* Logo Section */}
         <div className="h-20 flex items-center justify-center border-b border-sidebar-border bg-sidebar-dark">
           <div className="text-xl font-bold text-white flex items-center gap-2">
-            <Shield className="w-7 h-7" />
+            {renderBrandLogo("w-8 h-8")}
             Investor Portal
           </div>
         </div>
@@ -149,8 +150,8 @@ export default function InvestorLayout({ children, currentView }) { // Changed a
           </button>
 
           <div className="text-center p-4 bg-sidebar-dark rounded-lg">
-            <Shield className="w-8 h-8 mx-auto text-protocall-premium-light mb-2" />
-            <h3 className="font-bold text-sidebar-foreground">Protocol</h3>
+            {renderBrandLogo("w-9 h-9 mx-auto mb-2")}
+            <h3 className="font-bold text-sidebar-foreground">Protocall</h3>
             <p className="text-xs text-sidebar-muted-foreground">Secure Investment Fund</p>
           </div>
         </div>

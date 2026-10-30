@@ -228,7 +228,7 @@ export const FEATURE_REGISTRY = {
     status: 'live',
     visibility: ['premium', 'vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("MyStocks")} className="block"><div className="p-6 bg-buy-muted border-2 border-buy/30 rounded-xl hover:shadow-lg transition-all"><TrendingUp className="w-8 h-8 text-buy-muted-foreground mb-2" /><h3 className="font-bold text-lg">Portfolio Tracker</h3><p className="text-sm text-subtle">Manage your investments</p></div></Link>
+    component: () => <Link to={createPageUrl("MyPortfolio")} className="block"><div className="p-6 bg-buy-muted border-2 border-buy/30 rounded-xl hover:shadow-lg transition-all"><TrendingUp className="w-8 h-8 text-buy-muted-foreground mb-2" /><h3 className="font-bold text-lg">Portfolio Tracker</h3><p className="text-sm text-subtle">Manage your investments</p></div></Link>
   },
 
   // ============ VIP ELITE FEATURES ============
@@ -307,7 +307,7 @@ export const FEATURE_REGISTRY = {
     status: 'partial',
     visibility: ['vip'],
     releaseDate: null,
-    component: () => <Link to={createPageUrl("MyStocks")} className="block"><div className="p-6 bg-hold-muted border-2 border-hold/30 rounded-xl hover:shadow-lg transition-all"><Bell className="w-8 h-8 text-hold-muted-foreground mb-2" /><h3 className="font-bold text-lg">Custom Alerts</h3><p className="text-sm text-subtle">Personalized notifications</p></div></Link>
+    component: () => <Link to={createPageUrl("MyPortfolio")} className="block"><div className="p-6 bg-hold-muted border-2 border-hold/30 rounded-xl hover:shadow-lg transition-all"><Bell className="w-8 h-8 text-hold-muted-foreground mb-2" /><h3 className="font-bold text-lg">Custom Alerts</h3><p className="text-sm text-subtle">Personalized notifications</p></div></Link>
   },
   research_reports: {
     key: 'research_reports',

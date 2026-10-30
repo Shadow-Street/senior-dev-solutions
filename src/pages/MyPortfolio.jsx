@@ -16,6 +16,11 @@ import AddInvestmentModal from '../components/stocks/AddInvestmentModal';
 import AlertModal from '../components/stocks/AlertModal';
 import StatTile from '@/components/common/StatTile';
 
+// Money figures in the summary tiles: at most two decimals. Bare
+// toLocaleString allows three, which rendered values like ₹4,63,130.006 that
+// overran the tile's icon.
+const INR_2DP = { minimumFractionDigits: 0, maximumFractionDigits: 2 };
+
 export default function MyPortfolio() {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('portfolio');
@@ -330,7 +335,7 @@ export default function MyPortfolio() {
 
     return (
         <div className="w-full bg-background">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
 
                 {/* Guest Mode Banner */}
                 {!user && (
@@ -381,21 +386,21 @@ export default function MyPortfolio() {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 sm:gap-5 mb-8">
                     <StatTile
                         title="Total Invested"
-                        value={`₹${stats.totalInvested.toLocaleString('en-IN')}`}
+                        value={`₹${stats.totalInvested.toLocaleString('en-IN', INR_2DP)}`}
                         sub="Capital deployed"
                         icon={IndianRupee}
                         tone="blue"
                     />
                     <StatTile
                         title="Current Value"
-                        value={`₹${stats.currentValue.toLocaleString('en-IN')}`}
+                        value={`₹${stats.currentValue.toLocaleString('en-IN', INR_2DP)}`}
                         sub="Live valuation"
                         icon={TrendingUp}
                         tone="purple"
                     />
                     <StatTile
                         title="Total P/L"
-                        value={`₹${stats.totalPL.toLocaleString('en-IN')}`}
+                        value={`₹${stats.totalPL.toLocaleString('en-IN', INR_2DP)}`}
                         sub={`${stats.totalPLPercent.toFixed(2)}% overall`}
                         icon={stats.totalPL >= 0 ? TrendingUp : TrendingDown}
                         tone={stats.totalPL >= 0 ? 'green' : 'orange'}
@@ -550,7 +555,7 @@ export default function MyPortfolio() {
                                 </CardContent>
                             </Card>
                         ) : viewMode === 'grid' ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {filteredStocks.map((stock) => (
                                     <Card key={stock.id} className="bg-white border rounded-lg shadow-sm hover:shadow-md transition-all duration-200 relative">
                                         <div className="absolute top-3 right-3 flex items-center gap-2">
@@ -849,7 +854,7 @@ export default function MyPortfolio() {
                                 </CardContent>
                             </Card>
                         ) : viewMode === 'grid' ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {filteredWatchlistStocks.map((stock) => (
                                     <Card key={stock.id} className="bg-white border rounded-lg shadow-sm hover:shadow-md transition-all duration-200 relative">
                                         <div className="absolute top-3 right-3 flex items-center gap-2">

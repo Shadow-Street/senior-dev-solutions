@@ -117,24 +117,27 @@ export default function Dashboard() {
     <div className="w-full bg-background">
       <div className="mx-auto w-full max-w-[1680px] space-y-4 p-4 sm:space-y-5 sm:p-5 lg:p-6">
         {/* ---------- Hero banner ---------- */}
-        <section className="relative isolate overflow-hidden rounded-2xl bg-[linear-gradient(90deg,#250B8E_0%,#2C0DA5_70%,#3914BD_100%)] text-white shadow-sm">
-          {/* Bull-market artwork. It carries its own indigo field on the left,
-              and the section background continues that field. On desktop the
-              art stops short of the right edge and fades out, so the tagline
-              sits on clear colour beside the bull rather than over its head;
-              on narrow screens the scrim keeps the bull from fighting the text. */}
+        <section className="relative isolate overflow-hidden rounded-2xl bg-[linear-gradient(90deg,#3506B2_0%,#3A04C5_55%,#343DA1_100%)] text-white shadow-sm">
+          {/* Blue bull banner. The section background is sampled from the
+              artwork's own edges, so wherever the image ends the colour
+              carries on. From lg up the art is sized to the banner height and
+              parked just left of the tagline column, fading out at both ends;
+              below lg it fills the banner behind a scrim so the copy stays
+              readable over the bull. */}
           <img
             src={heroBull}
             alt=""
             aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 right-0 -z-10 h-full w-full select-none object-cover object-[72%_50%] lg:right-[9%] lg:w-[91%] lg:object-right lg:[mask-image:linear-gradient(to_right,#000_86%,transparent)]"
+            className="pointer-events-none absolute inset-0 -z-10 h-full w-full select-none object-cover object-[78%_45%]
+                       lg:inset-auto lg:inset-y-0 lg:right-[190px] lg:w-auto lg:max-w-none lg:object-contain
+                       lg:[mask-image:linear-gradient(to_right,transparent,#000_28%,#000_86%,transparent)]"
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-protocall-ink/70 via-protocall-ink/30 to-transparent lg:from-protocall-ink/40 lg:via-transparent"
+            className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-protocall-ink/75 via-protocall-ink/40 to-protocall-ink/10 lg:from-protocall-ink/35 lg:via-transparent lg:to-transparent"
           />
 
-          <div className="grid gap-5 p-5 sm:px-7 sm:py-6 lg:min-h-[184px] lg:grid-cols-[1fr_auto] lg:items-center">
+          <div className="grid gap-5 p-5 sm:px-7 sm:py-6 lg:min-h-[210px] lg:grid-cols-[1fr_auto] lg:items-center">
             <div className="min-w-0">
               <h1 className="text-2xl font-bold tracking-tight sm:text-[28px] sm:leading-9">
                 Welcome back, {firstName}!
@@ -171,7 +174,7 @@ export default function Dashboard() {
               </p>
               <Link
                 to={createPageUrl("MyPortfolio")}
-                className="group mt-4 inline-flex items-center gap-2 rounded-lg bg-buy px-5 py-2.5 text-sm font-bold text-buy-foreground shadow-[0_6px_20px_-6px_rgba(215,255,0,0.55)] transition-colors hover:bg-buy-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                className="group mt-4 inline-flex items-center gap-2 rounded-lg bg-buy px-5 py-2.5 text-sm font-bold text-buy-foreground shadow-[0_6px_20px_-6px_rgba(86,225,27,0.55)] transition-colors hover:bg-buy-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
               >
                 Explore Now
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 motion-reduce:transform-none" />

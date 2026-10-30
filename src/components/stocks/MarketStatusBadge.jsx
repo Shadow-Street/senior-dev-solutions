@@ -4,7 +4,7 @@ import { stockAPI } from "./LiveStockAPI";
 /**
  * One market-status pill for every surface that shows it (ticker, trending
  * stocks, app header), so the colours cannot drift apart:
- *   open   → Neon Lime fill, #101018 ink, pulsing dot   (BUY / Live semantics)
+ *   open   → green #56E11B fill, #101018 ink, pulsing dot   (BUY / Live semantics)
  *   closed → Loss Background #FEECEC, Loss Text #B91C1C, #EF4444 dot (SELL red)
  *
  * The closed state uses the tinted red rather than a solid #EF4444 fill: white

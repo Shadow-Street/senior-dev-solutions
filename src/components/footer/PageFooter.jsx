@@ -1,7 +1,6 @@
 
 import React from "react";
 import {
-  Crosshair,
   FileText,
   Newspaper,
   GraduationCap,
@@ -22,6 +21,7 @@ import {
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { usePlatformSettings } from "../hooks/usePlatformSettings";
+import { renderBrandLogo } from "@/components/common/BrandLogo";
 
 export default function PageFooter() {
   const { settings } = usePlatformSettings();
@@ -66,9 +66,7 @@ export default function PageFooter() {
           {/* Brand */}
           <div>
             <div className="mb-4 flex items-center gap-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-protocall-sidebar-dark ring-1 ring-white/15">
-                <Crosshair className="h-6 w-6 text-white" />
-              </span>
+              {renderBrandLogo("h-10 w-10")}
               <span className="text-xl font-bold">{settings.site_name || 'Protocall'}</span>
             </div>
 
@@ -201,14 +199,12 @@ export default function PageFooter() {
             <p className="text-center text-white/70 md:text-left">
               © {new Date().getFullYear()} {settings.site_name || 'Protocall'}. All rights reserved. | India's Retail Investor Community
             </p>
+            {/* Sitemap and Accessibility links removed: neither page exists,
+                so both fell through to the catch-all and bounced to /Dashboard. */}
             <div className="flex gap-6 text-white/70">
-              <Link to={createPageUrl("Sitemap")} className="transition-colors hover:text-white">
-                Sitemap
+              <Link to={createPageUrl("ContactSupport")} className="transition-colors hover:text-white">
+                24/7 Support
               </Link>
-              <Link to={createPageUrl("Accessibility")} className="transition-colors hover:text-white">
-                Accessibility
-              </Link>
-              <span>24/7 Support</span>
             </div>
           </div>
         </div>

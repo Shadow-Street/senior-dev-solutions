@@ -10,7 +10,7 @@ export default function QuickActions({ user }) {
   const isFinfluencer = user?.app_role === 'finfluencer' || user?.roles?.includes('finfluencer');
 
   // Colour-coded tiles as in the Base44 reference, drawn only from the
-  // PROTOCALL palette: blue/grape for community, Neon Lime for the pledge pool
+  // PROTOCALL palette: blue/grape for community, brand green for the pledge pool
   // (growth; ink icon on the lime), red→orange for creators, orange for upgrades.
   const quickActions = [
     {

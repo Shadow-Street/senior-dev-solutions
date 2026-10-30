@@ -25,7 +25,7 @@ import {
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 
-const COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#06b6d4', '#8b5cf6'];
+const COLORS = ['#3b82f6', '#8b5cf6', '#56E11B', '#f59e0b', '#ef4444', '#06b6d4', '#8b5cf6'];
 
 export default function Reports() {
   const [reportType, setReportType] = useState('monthly_summary');

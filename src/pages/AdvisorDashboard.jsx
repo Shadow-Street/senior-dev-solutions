@@ -1,11 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import apiClient, {
   authAPI,
   Advisor,
   AdvisorPost,
   AdvisorPlan,
-  AdvisorSubscription,
   CommissionTracking,
   Review,
   PayoutRequest
@@ -51,6 +51,8 @@ import RefundManagementSection from '../components/advisors/RefundManagementSect
 import PostLimitTracker from '../components/advisors/PostLimitTracker';
 import PostAnalyticsModal from '../components/advisors/PostAnalyticsModal'; // Added PostAnalyticsModal import
 
+const ADVISOR_TABS = ['overview', 'posts', 'plans', 'subscribers', 'financials', 'analytics'];
+
 export default function AdvisorDashboard() {
   const [user, setUser] = useState(null);
   const [advisor, setAdvisor] = useState(null);
@@ -64,7 +66,21 @@ export default function AdvisorDashboard() {
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [showPayoutRequest, setShowPayoutRequest] = useState(false);
   const [editingPost, setEditingPost] = useState(null);
-  const [activeTab, setActiveTab] = useState('overview');
+  // The active tab lives in the URL (?section=…), which is what the advisor
+  // sidebar links set. It used to be local state seeded once from ?tab= on
+  // mount, so ?section=financials (and every sidebar click on this page)
+  // silently showed Overview. ?tab= is still accepted for old links.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedTab = searchParams.get('section') || searchParams.get('tab');
+  const activeTab = ADVISOR_TABS.includes(requestedTab) ? requestedTab : 'overview';
+  const setActiveTab = useCallback((tab) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set('section', tab);
+      next.delete('tab');
+      return next;
+    }, { replace: true });
+  }, [setSearchParams]);
   const [showCreatePlan, setShowCreatePlan] = useState(false);
   const [editingPlan, setEditingPlan] = useState(null);
   const [viewingPost, setViewingPost] = useState(null);
@@ -84,16 +100,6 @@ export default function AdvisorDashboard() {
     pendingPayouts: 0,
     avgRating: 0
   });
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const tab = urlParams.get('tab');
-    if (tab) {
-      setActiveTab(tab);
-    } else {
-      setActiveTab('overview');
-    }
-  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -151,6 +157,8 @@ export default function AdvisorDashboard() {
 
         // Only load other data if advisor is approved
         if (advisorProfile.status === 'approved') {
+          // This advisor's plan ids, used to scope the subscriber list below.
+          let advisorPlanIds = new Set();
           try {
             const [postsData, plansData] = await Promise.all([
               AdvisorPost.filter({ advisor_id: advisorProfile.id }).catch(() => []),
@@ -160,6 +168,7 @@ export default function AdvisorDashboard() {
             if (!isMounted) return;
             setPosts(postsData || []);
             setPlans(plansData || []);
+            advisorPlanIds = new Set((plansData || []).map((plan) => plan.id));
           } catch (error) {
             console.error('Error loading posts/plans:', error);
             setPosts([]);
@@ -173,7 +182,17 @@ export default function AdvisorDashboard() {
 
             try {
               const [subscriptionsData, commissionsData, reviewsData, payoutRequestsData] = await Promise.all([
-                AdvisorSubscription.filter({ advisor_id: advisorProfile.id }).catch(() => []),
+                // Subscribers to this advisor's plans. The generic subscription
+                // CRUD is scoped to the caller's own rows, so filtering it by
+                // advisor_id returned the advisor's *own* subscriptions and left
+                // the Subscribers tab and stats empty.
+                // Narrowed to this advisor's plans on the client too: for
+                // admin/super_admin the endpoint returns every subscription on
+                // the platform, which would show as this advisor's subscribers.
+                apiClient.get('/advisors/subscriptions/my-subscribers')
+                  .then((r) => (Array.isArray(r?.data) ? r.data : []))
+                  .then((rows) => rows.filter((sub) => advisorPlanIds.has(sub.plan_id)))
+                  .catch(() => []),
                 CommissionTracking.filter({ advisor_id: advisorProfile.id }).catch(() => []),
                 Review.filter({ entity_id: advisorProfile.id, entity_type: 'advisor' }).catch(() => []),
                 PayoutRequest.filter({ entity_id: advisorProfile.id, entity_type: 'advisor' }).catch(() => [])

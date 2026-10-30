@@ -50,13 +50,15 @@ import {
   Target // Added Target icon for pledge sessions
 } from 'lucide-react';
 import { User, PlatformSetting, AdvisorPledgeAccessRequest, Advisor } from '@/lib/apiClient'; // Added PlatformSetting
+import { useAuth } from '@/components/context/AuthContext';
+import { renderBrandLogo } from "@/components/common/BrandLogo";
 
 export default function AdvisorLayout({ children, currentPageName }) { // Renamed activePage to currentPageName
+  const { logout } = useAuth();
   const location = useLocation();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [advisorOpen, setAdvisorOpen] = useState(true);
-  const [organizerOpen, setOrganizerOpen] = useState(true);
   const [pledgeOpen, setPledgeOpen] = useState(true);
   const [advisorPledgeFeatureEnabled, setAdvisorPledgeFeatureEnabled] = useState(false); // New state
   const [advisorPledgeAccessRequest, setAdvisorPledgeAccessRequest] = useState(null); // New state, implied by usage
@@ -183,8 +185,7 @@ export default function AdvisorLayout({ children, currentPageName }) { // Rename
 
   const handleLogout = async () => {
     try {
-      await User.logout();
-      window.location.href = createPageUrl('Dashboard');
+      await logout(); // AuthContext: revoke, clear session, go to /login
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -389,6 +390,16 @@ export default function AdvisorLayout({ children, currentPageName }) { // Rename
     <SidebarProvider>
       <div className="flex h-screen w-full overflow-hidden">
         <div className="w-80 border-r border-sidebar-border bg-sidebar text-sidebar-foreground flex flex-col h-screen overflow-hidden">
+          <Link
+            to={createPageUrl('Dashboard')}
+            className="flex flex-shrink-0 items-center gap-3 border-b border-sidebar-border bg-sidebar-dark px-5 py-4"
+          >
+            {renderBrandLogo("h-9 w-9")}
+            <span>
+              <span className="block text-lg font-bold leading-tight tracking-tight text-white">PROTOCALL</span>
+              <span className="block text-[10px] uppercase tracking-widest text-sidebar-muted-foreground">Advisor Portal</span>
+            </span>
+          </Link>
           {user && (
             <div className="px-4 py-6 border-b border-sidebar-border flex-shrink-0">
               <div className="p-4 bg-sidebar-dark rounded-xl shadow-lg text-sidebar-foreground">
@@ -476,36 +487,24 @@ export default function AdvisorLayout({ children, currentPageName }) { // Rename
                 </Collapsible>
               )}
 
-              <Collapsible open={organizerOpen} onOpenChange={setOrganizerOpen}>
-                <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2 rounded-lg bg-sidebar-dark hover:bg-sidebar-accent transition-all">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-protocall-premium-light" />
-                    <span className="font-semibold text-sm text-sidebar-foreground">Event Organizer</span>
-                  </div>
-                  <ChevronDown className={`w-4 h-4 text-sidebar-muted-foreground transition-transform ${organizerOpen ? 'rotate-180' : ''}`} />
-                </CollapsibleTrigger>
-                <CollapsibleContent className="mt-1">
-                  <div className="ml-6 space-y-1"> {/* Added ml-6 for indentation */}
-                    {organizerNavItems.map((item) => {
-                      const isActive = item.matchPattern(location.pathname, location.search);
-                      return (
-                        <Link 
-                          key={item.url} // Changed key to item.url
-                          to={item.url} 
-                          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${ // Simplified styling
-                            isActive 
-                              ? 'bg-sidebar-primary text-sidebar-primary-foreground font-semibold shadow-md' 
-                              : 'hover:bg-sidebar-accent text-sidebar-foreground'
-                          }`}
-                        >
-                          <item.icon className="w-4 h-4" />
-                          <span>{item.title}</span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
+              {/* Event Organizer is a coming-soon feature: its pages are not
+                  routed yet, so the group shows as a disabled row with a
+                  "Soon" badge instead of a dropdown of links that would all
+                  bounce to the dashboard. organizerNavItems is kept for when
+                  the feature ships. */}
+              <div
+                aria-disabled="true"
+                title="Event Organizer — coming soon"
+                className="flex w-full cursor-not-allowed items-center justify-between rounded-lg bg-sidebar-dark px-3 py-2 opacity-80"
+              >
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-protocall-premium-light" />
+                  <span className="font-semibold text-sm text-sidebar-foreground">Event Organizer</span>
+                </div>
+                <Badge className="border-transparent bg-buy px-1.5 text-[10px] font-bold uppercase tracking-tight text-buy-foreground hover:bg-buy">
+                  Soon
+                </Badge>
+              </div>
             </div>
           </div>
 

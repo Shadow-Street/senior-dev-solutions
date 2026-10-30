@@ -23,15 +23,20 @@ export default function AdvisorPledgeExecutionPanel({ user, advisorProfile, acce
       }
 
       try {
-        const [sessionData, executionData] = await Promise.all([
-          PledgeSession.filter({
-            created_by_advisor_id: advisorProfile.id,
-            status: { '$in': ['approved', 'active', 'executing', 'awaiting_sell_execution', 'completed'] }
-          }).catch(() => []), // Return empty array on error
-          PledgeExecutionRecord.filter({
-            session_id: { '$exists': true }
-          }).catch(() => []) // Return empty array on error
-        ]);
+        // The API takes plain equality filters only. The Mongo-style `$in` /
+        // `$exists` operators used here were sent as malformed query params,
+        // so both requests failed and the panel was always empty. Narrow the
+        // statuses and drop orphan records on the client instead.
+        const EXECUTION_STATUSES = new Set(['approved', 'active', 'executing', 'awaiting_sell_execution', 'completed']);
+        const rawSessions = await PledgeSession.filter({ created_by_advisor_id: advisorProfile.id }).catch(() => []);
+        const sessionData = (rawSessions || []).filter(s => EXECUTION_STATUSES.has(s.status));
+        // One query per session (the API filters by session_id), rather than a
+        // capped platform-wide list filtered here, which silently dropped an
+        // advisor's records once more than 100 existed in total.
+        const perSession = await Promise.all(
+          sessionData.map(s => PledgeExecutionRecord.filter({ session_id: s.id }, '-executed_at', 500).catch(() => []))
+        );
+        const executionData = perSession.flat();
 
         if (!isMounted || abortController.signal.aborted) return;
 

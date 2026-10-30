@@ -21,6 +21,7 @@ import {
 import { ContactInquiry } from '@/lib/apiClient';
 import { toast } from 'sonner';
 import PageFooter from '../components/footer/PageFooter';
+import FAQSection from '../components/landing/FAQSection';
 import { usePlatformSettings } from '../components/hooks/usePlatformSettings';
 
 export default function ContactSupport() {
@@ -299,11 +300,11 @@ export default function ContactSupport() {
                   <p className="text-sm text-subtle mb-4">
                     Check out our FAQ section for instant answers to common questions
                   </p>
-                  <Link to={createPageUrl('Landing') + '#faq'}>
+                  <a href="#faq">
                     <Button variant="outline" className="border-primary text-protocall-premium-text hover:bg-premium-muted">
                       View FAQs
                     </Button>
-                  </Link>
+                  </a>
                 </div>
               </div>
             </Card>
@@ -336,11 +337,11 @@ export default function ContactSupport() {
               <p className="text-sm text-subtle mb-4">
                 Browse guides and documentation
               </p>
-              <Link to={createPageUrl('Landing') + '#faq'}>
+              <a href="#faq">
                 <Button className="w-full bg-primary hover:bg-primary">
                   Visit Help Center
                 </Button>
-              </Link>
+              </a>
             </div>
           </Card>
 
@@ -433,6 +434,12 @@ export default function ContactSupport() {
           </div>
         </Card>
       </div>
+
+      {/* The FAQ used to live on the old landing page; the Home page rebuilt
+          from protocall.in/home has none, so it is kept here. */}
+      <section id="faq" className="scroll-mt-6">
+        <FAQSection />
+      </section>
 
       <PageFooter />
     </div>

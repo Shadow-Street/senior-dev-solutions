@@ -39,7 +39,7 @@ import {
   Area
 } from 'recharts';
 
-const COLORS = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#84CC16'];
+const COLORS = ['#3B82F6', '#8B5CF6', '#56E11B', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#63E52E'];
 
 export default function AdvancedAnalyticsDashboard() {
   const [isLoading, setIsLoading] = useState(true);

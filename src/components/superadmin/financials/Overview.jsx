@@ -36,7 +36,7 @@ export default function Overview({ data, subscriptionTransactions, refunds }) { 
     ];
   }, [subscriptionRevenue, stats.netRevenue, stats.adRevenue]);
 
-  const COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'];
+  const COLORS = ['#3b82f6', '#8b5cf6', '#56E11B', '#f59e0b', '#ef4444'];
 
   // Helper component for KPI cards - moved and refactored
   const StatCard = ({ title, value, icon: Icon, subtitle, change, badge, gradient }) => (

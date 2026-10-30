@@ -301,7 +301,7 @@ function InvestorLayout({
           <button
             onClick={async () => {
               await User.logout();
-              window.location.href = '/';
+              window.location.href = '/login';
             }} className="text- w-full flex items-center gap-3 rounded-xl transition-all duration-200 hover:from-surface-2 hover:to-surface-2 bg-surface-2 "
 
             style={{ fontSize: '16px', fontWeight: 500 }}>
@@ -338,7 +338,7 @@ function InvestorLayout({
             {/* NOTIFICATION BELL */}
             <NotificationBell user={user} />
 
-            <ProfileDropdown investor={investor} onLogout={async () => { await User.logout(); window.location.href = '/'; }} onNavigate={onNavigate} />
+            <ProfileDropdown investor={investor} onLogout={async () => { await User.logout(); window.location.href = '/login'; }} onNavigate={onNavigate} />
           </div>
         </header>
 
@@ -774,7 +774,7 @@ function DashboardHomeView({ investor, allocations, wallet, onRefresh }) {
       };
     });
 
-  const COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'];
+  const COLORS = ['#3b82f6', '#8b5cf6', '#56E11B', '#f59e0b', '#ef4444'];
 
   if (isLoading) {
     return (
@@ -3845,7 +3845,7 @@ export default function InvestorDashboard() {
 
   // If logged in, but needs to register
   if (showRegistrationForm && user && !investor) {
-    return <InvestorRegistrationForm user={user} onSuccess={handleRegistrationSuccess} onLogout={async () => { await User.logout(); window.location.href = '/'; }} />;
+    return <InvestorRegistrationForm user={user} onSuccess={handleRegistrationSuccess} onLogout={async () => { await User.logout(); window.location.href = '/login'; }} />;
   }
 
   // FIX: User has pending request - show locked dashboard with banner
@@ -3891,7 +3891,7 @@ export default function InvestorDashboard() {
                     Profile
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={async () => { await User.logout(); window.location.href = '/'; }} className="text-sell-muted-foreground">
+                  <DropdownMenuItem onClick={async () => { await User.logout(); window.location.href = '/login'; }} className="text-sell-muted-foreground">
                     <LogOut className="w-4 h-4 mr-2" />
                     Logout
                   </DropdownMenuItem>

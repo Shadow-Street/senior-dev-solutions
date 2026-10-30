@@ -85,12 +85,12 @@ export default function TrendingStocks({ stocks = [] }) {
                     <p className="text-base font-bold tabular-nums text-foreground">
                       {money(stock.current_price, stock.currency)}
                     </p>
-                    {/* Positive Background #D7FF00 + Positive Text #193B20;
+                    {/* Green fill #56E11B + #101018 ink (10.98:1);
                         Loss Background #FEECEC + Loss Text #B91C1C. */}
                     <span
                       className={`mt-1 inline-flex rounded-md border px-2 py-0.5 text-xs font-semibold tabular-nums ${
                         positive
-                          ? "border-transparent bg-buy text-positive"
+                          ? "border-transparent bg-buy text-buy-foreground"
                           : "border-sell/30 bg-card text-sell-muted-foreground"
                       }`}
                     >

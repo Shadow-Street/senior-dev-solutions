@@ -12,8 +12,8 @@ import { Card, CardContent } from "@/components/ui/card";
  *
  * Colour. Blue, purple and orange are the AA-safe depth of a family already in
  * the palette (blue is --premium, purple is --primary, orange from HOLD) and
- * measure 6.44, 7.10 and 5.18 against white. Green is the spec's Neon Lime
- * fill with #101018 ink text (16.4:1) rather than white.
+ * measure 6.44, 7.10 and 5.18 against white. Green is the brand #56E11B
+ * fill with #101018 ink text (10.98:1) rather than white.
  *
  * Text is full-strength throughout, with the hierarchy coming from size and
  * weight rather than opacity. Dimming the label to 90% and the sub-label to
@@ -25,9 +25,9 @@ import { Card, CardContent } from "@/components/ui/card";
  * it. Every one of those is wrapped in `motion-reduce:` so the tile is
  * completely still for anyone who has asked for reduced motion.
  */
-// Green is the spec's Neon Lime (#D7FF00), which is unreadable under white
-// (1.15:1). The tile swaps its foreground variable to #101018 ink instead, so
-// every `tile-foreground` text and translucent disc below follows (16.4:1).
+// Green is the brand #56E11B, which is unreadable under white (1.72:1). The
+// tile swaps its foreground variable to #101018 ink instead, so every
+// `tile-foreground` text and translucent disc below follows (10.98:1).
 const TONES = {
   green: "bg-buy [--tile-foreground:240_20%_7.8%]",
   blue: "bg-tile-blue",

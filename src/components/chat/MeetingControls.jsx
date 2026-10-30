@@ -1,19 +1,48 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Meeting } from "@/api/entities";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Video, VideoOff, Users, Clock, Settings, Edit } from "lucide-react";
+import { Video, VideoOff, Edit } from "lucide-react";
 
-export default function MeetingControls({ chatRoomId, stockSymbol, onMeetingStart, onMeetingEnd }) {
+/**
+ * Meeting links are typed by any room member and opened in a new tab, so only
+ * plain https URLs are accepted or opened — never javascript:, data: or other
+ * schemes. Returns the normalised URL, or null when it is not allowed.
+ * (The backend should enforce the same rule; tracked separately.)
+ */
+export function safeMeetingUrl(value) {
+  try {
+    const url = new URL(String(value || '').trim());
+    return url.protocol === 'https:' ? url.href : null;
+  } catch {
+    return null;
+  }
+}
+
+const openMeeting = (value) => {
+  const url = safeMeetingUrl(value);
+  if (url) window.open(url, '_blank', 'noopener,noreferrer');
+};
+
+/**
+ * Live-meeting controls for a chat room.
+ *
+ * `variant="inline"` renders compact header actions instead of a full-width
+ * card: a "Start Meeting" button while idle, and Meeting live / Join / edit-link / End
+ * while a meeting runs. The chat header uses this so the old "Start Live
+ * Meeting" banner no longer takes a row above the conversation. The card
+ * variant is kept as the default for any other caller.
+ */
+export default function MeetingControls({ chatRoomId, stockSymbol, onMeetingStart, onMeetingEnd, variant = "card" }) {
   const [activeMeeting, setActiveMeeting] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [customMeetingUrl, setCustomMeetingUrl] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [urlError, setUrlError] = useState("");
 
   // Load meeting
   const loadActiveMeeting = useCallback(async () => {
@@ -44,7 +73,12 @@ export default function MeetingControls({ chatRoomId, stockSymbol, onMeetingStar
     setIsLoading(true);
     try {
       // Use existing custom URL or generate one
-      const finalUrl = customMeetingUrl || `https://meet.google.com/${Math.random().toString(36).substring(7)}`;
+      const typed = customMeetingUrl.trim();
+      const finalUrl = typed ? safeMeetingUrl(typed) : `https://meet.google.com/${Math.random().toString(36).substring(7)}`;
+      if (!finalUrl) {
+        setUrlError('Enter a full https:// meeting link (Google Meet, Zoom, Teams…).');
+        return;
+      }
 
       const meetingData = {
         chat_room_id: chatRoomId,
@@ -69,12 +103,17 @@ export default function MeetingControls({ chatRoomId, stockSymbol, onMeetingStar
 
   const updateMeetingLink = async () => {
     if (!activeMeeting) return;
+    const nextUrl = safeMeetingUrl(customMeetingUrl);
+    if (!nextUrl) {
+      setUrlError('Enter a full https:// meeting link (Google Meet, Zoom, Teams…).');
+      return;
+    }
     setIsUpdating(true);
     try {
       await Meeting.update(activeMeeting.id, {
-        meeting_url: customMeetingUrl
+        meeting_url: nextUrl
       });
-      setActiveMeeting(prev => ({ ...prev, meeting_url: customMeetingUrl }));
+      setActiveMeeting(prev => ({ ...prev, meeting_url: nextUrl }));
       setShowConfigModal(false);
     } catch (error) {
       console.error("Error updating meeting:", error);
@@ -100,9 +139,67 @@ export default function MeetingControls({ chatRoomId, stockSymbol, onMeetingStar
     }
   };
 
+  const openConfig = (url = "") => {
+    setUrlError("");
+    setCustomMeetingUrl(url);
+    setShowConfigModal(true);
+  };
+
+  const inline = variant === "inline" && (
+    activeMeeting ? (
+      <div className="flex items-center gap-1.5" role="group" aria-label="Live meeting">
+        <span className="inline-flex h-8 items-center gap-1.5 rounded-full bg-sell-muted px-2.5 text-xs font-bold uppercase tracking-wide text-sell-muted-foreground">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-sell motion-reduce:animate-none" />
+          Meeting live
+        </span>
+        <Button
+          size="sm"
+          onClick={() => openMeeting(activeMeeting.meeting_url)}
+          className="h-8 rounded-full bg-buy px-3 text-sm font-semibold text-buy-foreground shadow-sm hover:bg-buy-soft"
+        >
+          <Video className="mr-1.5 h-4 w-4" />
+          Join
+        </Button>
+        <Button
+          size="icon"
+          variant="outline"
+          onClick={() => openConfig(activeMeeting.meeting_url)}
+          className="h-8 w-8 rounded-full"
+          title="Edit meeting link"
+          aria-label="Edit meeting link"
+        >
+          <Edit className="h-4 w-4" />
+        </Button>
+        <Button
+          size="icon"
+          variant="destructive"
+          onClick={endMeeting}
+          disabled={isLoading}
+          className="h-8 w-8 rounded-full"
+          title="End meeting"
+          aria-label="End meeting"
+        >
+          <VideoOff className="h-4 w-4" />
+        </Button>
+      </div>
+    ) : (
+      <Button
+        size="sm"
+        onClick={() => openConfig("")}
+        disabled={isLoading}
+        className="h-8 rounded-full bg-gradient-to-r from-protocall-blue to-protocall-deep px-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:shadow-md hover:from-protocall-deep hover:to-protocall-deep flex items-center gap-1.5 whitespace-nowrap"
+        title="Start a live video meeting with room members"
+      >
+        <Video className="h-4 w-4" />
+        <span className="hidden sm:inline">Start Meeting</span>
+        <span className="sm:hidden">Meet</span>
+      </Button>
+    )
+  );
+
   return (
     <>
-      {activeMeeting ? (
+      {variant === "inline" ? inline : activeMeeting ? (
         <Card className="bg-gradient-to-r from-positive to-protocall-blue text-white border-0">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -120,17 +217,14 @@ export default function MeetingControls({ chatRoomId, stockSymbol, onMeetingStar
                   size="sm"
                   variant="ghost"
                   className="h-8 w-8 p-0 text-white hover:bg-white/20"
-                  onClick={() => {
-                    setCustomMeetingUrl(activeMeeting.meeting_url);
-                    setShowConfigModal(true);
-                  }}
+                  onClick={() => openConfig(activeMeeting.meeting_url)}
                 >
                   <Edit className="w-4 h-4" />
                 </Button>
                 <Button
                   size="sm"
                   variant="secondary"
-                  onClick={() => window.open(activeMeeting.meeting_url, '_blank')}
+                  onClick={() => openMeeting(activeMeeting.meeting_url)}
                   className="bg-white text-primary hover:bg-premium-muted"
                 >
                   <Video className="w-4 h-4 mr-2" />
@@ -160,10 +254,7 @@ export default function MeetingControls({ chatRoomId, stockSymbol, onMeetingStar
                 </div>
               </div>
               <Button
-                onClick={() => {
-                  setCustomMeetingUrl("");
-                  setShowConfigModal(true);
-                }}
+                onClick={() => openConfig("")}
                 disabled={isLoading}
                 size="sm"
                 className="bg-primary hover:bg-primary"
@@ -186,11 +277,16 @@ export default function MeetingControls({ chatRoomId, stockSymbol, onMeetingStar
             <Input
               placeholder="https://meet.google.com/..."
               value={customMeetingUrl}
-              onChange={(e) => setCustomMeetingUrl(e.target.value)}
+              onChange={(e) => { setCustomMeetingUrl(e.target.value); setUrlError(""); }}
               className="mt-2"
+              aria-invalid={urlError ? true : undefined}
+              aria-describedby="meeting-url-help"
             />
-            <p className="text-xs text-muted-foreground mt-2">
-              Paste your Google Meet, Zoom, or Teams link here. If empty, a random link will be generated.
+            {urlError && (
+              <p role="alert" className="text-xs font-medium text-sell-muted-foreground mt-2">{urlError}</p>
+            )}
+            <p id="meeting-url-help" className="text-xs text-muted-foreground mt-2">
+              Paste your Google Meet, Zoom, or Teams link here (https:// only). If empty, a random link will be generated.
             </p>
           </div>
           <DialogFooter>

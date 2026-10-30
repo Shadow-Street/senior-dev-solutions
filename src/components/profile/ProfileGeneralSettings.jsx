@@ -1,6 +1,7 @@
 
 import React, { useState, useRef } from 'react';
 import { User } from '@/api/entities';
+import { useAuth } from '@/components/context/AuthContext';
 import { UploadFile, SendEmail } from '@/api/integrations';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,9 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Label } from "@/components/ui/label";
 
 export default function ProfileGeneralSettings({ user, onUserUpdate }) {
+  // AuthContext's logout revokes the session, clears it from memory and
+  // storage, and sends the user to /login.
+  const { logout } = useAuth();
   const [newImage, setNewImage] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -208,21 +212,14 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
   };
 
   const handleLogout = async () => {
-    try {
-      await User.logout();
-      toast.success('Logged out successfully');
-    } catch (error) {
-      console.error("Error logging out:", error);
-      toast.error('Failed to logout');
-    }
+    await logout();
   };
 
   const handleDeleteAccount = async () => {
     try {
       await User.updateMyUserData({ is_deactivated: true });
       toast.success("Your account has been deactivated.");
-      await User.logout();
-      window.location.href = '/'; // Redirect to home or login page after deactivation and logout
+      await logout(); // revokes the session and redirects to /login
     } catch (error) {
       toast.error("Failed to deactivate account.");
     }

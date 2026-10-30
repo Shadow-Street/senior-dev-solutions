@@ -155,14 +155,14 @@ export default {
   				text: '#202030',
   				muted: '#5E5E6A',
   				subtle: '#8B8D9A',
-  				/* BUY / positive / growth / live / progress — Neon Lime (spec) */
-  				green: '#D7FF00',          /* Neon Lime              */
-  				'green-soft': '#E4FF4D',   /* lighter lime (hover)   */
-  				'green-bg': '#F6FFCC',     /* lime tint surface      */
-  				'green-text': '#193B20',   /* Positive Text          */
-  				buy: '#D7FF00',
+  				/* BUY / positive / growth / live / progress — brand green */
+  				green: '#56E11B',          /* Primary Green          */
+  				'green-soft': '#63E52E',   /* Secondary Green (hover)*/
+  				'green-bg': '#EAFBDD',     /* green tint surface     */
+  				'green-text': '#276B10',   /* green text on light    */
+  				buy: '#56E11B',
   				'buy-foreground': '#101018',
-  				'buy-text': '#193B20',
+  				'buy-text': '#276B10',
   				/* HOLD / caution / pending */
   				hold: '#F75C03',
   				'hold-bg': '#FFF0E6',
@@ -184,7 +184,28 @@ export default {
   				'sidebar-divider': '#252D4A',
   				'sidebar-text': '#FFFFFF',
   				'sidebar-muted': '#A9B0C8'
+  			},
+  			/* Public Home page (protocall.in/home). Values copied from the
+  			   reference site's CSS variables, kept in their own namespace so
+  			   they cannot shift the app's semantic tokens. */
+  			home: {
+  				brand: 'hsl(263 69% 50% / <alpha-value>)',
+  				ink: 'hsl(272 54% 10% / <alpha-value>)',
+  				tint: 'hsl(261 91% 96% / <alpha-value>)',
+  				night: 'hsl(273 87% 21% / <alpha-value>)',
+  				royal: 'hsl(245 58% 51% / <alpha-value>)',
+  				cream: 'hsl(48 71% 96% / <alpha-value>)',
+  				lime: 'hsl(102 79% 49% / <alpha-value>)',
+  				bull: 'hsl(102 79% 49% / <alpha-value>)',
+  				'bull-text': 'hsl(100 78% 26% / <alpha-value>)',
+  				bear: 'hsl(0 84% 60% / <alpha-value>)',
+  				hold: 'hsl(22 98% 49% / <alpha-value>)',
+  				line: 'hsl(44 24% 88% / <alpha-value>)',
+  				muted: 'hsl(219 13% 41% / <alpha-value>)'
   			}
+  		},
+  		fontFamily: {
+  			display: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif']
   		},
   		backgroundImage: {
   			/* Brand gradient: #101018 -> #3529BF -> #4737FF -> #ACA5FF */

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import apiClient, { authAPI, Advisor, AdvisorPledgeAccessRequest } from '@/lib/apiClient';
 import { Loader2, Lock } from 'lucide-react';
 import AdvisorLayout from '../components/layouts/AdvisorLayout';
@@ -16,9 +17,10 @@ export default function AdvisorPledgeManagementPage() {
   const [accessRequest, setAccessRequest] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Get section from URL params (default to 'overview')
-  const urlParams = new URLSearchParams(window.location.search);
-  const section = urlParams.get('section') || 'overview';
+  // Section from the router's location (default 'overview'), so sidebar links
+  // that only change ?section= re-render this page with the right panel.
+  const [searchParams] = useSearchParams();
+  const section = searchParams.get('section') || 'overview';
 
   useEffect(() => {
     let isMounted = true;

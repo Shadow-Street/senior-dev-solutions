@@ -115,7 +115,7 @@ button:focus-visible {
                                           /*          4.76 on #F1F0FF)        */
     --subtle-foreground: 240 6% 39.2%;     /* #5E5E6A  Secondary Text          */
     /* --accent is shadcn's generic hover/highlight surface (dropdowns, ghost
-       buttons, calendar, command). It is deliberately NEUTRAL: Neon Lime is
+       buttons, calendar, command). It is deliberately NEUTRAL: brand green is
        reserved for BUY semantics and lives in --buy below. */
     --accent: 228 45.5% 97.8%;             /* #F7F8FC                          */
     --accent-foreground: 240 20% 15.7%;    /* #202030                          */
@@ -124,19 +124,20 @@ button:focus-visible {
     --ring: 263.4 70% 50.4%;               /* #6D28D9  Cyber Grape             */
 
     /* --- BUY / Positive / Growth / Live / Progress ---------------------
-       PROTOCALL green system, exact values from the colour spec:
-       NEON LIME #D7FF00 (BUY, Positive, Success, Live, Progress, Positive
-       Background), Positive Text #193B20, Text on Lime #101018.
-       #D7FF00 is a FILL colour on light surfaces: on white it measures
-       1.15:1, so green text and icons on light use --positive-foreground
-       (#193B20, 12.44:1 on white). On dark/brand surfaces lime may be used
-       directly (8.19:1 on #3529BF).                                         */
-    --buy: 69.4 100% 50%;                  /* #D7FF00  Neon Lime               */
-    --buy-foreground: 240 20% 7.8%;        /* #101018  Text on Lime (16.4:1)   */
-    --buy-soft: 69.1 100% 65.1%;           /* #E4FF4D  lighter lime (hover)    */
-    --buy-muted: 70.6 100% 90%;            /* #F6FFCC  tinted lime surface     */
-    --buy-muted-foreground: 132.4 40.5% 16.5%; /* #193B20 Positive Text (11.9) */
-    --positive-foreground: 132.4 40.5% 16.5%;  /* #193B20 Positive Text        */
+       PROTOCALL green system (client-selected): #56E11B is the one green
+       for BUY, gains, success, live and progress; #63E52E is its hover /
+       gradient partner. One hue family (102-105deg), never a second green.
+       #56E11B is a FILL colour on light surfaces: on white it measures
+       1.72:1, so green text and icons on light use --positive-foreground
+       (#276B10, 6.57:1 on white), and anything ON a green fill uses
+       #101018 ink (10.98:1). On dark/brand surfaces #56E11B may be used
+       directly (5.49:1 on #3529BF, 10.37:1 on the navy sidebar).           */
+    --buy: 102.1 78.6% 49.4%;              /* #56E11B  Primary Green           */
+    --buy-foreground: 240 20% 7.8%;        /* #101018  ink on green (10.98:1)  */
+    --buy-soft: 102.6 77.9% 53.9%;         /* #63E52E  Secondary Green (hover) */
+    --buy-muted: 94 78.9% 92.5%;           /* #EAFBDD  tinted green surface    */
+    --buy-muted-foreground: 104.8 74% 24.1%;   /* #276B10  (6.05:1 on tint)    */
+    --positive-foreground: 104.8 74% 24.1%;    /* #276B10  green text on light */
 
     /* --- HOLD / Neutral / Caution / Pending ---------------------------- */
     --hold: 21.9 97.6% 49%;                /* #F75C03                          */
@@ -161,7 +162,7 @@ button:focus-visible {
 
     /* --- Charts & Market Data ----------------------------------------- */
     --chart-1: 244.8 100% 60.8%;           /* #4737FF  Primary Chart           */
-    --chart-2: 69.4 100% 50%;              /* #D7FF00  Positive Chart          */
+    --chart-2: 102.1 78.6% 49.4%;          /* #56E11B  Positive Chart          */
     --chart-3: 0 84.2% 60.2%;              /* #EF4444  Negative Chart          */
     --chart-4: 240 6% 39.2%;               /* #5E5E6A  Neutral Chart           */
     --chart-5: 21.9 97.6% 49%;             /* #F75C03  Caution Chart           */
@@ -179,10 +180,10 @@ button:focus-visible {
        and chips and these deeper ones are used where white text sits on
        top. Measured with white: blue 6.44, purple 7.10, orange 5.18.
 
-       Green tiles do NOT use --tile-green: the spec's green is Neon Lime
-       (#D7FF00), which is a fill with #101018 ink on top (16.4:1) — see
-       StatTile. --tile-green is kept only as a deep stroke for charts
-       drawn on white, where lime would vanish (1.15:1).                 */
+       Green tiles do NOT use --tile-green: the brand green #56E11B is a
+       fill with #101018 ink on top (10.98:1) — see StatTile. --tile-green
+       is a deep green for surfaces whose content is hard-coded white
+       (5.02:1), and a stroke for charts drawn on white.                  */
     --tile-green: 142.4 71.8% 29.2%;       /* #15803D  (5.02:1)        */
     --tile-blue: 244.8 100% 60.8%;         /* #4737FF  = --premium     */
     --tile-purple: 263.4 70% 50.4%;        /* #6D28D9  = --primary     */
@@ -239,13 +240,13 @@ button:focus-visible {
     --input: 225 33.3% 16.5%;              /* #1C2338                          */
     --ring: 244.7 100% 82.4%;              /* #ACA5FF  visible focus on dark   */
 
-    /* --- BUY / Positive (same lime) ------------------------------------ */
-    --buy: 69.4 100% 50%;                  /* #D7FF00                          */
+    /* --- BUY / Positive (same green) ----------------------------------- */
+    --buy: 102.1 78.6% 49.4%;              /* #56E11B                          */
     --buy-foreground: 240 20% 7.8%;        /* #101018                          */
-    --buy-soft: 69.1 100% 65.1%;           /* #E4FF4D                          */
-    --buy-muted: 70.6 100% 10%;            /* #2A3300  deep lime surface       */
-    --buy-muted-foreground: 69.4 100% 50%; /* #D7FF00  (reads on dark)         */
-    --positive-foreground: 69.4 100% 50%;  /* #D7FF00  lime reads on dark      */
+    --buy-soft: 102.6 77.9% 53.9%;         /* #63E52E                          */
+    --buy-muted: 103.8 78.7% 9.2%;         /* #0F2A05  deep green surface      */
+    --buy-muted-foreground: 102.1 78.6% 49.4%; /* #56E11B  (reads on dark)     */
+    --positive-foreground: 102.1 78.6% 49.4%;  /* #56E11B  green reads on dark */
 
     /* --- HOLD (same orange) ------------------------------------------- */
     --hold: 21.9 97.6% 49%;                /* #F75C03                          */
@@ -270,7 +271,7 @@ button:focus-visible {
 
     /* --- Charts (same series colours) --------------------------------- */
     --chart-1: 244.8 100% 60.8%;           /* #4737FF                          */
-    --chart-2: 69.4 100% 50%;              /* #D7FF00                          */
+    --chart-2: 102.1 78.6% 49.4%;          /* #56E11B                          */
     --chart-3: 0 84.2% 60.2%;              /* #EF4444                          */
     --chart-4: 226.5 22% 72.4%;            /* #A9B0C8  neutral, lifted         */
     --chart-5: 21.9 97.6% 49%;             /* #F75C03                          */
@@ -316,7 +317,7 @@ button:focus-visible {
    Recharts writes the series colour onto the legend label as an inline
    `style="color: ..."`, so the label inherits whatever the line or bar is
    painted with. Several of our series colours are fills, not text colours:
-   on a white chart canvas --chart-2 (#D7FF00) measures 1.15:1 and --chart-5
+   on a white chart canvas --chart-2 (#56E11B) measures 1.72:1 and --chart-5
    (#F75C03) 3.50:1, both below the 4.5:1 floor for body text.
 
    The coloured swatch beside each label already identifies the series, so the

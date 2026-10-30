@@ -5,7 +5,7 @@ import { createPageUrl } from "@/utils";
 
 // BUY / HOLD / SELL keep their palette meaning from the design system.
 const LEGEND = [
-  { key: "buy", label: "BUY", icon: TrendingUp, chip: "bg-buy text-positive", bar: "bg-buy" },
+  { key: "buy", label: "BUY", icon: TrendingUp, chip: "bg-buy text-buy-foreground", bar: "bg-buy" },
   { key: "hold", label: "HOLD", icon: Minus, chip: "bg-hold-muted text-hold-muted-foreground", bar: "bg-hold" },
   { key: "sell", label: "SELL", icon: TrendingDown, chip: "bg-sell-muted text-sell-muted-foreground", bar: "bg-sell" },
 ];

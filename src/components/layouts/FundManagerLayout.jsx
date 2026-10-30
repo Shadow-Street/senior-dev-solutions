@@ -18,14 +18,16 @@ import {
   BarChart3,
   Activity,
   ChevronDown,
-  Shield,
   LogOut,
   Home
 } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { renderBrandLogo } from "@/components/common/BrandLogo";
+import { useAuth } from '@/components/context/AuthContext';
 
 export default function FundManagerLayout({ children, activePage }) {
+  const { logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -66,7 +68,7 @@ export default function FundManagerLayout({ children, activePage }) {
 
   const handleLogout = async () => {
     try {
-      await User.logout();
+      await logout(); // AuthContext: revoke, clear session, go to /login
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -91,7 +93,7 @@ export default function FundManagerLayout({ children, activePage }) {
         {/* Logo Section */}
         <div className="h-20 flex items-center justify-center border-b border-sidebar-border bg-sidebar-dark">
           <div className="text-xl font-bold text-white flex items-center gap-2">
-            <Shield className="w-7 h-7" />
+            {renderBrandLogo("w-8 h-8")}
             Fund Manager
           </div>
         </div>
@@ -128,8 +130,8 @@ export default function FundManagerLayout({ children, activePage }) {
           </button>
 
           <div className="text-center p-4 bg-sidebar-dark rounded-lg border border-divider">
-            <Shield className="w-8 h-8 mx-auto text-primary mb-2" />
-            <h3 className="font-bold text-sidebar-foreground">Protocol</h3>
+            {renderBrandLogo("w-9 h-9 mx-auto mb-2")}
+            <h3 className="font-bold text-sidebar-foreground">Protocall</h3>
             <p className="text-xs text-sidebar-muted-foreground">Fund Management System</p>
           </div>
         </div>

@@ -57,11 +57,12 @@ export const User = {
 
   /**
    * Logout helper used throughout the frontend.
-   * Delegates to authAPI.logout() and returns a resolved Promise
-   * so existing `await User.logout()` calls remain valid.
+   * Awaits authAPI.logout(): it revokes the refresh token and only then clears
+   * the stored tokens, so a caller that redirects straight after
+   * (window.location.href = '/login') must wait, or the unload can abort the
+   * request before the clear runs and leave a live session in storage.
    */
   async logout() {
-    authAPI.logout();
-    return Promise.resolve();
+    return authAPI.logout();
   },
 };

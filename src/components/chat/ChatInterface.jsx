@@ -756,12 +756,6 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
         <div className="flex-shrink-0 p-4 pb-2 space-y-2">
           <VipRoomBanner room={room} />
           <LiveStockTicker stockSymbol={latestPollStockSymbol || room.stock_symbol} onPriceUpdate={setPriceData} />
-          <MeetingControls
-            chatRoomId={room.id}
-            stockSymbol={latestPollStockSymbol || room.stock_symbol}
-            onMeetingStart={(meeting) => postBotMessage(`Meeting started! Join here: ${meeting.meeting_url}`)}
-            onMeetingEnd={() => postBotMessage('Meeting has ended.')}
-          />
         </div>
 
         {/* Main Content Area */}
@@ -780,7 +774,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                 </Button>
 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
                     <h1 className="text-lg md:text-xl font-bold text-foreground truncate">
                       {room.name}
                     </h1>
@@ -802,13 +796,23 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                       <Button
                         size="sm"
                         onClick={() => setShowCreatePollModal(true)}
-                        className="bg-gradient-to-r from-primary to-protocall-grape hover:from-primary hover:to-protocall-grape text-white text-xs px-2.5 py-1 h-6 rounded-full shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1 whitespace-nowrap"
+                        className="bg-gradient-to-r from-primary to-protocall-grape hover:from-primary hover:to-protocall-grape text-white text-sm font-semibold px-3 h-8 rounded-full shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap"
                       >
-                        <Plus className="w-3 h-3" />
+                        <Plus className="w-4 h-4" />
                         <span className="hidden sm:inline">Create Poll</span>
                         <span className="sm:hidden">Poll</span>
                       </Button>
                     )}
+
+                    {/* Live meeting, beside Create Poll. Replaces the former
+                        full-width "Start Live Meeting" banner above the chat. */}
+                    <MeetingControls
+                      variant="inline"
+                      chatRoomId={room.id}
+                      stockSymbol={latestPollStockSymbol || room.stock_symbol}
+                      onMeetingStart={(meeting) => postBotMessage(`Meeting started! Join here: ${meeting.meeting_url}`)}
+                      onMeetingEnd={() => postBotMessage('Meeting has ended.')}
+                    />
                   </div>
                   <p className="text-xs md:text-sm text-subtle truncate">
                     {room.description}

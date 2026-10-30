@@ -196,7 +196,7 @@ export default function ReportsManager() {
     );
   }
   
-  const PIE_COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'];
+  const PIE_COLORS = ['#3b82f6', '#8b5cf6', '#56E11B', '#f59e0b', '#ef4444'];
 
   return (
     <div className="p-8 space-y-6">

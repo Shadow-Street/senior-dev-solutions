@@ -15,7 +15,7 @@ import {
 import { ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line } from 'recharts';
 import { format } from 'date-fns';
 
-const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
+const COLORS = ['#3B82F6', '#56E11B', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
 
 export default function PledgeAnalytics({ user, sessions, pledges, executions, isLoading }) {
     // sessions, pledges, executions, and isLoading are now received as props.

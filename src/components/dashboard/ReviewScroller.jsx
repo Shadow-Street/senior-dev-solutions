@@ -89,8 +89,8 @@ const ReviewCard = ({ review }) => {
         </span>
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-foreground">{review.username}</p>
-          {/* Neon Lime fill with the spec's Positive Text (#193B20) outline,
-              so the stars read on white where lime alone is 1.15:1. */}
+          {/* Green #56E11B fill with a #276B10 outline, so the stars read on
+              white where the fill alone is 1.72:1. */}
           <div className="mt-1 flex" role="img" aria-label={`${review.rating} out of 5 stars`}>
             {[...Array(5)].map((_, i) => (
               <Star

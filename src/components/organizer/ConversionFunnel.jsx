@@ -53,7 +53,7 @@ export default function ConversionFunnel({ events, tickets, attendees, checkIns 
     ];
   }, [events, tickets, attendees, checkIns]);
 
-  const colors = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B'];
+  const colors = ['#3B82F6', '#8B5CF6', '#56E11B', '#F59E0B'];
 
   return (
     <Card className="shadow-lg border-0">

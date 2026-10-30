@@ -41,8 +41,8 @@ function Sparkline({ positive }) {
     : "M0 4 L10 8 L20 6 L30 13 L40 11 L50 17";
   return (
     <svg width="52" height="20" viewBox="0 0 52 20" fill="none" aria-hidden="true" className="shrink-0">
-      {/* Neon Lime is 1.15:1 on white, so the positive line sits on a thin
-          Positive Text (#193B20) keyline to stay visible. */}
+      {/* #56E11B is 1.72:1 on white, so the positive line sits on a thin
+          dark-green (#276B10) keyline to stay visible. */}
       {positive && (
         <path d={d} stroke="hsl(var(--positive-foreground))" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
       )}

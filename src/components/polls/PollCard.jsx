@@ -86,7 +86,7 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
     purple: { bar: 'bg-tile-purple', disc: 'bg-tile-purple', ring: 'group-hover:ring-tile-purple/30' },
     blue:   { bar: 'bg-tile-blue',   disc: 'bg-tile-blue',   ring: 'group-hover:ring-tile-blue/30' },
     // Disc carries a white initial, so it uses the spec's deep Positive green;
-    // the accent bar is a pure fill and takes Neon Lime.
+    // the accent bar is a pure fill and takes the brand green.
     green:  { bar: 'bg-buy',         disc: 'bg-positive',    ring: 'group-hover:ring-buy/50' },
     orange: { bar: 'bg-tile-orange', disc: 'bg-tile-orange', ring: 'group-hover:ring-tile-orange/30' },
     ink:    { bar: 'bg-tile-ink',    disc: 'bg-tile-ink',     ring: 'group-hover:ring-tile-ink/30' },

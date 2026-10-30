@@ -95,6 +95,13 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    // Signed out: no token was stored, so there is no session to refresh or
+    // end. Without this, any anonymous User.me() (SubscriptionProvider runs one
+    // on every page) bounced visitors off public pages such as /home to /login.
+    if (!localStorage.getItem('accessToken')) {
+      return Promise.reject(error);
+    }
+
     // A resource-level refusal is not a session problem: the caller handles it.
     if (!TOKEN_FAILURE.test(message)) {
       console.warn(`401 from ${original.url || 'request'}: ${message || 'no message'}`);
@@ -279,8 +286,11 @@ export const User = {
     const response = await apiClient.put('/users/me', updates);
     return response.data;
   },
+  // Awaited: authAPI.logout clears the stored tokens only once the revoke call
+  // settles, so a caller that redirects straight after must wait for it, or
+  // the reload can race the clear and land the user back in a live session.
   async logout() {
-    authAPI.logout();
+    return authAPI.logout();
   }
 };
 export const TrustScoreLog = createEntityAPI('/users/trust-score-logs');

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { User } from '@/api/entities';
+import { useAuth } from '@/components/context/AuthContext';
 import { UploadFile } from '@/api/integrations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +10,7 @@ import { toast } from 'sonner';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 export default function GeneralSettings({ user, onUpdate }) {
+  const { logout } = useAuth();
   const [newImage, setNewImage] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
@@ -40,8 +42,7 @@ export default function GeneralSettings({ user, onUpdate }) {
     try {
       await User.updateMyUserData({ is_deactivated: true });
       toast.success("Your account has been deactivated.");
-      await User.logout();
-      window.location.href = '/'; // Redirect to home
+      await logout(); // revokes the session and redirects to /login
     } catch (error) {
       toast.error("Failed to deactivate account.");
     }

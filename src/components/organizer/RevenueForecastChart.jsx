@@ -121,8 +121,8 @@ export default function RevenueForecastChart({ events, tickets, stats }) {
             <AreaChart data={forecastData}>
               <defs>
                 <linearGradient id="colorActual" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#10B981" stopOpacity={0.1}/>
+                  <stop offset="5%" stopColor="#56E11B" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#56E11B" stopOpacity={0.1}/>
                 </linearGradient>
                 <linearGradient id="colorForecast" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.6}/>

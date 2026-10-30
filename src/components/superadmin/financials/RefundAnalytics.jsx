@@ -76,13 +76,13 @@ export default function RefundAnalytics({ refunds, permissions }) {
   const COLORS = {
     subscription: '#3B82F6',
     event_ticket: '#8B5CF6',
-    course_enrollment: '#10B981',
+    course_enrollment: '#56E11B',
     advisor_subscription: '#F59E0B',
     pledge_payment: '#EF4444',
     wallet_topup: '#6B7280'
   };
 
-  const REASON_COLORS = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#6B7280'];
+  const REASON_COLORS = ['#3B82F6', '#8B5CF6', '#56E11B', '#F59E0B', '#EF4444', '#6B7280'];
 
   const getTypeLabel = (type) => {
     const labels = {

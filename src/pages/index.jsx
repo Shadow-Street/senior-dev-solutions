@@ -34,6 +34,7 @@ const InfluencerProfile = lazy(() => import("./InfluencerProfile"));
 const AdvisorRegistration = lazy(() => import("./AdvisorRegistration"));
 const Advisors = lazy(() => import("./Advisors"));
 const AdvisorDashboard = lazy(() => import("./AdvisorDashboard"));
+const AdvisorPledgeManagement = lazy(() => import("./AdvisorPledgeManagement"));
 const AdvisorProfile = lazy(() => import("./AdvisorProfile"));
 const News = lazy(() => import("./News"));
 const SamplePortfolio = lazy(() => import("./SamplePortfolio"));
@@ -92,6 +93,7 @@ const PAGES = {
     AdvisorRegistration,
     Advisors,
     AdvisorDashboard,
+    AdvisorPledgeManagement,
     AdvisorProfile,
     News,
     SamplePortfolio,
@@ -187,6 +189,7 @@ export default function Pages() {
             <Route path="/login" element={<Login />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/home" element={<Landing />} />
             <Route path="/landing" element={<Landing />} />
             <Route path="/blogs" element={<Blogs />} />
             <Route path="/blogArticle" element={<BlogArticle />} />
@@ -237,6 +240,19 @@ export default function Pages() {
                               element={
                                 <ProtectedRoute allowedRoles={["advisor", "admin", "super_admin"]}>
                                   <AdvisorDashboard />
+                                </ProtectedRoute>
+                              }
+                            />
+                            {/* Linked from the advisor sidebar's Pledge Management group and
+                                the pledge overview; previously unrouted, so every link fell
+                                through to the catch-all and bounced to /Dashboard. Same role
+                                guard as the dashboard; the page itself also checks the
+                                feature flag and the advisor's approved pledge access. */}
+                            <Route
+                              path="/AdvisorPledgeManagement"
+                              element={
+                                <ProtectedRoute allowedRoles={["advisor", "admin", "super_admin"]}>
+                                  <AdvisorPledgeManagement />
                                 </ProtectedRoute>
                               }
                             />

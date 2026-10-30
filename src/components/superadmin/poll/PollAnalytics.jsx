@@ -130,7 +130,7 @@ export default function PollAnalytics({ polls = [], votes = [] }) {
     );
   }
 
-  const COLORS = ['#10B981', '#EF4444', '#F59E0B'];
+  const COLORS = ['#56E11B', '#EF4444', '#F59E0B'];
 
   return (
     <div className="space-y-6">

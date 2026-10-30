@@ -22,6 +22,7 @@ import NotificationPanel from "@/components/notifications/NotificationPanel";
 import { useSubscription } from "@/components/hooks/useSubscription";
 import DashboardSearch from "@/components/dashboard/DashboardSearch";
 import MarketStatusBadge from "@/components/stocks/MarketStatusBadge";
+import { renderBrandLogo } from "@/components/common/BrandLogo";
 
 // Single source of truth for the primary navigation.
 // `comingSoon` items render a badge and do not navigate.
@@ -81,7 +82,7 @@ function InnerLayout({ children, currentPageName }) {
   // Pages that render their own full-page chrome and must not get the app shell.
   const isLandingPage =
     location.pathname === createPageUrl("Landing") ||
-    location.pathname.toLowerCase() === "/landing" ||
+    ["/landing", "/home"].includes(location.pathname.toLowerCase()) ||
     currentPageName === "Landing";
 
   const PUBLIC_CONTENT_PAGES = [
@@ -104,7 +105,7 @@ function InnerLayout({ children, currentPageName }) {
 
   // Portal pages ship their own navigation shell. Wrapping them in the app
   // sidebar would render two sidebars and two headers on the same screen.
-  const PORTAL_PAGES = ["AdvisorDashboard"];
+  const PORTAL_PAGES = ["AdvisorDashboard", "AdvisorPledgeManagement"];
   const isPortalPage = PORTAL_PAGES.some(
     (page) => location.pathname === createPageUrl(page) || currentPageName === page
   );
@@ -132,7 +133,7 @@ function InnerLayout({ children, currentPageName }) {
           <Sidebar className="border-r border-sidebar-border">
             <SidebarHeader className="p-0">
               <div className="flex min-h-[112px] flex-col items-center justify-center gap-1 bg-sidebar-dark p-4 text-sidebar-foreground">
-                <Shield className="h-9 w-9" />
+                {renderBrandLogo("h-11 w-11")}
                 <div className="text-xl font-bold tracking-tighter">PROTOCALL</div>
                 <div className="text-[10px] uppercase tracking-widest text-sidebar-muted-foreground">
                   Financial Networking

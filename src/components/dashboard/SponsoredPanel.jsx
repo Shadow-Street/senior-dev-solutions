@@ -3,7 +3,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   ArrowRight,
   BarChart3,
-  Crosshair,
   Crown,
   LineChart,
   MessagesSquare,
@@ -11,6 +10,7 @@ import {
 } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import bullArt from "@/assets/dashboard/bull-cutout.webp";
+import { renderBrandLogo } from "@/components/common/BrandLogo";
 
 // Each feature carries its own icon so the card reads as a product summary
 // rather than a plain list (§2: animated icons on cards).
@@ -41,7 +41,7 @@ export default function SponsoredPanel() {
             Sponsored
           </span>
           <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-white">
-            <Crosshair className="h-4 w-4 text-protocall-premium-light transition-transform duration-500 group-hover/card:rotate-90 motion-reduce:transform-none" />
+            {renderBrandLogo("h-5 w-5 transition-transform duration-500 group-hover/card:rotate-90 motion-reduce:transform-none")}
             Protocall
           </span>
         </div>
