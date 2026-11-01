@@ -1,10 +1,21 @@
 const WebSocket = require('ws');
 const jwt = require('jsonwebtoken');
 const db = require('../models');
+const { canJoinRoom, canReadRoom, canManageRoom } = require('../utils/roomAccess');
+
+// ws defaults to 100 MiB per frame, so one client could make the server
+// buffer and JSON.parse 100 MiB. Chat frames are small; media goes by URL.
+const MAX_PAYLOAD = 64 * 1024;
+const MAX_CONTENT_LENGTH = 10000;
+// Never `email`: these profiles are broadcast to everyone in the room.
+const PUBLIC_USER_ATTRIBUTES = ['id', 'name', 'profile_image_url'];
+
+/** An error whose message is safe to show the client; anything else is generic. */
+const clientError = (message) => Object.assign(new Error(message), { clientMessage: message });
 
 class WebSocketService {
   constructor(server) {
-    this.wss = new WebSocket.Server({ server });
+    this.wss = new WebSocket.Server({ server, maxPayload: MAX_PAYLOAD });
     this.clients = new Map(); // userId -> Set of WebSocket connections
     this.rooms = new Map(); // roomId -> Set of userIds
     this.typingTimeouts = new Map(); // `${roomId}-${userId}` -> timeout
@@ -84,8 +95,10 @@ class WebSocketService {
           await this.handleJoinRoom(userId, message.roomId);
           break;
 
+        // Room events below need a prior join_room, which is where access is
+        // checked; without it they would broadcast into any room by id.
         case 'leave_room':
-          await this.handleLeaveRoom(userId, message.roomId);
+          if (this.isInRoom(userId, message.roomId)) await this.handleLeaveRoom(userId, message.roomId);
           break;
 
         case 'chat_message':
@@ -93,11 +106,11 @@ class WebSocketService {
           break;
 
         case 'typing_start':
-          await this.handleTypingStart(userId, message.roomId);
+          if (this.isInRoom(userId, message.roomId)) await this.handleTypingStart(userId, message.roomId);
           break;
 
         case 'typing_stop':
-          await this.handleTypingStop(userId, message.roomId);
+          if (this.isInRoom(userId, message.roomId)) await this.handleTypingStop(userId, message.roomId);
           break;
 
         case 'message_reaction':
@@ -105,7 +118,7 @@ class WebSocketService {
           break;
 
         case 'read_messages':
-          await this.handleReadMessages(userId, message.roomId);
+          if (this.isInRoom(userId, message.roomId)) await this.handleReadMessages(userId, message.roomId);
           break;
 
         case 'ping':
@@ -119,24 +132,46 @@ class WebSocketService {
       console.error('Error handling WebSocket message:', error);
       this.sendToUser(ws.userId, {
         type: 'error',
-        message: error.message
+        message: error.clientMessage || 'Request failed'
       });
     }
   }
 
-  async handleJoinRoom(userId, roomId) {
-    // Add user to room tracking
-    if (!this.rooms.has(roomId)) {
-      this.rooms.set(roomId, new Set());
+  /** Stops live delivery of a room to a user removed from it (kick or ban). */
+  evictFromRoom(userId, roomId) {
+    const key = String(userId);
+    for (const id of [userId, key]) {
+      if (this.rooms.get(roomId)?.delete(id)) {
+        this.sendToUser(id, { type: 'removed_from_room', roomId });
+        this.broadcastToRoom(roomId, { type: 'user_left', roomId, userId: id, timestamp: new Date().toISOString() });
+      }
     }
-    this.rooms.get(roomId).add(userId);
+    if (this.rooms.get(roomId)?.size === 0) this.rooms.delete(roomId);
+  }
 
-    // Update database
+  /** True when this user joined `roomId` over this server (access was checked then). */
+  isInRoom(userId, roomId) {
+    return typeof roomId === 'string' && Boolean(this.rooms.get(roomId)?.has(userId));
+  }
+
+  async handleJoinRoom(userId, roomId) {
+    if (typeof roomId !== 'string' || !roomId) throw clientError('Invalid room');
+    const room = await db.ChatRoom.findByPk(roomId);
+    if (!room) throw clientError('Room not found');
+
+    // Existing participants are in; anyone else must pass the same join rules
+    // as POST /api/chat/:id/join (private = invite only, premium = paid).
     const existing = await db.ChatRoomParticipant.findOne({
       where: { chat_room_id: roomId, user_id: userId }
     });
 
+    const joiner = await db.User.findByPk(userId, { attributes: { exclude: ['password'] } });
+    // An existing row still has to read the room (a lapsed premium member).
+    if (existing && !(await canReadRoom(joiner, roomId))) throw clientError('You cannot join this room');
+
     if (!existing) {
+      if (!(await canJoinRoom(joiner, room))) throw clientError('You cannot join this room');
+
       await db.ChatRoomParticipant.create({
         chat_room_id: roomId,
         user_id: userId,
@@ -147,9 +182,15 @@ class WebSocketService {
       await db.ChatRoom.increment('participant_count', { where: { id: roomId } });
     }
 
+    // Add user to room tracking
+    if (!this.rooms.has(roomId)) {
+      this.rooms.set(roomId, new Set());
+    }
+    this.rooms.get(roomId).add(userId);
+
     // Get user info
     const user = await db.User.findByPk(userId, {
-      attributes: ['id', 'name', 'email', 'profile_image_url']
+      attributes: PUBLIC_USER_ATTRIBUTES
     });
 
     // Notify room members
@@ -161,15 +202,14 @@ class WebSocketService {
     });
 
     // Send room info to user
-    const room = await db.ChatRoom.findByPk(roomId);
     const participants = await db.ChatRoomParticipant.findAll({
       where: { chat_room_id: roomId },
-      include: [{ model: db.User, attributes: ['id', 'name', 'profile_image_url'] }]
+      include: [{ model: db.User, attributes: PUBLIC_USER_ATTRIBUTES }]
     });
 
     this.sendToUser(userId, {
       type: 'room_joined',
-      room: room?.toJSON(),
+      room: typeof room.toJSON === 'function' ? room.toJSON() : room,
       participants: participants.map(p => p.toJSON()),
       onlineUsers: Array.from(this.rooms.get(roomId) || [])
     });
@@ -198,6 +238,9 @@ class WebSocketService {
 
   async handleChatMessage(userId, message) {
     const { roomId, content, replyToId, messageType = 'text', mediaUrls } = message;
+    if (typeof roomId !== 'string' || typeof content !== 'string' || content.length > MAX_CONTENT_LENGTH) {
+      throw clientError('Invalid message');
+    }
 
     // Verify user is in room
     const participant = await db.ChatRoomParticipant.findOne({
@@ -205,15 +248,35 @@ class WebSocketService {
     });
 
     if (!participant) {
-      throw new Error('Not a member of this room');
+      throw clientError('Not a member of this room');
+    }
+    if (participant.muted) throw clientError('You are muted in this room');
+
+    // A participant row alone is not enough: a lapsed premium member keeps
+    // their row, so read access (which re-checks premium) is required to post.
+    const sender = await db.User.findByPk(userId, { attributes: { exclude: ['password'] } });
+    if (!(await canReadRoom(sender, roomId))) throw clientError('Not a member of this room');
+
+    const room = await db.ChatRoom.findByPk(roomId);
+    if (room?.admin_only_post && !(await canManageRoom(sender, room))) {
+      throw clientError('Only moderators can post in this room');
     }
 
     // Create message in database
+    // A reply may only point at a message in the same room.
+    let replyMessage = null;
+    if (replyToId) {
+      replyMessage = await db.Message.findByPk(replyToId, {
+        include: [{ model: db.User, attributes: ['id', 'name'] }]
+      });
+      if (replyMessage && replyMessage.chat_room_id !== roomId) replyMessage = null;
+    }
+
     const newMessage = await db.Message.create({
       chat_room_id: roomId,
       user_id: userId,
       content,
-      reply_to_id: replyToId || null,
+      reply_to_id: replyMessage ? replyMessage.id : null,
       message_type: messageType,
       media_urls: mediaUrls || null,
       is_pinned: false
@@ -227,16 +290,9 @@ class WebSocketService {
 
     // Get user info
     const user = await db.User.findByPk(userId, {
-      attributes: ['id', 'name', 'email', 'profile_image_url']
+      attributes: PUBLIC_USER_ATTRIBUTES
     });
 
-    // Get reply message if exists
-    let replyMessage = null;
-    if (replyToId) {
-      replyMessage = await db.Message.findByPk(replyToId, {
-        include: [{ model: db.User, attributes: ['id', 'name'] }]
-      });
-    }
 
     const messageData = {
       type: 'new_message',
@@ -325,6 +381,13 @@ class WebSocketService {
 
   async handleMessageReaction(userId, message) {
     const { messageId, emoji } = message;
+    if (typeof messageId !== 'string' || typeof emoji !== 'string' || !emoji || emoji.length > 32) {
+      throw clientError('Invalid reaction');
+    }
+
+    // Only on a message in a room this user has joined.
+    const msg = await db.Message.findByPk(messageId);
+    if (!msg || !this.isInRoom(userId, msg.chat_room_id)) throw clientError('Message not found');
 
     // Check if reaction exists
     const existing = await db.MessageReaction.findOne({
@@ -343,10 +406,6 @@ class WebSocketService {
       });
       action = 'added';
     }
-
-    // Get message to find room
-    const msg = await db.Message.findByPk(messageId);
-    if (!msg) return;
 
     // Get all reactions for the message
     const reactions = await db.MessageReaction.findAll({

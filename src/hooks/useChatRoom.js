@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useWebSocket } from './useWebSocket';
 import { Message, ChatRoom, ChatRoomParticipant, User, MessageReadReceipt } from '@/api/entities';
 import { toast } from 'sonner';
+import apiClient from '@/lib/apiClient';
 
 export function useChatRoom(roomId, user) {
   const [room, setRoom] = useState(null);
@@ -199,6 +200,9 @@ export function useChatRoom(roomId, user) {
 
     // Fallback: Persist via API if WS offline
     try {
+      // Posting needs a membership row, which the WS join_room normally
+      // creates. Idempotent: returns the existing row for current members.
+      await apiClient.post(`/chatrooms/${roomId}/join`);
       const createdMessage = await Message.create({
         chat_room_id: roomId,
         user_id: user?.id,

@@ -40,7 +40,15 @@ beforeEach(() => {
     const role = MEMBERS[where.chat_room_id]?.[where.user_id];
     return role ? { role } : null;
   });
+  // Listing scope (utils/roomAccess.readableRoomIds): open rooms, owned rooms, memberships.
+  mock.method(db.ChatRoom, 'findAll', async ({ where }) =>
+    (where.owner_id ? Object.values(ROOMS).filter((r) => r.owner_id === where.owner_id) : [ROOMS.open]));
+  mock.method(db.ChatRoomParticipant, 'findAll', async ({ where }) =>
+    Object.entries(MEMBERS).filter(([, m]) => m[where.user_id]).map(([chat_room_id]) => ({ chat_room_id })));
 });
+
+/** Room ids the listing scope allowed, from a Meeting.findAll call. */
+const scopedRooms = (call) => call.arguments[0].where[Op.and][0].chat_room_id[Op.in];
 afterEach(() => mock.restoreAll());
 
 test('unauthenticated meeting reads are 401', async () => {
@@ -142,7 +150,8 @@ test('a private room\'s meetings are hidden from non-members', async () => {
 
   const findAll = mock.method(db.Meeting, 'findAll', async () => []);
   await request(app).get('/api/meetings?chat_room_id=room-private').set('Authorization', bearer(USERS.user));
-  assert.equal(findAll.mock.calls[0].arguments[0].where.id, '__none__');
+  assert.equal(findAll.mock.calls[0].arguments[0].where.chat_room_id, 'room-private');
+  assert.ok(!scopedRooms(findAll.mock.calls[0]).includes('room-private'));
 });
 
 test('a readable room\'s listing keeps its chat_room_id filter', async () => {
@@ -197,11 +206,12 @@ test('only staff may set recording_url', async () => {
   assert.equal(meeting.recording_url, 'https://drive.example/rec');
 });
 
-test('an unfiltered listing is limited to the caller\'s rooms', async () => {
-  mock.method(db.ChatRoomParticipant, 'findAll', async () => [{ chat_room_id: 'room-open' }]);
+test('an unfiltered listing is limited to rooms the caller can read', async () => {
   const findAll = mock.method(db.Meeting, 'findAll', async () => []);
   const res = await request(app).get('/api/meetings').set('Authorization', bearer(USERS.user));
   assert.equal(res.status, 200);
-  const { where } = findAll.mock.calls[0].arguments[0];
-  assert.deepEqual(where[Op.and], [{ chat_room_id: { [Op.in]: ['room-open'] } }]);
+  assert.deepEqual(scopedRooms(findAll.mock.calls[0]), ['room-open']);
+
+  await request(app).get('/api/meetings').set('Authorization', bearer({ id: HOST_ID }));
+  assert.deepEqual(scopedRooms(findAll.mock.calls[1]).sort(), ['room-open', 'room-private']);
 });

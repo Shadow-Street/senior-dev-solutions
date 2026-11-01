@@ -1,10 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { Op } = require("sequelize");
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
 const { authMiddleware } = require("../middleware/auth");
-const { effectiveRole, ADMIN_ROLES } = require("../utils/roles");
+const { isStaff, canReadRoom, canManageRoom, findRoom, roomScope } = require("../utils/roomAccess");
 
 /**
  * A meeting is a link posted into a chat room and opened by every member, so
@@ -13,12 +12,6 @@ const { effectiveRole, ADMIN_ROLES } = require("../utils/roles");
  * page with the room's endorsement), and only the person who started it, a
  * room moderator or staff may change or end it.
  */
-
-const STAFF_ROLES = [...ADMIN_ROLES, 'sub_admin'];
-const isStaff = (user) => STAFF_ROLES.includes(effectiveRole(user));
-
-/** chat_room_participants.role values that may run a room's meetings. */
-const ROOM_MANAGER_ROLES = ['owner', 'admin', 'moderator'];
 
 /** Meeting providers we link to. A leading dot also allows subdomains. */
 const MEETING_HOSTS = ['meet.google.com', 'zoom.us', '.zoom.us', 'teams.microsoft.com', 'teams.live.com'];
@@ -40,32 +33,11 @@ function safeMeetingUrl(value) {
   return known && url.href.length <= 255 ? url.href : null;
 }
 
-/** Open rooms are readable by anyone signed in; private or premium ones by participants. */
-async function canReadRoom(req, roomId) {
-  if (isStaff(req.user)) return true;
-  if (typeof roomId !== 'string' || !roomId) return false;
-  const room = await db.ChatRoom.findByPk(roomId);
-  if (!room) return false;
-  if (room.is_public !== false && room.is_premium !== true) return true;
-  const membership = await db.ChatRoomParticipant.findOne({
-    where: { chat_room_id: roomId, user_id: req.user.id },
-  });
-  return Boolean(membership);
-}
-
 /** The meeting's host, the room owner, a room moderator/admin, or staff. */
 async function canManageMeeting(req, meeting) {
   if (isStaff(req.user)) return true;
-  const userId = String(req.user.id);
-  if (meeting.host_id && String(meeting.host_id) === userId) return true;
-  if (!meeting.chat_room_id) return false;
-
-  const room = await db.ChatRoom.findByPk(meeting.chat_room_id);
-  if (room && room.owner_id && String(room.owner_id) === userId) return true;
-  const membership = await db.ChatRoomParticipant.findOne({
-    where: { chat_room_id: meeting.chat_room_id, user_id: req.user.id },
-  });
-  return Boolean(membership && ROOM_MANAGER_ROLES.includes(membership.role));
+  if (meeting.host_id && String(meeting.host_id) === String(req.user.id)) return true;
+  return canManageRoom(req.user, await findRoom(meeting.chat_room_id));
 }
 
 /**
@@ -131,7 +103,7 @@ async function prepareCreate(req, res, next) {
     if (!data.meeting_url) return res.status(400).json({ error: 'meeting_url is required' });
     const invalid = validateMeetingFields(data);
     if (invalid) return res.status(400).json({ error: invalid });
-    if (!(await canReadRoom(req, data.chat_room_id))) {
+    if (!(await canReadRoom(req.user, data.chat_room_id))) {
       return res.status(403).json({ error: 'Not permitted in this room' });
     }
     req.body = { ...data, host_id: req.user.id };
@@ -153,28 +125,14 @@ function prepareUpdate(req, res, next) {
 }
 
 /**
- * Reads follow room visibility. With ?chat_room_id the caller must be able to
- * read that room; without it, only rooms they take part in (narrower than
- * messages, which also list open rooms; the UI always passes chat_room_id). Wrapped in Op.and
- * so it narrows the client's own chat_room_id filter instead of replacing it.
+ * Reads follow room visibility (see utils/roomAccess). A host or room owner
+ * without a participant row in a private room may still manage, and so read
+ * back, their meeting.
  */
 const meetingScope = {
-  listWhere: async (req) => {
-    const roomId = req.query.chat_room_id;
-    if (roomId !== undefined) {
-      return (await canReadRoom(req, roomId)) ? {} : { id: '__none__' };
-    }
-    const memberships = await db.ChatRoomParticipant.findAll({
-      where: { user_id: req.user.id },
-      attributes: ['chat_room_id'],
-    });
-    const ids = memberships.map((m) => m.chat_room_id);
-    return { [Op.and]: [{ chat_room_id: { [Op.in]: ids.length ? ids : ['__none__'] } }] };
-  },
-  // A host or room owner without a participant row in a private room may
-  // still manage (and so read back) their meeting.
+  listWhere: roomScope.listWhere,
   allows: async (req, record) =>
-    Boolean(record) && ((await canReadRoom(req, record.chat_room_id)) || canManageMeeting(req, record)),
+    Boolean(record) && ((await canReadRoom(req.user, record.chat_room_id)) || canManageMeeting(req, record)),
 };
 
 // Meetings CRUD
@@ -189,7 +147,7 @@ const meetingController = createCrudController(db.Meeting, {
 router.get('/room/:roomId/active', authMiddleware, async (req, res) => {
   try {
     const { roomId } = req.params;
-    if (!(await canReadRoom(req, roomId))) {
+    if (!(await canReadRoom(req.user, roomId))) {
       return res.status(404).json({ error: 'Room not found' });
     }
     const meeting = await db.Meeting.findOne({
