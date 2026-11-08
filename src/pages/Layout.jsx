@@ -1,5 +1,5 @@
 
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   Sidebar,
@@ -15,7 +15,15 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
-import { LayoutDashboard, BarChart3, Briefcase, MessageSquare, Shield, Star, Sparkles, ChevronDown } from "lucide-react";
+import { LayoutDashboard, BarChart3, Briefcase, MessageSquare, Shield, Star, Sparkles, ChevronDown, LogOut, UserRound } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import { useAuth } from "@/components/context/AuthContext";
 import NotificationPanel from "@/components/notifications/NotificationPanel";
@@ -61,7 +69,9 @@ const renderComingSoonItem = (item) => {
 
 function InnerLayout({ children, currentPageName }) {
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const isAdvisor = user?.app_role === "advisor" || user?.roles?.includes("advisor");
+  const navigate = useNavigate();
   const { subscription } = useSubscription();
 
   // Shown under the name in the sidebar footer, e.g. "Premium Member".
@@ -132,13 +142,13 @@ function InnerLayout({ children, currentPageName }) {
         <div className="flex h-dvh w-full overflow-hidden bg-background">
           <Sidebar className="border-r border-sidebar-border">
             <SidebarHeader className="p-0">
-              <div className="flex min-h-[112px] flex-col items-center justify-center gap-1 bg-sidebar-dark p-4 text-sidebar-foreground">
-                {renderBrandLogo("h-11 w-11")}
-                <div className="text-xl font-bold tracking-tighter">PROTOCALL</div>
-                <div className="text-[10px] uppercase tracking-widest text-sidebar-muted-foreground">
-                  Financial Networking
-                </div>
-              </div>
+              {/* Logo only, per the client: the mark stands on its own. */}
+              <Link
+                to={createPageUrl("Dashboard")}
+                className="flex min-h-[112px] items-center justify-center bg-sidebar-dark p-4 transition-opacity hover:opacity-90"
+              >
+                {renderBrandLogo("h-16 w-16 drop-shadow-[0_0_12px_rgba(109,40,217,0.55)]", "Protocall")}
+              </Link>
             </SidebarHeader>
 
             <SidebarContent className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-3">
@@ -147,8 +157,14 @@ function InnerLayout({ children, currentPageName }) {
                   Trading Hub
                 </SidebarGroupLabel>
                 <SidebarMenu>
-                  {NAV_ITEMS.map((item) => {
-                    if (item.comingSoon) return renderComingSoonItem(item);
+                  {NAV_ITEMS.map((navItem) => {
+                    if (navItem.comingSoon) return renderComingSoonItem(navItem);
+                    // Approved advisors go straight to their own dashboard;
+                    // everyone else browses the Advisors directory.
+                    const item =
+                      navItem.key === "advisors" && isAdvisor
+                        ? { ...navItem, url: createPageUrl("AdvisorDashboard") }
+                        : navItem;
                     const isActive = location.pathname === item.url;
                     return (
                       <SidebarMenuItem key={item.key}>
@@ -217,16 +233,41 @@ function InnerLayout({ children, currentPageName }) {
                     <MarketStatusBadge openLabel="Open" closedLabel="Closed" />
                   </span>
 
-                  <Link
-                    to={createPageUrl("Profile")}
-                    className="flex items-center gap-2 rounded-full p-0.5 transition-colors hover:bg-surface-2"
-                    aria-label="Open profile"
-                  >
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-                      {displayUser.display_name?.charAt(0)?.toUpperCase() || "U"}
-                    </span>
-                    <ChevronDown className="hidden h-4 w-4 text-muted-foreground sm:block" />
-                  </Link>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      className="flex items-center gap-2 rounded-full p-0.5 transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      aria-label="Open account menu"
+                    >
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+                        {displayUser.display_name?.charAt(0)?.toUpperCase() || "U"}
+                      </span>
+                      <ChevronDown className="hidden h-4 w-4 text-muted-foreground sm:block" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <DropdownMenuLabel className="font-normal">
+                        <p className="truncate text-sm font-semibold text-foreground">
+                          {displayUser.display_name || "User"}
+                        </p>
+                        {displayUser.email && (
+                          <p className="truncate text-xs text-muted-foreground">{displayUser.email}</p>
+                        )}
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="cursor-pointer" onSelect={() => navigate(createPageUrl("Profile"))}>
+                        <UserRound className="mr-2 h-4 w-4" />
+                        Profile
+                      </DropdownMenuItem>
+                      {/* AuthContext.logout revokes the token, clears the
+                          session and navigates to /login. */}
+                      <DropdownMenuItem
+                        className="cursor-pointer text-sell focus:text-sell"
+                        onSelect={() => logout()}
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             </header>

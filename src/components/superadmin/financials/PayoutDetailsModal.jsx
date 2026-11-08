@@ -14,8 +14,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { PayoutRequest, Notification, PlatformSetting } from '@/lib/apiClient';
 import { CheckCircle, XCircle, DollarSign, Calendar, CreditCard, Building, AlertTriangle, Info, Zap, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { normalizePayout } from '@/lib/payoutView';
 
-export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate }) {
+export default function PayoutDetailsModal({ request: rawRequest, isOpen, onClose, onUpdate }) {
+  // Real columns -> the field names this screen reads (see lib/payoutView.js).
+  const request = normalizePayout(rawRequest);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showApproveConfirm, setShowApproveConfirm] = useState(false);
   const [showRejectConfirm, setShowRejectConfirm] = useState(false);
@@ -32,8 +35,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
     try {
       await PayoutRequest.update(request.id, {
         status: 'approved',
-        admin_notes: adminNotes || 'Approved by admin',
-        processed_date: new Date().toISOString()
+        admin_notes: adminNotes || 'Approved by admin'
       });
 
       await Notification.create({
@@ -68,7 +70,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
       await PayoutRequest.update(request.id, {
         status: 'rejected',
         admin_notes: adminNotes,
-        processed_date: new Date().toISOString()
+        rejection_reason: adminNotes
       });
 
       await Notification.create({
@@ -219,11 +221,9 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
 
       // Update payout request with transaction reference
       await PayoutRequest.update(request.id, {
-        status: 'processed',
-        transaction_reference: transactionReference,
-        admin_notes: `${adminNotes || 'Processed via ' + paymentGateway}. Gateway Response: ${JSON.stringify(paymentGatewayResponse)}`,
-        processed_date: new Date().toISOString(),
-        processed_by: 'admin' // You can pass actual admin ID here
+        status: 'paid',
+        reference_number: transactionReference,
+        admin_notes: `${adminNotes || 'Processed via ' + paymentGateway}. Gateway Response: ${JSON.stringify(paymentGatewayResponse)}`
       });
 
       // Send notification to creator
@@ -258,10 +258,9 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
     setIsProcessing(true);
     try {
       await PayoutRequest.update(request.id, {
-        status: 'processed',
-        transaction_reference: utrNumber,
-        admin_notes: adminNotes || 'Payment processed manually via bank transfer',
-        processed_date: new Date().toISOString()
+        status: 'paid',
+        reference_number: utrNumber.trim(),
+        admin_notes: adminNotes || 'Payment processed manually via bank transfer'
       });
 
       await Notification.create({
@@ -298,7 +297,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
     pending: 'bg-hold-muted text-hold-muted-foreground',
     approved: 'bg-premium-muted text-primary',
     rejected: 'bg-sell-muted text-sell-muted-foreground',
-    processed: 'bg-buy-muted text-buy-muted-foreground'
+    paid: 'bg-buy-muted text-buy-muted-foreground'
   };
 
   return (
@@ -397,7 +396,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
             </div>
 
             {/* Transaction Reference (if processed) */}
-            {request.status === 'processed' && request.transaction_reference && (
+            {request.status === 'paid' && request.transaction_reference && (
               <div className="bg-premium-muted rounded-lg p-4 border border-protocall-premium-light">
                 <h3 className="font-semibold text-protocall-premium-text mb-2 flex items-center gap-2">
                   <CreditCard className="w-5 h-5" />
@@ -460,7 +459,7 @@ export default function PayoutDetailsModal({ request, isOpen, onClose, onUpdate 
               </>
             )}
 
-            {(request.status === 'processed' || request.status === 'rejected') && (
+            {(request.status === 'paid' || request.status === 'rejected') && (
               <Button variant="outline" onClick={onClose}>
                 Close
               </Button>

@@ -36,6 +36,8 @@
 
 | ID | Finding | Status | Fix / test |
 |---|---|---|---|
+| SEC-40 (BE-16) | **Advisor applications and profiles were world-readable and self-writable**: `GET /api/advisors` and `GET /api/users/advisors[/:id]` returned every applicant (pending, rejected, suspended) with the private SEBI certificate URL, rejection reason and earnings to anonymous callers; `/users/advisors` let any signed-in user create or rewrite advisor rows; approval was two browser calls (advisor row, then `PUT /users/:id` role) so a failure left an approved advisor without access. | ✅ (needs migration 014 unique index for race-proofing) | Directory is approved-only and field-whitelisted for the public; the owner reads their own row; staff read all. No generic write routes remain. `POST /advisors/apply` (validated, own private upload only, one application per account, locked user row), `PUT /advisors/me` (SEBI number locked after approval), `POST /advisors/:id/review` (admin only; status + verified + role + notification + audit in one transaction; staff roles never changed), `DELETE /advisors/:id` (admin; refuses with financial history). `backend/test/advisor-journey.test.js`, 74 tests, mutation-checked. |
+| SEC-41 (BE-16) | **Advisor-only APIs trusted a role or a row, not both**: plans/posts/recommendations writes used the generic CRUD (any user with an advisors row, any status; client-supplied price/flags), `AdvisorPledgeCommission` rows (money) were creatable and editable by the advisor, subscriber-only posts had no server-side gate (the list was owner-scoped, so subscribers saw nothing and the premium filter ran in the browser), and `advisorFinance.requireAdvisor` let a suspended advisor whose role was not yet demoted change bank accounts. | ✅ | `requireApprovedAdvisor` (role advisor + own row + status approved) on every advisor write and on subscribers/earnings/refunds; validated whitelists for plans (price 1 to 1,000,000, max 3, no delete with active subscribers), posts and recommendations; pledge commission writes staff-only; `GET /advisors/posts/by-advisor/:id` withholds content of locked posts on the server (public / any subscriber / plan tier); `requireAdvisor` now also requires status approved. |
 | SEC-8 (H-1) | **Unauthenticated request crashes the API**: the webhook ran `createHmac(undefined)` outside try. HMAC was over re-serialised JSON, the compare wasn't constant-time, and there was no replay protection. | ✅ (replay ⛔) | Returns 503 when the secret is missing, HMAC is over the raw body (fails closed without it), a strict hex signature with byte-wise `timingSafeEqual`, and `unhandledRejection` is now logged rather than crashing the process. 5 tests. **Open:** dedupe by event id / payment id. |
 | SEC-9 (H-2) | Users can write money, status and approval fields: RevenueTransaction, PayoutRequest, RefundRequest, Referral, CommissionTracking, Review, CourseEnrollment, advisor SubscriptionPlan `is_active`, FinInfluencer `is_featured`. | ⛔ | `protectedFields` / allow-lists per entity, with status and amount derived on the server. |
 | SEC-10 (H-3) | Admin functions open to any user: platform settings upsert, entity-config, investor/module approvals, financial audit logs, expenses/income, announcements, ads/vendors, portfolio-manager data, events, meetings. | 🟡 | ✅ `PUT /platform/settings/key/:key` is admin-only (test). The rest of the route table below is still ⛔. |
@@ -57,18 +59,28 @@
 | SEC-21 (M-1) | Banned users keep access (login, `authenticate` and WS never check `status`). | ⛔ |
 | SEC-22 (M-2) | Login told unknown email apart from wrong password. | ✅ generic message, test |
 | SEC-23 (M-3) | `role` set by the client at signup; some checks fall back from `app_role` to `role`. | ✅ register/Google ignore client role, test. Fallbacks to `role` remain (standardise on `app_role`). |
-| SEC-24 (M-4) | Payment verify replay: no `order.notes.userId === req.user.id` check, no unique payment id, non-constant-time compare. | ⛔ |
+| SEC-24 (M-4) | Payment verify replay: no `order.notes.userId === req.user.id` check, no unique payment id, non-constant-time compare. | ✅ 2026-11-05 (BE-13): `timingSafeEqual`, order owner checked, activation idempotent per payment id (app check + migration 013 unique index, not yet run). Event tickets: SEC-38 |
 | SEC-25 (M-5) | Settings redaction pattern misses `*_api_key` names served to anonymous `GET /platform/settings`. | ⛔ use a positive allow-list |
-| SEC-26 (M-6) | No global rate limit, 50 MB JSON bodies, AI chat cost abuse, OTP resend email-bombing, coupon oracle. | ⛔ |
+| SEC-26 (M-6) | No global rate limit, 50 MB JSON bodies, AI chat cost abuse, OTP resend email-bombing, coupon oracle. | 🟡 coupon validate needs login, prices a plan, answers one generic message for unknown/off/expired codes and counts failed attempts per account (20/15 min) and per IP (100/15 min). No global limiter yet |
 | SEC-27 (M-7) | Stack traces and raw error messages returned to clients. | 🟡 central JSON error handler added (malformed JSON test). About 21 handlers still return `error.message`. |
 | SEC-28 (M-8) | More object-level gaps: `/commissions/advisor/:id`, `/audit/logs/user/:id`, poll vote PUT/DELETE, unauthenticated room-scoped GETs. | ⛔ |
 | SEC-29 (FE) | Access and refresh tokens in `localStorage`; JWT in WebSocket query strings. | ⛔ |
 | SEC-30 | `SESSION_SECRET` fell back to `"dev_secret"` silently. | ✅ throws at boot in production |
+| BE-13 (found) | `POST /subscriptions` (and `/advisors/subscriptions`, `/subscriptions/transactions`) let any signed-in user create or edit their own subscription/payment rows: a free Premium or advisor plan with `status: 'active'`. `activateSubscription` also set `app_role = 'advisor'` for any plan whose name contained "advisor". | ✅ 2026-11-05 writes are staff-only; advisor/finfluencer plans can no longer go through the platform activation; the role side effect is removed |
+| BE-13 (found) | Promo and feature admin routes wrote `req.body` straight into the model. | ✅ whitelisted + validated (PromoCodeController, FeatureController) |
 
 ## Low / Info
 
-- L-1: `Math.random()` for invite codes and Google-account passwords.
-- L-2: Google login doesn't check `email_verified` before linking.
+- L-1: `Math.random()` for invite codes and Google-account passwords. ✅ Google accounts now get a `crypto.randomBytes` password (BE-20); invite codes remain.
+- L-2: Google login doesn't check `email_verified` before linking. ✅ Fixed in BE-20, together with these found in its review (2026-11-07):
+  - Google sign-in never worked (access token sent where an ID token is verified); now the GIS ID-token flow.
+  - Audience check skipped when `GOOGLE_CLIENT_ID` was unset: now fails closed (503).
+  - Linking a pre-registered, never-verified account kept the registrant's password (account takeover): linking now replaces the password, revokes sessions and voids outstanding codes.
+  - Auto-linking trusted `email_verified` for addresses Google is not authoritative for: only Gmail or a matching Workspace `hd` may link an existing account.
+  - Staff, advisor and portfolio-manager accounts are never auto-linked.
+  - Accounts are matched by Google `sub` first; profile fields bounded; one cached `OAuth2Client`; `/api/auth/google` rate-limited; generic errors.
+  - security-auditor re-check: approved; evidence `backend/test/google-login.test.js` (13 cases) and `google-login-ratelimit.test.js`.
+  - Still open: SEC-45 (nonce/replay, login CSRF, unused session write), SEC-46 (signed-in "link Google" flow + link notification email), SEC-21 must also cover Google sign-in and refresh.
 - L-3: unescaped user names in HTML emails.
 - L-4: uploads lack a magic-byte check and per-user quota; file URLs derive from Host when `PUBLIC_API_BASE_URL` is unset.
 - L-5: MemoryStore sessions; cookies `secure` only with `NODE_ENV=production`.

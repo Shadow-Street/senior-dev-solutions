@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, DollarSign, AlertCircle, Sparkles, Edit } from 'lucide-react';
+import { Plus, DollarSign, Sparkles, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan = null }) {
@@ -14,8 +14,7 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
     description: '',
     price: '',
     billing_interval: 'monthly',
-    features: [''],
-    monthly_post_limit: ''
+    features: ['']
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -27,8 +26,7 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
         description: editingPlan.description || '',
         price: editingPlan.price?.toString() || '',
         billing_interval: editingPlan.billing_interval || 'monthly',
-        features: editingPlan.features && editingPlan.features.length > 0 ? editingPlan.features : [''],
-        monthly_post_limit: editingPlan.monthly_post_limit?.toString() || ''
+        features: editingPlan.features && editingPlan.features.length > 0 ? editingPlan.features : ['']
       });
     } else {
       // Reset form for new plan
@@ -37,8 +35,7 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
         description: '',
         price: '',
         billing_interval: 'monthly',
-        features: [''],
-        monthly_post_limit: ''
+        features: ['']
       });
     }
   }, [editingPlan, open]);
@@ -95,13 +92,17 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.name.trim() || !formData.price) {
-      toast.error('Please fill in all required fields');
+    const price = Number(formData.price);
+    if (formData.name.trim().length < 2) {
+      toast.error('Enter a plan name.');
+      return;
+    }
+    if (!(price >= 1) || price > 1000000 || Math.round(price * 100) / 100 !== price) {
+      toast.error('Price must be between ₹1 and ₹10,00,000 with at most two decimals.');
       return;
     }
 
-    const filteredFeatures = formData.features.filter(f => f.trim() !== '');
-    
+    const filteredFeatures = formData.features.map((f) => f.trim()).filter(Boolean);
     if (filteredFeatures.length === 0) {
       toast.error('Please add at least one feature');
       return;
@@ -109,12 +110,15 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
 
     setIsSubmitting(true);
     try {
+      // The server owns advisor_id, is_system_plan and the price mirror; only
+      // the advisor's own plan fields are sent.
       await onSubmit({
-        ...formData,
-        price: parseFloat(formData.price),
+        name: formData.name.trim(),
+        description: formData.description.trim(),
+        price,
+        billing_interval: formData.billing_interval,
         features: filteredFeatures,
-        monthly_post_limit: formData.monthly_post_limit ? parseInt(formData.monthly_post_limit) : null,
-        is_active: editingPlan ? editingPlan.is_active : true
+        ...(editingPlan ? {} : { is_active: true })
       }, editingPlan?.id);
     } catch (error) {
       console.error('Error saving plan:', error);
@@ -209,7 +213,8 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
                 id="price"
                 type="number"
                 step="0.01"
-                min="0"
+                min="1"
+                max="1000000"
                 value={formData.price}
                 onChange={(e) => setFormData(prev => ({...prev, price: e.target.value}))}
                 placeholder="999"
@@ -228,31 +233,9 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
                 <SelectContent>
                   <SelectItem value="monthly">Monthly</SelectItem>
                   <SelectItem value="quarterly">Quarterly</SelectItem>
-                  <SelectItem value="annually">Annually</SelectItem>
+                  <SelectItem value="yearly">Yearly</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-          </div>
-
-          <div className="bg-premium-muted border-2 border-protocall-premium-light rounded-lg p-4">
-            <Label htmlFor="monthly_post_limit" className="text-base font-semibold text-foreground mb-2 block">
-              📅 Monthly Post Limit
-            </Label>
-            <Input
-              id="monthly_post_limit"
-              type="number"
-              min="0"
-              value={formData.monthly_post_limit}
-              onChange={(e) => setFormData(prev => ({...prev, monthly_post_limit: e.target.value}))}
-              placeholder="e.g., 5 (leave empty for unlimited)"
-              className="mb-2"
-            />
-            <div className="flex items-start gap-2 text-xs text-subtle">
-              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-              <p>
-                Set how many exclusive posts you'll publish for this plan per month. 
-                Leave empty for unlimited posts. This helps you track your commitment to subscribers.
-              </p>
             </div>
           </div>
 
@@ -293,7 +276,7 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
           <div className="bg-premium-muted p-4 rounded-lg">
             <p className="text-sm text-primary">
               <strong>Note:</strong> {isEditMode 
-                ? 'Changes will be applied immediately. Existing subscribers will see the updated plan details.' 
+                ? 'Changes apply immediately. A new price is charged to new subscribers and at the next renewal.' 
                 : 'This plan will be immediately available for users to subscribe. You can deactivate it anytime from the plans list.'}
             </p>
           </div>

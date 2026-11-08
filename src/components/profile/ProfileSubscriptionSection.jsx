@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Crown, Calendar, CheckCircle, ArrowUp, Shield } from 'lucide-react';
+import { Crown, CheckCircle, ArrowUp, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { format } from 'date-fns';
 import { SubscriptionPlan } from '@/api/entities';
 
 // ✅ FIX: Feature name mapping for proper display
@@ -71,10 +68,11 @@ export default function ProfileSubscriptionSection({ subscription }) {
         const allPlans = await SubscriptionPlan.list();
         
         // Find the current plan by matching plan_type with plan name
-        const currentPlan = allPlans.find(p => 
-          p.name.toLowerCase() === subscription.plan_type.toLowerCase() ||
-          p.name.toLowerCase().replace(/\s+/g, '_') === subscription.plan_type.toLowerCase()
-        );
+        const planKey = String(subscription.plan_type || '').toLowerCase();
+        const currentPlan = (Array.isArray(allPlans) ? allPlans : []).find(p => {
+          const planName = String(p.name || '').toLowerCase();
+          return planName === planKey || planName.replace(/\s+/g, '_') === planKey;
+        });
 
         if (!currentPlan) {
           setPlanFeatures([]);
@@ -115,7 +113,7 @@ export default function ProfileSubscriptionSection({ subscription }) {
         <CardContent className="text-center space-y-4">
           <p className="text-subtle">You are currently on the free plan.</p>
           <Link to={createPageUrl("Subscription")}>
-            <Button className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
               <Crown className="w-4 h-4 mr-2" />
               Upgrade to Premium
             </Button>
@@ -125,64 +123,12 @@ export default function ProfileSubscriptionSection({ subscription }) {
     );
   }
 
-  const getPlanGradient = (planType) => {
-    switch(planType) {
-      case 'vip': return 'from-hold via-hold to-sell';
-      case 'premium': return 'from-protocall-deep via-protocall-grape to-protocall-blue';
-      default: return 'from-protocall-blue to-protocall-blue';
-    }
-  };
-
-  const getPlanIcon = (planType) => {
-    switch(planType) {
-      case 'vip': return '👑';
-      case 'premium': return '💎';
-      default: return '🚀';
-    }
-  };
-
   return (
     <div className="space-y-6">
-      {/* Current Plan */}
-      <Card className={`bg-gradient-to-r ${getPlanGradient(subscription.plan_type)} text-white border-0 shadow-lg`}>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between text-white">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">{getPlanIcon(subscription.plan_type)}</span>
-              <span>Your Current Plan</span>
-            </div>
-            <Badge className="bg-white/20 text-white border-white/30">
-              {(subscription.status || 'unknown').toUpperCase()}
-            </Badge>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-2xl font-bold capitalize">{subscription.plan_type}</h3>
-              <p className="opacity-90">
-                ₹{subscription.price.toLocaleString()}{subscription.price > 0 ? '/month' : ' Forever'}
-              </p>
-            </div>
-            <div className="text-right">
-              <div className="flex items-center gap-2 text-white/90">
-                <Calendar className="w-4 h-4" />
-                <div>
-                  <p className="text-sm">Expires</p>
-                  <p className="font-semibold">
-                    {format(new Date(subscription.end_date), 'MMM d, yyyy')}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Plan Features */}
       <Card>
         <CardHeader className="bg-card border-b border-divider">
-          <CardTitle>Plan Features</CardTitle>
+          <CardTitle>What your plan includes</CardTitle>
         </CardHeader>
         <CardContent className="pt-4">
           {isLoadingFeatures ? (
@@ -230,13 +176,13 @@ export default function ProfileSubscriptionSection({ subscription }) {
       </Card>
 
       {/* Upgrade Option */}
-      {subscription.plan_type !== 'vip' && (
+      {String(subscription.plan_type || '').toLowerCase() !== 'vip' && (
         <Card className="bg-card border-protocall-premium-light">
           <CardContent className="p-6 text-center">
             <h3 className="font-semibold text-lg mb-2">Want More Features?</h3>
             <p className="text-subtle mb-4">Upgrade to unlock advanced trading tools and exclusive content</p>
             <Link to={createPageUrl("Subscription")}>
-              <Button className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue">
+              <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
                 <ArrowUp className="w-4 h-4 mr-2" />
                 Upgrade Plan
               </Button>

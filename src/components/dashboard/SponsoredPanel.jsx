@@ -11,6 +11,7 @@ import {
 import { createPageUrl } from "@/utils";
 import bullArt from "@/assets/dashboard/bull-cutout.webp";
 import { renderBrandLogo } from "@/components/common/BrandLogo";
+import { useAdsEnabled } from "@/components/hooks/useAdsEnabled";
 
 // Each feature carries its own icon so the card reads as a product summary
 // rather than a plain list (§2: animated icons on cards).
@@ -23,6 +24,10 @@ const FEATURES = [
 ];
 
 export default function SponsoredPanel() {
+  // Global switch: nothing at all unless ads are known to be on.
+  const adsEnabled = useAdsEnabled();
+  if (!adsEnabled) return null;
+
   return (
     <Card
       className="group/card relative isolate h-full overflow-hidden border-0 bg-gradient-to-br from-protocall-sidebar-dark via-protocall-sidebar-bg to-protocall-deep

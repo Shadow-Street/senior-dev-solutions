@@ -1,16 +1,16 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Crown, Calendar, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { format } from 'date-fns';
+import { formatDate } from '@/lib/format';
+import { isFreeSubscription } from '@/lib/subscriptionApi';
 
 export default function SubscriptionInfo({ subscription }) {
-  if (!subscription) {
+  if (!subscription || isFreeSubscription(subscription)) {
     return (
       <div className="text-center">
-        <p className="mb-4">You are currently on the free plan.</p>
+        <p className="mb-4">You are on the Free plan. Upgrade any time for more features.</p>
         <Link to={createPageUrl("Subscription")}>
           <Button>
             <Crown className="w-4 h-4 mr-2" />
@@ -38,7 +38,7 @@ export default function SubscriptionInfo({ subscription }) {
         </div>
         <div className="flex items-center gap-2 text-subtle">
           <Calendar className="w-4 h-4" />
-          <span>Renews on {format(new Date(subscription.end_date), 'MMMM d, yyyy')}</span>
+          <span>{subscription.auto_renew ? 'Renews on' : 'Expires on'} {formatDate(subscription.end_date)}</span>
         </div>
         <Link to={createPageUrl("Subscription")}>
           <Button variant="outline">Manage Subscription</Button>

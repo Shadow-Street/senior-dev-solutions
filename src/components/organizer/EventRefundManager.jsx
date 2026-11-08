@@ -16,6 +16,7 @@ import { Label } from '@/components/ui/label';
 import { Clock, CheckCircle, XCircle, Eye, Loader2, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { formatINR } from '@/lib/format';
 
 export default function EventRefundManager({ organizerId }) {
   const [refunds, setRefunds] = useState([]);
@@ -192,7 +193,7 @@ export default function EventRefundManager({ organizerId }) {
                       </div>
                       <div className="space-y-1 text-sm text-subtle">
                         <p><strong>User:</strong> {refund.user_name} ({refund.user_email})</p>
-                        <p><strong>Amount:</strong> ₹{refund.refund_amount.toLocaleString()}</p>
+                        <p><strong>Amount:</strong> {formatINR(refund.refund_amount)}</p>
                         <p><strong>Requested:</strong> {format(new Date(refund.created_date), 'PPP')}</p>
                         <p><strong>Reason:</strong> {refund.request_reason}</p>
                       </div>
@@ -247,7 +248,7 @@ export default function EventRefundManager({ organizerId }) {
                       </div>
                       <div className="space-y-1 text-sm text-subtle">
                         <p><strong>User:</strong> {refund.user_name}</p>
-                        <p><strong>Amount:</strong> ₹{refund.refund_amount.toLocaleString()}</p>
+                        <p><strong>Amount:</strong> {formatINR(refund.refund_amount)}</p>
                         <p><strong>Reviewed:</strong> {format(new Date(refund.processed_date || refund.created_date), 'PPP')}</p>
                         {refund.rejection_reason && (
                           <p className="text-sell-muted-foreground"><strong>Rejection Reason:</strong> {refund.rejection_reason}</p>
@@ -282,7 +283,7 @@ export default function EventRefundManager({ organizerId }) {
               <div className="p-4 bg-surface-2 rounded-lg">
                 <p className="text-sm"><strong>Event:</strong> {selectedRefund?.related_entity_name}</p>
                 <p className="text-sm"><strong>User:</strong> {selectedRefund?.user_name}</p>
-                <p className="text-sm"><strong>Amount:</strong> ₹{selectedRefund?.refund_amount.toLocaleString()}</p>
+                <p className="text-sm"><strong>Amount:</strong> {formatINR(selectedRefund?.refund_amount)}</p>
               </div>
               <div>
                 <Label htmlFor="notes">

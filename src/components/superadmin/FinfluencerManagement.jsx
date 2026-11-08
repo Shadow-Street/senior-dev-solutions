@@ -53,6 +53,7 @@ import { toast } from "sonner";
 import { format } from 'date-fns';
 import FinfluencerPricingCommission from './finfluencers/FinfluencerPricingCommission';
 import { logAuditAction, AuditActions } from '@/components/utils/auditLogger';
+import { normalizePayout, payoutAmount } from '@/lib/payoutView';
 
 export default function FinfluencerManagement() {
   const [finfluencers, setFinfluencers] = useState([]);
@@ -1021,7 +1022,7 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
     setIsLoading(true);
     try {
       const [allPayouts, allRevenues] = await Promise.all([
-        PayoutRequest.filter({ entity_type: 'finfluencer' }, '-created_date').catch(() => []),
+        PayoutRequest.filter({ entity_type: 'finfluencer' }, '-created_date').then((rows) => rows.map(normalizePayout)).catch(() => []),
         RevenueTransaction.list('-created_date').catch(() => [])
       ]);
       setPayoutRequests(allPayouts || []);
@@ -1044,14 +1045,14 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
     ? safePayoutRequests 
     : safePayoutRequests.filter(p => p.entity_id === selectedFinfluencer);
 
-  const totalPending = safePayoutRequests.filter(p => p.status === 'pending').reduce((sum, p) => sum + (p.requested_amount || 0), 0);
-  const totalApproved = safePayoutRequests.filter(p => p.status === 'approved').reduce((sum, p) => sum + (p.requested_amount || 0), 0);
-  const totalProcessed = safePayoutRequests.filter(p => p.status === 'processed').reduce((sum, p) => sum + (p.requested_amount || 0), 0);
+  const totalPending = safePayoutRequests.filter(p => p.status === 'pending').reduce((sum, p) => sum + payoutAmount(p), 0);
+  const totalApproved = safePayoutRequests.filter(p => p.status === 'approved').reduce((sum, p) => sum + payoutAmount(p), 0);
+  const totalProcessed = safePayoutRequests.filter(p => p.status === 'paid').reduce((sum, p) => sum + payoutAmount(p), 0);
 
   const totalGrossEarnings = safeRevenues.reduce((sum, r) => sum + (r.gross_amount || 0), 0);
   const totalPlatformCommission = safeRevenues.reduce((sum, r) => sum + (r.platform_commission || 0), 0);
   const totalFinfluencerPayout = safeRevenues.reduce((sum, r) => sum + (r.influencer_payout || 0), 0);
-  const totalPaidOut = safePayoutRequests.filter(p => p.status === 'processed').reduce((sum, p) => sum + (p.requested_amount || 0), 0);
+  const totalPaidOut = safePayoutRequests.filter(p => p.status === 'paid').reduce((sum, p) => sum + payoutAmount(p), 0);
   const pendingPayoutAmount = totalFinfluencerPayout - totalPaidOut;
 
   const getStatusBadge = (status) => {
@@ -1202,7 +1203,7 @@ function FinfluencerPayoutsSection({ finfluencers, finfluencerStats }) {
                           <div className="grid grid-cols-2 gap-4 mt-3">
                             <div>
                               <p className="text-xs text-subtle">Requested Amount</p>
-                              <p className="text-xl font-bold text-protocall-premium-text">₹{(payout.requested_amount || 0).toLocaleString()}</p>
+                              <p className="text-xl font-bold text-protocall-premium-text">₹{payoutAmount(payout).toLocaleString()}</p>
                             </div>
                             <div>
                               <p className="text-xs text-subtle">Available Balance</p>

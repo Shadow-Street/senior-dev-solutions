@@ -138,9 +138,9 @@ export default {
   			protocall: {
   				/* Brand & primary */
   				grape: '#6D28D9',
-  				blue: '#4737FF',
-  				deep: '#3529BF',
-  				light: '#ACA5FF',
+  				blue: '#6D28D9',
+  				deep: '#5B21B6',
+  				light: '#C4B5FD',
   				ink: '#101018',
   				/* Page & cards */
   				page: '#FCF9ED',
@@ -156,6 +156,10 @@ export default {
   				muted: '#5E5E6A',
   				subtle: '#8B8D9A',
   				/* BUY / positive / growth / live / progress — brand green */
+  				/* Review stars: NEON LIME fill; the olive edge keeps the shape
+  				   readable on white, where #D7FF00 alone is ~1.1:1. */
+  				neon: '#D7FF00',
+  				'neon-edge': '#7A9100',
   				green: '#56E11B',          /* Primary Green          */
   				'green-soft': '#63E52E',   /* Secondary Green (hover)*/
   				'green-bg': '#EAFBDD',     /* green tint surface     */
@@ -172,15 +176,15 @@ export default {
   				'sell-bg': '#FEECEC',
   				'sell-text': '#B91C1C',
   				/* Premium / special */
-  				premium: '#4737FF',
-  				'premium-light': '#D1CDFF',
-  				'premium-bg': '#F1F0FF',
-  				'premium-text': '#3529BF',
+  				premium: '#6D28D9',
+  				'premium-light': '#DDD6FE',
+  				'premium-bg': '#F5F3FF',
+  				'premium-text': '#5B21B6',
   				/* Sidebar & navigation */
   				'sidebar-bg': '#10162D',
   				'sidebar-dark': '#0B1024',
-  				'sidebar-active': '#4737FF',
-  				'sidebar-hover': '#3529BF',
+  				'sidebar-active': '#6D28D9',
+  				'sidebar-hover': '#5B21B6',
   				'sidebar-divider': '#252D4A',
   				'sidebar-text': '#FFFFFF',
   				'sidebar-muted': '#A9B0C8'
@@ -196,6 +200,8 @@ export default {
   				royal: 'hsl(245 58% 51% / <alpha-value>)',
   				cream: 'hsl(48 71% 96% / <alpha-value>)',
   				lime: 'hsl(102 79% 49% / <alpha-value>)',
+  				/* protocall.in/home `brandlime` (#D9FF00): hero accent, candles, analyst carousel */
+  				neon: 'hsl(69 100% 50% / <alpha-value>)',
   				bull: 'hsl(102 79% 49% / <alpha-value>)',
   				'bull-text': 'hsl(100 78% 26% / <alpha-value>)',
   				bear: 'hsl(0 84% 60% / <alpha-value>)',
@@ -208,12 +214,12 @@ export default {
   			display: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif']
   		},
   		backgroundImage: {
-  			/* Brand gradient: #101018 -> #3529BF -> #4737FF -> #ACA5FF */
+  			/* Brand gradient: #101018 -> #5B21B6 -> #6D28D9 -> #C4B5FD */
   			'brand-gradient':
-  				'linear-gradient(100deg, #101018 0%, #3529BF 42%, #4737FF 70%, #ACA5FF 100%)',
+  				'linear-gradient(100deg, #101018 0%, #5B21B6 42%, #6D28D9 70%, #C4B5FD 100%)',
   			/* VIP / premium variant — stays inside the purple family */
   			'premium-gradient':
-  				'linear-gradient(100deg, #101018 0%, #6D28D9 38%, #3529BF 68%, #D1CDFF 100%)'
+  				'linear-gradient(100deg, #101018 0%, #6D28D9 38%, #5B21B6 68%, #DDD6FE 100%)'
   		},
   		keyframes: {
   			/* Slow idle drift for stat-tile icons. Small on purpose: it should

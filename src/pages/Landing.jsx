@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/components/context/AuthContext';
 import { usePlatformSettings } from '@/components/hooks/usePlatformSettings';
 import { useHomeData } from '@/components/home/useHomeData';
+import HomeExperts from '@/components/home/HomeExperts';
 import {
   renderHomeAbout,
   renderHomeCommunity,
@@ -11,7 +12,6 @@ import {
   renderHomeFooter,
   renderHomeHeader,
   renderHomeHero,
-  renderHomeMarket,
   renderHomeMembership,
   renderHomeReviews,
   renderHomeStats,
@@ -29,7 +29,6 @@ export default function Landing() {
   const { settings } = usePlatformSettings();
   const data = useHomeData();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [marketTab, setMarketTab] = useState('gainers');
 
   useEffect(() => {
     document.title = 'Home | Protocall';
@@ -43,6 +42,11 @@ export default function Landing() {
     setMenuOpen(false);
     navigate(isAuthenticated ? '/Dashboard' : '/login');
   }, [navigate, isAuthenticated]);
+  // Signed-out visitors are sent to sign in by the protected route.
+  const goDashboard = useCallback(() => {
+    setMenuOpen(false);
+    navigate('/Dashboard');
+  }, [navigate]);
   // Signed-in members skip registration and land on their dashboard.
   const goGetStarted = useCallback(() => {
     setMenuOpen(false);
@@ -56,14 +60,14 @@ export default function Landing() {
         onToggleMenu: () => setMenuOpen((open) => !open),
         onCloseMenu: closeMenu,
         onLogin: goLogin,
-        onGetStarted: goGetStarted,
+        onDashboard: goDashboard,
       })}
       <main>
         {renderHomeHero(data, goGetStarted)}
         {renderHomeStats(data)}
         {renderHomeFeatures()}
-        {renderHomeMarket(data, marketTab, setMarketTab)}
         {renderHomeCommunity(data)}
+        <HomeExperts />
         {renderHomeReviews(data)}
         {renderHomeSteps()}
         {renderHomeMembership()}

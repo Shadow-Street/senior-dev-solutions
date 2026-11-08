@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { User, Referral, ReferralBadge, Subscription } from "@/lib/apiClient";
+import { User, Referral, ReferralBadge } from "@/lib/apiClient";
+import { subscriptionApi } from "@/lib/subscriptionApi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -13,7 +14,7 @@ import {
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useAuth } from "@/components/context/AuthContext";
 
@@ -39,6 +40,8 @@ export default function Profile() {
   const [badges, setBadges] = useState([]);
   const [subscription, setSubscription] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchParams] = useSearchParams();
+  const initialTab = ['general', 'referrals', 'subscription', 'trust-score', 'credits'].includes(searchParams.get('tab')) ? searchParams.get('tab') : 'general';
 
   useEffect(() => {
     setUser(authUser);
@@ -61,12 +64,14 @@ export default function Profile() {
       const [ref, bdg, sub] = await Promise.all([
         Referral.filter({ referrer_id: authUser.id }).catch(() => []),
         ReferralBadge.filter({ user_id: authUser.id }).catch(() => []),
-        Subscription.filter({ user_id: authUser.id }).catch(() => []),
+        // The server's answer for "my current plan": always one row (Free when nothing is paid),
+        // never an arbitrary or advisor subscription.
+        subscriptionApi.mine().catch(() => null),
       ]);
       if (cancelled) return;
       setReferrals(Array.isArray(ref) ? ref : []);
       setBadges(Array.isArray(bdg) ? bdg : []);
-      setSubscription(Array.isArray(sub) ? sub[0] || null : sub || null);
+      setSubscription(sub && typeof sub === 'object' ? sub : null);
       setIsLoading(false);
     })();
 
@@ -138,7 +143,7 @@ export default function Profile() {
         {/* Profile Tabs */}
         <Card className="border border-border bg-card shadow-sm">
           <CardContent className="p-6">
-            <Tabs defaultValue="general" className="space-y-6">
+            <Tabs defaultValue={initialTab} className="space-y-6">
               <TabsList className="w-full bg-transparent rounded-none h-auto p-0 grid grid-cols-5 gap-2">
                 <TabsTrigger
                   value="general"
@@ -190,7 +195,7 @@ export default function Profile() {
               </TabsContent>
 
               <TabsContent value="subscription" className="mt-6 space-y-5">
-                <ProfileBillingSection subscription={subscription} />
+                <ProfileBillingSection />
                 <ProfileSubscriptionSection subscription={subscription} />
               </TabsContent>
 

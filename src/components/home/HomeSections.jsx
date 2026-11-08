@@ -10,15 +10,18 @@ import {
   Phone,
   ShieldCheck,
   Sparkles,
-  Star,
-  TrendingDown,
   TrendingUp,
   Users,
   Vote,
   X,
 } from "lucide-react";
-import { renderBrandLogo } from "@/components/common/BrandLogo";
 import heroBull from "@/assets/home/hero-green-bull.webp";
+import emblemDark from "@/assets/home/emblem-dark.webp";
+import emblemLight from "@/assets/home/emblem-light.webp";
+import footerBackdrop from "@/assets/home/footer-bg.webp";
+import { renderMarqueeRow } from "@/components/common/Marquee";
+import { renderRatingStars } from "@/components/common/RatingStars";
+import ProtoGuide from "./ProtoGuide";
 import {
   HOME_ABOUT,
   HOME_FEATURES,
@@ -28,6 +31,7 @@ import {
   HOME_NAV,
   HOME_REVIEWS,
   HOME_ROOM_TYPE_LABELS,
+  HOME_SOCIAL,
   HOME_STEPS,
 } from "./homeContent";
 
@@ -40,7 +44,7 @@ import {
  * border-home-line, ...).
  *
  * Render helpers rather than components with props, following the codebase's
- * no-propTypes style (see renderBrandLogo).
+ * no-propTypes style. Stateful parts live in HomeExperts.jsx and ProtoGuide.jsx.
  */
 
 const FOCUS = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-home-brand";
@@ -87,13 +91,13 @@ function renderIconTile(Icon, className = "h-10 w-10 bg-home-tint text-home-bran
 
 /* ------------------------------------------------------------------ header */
 
-export function renderHomeHeader({ menuOpen, onToggleMenu, onCloseMenu, onLogin, onGetStarted }) {
+export function renderHomeHeader({ menuOpen, onToggleMenu, onCloseMenu, onLogin, onDashboard }) {
   return (
     <header className="sticky top-0 z-50 border-b border-home-line bg-home-cream">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <div className="flex h-16 items-center justify-between gap-4">
-          <Link to="/home" className="flex shrink-0 items-center gap-2.5">
-            {renderBrandLogo("h-9 w-9", "Protocall logo", "dark")}
+          <Link to="/home" className="flex shrink-0 items-center gap-2.5" aria-label="Protocall home">
+            <img src={emblemDark} alt="Protocall logo" className="h-9 w-9 shrink-0 object-contain" />
             <span className="font-display text-lg font-extrabold tracking-tight text-home-ink sm:text-xl">PROTOCALL</span>
           </Link>
           <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Main navigation">
@@ -107,8 +111,8 @@ export function renderHomeHeader({ menuOpen, onToggleMenu, onCloseMenu, onLogin,
             >
               Login
             </button>
-            <button type="button" onClick={onGetStarted} className={PRIMARY_BTN}>
-              Get Started
+            <button type="button" onClick={onDashboard} className={PRIMARY_BTN}>
+              Dashboard
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
@@ -134,8 +138,8 @@ export function renderHomeHeader({ menuOpen, onToggleMenu, onCloseMenu, onLogin,
             >
               Login
             </button>
-            <button type="button" onClick={onGetStarted} className={`${PRIMARY_BTN} py-3`}>
-              Get Started
+            <button type="button" onClick={onDashboard} className={`${PRIMARY_BTN} py-3`}>
+              Dashboard
             </button>
           </div>
         </div>
@@ -161,8 +165,8 @@ function renderCandles() {
         const x = 22 + i * 25;
         return (
           <g key={x}>
-            <line x1={x} x2={x} y1={y1} y2={y2} className={up ? "stroke-home-bull" : "stroke-home-bear"} strokeWidth="1.5" />
-            <rect x={x - 6} y={y} width="12" height={h} rx="1.5" className={up ? "fill-home-bull" : "fill-home-bear"} />
+            <line x1={x} x2={x} y1={y1} y2={y2} className={up ? "stroke-home-neon" : "stroke-home-bear"} strokeWidth="1.5" />
+            <rect x={x - 6} y={y} width="12" height={h} rx="1.5" className={up ? "fill-home-neon" : "fill-home-bear"} />
           </g>
         );
       })}
@@ -183,11 +187,10 @@ export function renderHomeHero(data, onGetStarted) {
       <div className="pointer-events-none absolute -left-24 -top-40 h-96 w-96 rounded-full bg-home-brand opacity-40 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-32 right-0 h-80 w-80 rounded-full bg-home-royal opacity-30 blur-3xl" />
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-5 pb-12 pt-9 sm:gap-12 sm:px-8 sm:pt-14 lg:grid-cols-2 lg:gap-10 lg:pb-24 lg:pt-24">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-5 pb-16 pt-9 sm:gap-12 sm:px-8 sm:pt-14 lg:grid-cols-2 lg:gap-10 lg:pb-24 lg:pt-24">
         <div>
-          {renderBrandLogo("h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20", "Protocall logo")}
-          <span className="mt-5 inline-flex max-w-full items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[11px] font-semibold tracking-wide text-white sm:mt-6 sm:px-3.5 sm:text-xs">
-            <Sparkles className="h-3.5 w-3.5 shrink-0 text-home-lime" aria-hidden="true" />
+          <span className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[11px] font-semibold tracking-wide text-white sm:mt-6 sm:px-3.5 sm:text-xs">
+            <Sparkles className="h-3.5 w-3.5 shrink-0 text-home-neon" aria-hidden="true" />
             A community for Indian retail investors
           </span>
           <h1 className="mt-5 font-display text-[1.75rem] font-extrabold leading-[1.15] tracking-tight sm:mt-6 sm:text-5xl sm:leading-[1.05] lg:text-6xl">
@@ -195,7 +198,7 @@ export function renderHomeHero(data, onGetStarted) {
             <br />
             Discuss Better.
             <br />
-            <span className="text-home-lime">Grow Together.</span>
+            <span className="text-home-neon">Grow Together.</span>
           </h1>
           <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/75 sm:mt-6 sm:text-base lg:text-lg">
             Join a community of retail investors to discuss stocks, share market perspectives, participate in community
@@ -233,10 +236,10 @@ export function renderHomeHero(data, onGetStarted) {
           <div className="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-2xl backdrop-blur-sm sm:p-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-home-bull" />
+                <span className="h-2 w-2 rounded-full bg-home-neon" />
                 <span className="text-xs font-semibold uppercase tracking-wider text-white">Market overview</span>
               </div>
-              <Activity className="h-4 w-4 text-home-lime" aria-hidden="true" />
+              <Activity className="h-4 w-4 text-home-neon" aria-hidden="true" />
             </div>
             <div className="mt-4 rounded-2xl bg-home-night p-4">
               {renderCandles()}
@@ -246,9 +249,15 @@ export function renderHomeHero(data, onGetStarted) {
               </div>
             </div>
             <div className="mt-4 grid grid-cols-3 gap-2">
-              <div className="rounded-xl border border-home-bull/40 bg-home-bull/10 py-2 text-center text-xs font-bold text-home-bull">BUY</div>
-              <div className="rounded-xl border border-home-hold/40 bg-home-hold/10 py-2 text-center text-xs font-bold text-home-hold">HOLD</div>
-              <div className="rounded-xl border border-home-bear/40 bg-home-bear/10 py-2 text-center text-xs font-bold text-home-bear">SELL</div>
+              {[
+                ["BUY", "border-home-neon/50 bg-home-neon/15 text-home-neon"],
+                ["HOLD", "border-home-hold/50 bg-home-hold/15 text-home-hold"],
+                ["SELL", "border-home-bear/50 bg-home-bear/15 text-home-bear"],
+              ].map(([label, tone]) => (
+                <div key={label} className={`rounded-xl border py-2 text-center text-[11px] font-bold uppercase tracking-wide ${tone}`}>
+                  {label}
+                </div>
+              ))}
             </div>
             <div className="mt-4 grid grid-cols-3 gap-2">
               {[
@@ -327,126 +336,6 @@ export function renderHomeFeatures() {
               </Link>
             </div>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------------------------------------------------- market insights */
-
-const MARKET_TABS = [
-  { key: "gainers", label: "Top Gainers", icon: TrendingUp },
-  { key: "losers", label: "Top Losers", icon: TrendingDown },
-  { key: "trending", label: "Trending Stocks", icon: Flame },
-];
-
-function formatPrice(stock) {
-  const price = Number(stock.current_price);
-  if (!Number.isFinite(price)) return "—";
-  try {
-    return new Intl.NumberFormat("en-IN", { style: "currency", currency: stock.currency || "INR", maximumFractionDigits: 2 }).format(price);
-  } catch {
-    return price.toFixed(2);
-  }
-}
-
-function renderMoverRow(stock) {
-  const pct = Number(stock.change_percent);
-  const hasPct = Number.isFinite(pct);
-  const up = hasPct && pct >= 0;
-  return (
-    <div key={stock.symbol} className="flex items-center justify-between gap-3 rounded-xl bg-home-cream px-3.5 py-2.5">
-      <div className="min-w-0">
-        <div className="truncate text-sm font-semibold text-home-ink">{stock.symbol}</div>
-        {stock.name && stock.name !== stock.symbol && <div className="truncate text-[11px] text-home-muted">{stock.name}</div>}
-      </div>
-      <div className="shrink-0 text-right">
-        <div className="text-sm font-semibold text-home-ink">{formatPrice(stock)}</div>
-        {hasPct && (
-          <div className={`text-[11px] font-bold ${up ? "text-home-bull-text" : "text-home-bear"}`}>
-            {up ? "+" : ""}
-            {pct.toFixed(2)}%
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-export function renderHomeMarket(data, marketTab, onMarketTab) {
-  const rows = (data[marketTab] || []).slice(0, 6);
-  return (
-    <section className="bg-white">
-      <div className={CONTAINER}>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className={EYEBROW}>Market insights</p>
-            <h2 className={H2}>What the market is doing right now</h2>
-          </div>
-        </div>
-        <div className="mt-10 grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-home-line bg-white p-5 shadow-sm lg:col-span-2 lg:p-6">
-            <div className="flex flex-wrap gap-1.5 rounded-xl bg-home-cream p-1.5" role="tablist" aria-label="Market movers">
-              {MARKET_TABS.map(({ key, label, icon: Icon }) => {
-                const active = key === marketTab;
-                return (
-                  <button
-                    key={key}
-                    type="button"
-                    role="tab"
-                    aria-selected={active}
-                    onClick={() => onMarketTab(key)}
-                    className={`inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold transition-colors ${FOCUS} ${
-                      active ? "bg-home-brand text-white shadow-sm" : "text-home-muted hover:text-home-ink"
-                    }`}
-                  >
-                    <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-            {rows.length ? (
-              <div className="mt-5 grid gap-2 sm:grid-cols-2">{rows.map(renderMoverRow)}</div>
-            ) : (
-              <div className="mt-5 rounded-xl border border-dashed border-home-line bg-home-cream px-6 py-10 text-center">
-                <p className="font-semibold text-home-ink">
-                  {data.loading ? "Loading market prices…" : "Live market prices are not available right now."}
-                </p>
-                <p className="mx-auto mt-1.5 max-w-md text-sm leading-relaxed text-home-muted">
-                  Prices appear here as soon as the market data feed is connected. You can still explore stocks and follow the
-                  community discussion.
-                </p>
-                <Link to="/Dashboard" className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-home-brand hover:text-home-ink">
-                  Explore stocks
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              </div>
-            )}
-          </div>
-          <div className="rounded-2xl border border-home-line bg-white p-5 shadow-sm lg:p-6">
-            <h3 className="font-display text-base font-bold text-home-ink">Most discussed in polls</h3>
-            <p className="mt-1 text-xs text-home-muted">Stocks the community is voting on most.</p>
-            <div className="mt-4 space-y-2">
-              {data.mostDiscussed.length ? (
-                data.mostDiscussed.map(({ label, count }) => (
-                  <div key={label} className="flex items-center justify-between gap-3 rounded-xl bg-home-cream px-3 py-2.5">
-                    <span className="truncate text-sm font-semibold text-home-ink">{label}</span>
-                    <span className="shrink-0 rounded-full bg-home-tint px-2 py-0.5 text-[11px] font-bold text-home-brand">
-                      {count} {count === 1 ? "poll" : "polls"}
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <p className="rounded-xl bg-home-cream px-3 py-2.5 text-sm text-home-muted">{data.loading ? "Loading…" : "No polls yet."}</p>
-              )}
-            </div>
-            <Link to="/Polls" className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-home-brand hover:text-home-ink">
-              See all polls
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </div>
         </div>
       </div>
     </section>
@@ -547,13 +436,24 @@ export function renderHomeCommunity(data) {
 
 /* ----------------------------------------------------------------- reviews */
 
-const initials = (name) =>
-  name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0].toUpperCase())
-    .join("");
+function renderReviewCard(r) {
+  return (
+    <figure className="flex h-full w-[300px] shrink-0 flex-col rounded-2xl border border-home-line bg-white p-6 shadow-sm transition-shadow hover:shadow-md sm:w-[360px]">
+      {renderRatingStars(r.rating)}
+      <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-home-ink">“{r.text}”</blockquote>
+      <figcaption className="mt-5 flex items-center gap-3 border-t border-home-line pt-4">
+        <img src={r.avatar} alt="" loading="lazy" className="h-10 w-10 shrink-0 rounded-full border border-home-line object-cover" />
+        <div className="min-w-0">
+          <div className="truncate text-sm font-bold text-home-ink">{r.name}</div>
+          <div className="flex items-center gap-1 text-xs text-home-muted">
+            <ShieldCheck className="h-3 w-3 text-home-brand" aria-hidden="true" />
+            Verified member
+          </div>
+        </div>
+      </figcaption>
+    </figure>
+  );
+}
 
 export function renderHomeReviews(data) {
   const average = HOME_REVIEWS.reduce((sum, r) => sum + r.rating, 0) / HOME_REVIEWS.length;
@@ -590,39 +490,21 @@ export function renderHomeReviews(data) {
             ))}
           </div>
         </div>
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {HOME_REVIEWS.map((r) => (
-            <figure
-              key={r.name}
-              className="flex h-full flex-col rounded-2xl border border-home-line bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
-            >
-              <div className="flex items-center gap-0.5" aria-label={`${r.rating} out of 5 stars`}>
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <Star
-                    key={i}
-                    aria-hidden="true"
-                    className={`h-4 w-4 ${i < r.rating ? "fill-home-brand text-home-brand" : "text-home-line"}`}
-                  />
-                ))}
-              </div>
-              <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-home-ink">“{r.text}”</blockquote>
-              <figcaption className="mt-5 flex items-center gap-3 border-t border-home-line pt-4">
-                <span
-                  aria-hidden="true"
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-home-line bg-home-tint font-display text-xs font-bold text-home-brand"
-                >
-                  {initials(r.name)}
-                </span>
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-bold text-home-ink">{r.name}</div>
-                  <div className="flex items-center gap-1 text-xs text-home-muted">
-                    <ShieldCheck className="h-3 w-3 text-home-brand" aria-hidden="true" />
-                    Verified member
-                  </div>
-                </div>
-              </figcaption>
-            </figure>
-          ))}
+        {/* Two endless rows in opposite directions (shared with the Dashboard
+            review carousel). One row holds three cards, so the run is laid out
+            twice to stay wider than the container and loop without a gap. */}
+        <div className="mt-12 space-y-3">
+          {[HOME_REVIEWS.slice(0, 3), HOME_REVIEWS.slice(3)].map((row, i) =>
+            renderMarqueeRow({
+              items: row,
+              renderItem: renderReviewCard,
+              keyOf: (r) => r.name,
+              direction: i === 0 ? "right" : "left",
+              label: `Member reviews, row ${i === 0 ? "one" : "two"}`,
+              copies: 2,
+              durationSeconds: 110,
+            })
+          )}
         </div>
       </div>
     </section>
@@ -663,7 +545,7 @@ export function renderHomeMembership() {
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-semibold text-white">
-              <Sparkles className="h-3.5 w-3.5 text-home-lime" aria-hidden="true" />
+              <Sparkles className="h-3.5 w-3.5 text-home-neon" aria-hidden="true" />
               Membership
             </span>
             <h2 className="mt-5 font-display text-3xl font-extrabold tracking-tight sm:text-4xl">Go beyond the public feed</h2>
@@ -725,30 +607,36 @@ export function renderHomeCta(onGetStarted) {
   return (
     <section className="bg-white">
       <div className={CONTAINER}>
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-home-night via-home-night to-home-royal px-6 py-14 text-center text-white sm:px-12 lg:py-20">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-home-night via-home-night to-home-royal px-6 py-12 text-white sm:px-10 lg:px-14 lg:py-16">
           <div className="pointer-events-none absolute -left-16 -top-16 h-64 w-64 rounded-full bg-home-brand opacity-30 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-20 -right-10 h-64 w-64 rounded-full bg-home-brand opacity-20 blur-3xl" />
-          <div className="relative mx-auto max-w-2xl">
-            <h2 className="font-display text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">Your Market Community Starts Here.</h2>
-            <p className="mt-4 text-base leading-relaxed text-white/70">
-              Discover stocks, exchange perspectives, and become part of the PROTOCALL community.
-            </p>
-            <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-              <button
-                type="button"
-                onClick={onGetStarted}
-                className={`inline-flex items-center justify-center gap-2 rounded-xl bg-home-brand px-7 py-3.5 text-sm font-bold text-white shadow-lg transition-colors hover:bg-home-brand/90 ${FOCUS_ON_NIGHT}`}
-              >
-                Get Started
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </button>
-              <Link
-                to="/ChatRooms"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 px-7 py-3.5 text-sm font-bold text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-home-night"
-              >
-                Explore the Community
-              </Link>
+          <div className="relative grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
+            <div className="text-center lg:text-left">
+              <h2 className="font-display text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
+                Your Market Community Starts Here.
+              </h2>
+              <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-white/70 lg:mx-0">
+                Discover stocks, exchange perspectives, and become part of the PROTOCALL community. Not sure where to begin? Ask
+                Proto.
+              </p>
+              <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
+                <button
+                  type="button"
+                  onClick={onGetStarted}
+                  className={`inline-flex items-center justify-center gap-2 rounded-xl bg-home-brand px-7 py-3.5 text-sm font-bold text-white shadow-lg transition-colors hover:bg-home-brand/90 ${FOCUS_ON_NIGHT}`}
+                >
+                  Get Started
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </button>
+                <Link
+                  to="/ChatRooms"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 px-7 py-3.5 text-sm font-bold text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-home-night"
+                >
+                  Explore the Community
+                </Link>
+              </div>
             </div>
+            <ProtoGuide />
           </div>
         </div>
       </div>
@@ -758,20 +646,49 @@ export function renderHomeCta(onGetStarted) {
 
 /* ------------------------------------------------------------------ footer */
 
+const SOCIAL_BTN =
+  "flex h-10 w-10 items-center justify-center rounded-xl border border-white/25 bg-white/15 backdrop-blur-sm transition-all duration-300";
+
+function renderSocialLink({ label, icon: Icon, href }) {
+  const icon = <Icon className="h-4 w-4 text-white" aria-hidden="true" />;
+  return href ? (
+    <a
+      key={label}
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label}
+      title={`Follow us on ${label}`}
+      className={`${SOCIAL_BTN} hover:-translate-y-0.5 hover:bg-white/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white`}
+    >
+      {icon}
+    </a>
+  ) : (
+    <span key={label} role="img" aria-label={`${label} (coming soon)`} title={`${label} (Coming Soon)`} className={`${SOCIAL_BTN} cursor-default opacity-70`}>
+      {icon}
+    </span>
+  );
+}
+
 export function renderHomeFooter(settings) {
   return (
-    <footer className="bg-home-night text-white">
-      <div className="mx-auto max-w-7xl px-5 pb-8 pt-14 sm:px-8 lg:pt-16">
+    <footer
+      className="relative bg-home-night bg-cover bg-center bg-no-repeat text-white"
+      style={{ backgroundImage: `linear-gradient(rgba(10, 5, 21, 0.86), rgba(30, 10, 60, 0.9)), url(${footerBackdrop})` }}
+    >
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-home-brand via-home-neon to-home-brand" />
+      <div className="relative mx-auto max-w-7xl px-5 pb-8 pt-14 sm:px-8 lg:pt-16">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-6">
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2.5">
-              {renderBrandLogo("h-9 w-9", "Protocall logo")}
+              <img src={emblemLight} alt="Protocall logo" className="h-9 w-9 shrink-0 object-contain" />
               <span className="font-display text-lg font-extrabold tracking-tight">PROTOCALL</span>
             </div>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/60">
               A community platform for Indian retail investors to discuss stocks, share perspectives and participate in community
               sentiment polls.
             </p>
+            <div className="mt-5 flex gap-3">{HOME_SOCIAL.map(renderSocialLink)}</div>
             <div className="mt-5 space-y-2">
               {settings.contact_email && (
                 <a href={`mailto:${settings.contact_email}`} className={`${FOOTER_LINK} flex items-center gap-2`}>

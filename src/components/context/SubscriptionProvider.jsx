@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
-import { User, Subscription, SubscriptionPlan } from '@/api/entities';
+import { User, SubscriptionPlan } from '@/api/entities';
+import { subscriptionApi, isFreeSubscription } from '@/lib/subscriptionApi';
 
 export const SubscriptionContext = createContext(null);
 
@@ -141,30 +142,18 @@ export function SubscriptionProvider({ children }) {
         return;
       }
 
-      // Load user subscriptions with better error handling
+      // The server answers with the user's current platform plan and is the one
+      // place that decides "Free" (a real row, created on first read for older
+      // accounts), so there is no separate client-side notion of "no plan".
       let userSubs = [];
       try {
-        userSubs = await Subscription.filter(
-          { user_id: currentUser.id, status: 'active' },
-          '-created_date',
-          1,
-          null,
-          { signal: abortController?.signal }
-        ).catch((error) => {
-          if (error?.name === 'AbortError' ||
-            error?.message?.toLowerCase().includes('abort') ||
-            error?.message?.toLowerCase().includes('cancel')) {
-            console.log('🚫 Subscription.filter() aborted');
-            return [];
-          }
-          console.warn('⚠️ Error fetching subscriptions:', error.message);
-          return [];
-        });
+        const current = await subscriptionApi.mine();
+        userSubs = current ? [current] : [];
       } catch (error) {
         if (error?.name !== 'AbortError' &&
           !error?.message?.toLowerCase().includes('abort') &&
           !error?.message?.toLowerCase().includes('cancel')) {
-          console.warn('⚠️ Error loading subscriptions:', error);
+          console.warn('⚠️ Error loading subscription:', error?.message);
         }
         userSubs = [];
       }
@@ -386,7 +375,8 @@ export function SubscriptionProvider({ children }) {
     hasAdvisorSubscription,
     checkAccess,
     refreshSubscription,
-    isSubscribed: !!subscription,
+    // "Subscribed" means on a paid plan; everyone is on Free by default.
+    isSubscribed: !!subscription && !isFreeSubscription(subscription),
     isPremium: subscription?.plan_type === 'premium' || subscription?.plan_type === 'vip',
     isVIP: subscription?.plan_type === 'vip'
   };

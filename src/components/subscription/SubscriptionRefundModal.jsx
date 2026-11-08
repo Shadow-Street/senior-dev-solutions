@@ -14,8 +14,11 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { RefundRequest, User } from '@/api/entities';
 import { AlertCircle, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatINR } from '@/lib/format';
 
 export default function SubscriptionRefundModal({ subscription, onClose, onSuccess }) {
+  // A subscription row has no price of its own; it lives on the plan.
+  const planPrice = subscription?.price ?? subscription?.SubscriptionPlan?.price_monthly;
   const [reason, setReason] = useState('');
   const [reasonCategory, setReasonCategory] = useState('not_satisfied');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,8 +41,8 @@ export default function SubscriptionRefundModal({ subscription, onClose, onSucce
         related_entity_id: subscription.id,
         related_entity_name: `${subscription.plan_type} Subscription`,
         original_transaction_id: subscription.payment_id || 'N/A',
-        original_amount: subscription.price,
-        refund_amount: subscription.price,
+        original_amount: planPrice,
+        refund_amount: planPrice,
         refund_type: 'full',
         request_reason: reason,
         reason_category: reasonCategory,
@@ -85,7 +88,7 @@ export default function SubscriptionRefundModal({ subscription, onClose, onSucce
             </div>
             <div className="flex justify-between items-center mt-2">
               <span className="text-sm text-subtle">Refund Amount:</span>
-              <span className="font-semibold text-buy-muted-foreground">₹{subscription.price.toLocaleString()}</span>
+              <span className="font-semibold text-buy-muted-foreground">{formatINR(planPrice)}</span>
             </div>
           </div>
 

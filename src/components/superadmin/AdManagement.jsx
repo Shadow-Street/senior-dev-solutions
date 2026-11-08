@@ -39,6 +39,7 @@ import { toast } from "sonner";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { format } from 'date-fns';
 import CreateCampaignForm from '../vendor/CreateCampaignForm';
+import AdsMasterSwitch from './AdsMasterSwitch';
 
 const statusConfig = {
   pending: { label: 'Pending', icon: Clock, color: 'bg-hold-muted text-hold-muted-foreground border-hold/30' },
@@ -641,10 +642,13 @@ export default function AdManagement({ user }) {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-subtle">Loading Ad Management...</p>
+      <div className="space-y-6">
+        <AdsMasterSwitch />
+        <div className="flex h-96 items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-subtle">Loading Ad Management...</p>
+          </div>
         </div>
       </div>
     );
@@ -652,6 +656,8 @@ export default function AdManagement({ user }) {
 
   return (
     <div className="space-y-6">
+      <AdsMasterSwitch />
+
       {/* Header */}
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader>

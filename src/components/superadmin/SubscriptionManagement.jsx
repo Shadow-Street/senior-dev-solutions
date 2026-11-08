@@ -166,7 +166,7 @@ export default function SubscriptionManagement({ user }) {
         </TabsContent>
 
         <TabsContent value="promo-codes" className="mt-6">
-          <PromoCodeManager promoCodes={promoCodes} setPromoCodes={setPromoCodes} permissions={permissions} />
+          <PromoCodeManager promoCodes={promoCodes} setPromoCodes={setPromoCodes} permissions={permissions} plans={plans} />
         </TabsContent>
 
         {/* NEW: Analytics Tab */}

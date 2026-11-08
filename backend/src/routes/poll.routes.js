@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
 const { authMiddleware } = require("../middleware/auth");
+const { withTallies, reconcileTalliesOnGet } = require("../utils/pollTally");
 
 const parseValue = (value) => {
   if (value === 'true') return true;
@@ -162,7 +163,7 @@ router.get('/active', async (req, res) => {
       },
       order: [['created_at', 'DESC']]
     });
-    res.json(polls);
+    res.json(await withTallies(polls));
   } catch (error) {
     console.error('[poll.routes.js] request failed:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -381,15 +382,22 @@ voteRouter.post('/cast', authMiddleware, async (req, res) => {
     await transaction.commit();
 
     // === REAL-TIME UPDATE ===
-    // Broadcast updated poll data
+    // Broadcast updated poll data, reconciled against the PollVote rows so
+    // listeners never overwrite a correct tally with a drifted counter.
     const wsService = req.app.get('wsService');
     if (wsService) {
+      let updatedPoll = poll;
+      try {
+        updatedPoll = await withTallies(poll);
+      } catch (tallyError) {
+        console.error('Poll tally for broadcast failed:', tallyError);
+      }
       wsService.broadcastAll({
         type: 'poll:updated',
         pollId: poll.id,
-        votes: poll.votes,
-        total_votes: poll.total_votes,
-        updatedPoll: poll // send full object just in case
+        votes: updatedPoll.votes,
+        total_votes: updatedPoll.total_votes,
+        updatedPoll
       });
     }
 
@@ -449,6 +457,7 @@ createCrudRoutes(voteRouter, voteController, [authMiddleware]);
 router.use('/votes', voteRouter);
 
 // CRUD LAST — '/:id' must not shadow the sub-routers mounted above.
-createCrudRoutes(router, pollController, [authMiddleware]);
+// reconcileTalliesOnGet makes GET responses report vote counts from PollVote rows.
+createCrudRoutes(router, pollController, [authMiddleware, reconcileTalliesOnGet]);
 
 module.exports = router;

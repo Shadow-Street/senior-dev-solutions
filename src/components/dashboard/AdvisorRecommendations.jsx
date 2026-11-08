@@ -111,11 +111,11 @@ export default function AdvisorRecommendations({ recommendations }) {
 
         <div className="absolute inset-0 flex items-center justify-center bg-card/75 p-6 backdrop-blur-[2px]">
           <div className="max-w-[18rem] text-center">
-            <span className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-buy text-buy-foreground shadow-lg shadow-buy/40">
+            <span className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/40 ring-4 ring-primary/15">
               <Shield className="h-8 w-8" strokeWidth={2.25} />
             </span>
             <h3 className="mb-2 flex items-center justify-center gap-1.5 text-lg font-bold text-foreground">
-              <Lock className="h-4 w-4 text-hold" />
+              <Lock className="h-4 w-4 text-primary" />
               Premium Feature
             </h3>
             <p className="mb-5 text-sm leading-relaxed text-subtle">
@@ -123,14 +123,14 @@ export default function AdvisorRecommendations({ recommendations }) {
             </p>
             <Link
               to={createPageUrl("Subscription")}
-              className="inline-flex items-center gap-2 rounded-lg bg-buy px-4 py-2.5 text-sm font-semibold text-buy-foreground shadow-md shadow-buy/40 transition-colors
-                         hover:bg-buy-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/40 transition-colors
+                         hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               <Crown className="h-4 w-4" />
               Unlock Premium Access
             </Link>
             <p className="mt-3 flex items-center justify-center gap-1 text-xs text-muted-foreground">
-              <Sparkles className="h-3.5 w-3.5 text-hold" />
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
               Includes all premium features
             </p>
           </div>

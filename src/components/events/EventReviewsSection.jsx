@@ -82,7 +82,7 @@ export default function EventReviewsSection({ eventId, currentUser }) {
                         key={star}
                         className={`w-5 h-5 ${
                           star <= Math.round(averageRating)
-                            ? 'fill-hold text-hold'
+                            ? 'fill-protocall-neon text-protocall-neon-edge'
                             : 'text-muted-foreground'
                         }`}
                       />
@@ -184,7 +184,7 @@ export default function EventReviewsSection({ eventId, currentUser }) {
                                   key={star}
                                   className={`w-4 h-4 ${
                                     star <= review.rating
-                                      ? 'fill-hold text-hold'
+                                      ? 'fill-protocall-neon text-protocall-neon-edge'
                                       : 'text-muted-foreground'
                                   }`}
                                 />

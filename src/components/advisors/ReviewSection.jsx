@@ -34,7 +34,7 @@ export default function ReviewSection({ reviews }) {
                                                 key={star}
                                                 className={`w-4 h-4 ${
                                                     star <= review.rating
-                                                        ? 'text-hold fill-current'
+                                                        ? 'text-protocall-neon-edge fill-protocall-neon'
                                                         : 'text-muted-foreground'
                                                 }`}
                                             />

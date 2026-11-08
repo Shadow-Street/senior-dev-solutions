@@ -94,7 +94,7 @@ export default function EducatorCard({ educator, canAccessPremium }) {
         {/* Rating */}
         {educator.rating && (
           <div className="flex items-center justify-center gap-2 bg-hold-muted p-2 rounded-lg">
-            <Star className="w-4 h-4 text-hold fill-current" />
+            <Star className="w-4 h-4 text-protocall-neon-edge fill-protocall-neon" />
             <span className="font-semibold text-hold-muted-foreground">{educator.rating}</span>
             <span className="text-sm text-hold-muted-foreground">({educator.success_rate}% success rate)</span>
           </div>

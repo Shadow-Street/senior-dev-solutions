@@ -108,7 +108,7 @@ export default function EventReviewModal({ open, onClose, event, user, onSuccess
                   <Star
                     className={`w-10 h-10 ${
                       star <= (hoverRating || rating)
-                        ? 'fill-hold text-hold'
+                        ? 'fill-protocall-neon text-protocall-neon-edge'
                         : 'text-muted-foreground'
                     }`}
                   />

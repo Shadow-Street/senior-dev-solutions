@@ -40,7 +40,7 @@ export default function CourseCard({ course, educator, canAccessPremium }) {
             {course.course_type.replace('_', ' ').toUpperCase()}
           </Badge>
           <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 text-hold" />
+            <Star className="w-4 h-4 text-protocall-neon-edge" />
             <span className="font-medium">{course.rating}</span>
           </div>
         </div>
@@ -86,7 +86,7 @@ export default function CourseCard({ course, educator, canAccessPremium }) {
         {/* Key Info */}
         <div className="flex justify-between items-center text-sm text-subtle">
           <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 text-hold" />
+            <Star className="w-4 h-4 text-protocall-neon-edge" />
             <span>{course.rating} ({course.current_enrollments} reviews)</span>
           </div>
           <div className="flex items-center gap-1">

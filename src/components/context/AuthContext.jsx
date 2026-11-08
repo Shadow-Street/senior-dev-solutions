@@ -175,8 +175,8 @@ export function AuthProvider({ children }) {
     return data;
   }, []);
 
-  const googleLogin = useCallback(async (token, role = 'user') => {
-    const data = await authAPI.googleLogin(token, role);
+  const googleLogin = useCallback(async (token) => {
+    const data = await authAPI.googleLogin(token);
     sessionRef.current += 1;
     setUser(data.user);
     setLoading(false);

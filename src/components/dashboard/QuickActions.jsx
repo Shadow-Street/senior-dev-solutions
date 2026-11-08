@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
-import { Shield, Star, Wallet, Crown, TrendingUp, MessageSquare } from 'lucide-react';
+import { Shield, Star, Crown, TrendingUp, MessageSquare } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 
 export default function QuickActions({ user }) {
@@ -10,8 +10,8 @@ export default function QuickActions({ user }) {
   const isFinfluencer = user?.app_role === 'finfluencer' || user?.roles?.includes('finfluencer');
 
   // Colour-coded tiles as in the Base44 reference, drawn only from the
-  // PROTOCALL palette: blue/grape for community, brand green for the pledge pool
-  // (growth; ink icon on the lime), red→orange for creators, orange for upgrades.
+  // PROTOCALL palette: grape for community, red→orange for creators, orange for
+  // upgrades. Pledge Pool is hidden for now at the client's request.
   const quickActions = [
     {
       icon: MessageSquare,
@@ -26,13 +26,6 @@ export default function QuickActions({ user }) {
       url: createPageUrl("Polls"),
       show: true,
       tile: "bg-gradient-to-br from-protocall-light to-protocall-grape text-white shadow-protocall-grape/30",
-    },
-    {
-      icon: Wallet,
-      label: "Pledge Pool",
-      url: createPageUrl("PledgePool"),
-      show: true,
-      tile: "bg-buy text-buy-foreground shadow-buy/40",
     },
     {
       icon: Shield,

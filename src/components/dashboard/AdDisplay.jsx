@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ExternalLink } from 'lucide-react';
+import { useAdsEnabled } from '@/components/hooks/useAdsEnabled';
 
 // Static sample ad - NO DATABASE CALLS
 const sampleAd = {
@@ -13,9 +14,13 @@ const sampleAd = {
 };
 
 export default function AdDisplay({ placement = 'dashboard', userContext = null, className = "" }) {
+  // Global switch: renders nothing (no wrapper, no spacing) unless ads are known to be on.
+  const adsEnabled = useAdsEnabled();
   const handleAdClick = () => {
     window.open(sampleAd.cta_link, '_blank', 'noopener,noreferrer');
   };
+
+  if (!adsEnabled) return null;
 
   return (
     <Card className={`overflow-hidden border border-border bg-card shadow-lg hover:shadow-xl transition-shadow duration-300 ${className}`}>

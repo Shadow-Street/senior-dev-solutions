@@ -41,6 +41,9 @@ router.use("/roles", require("./role.routes"));
 router.use("/permissions", require("./permission.routes"));
 
 // Admin Routes
+// Withdrawal review is mounted first so it keeps its own, stricter handlers.
+router.use("/admin/withdrawals", require("./withdrawalAdmin.routes"));
+router.use("/admin/market-data", require("./marketDataAdmin.routes"));
 router.use("/admin", require("./admin.routes"));
 
 // Core Business
@@ -66,6 +69,11 @@ router.use("/subscriptions", subscriptionRoutes);
 router.use("/notifications", notificationRoutes);
 
 // Advisors & Recommendations
+// Bank accounts and withdrawals live under /advisors/bank-accounts and
+// /advisors/withdrawals; the router only claims those two prefixes.
+router.use("/advisors", require("./advisorFinance.routes"));
+// Applications, profile, directory, earnings (mounted before the generic CRUD below).
+router.use("/advisors", require("./advisorProfile.routes"));
 router.use("/advisors", advisorRoutes);
 
 // Content & Learning
@@ -77,6 +85,7 @@ router.use("/news", newsRoutes);
 
 // Community
 router.use("/polls", pollRoutes);
+router.use("/activity", require("./activity.routes"));
 router.use("/referrals", referralRoutes);
 router.use("/reviews", reviewRoutes);
 

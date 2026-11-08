@@ -13,13 +13,13 @@ import {
   Zap,
 } from "lucide-react";
 import { useAuth } from "@/components/context/AuthContext";
+import { usePlatformSettings } from "@/components/hooks/usePlatformSettings";
 import { User, ChatRoom, Poll, marketAPI, AdvisorRecommendation } from "@/lib/apiClient";
 import { createPageUrl } from "@/utils";
 import StatTile from "@/components/common/StatTile";
 
 import LiveStockTicker from "../components/stocks/LiveStockTicker";
-import MarketOverviewPanel from "../components/dashboard/MarketOverviewPanel";
-import SponsoredPanel from "../components/dashboard/SponsoredPanel";
+import MarketSponsoredRow from "../components/dashboard/MarketSponsoredRow";
 import TopMovers from "../components/dashboard/TopMovers";
 import CommunityPollPanel from "../components/dashboard/CommunityPollPanel";
 import QuickActions from "../components/dashboard/QuickActions";
@@ -31,7 +31,8 @@ import RecentActivity from "../components/dashboard/RecentActivity";
 import AdvisorRecommendations from "../components/dashboard/AdvisorRecommendations";
 import ActivePolls from "../components/dashboard/ActivePolls";
 import ReviewScroller from "../components/dashboard/ReviewScroller";
-import PageFooter from "../components/footer/PageFooter";
+import footerBanner from "@/assets/brand/dashboard-footer-banner.webp";
+import footerBannerSmall from "@/assets/brand/dashboard-footer-banner-1000.webp";
 import heroBull from "@/assets/dashboard/hero-bull.webp";
 
 // Hero quick-actions, matching the reference banner.
@@ -42,8 +43,19 @@ const HERO_ACTIONS = [
   { label: "Grow", icon: Sprout, to: createPageUrl("MyPortfolio") },
 ];
 
+// Shown under the footer banner: the Dashboard has no site footer, and these
+// (Risk Disclosure especially) must stay one click away.
+const LEGAL_LINKS = [
+  { label: "Terms & Conditions", page: "Terms" },
+  { label: "Privacy Policy", page: "Privacy" },
+  { label: "Cookies Policy", page: "Cookies" },
+  { label: "Risk Disclosure", page: "RiskDisclosure" },
+  { label: "Contact Support", page: "ContactSupport" },
+];
+
 export default function Dashboard() {
   const { user, loading: authLoading } = useAuth();
+  const { settings } = usePlatformSettings();
 
   const [stats, setStats] = useState({
     totalTraders: 0,
@@ -228,14 +240,7 @@ export default function Dashboard() {
         </div>
 
         {/* ---------- Market overview + sponsored ---------- */}
-        <div className="grid gap-4 sm:gap-5 xl:grid-cols-3">
-          <div className="min-w-0 xl:col-span-2">
-            <MarketOverviewPanel indices={stats.indices} error={marketError} />
-          </div>
-          <div className="min-w-0">
-            <SponsoredPanel />
-          </div>
-        </div>
+        <MarketSponsoredRow indices={stats.indices} error={marketError} />
 
         {/* ---------- Movers + community poll ---------- */}
         <div className="grid gap-4 sm:gap-5 xl:grid-cols-3">
@@ -243,7 +248,7 @@ export default function Dashboard() {
             <TopMovers gainers={stats.gainers} losers={stats.losers} isLoading={isLoading} error={marketError} />
           </div>
           <div className="min-w-0">
-            <CommunityPollPanel polls={stats.polls} />
+            <CommunityPollPanel polls={isLoading ? null : stats.polls} />
           </div>
         </div>
 
@@ -264,7 +269,7 @@ export default function Dashboard() {
           <aside className="flex min-w-0 flex-col gap-4 sm:gap-5">
             <AdvisorRecommendations recommendations={stats.recommendations} />
             <div className="flex-1">
-              <ActivePolls polls={stats.polls} />
+              <ActivePolls polls={isLoading ? null : stats.polls} />
             </div>
           </aside>
         </div>
@@ -296,9 +301,43 @@ export default function Dashboard() {
           <span aria-hidden="true" className="text-muted-foreground">·</span>
           <span>Be a part of PROTOCALL</span>
         </div>
-      </div>
 
-      <PageFooter />
+        {/* ---------- Footer banner ----------
+            The Dashboard ends on the brand banner instead of the site footer,
+            with the legal links (incl. Risk Disclosure) kept in a slim row. */}
+        <footer className="space-y-3">
+          <div className="overflow-hidden rounded-2xl border border-border shadow-sm">
+            <img
+              src={footerBanner}
+              srcSet={`${footerBannerSmall} 1000w, ${footerBanner} 2000w`}
+              sizes="(min-width: 768px) min(calc(100vw - 19rem), 1632px), calc(100vw - 2rem)"
+              width="2000"
+              height="672"
+              loading="lazy"
+              decoding="async"
+              alt="Protocall — Trade, Learn, Connect, Grow. Live stock tracking, community chat, courses and learning, events and webinars, advisors and finfluencers, polls and pledge pools."
+              className="block h-auto w-full select-none"
+              draggable="false"
+            />
+          </div>
+          <div className="flex flex-col items-center justify-between gap-2 px-1 pb-1 text-xs text-subtle lg:flex-row">
+            <p className="shrink-0">
+              © {new Date().getFullYear()} {settings.site_name || "Protocall"}. All rights reserved.
+            </p>
+            <nav aria-label="Legal" className="flex flex-wrap items-center justify-center gap-x-4">
+              {LEGAL_LINKS.map(({ label, page }) => (
+                <Link
+                  key={page}
+                  to={createPageUrl(page)}
+                  className="rounded py-1.5 font-medium transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }

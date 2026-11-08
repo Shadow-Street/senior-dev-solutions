@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { sidebarTabClass } from '@/components/superadmin/sidebarTabClass';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/components/context/AuthContext';
 import { User } from '@/api/entities';
@@ -147,10 +148,7 @@ export default function SuperAdmin() {
                   <TabsTrigger
                     key={tab.value}
                     value={tab.value}
-                    className={`w-full justify-start px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 border-none ${isActive
-                      ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg shadow-protocall-deep/30/20'
-                      : 'text-sidebar-muted-foreground hover:bg-protocall-ink hover:text-white'
-                      }`}
+                    className={sidebarTabClass(isActive)}
                   >
                     <Icon className={`w-5 h-5 mr-3 ${isActive ? 'text-white' : 'text-sidebar-muted-foreground'}`} />
                     <div className="flex flex-col items-start">

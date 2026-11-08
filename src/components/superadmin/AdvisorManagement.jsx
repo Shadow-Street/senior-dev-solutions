@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   ShieldCheck,
@@ -26,6 +27,10 @@ import {
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import AdvisorPricingCommission from './advisors/AdvisorPricingCommission';
+import { advisorApi, openPrivateFile } from '@/lib/advisorApi';
+import { apiErrorMessage } from '@/lib/withdrawalsApi';
+import { normalizePayout, payoutAmount, commissionParts } from '@/lib/payoutView';
+import AdvisorCommissionApprovals from './advisors/AdvisorCommissionApprovals';
 import {
   Dialog,
   DialogContent,
@@ -56,16 +61,38 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [advisorToDelete, setAdvisorToDelete] = useState(null);
+  // 'reject' and 'suspend' ask for a reason that is shown to the advisor.
+  const [reviewTarget, setReviewTarget] = useState(null); // { advisor, action }
+  const [reviewReason, setReviewReason] = useState('');
+  const [isReviewing, setIsReviewing] = useState(false);
+
+  // Rows for the selected status filter, fetched from the server so a pending
+  // applicant is never hidden behind older advisors (the API returns newest
+  // first and caps a page, so filtering a capped page in the browser loses rows).
+  const [statusRows, setStatusRows] = useState(null);
+  const [pendingTotal, setPendingTotal] = useState(null);
 
   useEffect(() => {
     loadAdvisors();
   }, []);
 
+  useEffect(() => {
+    let alive = true;
+    if (filterStatus === 'all') { setStatusRows(null); return undefined; }
+    Advisor.filter({ status: filterStatus }, '-created_date', 200)
+      .then((rows) => { if (alive) setStatusRows(Array.isArray(rows) ? rows : []); })
+      .catch(() => { if (alive) { setStatusRows([]); toast.error('Failed to load advisors'); } });
+    return () => { alive = false; };
+  }, [filterStatus, advisors]);
+
   const loadAdvisors = async () => {
     setIsLoading(true);
     try {
-      const advisorsList = await Advisor.list('-created_date');
+      const advisorsList = await Advisor.filter({}, '-created_date', 200);
       setAdvisors(advisorsList);
+      Advisor.filter({ status: 'pending_approval' }, '-created_date', 200)
+        .then((rows) => setPendingTotal(Array.isArray(rows) ? rows.length : null))
+        .catch(() => setPendingTotal(null));
 
       for (const advisor of advisorsList) {
         loadAdvisorStats(advisor.id);
@@ -89,7 +116,7 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
 
       const activeSubscribers = subscriptions.filter(s => s.status === 'active').length;
       const totalViews = posts.reduce((sum, p) => sum + (p.view_count || 0), 0);
-      const totalEarnings = commissions.reduce((sum, c) => sum + (c.advisor_payout || 0), 0);
+      const totalEarnings = commissions.filter((c) => c.status === 'approved').reduce((sum, c) => sum + Number(c.amount || 0), 0);
       const avgEngagement = subscriptions.length > 0
         ? subscriptions.reduce((sum, s) => sum + (s.engagement_score || 0), 0) / subscriptions.length
         : 0;
@@ -123,59 +150,51 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
   };
 
   /**
-   * Approval has to move two records, not one.
-   *
-   * `/AdvisorDashboard` is gated on the *user's* app_role, so setting only
-   * Advisor.status left an approved advisor unable to open their own dashboard.
-   * Approval therefore also marks the profile verified (the SEBI badge the
-   * investor-facing pages read) and promotes the owning user to 'advisor';
-   * rejection and suspension demote them back, or a suspended advisor would
-   * keep working dashboard access.
+   * Approve / reject / suspend go to ONE server endpoint. The server moves the
+   * advisor status, verified flag and the owner's role together in a
+   * transaction, records an audit row and notifies the applicant. The browser
+   * used to make two separate calls (advisor row, then user role), which could
+   * leave an "approved" advisor without dashboard access.
    */
-  const setOwnerRole = async (advisorId, appRole) => {
-    const advisor = advisors.find(a => a.id === advisorId);
-    if (!advisor?.user_id) return;
+  const runReview = async (advisorId, action, reason) => {
     try {
-      await User.update(advisor.user_id, { app_role: appRole });
+      await advisorApi.review(advisorId, action, reason);
+      const done = { approve: 'Advisor approved. They have been notified.', reject: 'Application rejected. The applicant has been told why.', suspend: 'Advisor suspended.' };
+      toast.success(done[action]);
+      loadAdvisors();
+      return true;
     } catch (error) {
-      console.error(`Could not set app_role=${appRole} for user ${advisor.user_id}:`, error);
-      toast.error('Status saved, but the account role could not be updated.');
+      console.error(`Error during advisor ${action}:`, error);
+      toast.error(apiErrorMessage(error, `Could not ${action} this advisor`));
+      return false;
     }
   };
 
-  const handleApprove = async (advisorId) => {
-    try {
-      await Advisor.update(advisorId, { status: 'approved', verified: true });
-      await setOwnerRole(advisorId, 'advisor');
-      toast.success('Advisor approved successfully');
-      loadAdvisors();
-    } catch (error) {
-      console.error('Error approving advisor:', error);
-      toast.error('Failed to approve advisor');
-    }
+  const handleApprove = (advisorId) => runReview(advisorId, 'approve');
+
+  const askReason = (advisor, action) => {
+    setReviewReason('');
+    setReviewTarget({ advisor, action });
   };
 
-  const handleReject = async (advisorId) => {
-    try {
-      await Advisor.update(advisorId, { status: 'rejected', verified: false });
-      await setOwnerRole(advisorId, 'user');
-      toast.success('Advisor application rejected');
-      loadAdvisors();
-    } catch (error) {
-      console.error('Error rejecting advisor:', error);
-      toast.error('Failed to reject advisor');
+  const confirmReview = async () => {
+    if (!reviewTarget) return;
+    const reason = reviewReason.trim();
+    if (reviewTarget.action === 'reject' && reason.length < 5) {
+      toast.error('Give the applicant a reason (at least 5 characters).');
+      return;
     }
+    setIsReviewing(true);
+    const ok = await runReview(reviewTarget.advisor.id, reviewTarget.action, reason);
+    setIsReviewing(false);
+    if (ok) setReviewTarget(null);
   };
 
-  const handleSuspend = async (advisorId) => {
+  const openCertificate = async (advisor) => {
     try {
-      await Advisor.update(advisorId, { status: 'suspended', verified: false });
-      await setOwnerRole(advisorId, 'user');
-      toast.success('Advisor suspended');
-      loadAdvisors();
-    } catch (error) {
-      console.error('Error suspending advisor:', error);
-      toast.error('Failed to suspend advisor');
+      await openPrivateFile(advisor.sebi_document_key);
+    } catch {
+      toast.error('Could not open the certificate.');
     }
   };
 
@@ -183,14 +202,14 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
     if (!advisorToDelete) return;
 
     try {
-      await Advisor.delete(advisorToDelete.id);
+      await advisorApi.remove(advisorToDelete.id);
       toast.success('Advisor deleted successfully');
       setAdvisors(advisors.filter(a => a.id !== advisorToDelete.id));
       setShowDeleteDialog(false);
       setAdvisorToDelete(null);
     } catch (error) {
       console.error('Error deleting advisor:', error);
-      toast.error('Failed to delete advisor');
+      toast.error(apiErrorMessage(error, 'Failed to delete advisor'));
     }
   };
 
@@ -210,7 +229,7 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
     );
   };
 
-  const filteredAdvisors = advisors.filter(advisor => {
+  const filteredAdvisors = (statusRows ?? advisors).filter(advisor => {
     const matchesSearch =
       advisor.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       advisor.bio?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -334,7 +353,7 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-subtle">Pending Approval</p>
-                    <p className="text-2xl font-bold">{advisors.filter(a => a.status === 'pending_approval').length}</p>
+                    <p className="text-2xl font-bold">{pendingTotal ?? advisors.filter(a => a.status === 'pending_approval').length}</p>
                   </div>
                   <Clock className="w-8 h-8 text-hold-muted-foreground" />
                 </div>
@@ -390,6 +409,11 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
                         </div>
 
                         <p className="text-sm text-subtle mb-4">{advisor.bio}</p>
+                        {advisor.rejection_reason && advisor.status !== 'approved' && (
+                          <p className="text-sm text-sell-muted-foreground mb-4">
+                            <strong>{advisor.status === 'suspended' ? 'Suspension note' : 'Rejection reason'}:</strong> {advisor.rejection_reason}
+                          </p>
+                        )}
 
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                           <div className="bg-premium-muted rounded-lg p-3">
@@ -477,7 +501,7 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
                               <CheckCircle className="w-4 h-4 mr-2" />
                               Approve
                             </Button>
-                            <Button onClick={() => handleReject(advisor.id)} variant="outline" className="text-sell-muted-foreground border-sell hover:bg-sell-muted">
+                            <Button onClick={() => askReason(advisor, 'reject')} variant="outline" className="text-sell-muted-foreground border-sell hover:bg-sell-muted">
                               <XCircle className="w-4 h-4 mr-2" />
                               Reject
                             </Button>
@@ -485,7 +509,7 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
                         )}
 
                         {advisor.status === 'approved' && (
-                          <Button onClick={() => handleSuspend(advisor.id)} variant="outline" className="text-hold-muted-foreground border-hold hover:bg-hold-muted">
+                          <Button onClick={() => askReason(advisor, 'suspend')} variant="outline" className="text-hold-muted-foreground border-hold hover:bg-hold-muted">
                             <Ban className="w-4 h-4 mr-2" />
                             Suspend
                           </Button>
@@ -498,10 +522,10 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
                           </Button>
                         )}
 
-                        {advisor.sebi_document_url && (
+                        {advisor.sebi_document_key && (
                           <Button
                             variant="outline"
-                            onClick={() => window.open(advisor.sebi_document_url, '_blank')}
+                            onClick={() => openCertificate(advisor)}
                             className="text-protocall-premium-text border-primary hover:bg-premium-muted"
                           >
                             <FileText className="w-4 h-4 mr-2" />
@@ -578,13 +602,46 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
         />
       )}
 
+      <AlertDialog open={Boolean(reviewTarget)} onOpenChange={(open) => { if (!open && !isReviewing) setReviewTarget(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {reviewTarget?.action === 'suspend' ? 'Suspend' : 'Reject'} {reviewTarget?.advisor?.display_name}?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {reviewTarget?.action === 'suspend'
+                ? 'They lose advisor access immediately. Add a note if you want them to see why (optional).'
+                : 'The applicant is notified and shown this reason, and can correct their details and apply again.'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Textarea
+            aria-label="Reason"
+            placeholder={reviewTarget?.action === 'suspend' ? 'Reason (optional)' : 'Reason (required)'}
+            value={reviewReason}
+            onChange={(e) => setReviewReason(e.target.value)}
+            maxLength={500}
+            rows={3}
+          />
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isReviewing}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isReviewing}
+              onClick={(e) => { e.preventDefault(); confirmReview(); }}
+              className="bg-sell hover:bg-sell"
+            >
+              {isReviewing ? 'Saving...' : reviewTarget?.action === 'suspend' ? 'Suspend advisor' : 'Reject application'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete {advisorToDelete?.display_name} and all associated data.
-              This action cannot be undone.
+              This permanently deletes {advisorToDelete?.display_name} and their plans and posts, and withdraws their advisor role.
+              Advisors with subscribers or earnings cannot be deleted; suspend them instead.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -914,8 +971,8 @@ function AdvisorPayoutsSection({ advisors, advisorStats }) {
     setIsLoading(true);
     try {
       const [allPayouts, allCommissions] = await Promise.all([
-        PayoutRequest.filter({ entity_type: 'advisor' }, '-created_date').catch(() => []),
-        CommissionTracking.list('-transaction_date').catch(() => [])
+        PayoutRequest.filter({ entity_type: 'advisor' }, '-created_date').then((rows) => rows.map(normalizePayout)).catch(() => []),
+        CommissionTracking.list('-created_at').catch(() => [])
       ]);
       setPayoutRequests(allPayouts || []);
       setCommissions(allCommissions || []);
@@ -939,22 +996,25 @@ function AdvisorPayoutsSection({ advisors, advisorStats }) {
     : safePayoutRequests.filter(p => p.entity_id === selectedAdvisor);
 
   // Existing stats with safety checks
-  const totalPending = safePayoutRequests.filter(p => p.status === 'pending').reduce((sum, p) => sum + (p.requested_amount || 0), 0);
-  const totalApproved = safePayoutRequests.filter(p => p.status === 'approved').reduce((sum, p) => sum + (p.requested_amount || 0), 0);
-  const totalProcessed = safePayoutRequests.filter(p => p.status === 'processed').reduce((sum, p) => sum + (p.requested_amount || 0), 0);
+  const totalPending = safePayoutRequests.filter(p => p.status === 'pending').reduce((sum, p) => sum + payoutAmount(p), 0);
+  const totalApproved = safePayoutRequests.filter(p => p.status === 'approved').reduce((sum, p) => sum + payoutAmount(p), 0);
+  const totalProcessed = safePayoutRequests.filter(p => p.status === 'paid').reduce((sum, p) => sum + payoutAmount(p), 0);
 
   // Business-level stats with safety checks
-  const totalGrossEarnings = safeCommissions.reduce((sum, c) => sum + (c.gross_amount || 0), 0);
-  const totalPlatformCommission = safeCommissions.reduce((sum, c) => sum + (c.platform_fee || 0), 0);
-  const totalAdvisorPayout = safeCommissions.reduce((sum, c) => sum + (c.advisor_payout || 0), 0);
-  const totalPaidOut = safePayoutRequests.filter(p => p.status === 'processed').reduce((sum, p) => sum + (p.requested_amount || 0), 0);
+  // Server-created rows keep the advisor's net in `amount` (split in metadata); cancelled rows never count.
+  const countedCommissions = safeCommissions.filter((c) => c.status !== 'cancelled');
+  const totalGrossEarnings = countedCommissions.reduce((sum, c) => sum + commissionParts(c).gross, 0);
+  const totalPlatformCommission = countedCommissions.reduce((sum, c) => sum + commissionParts(c).fee, 0);
+  const totalAdvisorPayout = countedCommissions.reduce((sum, c) => sum + commissionParts(c).net, 0);
+  const totalPaidOut = safePayoutRequests.filter(p => p.status === 'paid').reduce((sum, p) => sum + payoutAmount(p), 0);
   const pendingPayoutAmount = totalAdvisorPayout - totalPaidOut;
 
   const getStatusBadge = (status) => {
     const config = {
       pending: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending' },
       approved: { color: 'bg-premium-muted text-primary', label: 'Approved' },
-      processed: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Processed' },
+      paid: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Paid' },
+      cancelled: { color: 'bg-surface-2 text-foreground', label: 'Cancelled' },
       rejected: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Rejected' }
     };
     const { color, label } = config[status] || config.pending;
@@ -971,6 +1031,9 @@ function AdvisorPayoutsSection({ advisors, advisorStats }) {
 
   return (
     <div className="space-y-6">
+      {/* Advisors only earn a withdrawable balance from commissions staff have approved. */}
+      <AdvisorCommissionApprovals />
+
       {/* Business Stats - Row 1 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="shadow-lg border-0 bg-surface-2">
@@ -1100,7 +1163,7 @@ function AdvisorPayoutsSection({ advisors, advisorStats }) {
                           <div className="grid grid-cols-2 gap-4 mt-3">
                             <div>
                               <p className="text-xs text-subtle">Requested Amount</p>
-                              <p className="text-xl font-bold text-protocall-premium-text">₹{(payout.requested_amount || 0).toLocaleString()}</p>
+                              <p className="text-xl font-bold text-protocall-premium-text">₹{payoutAmount(payout).toLocaleString()}</p>
                             </div>
                             <div>
                               <p className="text-xs text-subtle">Available Balance</p>

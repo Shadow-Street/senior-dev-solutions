@@ -65,7 +65,7 @@ export default function WorkshopCard({ workshop, educator, canAccessPremium }) {
         <div className="flex items-center justify-between">
           {getStatusBadge()}
           <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 text-hold" />
+            <Star className="w-4 h-4 text-protocall-neon-edge" />
             <span className="font-medium">{workshop.rating}</span>
           </div>
         </div>

@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import apiClient from '@/lib/apiClient';
+import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '@/components/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,10 @@ import { Label } from '@/components/ui/label';
 import { AlertCircle, Eye, EyeOff, Loader2, LogIn } from 'lucide-react';
 import { toast } from 'sonner';
 import AuthShell from '@/components/auth/AuthShell';
+
+// GIS calls back without a credential when Google could not complete the
+// sign-in (closing the popup usually calls nothing at all).
+const GOOGLE_NO_CREDENTIAL = 'Google sign-in did not complete. Please try again.';
 
 /** Where each role lands after signing in. */
 const ROLE_HOME = {
@@ -23,7 +27,24 @@ const ROLE_HOME = {
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, user, loading: authLoading } = useAuth();
+  const { login, googleLogin, user, loading: authLoading } = useAuth();
+  const googleEnabled = Boolean(import.meta.env.VITE_GOOGLE_CLIENT_ID);
+  // The GIS button takes a pixel width (Google caps it at 400); keep it
+  // matched to the form column, including after rotation or resize.
+  const googleSlotRef = useRef(null);
+  const [googleWidth, setGoogleWidth] = useState(undefined);
+  useLayoutEffect(() => {
+    const el = googleSlotRef.current;
+    if (!el) return undefined;
+    const measure = () => {
+      if (el.clientWidth) setGoogleWidth(Math.min(400, Math.floor(el.clientWidth)));
+    };
+    measure();
+    if (typeof ResizeObserver === 'undefined') return undefined;
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [googleEnabled]);
 
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
@@ -115,84 +136,32 @@ export default function Login() {
     }
   };
 
-  const handleGoogleLogin = async () => {
+  /**
+   * Google Identity Services hands back an ID token (`credential`); the server
+   * verifies it against GOOGLE_CLIENT_ID and opens the session. The old flow
+   * sent an OAuth access token under the wrong field, so it never worked.
+   */
+  const handleGoogleCredential = async ({ credential } = {}) => {
+    if (!credential) {
+      setFormError(GOOGLE_NO_CREDENTIAL);
+      return;
+    }
     setSocialLoading('google');
     setFormError('');
     try {
-      if (typeof google !== 'undefined' && google.accounts) {
-        google.accounts.oauth2
-          .initTokenClient({
-            client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-            scope: 'email profile',
-            callback: async (tokenResponse) => {
-              if (!tokenResponse.access_token) return;
-              try {
-                const response = await apiClient.post('/auth/google', {
-                  accessToken: tokenResponse.access_token,
-                });
-                localStorage.setItem('accessToken', response.data.accessToken);
-                if (response.data.refreshToken) {
-                  localStorage.setItem('refreshToken', response.data.refreshToken);
-                }
-                localStorage.setItem('user', JSON.stringify(response.data.user));
-                toast.success('Welcome back');
-                goHome(response.data.user);
-              } catch (error) {
-                const message = error.response?.data?.error || 'Google sign-in failed.';
-                setFormError(message);
-                toast.error(message);
-              }
-            },
-          })
-          .requestAccessToken();
-      } else {
-        const message = 'Google sign-in is not configured for this environment.';
-        setFormError(message);
-        toast.error(message);
-      }
+      const data = await googleLogin(credential);
+      toast.success('Welcome back');
+      goHome(data?.user);
     } catch (error) {
-      console.error('Google login error:', error);
-      setFormError('Google sign-in failed. Please try again.');
-    } finally {
-      setSocialLoading(null);
-    }
-  };
-
-  const handleFacebookLogin = async () => {
-    setSocialLoading('facebook');
-    setFormError('');
-    try {
-      if (typeof FB !== 'undefined') {
-        FB.login(
-          async (response) => {
-            if (!response.authResponse) return;
-            try {
-              const result = await apiClient.post('/auth/facebook', {
-                accessToken: response.authResponse.accessToken,
-              });
-              localStorage.setItem('accessToken', result.data.accessToken);
-              if (result.data.refreshToken) {
-                localStorage.setItem('refreshToken', result.data.refreshToken);
-              }
-              localStorage.setItem('user', JSON.stringify(result.data.user));
-              toast.success('Welcome back');
-              goHome(result.data.user);
-            } catch (error) {
-              const message = error.response?.data?.error || 'Facebook sign-in failed.';
-              setFormError(message);
-              toast.error(message);
-            }
-          },
-          { scope: 'email,public_profile' }
-        );
-      } else {
-        const message = 'Facebook sign-in is not configured for this environment.';
-        setFormError(message);
-        toast.error(message);
-      }
-    } catch (error) {
-      console.error('Facebook login error:', error);
-      setFormError('Facebook sign-in failed. Please try again.');
+      const status = error?.response?.status;
+      const message =
+        status === 429
+          ? 'Too many attempts. Please wait a minute and try again.'
+          : !error?.response
+            ? 'Cannot reach the server. Check your connection and try again.'
+            : error.response.data?.error || 'Google sign-in failed. Please try again.';
+      setFormError(message);
+      toast.error(message);
     } finally {
       setSocialLoading(null);
     }
@@ -216,55 +185,45 @@ export default function Login() {
         </span>
       }
     >
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleGoogleLogin}
-          disabled={busy}
-          className="h-11"
-        >
-          {socialLoading === 'google' ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none" />
-          ) : (
-            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.76h3.57c2.08-1.92 3.28-4.74 3.28-8.09Z" />
-              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.76c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23Z" />
-              <path fill="#FBBC05" d="M5.84 14.11a6.6 6.6 0 0 1 0-4.22V7.05H2.18a11 11 0 0 0 0 9.9l3.66-2.84Z" />
-              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 0 0 2.18 7.05l3.66 2.84c.87-2.6 3.3-4.51 6.16-4.51Z" />
-            </svg>
-          )}
-          Google
-        </Button>
+      {/* Shown only when the build has a Google client id; without one the
+          GIS button cannot work, so the page offers email sign-in alone. */}
+      {googleEnabled && (
+        <>
+          <div ref={googleSlotRef} className="relative flex min-h-11 justify-center" aria-busy={busy}>
+            <GoogleLogin
+              onSuccess={handleGoogleCredential}
+              onError={() => setFormError(GOOGLE_NO_CREDENTIAL)}
+              text="continue_with"
+              theme="outline"
+              size="large"
+              shape="rectangular"
+              logo_alignment="center"
+              width={googleWidth}
+            />
+            {/* Covers the button during any sign-in, so email and Google
+                attempts cannot race each other. */}
+            {busy && (
+              <div className="absolute inset-0 flex items-center justify-center rounded-md bg-card/80">
+                <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+                <span className="sr-only" role="status">
+                  {socialLoading === 'google' ? 'Signing in with Google…' : 'Signing in…'}
+                </span>
+              </div>
+            )}
+          </div>
 
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleFacebookLogin}
-          disabled={busy}
-          className="h-11"
-        >
-          {socialLoading === 'facebook' ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none" />
-          ) : (
-            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true">
-              <path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07Z" />
-            </svg>
-          )}
-          Facebook
-        </Button>
-      </div>
-
-      <div className="relative my-6">
-        <div className="absolute inset-0 flex items-center" aria-hidden="true">
-          <span className="w-full border-t border-border" />
-        </div>
-        <div className="relative flex justify-center">
-          <span className="bg-card px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            or continue with email
-          </span>
-        </div>
-      </div>
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center" aria-hidden="true">
+              <span className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center">
+              <span className="bg-card px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                or continue with email
+              </span>
+            </div>
+          </div>
+        </>
+      )}
 
       {formError && (
         <div

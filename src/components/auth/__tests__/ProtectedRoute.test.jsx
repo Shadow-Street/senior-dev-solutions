@@ -1,9 +1,9 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { vi } from 'vitest'
 import ProtectedRoute from '../ProtectedRoute'
 
-const authState = { user: null, loading: false }
+const authState = { user: null, loading: false, refreshUser: undefined }
 vi.mock('@/components/context/AuthContext', () => ({ useAuth: () => authState }))
 
 function renderAt(path, allowedRoles) {
@@ -29,6 +29,7 @@ describe('ProtectedRoute', () => {
   beforeEach(() => {
     authState.user = null
     authState.loading = false
+    authState.refreshUser = undefined
   })
 
   it('shows a loading state while the session is resolving', () => {
@@ -59,5 +60,27 @@ describe('ProtectedRoute', () => {
     authState.user = { id: 'u1', app_role: 'admin' }
     renderAt('/admin', ['admin'])
     expect(screen.getByText('secret page')).toBeInTheDocument()
+  })
+
+  it('re-reads a stale user once and lets them in if the server now says they are allowed (e.g. just approved as an advisor)', async () => {
+    authState.user = { id: 'u1', app_role: 'user', role: 'user' }
+    authState.refreshUser = vi.fn(async () => {
+      authState.user = { id: 'u1', app_role: 'advisor', role: 'advisor' }
+      return authState.user
+    })
+    const view = renderAt('/admin', ['advisor'])
+    expect(screen.queryByText('unauthorized page')).not.toBeInTheDocument()
+    await waitFor(() => expect(screen.getByText('secret page')).toBeInTheDocument())
+    expect(authState.refreshUser).toHaveBeenCalledTimes(1)
+    view.unmount()
+  })
+
+  it('still refuses after the re-read when the server confirms the role', async () => {
+    authState.user = { id: 'u1', app_role: 'user', role: 'user' }
+    authState.refreshUser = vi.fn(async () => authState.user)
+    renderAt('/admin', ['advisor'])
+    await waitFor(() => expect(screen.getByText('unauthorized page')).toBeInTheDocument())
+    expect(screen.queryByText('secret page')).not.toBeInTheDocument()
+    expect(authState.refreshUser).toHaveBeenCalledTimes(1)
   })
 })

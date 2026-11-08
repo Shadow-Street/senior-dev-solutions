@@ -1,13 +1,12 @@
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Check, Sparkles, Crown, Zap, Shield, UserCircle, Tag, Loader2, X } from "lucide-react";
+import { Check, Sparkles, Crown, UserCircle, Tag, Loader2, X, ChevronDown, Layers } from "lucide-react";
 import { toast } from "sonner";
-import { PromoCode, SubscriptionTransaction } from "@/lib/apiClient";
+import { subscriptionApi, apiErrorMessage, priceView, normaliseCycle, rupees } from "@/lib/subscriptionApi";
+import { cn } from "@/lib/utils";
 
-// ✅ Feature name mapping
+// Feature key -> label. Unknown keys fall back to Title Case.
 const featureNameMap = {
   'premium_chat_rooms': 'Premium Chat Rooms',
   'premium_polls': 'Premium Polls',
@@ -21,432 +20,337 @@ const featureNameMap = {
   'advisor_picks': 'Advisor Picks',
   'priority_support': 'Priority Support',
   'exclusive_events': 'Exclusive Events',
-  'Chat Rooms': 'Chat Rooms',
-  'Community Polls': 'Community Polls',
-  'Advisor Picks': 'Advisor Picks',
-  'Premium Polls': 'Premium Polls',
-  'Pledge Pool Access': 'Pledge Pool Access',
-  'Priority Support': 'Priority Support',
-  'Exclusive Events': 'Exclusive Events'
 };
 
 const getFeatureName = (feature) => {
   if (typeof feature !== 'string') return 'Feature';
-
-  if (featureNameMap[feature]) {
-    return featureNameMap[feature];
-  }
-
-  return feature
-    .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+  if (featureNameMap[feature]) return featureNameMap[feature];
+  if (feature.includes(' ')) return feature;
+  return feature.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 };
 
-// ✅ Plan tier hierarchy
-const planTierHierarchy = {
-  'basic': { order: 1, name: 'Free' },
-  'free': { order: 1, name: 'Free' },
-  'premium': { order: 2, name: 'Premium', parent: 'Free' },
-  'vip': { order: 3, name: 'VIP', parent: 'Premium' },
-  'elite': { order: 3, name: 'Elite', parent: 'Premium' }
+const parseFeatures = (features) => {
+  if (Array.isArray(features)) return features;
+  if (typeof features === 'string') {
+    try {
+      const parsed = JSON.parse(features);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
 };
 
-// ✅ Plan-specific light background colors
-const getPlanBackgroundColor = (planName) => {
-  const normalized = planName.toLowerCase().trim();
-
-  if (normalized === 'basic' || normalized === 'free') {
-    return 'bg-surface-2';
-  }
-  if (normalized === 'premium') {
-    return 'bg-surface-2';
-  }
-  if (normalized === 'vip' || normalized === 'elite') {
-    return 'bg-gradient-to-br from-surface-2 via-hold to-hold-muted';
-  }
-
-  return 'bg-white'; // Default fallback
+// Tier order and the plan each tier builds on ("Everything in ...").
+const TIERS = {
+  basic: { order: 1, parent: null },
+  free: { order: 1, parent: null },
+  premium: { order: 2, parent: 'Free' },
+  vip: { order: 3, parent: 'Premium' },
+  elite: { order: 3, parent: 'Premium' },
 };
+const tierOf = (name) => TIERS[String(name || '').toLowerCase().trim()] || { order: 0, parent: null };
 
-export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelect, user, allPlans = [], cycle = 'monthly' }) {
-  // The billing cycle is owned by the Subscription page so every card agrees.
-  const selectedCycle = cycle === 'annually' ? 'annually' : 'monthly';
-  const [promoCode, setPromoCode] = React.useState('');
-  const [appliedPromo, setAppliedPromo] = React.useState(null);
-  const [isValidatingPromo, setIsValidatingPromo] = React.useState(false);
+const VISIBLE_FEATURES = 6;
 
-  const getPlanIcon = () => {
-    const planName = plan.name.toLowerCase();
-    if (planName.includes('vip') || planName.includes('elite')) {
-      return <Crown className="w-5 h-5" />;
-    }
-    if (planName.includes('premium')) {
-      return <Sparkles className="w-5 h-5" />;
-    }
-    return <UserCircle className="w-5 h-5" />;
-  };
+function PlanIcon({ name }) {
+  const n = String(name || '').toLowerCase();
+  if (n.includes('vip') || n.includes('elite')) {
+    return <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground"><Crown className="h-5 w-5" /></span>;
+  }
+  if (n.includes('premium')) {
+    return <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary"><Sparkles className="h-5 w-5" /></span>;
+  }
+  return <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-2 text-subtle"><UserCircle className="h-5 w-5" /></span>;
+}
 
-  const getPlanColor = () => {
-    const planName = plan.name.toLowerCase();
-    if (planName.includes('vip') || planName.includes('elite')) {
-      return 'text-hold-muted-foreground';
-    }
-    if (planName.includes('premium')) {
-      return 'text-protocall-premium-text';
-    }
-    return 'text-primary';
-  };
-
-  const monthlyPrice = plan.price_monthly || 0;
-  const annualPrice = plan.price_annually || 0;
-
-  // Calculate final amount with promo
-  const calculateFinalAmount = (forCycle) => {
-    const baseAmount = forCycle === 'monthly' ? monthlyPrice : annualPrice;
-
-    if (!appliedPromo) return baseAmount;
-
-    if (appliedPromo.discount_type === 'percentage') {
-      return baseAmount - (baseAmount * appliedPromo.discount_value / 100);
-    } else {
-      return Math.max(0, baseAmount - appliedPromo.discount_value);
-    }
-  };
-
-  const monthlyFinalPrice = calculateFinalAmount('monthly');
-  const annualFinalPrice = calculateFinalAmount('annual');
-
-  const hasMonthlyDiscount = appliedPromo && monthlyFinalPrice < monthlyPrice;
-  const hasAnnualDiscount = appliedPromo && annualFinalPrice < annualPrice;
-
-  // Calculate annual savings percentage
-  const monthlySavings = monthlyPrice > 0 && annualPrice > 0
-    ? Math.round(((monthlyPrice * 12 - annualPrice) / (monthlyPrice * 12)) * 100)
-    : 0;
-
-  const isFree = monthlyPrice === 0 && annualPrice === 0;
+export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelect, user, cycle = 'monthly', recommended = false }) {
+  const { name, description, features } = plan;
+  const selectedCycle = normaliseCycle(cycle);
   const isAnnual = selectedCycle === 'annually';
 
-  const currentTierInfo = planTierHierarchy[currentPlanTier?.toLowerCase()?.trim()] || { order: 0 };
-  const thisTierInfo = planTierHierarchy[plan.name.toLowerCase().trim()] || { order: 0 };
+  // appliedPromo = { code, quotes: { monthly, annually } }. Both cycles are priced by the
+  // server when the code is applied, so flipping the Monthly/Yearly toggle never needs a
+  // client-side discount calculation.
+  const [promoOpen, setPromoOpen] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState(null);
+  const [isValidatingPromo, setIsValidatingPromo] = useState(false);
+  const [promoError, setPromoError] = useState(null);
+  const [showAllFeatures, setShowAllFeatures] = useState(false);
 
-  const isIncluded = currentTierInfo.order > thisTierInfo.order;
-  const isUpgrade = currentTierInfo.order > 0 && currentTierInfo.order < thisTierInfo.order;
+  const quotes = appliedPromo ? appliedPromo.quotes : null;
+  const monthlyView = priceView(plan, 'monthly', quotes);
+  const annualView = priceView(plan, 'annually', quotes);
+  const view = isAnnual ? annualView : monthlyView;
 
-  const getParentPlanName = () => {
-    if (thisTierInfo.parent) {
-      return thisTierInfo.parent;
-    }
-    return null;
-  };
+  const isFree = monthlyView.base === 0 && annualView.base === 0;
+  const yearlySavingPct = monthlyView.base > 0 && annualView.base > 0
+    ? Math.round(((monthlyView.base * 12 - annualView.base) / (monthlyView.base * 12)) * 100)
+    : 0;
 
-  const parentPlanName = getParentPlanName();
+  const currentTier = tierOf(currentPlanTier);
+  const thisTier = tierOf(name);
+  const isIncluded = currentTier.order > thisTier.order;
+  const isUpgrade = currentTier.order > 0 && currentTier.order < thisTier.order;
+  const buttonState = isCurrentPlan ? 'current' : isIncluded ? 'included' : isUpgrade ? 'upgrade' : 'subscribe';
+  const freeWithCode = Boolean(appliedPromo) && view.discounted && view.final === 0;
 
-  const getButtonState = () => {
-    if (isCurrentPlan) return 'current';
-    if (isIncluded) return 'included';
-    if (isUpgrade) return 'upgrade';
-    return 'subscribe';
-  };
+  const featureList = parseFeatures(features);
+  const shownFeatures = showAllFeatures ? featureList : featureList.slice(0, VISIBLE_FEATURES);
+  const hiddenCount = featureList.length - shownFeatures.length;
+  const parentName = thisTier.parent;
 
-  const buttonState = getButtonState();
-  const cardBackground = getPlanBackgroundColor(plan.name);
-
-  // Promo code handling
+  // The server decides validity and the discounted price.
   const handleApplyPromo = async () => {
-    if (!promoCode.trim()) {
+    const code = promoCode.trim();
+    if (!code) {
       toast.error('Please enter a promo code');
       return;
     }
-
     if (!user) {
       toast.error('Please log in to use promo codes');
       return;
     }
 
     setIsValidatingPromo(true);
-
+    setPromoError(null);
     try {
-      const promoCodes = await PromoCode.filter({ code: promoCode.trim(), is_active: true });
+      const [monthly, annually] = await Promise.allSettled([
+        subscriptionApi.validatePromo({ code, planId: plan.id, cycle: 'monthly' }),
+        subscriptionApi.validatePromo({ code, planId: plan.id, cycle: 'annually' }),
+      ]);
+      const current = isAnnual ? annually : monthly;
 
-      if (promoCodes.length === 0) {
-        toast.error('Invalid or expired promo code');
+      // The cycle the customer is looking at decides success; its error is the one to show.
+      if (current.status === 'rejected') {
+        const message = apiErrorMessage(current.reason, 'Could not apply this promo code. Please try again.');
         setAppliedPromo(null);
+        setPromoError(message);
+        toast.error(message);
         return;
       }
 
-      const promo = promoCodes[0];
-
-      if (promo.expiry_date && new Date(promo.expiry_date) < new Date()) {
-        toast.error('This promo code has expired');
-        setAppliedPromo(null);
-        return;
-      }
-
-      if (promo.usage_limit && promo.current_usage >= promo.usage_limit) {
-        toast.error('This promo code has reached its usage limit');
-        setAppliedPromo(null);
-        return;
-      }
-
-      const userTransactions = await SubscriptionTransaction.filter({
-        user_id: user.id,
-        promo_code: promo.code
+      setAppliedPromo({
+        code: current.value.code || code,
+        quotes: {
+          monthly: monthly.status === 'fulfilled' ? monthly.value : null,
+          annually: annually.status === 'fulfilled' ? annually.value : null,
+        },
       });
-
-      if (userTransactions && userTransactions.length > 0) {
-        toast.error('You have already used this promo code');
-        setAppliedPromo(null);
-        return;
-      }
-
-      setAppliedPromo(promo);
-      toast.success(`Promo applied! ${promo.discount_type === 'percentage' ? `${promo.discount_value}% off` : `₹${promo.discount_value} off`}`);
+      toast.success(current.value.message || `Promo ${code} applied`);
     } catch (error) {
       console.error('Error applying promo code:', error);
-      toast.error('Failed to apply promo code');
       setAppliedPromo(null);
+      setPromoError('Could not apply this promo code. Please try again.');
+      toast.error('Could not apply this promo code. Please try again.');
     } finally {
       setIsValidatingPromo(false);
     }
   };
 
-  const handleSelectPlan = () => {
-    // Pass promo data along with plan selection
-    const discountAmount = appliedPromo ?
-      (selectedCycle === 'monthly' ? monthlyPrice : annualPrice) -
-      (selectedCycle === 'monthly' ? monthlyFinalPrice : annualFinalPrice) : 0;
-
-    onSelect(plan, selectedCycle, appliedPromo, discountAmount);
+  const handleRemovePromo = () => {
+    setAppliedPromo(null);
+    setPromoCode('');
+    setPromoError(null);
+    setPromoOpen(false);
+    toast.info('Promo removed');
   };
 
+  // The code travels with the selection; checkout re-prices it on the server.
+  const handleSelectPlan = () => onSelect(plan, selectedCycle, appliedPromo ? appliedPromo.code : null);
+
+  const ctaLabel = {
+    current: 'Current plan',
+    included: 'Included in your plan',
+    upgrade: freeWithCode ? 'Activate for free' : 'Upgrade',
+    subscribe: freeWithCode ? 'Activate for free' : 'Get started',
+  }[buttonState];
+
   return (
-    <Card className={`relative overflow-hidden border-2 border-border shadow-md hover:shadow-xl transition-all duration-300 ${cardBackground}`}>
-      <CardContent className="p-6">
-        {/* Plan Name and Status */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <span className={getPlanColor()}>
-              {getPlanIcon()}
-            </span>
-            <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-xs">System</Badge>
+    <article
+      aria-label={`${name} plan`}
+      className={cn(
+        'relative flex h-full flex-col rounded-2xl border bg-card p-5 transition-shadow lg:p-6',
+        recommended
+          ? 'border-2 border-primary shadow-xl shadow-primary/15 md:-mt-3 md:pb-8'
+          : 'border-border shadow-sm hover:shadow-md',
+        isCurrentPlan && 'ring-2 ring-primary/40'
+      )}
+    >
+      {recommended && (
+        <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-3.5 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground shadow-md">
+          Most popular
+        </span>
+      )}
+
+      {/* Header */}
+      <header className="flex items-start gap-3">
+        <PlanIcon name={name} />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-lg font-bold leading-tight text-foreground">{name}</h3>
             {isCurrentPlan && (
-              <Badge className="bg-protocall-ink text-white text-xs">Active</Badge>
-            )}
-          </div>
-        </div>
-
-        {/* Pricing */}
-        <div className="mb-4">
-          {isFree ? (
-            <>
-              <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold text-foreground">₹0</span>
-                <span className="text-muted-foreground">/month</span>
-              </div>
-              <p className="text-sm text-muted-foreground mt-1">Basic platform access</p>
-            </>
-          ) : (
-            <>
-              {/* Headline price for the selected billing cycle */}
-              <div className="flex items-baseline gap-2">
-                {isAnnual
-                  ? hasAnnualDiscount && (
-                      <span className="text-2xl font-semibold text-muted-foreground line-through">
-                        ₹{annualPrice}
-                      </span>
-                    )
-                  : hasMonthlyDiscount && (
-                      <span className="text-2xl font-semibold text-muted-foreground line-through">
-                        ₹{monthlyPrice}
-                      </span>
-                    )}
-                <span className="text-4xl font-bold text-foreground">
-                  ₹{Math.round(isAnnual ? annualFinalPrice : monthlyFinalPrice)}
-                </span>
-                <span className="text-muted-foreground">{isAnnual ? '/year' : '/month'}</span>
-              </div>
-
-              {/* The other cycle, shown as the alternative */}
-              {isAnnual
-                ? monthlyPrice > 0 && (
-                    <div className="flex items-center gap-2 mt-1">
-                      <p className="text-sm text-subtle">
-                        or ₹{Math.round(hasMonthlyDiscount ? monthlyFinalPrice : monthlyPrice)}/month
-                      </p>
-                      {monthlySavings > 0 && (
-                        <Badge className="bg-buy-muted text-buy-muted-foreground text-xs border-0">
-                          Save {monthlySavings}% yearly
-                        </Badge>
-                      )}
-                    </div>
-                  )
-                : annualPrice > 0 && (
-                    <div className="flex items-center gap-2 mt-1">
-                      <p className="text-sm text-subtle">
-                        or ₹{Math.round(hasAnnualDiscount ? annualFinalPrice : annualPrice)}/year
-                      </p>
-                      {monthlySavings > 0 && (
-                        <Badge className="bg-buy-muted text-buy-muted-foreground text-xs border-0">
-                          Save {monthlySavings}%
-                        </Badge>
-                      )}
-                    </div>
-                  )}
-
-              {/* Promo Discount Badge */}
-              {(hasMonthlyDiscount || hasAnnualDiscount) && (
-                <Badge className="mt-2 bg-buy-muted text-buy-muted-foreground border-buy/30">
-                  Promo Applied: Save ₹{Math.round(isAnnual ? annualPrice - annualFinalPrice : monthlyPrice - monthlyFinalPrice)}{isAnnual ? '/yr' : '/mo'}
-                </Badge>
-              )}
-
-              <p className="text-sm text-muted-foreground mt-2">
-                {plan.description || 'Access to premium features'}
-              </p>
-            </>
-          )}
-        </div>
-
-        {/* Promo Code Section - Only for paid plans */}
-        {!isFree && (
-          <div className="mb-4 p-3 bg-white/60 rounded-lg border border-border">
-            <div className="flex items-center gap-2 mb-2">
-              <Tag className="w-4 h-4 text-subtle" />
-              <span className="text-xs font-semibold text-subtle">Have a Promo Code?</span>
-            </div>
-            <div className="flex gap-2">
-              <Input
-                placeholder="Enter code"
-                value={promoCode}
-                onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                disabled={isValidatingPromo || !!appliedPromo || !user}
-                className="text-sm h-8"
-              />
-              {appliedPromo ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setAppliedPromo(null);
-                    setPromoCode('');
-                    toast.info('Promo removed');
-                  }}
-                  className="h-8"
-                >
-                  <X className="w-3 h-3" />
-                </Button>
-              ) : (
-                <Button
-                  size="sm"
-                  onClick={handleApplyPromo}
-                  disabled={isValidatingPromo || !promoCode.trim() || !user}
-                  className="h-8 px-3"
-                >
-                  {isValidatingPromo ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Apply'}
-                </Button>
-              )}
-            </div>
-            {!user && (
-              <p className="text-xs text-hold-muted-foreground mt-1">Login to use promo codes</p>
-            )}
-          </div>
-        )}
-
-        {/* Features Section */}
-        <div className="mb-6">
-          {/* Parent Plan Inclusion */}
-          {parentPlanName && (
-            <div className="flex items-center gap-2 p-3 bg-premium-muted rounded-lg mb-3 border border-protocall-premium-light">
-              <Shield className="w-4 h-4 text-primary flex-shrink-0" />
-              <span className="text-sm font-medium text-primary">
-                Includes All {parentPlanName} Features
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
+                <Check className="h-3 w-3" /> Your plan
               </span>
+            )}
+          </div>
+          <p className="mt-1 line-clamp-2 min-h-[2.5rem] text-sm text-muted-foreground">
+            {description || (isFree ? 'Essential tools, free for everyone.' : 'Everything you need to trade with confidence.')}
+          </p>
+        </div>
+      </header>
+
+      {/* Price */}
+      <div className="mt-5 min-h-[7.5rem]">
+        {isFree ? (
+          <>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-4xl font-extrabold tabular-nums tracking-tight text-foreground lg:text-5xl">₹0</span>
+              <span className="text-sm text-muted-foreground">forever</span>
             </div>
-          )}
-
-          {/* Additional Features Header */}
-          {plan.features && plan.features.length > 0 && (
-            <div className="mb-3">
-              <h4 className="text-sm font-semibold text-foreground">
-                {parentPlanName ? `Additional ${plan.name} Features:` : 'Features:'}
-              </h4>
+            <p className="mt-2 text-sm text-muted-foreground">No card needed.</p>
+          </>
+        ) : (
+          <>
+            <div className="flex flex-wrap items-baseline gap-x-2">
+              {view.discounted && (
+                <span className="text-lg font-semibold tabular-nums text-muted-foreground line-through">{rupees(view.base)}</span>
+              )}
+              <span className="text-4xl font-extrabold tabular-nums tracking-tight text-foreground lg:text-5xl">{rupees(view.final)}</span>
+              <span className="text-sm text-muted-foreground">{isAnnual ? '/year' : '/month'}</span>
             </div>
-          )}
 
-          {/* Features List */}
-          {plan.features && (
-            <div className="space-y-2">
-              {(() => {
-                const safeParseFeatures = (features) => {
-                  if (Array.isArray(features)) return features;
-                  if (typeof features === 'string') {
-                    try {
-                      const parsed = JSON.parse(features);
-                      return Array.isArray(parsed) ? parsed : [];
-                    } catch (e) {
-                      return [];
-                    }
-                  }
-                  return [];
-                };
+            <div className="mt-2 flex min-h-[1.75rem] flex-wrap items-center gap-2 text-sm text-muted-foreground">
+              {isAnnual ? (
+                <>
+                  <span>{rupees(Math.round((annualView.final / 12) * 100) / 100)}/month, billed yearly</span>
+                  {yearlySavingPct > 0 && (
+                    <span className="rounded-full bg-buy-muted px-2 py-0.5 text-xs font-semibold text-buy-muted-foreground">Save {yearlySavingPct}%</span>
+                  )}
+                </>
+              ) : (
+                yearlySavingPct > 0 && (
+                  <span>
+                    or {rupees(annualView.final)}/year{' '}
+                    <span className="rounded-full bg-buy-muted px-2 py-0.5 text-xs font-semibold text-buy-muted-foreground">Save {yearlySavingPct}%</span>
+                  </span>
+                )
+              )}
+            </div>
 
-                const featuresList = safeParseFeatures(plan.features);
+            {view.discounted && (
+              <p className="mt-1 text-sm font-medium text-buy-muted-foreground">
+                {freeWithCode ? 'Free with your promo code' : `Promo saves you ${rupees(view.saving)}${isAnnual ? ' a year' : ' a month'}`}
+              </p>
+            )}
+          </>
+        )}
+      </div>
 
-                if (featuresList.length === 0) {
-                  return parentPlanName ? (
-                    <p className="text-sm text-muted-foreground italic">No additional unique features</p>
-                  ) : null;
-                }
-
-                return featuresList.map((feature, index) => (
-                  <div key={index} className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-positive flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-subtle">
-                      {getFeatureName(feature)}
-                    </span>
+      {/* Promo code (paid plans): collapsed until asked for */}
+      {!isFree && (
+        <div className="mt-3">
+          {appliedPromo ? (
+            <div className="flex items-center justify-between gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-sm">
+              <span className="flex min-w-0 items-center gap-2 font-medium text-primary">
+                <Tag className="h-4 w-4 shrink-0" />
+                <span className="truncate">{appliedPromo.code} applied</span>
+              </span>
+              <Button variant="ghost" size="sm" onClick={handleRemovePromo} aria-label="Remove promo code" className="h-7 px-2 text-muted-foreground hover:text-foreground">
+                <X className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => setPromoOpen((open) => !open)}
+                aria-expanded={promoOpen}
+                className="flex items-center gap-1.5 rounded text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                <Tag className="h-3.5 w-3.5" />
+                Have a promo code?
+                <ChevronDown className={cn('h-3.5 w-3.5 transition-transform motion-reduce:transition-none', promoOpen && 'rotate-180')} />
+              </button>
+              {promoOpen && (
+                <div className="mt-2">
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Enter code"
+                      aria-label={`Promo code for ${name}`}
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                      onKeyDown={(e) => { if (e.key === 'Enter') handleApplyPromo(); }}
+                      disabled={isValidatingPromo || !user}
+                      className="h-9 text-sm"
+                    />
+                    <Button size="sm" onClick={handleApplyPromo} disabled={isValidatingPromo || !promoCode.trim() || !user} className="h-9 bg-primary px-4 text-primary-foreground hover:bg-primary/90">
+                      {isValidatingPromo ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Apply'}
+                    </Button>
                   </div>
-                ));
-              })()}
-            </div>
+                  {!user && <p className="mt-1 text-xs text-muted-foreground">Log in to use a promo code.</p>}
+                  {promoError && <p role="alert" className="mt-1 text-xs text-sell-muted-foreground">{promoError}</p>}
+                </div>
+              )}
+            </>
+          )}
+          {appliedPromo && !view.discounted && (
+            <p className="mt-1 text-xs text-muted-foreground">This code does not reduce the {isAnnual ? 'yearly' : 'monthly'} price on this plan.</p>
           )}
         </div>
+      )}
 
-        {/* Action Button */}
-        <Button
-          onClick={handleSelectPlan}
-          disabled={isCurrentPlan || isIncluded}
-          variant="outline"
-          className={`w-full ${buttonState === 'current'
-              ? 'bg-buy-soft text-buy-foreground border-0 cursor-not-allowed hover:from-buy hover:to-buy-soft'
-              : buttonState === 'included'
-                ? 'bg-gradient-to-r from-surface-2 to-protocall-sidebar-bg text-white border-0 cursor-not-allowed hover:from-surface-2 hover:to-protocall-sidebar-bg'
-                : buttonState === 'upgrade'
-                  ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white border-0 hover:from-protocall-deep hover:to-protocall-blue shadow-lg'
-                  : 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white border-0 hover:from-protocall-deep hover:to-protocall-blue shadow-lg'
-            }`}
-        >
-          {buttonState === 'current' ? (
-            <>
-              <Check className="w-4 h-4 mr-2" />
-              Current Plan
-            </>
-          ) : buttonState === 'included' ? (
-            <>
-              <Check className="w-4 h-4 mr-2" />
-              Included
-            </>
-          ) : buttonState === 'upgrade' ? (
-            'Upgrade Plan'
-          ) : (
-            'Subscribe Now'
+      {/* Features */}
+      <div className="mt-6 flex-1 border-t border-divider pt-5">
+        <ul className="space-y-2.5">
+          {parentName && (
+            <li className="flex items-start gap-2.5 rounded-lg bg-primary/5 px-3 py-2 text-sm font-semibold text-primary">
+              <Layers className="mt-0.5 h-4 w-4 shrink-0" />
+              Everything in {parentName}, plus:
+            </li>
           )}
-        </Button>
-      </CardContent>
-    </Card>
+          {shownFeatures.map((feature, index) => (
+            <li key={`${feature}-${index}`} className="flex items-start gap-2.5 text-sm text-foreground/80">
+              <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Check className="h-3 w-3" strokeWidth={3} />
+              </span>
+              {getFeatureName(feature)}
+            </li>
+          ))}
+          {featureList.length === 0 && parentName && (
+            <li className="text-sm italic text-muted-foreground">No additional unique features</li>
+          )}
+        </ul>
+        {hiddenCount > 0 && (
+          <button type="button" onClick={() => setShowAllFeatures(true)} className="mt-3 text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            Show {hiddenCount} more feature{hiddenCount === 1 ? '' : 's'}
+          </button>
+        )}
+        {showAllFeatures && featureList.length > VISIBLE_FEATURES && (
+          <button type="button" onClick={() => setShowAllFeatures(false)} className="mt-3 text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            Show fewer
+          </button>
+        )}
+      </div>
+
+      {/* Call to action, pinned to the bottom of every card */}
+      <Button
+        onClick={handleSelectPlan}
+        disabled={isCurrentPlan || isIncluded}
+        size="lg"
+        className={cn(
+          'mt-6 w-full font-semibold',
+          buttonState === 'upgrade' || buttonState === 'subscribe'
+            ? 'bg-primary text-primary-foreground shadow-md hover:bg-primary/90'
+            : 'border border-border bg-surface-2 text-muted-foreground hover:bg-surface-2 disabled:opacity-100'
+        )}
+      >
+        {buttonState === 'current' && <Check className="mr-2 h-4 w-4" />}
+        {ctaLabel}
+      </Button>
+    </article>
   );
 }

@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Star, Gift, Award, TrendingUp } from 'lucide-react';
+import { formatNumber } from '@/lib/format';
 
 export default function ProfileCreditsSection({ user, referrals }) {
   // Calculate credits based on referrals and other activities
@@ -64,7 +65,7 @@ export default function ProfileCreditsSection({ user, referrals }) {
                         <p className="text-sm text-subtle">{source.description}</p>
                         </div>
                         <div className="text-right">
-                        <div className="text-xl font-bold">{source.amount.toLocaleString()}</div>
+                        <div className="text-xl font-bold">{formatNumber(source.amount, { placeholder: '0' })}</div>
                         <div className="text-xs text-muted-foreground">credits</div>
                         </div>
                     </div>

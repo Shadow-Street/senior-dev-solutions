@@ -19,7 +19,7 @@ import {
 import { usePlatformSettings } from '../hooks/usePlatformSettings';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { DollarSign, Receipt, FileText, ShieldCheck, HandCoins, BarChart3, CreditCard, TrendingUp, Percent, RotateCcw } from 'lucide-react';
+import { DollarSign, Receipt, FileText, ShieldCheck, HandCoins, BarChart3, CreditCard, TrendingUp, Percent, RotateCcw, Landmark } from 'lucide-react';
 import { toast } from "sonner";
 import { format } from 'date-fns';
 
@@ -31,6 +31,7 @@ import Payouts from './financials/Payouts';
 import SubscriptionRevenue from './financials/SubscriptionRevenue';
 import CommissionAnalytics from './financials/CommissionAnalytics';
 import RefundAnalytics from './financials/RefundAnalytics'; // ADDED: New component
+import AdvisorWithdrawalsReview from './financials/AdvisorWithdrawalsReview';
 
 const tabs = [
   { id: 'overview', name: 'Overview', icon: BarChart3, gradient: 'from-protocall-deep to-protocall-blue' },
@@ -38,6 +39,7 @@ const tabs = [
   { id: 'subscription', name: 'Subscription Revenue', icon: CreditCard, gradient: 'from-positive to-tile-green' },
   { id: 'refunds', name: 'Refunds', icon: RotateCcw, gradient: 'from-hold to-hold' }, // ADDED: Refunds tab
   { id: 'payouts', name: 'Payouts', icon: HandCoins, gradient: 'from-protocall-deep to-protocall-blue' },
+  { id: 'advisor-withdrawals', name: 'Advisor Withdrawals', icon: Landmark, gradient: 'from-protocall-deep to-protocall-blue' },
   { id: 'expenses', name: 'Expenses', icon: Receipt, gradient: 'from-hold to-hold' },
   { id: 'reports', name: 'Reports', icon: FileText, gradient: 'from-positive to-tile-green' },
   { id: 'audit', name: 'Audit Log', icon: ShieldCheck, gradient: 'from-sell to-sell' }
@@ -395,6 +397,8 @@ export default function Financials() {
           payoutRequests={payoutRequests}
           onUpdate={loadData}
         />;
+      case 'advisor-withdrawals':
+        return <AdvisorWithdrawalsReview />;
       case 'expenses':
         return <ExpenseManager
           expenses={expenses}

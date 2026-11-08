@@ -1,4 +1,5 @@
 const { FinDataService } = require("../services/FinDataService");
+const { parseSearchQuery } = require("../utils/searchQuery");
 
 /**
  * Symbol universe for the dashboard.
@@ -9,6 +10,11 @@ const { FinDataService } = require("../services/FinDataService");
  *
  *   MARKET_SYMBOLS=AAPL,MSFT,...   watchlist used for gainers/losers
  *   MARKET_INDICES=SPY,DIA,QQQ     index tiles beside the chart
+ *
+ * Indian markets: when DHAN_CLIENT_ID + DHAN_ACCESS_TOKEN are set, symbols in
+ * Yahoo style (RELIANCE.NS, TCS.NS, INFY.BO, indices ^NSEI / ^NSEBANK / ^BSESN)
+ * are quoted by DhanHQ first. Point these two variables at such symbols to put
+ * the dashboard on NSE/BSE data; US symbols keep using the Finnhub/Yahoo chain.
  */
 const parseSymbols = (value, fallback) => {
     const list = (value || '')
@@ -29,6 +35,32 @@ const INDEX_LABELS = { SPY: 'S&P 500', DIA: 'DOW 30', QQQ: 'NASDAQ 100' };
 
 exports.getMarketData = async (req, res) => {
     try {
+        // Dhan active and a snapshot of the NSE universe exists: answer from the
+        // shared in-memory snapshot (no provider call per request). Same shape
+        // as below; `meta` gains universe_size, snapshot_at and stale.
+        const dhanView = FinDataService.getDhanMarketView();
+        if (dhanView) {
+            const { views, info } = dhanView;
+            return res.json({
+                stocks: views.stocks,
+                gainers: views.gainers,
+                losers: views.losers,
+                indices: views.indices,
+                most_active: views.most_active,
+                trending: views.trending,
+                heatmap: views.heatmap,
+                meta: {
+                    provider: 'DhanProvider',
+                    symbol_count: views.stocks.length,
+                    fetched_at: info.snapshot_at,
+                    universe_size: info.universe_size,
+                    snapshot_at: info.snapshot_at,
+                    stale: Boolean(info.stale),
+                    market_open: info.market_open,
+                },
+            });
+        }
+
         const [watchlist, indexQuotes] = await Promise.all([
             FinDataService.getBulkQuotes(MARKET_SYMBOLS),
             FinDataService.getBulkQuotes(MARKET_INDICES),
@@ -69,10 +101,19 @@ exports.getCandles = async (req, res) => {
         const { resolution = '5', from, to } = req.query;
 
         if (!symbol) return res.status(400).json({ error: 'Symbol is required' });
+        if (!/^[A-Za-z0-9^][A-Za-z0-9.&_^-]{0,29}$/.test(symbol)) {
+            return res.status(400).json({ error: 'Invalid symbol' });
+        }
+        if (!/^(1|5|15|25|30|60|D|W|M)$/i.test(String(resolution))) {
+            return res.status(400).json({ error: 'Invalid resolution' });
+        }
+        if ((from !== undefined && !/^\d{1,12}$/.test(String(from))) || (to !== undefined && !/^\d{1,12}$/.test(String(to)))) {
+            return res.status(400).json({ error: 'Invalid time range' });
+        }
 
         const series = await FinDataService.getCandles(
             symbol.toUpperCase(),
-            resolution,
+            String(resolution).toUpperCase(),
             from ? Number(from) : undefined,
             to ? Number(to) : undefined,
         );
@@ -102,9 +143,9 @@ exports.getStockPrice = async (req, res) => {
 
 exports.search = async (req, res) => {
     try {
-        const { q } = req.query;
-        if (!q) {
-            return res.json([]);
+        const q = parseSearchQuery(req.query.q);
+        if (q === null) {
+            return res.status(400).json({ error: 'q must be 1-50 characters: letters, digits, space, & . -' });
         }
         const results = await FinDataService.searchStocks(q);
         res.json(results);

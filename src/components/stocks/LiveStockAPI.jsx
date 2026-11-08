@@ -98,14 +98,23 @@ class LiveStockAPI {
   }
 
   /** Intraday OHLC series for charts. */
-  async getCandles(symbol, resolution = '5') {
-    const key = `candles:${symbol}:${resolution}`;
+  async getCandles(symbol, resolution = '5', windowSeconds) {
+    // `windowSeconds` is the look-back for the chart range (1M, 1Y, ...). The
+    // key uses the window length, not absolute timestamps, so repeat views hit
+    // the cache. Omitted -> the server's default window (the last session).
+    const key = `candles:${symbol}:${resolution}:${windowSeconds || 'default'}`;
     const cached = this._cached(key);
     if (cached) return cached;
 
+    const params = { resolution };
+    if (windowSeconds > 0) {
+      const to = Math.floor(Date.now() / 1000);
+      params.from = to - Math.floor(windowSeconds);
+      params.to = to;
+    }
     const { data } = await apiClient.get(
       `/stocks/${encodeURIComponent(symbol)}/candles`,
-      { params: { resolution } }
+      { params }
     );
     return this._store(key, data?.series || []);
   }

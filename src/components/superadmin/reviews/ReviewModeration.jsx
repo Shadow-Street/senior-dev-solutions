@@ -226,7 +226,7 @@ export default function ReviewModeration({ user }) {
                 <p className="text-sm text-subtle">Total Reviews</p>
                 <p className="text-2xl font-bold">{reviews.length}</p>
               </div>
-              <Star className="w-8 h-8 text-hold" />
+              <Star className="w-8 h-8 text-protocall-neon-edge" />
             </div>
           </CardContent>
         </Card>
@@ -319,7 +319,7 @@ export default function ReviewModeration({ user }) {
                                 <Star
                                   key={i}
                                   size={16}
-                                  className={i < review.rating ? 'text-hold fill-hold' : 'text-muted-foreground'}
+                                  className={i < review.rating ? 'text-protocall-neon-edge fill-protocall-neon' : 'text-muted-foreground'}
                                 />
                               ))}
                             </div>

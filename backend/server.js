@@ -28,6 +28,8 @@ async function start() {
     server.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
       console.log(`WebSocket server ready on ws://localhost:${PORT}`);
+      // Dhan credential renewal + NSE snapshot; never blocks or fails boot.
+      require('./src/services/MarketDataRuntime').startMarketData();
     });
   } catch (err) {
     console.error("Failed to start server:", err);

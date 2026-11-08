@@ -55,7 +55,6 @@ export default function PaymentModal({ open, onClose, plan, onPaymentSuccess }) 
     }
 
     setHasCalledSuccess(true);
-    console.log('✅ Payment completed:', paymentData);
     
     // ✅ FIX: Call parent with BOTH plan and payment data
     if (onPaymentSuccess) {
@@ -63,9 +62,9 @@ export default function PaymentModal({ open, onClose, plan, onPaymentSuccess }) 
     }
   };
 
+  // The modal has already shown the specific reason.
   const handleFailure = (error) => {
     console.error('❌ Payment failed:', error);
-    toast.error('Payment failed. Please try again.');
     setHasCalledSuccess(false); // Reset flag on failure
   };
 
@@ -77,28 +76,25 @@ export default function PaymentModal({ open, onClose, plan, onPaymentSuccess }) 
     }
   };
 
+  const cycleLabel = plan.cycle === 'annually' ? ' - Annual' : plan.cycle === 'monthly' ? ' - Monthly' : '';
+
   return (
     <UniversalPaymentModal
       open={open}
       onClose={handleClose}
       amount={plan.price}
       currency="INR"
-      description={`${plan.name} Subscription - ${plan.cycle === 'monthly' ? 'Monthly' : 'Annual'}`}
+      description={`${plan.name} Subscription${cycleLabel}`}
       customerInfo={{
         name: user.display_name || user.full_name || 'User',
         email: user.email
       }}
       metadata={{
-        subscription_plan_id: plan.id,
-        plan_name: plan.name,
-        billing_cycle: plan.cycle,
-        user_id: user.id,
-        ...(plan.discount && {
-          promo_code: plan.discount.code,
-          discount_amount: plan.discount.amount,
-          original_price: plan.originalPrice
-        })
+        ...(plan.discount && { discount_amount: plan.discount.amount })
       }}
+      planId={plan.id}
+      cycle={plan.cycle || 'monthly'}
+      couponCode={plan.discount?.code || null}
       onSuccess={handleSuccess}
       onFailure={handleFailure}
     />

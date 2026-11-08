@@ -1,61 +1,21 @@
-import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { BarChart3, ArrowRight, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { getPollTally, optionTone } from "@/lib/pollVotes";
+
+// Badge look for the leading option, by tone (Buy / Bullish / Yes ...).
+const TONE_BADGE = {
+  positive: { icon: TrendingUp, className: "bg-buy text-buy-foreground border-transparent" },
+  negative: { icon: TrendingDown, className: "bg-sell-muted text-sell-muted-foreground border-sell/30" },
+  neutral: { icon: Minus, className: "bg-hold-muted text-hold-muted-foreground border-hold/30" },
+  other: { icon: null, className: "bg-premium-muted text-premium-muted-foreground border-premium-light" },
+};
 
 export default function ActivePolls({ polls }) {
-  // Fallback sample data
-  const samplePolls = [
-    {
-      id: '1',
-      title: 'Should we buy RELIANCE at current levels?',
-      stock_symbol: 'RELIANCE',
-      buy_votes: 145,
-      sell_votes: 23,
-      hold_votes: 87,
-      total_votes: 255
-    },
-    {
-      id: '2',
-      title: 'TCS Q3 Results Impact',
-      stock_symbol: 'TCS',
-      buy_votes: 89,
-      sell_votes: 34,
-      hold_votes: 156,
-      total_votes: 279
-    },
-    {
-      id: '3',
-      title: 'Banking Sector Outlook',
-      stock_symbol: 'HDFCBANK',
-      buy_votes: 167,
-      sell_votes: 45,
-      hold_votes: 98,
-      total_votes: 310
-    }
-  ];
-
-  const pollData = polls?.length > 0 ? polls : samplePolls;
-
-  const getVoteIcon = (vote) => {
-    switch(vote) {
-      case 'buy': return <TrendingUp className="w-3 h-3" />;
-      case 'sell': return <TrendingDown className="w-3 h-3" />;
-      case 'hold': return <Minus className="w-3 h-3" />;
-      default: return null;
-    }
-  };
-
-  const getWinningVote = (poll) => {
-    const votes = [
-      { type: 'buy', count: poll.buy_votes || 0 },
-      { type: 'sell', count: poll.sell_votes || 0 },
-      { type: 'hold', count: poll.hold_votes || 0 }
-    ];
-    return votes.reduce((a, b) => a.count > b.count ? a : b);
-  };
+  const pollData = Array.isArray(polls) ? polls.filter((p) => p && p.is_active !== false) : [];
 
   return (
     <Card className="h-full overflow-hidden border border-border bg-card shadow-sm">
@@ -75,41 +35,50 @@ export default function ActivePolls({ polls }) {
         </Link>
       </div>
       <CardContent className="p-4 sm:p-5">
-        <div className="space-y-3">
-          {pollData.slice(0, 4).map(poll => {
-            const winningVote = getWinningVote(poll);
-            const totalVotes = poll.total_votes || 0;
-            
-            return (
-              <div key={poll.id} className="rounded-xl border border-divider bg-card p-3 transition-colors hover:border-premium-light hover:bg-premium-muted/40">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-sm text-foreground mb-1">{poll.title}</h4>
-                    <Badge variant="outline" className="text-xs">
-                      {poll.stock_symbol}
-                    </Badge>
+        {polls === null || polls === undefined ? (
+          <div role="status" aria-label="Loading polls" className="space-y-3">
+            <Skeleton className="h-20 w-full rounded-xl" />
+            <Skeleton className="h-20 w-full rounded-xl" />
+          </div>
+        ) : pollData.length === 0 ? (
+          <p className="rounded-xl border border-dashed border-border px-4 py-8 text-center text-sm text-subtle">
+            No active polls yet.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {pollData.slice(0, 4).map(poll => {
+              const { total, leader } = getPollTally(poll);
+              const tone = TONE_BADGE[leader ? optionTone(leader.label) : "none"] || TONE_BADGE.other;
+              const LeaderIcon = tone.icon;
+
+              return (
+                <div key={poll.id} className="rounded-xl border border-divider bg-card p-3 transition-colors hover:border-premium-light hover:bg-premium-muted/40">
+                  <div className="mb-2 flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="mb-1 text-sm font-semibold text-foreground">{poll.title}</h4>
+                      {poll.stock_symbol && (
+                        <Badge variant="outline" className="text-xs">
+                          {poll.stock_symbol}
+                        </Badge>
+                      )}
+                    </div>
+                    {leader && (
+                      <Badge variant="outline" className={`shrink-0 text-xs ${tone.className}`}>
+                        {LeaderIcon && <LeaderIcon className="h-3 w-3" />}
+                        <span className="ml-1">{leader.tie ? "Tied" : leader.label}</span>
+                      </Badge>
+                    )}
                   </div>
-                  <Badge 
-                    variant="outline" 
-                    className={`text-xs ${
-                      winningVote.type === 'buy' ? 'bg-buy text-buy-foreground border-transparent' :
-                      winningVote.type === 'sell' ? 'bg-sell-muted text-sell-muted-foreground border-sell/30' :
-                      'bg-hold-muted text-hold-muted-foreground border-hold/30'
-                    }`}
-                  >
-                    {getVoteIcon(winningVote.type)}
-                    <span className="ml-1 capitalize">{winningVote.type}</span>
-                  </Badge>
+
+                  <div className="flex items-center justify-between text-xs text-subtle">
+                    <span>{total} {total === 1 ? "vote" : "votes"}</span>
+                    <span>{leader ? `${leader.rounded}% consensus` : "No votes yet"}</span>
+                  </div>
                 </div>
-                
-                <div className="flex items-center justify-between text-xs text-subtle">
-                  <span>{totalVotes} votes</span>
-                  <span>{winningVote.count > 0 ? Math.round((winningVote.count / totalVotes) * 100) : 0}% consensus</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

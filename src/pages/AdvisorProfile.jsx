@@ -1,12 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { authAPI, Advisor, AdvisorPlan, AdvisorSubscription, AdvisorPost, Review, CommissionTracking, PlatformSetting } from '@/lib/apiClient';
+import { useState, useEffect } from 'react';
+import { authAPI, Advisor, AdvisorPlan, AdvisorSubscription, Review } from '@/lib/apiClient';
+import { advisorApi } from '@/lib/advisorApi';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle, Star, Users, Lock, Shield, BarChart3, ArrowLeft, Crown, Eye } from 'lucide-react';
+import { CheckCircle, Star, Users, Lock, Shield, BarChart3, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -24,6 +24,7 @@ export default function AdvisorProfile() {
   const [advisor, setAdvisor] = useState(null);
   const [plans, setPlans] = useState([]);
   const [posts, setPosts] = useState([]);
+  const [postsError, setPostsError] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [subscription, setSubscription] = useState(null);
@@ -88,6 +89,17 @@ export default function AdvisorProfile() {
           if (isMounted) setPlans([]);
         }
 
+        // Posts: the server decides what this viewer may read. Public posts
+        // arrive in full; subscriber-only posts arrive as locked previews
+        // (title only) unless the viewer has an active subscription.
+        try {
+          const feed = await advisorApi.feed(advisorId, { limit: 20 });
+          if (isMounted) { setPosts(Array.isArray(feed) ? feed : []); setPostsError(false); }
+        } catch (err) {
+          console.warn('Posts loading failed:', err.message);
+          if (isMounted) { setPosts([]); setPostsError(true); }
+        }
+
         // Load reviews
         try {
           const advisorReviews = await Review.filter({
@@ -130,38 +142,6 @@ export default function AdvisorProfile() {
             if (isMounted) {
               if (userSub && userSub.length > 0) {
                 setSubscription(userSub[0]);
-                console.log('✅ User subscription found');
-
-                // Load posts for subscribed users
-                try {
-                  const allPosts = await AdvisorPost.filter({
-                    advisor_id: advisorId,
-                    status: 'published'
-                  }, '-created_date', 50);
-
-                  if (isMounted && allPosts) {
-                    const userPlanId = userSub[0].plan_id;
-                    const userPlan = plans.find(p => p.id === userPlanId);
-
-                    const accessiblePosts = allPosts.filter(post => {
-                      if (!post.required_plan_id) return true;
-                      if (post.required_plan_id === userPlanId) return true;
-
-                      const postPlan = plans.find(p => p.id === post.required_plan_id);
-                      if (userPlan && postPlan && userPlan.price >= postPlan.price) {
-                        return true;
-                      }
-
-                      return false;
-                    });
-
-                    setPosts(accessiblePosts);
-                    console.log('✅ Posts loaded:', accessiblePosts.length);
-                  }
-                } catch (err) {
-                  console.warn('⚠️ Posts loading failed:', err.message);
-                  if (isMounted) setPosts([]);
-                }
               }
 
               // Check if user has already reviewed
@@ -220,83 +200,33 @@ export default function AdvisorProfile() {
     setShowPaymentModal(true);
   };
 
-  const handlePaymentSuccess = async (plan, paymentInfo) => {
-    console.log('💳 Payment success:', { plan: plan.name, paymentInfo });
-
+  // Called after the server has verified the Razorpay signature and created the
+  // subscription (POST /payments/verify). Nothing is created from the browser:
+  // the AdvisorSubscription, the follower count and the advisor's commission are
+  // all written by the server.
+  const handlePaymentSuccess = async (plan, verifyData) => {
     if (!currentUser || !advisor) {
       toast.error("User or advisor information missing");
       return;
     }
 
-    if (!paymentInfo) {
-      console.error("Payment info is undefined");
-      toast.error("Payment information is missing. Please contact support.");
-      return;
-    }
-
     try {
-      const settings = await PlatformSetting.filter({
-        key: 'global_commission_rate'
-      });
-      const commissionRate = settings.length > 0 ? parseFloat(settings[0].value) : 20;
-
-      const subData = {
+      // Read the subscription back from the server rather than trusting the client.
+      const [newSubscription] = (await AdvisorSubscription.filter({
         user_id: currentUser.id,
         advisor_id: advisor.id,
-        plan_id: plan.id,
-        start_date: new Date().toISOString(),
-        end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        status: 'active',
-        payment_id: paymentInfo.paymentId,
-        posts_read: 0,
-        engagement_score: 0,
-        notifications_enabled: true
-      };
+        status: 'active'
+      }, '', 1)) || [];
+      setSubscription(newSubscription || verifyData?.subscription || null);
 
-      const newSubscription = await AdvisorSubscription.create(subData);
-      setSubscription(newSubscription);
+      // The server unlocks whatever the new subscription entitles them to.
+      setPosts(await advisorApi.feed(advisorId, { limit: 20 }));
 
-      const platform_fee = plan.price * (commissionRate / 100);
-      const advisor_payout = plan.price - platform_fee;
-
-      await CommissionTracking.create({
-        subscription_id: newSubscription.id,
-        advisor_id: advisor.id,
-        user_id: currentUser.id,
-        gross_amount: plan.price,
-        platform_commission_rate: commissionRate,
-        platform_fee: platform_fee,
-        advisor_payout: advisor_payout,
-        transaction_date: new Date().toISOString()
-      });
-
-      await Advisor.update(advisor.id, {
-        follower_count: (advisor.follower_count || 0) + 1
-      });
-
-      const allPosts = await AdvisorPost.filter({
-        advisor_id: advisorId,
-        status: 'published'
-      }, '-created_date', 50);
-
-      const accessiblePosts = allPosts.filter(post => {
-        if (!post.required_plan_id) return true;
-        if (post.required_plan_id === plan.id) return true;
-
-        const postPlan = plans.find(p => p.id === post.required_plan_id);
-        if (postPlan && plan.price >= postPlan.price) {
-          return true;
-        }
-
-        return false;
-      });
-
-      setPosts(accessiblePosts);
-
-      toast.success(`You are now subscribed to ${advisor.display_name} !`);
+      toast.success(`Payment received. You are now subscribed to ${advisor.display_name}.`);
     } catch (error) {
-      console.error("❌ Subscription processing failed:", error);
-      toast.error("An error occurred during subscription. Please contact support.");
+      console.error("❌ Loading the new subscription failed:", error);
+      // The payment and subscription are already recorded server-side.
+      toast.success(`Payment received. Your subscription to ${advisor.display_name} is active - refresh the page if it does not appear.`);
     } finally {
       setShowPaymentModal(false);
       setSelectedPlan(null);
@@ -354,55 +284,6 @@ export default function AdvisorProfile() {
   };
 
   const canLeaveReview = currentUser && subscription;
-
-  const getPostPlanBadge = (postPlanId) => {
-    if (!postPlanId) {
-      return (
-        <Badge className="bg-premium-muted text-primary text-xs">
-          <Users className="w-3 h-3 mr-1" />
-          All Subscribers
-        </Badge>
-      );
-    }
-
-    const plan = plans.find(p => p.id === postPlanId);
-    if (!plan) return null;
-
-    const isHighTier = plan.price >= 2000;
-
-    return (
-      <Badge className={`text - xs flex items - center gap - 1 ${isHighTier
-        ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white'
-        : 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white'
-        } `}>
-        {isHighTier ? <Crown className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
-        {plan.name} Exclusive
-      </Badge>
-    );
-  };
-
-  const getRecommendationBadge = (post) => {
-    if (!post.recommendation_status || post.recommendation_status === 'active') return null;
-
-    const config = {
-      target_hit: { color: 'bg-buy-muted text-buy-muted-foreground border-buy/30', label: '🎯 Target Hit', icon: '✅' },
-      stop_loss_hit: { color: 'bg-sell-muted text-sell-muted-foreground border-sell/30', label: '⚠️ Stop Loss', icon: '🛑' },
-      expired: { color: 'bg-surface-2 text-foreground border-border', label: 'Expired', icon: '⏰' },
-      closed: { color: 'bg-premium-muted text-primary border-protocall-premium-light', label: 'Closed', icon: '✓' }
-    };
-
-    const status = config[post.recommendation_status];
-    if (!status) return null;
-
-    return (
-      <Badge className={`${status.color} border text - xs font - semibold`}>
-        {status.label}
-        {post.return_percentage && (
-          <span className="ml-1">({post.return_percentage > 0 ? '+' : ''}{post.return_percentage.toFixed(1)}%)</span>
-        )}
-      </Badge>
-    );
-  };
 
   const getPlanColor = (planName) => {
     const name = planName?.toLowerCase();
@@ -517,8 +398,14 @@ export default function AdvisorProfile() {
                   </div>
                   <div className="flex items-center gap-1">
                     <BarChart3 className="w-4 h-4" />
-                    <span>{advisor.success_rate || 'N/A'}% Success Rate</span>
+                    <span>{advisor.success_rate ? `${advisor.success_rate}% Success Rate` : 'Success rate not available'}</span>
                   </div>
+                  {advisor.sebi_registration_number && (
+                    <div className="flex items-center gap-1">
+                      <Shield className="w-4 h-4" />
+                      <span>SEBI {advisor.sebi_registration_number}</span>
+                    </div>
+                  )}
                 </div>
                 <p className="text-subtle leading-relaxed mb-4">{advisor.bio}</p>
                 <div className="flex flex-wrap gap-2">
@@ -544,8 +431,6 @@ export default function AdvisorProfile() {
               {plans.length > 0 ? (
                 <div className="grid md:grid-cols-3 gap-6">
                   {plans.map((plan) => {
-                    const activeSubs = 0; // You can calculate this if needed
-
                     return (
                       <Card key={plan.id} className={`relative overflow-hidden hover:shadow-2xl transition-all duration-300 ${plan.is_active ? 'border-2 border-protocall-premium-light' : 'border-2 border-border opacity-75'
                         }`}>
@@ -560,7 +445,7 @@ export default function AdvisorProfile() {
 
                           <div className="flex items-baseline justify-center gap-1">
                             <span className="text-4xl font-bold text-white">₹{plan.price?.toLocaleString() || 0}</span>
-                            <span className="text-white/90 text-sm font-medium">/ {plan.billing_interval}</span>
+                            <span className="text-white/90 text-sm font-medium">/ {{ monthly: 'month', quarterly: 'quarter', yearly: 'year' }[plan.billing_interval] || 'month'}</span>
                           </div>
                         </div>
 
@@ -569,15 +454,6 @@ export default function AdvisorProfile() {
                             <p className="text-sm text-subtle mb-4 text-center leading-relaxed">
                               {plan.description}
                             </p>
-                          )}
-
-                          {plan.monthly_post_limit && (
-                            <div className="bg-premium-muted rounded-lg p-3 mb-4 border border-protocall-premium-light">
-                              <p className="text-xs text-subtle mb-1 text-center">Monthly Post Limit</p>
-                              <p className="text-lg font-bold text-primary text-center">
-                                {plan.monthly_post_limit} Posts/Month
-                              </p>
-                            </div>
                           )}
 
                           {plan.features && plan.features.length > 0 && (
@@ -624,69 +500,51 @@ export default function AdvisorProfile() {
               <CardTitle>Recent Advisory Posts</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              {subscription ? (
-                posts.length > 0 ? (
-                  <div className="space-y-4">
-                    {posts.map((post) => (
-                      <div key={post.id} className="p-4 border-2 border-border rounded-xl bg-white hover:shadow-md transition-shadow">
-                        <div className="flex items-start justify-between mb-2">
-                          <h4 className="font-semibold text-lg">{post.title}</h4>
-                          <div className="flex items-center gap-2">
-                            {getPostPlanBadge(post.required_plan_id)}
-                            {post.view_count > 0 && (
-                              <Badge variant="outline" className="text-xs">
-                                <Eye className="w-3 h-3 mr-1" />
-                                {post.view_count} views
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-
-                        {getRecommendationBadge(post)}
-
-                        <p className="text-sm text-subtle mt-2 mb-3">{post.content}</p>
-                        <div className="flex items-center gap-3 flex-wrap">
-                          {post.stock_symbol && (
-                            <Badge variant="outline" className="rounded-lg font-semibold">
-                              {post.stock_symbol}
-                            </Badge>
-                          )}
-                          {post.recommendation_type && (
-                            <Badge className={
-                              post.recommendation_type === 'buy' ? 'bg-buy-muted text-buy-muted-foreground' :
-                                post.recommendation_type === 'sell' ? 'bg-sell-muted text-sell-muted-foreground' :
-                                  'bg-hold-muted text-hold-muted-foreground'
-                            }>
-                              {post.recommendation_type.toUpperCase()}
-                            </Badge>
-                          )}
-                          {post.target_price && (
-                            <Badge variant="outline">
-                              Target: ₹{post.target_price}
-                            </Badge>
-                          )}
-                          {post.current_price && (
-                            <Badge variant="outline" className="bg-premium-muted">
-                              Current: ₹{post.current_price.toFixed(2)}
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-3">
-                          Posted {format(new Date(post.created_date), 'MMM d, yyyy h:mm a')}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground text-center py-8">No posts available for your subscription plan yet.</p>
-                )
+              {postsError ? (
+                <p className="text-sell-muted-foreground text-center py-8">We could not load advisory posts. Please refresh the page.</p>
+              ) : posts.length === 0 ? (
+                <p className="text-muted-foreground text-center py-8">No advisory posts have been published yet.</p>
               ) : (
-                <div className="text-center p-8 bg-surface-2 rounded-xl">
-                  <Lock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="font-semibold text-lg">Content Locked</h3>
-                  <p className="text-subtle mb-4">
-                    Subscribe to one of the plans above to view exclusive advisory posts.
-                  </p>
+                <div className="space-y-4">
+                  {posts.map((post) => (post.locked ? (
+                    <div key={post.id} className="p-4 border-2 border-dashed border-border rounded-xl bg-surface-2">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <h4 className="font-semibold text-lg flex items-center gap-2"><Lock className="w-4 h-4 text-muted-foreground shrink-0" />{post.title}</h4>
+                          <p className="text-sm text-subtle mt-1">
+                            {post.required_plan_name
+                              ? `Available to subscribers on the ${post.required_plan_name} plan and above.`
+                              : 'Available to subscribers.'}
+                          </p>
+                        </div>
+                        <p className="text-xs text-muted-foreground whitespace-nowrap">{format(new Date(post.created_date), 'MMM d, yyyy')}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div key={post.id} className="p-4 border-2 border-border rounded-xl bg-white hover:shadow-md transition-shadow">
+                      <div className="flex items-start justify-between mb-2 gap-3">
+                        <h4 className="font-semibold text-lg">{post.title}</h4>
+                        <Badge variant="outline" className="text-xs shrink-0">
+                          {post.visibility === 'public' ? <><Users className="w-3 h-3 mr-1" />Public</> : <><Lock className="w-3 h-3 mr-1" />{post.required_plan_name ? `${post.required_plan_name}+` : 'Subscribers'}</>}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-subtle mt-2 mb-3 whitespace-pre-line">{post.content}</p>
+                      <div className="flex items-center gap-3 flex-wrap">
+                        {post.stock_symbol && <Badge variant="outline" className="rounded-lg font-semibold">{post.stock_symbol}</Badge>}
+                        {post.recommendation_type && (
+                          <Badge className={post.recommendation_type === 'buy' ? 'bg-buy-muted text-buy-muted-foreground' : post.recommendation_type === 'sell' ? 'bg-sell-muted text-sell-muted-foreground' : 'bg-hold-muted text-hold-muted-foreground'}>
+                            {post.recommendation_type.toUpperCase()}
+                          </Badge>
+                        )}
+                        {post.target_price && <Badge variant="outline">Target: ₹{Number(post.target_price)}</Badge>}
+                        {post.stop_loss && <Badge variant="outline">Stop loss: ₹{Number(post.stop_loss)}</Badge>}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-3">Posted {format(new Date(post.created_date), 'MMM d, yyyy h:mm a')}</p>
+                    </div>
+                  )))}
+                  {!subscription && posts.some((p) => p.locked) && (
+                    <p className="text-center text-sm text-subtle">Subscribe to one of the plans above to unlock subscriber-only advisories.</p>
+                  )}
                 </div>
               )}
             </CardContent>

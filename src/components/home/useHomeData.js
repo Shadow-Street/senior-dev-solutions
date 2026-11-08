@@ -87,12 +87,8 @@ export function useHomeData() {
     trendingCount: asArray(market?.stocks).length,
     popularRooms,
     recentPolls,
-    mostDiscussed: topCounts(pollsPerStock, 6),
     trendingTopics: topCounts(threadsPerStock, 5),
     votesCast,
-    gainers: asArray(market?.gainers),
-    losers: asArray(market?.losers),
-    trending: asArray(market?.stocks),
     pollStock,
   };
 }

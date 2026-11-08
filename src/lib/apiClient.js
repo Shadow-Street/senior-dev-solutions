@@ -145,8 +145,10 @@ export const authAPI = {
     return response.data;
   },
 
-  async googleLogin(token, role = 'user') {
-    const response = await apiClient.post('/auth/google', { token, role });
+  // `token` is the Google ID token (GIS credential). No role is sent: the
+  // server creates Google accounts as plain users.
+  async googleLogin(token) {
+    const response = await apiClient.post('/auth/google', { token });
     if (response.data.accessToken) {
       localStorage.setItem('accessToken', response.data.accessToken);
       // Without this the refresh token was issued and then thrown away, so the
@@ -361,6 +363,19 @@ export const TypingIndicator = createEntityAPI('/typing-indicators');
 // Platform Settings
 export const PlatformSetting = createEntityAPI('/platform/settings');
 
+// Global advertisement switch. GET is public (works signed out); PUT is
+// admin / super_admin only and takes { enabled: boolean }.
+export const AdsSetting = {
+  async get() {
+    const response = await apiClient.get('/platform/settings/ads-status');
+    return response.data;
+  },
+  async set(enabled) {
+    const response = await apiClient.put('/platform/settings/ads-status', { enabled });
+    return response.data;
+  },
+};
+
 // News & Content
 export const News = {
   ...createEntityAPI('/news'),
@@ -368,6 +383,16 @@ export const News = {
     const params = { limit };
     if (category) params.category = category;
     const response = await apiClient.get('/news/latest', { params });
+    return response.data;
+  },
+  /**
+   * Indian market news (Marketaux, via the backend).
+   * params: { q, symbols, industries, sentiment, range, page, limit }
+   * Resolves to { configured, articles, meta }; `configured: false` means the
+   * server has no news API key.
+   */
+  async getFeed(params = {}, signal) {
+    const response = await apiClient.get('/news/feed', { params, signal });
     return response.data;
   }
 };

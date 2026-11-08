@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef, useLayoutEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import StatTile from "@/components/common/StatTile";
 import pollsBanner from "@/assets/brand/polls-bull-bear.webp";
@@ -28,118 +28,23 @@ import { toast } from 'sonner';
 import { Poll, PollVote } from "@/lib/apiClient";
 import apiClient from '@/lib/apiClient';
 import PollCard from "../components/polls/PollCard";
+import { POLL_GRID_CLASS, buildPollGridCells } from "../components/polls/PollGrid";
+import { useAdsEnabled } from "@/components/hooks/useAdsEnabled";
 import CreatePollModal from "../components/polls/CreatePollModal";
-import VoteModal from "../components/polls/VoteModal";
 import ShareRoomModal from "../components/chat/ShareRoomModal";
 import EmptyState from "../components/ui/EmptyState";
 import PollCardSkeleton from "../components/ui/PollCardSkeleton";
+import { getPollTally } from "@/lib/pollVotes";
 import { useAuth } from "@/components/context/AuthContext";
 
 import { usePollSocket } from "@/hooks/usePollSocket";
 
-// Number of masonry columns, tracking the same md / lg breakpoints as the
-// grid classes (768px → 2, 1024px → 3) so the stacks and the CSS agree.
-function useColumnCount() {
-  const query = () => {
-    if (typeof window === "undefined" || !window.matchMedia) return 3;
-    if (window.matchMedia("(min-width: 1024px)").matches) return 3;
-    if (window.matchMedia("(min-width: 768px)").matches) return 2;
-    return 1;
-  };
-  const [count, setCount] = useState(query);
-
-  useEffect(() => {
-    if (!window.matchMedia) return undefined;
-    const lists = ["(min-width: 1024px)", "(min-width: 768px)"].map((q) => window.matchMedia(q));
-    const update = () => setCount(query());
-    lists.forEach((l) => l.addEventListener("change", update));
-    // Backup: some environments (device emulation, embedded webviews) resize
-    // without dispatching media-query change events. Same count = no render.
-    window.addEventListener("resize", update);
-    return () => {
-      lists.forEach((l) => l.removeEventListener("change", update));
-      window.removeEventListener("resize", update);
-    };
-  }, []);
-
-  return count;
-}
-
-/**
- * Balanced masonry placement.
- *
- * Each card goes into whichever column is currently shortest, in list order,
- * so newest-first still reads left to right across the top while the columns
- * end at roughly the same height. Heights are measured from the rendered
- * cards (they vary with ads, locks and vote buttons, so they cannot be
- * guessed).
- *
- * The placement is computed once every card in the current list has been
- * measured, and then held until the list or the column count changes. Later
- * height changes — a vote swapping buttons for "You voted", say — do not
- * reshuffle cards under the user's pointer. Moving a card between columns
- * also remounts it, which is another reason not to do it after load.
- */
-function useBalancedColumns(items, columnCount, getId) {
-  // Callback ref held in state: the grid mounts later than the list arrives
-  // (it waits for the loading flag), and the measuring effect must re-run then.
-  const [root, setRoot] = useState(null);
-  const heights = useRef(new Map());
-  const ids = items.map(getId);
-  const layoutKey = `${columnCount}|${ids.join(",")}`;
-
-  const place = () => {
-    const cols = Array.from({ length: columnCount }, () => ({ height: 0, items: [] }));
-    items.forEach((item) => {
-      const target = cols.reduce((a, b) => (b.height < a.height ? b : a));
-      target.items.push(item);
-      // Unmeasured cards count as one typical card until measured.
-      target.height += heights.current.get(getId(item)) ?? 520;
-    });
-    return cols.map((c) => c.items);
-  };
-
-  const [layout, setLayout] = useState({ key: null, settled: false, columns: [] });
-  const current = layout.key === layoutKey ? layout : { key: layoutKey, settled: false, columns: place() };
-  if (current !== layout) setLayout(current);
-
-  useLayoutEffect(() => {
-    if (!root || current.settled) return undefined;
-
-    const nodes = [...root.querySelectorAll("[data-masonry-id]")];
-    const settleIfMeasured = () => {
-      if (!ids.every((id) => heights.current.get(id) > 0)) return false;
-      setLayout({ key: layoutKey, settled: true, columns: place() });
-      return true;
-    };
-
-    // Measure synchronously first: layout effects run after DOM mutation and
-    // before paint, so offsetHeight is already correct here.
-    nodes.forEach((n) => heights.current.set(n.dataset.masonryId, n.offsetHeight));
-    if (settleIfMeasured() || typeof ResizeObserver === "undefined") return undefined;
-
-    // Fallback for cards that had no size yet (e.g. rendered while hidden).
-    const observer = new ResizeObserver((entries) => {
-      entries.forEach((e) => heights.current.set(e.target.dataset.masonryId, e.contentRect.height));
-      if (settleIfMeasured()) observer.disconnect();
-    });
-    nodes.forEach((n) => observer.observe(n));
-    return () => observer.disconnect();
-    // place/ids are derived from layoutKey; re-running on it is sufficient.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [root, layoutKey, current.settled]);
-
-  return { containerRef: setRoot, columns: current.columns };
-}
-
 export default function Polls() {
   const { user } = useAuth(); // Use AuthContext instead of localStorage
-  const columnCount = useColumnCount();
+  const adsEnabled = useAdsEnabled();
   const [polls, setPolls] = useState([]);
   const [userVotes, setUserVotes] = useState({});
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showVoteModal, setShowVoteModal] = useState(false);
-  const [selectedPoll, setSelectedPoll] = useState(null);
   const [editingPoll, setEditingPoll] = useState(null); // ✅ State for editing poll
   const [sharePoll, setSharePoll] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -223,53 +128,10 @@ export default function Polls() {
     fetchPolls();
   }, [user]);
 
-  const handleVote = async (pollId, vote) => {
-    if (!user) {
-      toast.error("Please log in to vote");
-      return;
-    }
-
-    // Map vote type to option_index
-    const voteTypeMap = {
-      'buy': 0, 'sell': 1, 'hold': 2,
-      'bullish': 0, 'bearish': 1, 'neutral': 2,
-      'yes': 0, 'no': 1
-    };
-
-    const option_index = voteTypeMap[vote];
-    if (option_index === undefined) {
-      toast.error('Invalid vote option');
-      return;
-    }
-
-    try {
-      // Submit vote using the /cast endpoint directly with apiClient
-      const response = await apiClient.post('/polls/votes/cast', {
-        poll_id: pollId,
-        option_index
-      });
-
-      const voteData = response.data.vote;
-
-      // Update local state
-      setUserVotes(prev => ({ ...prev, [pollId]: { ...voteData, vote_value: vote } }));
-
-      // Refresh polls to get updated counts
-      const updatedPolls = await Poll.list('created_at', 100);
-      if (updatedPolls && updatedPolls.length > 0) {
-        setPolls(updatedPolls);
-      }
-
-      toast.success(response.data.message || "Vote submitted successfully!");
-    } catch (error) {
-      console.error("Failed to submit vote:", error);
-
-      // Show user-friendly error message
-      const errorMessage = error.response?.data?.message ||
-        error.response?.data?.error ||
-        "Failed to submit vote. Please try again.";
-      toast.error(errorMessage);
-    }
+  // PollCard has already cast the vote; just remember it so the card stays in
+  // its "You voted" state when the list re-renders.
+  const handleVoteRecorded = (pollId, vote) => {
+    if (vote) setUserVotes(prev => ({ ...prev, [pollId]: vote }));
   };
 
   const handleCreatePoll = async (pollData) => {
@@ -359,10 +221,18 @@ export default function Polls() {
       if (filter === "closed" && poll.status !== "closed") return false;
 
       return matchesSearch && matchesFilter;
+    }).sort((a, b) => {
+      const created = (p) => new Date(p.created_at || p.created_date || 0).getTime();
+      if (sortBy === "newest") return created(b) - created(a);
+      const votes = (p) => getPollTally(p).total;
+      // "Trending": most votes among polls from the last 7 days first.
+      if (sortBy === "trending") {
+        const recent = (p) => (Date.now() - created(p) < 7 * 24 * 60 * 60 * 1000 ? 1 : 0);
+        return recent(b) - recent(a) || votes(b) - votes(a) || created(b) - created(a);
+      }
+      return votes(b) - votes(a) || created(b) - created(a);
     });
-  }, [polls, searchTerm, filter]);
-
-  const masonry = useBalancedColumns(filteredPolls, columnCount, (poll) => String(poll.id));
+  }, [polls, searchTerm, filter, sortBy]);
 
   // Calculate user stats from actual data
   const userStats = useMemo(() => {
@@ -442,7 +312,7 @@ export default function Polls() {
             text-white/80 — an opacity that drops the contrast below the 4.5:1
             floor on the lighter fills. StatTile keeps the text at full white
             and takes its hierarchy from size and weight instead. */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
           <StatTile
             title="Polls Voted"
             value={userStats.pollsVoted}
@@ -474,10 +344,13 @@ export default function Polls() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 pointer-events-none" />
               <Input
-                placeholder="Search polls by title or stock symbol..."
+                placeholder="Search polls or stock symbol..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-11"
+                aria-label="Search polls"
+                className="h-11 rounded-lg border border-protocall-premium-light bg-white pl-10 pr-4 transition-all duration-200
+                           placeholder:text-muted-foreground hover:border-primary/40
+                           focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-0"
               />
             </div>
 
@@ -496,12 +369,10 @@ export default function Polls() {
             </div>
           </div>
 
-          {/* Filter tabs. All white in every state: the selected tab is marked
-              by a brand-blue outline and text rather than a fill, and hover
-              sets both background and text so the label can never vanish
-              into a matching colour (the old hover inherited the Button's
-              purple fill under purple text). */}
-          <div className="flex gap-2 flex-wrap" role="group" aria-label="Filter polls">
+          {/* Filter tabs, same pattern as the Chat Rooms filter: the selected
+              tab is a filled primary pill with a soft glow; the others are
+              white with a visible border and a hover state. */}
+          <div className="flex flex-wrap items-center gap-3" role="group" aria-label="Filter polls">
             {[
               { value: "all", label: "All Polls", icon: BarChart3 },
               { value: "premium", label: "Premium", icon: Star },
@@ -512,16 +383,16 @@ export default function Polls() {
               return (
                 <Button
                   key={filterOption.value}
+                  type="button"
                   onClick={() => setFilter(filterOption.value)}
-                  size="sm"
-                  variant="outline"
+                  variant="ghost"
                   aria-pressed={selected}
-                  className={`h-9 px-4 rounded-full font-semibold transition-all duration-200 flex items-center gap-2 bg-card ${selected
-                    ? 'border-premium text-premium-muted-foreground ring-1 ring-premium shadow-sm hover:bg-premium-muted hover:text-premium-muted-foreground'
-                    : 'border-border text-foreground hover:border-premium-light hover:bg-premium-muted hover:text-premium-muted-foreground'
+                  className={`h-9 rounded-full px-4 font-semibold transition-all duration-200 ${selected
+                    ? 'border border-primary bg-primary text-primary-foreground shadow-[0_0_0_3px_rgba(109,40,217,0.15)] hover:bg-primary hover:text-primary-foreground'
+                    : 'border border-border bg-white text-foreground shadow-sm hover:border-primary/40 hover:bg-premium-muted hover:text-premium-muted-foreground'
                     }`}
                 >
-                  <filterOption.icon className={`w-4 h-4 ${selected ? 'text-premium' : 'text-muted-foreground'}`} />
+                  <filterOption.icon className="mr-2 h-4 w-4" />
                   {filterOption.label}
                 </Button>
               );
@@ -531,7 +402,7 @@ export default function Polls() {
 
         {/* Loading State */}
         {isLoading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <PollCardSkeleton key={i} />
             ))}
@@ -557,38 +428,29 @@ export default function Polls() {
           />
         )}
 
-        {/* Polls Grid — masonry.
-            Cells differ a lot in height (some carry an ad above the poll, and
-            open polls have vote buttons that closed ones do not). A row-based
-            grid either left gaps under the short cards (items-start) or
-            stretched them with empty bands (stretch). Instead each column is
-            its own stack, filled shortest-first (see useBalancedColumns). */}
+        {/* Polls grid. A real CSS grid: every card in a row stretches to the
+            row's height and pins its actions to the bottom (PollCard), so rows
+            line up. A sponsored card is its own grid item, ahead of the poll
+            it belongs to. */}
         {!isLoading && filteredPolls.length > 0 && (
-          <div ref={masonry.containerRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-            {masonry.columns.map((columnPolls, col) => (
-              <div key={col} className="flex min-w-0 flex-col gap-6">
-                {columnPolls.map((poll) => (
-                  <div key={poll.id} data-masonry-id={poll.id}>
-                    <PollCard
-                      key={poll.id}
-                      poll={poll}
-                      user={user}
-                      userVote={userVotes[poll.id]}
-                      onVoteSubmit={(vote) => handleVote(poll.id, vote)}
-                      onPledge={() => { }}
-                      onViewDetails={() => {
-                        setSelectedPoll(poll);
-                        setShowVoteModal(true);
-                      }}
-                      onDelete={handleDeletePoll}
-                      onEdit={handleEditPoll} // ✅ Added edit handler
-                      onShare={setSharePoll}
-                      userPledge={null}
-                    />
-                  </div>
-                ))}
-              </div>
-            ))}
+          <div className={POLL_GRID_CLASS}>
+            {buildPollGridCells(
+              filteredPolls,
+              (poll) => (
+                <PollCard
+                  poll={poll}
+                  user={user}
+                  userVote={userVotes[poll.id]}
+                  withAd={false}
+                  onVoteSubmit={(vote) => handleVoteRecorded(poll.id, vote)}
+                  onDelete={handleDeletePoll}
+                  onEdit={handleEditPoll}
+                  onShare={setSharePoll}
+                  userPledge={null}
+                />
+              ),
+              adsEnabled,
+            )}
           </div>
         )}
 
@@ -598,14 +460,6 @@ export default function Polls() {
           room={null}
           user={user}
           onCreatePoll={handleCreatePoll}
-        />
-
-        <VoteModal
-          open={showVoteModal}
-          onClose={() => setShowVoteModal(false)}
-          poll={selectedPoll}
-          userVote={selectedPoll ? userVotes[selectedPoll.id] : undefined}
-          onVote={handleVote}
         />
 
         <ShareRoomModal

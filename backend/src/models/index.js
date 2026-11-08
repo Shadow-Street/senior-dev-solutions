@@ -7,6 +7,9 @@ const sequelize = new Sequelize(
   String(process.env.DB_PASSWORD),
   {
     host: process.env.DB_HOST || "127.0.0.1",
+    // Honoured by deploy/db-migrate.sh too, so migrations and the API always
+    // talk to the same server.
+    port: Number(process.env.DB_PORT) || 3306,
     dialect: process.env.DB_DIALECT || "mysql",
     logging: false,
   }
@@ -35,6 +38,7 @@ db.PledgeExecutionRecord = require("./PledgeExecutionRecord")(sequelize);
 db.PledgeAccessRequest = require("./PledgeAccessRequest")(sequelize);
 db.FundTransaction = require("./FundTransaction")(sequelize);
 db.FeatureConfig = require("./FeatureConfig")(sequelize);
+db.ProviderCredential = require("./ProviderCredential")(sequelize);
 
 // ============ ASSOCIATIONS ============
 

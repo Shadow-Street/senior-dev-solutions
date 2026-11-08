@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,6 @@ import {
   Users,
   Crown,
   Shield,
-  Lock,
   Star,
   MoreVertical,
   Trash2,
@@ -28,72 +27,63 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
 import { usePlatformSettings } from "../hooks/usePlatformSettings";
 import { useSubscription } from "@/components/hooks/useSubscription";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import AdDisplay from '../dashboard/AdDisplay';
 import { toast } from 'sonner';
-import { Subscription, Poll } from '@/api/entities';
+import { Poll } from '@/api/entities';
 import apiClient from '@/lib/apiClient';
 import { format } from 'date-fns';
 import PremiumAccessOverlay from '../common/PremiumAccessOverlay';
+import { getPollTally, withVoteApplied } from '@/lib/pollVotes';
+import { pollShowsAd } from './pollAd';
+import { useAdsEnabled } from '@/components/hooks/useAdsEnabled';
 
-export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDetails, onDelete, onEdit, isLocked, userPledge, onShare }) {
+// Per-tone styling for result bars and the option buttons. Tones come from the
+// option label (see optionTone), so Buy / Bullish / Yes share a look.
+const TONE_STYLES = {
+  positive: {
+    icon: TrendingUp,
+    text: 'text-buy-muted-foreground',
+    bar: 'bg-buy',
+    idle: 'bg-buy-muted text-buy-muted-foreground border border-buy/30 hover:bg-buy-muted hover:border-buy',
+    voted: 'bg-buy text-buy-foreground hover:bg-buy',
+  },
+  negative: {
+    icon: TrendingDown,
+    text: 'text-sell-muted-foreground',
+    bar: 'bg-sell',
+    idle: 'bg-sell-muted text-sell-muted-foreground border border-sell/30 hover:bg-sell-muted hover:border-sell',
+    voted: 'bg-sell text-sell-foreground hover:bg-sell',
+  },
+  neutral: {
+    icon: Minus,
+    text: 'text-hold-muted-foreground',
+    bar: 'bg-hold',
+    idle: 'bg-hold-muted text-hold-muted-foreground border border-hold/30 hover:bg-hold-muted hover:border-hold',
+    voted: 'bg-hold text-hold-foreground hover:bg-hold',
+  },
+  other: {
+    icon: Star,
+    text: 'text-primary',
+    bar: 'bg-primary',
+    idle: 'bg-surface-2 text-foreground border border-border hover:bg-surface-2 hover:border-primary/40',
+    voted: 'bg-primary text-primary-foreground hover:bg-primary',
+  },
+};
+
+export default function PollCard({ poll, user, userVote, onVoteSubmit, onDelete, onEdit, isLocked, userPledge, onShare, withAd = true }) {
   const { settings, isLoading: settingsLoading } = usePlatformSettings();
   const subscriptionContext = useSubscription();
   // A poll image that 404s should disappear, not leave an empty frame.
   const [imageFailed, setImageFailed] = useState(false);
-  // Whether this cell shows an ad.
-  //
-  // This was `Math.random() < 0.2` evaluated inline during render, so the
-  // ad appeared and vanished on every re-render — casting a vote could make
-  // it pop in or out and visibly reflow the grid. Deriving it from the poll
-  // id keeps roughly the same 1-in-5 rate while staying stable for a given
-  // poll, which is also what render purity requires.
-  const showAd = useMemo(() => {
-    const id = String(poll?.id ?? '');
-    if (!id) return false;
-    let hash = 0;
-    for (let i = 0; i < id.length; i += 1) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
-    return hash % 5 === 0;
-  }, [poll?.id]);
-
-  /**
-   * Per-card accent colour.
-   *
-   * Decorative, not semantic: a poll carries several sentiments at once (buy,
-   * sell, hold), so one colour cannot stand for its result, and using the
-   * buy/sell palette here would imply a recommendation the poll does not make.
-   * The five tones are the AA-safe tile colours already in the palette — the
-   * same ones the dashboard uses — so no new hue enters the design.
-   *
-   * Derived from the poll id rather than the render order, so a card keeps its
-   * colour when the list is filtered, sorted or re-rendered. Picking by index
-   * would make every card change colour as soon as a search narrowed the grid.
-   */
-  const tone = useMemo(() => {
-    const TONES = ['purple', 'blue', 'green', 'orange', 'ink'];
-    const id = String(poll?.id ?? '');
-    if (!id) return TONES[0];
-    let hash = 0;
-    for (let i = 0; i < id.length; i += 1) hash = (hash * 33 + id.charCodeAt(i)) >>> 0;
-    return TONES[hash % TONES.length];
-  }, [poll?.id]);
-
-  const toneClasses = {
-    purple: { bar: 'bg-tile-purple', disc: 'bg-tile-purple', ring: 'group-hover:ring-tile-purple/30' },
-    blue:   { bar: 'bg-tile-blue',   disc: 'bg-tile-blue',   ring: 'group-hover:ring-tile-blue/30' },
-    // Disc carries a white initial, so it uses the spec's deep Positive green;
-    // the accent bar is a pure fill and takes the brand green.
-    green:  { bar: 'bg-buy',         disc: 'bg-positive',    ring: 'group-hover:ring-buy/50' },
-    orange: { bar: 'bg-tile-orange', disc: 'bg-tile-orange', ring: 'group-hover:ring-tile-orange/30' },
-    ink:    { bar: 'bg-tile-ink',    disc: 'bg-tile-ink',     ring: 'group-hover:ring-tile-ink/30' },
-  }[tone];
+  // Pages that lay polls out in a grid render the sponsored card as its own
+  // grid item (withAd = false); embedded uses (chat) keep it above the poll.
+  const adsEnabled = useAdsEnabled();
+  const showAd = withAd && pollShowsAd(poll?.id, adsEnabled);
 
   const [hasAccess, setHasAccess] = useState(false);
-  const [isCheckingAccess, setIsCheckingAccess] = useState(true);
 
   // Local state for optimistic updates
   const [localUserVote, setLocalUserVote] = useState(userVote || null);
@@ -136,90 +126,37 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
 
   const timeRemaining = getTimeRemaining();
 
-  // ✅ Premium Access Check using subscription features
+  // Premium access check using subscription features
   useEffect(() => {
-    const checkUserAccess = async () => {
-      if (!poll.is_premium || !user) {
-        setHasAccess(!poll.is_premium);
-        setIsCheckingAccess(false);
-        return;
-      }
+    if (!poll.is_premium || !user) {
+      setHasAccess(!poll.is_premium);
+      return;
+    }
 
-      // Admin/SuperAdmin bypass
-      if (['admin', 'super_admin'].includes(user.app_role)) {
-        setHasAccess(true);
-        setIsCheckingAccess(false);
-        return;
-      }
+    // Admin/SuperAdmin bypass
+    if (['admin', 'super_admin'].includes(user.app_role)) {
+      setHasAccess(true);
+      return;
+    }
 
-      // ✅ Check subscription features
-      const canViewPremiumPolls = subscriptionContext?.hasFeatureAccess?.('premium_polls');
-      setHasAccess(!!canViewPremiumPolls);
-      setIsCheckingAccess(false);
-    };
-
-    checkUserAccess();
+    const canViewPremiumPolls = subscriptionContext?.hasFeatureAccess?.('premium_polls');
+    setHasAccess(!!canViewPremiumPolls);
   }, [user, poll.is_premium, subscriptionContext]);
 
   const isAdvisorPoll = poll.created_by_admin || poll.created_by_role === 'admin' || poll.created_by_role === 'advisor';
-  const isPremiumDesign = poll.is_premium || isAdvisorPoll;
   const isAdmin = user && ['admin', 'super_admin'].includes(user.app_role);
   const isCreator = user && user.id === poll.created_by;
   const canAccessPollContent = isAdmin || (poll.is_premium ? hasAccess : true);
   const canBoost = user && (isCreator || isAdmin);
   const canEditDelete = isCreator || isAdmin;
 
-  // Data Preparation
-  const totalVotes = localPollData.total_votes || 0;
-  const pollVotes = localPollData.votes || {};
-  const pollOptions = localPollData.options || [];
+  // One tally for the whole card, so the bars, the vote total and the leading
+  // option can never disagree (see src/lib/pollVotes.js).
+  const tally = useMemo(() => getPollTally(localPollData), [localPollData]);
+  const totalVotes = tally.total;
+  const winningVote = tally.leader;
 
-  const iconMap = {
-    'Buy': TrendingUp, 'Sell': TrendingDown, 'Hold': Minus,
-    'Bullish': TrendingUp, 'Bearish': TrendingDown, 'Neutral': Minus,
-    'Yes': CheckCircle, 'No': Ban
-  };
-
-  const colorMap = {
-    'Buy': { color: 'text-buy-muted-foreground', bgColor: 'bg-buy' },
-    'Sell': { color: 'text-sell-muted-foreground', bgColor: 'bg-sell' },
-    'Hold': { color: 'text-hold-muted-foreground', bgColor: 'bg-hold' },
-    'Bullish': { color: 'text-buy-muted-foreground', bgColor: 'bg-buy' },
-    'Bearish': { color: 'text-sell-muted-foreground', bgColor: 'bg-sell' },
-    'Neutral': { color: 'text-hold-muted-foreground', bgColor: 'bg-hold' },
-    'Yes': { color: 'text-buy-muted-foreground', bgColor: 'bg-buy' },
-    'No': { color: 'text-sell-muted-foreground', bgColor: 'bg-sell' }
-  };
-
-  let voteData = {};
-  if (pollOptions.length > 0) {
-    pollOptions.forEach((option, index) => {
-      const voteCount = pollVotes[index] || 0;
-      const colors = colorMap[option] || { color: 'text-primary', bgColor: 'bg-primary' };
-      voteData[index] = {
-        icon: iconMap[option] || Star,
-        ...colors,
-        label: option,
-        count: voteCount,
-        percentage: totalVotes > 0 ? (voteCount / totalVotes * 100) : 0,
-      };
-    });
-  }
-
-  const getWinningVote = () => {
-    const votes = Object.entries(voteData).map(([type, data]) => ({
-      type: data.label,
-      count: data.count,
-      percentage: data.percentage
-    }));
-
-    if (totalVotes === 0) {
-      return { type: 'none', count: 0, percentage: 0 };
-    }
-    return votes.reduce((a, b) => a.count > b.count ? a : b);
-  };
-
-  const winningVote = getWinningVote();
+  const toneOf = (option) => TONE_STYLES[option.tone] || TONE_STYLES.other;
 
   // Handlers
   const handleBoostPoll = async () => {
@@ -259,7 +196,10 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
     }
   };
 
-  const handleQuickVote = async (vote) => {
+  // optionIndex is the position in poll.options - the same index the server
+  // stores - so polls whose options are not in Buy/Sell/Hold order still
+  // record the vote that was clicked.
+  const handleQuickVote = async (optionIndex) => {
     if (!user) {
       toast.error("Please log in to vote");
       return;
@@ -272,44 +212,21 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
 
     setIsVoting(true);
 
-    const previousPollData = { ...localPollData };
+    const previousPollData = localPollData;
     const previousUserVote = localUserVote;
 
-    const voteTypeMap = {
-      'buy': 0, 'sell': 1, 'hold': 2,
-      'bullish': 0, 'bearish': 1, 'neutral': 2,
-      'yes': 0, 'no': 1
-    };
-
-    const option_index = voteTypeMap[vote.toLowerCase()];
-    if (option_index === undefined) {
-      toast.error('Invalid vote option');
-      setIsVoting(false);
-      return;
-    }
-
-    // Optimistic Update
-    const voteField = `${vote.toLowerCase()}_votes`;
-    const newPollData = {
-      ...localPollData,
-      [voteField]: (localPollData[voteField] || 0) + 1,
-      total_votes: (localPollData.total_votes || 0) + 1
-    };
-
-    // IMPORTANT: Set localUserVote to an object mimicking the backend response
+    // Optimistic update
     setLocalUserVote({
       poll_id: poll.id,
       user_id: user.id,
-      option_index: option_index,
-      vote_value: vote // optional helper
+      option_index: optionIndex,
     });
-
-    setLocalPollData(newPollData);
+    setLocalPollData(withVoteApplied(localPollData, optionIndex));
 
     try {
       const response = await apiClient.post('/polls/votes/cast', {
         poll_id: poll.id,
-        option_index
+        option_index: optionIndex
       });
 
       toast.success(response.data.message || "Your vote has been recorded!");
@@ -319,8 +236,10 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
         setLocalPollData(updatedPoll);
       }
 
-      if (onVoteSubmit) {
-        onVoteSubmit(vote).catch(() => { });
+      try {
+        onVoteSubmit?.(response.data.vote);
+      } catch (callbackError) {
+        console.error('onVoteSubmit failed:', callbackError);
       }
 
     } catch (error) {
@@ -336,28 +255,26 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
     }
   };
 
-  // No early return for premium anymore, we handle it with overlay
-
   if (!poll.is_active) {
     return (
-      <Card className="border-2 border-dashed border-border bg-surface-2/50 relative p-6">
-        <div className="absolute inset-0 bg-border/70 flex items-center justify-center z-10">
+      <Card className="relative flex h-full flex-col rounded-2xl border border-dashed border-border bg-surface-2/50 p-6 shadow-sm">
+        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-border/70">
           <div className="text-center">
-            <Ban className="w-8 h-8 text-subtle mx-auto mb-2" />
+            <Ban className="mx-auto mb-2 h-8 w-8 text-subtle" />
             <h3 className="font-semibold text-foreground">Poll Suspended</h3>
           </div>
         </div>
-        <div className="opacity-50 space-y-4">
-          <h3 className="font-bold text-subtle">{poll.stock_symbol}</h3>
+        <div className="space-y-4 opacity-50">
+          <h3 className="text-xl font-bold text-subtle">{poll.stock_symbol}</h3>
           {/* Show grayed out results */}
           <div className="space-y-3">
-            {Object.entries(voteData).map(([voteType, data]) => (
-              <div key={voteType} className="space-y-1">
+            {tally.options.map((option) => (
+              <div key={option.index} className="space-y-1">
                 <div className="flex justify-between text-xs">
-                  <span>{data.label}</span>
-                  <span>{data.count}</span>
+                  <span>{option.label}</span>
+                  <span>{option.count}</span>
                 </div>
-                <div className="h-2 bg-border rounded-full w-full"></div>
+                <div className="h-2 w-full rounded-full bg-border"></div>
               </div>
             ))}
           </div>
@@ -366,13 +283,76 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
     );
   }
 
+  // Same button shape as "Join Conversation" on the chat room cards.
+  const actionButton = 'h-10 rounded-xl font-semibold shadow-sm transition-all duration-200 hover:shadow-md';
+
+  const renderActions = () => {
+    if (isExpired) {
+      return (
+        <div className="rounded-xl bg-surface-2 p-3 text-center">
+          <Badge className="bg-muted-foreground px-3 py-1 text-sm text-white">
+            <Clock className="mr-1 h-3 w-3" />
+            Poll Expired
+          </Badge>
+          <p className="mt-2 text-xs text-subtle">
+            Voting closed on {format(new Date(localPollData.expires_at), 'PPP')}
+          </p>
+        </div>
+      );
+    }
+
+    if (localUserVote) {
+      const voted = tally.options[localUserVote.option_index];
+      if (!voted) {
+        return (
+          <Button disabled className={`w-full bg-muted-foreground text-white disabled:opacity-100 ${actionButton}`}>
+            You voted (option {Number(localUserVote.option_index) + 1})
+          </Button>
+        );
+      }
+      return (
+        <Button
+          disabled
+          className={`w-full border-0 disabled:opacity-100 ${actionButton} ${toneOf(voted).voted}`}
+        >
+          <CheckCircle className="mr-2 h-4 w-4" />
+          You voted: {voted.label}
+        </Button>
+      );
+    }
+
+    return (
+      <div
+        className="grid gap-2"
+        style={{ gridTemplateColumns: `repeat(${Math.min(Math.max(tally.options.length, 1), 3)}, minmax(0, 1fr))` }}
+      >
+        {tally.options.map((option) => {
+          const style = toneOf(option);
+          const OptionIcon = style.icon;
+          // Icon above the label: three side-by-side buttons in a two-column
+          // grid leave ~75px each, which truncated "Bullish" to "Bulli...".
+          return (
+            <Button
+              key={option.index}
+              onClick={() => handleQuickVote(option.index)}
+              disabled={isVoting}
+              variant="ghost"
+              className={`${actionButton} h-auto min-h-10 flex-col gap-0.5 px-1.5 py-1.5 text-xs leading-tight ${style.idle}`}
+            >
+              {isVoting ? <Zap className="h-4 w-4 animate-spin" /> : <OptionIcon className="h-4 w-4 shrink-0" />}
+              <span className="max-w-full truncate">{option.label}</span>
+            </Button>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
-    // flex column rather than space-y, which adds margins that fight the
-    // layout. Deliberately no h-full: a percentage height on a grid item
-    // resolves against the grid *area*, so it re-stretched cells back to the
-    // tallest in the row and undid the grid's items-start — which is what left
-    // a 344px empty band inside cards sitting beside an ad.
-    <div className="flex flex-col gap-4">
+    // The root fills its grid cell; the Card inside takes whatever height the
+    // cell has, and the action block is pinned to the bottom (mt-auto), so
+    // cards in a row share a height and their buttons line up.
+    <div className="flex h-full flex-col gap-4">
       {showAd && (
         <AdDisplay
           placement="polls"
@@ -381,21 +361,11 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
       )}
 
       <TooltipProvider>
-        {/* h-full + flex column: the grid already stretches every card in a row
-            to the same height, but the content was top-aligned inside it, so
-            the vote bars, stats and action buttons landed at different heights
-            from card to card. Making the card a column lets the block below be
-            pinned to the bottom, which is what lines the rows up. */}
-        <Card className={`flex flex-col overflow-hidden transition-all duration-300 border-0 relative group ${isBoosted ? 'ring-2 ring-hold shadow-xl' : ''
-          } ${isPremiumDesign ? "shadow-lg bg-gradient-to-br from-white to-surface-2 hover:shadow-xl transform hover:-translate-y-1" : "bg-white hover:shadow-lg"} ${isLocked ? 'locked-poll-card' : ''}`}>
-
-          {/* Per-card accent. overflow-hidden on the Card keeps it inside the
-              rounded corners. Boosted polls already carry a ring, so the bar
-              sits under it rather than competing with it. */}
-          <div
-            aria-hidden="true"
-            className={`absolute inset-x-0 top-0 h-1.5 z-20 ${toneClasses.bar}`}
-          />
+        {/* Matches the chat room cards: white, rounded-2xl, subtle border and
+            shadow, lift on hover. Boosted / premium are small badges only. */}
+        <Card className={`group relative flex flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-sm
+                          transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/20
+                          motion-reduce:transform-none motion-reduce:transition-none ${isLocked ? 'locked-poll-card' : ''}`}>
 
           {poll.is_premium && !canAccessPollContent && !isAdmin && (
             <PremiumAccessOverlay
@@ -404,271 +374,176 @@ export default function PollCard({ poll, user, userVote, onVoteSubmit, onViewDet
             />
           )}
 
-          {isBoosted && (
-            <div className="absolute inset-0 bg-hold opacity-20 animate-pulse z-0"></div>
-          )}
-
           {poll.is_premium && (
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-protocall-grape to-protocall-blue opacity-10 rounded-full transform translate-x-16 -translate-y-16 z-0"></div>
+            <div className="pointer-events-none absolute right-0 top-0 h-32 w-32 -translate-y-16 translate-x-16 transform rounded-full bg-gradient-to-br from-protocall-grape to-protocall-blue opacity-10"></div>
           )}
 
-          {/* gap-4, not space-y-4: the space-y selector
-              (`.space-y-4 > :not([hidden]) ~ :not([hidden])`) outranks the
-              `mt-auto` below it and was silently resetting it to 16px, so the
-              bottom-anchoring never took effect. gap sets no margins. */}
-          <div className="relative z-10 flex flex-1 flex-col gap-4 p-4">
-            {/* Header */}
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  {/* White on these five tones measures 5.02:1 or better, so
-                      the initial stays legible on every one of them. */}
-                  <span
-                    aria-hidden="true"
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg
-                                text-sm font-bold text-tile-foreground shadow-sm
-                                transition-transform duration-300 group-hover:scale-105
-                                motion-reduce:transform-none motion-reduce:transition-none
-                                ${toneClasses.disc}`}
-                  >
-                    {String(poll.stock_symbol || '?').charAt(0).toUpperCase()}
-                  </span>
-                  <CardTitle className="text-lg font-bold text-foreground leading-tight">
-                    {poll.stock_symbol}
-                  </CardTitle>
-                  {isBoosted && (
-                    <Badge className="bg-hold text-hold-foreground border-0 shadow-md animate-pulse">
-                      <Flame className="w-3 h-3 mr-1" />
-                      Boosted
-                    </Badge>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-                {poll.is_premium ? (
-                  <Badge className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white border-0 shadow-md">
-                    <Crown className="w-3 h-3 mr-1" />
-                    Premium
-                  </Badge>
-                ) : isAdvisorPoll && (
-                  <Badge className="bg-premium-muted text-protocall-premium-text border border-protocall-premium-light text-xs">
-                    <Shield className="w-3 h-3 mr-1" />
-                    Advisor
-                  </Badge>
-                )}
-
-                {timeRemaining && !isExpired && (
-                  <Badge variant="outline" className="bg-hold-muted text-hold-muted-foreground border-hold/30 text-xs">
-                    <Clock className="w-3 h-3 mr-1" />
-                    {timeRemaining}
-                  </Badge>
-                )}
-
-                {(canEditDelete || canBoost) && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-6 w-6">
-                        <MoreVertical className="w-4 h-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      {canBoost && !isBoosted && (
-                        <DropdownMenuItem onClick={handleBoostPoll} disabled={isBoosting}>
-                          <Zap className="w-4 h-4 mr-2 text-hold-muted-foreground" />
-                          {isBoosting ? 'Boosting...' : 'Boost Poll (24h)'}
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuItem onClick={handleSharePoll}>
-                        <Share2 className="w-4 h-4 mr-2 text-primary" />
-                        Share Poll
-                      </DropdownMenuItem>
-                      {canEditDelete && onEdit && (
-                        <DropdownMenuItem onClick={() => onEdit(poll)}>
-                          <Edit className="w-4 h-4 mr-2 text-primary" />
-                          Edit Poll
-                        </DropdownMenuItem>
-                      )}
-                      {canEditDelete && (
-                        <DropdownMenuItem onClick={() => onDelete(poll)} className="text-sell-muted-foreground">
-                          <Trash2 className="w-4 h-4 mr-2" />
-                          Delete Poll
-                        </DropdownMenuItem>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
-              </div>
+          <div className="relative z-10 flex flex-1 flex-col gap-4 p-6">
+            {/* Badges (omitted when there are none, so titles line up) */}
+            {(poll.is_premium || isAdvisorPoll || isBoosted || (timeRemaining && !isExpired)) && (
+            <div className="flex flex-wrap items-center gap-2 pr-9">
+              {poll.is_premium ? (
+                <Badge className="border-0 bg-primary text-white hover:bg-primary">
+                  <Crown className="mr-1 h-3 w-3" />
+                  Premium
+                </Badge>
+              ) : isAdvisorPoll && (
+                <Badge className="border border-protocall-premium-light bg-premium-muted text-xs text-protocall-premium-text hover:bg-premium-muted">
+                  <Shield className="mr-1 h-3 w-3" />
+                  Advisor
+                </Badge>
+              )}
+              {isBoosted && (
+                <Badge className="border-0 bg-hold-muted text-hold-muted-foreground hover:bg-hold-muted">
+                  <Flame className="mr-1 h-3 w-3" />
+                  Boosted
+                </Badge>
+              )}
+              {timeRemaining && !isExpired && (
+                <Badge variant="outline" className="border-hold/30 bg-hold-muted text-xs text-hold-muted-foreground">
+                  <Clock className="mr-1 h-3 w-3" />
+                  {timeRemaining}
+                </Badge>
+              )}
             </div>
+            )}
 
-            <p className="text-sm text-subtle font-semibold mt-2 leading-relaxed">
-              {poll.title}
-            </p>
-
-            {localPollData.image_url && !imageFailed && (
-              <div className="mt-3 rounded-lg overflow-hidden border border-border">
-                <img
-                  src={localPollData.image_url}
-                  alt="Poll visual"
-                  loading="lazy"
-                  // A missing file used to leave a 192px empty frame with the
-                  // alt text in it, which both looked broken and threw the row
-                  // out of alignment. Drop the figure instead.
-                  onError={() => setImageFailed(true)}
-                  className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300 cursor-pointer motion-reduce:transform-none"
-                  onClick={() => window.open(localPollData.image_url, '_blank')}
-                />
+            {(canEditDelete || canBoost) && (
+              <div className="absolute right-4 top-4 z-10">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" aria-label={`Poll options for ${poll.stock_symbol || 'poll'}`}>
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {canBoost && !isBoosted && (
+                      <DropdownMenuItem onClick={handleBoostPoll} disabled={isBoosting}>
+                        <Zap className="mr-2 h-4 w-4 text-hold-muted-foreground" />
+                        {isBoosting ? 'Boosting...' : 'Boost Poll (24h)'}
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem onClick={handleSharePoll}>
+                      <Share2 className="mr-2 h-4 w-4 text-primary" />
+                      Share Poll
+                    </DropdownMenuItem>
+                    {canEditDelete && onEdit && (
+                      <DropdownMenuItem onClick={() => onEdit(poll)}>
+                        <Edit className="mr-2 h-4 w-4 text-primary" />
+                        Edit Poll
+                      </DropdownMenuItem>
+                    )}
+                    {canEditDelete && (
+                      <DropdownMenuItem onClick={() => onDelete(poll)} className="text-sell-muted-foreground">
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete Poll
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             )}
 
-            <div className="flex items-center gap-4 mt-2">
-              {poll.confidence_score && (
-                <div className="flex items-center gap-1">
-                  {Array(5).fill(0).map((_, i) => (
-                    <Star key={i} className={`w-3.5 h-3.5 ${i < poll.confidence_score ? 'text-hold fill-hold' : 'text-muted-foreground'}`} />
-                  ))}
-                </div>
-              )}
+            {/* Title block */}
+            <div>
+              <CardTitle className="mb-1 line-clamp-1 text-xl font-bold leading-tight text-foreground">
+                {poll.stock_symbol}
+              </CardTitle>
+              <p className="line-clamp-3 text-sm leading-relaxed text-subtle">
+                {poll.title}
+              </p>
             </div>
 
-            {/* Voting Results */}
-            <div className="space-y-3 pt-2">
-              {Object.entries(voteData).map(([voteType, data]) => (
-                <div key={voteType}>
-                  <div className="flex items-center justify-between text-sm mb-1.5">
-                    <div className="flex items-center gap-2">
-                      <data.icon className={`w-4 h-4 ${data.color}`} />
-                      <span className="font-medium text-subtle">{data.label}</span>
-                    </div>
-                    <span className="font-semibold text-foreground">{data.count} ({!isNaN(data.percentage) ? data.percentage.toFixed(1) : 0}%)</span>
-                  </div>
-                  <div className="w-full bg-surface-2 rounded-full h-2 overflow-hidden">
-                    <div
-                      className={`${data.bgColor} h-2 rounded-full transition-all duration-500 ease-out`}
-                      style={{ width: `${!isNaN(data.percentage) ? data.percentage : 0}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            {localPollData.image_url && !imageFailed && (
+              <button
+                type="button"
+                aria-label={`Open the ${poll.stock_symbol || 'poll'} image in a new tab`}
+                onClick={() => window.open(localPollData.image_url, '_blank', 'noopener,noreferrer')}
+                className="overflow-hidden rounded-xl border border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <img
+                  src={localPollData.image_url}
+                  alt=""
+                  loading="lazy"
+                  // A missing file used to leave a 192px empty frame, which
+                  // looked broken and threw the row out of alignment.
+                  onError={() => setImageFailed(true)}
+                  className="h-40 w-full object-cover"
+                />
+              </button>
+            )}
 
-            {/* Poll Stats Footer */}
-            <div className="flex items-center justify-between text-sm text-muted-foreground border-t border-divider pt-3">
-              <div className="flex items-center gap-1.5">
-                <Users className="w-4 h-4" />
-                <span>{totalVotes} votes</span>
+            {poll.confidence_score && (
+              <div className="flex items-center gap-1" role="img" aria-label={`Confidence ${poll.confidence_score} out of 5`}>
+                {Array(5).fill(0).map((_, i) => (
+                  <Star key={i} className={`h-3.5 w-3.5 ${i < poll.confidence_score ? 'fill-hold text-hold' : 'text-muted-foreground'}`} />
+                ))}
               </div>
-              {winningVote.type !== 'none' && (
-                <span className="font-semibold capitalize">{winningVote.type} {winningVote.percentage.toFixed(0)}%</span>
+            )}
+
+            {/* Voting results */}
+            <div className="space-y-3">
+              {tally.options.map((option) => {
+                const style = toneOf(option);
+                const OptionIcon = style.icon;
+                return (
+                  <div key={option.index}>
+                    <div className="mb-1.5 flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <OptionIcon className={`h-4 w-4 ${style.text}`} />
+                        <span className="font-medium text-subtle">{option.label}</span>
+                      </div>
+                      <span className="font-semibold tabular-nums text-foreground">{option.count} ({option.rounded}%)</span>
+                    </div>
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-surface-2">
+                      <div
+                        className={`${style.bar} h-2 rounded-full transition-all duration-500 ease-out`}
+                        style={{ width: `${option.percentage}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Stats */}
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <div className="flex items-center gap-1.5">
+                <Users className="h-4 w-4" />
+                <span>{totalVotes} {totalVotes === 1 ? 'vote' : 'votes'}</span>
+              </div>
+              {winningVote && (
+                <span className="font-semibold">
+                  {winningVote.tie ? 'Tied' : winningVote.label} {winningVote.rounded}%
+                </span>
               )}
-              {/* Share button in footer if Dropdown not used (optional, but requested in screenshot to have Share on card) */}
-              <Button variant="ghost" size="sm" onClick={handleSharePoll} className="text-muted-foreground hover:text-foreground">
-                <Share2 className="w-4 h-4 mr-1.5" />
+            </div>
+
+            {/* Actions, pinned to the bottom of the card. */}
+            <div className="mt-auto flex flex-col gap-2 border-t border-divider pt-4">
+              {renderActions()}
+
+              {userPledge && (
+                <Button disabled className={`w-full bg-gradient-to-r from-protocall-deep to-protocall-blue text-white disabled:opacity-100 ${actionButton}`}>
+                  PLEDGED: ₹{userPledge.amount_committed?.toLocaleString() || 'N/A'}
+                </Button>
+              )}
+
+              {poll.poll_type === 'pledge_poll' && !settingsLoading && !settings.pledgeEnabled && (
+                <div className="flex items-center justify-center gap-2 rounded-lg bg-surface-2 p-2 text-xs text-muted-foreground">
+                  <AlertCircle className="h-3 w-3" />
+                  <span>Pledge system currently disabled by admin.</span>
+                </div>
+              )}
+
+              <Button
+                variant="outline"
+                onClick={handleSharePoll}
+                className="h-10 w-full rounded-xl border-border font-medium text-subtle hover:bg-surface-2 hover:text-foreground"
+              >
+                <Share2 className="mr-2 h-4 w-4" />
                 Share
               </Button>
-            </div>
-
-            {/* Action Buttons — mt-auto pins just this block to the bottom, so
-                the primary control lines up across a row while everything above
-                it still flows from the top. Anchoring the whole results block
-                instead left a large empty band in the middle of shorter cards. */}
-            <div className="mt-auto pt-4">
-              {isExpired ? (
-                <div className="text-center p-4 bg-surface-2 rounded-lg">
-                  <Badge className="bg-muted-foreground text-white text-sm px-3 py-1">
-                    <Clock className="w-3 h-3 mr-1" />
-                    Poll Expired
-                  </Badge>
-                  <p className="text-xs text-subtle mt-2">
-                    Voting closed on {format(new Date(localPollData.expires_at), 'PPP')}
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {localUserVote ? (
-                    // Voted State - Show only the voted option
-                    <div className="flex justify-center">
-                      {(() => {
-                        const optionIndex = localUserVote.option_index;
-                        // Determine vote data safely
-                        const data = voteData[optionIndex];
-
-                        if (!data) {
-                          // Fallback if data is missing (e.g. data mismatch)
-                          return (
-                            <Button disabled className="w-full bg-muted-foreground text-white">
-                              You Voted (Option {optionIndex})
-                            </Button>
-                          );
-                        }
-
-                        const voteType = data.label.toLowerCase();
-                        let votedClass = 'bg-primary';
-                        if (voteType.includes('buy') || voteType.includes('bullish') || voteType.includes('yes')) {
-                          votedClass = 'bg-buy text-buy-foreground hover:bg-buy-soft';
-                        } else if (voteType.includes('sell') || voteType.includes('bearish') || voteType.includes('no')) {
-                          votedClass = 'bg-sell hover:bg-sell';
-                        } else {
-                          votedClass = 'bg-hold hover:bg-hold';
-                        }
-
-                        return (
-                          <Button
-                            disabled
-                            className={`w-full h-12 text-base rounded-xl font-bold text-white shadow-md opacity-100 disabled:opacity-100 ${votedClass}`}
-                          >
-                            <CheckCircle className="w-5 h-5 mr-2" />
-                            You voted: {data.label.toUpperCase()}
-                          </Button>
-                        );
-                      })()}
-                    </div>
-                  ) : (
-                    // Not Voted State - Show all options
-                    <div className={`grid gap-2 ${Object.keys(voteData).length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
-                      {Object.entries(voteData).map(([optionIndex, data]) => {
-                        const voteType = data.label.toLowerCase();
-                        let baseColorClass = 'bg-surface-2 text-subtle hover:bg-surface-2';
-                        if (voteType.includes('buy') || voteType.includes('bullish') || voteType.includes('yes')) {
-                          baseColorClass = 'bg-buy-muted text-buy-muted-foreground hover:bg-buy-muted border border-buy/30';
-                        } else if (voteType.includes('sell') || voteType.includes('bearish') || voteType.includes('no')) {
-                          baseColorClass = 'bg-sell-muted text-sell-muted-foreground hover:bg-sell-muted border border-sell/30';
-                        } else {
-                          baseColorClass = 'bg-hold-muted text-hold-muted-foreground hover:bg-hold-muted border border-hold/30';
-                        }
-
-                        return (
-                          <Button
-                            key={optionIndex}
-                            onClick={() => handleQuickVote(voteType)}
-                            disabled={isVoting}
-                            variant="ghost"
-                            className={`h-11 rounded-xl text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md ${baseColorClass}`}
-                          >
-                            {isVoting ? <Zap className="w-4 h-4 animate-spin" /> : <data.icon className="w-4 h-4 mr-2" />}
-                            {data.label}
-                          </Button>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {userPledge && (
-                    <div className="mt-2">
-                      <Button disabled className="w-full bg-gradient-to-r from-protocall-deep to-protocall-blue text-white font-semibold">
-                        PLEDGED: ₹{userPledge.amount_committed?.toLocaleString() || 'N/A'}
-                      </Button>
-                    </div>
-                  )}
-
-                  {poll.poll_type === 'pledge_poll' && !settingsLoading && !settings.pledgeEnabled && (
-                    <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground bg-surface-2 p-2 rounded-lg mt-2">
-                      <AlertCircle className="w-3 h-3" />
-                      <span>Pledge system currently disabled by admin.</span>
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
           </div>
         </Card>

@@ -116,6 +116,7 @@ app.use('/uploads/public', express.static(path.join('uploads', 'public')));
 // Throttle only the credential endpoints; the rest of the API is unaffected.
 app.use("/api/auth/login", authLimiter);
 app.use("/api/auth/register", authLimiter);
+app.use("/api/auth/google", authLimiter);
 app.use("/api/auth/forgot-password", authLimiter);
 app.use("/api/auth/reset-password", authLimiter);
 

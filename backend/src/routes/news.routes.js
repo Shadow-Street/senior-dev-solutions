@@ -1,4 +1,5 @@
 const express = require("express");
+const rateLimit = require("express-rate-limit");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
@@ -7,30 +8,24 @@ const { authMiddleware, adminMiddleware, optionalAuthenticate } = require("../mi
 // News CRUD
 const NewsController = require("../controllers/NewsController");
 
-// Get latest news
-router.get('/latest', NewsController.getLatestNews);
+// Public read endpoints (the News page and dashboard card are public-facing);
+// throttled per IP because every cache miss spends Marketaux free-tier quota.
+const newsLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many requests. Please slow down." },
+});
+
+// Indian market news (Marketaux). { configured:false } when no API key is set.
+router.get('/feed', newsLimiter, optionalAuthenticate, NewsController.getFeed);
+
+// Get latest news (flat array; Marketaux when configured, legacy fallback otherwise)
+router.get('/latest', newsLimiter, optionalAuthenticate, NewsController.getLatestNews);
 
 // Get news by stock
-router.get('/stock/:symbol', async (req, res) => {
-  try {
-    const { symbol } = req.params;
-    const news = await db.News.findAll({
-      where: {
-        status: 'published',
-        [db.Sequelize.Op.or]: [
-          { stock_symbols: { [db.Sequelize.Op.like]: `%${symbol}%` } },
-          { tags: { [db.Sequelize.Op.like]: `%${symbol}%` } }
-        ]
-      },
-      order: [['published_at', 'DESC']],
-      limit: 20
-    });
-    res.json(news);
-  } catch (error) {
-    console.error('[news.routes.js] request failed:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+router.get('/stock/:symbol', newsLimiter, optionalAuthenticate, NewsController.getStockNews);
 
 // Get categories
 router.get('/categories', async (req, res) => {

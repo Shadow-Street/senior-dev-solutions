@@ -23,7 +23,6 @@ export default function FeatureManager({ permissions }) {
     feature_name: '',
     description: '',
     tier: 'basic',
-    status: 'live',
   });
 
   useEffect(() => {
@@ -51,7 +50,6 @@ export default function FeatureManager({ permissions }) {
       feature_name: '',
       description: '',
       tier: 'basic',
-      status: 'live',
     });
     setShowModal(true);
   };
@@ -62,8 +60,7 @@ export default function FeatureManager({ permissions }) {
       feature_key: feature.feature_key,
       feature_name: feature.feature_name,
       description: feature.description || '',
-      tier: feature.tier,
-      status: feature.status || 'live',
+      tier: feature.tier || 'basic',
     });
     setShowModal(true);
   };
@@ -79,52 +76,38 @@ export default function FeatureManager({ permissions }) {
       return;
     }
 
-    // Validate feature key format (lowercase, underscores only)
-    if (!/^[a-z_]+$/.test(formData.feature_key)) {
-      toast.error('Feature key must be lowercase letters and underscores only');
+    // Validate feature key format (the server enforces the same rule)
+    if (!/^[a-z][a-z0-9_]+$/.test(formData.feature_key)) {
+      toast.error('Feature key must start with a letter and use lowercase letters, numbers and underscores only');
       return;
     }
 
     setIsSaving(true);
     try {
       if (editingFeature) {
-        // Update existing feature
+        // Update existing feature (the key never changes)
         await FeatureConfig.update(editingFeature.id, {
           feature_name: formData.feature_name,
           description: formData.description,
           tier: formData.tier,
-          status: formData.status,
         });
-        toast.success('Feature updated successfully!');
+        toast.success('Feature updated. It now shows in the plan editors.');
       } else {
-        // Check if feature key already exists
-        const existingFeatures = await FeatureConfig.filter({ 
-          feature_key: formData.feature_key 
-        });
-        
-        if (existingFeatures.length > 0) {
-          toast.error('Feature key already exists. Please use a unique key.');
-          setIsSaving(false);
-          return;
-        }
-
-        // Create new feature
+        // The server rejects a duplicate key with 409, which is shown below.
         await FeatureConfig.create({
           feature_key: formData.feature_key,
           feature_name: formData.feature_name,
           description: formData.description,
           tier: formData.tier,
-          status: formData.status,
-          module_type: 'feature',
         });
-        toast.success('Feature created successfully!');
+        toast.success('Feature created. You can now add it to a plan.');
       }
 
       setShowModal(false);
       loadFeatures();
     } catch (error) {
       console.error('Error saving feature:', error);
-      toast.error('Failed to save feature');
+      toast.error(error?.response?.data?.error || 'Failed to save feature. Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -146,7 +129,7 @@ export default function FeatureManager({ permissions }) {
       loadFeatures();
     } catch (error) {
       console.error('Error deleting feature:', error);
-      toast.error('Failed to delete feature');
+      toast.error(error?.response?.data?.error || 'Failed to delete feature');
     }
   };
 
@@ -398,7 +381,7 @@ export default function FeatureManager({ permissions }) {
             <div>
               <Label htmlFor="feature-key">
                 Feature Key * 
-                <span className="text-xs text-muted-foreground ml-2">(lowercase, underscores only)</span>
+                <span className="text-xs text-muted-foreground ml-2">(lowercase letters, numbers, underscores)</span>
               </Label>
               <Input
                 id="feature-key"

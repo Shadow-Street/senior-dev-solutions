@@ -22,6 +22,33 @@
         "dev"
       ],
       "port": 4000
+    },
+    {
+      "name": "api-test",
+      "runtimeExecutable": "env",
+      "runtimeArgs": [
+        "PORT=4001",
+        "npm",
+        "--prefix",
+        "backend",
+        "run",
+        "dev"
+      ],
+      "port": 4001
+    },
+    {
+      "name": "frontend-test",
+      "runtimeExecutable": "env",
+      "runtimeArgs": [
+        "VITE_API_URL=http://localhost:4001/api",
+        "VITE_WS_URL=ws://localhost:4001",
+        "npx",
+        "vite",
+        "--port",
+        "8081",
+        "--strictPort"
+      ],
+      "port": 8081
     }
   ]
 }

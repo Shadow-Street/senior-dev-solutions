@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
 const { authMiddleware, adminMiddleware, optionalAuthenticate } = require("../middleware/auth");
+const { ADS_ENABLED_KEY, coerceBoolean, isAdsEnabled, writeAdsEnabled } = require("../utils/adsSetting");
 
 // Platform Settings
 const settingsRouter = express.Router();
@@ -22,9 +23,18 @@ const settingsRouter = express.Router();
  * later is covered by default. Note `razorpay_key_id` is deliberately NOT
  * secret: it is the publishable key and the checkout needs it in the browser.
  */
-const SECRET_KEY_PATTERN = /(secret|password|passwd|private_key|api_secret|access_token|refresh_token|_pass)$|(^|_)(secret|password)(_|$)/i;
+// Secret by default: anything named like a credential (…secret, …password,
+// …token, …credentials, …webhook_url, or any …key / …Key) is blanked for
+// non-staff. Only the publishable values the browser checkout needs are
+// exempt. A new credential screen is therefore covered without remembering to
+// update this list.
+const SECRET_KEY_PATTERN = /(secret|password|passwd|token|credentials?|webhook_?url|_key|apikey)$|(^|_)(secret|password)(_|$)/i;
+const PUBLIC_SETTING_KEYS = new Set(['razorpay_key_id', 'stripe_publishable_key']);
 
-const isSecretKey = (key) => SECRET_KEY_PATTERN.test(String(key || ''));
+const isSecretKey = (key) => {
+  const name = String(key || '');
+  return !PUBLIC_SETTING_KEYS.has(name.toLowerCase()) && SECRET_KEY_PATTERN.test(name);
+};
 
 const isStaffRequest = (req) =>
   ['admin', 'super_admin', 'sub_admin'].includes(req.user?.app_role || req.user?.role);
@@ -68,6 +78,61 @@ const getWithRedaction = async (req, res) => {
   return settingsController.get(req, res);
 };
 
+/**
+ * Global advertisement switch.
+ *
+ * GET is public on purpose: signed-out visitors and every client need it to
+ * decide whether to render sponsored content, and it exposes one boolean.
+ * PUT is admin / super_admin only and takes exactly `{ enabled: boolean }`.
+ * Registered before `/key/:key` and the generated CRUD so nothing shadows it.
+ */
+settingsRouter.get('/ads-status', async (_req, res) => {
+  try {
+    const enabled = await isAdsEnabled();
+    res.set('Cache-Control', 'no-store');
+    res.json({ enabled });
+  } catch (error) {
+    console.error('[platform.routes.js] ads-status read failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+settingsRouter.put('/ads-status', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const body = req.body || {};
+    const enabled = coerceBoolean(body.enabled);
+    if (enabled === null) {
+      return res.status(400).json({ error: '`enabled` must be true or false' });
+    }
+
+    const { previous, setting } = await writeAdsEnabled(enabled, req.user.id);
+
+    // Audit trail: who flipped it, from what to what. A failed audit write
+    // must not undo or hide a successful change.
+    try {
+      await db.AuditLog.create({
+        user_id: req.user.id,
+        action: 'ads_enabled_changed',
+        entity_type: 'platform_setting',
+        entity_id: setting && setting.id ? setting.id : null,
+        old_data: { enabled: previous },
+        new_data: { enabled },
+        description: `Advertisements ${enabled ? 'enabled' : 'disabled'}`,
+        ip_address: req.ip ? String(req.ip).slice(0, 45) : null,
+        user_agent: req.headers['user-agent'] ? String(req.headers['user-agent']).slice(0, 255) : null
+      });
+    } catch (auditError) {
+      console.error('[platform.routes.js] ads audit write failed:', auditError.message);
+    }
+
+    res.set('Cache-Control', 'no-store');
+    res.json({ enabled });
+  } catch (error) {
+    console.error('[platform.routes.js] ads-status update failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Get setting by key
 settingsRouter.get('/key/:key', optionalAuthenticate, async (req, res) => {
   try {
@@ -110,6 +175,11 @@ settingsRouter.put('/key/:key', authMiddleware, adminMiddleware, async (req, res
     const { key } = req.params;
     const { value } = req.body;
 
+    // ads_enabled has a dedicated, validated, audited endpoint (/ads-status).
+    if (key === ADS_ENABLED_KEY) {
+      return res.status(400).json({ error: 'Use PUT /platform/settings/ads-status to change this setting' });
+    }
+
     const [setting] = await db.PlatformSetting.upsert({
       key,
       value,
@@ -124,6 +194,59 @@ settingsRouter.put('/key/:key', authMiddleware, adminMiddleware, async (req, res
   }
 });
 
+/**
+ * ads_enabled may only change through PUT /ads-status (validated + audited).
+ * The generated CRUD below would otherwise let an admin create, rewrite or
+ * delete the row unvalidated and unaudited; deleting it re-enables ads.
+ * Applied to every non-read request that reaches the generated routes
+ * (create, update/delete by id, bulk). Runs after auth so anonymous callers
+ * get 401/403 without a database lookup.
+ */
+const namesAdsKey = (node, depth = 0) => {
+  if (!node || typeof node !== 'object' || depth > 4) return false;
+  if (Array.isArray(node)) return node.some((n) => namesAdsKey(n, depth + 1));
+  if (node.key === ADS_ENABLED_KEY) return true;
+  return Object.values(node).some((v) => namesAdsKey(v, depth + 1));
+};
+
+const refuseAdsKeyWrites = async (req, res, next) => {
+  try {
+    const segment = req.path.split('/').filter(Boolean)[0];
+    const ids = [];
+    if (segment && segment !== 'bulk') ids.push(segment);
+    const body = req.body;
+    if (body && typeof body === 'object') {
+      // A single id is accepted by Sequelize in the bulk routes too, so
+      // normalise rather than only checking arrays.
+      if (body.ids !== undefined && body.ids !== null) ids.push(...[].concat(body.ids));
+    }
+
+    let blocked = namesAdsKey(body);
+    if (!blocked && ids.length) {
+      const hit = await db.PlatformSetting.findOne({
+        where: { id: { [db.Sequelize.Op.in]: ids.map(String) }, key: ADS_ENABLED_KEY }
+      });
+      blocked = Boolean(hit);
+    }
+    if (blocked) {
+      return res.status(403).json({ error: 'The advertisement setting can only be changed from Ad Management' });
+    }
+    next();
+  } catch (error) {
+    console.error('[platform.routes.js] ads key guard failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const READ_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
+settingsRouter.use((req, res, next) => {
+  if (READ_METHODS.has(req.method)) return next();
+  authMiddleware(req, res, (err) => {
+    if (err) return next(err);
+    adminMiddleware(req, res, (err2) => (err2 ? next(err2) : refuseAdsKeyWrites(req, res, next)));
+  });
+});
+
 // Redacting reads are registered ahead of the generated CRUD so they take
 // precedence; writes stay staff-only through the factory below.
 settingsRouter.get('/', optionalAuthenticate, listWithRedaction);
@@ -133,3 +256,4 @@ createCrudRoutes(settingsRouter, settingsController, { read: [optionalAuthentica
 router.use('/settings', settingsRouter);
 
 module.exports = router;
+module.exports.isSecretKey = isSecretKey;

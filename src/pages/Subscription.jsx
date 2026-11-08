@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/components/context/AuthContext";
 import { useSubscription } from "@/components/hooks/useSubscription";
@@ -7,38 +7,49 @@ import { createPageUrl } from "@/utils";
 import SubscriptionCheckoutModal from "@/components/subscription/SubscriptionCheckoutModal";
 import PlanCard from "@/components/subscription/PlanCard";
 import CurrentSubscriptionCard from "@/components/subscription/CurrentSubscriptionCard";
-import UserSubscriptionHistory from "@/components/subscription/UserSubscriptionHistory";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Crown, Loader2 } from "lucide-react";
+import { Crown, Loader2, AlertCircle, RefreshCw, ShieldCheck, RefreshCcw, CreditCard, Receipt } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { isFreeSubscription } from "@/lib/subscriptionApi";
 import { toast } from "sonner";
+
+const FAQ = [
+  ['Can I cancel anytime?', 'Yes. Cancel whenever you like. If you cancel early you may be refunded for the unused part of your period; otherwise you keep access until it ends. No hidden fees.'],
+  ['What payment methods do you accept?', 'Cards, UPI, net banking and wallets through Razorpay. Payments are encrypted and we never see or store your card details.'],
+  ['Can I upgrade or downgrade?', 'Yes, at any time. Choosing a different plan replaces your current one from the moment your payment is confirmed.'],
+  ['How do promo codes work?', 'Open "Have a promo code?" on a paid plan, enter it and press Apply. The discount is worked out by our server and shown on the card before you pay. A code that covers the whole price activates the plan with no payment.'],
+  ['Is there a free trial?', 'The Free plan is free forever and needs no payment details. Upgrade to Premium or VIP whenever you want more.'],
+  ['What if a payment fails?', 'You will not be charged and nothing changes on your account. Try again, or contact support with your payment id if money left your account.'],
+];
 
 export default function SubscriptionPage() {
   const [plans, setPlans] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
   const { user } = useAuth();
   const { subscription, refreshSubscription } = useSubscription();
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [billingCycle, setBillingCycle] = useState('monthly'); // 'monthly' or 'annually'
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [selectedPromo, setSelectedPromo] = useState(null);
 
   useEffect(() => {
     fetchPlans();
   }, []);
 
   const fetchPlans = async () => {
+    setIsLoading(true);
+    setLoadError(null);
     try {
       const { data } = await apiClient.get('/subscriptions/plans');
       // Sort plans: Free -> Premium -> VIP
-      const sortedPlans = data.sort((a, b) => {
+      const sortedPlans = [...(Array.isArray(data) ? data : [])].sort((a, b) => {
         const priceA = a.price_monthly !== undefined ? a.price_monthly : a.price;
         const priceB = b.price_monthly !== undefined ? b.price_monthly : b.price;
         return (Number(priceA) || 0) - (Number(priceB) || 0);
@@ -46,7 +57,7 @@ export default function SubscriptionPage() {
       setPlans(sortedPlans);
     } catch (error) {
       console.error("Error fetching plans:", error);
-      toast.error("Failed to load subscription plans");
+      setLoadError(error?.response?.data?.error || "We could not load the plans. Check your connection and try again.");
     } finally {
       setIsLoading(false);
     }
@@ -61,7 +72,7 @@ export default function SubscriptionPage() {
     return pct > best ? pct : best;
   }, 0);
 
-  const handleSelectPlan = (plan, cycle = billingCycle) => {
+  const handleSelectPlan = (plan, cycle = billingCycle, promo = null) => {
     if (!user) {
       toast.error("Please log in to subscribe");
       return;
@@ -77,19 +88,21 @@ export default function SubscriptionPage() {
     }
 
     setSelectedPlan(plan);
+    setSelectedPromo(promo);
     setBillingCycle(cycle);
     setShowCheckoutModal(true);
   };
 
   const handleRenew = () => {
-    if (subscription && plans.length > 0) {
-      const planToRenew = plans.find(p => p.name.toLowerCase() === subscription.plan_type.toLowerCase());
+    const currentName = String(subscription?.plan_type || '').toLowerCase();
+    if (currentName && plans.length > 0) {
+      const planToRenew = plans.find(p => String(p.name || '').toLowerCase() === currentName);
       if (planToRenew) {
         handleSelectPlan(planToRenew);
         return;
       }
     }
-    const fallbackPlan = plans.find(p => p.name.toLowerCase().includes('premium')) || plans[1];
+    const fallbackPlan = plans.find(p => String(p.name || '').toLowerCase().includes('premium')) || plans[1];
     if (fallbackPlan) {
       handleSelectPlan(fallbackPlan);
     }
@@ -99,8 +112,10 @@ export default function SubscriptionPage() {
     if (!confirm("Are you sure you want to cancel your subscription? You will lose access to premium features at the end of the billing period.")) return;
 
     try {
-      await apiClient.post('/subscriptions/cancel', { reason: 'User requested cancellation' });
-      toast.success("Subscription cancelled successfully");
+      const { data } = await apiClient.post('/subscriptions/cancel', { reason: 'User requested cancellation' });
+      if (data?.pending) toast.success(data.message || "Subscription cancelled. Your refund is being confirmed.");
+      else if (data?.refundId) toast.success(`Subscription cancelled. A refund of ₹${data.amount} has been started.`);
+      else toast.success("Subscription cancelled. You keep access until the end of your billing period.");
       refreshSubscription();
     } catch (error) {
       console.error("Cancellation error:", error);
@@ -108,109 +123,112 @@ export default function SubscriptionPage() {
     }
   };
 
-  const handleUpgrade = () => {
-    const plansSection = document.querySelector('.plans-grid');
-    if (plansSection) {
-      plansSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
   if (isLoading) {
     return (
-      <div className="w-full bg-background flex items-center justify-center">
-        <Loader2 className="w-12 h-12 animate-spin text-primary" />
+      <div className="flex min-h-[50vh] w-full items-center justify-center bg-background">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" aria-label="Loading plans" />
       </div>
     );
   }
 
   const currentPlanTier = subscription?.status === 'active' ? subscription.plan_type : 'Free';
   const isCurrentActive = subscription?.status === 'active';
+  const onFree = isFreeSubscription(subscription);
+  const popularIndex = (() => {
+    const byName = plans.findIndex((p) => /premium/i.test(p.name));
+    if (byName >= 0) return byName;
+    return plans.length >= 3 ? 1 : -1;
+  })();
+
+  const toggleClass = (active) => cn(
+    'rounded-full border-2 px-5 py-2 text-sm font-semibold transition-colors motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:px-7',
+    active
+      ? 'border-primary bg-primary text-white shadow-md'
+      : 'border-primary/40 bg-card text-primary hover:bg-primary/10'
+  );
 
   return (
-    <div className="w-full bg-background p-6">
-      {/* Login Prompt for Non-Authenticated Users */}
-      {!user && (
-        <div className="max-w-7xl mx-auto mb-6">
-          <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-premium-muted flex items-center justify-center">
-                <Crown className="w-5 h-5 text-protocall-premium-text" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-protocall-premium-text">Explore Our Plans</p>
-                <p className="text-xs text-protocall-premium-text mt-1">Log in to subscribe and unlock premium features</p>
-              </div>
+    <div className="w-full bg-background px-4 py-8 sm:px-6 lg:py-12">
+      <div className="mx-auto max-w-6xl">
+        {/* Hero */}
+        <header className="text-center">
+          <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
+            <Crown className="h-4 w-4" /> Plans &amp; pricing
+          </span>
+          <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+            Choose the plan that fits how you trade
+          </h1>
+          <p className="mx-auto mt-3 max-w-2xl text-base text-muted-foreground sm:text-lg">
+            Start free and upgrade when you want advisor picks, premium rooms and exclusive content. Change or cancel any time.
+          </p>
+
+          {user ? (
+            <p className="mt-4 text-sm text-muted-foreground">
+              You are on the{' '}
+              <span className="rounded-full bg-primary/10 px-2.5 py-0.5 font-semibold text-primary">
+                {onFree ? 'Free' : (subscription?.plan_type || 'Free')} plan
+              </span>
+            </p>
+          ) : (
+            <div className="mx-auto mt-5 flex max-w-md items-center justify-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-left">
+              <p className="flex-1 text-sm text-foreground">Log in to subscribe and unlock premium features.</p>
               <Link to={createPageUrl("Profile")}>
-                <Button size="sm" className="bg-primary hover:bg-primary">
-                  Log In to Subscribe
-                </Button>
+                <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">Log in</Button>
               </Link>
             </div>
-          </div>
-        </div>
-      )}
+          )}
+        </header>
 
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header Section */}
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-protocall-deep to-protocall-blue text-white px-4 py-2 rounded-full">
-            <Crown className="w-5 h-5" />
-            <span className="font-semibold">Premium Features</span>
-          </div>
-          <h1 className="text-4xl font-bold text-foreground">
-            Choose Your Plan
-          </h1>
-          <p className="text-subtle max-w-2xl mx-auto">
-            Unlock exclusive features, advisor picks, and premium content to enhance your trading journey
-          </p>
-        </div>
-
-        {/* Current Subscription Status Card */}
-        {subscription && (
-          <>
+        {/* Paid plans get the full status card (renew / cancel). Free is shown on the card and in the hero. */}
+        {subscription && !onFree && (
+          <div className="mt-8">
             <CurrentSubscriptionCard
               subscription={subscription}
               onRenew={handleRenew}
               onCancel={handleCancelSubscription}
             />
-          </>
+          </div>
         )}
 
-        {/* Billing history sits outside the `subscription &&` block on purpose.
-            Invoices are historical records, so they are needed precisely after
-            a subscription lapses — for accounting, tax and disputes. Nesting
-            them under "has a current subscription" hid every past invoice from
-            anyone whose plan had ended. The component hides itself when there
-            is nothing to show. */}
-        <div className="mb-8">
-          <UserSubscriptionHistory />
-        </div>
-
-        {/* Billing Cycle Toggle */}
-        <div className="flex justify-center">
-          <div className="bg-white p-1.5 rounded-full border border-border shadow-sm flex items-center gap-3">
-            <span className={`text-sm px-3 py-1 font-semibold transition-colors ${billingCycle === 'monthly' ? 'text-foreground' : 'text-muted-foreground'}`}>
+        {/* Billing cycle: selected = filled primary with white text; the other keeps visible text and an outline */}
+        <div className="mt-8 flex justify-center">
+          <div role="group" aria-label="Billing cycle" className="inline-flex items-center gap-1 rounded-full border-2 border-primary/30 bg-card p-1 shadow-sm">
+            <button type="button" aria-pressed={billingCycle === 'monthly'} onClick={() => setBillingCycle('monthly')} className={toggleClass(billingCycle === 'monthly')}>
               Monthly
-            </span>
-            <Switch
-              checked={billingCycle === 'annually'}
-              onCheckedChange={(checked) => setBillingCycle(checked ? 'annually' : 'monthly')}
-              className="data-[state=checked]:bg-primary"
-            />
-            <span className={`text-sm px-3 py-1 font-semibold transition-colors flex items-center gap-1 ${billingCycle === 'annually' ? 'text-foreground' : 'text-muted-foreground'}`}>
+            </button>
+            <button type="button" aria-pressed={billingCycle === 'annually'} onClick={() => setBillingCycle('annually')} className={cn(toggleClass(billingCycle === 'annually'), 'flex items-center gap-2')}>
               Yearly
               {maxAnnualSavings > 0 && (
-                <span className="text-protocall-green-text text-[10px] bg-buy-muted px-1.5 py-0.5 rounded-full border border-buy/30 uppercase tracking-tight font-bold">
+                <span className={cn('rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-tight', billingCycle === 'annually' ? 'bg-white/20 text-white' : 'bg-buy-muted text-buy-muted-foreground')}>
                   Save {maxAnnualSavings}%
                 </span>
               )}
-            </span>
+            </button>
           </div>
         </div>
 
-        {/* Plan Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto plans-grid">
-          {plans.map((plan) => {
+        {/* Plans */}
+        {loadError && (
+          <div role="alert" className="mx-auto mt-10 max-w-xl rounded-2xl border border-sell/30 bg-sell-muted p-6 text-center">
+            <AlertCircle className="mx-auto h-8 w-8 text-sell-muted-foreground" />
+            <h2 className="mt-3 text-lg font-semibold text-foreground">Plans could not be loaded</h2>
+            <p className="mt-1 text-sm text-sell-muted-foreground">{loadError}</p>
+            <Button onClick={fetchPlans} className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90">
+              <RefreshCw className="mr-2 h-4 w-4" /> Try again
+            </Button>
+          </div>
+        )}
+
+        {!loadError && plans.length === 0 && (
+          <div className="mx-auto mt-10 max-w-xl rounded-2xl border border-dashed border-border bg-card p-8 text-center">
+            <Crown className="mx-auto h-8 w-8 text-muted-foreground" />
+            <h2 className="mt-3 text-lg font-semibold text-foreground">No plans are available right now</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Please check back soon. You can keep using everything on your current plan.</p>
+          </div>
+        )}
+
+        <section aria-label="Plans" className="plans-grid mx-auto mt-10 grid max-w-5xl grid-cols-1 items-stretch gap-8 md:mt-12 md:grid-cols-3 md:gap-4 lg:gap-7">
+          {plans.map((plan, index) => {
             const baseMonthlyPrice = Number(plan.price_monthly ?? plan.price) || 0;
             const baseAnnualPrice = plan.price_annually != null && plan.price_annually !== ''
               ? Number(plan.price_annually) || 0
@@ -226,127 +244,43 @@ export default function SubscriptionPage() {
               <PlanCard
                 key={plan.id}
                 plan={displayPlan}
-                isCurrentPlan={isCurrentActive && plan.name.toLowerCase() === (subscription?.plan_type || '').toLowerCase()}
+                recommended={index === popularIndex}
+                isCurrentPlan={isCurrentActive && (plan.name || '').toLowerCase() === (subscription?.plan_type || '').toLowerCase()}
                 currentPlanTier={currentPlanTier}
-                onSelect={(p) => handleSelectPlan(p, billingCycle)}
+                onSelect={(p, c, promo) => handleSelectPlan(p, c || billingCycle, promo)}
                 user={user}
-                allPlans={plans}
                 cycle={billingCycle}
               />
             );
           })}
-        </div>
+        </section>
 
-        {/* FAQ Section */}
-        <Card className="max-w-4xl mx-auto shadow-lg">
-          <CardHeader className="bg-background border-b">
-            <CardTitle className="text-center text-2xl font-bold text-foreground">
-              Frequently Asked Questions
-            </CardTitle>
-            <p className="text-center text-sm text-subtle mt-2">
-              Click on any question to view the answer
-            </p>
-          </CardHeader>
-          <CardContent className="p-6">
-            <Accordion type="single" collapsible className="w-full space-y-2">
-              <AccordionItem value="item-1" className="border rounded-xl px-4 bg-white hover:bg-surface-2 transition-colors">
-                <AccordionTrigger className="text-left hover:no-underline py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-premium-muted flex items-center justify-center flex-shrink-0">
-                      <span className="text-primary font-bold text-sm">1</span>
-                    </div>
-                    <span className="font-semibold text-foreground">Can I cancel anytime?</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-11 pb-4">
-                  <p className="text-subtle text-sm leading-relaxed">
-                    Yes, you can cancel your subscription at any time. Your access will continue until the end of your billing period, so you can enjoy all premium features until then. No hidden fees or penalties for cancellation.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
+        {/* Reassurance */}
+        <ul className="mx-auto mt-10 grid max-w-3xl gap-3 text-sm text-muted-foreground sm:grid-cols-3">
+          <li className="flex items-center justify-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Secure payments by Razorpay</li>
+          <li className="flex items-center justify-center gap-2"><RefreshCcw className="h-4 w-4 text-primary" /> Cancel any time</li>
+          <li className="flex items-center justify-center gap-2"><CreditCard className="h-4 w-4 text-primary" /> Cards, UPI and net banking</li>
+        </ul>
+        {user && (
+          <p className="mt-4 flex items-center justify-center gap-2 text-center text-sm text-muted-foreground">
+            <Receipt className="h-4 w-4" />
+            Invoices and payment details are in your{' '}
+            <Link to={`${createPageUrl("Profile")}?tab=subscription`} className="font-medium text-primary hover:underline">Profile</Link>.
+          </p>
+        )}
 
-              <AccordionItem value="item-2" className="border rounded-xl px-4 bg-white hover:bg-surface-2 transition-colors">
-                <AccordionTrigger className="text-left hover:no-underline py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-premium-muted flex items-center justify-center flex-shrink-0">
-                      <span className="text-protocall-premium-text font-bold text-sm">2</span>
-                    </div>
-                    <span className="font-semibold text-foreground">What payment methods do you accept?</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-11 pb-4">
-                  <p className="text-subtle text-sm leading-relaxed">
-                    We accept all major credit/debit cards, UPI, net banking, and digital wallets through our secure payment gateway. All transactions are encrypted and PCI-DSS compliant for your security.
-                  </p>
-                </AccordionContent>
+        {/* FAQ */}
+        <section aria-label="Frequently asked questions" className="mx-auto mt-14 max-w-3xl">
+          <h2 className="text-center text-2xl font-bold text-foreground">Frequently asked questions</h2>
+          <Accordion type="single" collapsible className="mt-6 w-full space-y-2">
+            {FAQ.map(([question, answer], i) => (
+              <AccordionItem key={question} value={`faq-${i}`} className="rounded-xl border bg-card px-4">
+                <AccordionTrigger className="py-4 text-left font-semibold text-foreground hover:no-underline">{question}</AccordionTrigger>
+                <AccordionContent className="pb-4 text-sm leading-relaxed text-muted-foreground">{answer}</AccordionContent>
               </AccordionItem>
-
-              <AccordionItem value="item-3" className="border rounded-xl px-4 bg-white hover:bg-surface-2 transition-colors">
-                <AccordionTrigger className="text-left hover:no-underline py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-buy-muted flex items-center justify-center flex-shrink-0">
-                      <span className="text-buy-muted-foreground font-bold text-sm">3</span>
-                    </div>
-                    <span className="font-semibold text-foreground">Can I upgrade or downgrade my plan?</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-11 pb-4">
-                  <p className="text-subtle text-sm leading-relaxed">
-                    Yes, you can change your plan at any time. When upgrading, you'll get immediate access to premium features. When downgrading, changes take effect at the end of your current billing cycle. Pro-rated credits are applied automatically.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-4" className="border rounded-xl px-4 bg-white hover:bg-surface-2 transition-colors">
-                <AccordionTrigger className="text-left hover:no-underline py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-hold-muted flex items-center justify-center flex-shrink-0">
-                      <span className="text-hold-muted-foreground font-bold text-sm">4</span>
-                    </div>
-                    <span className="font-semibold text-foreground">Do promo codes work on all plans?</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-11 pb-4">
-                  <p className="text-subtle text-sm leading-relaxed">
-                    Yes, you can apply promo codes to any paid subscription plan. Each plan card has its own promo code field. Enter the code in the promo field on your chosen plan card, and the discount will be automatically applied before payment. Promo codes cannot be combined with other offers.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-5" className="border rounded-xl px-4 bg-white hover:bg-surface-2 transition-colors">
-                <AccordionTrigger className="text-left hover:no-underline py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-premium-muted flex items-center justify-center flex-shrink-0">
-                      <span className="text-protocall-premium-text font-bold text-sm">5</span>
-                    </div>
-                    <span className="font-semibold text-foreground">Is there a free trial available?</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-11 pb-4">
-                  <p className="text-subtle text-sm leading-relaxed">
-                    Our Basic plan is completely free and gives you access to essential features. You can try it without any payment information required. When you're ready for advanced features, you can upgrade to Premium or VIP plans at any time.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-6" className="border rounded-xl px-4 bg-white hover:bg-surface-2 transition-colors">
-                <AccordionTrigger className="text-left hover:no-underline py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-sell-muted flex items-center justify-center flex-shrink-0">
-                      <span className="text-sell-muted-foreground font-bold text-sm">6</span>
-                    </div>
-                    <span className="font-semibold text-foreground">What happens if my payment fails?</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-11 pb-4">
-                  <p className="text-subtle text-sm leading-relaxed">
-                    If a payment fails, we'll send you an email notification immediately. You'll have a grace period to update your payment method. During this time, you'll retain access to your subscription features. If payment isn't resolved within the grace period, your account will be downgraded to the Basic plan.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </CardContent>
-        </Card>
+            ))}
+          </Accordion>
+        </section>
       </div>
 
       {/* Checkout Modal */}
@@ -356,8 +290,8 @@ export default function SubscriptionPage() {
           onClose={() => setShowCheckoutModal(false)}
           plan={selectedPlan}
           cycle={billingCycle}
+          initialCoupon={selectedPromo}
           onSuccess={() => {
-            toast.success("Subscription updated successfully!");
             refreshSubscription();
             setShowCheckoutModal(false);
           }}

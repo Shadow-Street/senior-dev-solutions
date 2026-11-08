@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/components/context/AuthContext';
@@ -13,9 +14,30 @@ import { useAuth } from '@/components/context/AuthContext';
  */
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const location = useLocation();
-  const { user, loading } = useAuth();
+  const { user, loading, refreshUser } = useAuth();
+  const [rechecked, setRechecked] = useState(false);
 
-  if (loading) {
+  // Same precedence as the backend's adminMiddleware and every other role check
+  // in the app: app_role first, then role. Reading `role` alone locked advisors
+  // out of their own dashboard, because approval promotes `app_role` and leaves
+  // `role` at its registration value.
+  const userRole = user ? (user.app_role || user.role) : null;
+  const roleAllowed = allowedRoles.length === 0 || allowedRoles.includes(userRole);
+
+  // The cached user can be stale: an applicant approved by an admin while they
+  // were signed in still carries role "user" until something re-reads it, so
+  // following the "you were approved" link bounced them to /unauthorized. Before
+  // refusing, re-read the user from the server once; the backend stays the
+  // authority and a genuinely unauthorised user is still refused.
+  const needsRecheck = Boolean(user) && !roleAllowed && !rechecked && typeof refreshUser === 'function';
+  useEffect(() => {
+    if (!needsRecheck) return undefined;
+    let live = true;
+    Promise.resolve(refreshUser()).finally(() => { if (live) setRechecked(true); });
+    return () => { live = false; };
+  }, [needsRecheck, refreshUser]);
+
+  if (loading || needsRecheck) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
@@ -31,13 +53,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Same precedence as the backend's adminMiddleware and every other role check
-  // in the app: app_role first, then role. Reading `role` alone locked advisors
-  // out of their own dashboard, because approval promotes `app_role` and leaves
-  // `role` at its registration value.
-  const userRole = user.app_role || user.role;
-
-  if (allowedRoles.length > 0 && !allowedRoles.includes(userRole)) {
+  if (!roleAllowed) {
     return <Navigate to="/unauthorized" replace />;
   }
 

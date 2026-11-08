@@ -1,147 +1,108 @@
-
-import React, { useState, useEffect } from 'react';
-import { Advisor, authAPI } from '@/lib/apiClient';
+import { useState, useEffect, useCallback } from 'react';
+import { AdvisorSubscription } from '@/lib/apiClient';
+import { advisorApi } from '@/lib/advisorApi';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { BookUser, UserPlus, Search, Filter } from 'lucide-react';
+import { BookUser, UserPlus, Search, Filter, LayoutDashboard, Clock, RefreshCw } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AdvisorCard from '../components/advisors/AdvisorCard';
-import { useFeatureAccess } from '../components/hooks/useFeatureAccess';
-import { useSubscription } from '../components/hooks/useSubscription';
-import { Lock, Crown } from 'lucide-react';
-import toast from 'react-hot-toast'; // Assuming react-hot-toast is used for notifications
+import { useAuth } from '@/components/context/AuthContext';
+
+const useDebounced = (value, ms = 300) => {
+    const [debounced, setDebounced] = useState(value);
+    useEffect(() => {
+        const t = setTimeout(() => setDebounced(value), ms);
+        return () => clearTimeout(t);
+    }, [value, ms]);
+    return debounced;
+};
 
 export default function Advisors() {
+    const { user: currentUser } = useAuth();
     const [advisors, setAdvisors] = useState([]);
     const [advisorsError, setAdvisorsError] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [currentUser, setCurrentUser] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [specializationFilter, setSpecializationFilter] = useState('all');
-    const [hasSubscription, setHasSubscription] = useState(false);
-    const [selectedAdvisor, setSelectedAdvisor] = useState(null);
-    const [showSubscribeModal, setShowSubscribeModal] = useState(false);
+    const [mySubscriptions, setMySubscriptions] = useState([]);
+    const [myApplication, setMyApplication] = useState(null);
+    const [reloadKey, setReloadKey] = useState(0);
+    const q = useDebounced(searchTerm.trim());
 
-    const { hasFeatureAccess } = useFeatureAccess('advisor_subscriptions');
-    // The page used to hardcode "no subscription", so a paying subscriber was
-    // shown the upgrade gate. Read the real state from the subscription context.
-    const subscriptionCtx = useSubscription();
+    const myRole = currentUser?.app_role || currentUser?.role;
+    const isAdvisor = myRole === 'advisor';
 
+    // The directory is searched and filtered by the server (approved advisors
+    // only), so pagination and counts stay honest as the directory grows.
     useEffect(() => {
-        let isMounted = true;
-        let loadingTimeout = null;
+        let alive = true;
+        setIsLoading(true);
+        setAdvisorsError(false);
+        advisorApi.directory({
+            limit: 50,
+            sort: '-follower_count',
+            ...(q ? { q } : {}),
+            ...(specializationFilter !== 'all' ? { specialization: specializationFilter } : {}),
+        })
+            .then((rows) => { if (alive) setAdvisors(Array.isArray(rows) ? rows : []); })
+            .catch((error) => {
+                console.error('Could not load advisors:', error);
+                if (alive) { setAdvisors([]); setAdvisorsError(true); }
+            })
+            .finally(() => { if (alive) setIsLoading(false); });
+        return () => { alive = false; };
+    }, [q, specializationFilter, reloadKey]);
 
-        const loadData = async () => {
-            // Wait slightly to simulate loading or ensure mounting if needed
-            await new Promise(resolve => {
-                loadingTimeout = setTimeout(resolve, 100);
-            });
+    // Who the viewer is in the advisor journey: advisor, applicant, or neither.
+    useEffect(() => {
+        if (!currentUser?.id) { setMySubscriptions([]); setMyApplication(null); return undefined; }
+        let alive = true;
+        AdvisorSubscription.filter({ user_id: currentUser.id, status: 'active' })
+            .then((rows) => { if (alive) setMySubscriptions(Array.isArray(rows) ? rows : []); })
+            .catch(() => { if (alive) setMySubscriptions([]); });
+        advisorApi.me()
+            .then((res) => { if (alive) setMyApplication(res?.advisor || null); })
+            .catch(() => { if (alive) setMyApplication(null); });
+        return () => { alive = false; };
+    }, [currentUser?.id]);
 
-            if (!isMounted) return;
-
-            setIsLoading(true);
-
-            try {
-                // `apiClient.auth` was never defined, so this threw on every load and
-                // the catch left `user` null — the page treated every visitor, including
-                // signed-in subscribers, as anonymous. authAPI.me() returns the user.
-                let user = null;
-                try {
-                    user = await authAPI.me();
-                } catch {
-                    user = null;   // genuinely not signed in
-                }
-
-                if (!isMounted) return;
-                setCurrentUser(user);
-
-                // `apiClient.advisors` was never defined, so this call threw on every
-                // load, the catch swallowed it, and the page silently rendered six
-                // fabricated "SEBI verified" advisors. Use the exported entity API,
-                // and surface a real failure instead of inventing professionals: this
-                // page tells visitors every advisor shown is SEBI verified.
-                let loadedAdvisors = [];
-                let loadFailed = false;
-                try {
-                    loadedAdvisors = await Advisor.filter({ status: 'approved' }, '-follower_count', 50);
-                } catch (error) {
-                    console.error('Could not load advisors:', error);
-                    loadFailed = true;
-                }
-
-                if (!isMounted) return;
-
-                setAdvisorsError(loadFailed);
-                setAdvisors(Array.isArray(loadedAdvisors) ? loadedAdvisors : []);
-
-                if (user) {
-                    if (['admin', 'super_admin'].includes(user.app_role || user.role)) {
-                        if (isMounted) {
-                            setHasSubscription(true);
-                        }
-                    } else if (isMounted) {
-                        setHasSubscription(Boolean(subscriptionCtx?.isSubscribed));
-                    }
-                } else {
-                    if (isMounted) {
-                        setHasSubscription(false);
-                    }
-                }
-
-            } catch (error) {
-                if (isMounted) {
-                    console.error("Error during advisor data loading:", error);
-                    setAdvisorsError(true);
-                    setAdvisors([]);
-                    setCurrentUser(null);
-                    setHasSubscription(false);
-                }
-            } finally {
-                if (isMounted) {
-                    setIsLoading(false);
-                }
-            }
-        };
-
-        loadData();
-
-        return () => {
-            isMounted = false;
-            if (loadingTimeout) {
-                clearTimeout(loadingTimeout);
-            }
-        };
-        // The subscription context resolves asynchronously, so the gate has to
-        // re-evaluate once it arrives — with an empty array a subscriber kept
-        // seeing the upgrade prompt until a manual reload.
-    }, [subscriptionCtx?.isSubscribed]);
-
-    const filteredAdvisors = advisors.filter(advisor => {
-        const matchesSearch = advisor.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            advisor.bio?.toLowerCase().includes(searchTerm.toLowerCase());
-
-        const matchesSpecialization = specializationFilter === 'all' ||
-            advisor.specialization?.some(spec =>
-                spec.toLowerCase().includes(specializationFilter.toLowerCase())
+    const renderAdvisorEntry = () => {
+        if (isAdvisor) {
+            return (
+                <Link to={createPageUrl('AdvisorDashboard')}>
+                    <Button size="lg">
+                        <LayoutDashboard className="mr-2 h-5 w-5" />
+                        Go to my dashboard
+                    </Button>
+                </Link>
             );
-
-        return matchesSearch && matchesSpecialization;
-    });
-
-    const handleSubscribe = (advisor) => {
-        // ✅ Check feature access before subscribing
-        if (!hasFeatureAccess) {
-            toast.error('Upgrade to VIP to subscribe to advisors');
-            return;
         }
-
-        setSelectedAdvisor(advisor);
-        setShowSubscribeModal(true);
+        if (myApplication) {
+            return (
+                <Link to={createPageUrl('AdvisorRegistration')}>
+                    <Button size="lg" variant="outline">
+                        <Clock className="mr-2 h-5 w-5" />
+                        My advisor application
+                    </Button>
+                </Link>
+            );
+        }
+        return (
+            <Link to={createPageUrl('AdvisorRegistration')}>
+                <Button size="lg">
+                    <UserPlus className="mr-2 h-5 w-5" />
+                    Become an Advisor
+                </Button>
+            </Link>
+        );
     };
+
+    const filtersActive = Boolean(q) || specializationFilter !== 'all';
+    const retry = useCallback(() => setReloadKey((k) => k + 1), []);
 
     return (
         <div className="w-full bg-background p-6">
@@ -150,26 +111,18 @@ export default function Advisors() {
                     <div>
                         <div className="flex items-center gap-3 mb-2">
                             <BookUser className="w-8 h-8 text-primary" />
-                            <h1 className="text-4xl font-bold bg-gradient-to-r from-protocall-deep to-protocall-blue bg-clip-text text-transparent">
+                            <h1 className="text-4xl font-bold text-primary">
                                 SEBI Registered Advisors
                             </h1>
                         </div>
                         <p className="text-lg text-subtle">Subscribe to verified professionals for expert stock advice.</p>
 
                         <div className="flex items-center gap-4 mt-3 text-sm text-muted-foreground">
-                            <span>✅ All advisors are SEBI verified</span>
-                            <span>•</span>
-                            <span>📊 {advisors.length} Expert Advisors</span>
-                            <span>•</span>
-                            <span>⭐ Rated by subscribers</span>
+                            <span>All advisors are reviewed and SEBI verified</span>
+                            {!isLoading && !advisorsError && (<><span>•</span><span>{advisors.length} {advisors.length === 1 ? 'advisor' : 'advisors'}{filtersActive ? ' match' : ''}</span></>)}
                         </div>
                     </div>
-                    <Link to={createPageUrl("AdvisorRegistration")}>
-                        <Button size="lg">
-                            <UserPlus className="mr-2 h-5 w-5" />
-                            Become an Advisor
-                        </Button>
-                    </Link>
+                    {renderAdvisorEntry()}
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-4 items-center">
@@ -177,6 +130,7 @@ export default function Advisors() {
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                         <Input
                             placeholder="Search advisors by name or expertise..."
+                            aria-label="Search advisors"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="pl-10 search-bar-input"
@@ -205,32 +159,32 @@ export default function Advisors() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {Array(6).fill(0).map((_, i) => <Skeleton key={i} className="h-[500px] w-full rounded-xl" />)}
                     </div>
-                ) : filteredAdvisors.length === 0 ? (
+                ) : advisors.length === 0 ? (
                     <Card className="border-0 shadow-lg rounded-xl">
                         <CardContent className="p-12 text-center">
                             <BookUser className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                             <h3 className="text-xl font-semibold text-subtle">
-                                {advisorsError ? "Advisors Could Not Be Loaded" : "No Advisors Found"}
+                                {advisorsError ? 'Advisors could not be loaded' : 'No advisors found'}
                             </h3>
                             <p className="text-muted-foreground mt-2">
                                 {advisorsError
-                                    ? "We could not reach the advisor directory. Please try again shortly."
-                                    : searchTerm || specializationFilter !== 'all'
-                                        ? "Try adjusting your search or filter criteria."
-                                        : "Check back soon for a list of verified stock advisors."}
+                                    ? 'We could not reach the advisor directory. Please try again.'
+                                    : filtersActive
+                                        ? 'Try adjusting your search or filter criteria.'
+                                        : 'Check back soon for a list of verified stock advisors.'}
                             </p>
+                            {advisorsError && (
+                                <Button className="mt-4" variant="outline" onClick={retry}>
+                                    <RefreshCw className="mr-2 h-4 w-4" />
+                                    Try again
+                                </Button>
+                            )}
                         </CardContent>
                     </Card>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {filteredAdvisors.map(advisor => (
-                            <AdvisorCard
-                                key={advisor.id}
-                                advisor={advisor}
-                                currentUser={currentUser}
-                                hasSubscription={hasSubscription}
-                                handleSubscribe={handleSubscribe} // Pass the new handler
-                            />
+                        {advisors.map((advisor) => (
+                            <AdvisorCard key={advisor.id} advisor={advisor} userSubscriptions={mySubscriptions} />
                         ))}
                     </div>
                 )}

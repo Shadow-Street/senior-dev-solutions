@@ -3,15 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
-  Sidebar,
-  SidebarContent, // This component is not explicitly used in the outline, but Sidebar, Header, Footer are.
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarProvider,
-  SidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import {
@@ -27,27 +19,21 @@ import {
 } from "@/components/ui/collapsible";
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  ShieldCheck, 
-  Calendar, 
-  LogOut, 
-  User as UserIcon, 
+import {
+  ShieldCheck,
+  LogOut,
+  User as UserIcon,
   ChevronDown,
   Home,
   ArrowLeft,
   FileText,
-  CreditCard,
   Users,
   DollarSign,
   BarChart3,
-  CalendarDays,
   TrendingUp,
-  Wallet,
-  Star,
   LayoutDashboard,
   Crown,
-  Activity,
-  Target // Added Target icon for pledge sessions
+  Target
 } from 'lucide-react';
 import { User, PlatformSetting, AdvisorPledgeAccessRequest, Advisor } from '@/lib/apiClient'; // Added PlatformSetting
 import { useAuth } from '@/components/context/AuthContext';
@@ -247,6 +233,17 @@ export default function AdvisorLayout({ children, currentPageName }) { // Rename
         return pathname === createPageUrl('AdvisorDashboard') && params.get('section') === 'financials';
       },
     },
+    {
+      key: 'advisor-analytics',
+      title: 'Analytics',
+      url: createPageUrl('AdvisorDashboard') + '?section=analytics',
+      icon: TrendingUp,
+      description: 'Subscribers, posts & earnings trends',
+      matchPattern: (pathname, search) => {
+        const params = new URLSearchParams(search);
+        return pathname === createPageUrl('AdvisorDashboard') && params.get('section') === 'analytics';
+      },
+    },
   ];
 
   const pledgeNavItems = [
@@ -307,64 +304,6 @@ export default function AdvisorLayout({ children, currentPageName }) { // Rename
     },
   ];
 
-  const organizerNavItems = [
-    { 
-      key: 'organizer-overview', 
-      title: 'Overview', 
-      url: createPageUrl('OrganizerDashboard') + '?section=overview', 
-      icon: LayoutDashboard,
-      description: 'Dashboard stats & overview',
-      matchPattern: (pathname, search) => {
-        const params = new URLSearchParams(search);
-        return pathname === createPageUrl('OrganizerDashboard') && (!params.get('section') || params.get('section') === 'overview');
-      },
-    },
-    { 
-      key: 'organizer-events', 
-      title: 'My Events', 
-      url: createPageUrl('OrganizerDashboard') + '?section=events', 
-      icon: CalendarDays,
-      description: 'Manage events',
-      matchPattern: (pathname, search) => {
-        const params = new URLSearchParams(search);
-        return pathname === createPageUrl('OrganizerDashboard') && params.get('section') === 'events';
-      },
-    },
-    { 
-      key: 'organizer-analytics', 
-      title: 'Analytics', 
-      url: createPageUrl('OrganizerDashboard') + '?section=analytics', 
-      icon: TrendingUp,
-      description: 'Event performance',
-      matchPattern: (pathname, search) => {
-        const params = new URLSearchParams(search);
-        return pathname === createPageUrl('OrganizerDashboard') && params.get('section') === 'analytics';
-      },
-    },
-    { 
-      key: 'organizer-financials', 
-      title: 'Financials', 
-      url: createPageUrl('OrganizerDashboard') + '?section=financials', 
-      icon: DollarSign,
-      description: 'Revenue & payouts',
-      matchPattern: (pathname, search) => {
-        const params = new URLSearchParams(search);
-        return pathname === createPageUrl('OrganizerDashboard') && params.get('section') === 'financials';
-      },
-    },
-    { 
-      key: 'organizer-reviews', 
-      title: 'Reviews', 
-      url: createPageUrl('OrganizerDashboard') + '?section=reviews', 
-      icon: Star,
-      description: 'Event reviews',
-      matchPattern: (pathname, search) => {
-        const params = new URLSearchParams(search);
-        return pathname === createPageUrl('OrganizerDashboard') && params.get('section') === 'reviews';
-      },
-    },
-  ];
-
   if (isLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
@@ -418,7 +357,7 @@ export default function AdvisorLayout({ children, currentPageName }) { // Rename
                 </div>
                 <Badge className="bg-protocall-premium-light text-protocall-premium-text border-0 text-xs w-full justify-center py-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 mr-1.5" />
-                  Advisor
+                  {(user.app_role || user.role) === 'advisor' ? 'Advisor' : 'Staff'}
                 </Badge>
               </div>
             </div>
@@ -487,24 +426,6 @@ export default function AdvisorLayout({ children, currentPageName }) { // Rename
                 </Collapsible>
               )}
 
-              {/* Event Organizer is a coming-soon feature: its pages are not
-                  routed yet, so the group shows as a disabled row with a
-                  "Soon" badge instead of a dropdown of links that would all
-                  bounce to the dashboard. organizerNavItems is kept for when
-                  the feature ships. */}
-              <div
-                aria-disabled="true"
-                title="Event Organizer — coming soon"
-                className="flex w-full cursor-not-allowed items-center justify-between rounded-lg bg-sidebar-dark px-3 py-2 opacity-80"
-              >
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-protocall-premium-light" />
-                  <span className="font-semibold text-sm text-sidebar-foreground">Event Organizer</span>
-                </div>
-                <Badge className="border-transparent bg-buy px-1.5 text-[10px] font-bold uppercase tracking-tight text-buy-foreground hover:bg-buy">
-                  Soon
-                </Badge>
-              </div>
             </div>
           </div>
 
@@ -582,7 +503,6 @@ export default function AdvisorLayout({ children, currentPageName }) { // Rename
               {(() => {
                 const advisorMatch = advisorNavItems.find(item => item.matchPattern(location.pathname, location.search));
                 const pledgeMatch = pledgeNavItems.find(item => item.matchPattern(location.pathname, location.search));
-                const organizerMatch = organizerNavItems.find(item => item.matchPattern(location.pathname, location.search));
                 
                 let parentSection = '';
                 let currentTitle = 'Advisor Dashboard';
@@ -596,10 +516,6 @@ export default function AdvisorLayout({ children, currentPageName }) { // Rename
                   parentSection = 'Pledge Management';
                   currentTitle = pledgeMatch.title;
                   currentDescription = pledgeMatch.description;
-                } else if (organizerMatch) {
-                  parentSection = 'Event Organizer';
-                  currentTitle = organizerMatch.title;
-                  currentDescription = organizerMatch.description;
                 }
                 
                 return (
@@ -625,7 +541,7 @@ export default function AdvisorLayout({ children, currentPageName }) { // Rename
                 );
               })()}
             </div>
-            {user && (
+            {user && (user.app_role || user.role) === 'advisor' && (
               <Badge className="bg-buy-muted text-buy-muted-foreground border-buy/30 px-4 py-2 text-sm font-semibold">
                 <ShieldCheck className="w-4 h-4 mr-2" />
                 SEBI Registered

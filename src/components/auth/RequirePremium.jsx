@@ -27,15 +27,15 @@ export default function RequirePremium({ children, fallback }) {
 
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] p-6 text-center">
-                <div className="w-16 h-16 bg-hold-muted rounded-full flex items-center justify-center mb-6">
-                    <Lock className="w-8 h-8 text-hold-muted-foreground" />
+                <div className="w-16 h-16 bg-primary/10 ring-4 ring-primary/15 rounded-full flex items-center justify-center mb-6">
+                    <Lock className="w-8 h-8 text-primary" />
                 </div>
                 <h2 className="text-2xl font-bold text-foreground mb-2">Premium Feature Locked</h2>
                 <p className="text-subtle mb-8 max-w-md">
                     This feature is available exclusively to Premium subscribers. Upgrade your plan to unlock unlimited access.
                 </p>
                 <Button
-                    className="bg-hold text-hold-foreground hover:from-hold hover:to-hold"
+                    className="bg-primary text-primary-foreground shadow-md shadow-primary/30 hover:bg-primary/90"
                     onClick={() => window.location.href = '/subscription'}
                 >
                     <Shield className="w-4 h-4 mr-2" />

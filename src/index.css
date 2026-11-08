@@ -95,9 +95,9 @@ button:focus-visible {
     /* --- Brand & Primary ---------------------------------------------- */
     --primary: 263.4 70% 50.4%;            /* #6D28D9  Cyber Grape             */
     --primary-foreground: 0 0% 100%;       /* #FFFFFF  Text on Primary         */
-    --brand-blue: 244.8 100% 60.8%;        /* #4737FF  Active / Premium blue   */
-    --brand-deep: 244.8 64.7% 45.5%;       /* #3529BF  Gradient mid            */
-    --brand-light: 244.7 100% 82.4%;       /* #ACA5FF  Gradient end            */
+    --brand-blue: 263.4 70% 50.4%;        /* #6D28D9  Active / Premium blue   */
+    --brand-deep: 263.4 69.3% 42.2%;       /* #5B21B6  Gradient mid            */
+    --brand-light: 252.5 94.7% 85.1%;       /* #C4B5FD  Gradient end            */
     --brand-ink: 240 20% 7.8%;             /* #101018  Gradient start / on-lime*/
 
     /* --- Neutral surfaces & text -------------------------------------- */
@@ -154,14 +154,14 @@ button:focus-visible {
     --loss-muted-foreground: 0 73.7% 41.8%;    /* #B91C1C Loss Text (5.68:1)   */
 
     /* --- Premium / Special -------------------------------------------- */
-    --premium: 244.8 100% 60.8%;           /* #4737FF                          */
+    --premium: 263.4 70% 50.4%;           /* #6D28D9                          */
     --premium-foreground: 0 0% 100%;       /* #FFFFFF                          */
-    --premium-light: 244.8 100% 90.2%;     /* #D1CDFF  Premium Accent          */
-    --premium-muted: 244 100% 97.1%;       /* #F1F0FF  Premium Background      */
-    --premium-muted-foreground: 244.8 64.7% 45.5%; /* #3529BF Premium Text     */
+    --premium-light: 250.5 95.2% 91.8%;     /* #DDD6FE  Premium Accent          */
+    --premium-muted: 250 100% 97.6%;       /* #F5F3FF  Premium Background      */
+    --premium-muted-foreground: 263.4 69.3% 42.2%; /* #5B21B6 Premium Text     */
 
     /* --- Charts & Market Data ----------------------------------------- */
-    --chart-1: 244.8 100% 60.8%;           /* #4737FF  Primary Chart           */
+    --chart-1: 263.4 70% 50.4%;           /* #6D28D9  Primary Chart           */
     --chart-2: 102.1 78.6% 49.4%;          /* #56E11B  Positive Chart          */
     --chart-3: 0 84.2% 60.2%;              /* #EF4444  Negative Chart          */
     --chart-4: 240 6% 39.2%;               /* #5E5E6A  Neutral Chart           */
@@ -185,7 +185,7 @@ button:focus-visible {
        is a deep green for surfaces whose content is hard-coded white
        (5.02:1), and a stroke for charts drawn on white.                  */
     --tile-green: 142.4 71.8% 29.2%;       /* #15803D  (5.02:1)        */
-    --tile-blue: 244.8 100% 60.8%;         /* #4737FF  = --premium     */
+    --tile-blue: 263.5 67.4% 34.9%;       /* #4C1D95  deep grape, kept distinct from --tile-purple */
     --tile-purple: 263.4 70% 50.4%;        /* #6D28D9  = --primary     */
     --tile-orange: 17.5 88.3% 40.4%;       /* #C2410C  (5.18:1)        */
     /* Neutral slot, so a tile whose colour is semantic (profit/loss) never
@@ -197,12 +197,12 @@ button:focus-visible {
     --sidebar-foreground: 0 0% 100%;           /* #FFFFFF                      */
     --sidebar-dark: 228 53.2% 9.2%;            /* #0B1024  Profile area        */
     --sidebar-muted-foreground: 226.5 22% 72.4%;   /* #A9B0C8 Secondary text   */
-    --sidebar-primary: 244.8 100% 60.8%;       /* #4737FF  Active Menu         */
+    --sidebar-primary: 263.4 70% 50.4%;       /* #6D28D9  Active Menu         */
     --sidebar-primary-foreground: 0 0% 100%;   /* #FFFFFF                      */
-    --sidebar-accent: 244.8 64.7% 45.5%;       /* #3529BF  Active Menu Hover   */
+    --sidebar-accent: 263.4 69.3% 42.2%;       /* #5B21B6  Active Menu Hover   */
     --sidebar-accent-foreground: 0 0% 100%;    /* #FFFFFF                      */
     --sidebar-border: 227 33.3% 21.8%;         /* #252D4A  Sidebar Divider     */
-    --sidebar-ring: 244.8 100% 60.8%;          /* #4737FF                      */
+    --sidebar-ring: 263.4 70% 50.4%;          /* #6D28D9                      */
 
     --radius: 0.5rem;
   }
@@ -223,9 +223,9 @@ button:focus-visible {
     /* --- Brand & Primary (unchanged hues) ----------------------------- */
     --primary: 263.4 70% 50.4%;            /* #6D28D9  Cyber Grape             */
     --primary-foreground: 0 0% 100%;       /* #FFFFFF  (7.1:1)                 */
-    --brand-blue: 244.8 100% 60.8%;        /* #4737FF                          */
-    --brand-deep: 244.8 64.7% 45.5%;       /* #3529BF                          */
-    --brand-light: 244.7 100% 82.4%;       /* #ACA5FF                          */
+    --brand-blue: 263.4 70% 50.4%;        /* #6D28D9                          */
+    --brand-deep: 263.4 69.3% 42.2%;       /* #5B21B6                          */
+    --brand-light: 252.5 94.7% 85.1%;       /* #C4B5FD                          */
     --brand-ink: 240 20% 7.8%;             /* #101018                          */
 
     /* --- Neutral surfaces & text -------------------------------------- */
@@ -238,7 +238,7 @@ button:focus-visible {
     --accent-foreground: 0 0% 100%;
     --border: 227 33.3% 21.8%;             /* #252D4A                          */
     --input: 225 33.3% 16.5%;              /* #1C2338                          */
-    --ring: 244.7 100% 82.4%;              /* #ACA5FF  visible focus on dark   */
+    --ring: 252.5 94.7% 85.1%;              /* #C4B5FD  visible focus on dark   */
 
     /* --- BUY / Positive (same green) ----------------------------------- */
     --buy: 102.1 78.6% 49.4%;              /* #56E11B                          */
@@ -263,14 +263,14 @@ button:focus-visible {
     --loss-muted-foreground: 0 93.5% 81.8%;    /* #FCA5A5  (8.52:1)            */
 
     /* --- Premium ------------------------------------------------------ */
-    --premium: 244.8 100% 60.8%;           /* #4737FF                          */
+    --premium: 263.4 70% 50.4%;           /* #6D28D9                          */
     --premium-foreground: 0 0% 100%;
-    --premium-light: 244.8 100% 90.2%;     /* #D1CDFF                          */
-    --premium-muted: 241.4 45.3% 18.6%;    /* #1B1A45                          */
-    --premium-muted-foreground: 244.8 100% 90.2%;  /* #D1CDFF  (10.85:1)       */
+    --premium-light: 250.5 95.2% 91.8%;     /* #DDD6FE                          */
+    --premium-muted: 261.2 72.6% 22.9%;    /* #2E1065                          */
+    --premium-muted-foreground: 250.5 95.2% 91.8%;  /* #DDD6FE  (10.85:1)       */
 
     /* --- Charts (same series colours) --------------------------------- */
-    --chart-1: 244.8 100% 60.8%;           /* #4737FF                          */
+    --chart-1: 263.4 70% 50.4%;           /* #6D28D9                          */
     --chart-2: 102.1 78.6% 49.4%;          /* #56E11B                          */
     --chart-3: 0 84.2% 60.2%;              /* #EF4444                          */
     --chart-4: 226.5 22% 72.4%;            /* #A9B0C8  neutral, lifted         */
@@ -281,7 +281,7 @@ button:focus-visible {
     /* Stat tiles: slightly lifted on a dark page so the cards still read
        as raised surfaces rather than holes. Contrast with white holds. */
     --tile-green: 142.2 70.9% 35.1%;       /* #1A9949                  */
-    --tile-blue: 244.8 100% 60.8%;         /* #4737FF                  */
+    --tile-blue: 263.5 67.4% 34.9%;       /* #4C1D95  deep grape      */
     --tile-purple: 263.4 70% 50.4%;        /* #6D28D9                  */
     --tile-orange: 21.1 83.3% 46.9%;       /* #DB5A14                  */
     --tile-ink: 240 16% 26%;               /* #383848 — lifted on dark */
@@ -291,12 +291,12 @@ button:focus-visible {
     --sidebar-foreground: 0 0% 100%;
     --sidebar-dark: 228 53.2% 9.2%;            /* #0B1024                      */
     --sidebar-muted-foreground: 226.5 22% 72.4%;   /* #A9B0C8                  */
-    --sidebar-primary: 244.8 100% 60.8%;       /* #4737FF  Active Menu         */
+    --sidebar-primary: 263.4 70% 50.4%;       /* #6D28D9  Active Menu         */
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 244.8 64.7% 45.5%;       /* #3529BF                      */
+    --sidebar-accent: 263.4 69.3% 42.2%;       /* #5B21B6                      */
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 227 33.3% 21.8%;         /* #252D4A                      */
-    --sidebar-ring: 244.8 100% 60.8%;          /* #4737FF                      */
+    --sidebar-ring: 263.4 70% 50.4%;          /* #6D28D9                      */
   }
 }
 

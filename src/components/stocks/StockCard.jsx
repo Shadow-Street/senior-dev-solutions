@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { TrendingUp, TrendingDown, X, MessageSquare, BarChart3, Bell, Lock, Crown, CheckCircle, Pause, XCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { User, Poll, AdvisorPost, Subscription } from "@/api/entities";
+import { User, Poll, Subscription } from "@/api/entities";
+import { advisorApi } from "@/lib/advisorApi";
 import AlertModal from "./AlertModal";
-import AdDisplay from "@/components/common/AdDisplay"; // Assuming AdDisplay component is located here
 
 export default function StockCard({ stock, onRemove, onSell, showRemove = false, userInvestment, onWatchlistChange, onInvestmentChange }) {
   const [communityAdvice, setCommunityAdvice] = useState(null);
@@ -28,27 +28,19 @@ export default function StockCard({ stock, onRemove, onSell, showRemove = false,
           is_active: true
         }, '-total_votes', 3).catch(() => []);
 
-        // Get advisor recommendations
-        const advisorPosts = await AdvisorPost.filter({
-          stock_symbol: stock.symbol
-        }, '-created_date', 3).catch(() => []);
+        // Active calls from approved advisors (public per-stock tally).
+        const advisorTally = await advisorApi.stockSummary(stock.symbol)
+          .catch(() => ({ buy: 0, sell: 0, hold: 0, total: 0 }));
 
         // Calculate consensus
         let communityVotes = { buy: 0, sell: 0, hold: 0 };
-        let advisorRecommendations = { buy: 0, sell: 0, hold: 0 };
+        const advisorRecommendations = { buy: advisorTally.buy || 0, sell: advisorTally.sell || 0, hold: advisorTally.hold || 0 };
 
         // Aggregate community poll results
         polls.forEach((poll) => {
           communityVotes.buy += poll.buy_votes || 0;
           communityVotes.sell += poll.sell_votes || 0;
           communityVotes.hold += poll.hold_votes || 0;
-        });
-
-        // Aggregate advisor recommendations
-        advisorPosts.forEach((post) => {
-          if (post.recommendation_type === 'buy') advisorRecommendations.buy++;
-          else if (post.recommendation_type === 'sell') advisorRecommendations.sell++;
-          else if (post.recommendation_type === 'hold') advisorRecommendations.hold++;
         });
 
         // Determine consensus (weighted: advisor recommendations count more)
@@ -65,7 +57,7 @@ export default function StockCard({ stock, onRemove, onSell, showRemove = false,
         setCommunityAdvice({
           consensus,
           communityVotes,
-          advisorCount: advisorPosts.length,
+          advisorCount: advisorTally.total || 0,
           confidence: Math.min(100, Math.max(50, advisorRecommendations[consensus] * 20 + 30))
         });
       } catch (error) {
@@ -143,18 +135,6 @@ export default function StockCard({ stock, onRemove, onSell, showRemove = false,
   return (
     <>
       <Card className="hover:shadow-lg transition-all duration-200 border-0 bg-white relative overflow-hidden flex flex-col">
-        {Math.random() < 0.3 && ( // Show ads on ~30% of stock cards
-          <div className="p-4 border-b">
-            <AdDisplay
-              placement="stocks"
-              userContext={{
-                stock_symbol: stock.symbol,
-                sectors: [stock.sector]
-              }}
-              className="mb-0"
-            />
-          </div>
-        )}
 
         {showRemove &&
           <Button

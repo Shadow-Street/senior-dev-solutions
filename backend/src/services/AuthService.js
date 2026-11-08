@@ -6,7 +6,9 @@ const DUMMY_PASSWORD_HASH = bcrypt.hashSync(require("crypto").randomBytes(16).to
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { Op } = require("sequelize");
-const { User, OauthToken } = require("../models");
+const { User, OauthToken, VerificationCode } = require("../models");
+const { effectiveRole } = require("../utils/roles");
+const SubscriptionService = require("./SubscriptionService");
 
 /**
  * Token lifetimes.
@@ -34,6 +36,46 @@ const userPayload = (user) => ({
   is_premium: user.is_premium,
   profile_image_url: user.profile_image_url,
 });
+
+const GOOGLE_ERRORS = {
+  GOOGLE_NOT_CONFIGURED: 'Google sign-in is not available right now.',
+  GOOGLE_TOKEN_INVALID: 'Google sign-in failed. Please try again.',
+  GOOGLE_EMAIL_UNVERIFIED: 'Your Google account email is not verified. Verify it with Google, or sign in with email.',
+  GOOGLE_ACCOUNT_MISMATCH: 'This email is linked to a different Google account. Sign in with email instead.',
+  GOOGLE_LINK_NOT_ALLOWED: 'An account with this email already exists. Sign in with your email and password instead.',
+};
+const googleError = (code) => Object.assign(new Error(GOOGLE_ERRORS[code]), { code });
+
+// Accounts that hold money, KYC or admin power never gain Google sign-in by
+// auto-linking: a Google account is a weaker credential than their password.
+const NO_GOOGLE_AUTOLINK_ROLES = new Set(['super_admin', 'admin', 'sub_admin', 'advisor', 'portfolio_manager']);
+
+/**
+ * Google is authoritative for an address only for Gmail and for Workspace
+ * accounts whose hosted domain (`hd`) is the address's own domain. A consumer
+ * Google account registered on another address was checked once and may have
+ * outlived the mailbox, so it may create a new account but not take over an
+ * existing one.
+ */
+const googleOwnsAddress = (email, hd) => {
+  const domain = email.split('@')[1] || '';
+  return domain === 'gmail.com' || domain === 'googlemail.com' || (typeof hd === 'string' && hd.toLowerCase() === domain);
+};
+
+// One client for the process, so Google's signing certificates are cached
+// instead of fetched on every attempt (forged ones included).
+let googleClient = null;
+let googleClientFor = null;
+const getGoogleClient = (clientId) => {
+  if (!googleClient || googleClientFor !== clientId) {
+    const { OAuth2Client } = require('google-auth-library');
+    googleClient = new OAuth2Client(clientId);
+    googleClientFor = clientId;
+  }
+  return googleClient;
+};
+
+const unusablePassword = () => bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
 
 class AuthService {
   /**
@@ -236,6 +278,9 @@ class AuthService {
       email_verified: false,
     });
 
+    // Everyone starts on the Free plan, as a real subscription row.
+    await SubscriptionService.ensureFreeSubscriptionSafely(user.id);
+
     /**
      * Returns the account, not a session.
      *
@@ -248,40 +293,92 @@ class AuthService {
     return { user };
   }
 
+  /**
+   * Signs in with a Google ID token (the `credential` from Google Identity
+   * Services), creating the account on first use.
+   *
+   * Fails closed:
+   *   - without GOOGLE_CLIENT_ID the audience check would be skipped, so a
+   *     token minted for any other Google app would be accepted;
+   *   - Google must vouch for the address (email_verified);
+   *   - the account is found by Google subject first; an account linked to a
+   *     different Google identity is refused;
+   *   - an existing account is auto-linked only when Google owns the address
+   *     (Gmail / matching Workspace domain) and the account is not staff,
+   *     advisor or portfolio manager;
+   *   - linking an account whose email was never verified also replaces its
+   *     password and ends its sessions: nobody proved that password belongs to
+   *     the mailbox owner, so it may be an attacker's pre-registration.
+   *
+   * Errors carry `code` and a generic message; the controller never forwards
+   * library messages to the browser.
+   */
   static async googleLogin(token, role = 'user', context = {}) {
-    const { OAuth2Client } = require('google-auth-library');
-    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    if (!clientId) throw googleError('GOOGLE_NOT_CONFIGURED');
 
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
-    const payload = ticket.getPayload();
-    const { email, name, sub: googleId, picture } = payload;
+    let payload;
+    try {
+      const ticket = await getGoogleClient(clientId).verifyIdToken({ idToken: token, audience: clientId });
+      payload = ticket.getPayload();
+    } catch {
+      throw googleError('GOOGLE_TOKEN_INVALID');
+    }
+    const email = typeof payload?.email === 'string' ? payload.email.trim().toLowerCase() : '';
+    if (!email || !payload.sub) throw googleError('GOOGLE_TOKEN_INVALID');
+    if (payload.email_verified !== true && payload.email_verified !== 'true') {
+      throw googleError('GOOGLE_EMAIL_UNVERIFIED');
+    }
+    const googleId = String(payload.sub);
+    // Bounded to the columns (name STRING(100) NOT NULL, profile_image_url STRING(255)).
+    const name = String(payload.name || email.split('@')[0]).trim().slice(0, 100) || email.split('@')[0].slice(0, 100);
+    const picture =
+      typeof payload.picture === 'string' && payload.picture.startsWith('https://') && payload.picture.length <= 255
+        ? payload.picture
+        : null;
 
-    let user = await User.findOne({ where: { email } });
+    let user = (await User.findOne({ where: { google_id: googleId } })) || (await User.findOne({ where: { email } }));
 
     if (!user) {
-      // Create new user if not exists
       user = await User.create({
         email,
         name,
+        display_name: name,
         google_id: googleId,
         profile_image_url: picture,
         role,
-        password: await bcrypt.hash(Math.random().toString(36).slice(-8), 10), // Random password
-        verify_step: 1
+        // Unusable random password: the account signs in through Google until
+        // the owner sets one with "forgot password".
+        password: await unusablePassword(),
+        verify_step: 1,
+        // Google has verified the address, so there is no OTP step.
+        email_verified: true,
       });
+      await SubscriptionService.ensureFreeSubscriptionSafely(user.id);
+    } else if (user.google_id) {
+      if (user.google_id !== googleId) throw googleError('GOOGLE_ACCOUNT_MISMATCH');
     } else {
-      // Update existing user with google info if missing
-      if (!user.google_id) {
-        user.google_id = googleId;
-        if (!user.profile_image_url) user.profile_image_url = picture;
-        await user.save();
+      if (NO_GOOGLE_AUTOLINK_ROLES.has(effectiveRole(user)) || !googleOwnsAddress(email, payload.hd)) {
+        throw googleError('GOOGLE_LINK_NOT_ALLOWED');
       }
+      user.google_id = googleId;
+      if (!user.profile_image_url && picture) user.profile_image_url = picture;
+      const preRegistered = user.email_verified === false;
+      if (preRegistered) {
+        // Whoever created the unverified row loses every way back in. Codes
+        // and sessions go first: if the save below fails, the row is still
+        // unverified (its password unusable for login) and nothing is left open.
+        await VerificationCode.update(
+          { consumed_at: new Date() },
+          { where: { user_id: user.id, consumed_at: null } }
+        );
+        await this.revokeAllForUser(user.id);
+        user.email_verified = true;
+        user.password = await unusablePassword();
+      }
+      await user.save();
     }
 
-    // Generate tokens
     // One place issues tokens, so lifetimes and the stored hash cannot drift
     // between the password and Google paths.
     const { accessToken, refreshToken } = await this.issueTokens(user, context);

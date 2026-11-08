@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react';
-import { Event, EventTicket, EventAttendee, PayoutRequest, Notification, EventCommissionTracking, EventReview } from '@/lib/apiClient';
+import { Event, EventTicket, EventAttendee, Notification, EventCommissionTracking, EventReview } from '@/lib/apiClient';
 import { toast } from 'sonner';
 
 /**
@@ -101,27 +101,12 @@ export const useEventAutomation = () => {
         }
       }
       
-      // Check if payout request already exists
-      const existingPayouts = await PayoutRequest.filter({ 
-        entity_type: 'event',
-        entity_id: event.id 
-      });
-      
-      if (existingPayouts.length === 0) {
-        const commissionRecord = commissionRecords[0] || await EventCommissionTracking.filter({ event_id: event.id });
-        
-        if (commissionRecord && commissionRecord[0] && commissionRecord[0].organizer_payout > 0) {
-          await PayoutRequest.create({
-            user_id: event.organizer_id,
-            entity_type: 'event',
-            entity_id: event.id,
-            requested_amount: commissionRecord[0].organizer_payout,
-            available_balance: commissionRecord[0].organizer_payout,
-            payout_method: 'bank_transfer',
-            status: 'pending'
-          });
-        }
-      }
+      // Payout requests are no longer created from the browser on an
+      // organiser's behalf: the server files a payout only for the signed-in
+      // owner (POST /revenue/payouts stamps user_id from the session), so this
+      // call used to create a request under the wrong account. The
+      // EventCommissionTracking record above (payout_status 'pending') is the
+      // queue finance works from until a server-side organiser payout flow exists.
     } catch (error) {
       console.error('Error creating organizer payout:', error);
     }

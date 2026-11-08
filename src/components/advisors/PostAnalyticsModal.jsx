@@ -1,275 +1,68 @@
-import apiClient from '@/lib/apiClient';
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import {
-  Eye,
-  Users,
-  TrendingUp,
-  Clock,
-  Download,
-  Search,
-  CheckCircle,
-  XCircle,
-  Calendar
-} from 'lucide-react';
+import { Users, Globe, Lock, CalendarDays } from 'lucide-react';
 import { format } from 'date-fns';
-import { toast } from 'sonner';
+import { useMyPlans, useMySubscribers } from './useAdvisorData';
+
+/**
+ * Who a post reaches. View counts are not tracked, so this reports what is
+ * actually known: the audience setting and how many of your active subscribers
+ * are entitled to read it (the same rule the server applies).
+ */
+function describeAudience(post, plans, subscribers) {
+  const active = subscribers.filter((s) => s.status === 'active');
+  if (post.visibility === 'public') {
+    return { label: 'Public - anyone can read it', icon: Globe, eligible: active.length, note: 'All of your active subscribers can read it, as can visitors without an account.' };
+  }
+  const required = plans.find((p) => p.id === post.required_plan_id);
+  if (!required) {
+    return { label: 'Any active subscriber', icon: Lock, eligible: active.length, note: 'Visitors and non-subscribers see a locked preview with the title only.' };
+  }
+  const eligible = active.filter((s) => Number(s.plan_price) >= Number(required.price)).length;
+  return { label: `${required.name} plan and above`, icon: Lock, eligible, note: 'Subscribers on cheaper plans see a locked preview with the title only.' };
+}
 
 export default function PostAnalyticsModal({ open, onClose, post }) {
-  const [viewers, setViewers] = useState([]);
-  const [subscribers, setSubscribers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [isLoading, setIsLoading] = useState(true);
-
-  const [stats, setStats] = useState({
-    totalViews: 0,
-    uniqueViewers: 0,
-    subscriberViews: 0,
-    nonSubscriberViews: 0,
-    avgViewDuration: '2m 34s',
-    engagement: 0
-  });
-
-  useEffect(() => {
-    if (open && post) {
-      loadAnalytics();
-    }
-  }, [open, post]);
-
-  const loadAnalytics = async () => {
-    setIsLoading(true);
-    try {
-      // Subscribers to this advisor's own plans. The generic subscription CRUD
-      // is scoped to the caller's own rows, so this uses the advisor-scoped
-      // endpoint instead.
-      const { data: allSubscribers } = await apiClient.get(
-        '/advisors/subscriptions/my-subscribers'
-      );
-      setSubscribers(Array.isArray(allSubscribers) ? allSubscribers : []);
-
-      // Parse unique viewers from post
-      const uniqueViewerIds = post.unique_viewers || [];
-
-      // Create viewer list with subscriber status
-      const viewersList = uniqueViewerIds.map(userId => {
-        const subscription = allSubscribers.find(sub => sub.user_id === userId);
-        return {
-          user_id: userId,
-          isSubscriber: !!subscription,
-          subscription_status: subscription?.status || 'none',
-          viewed_at: post.created_date, // You can add actual view timestamp if tracked
-          plan_id: subscription?.plan_id
-        };
-      });
-
-      setViewers(viewersList);
-
-      // Calculate stats
-      const subscriberViewCount = viewersList.filter(v => v.isSubscriber).length;
-      const nonSubscriberViewCount = viewersList.filter(v => !v.isSubscriber).length;
-
-      setStats({
-        totalViews: post.view_count || 0,
-        uniqueViewers: uniqueViewerIds.length,
-        subscriberViews: subscriberViewCount,
-        nonSubscriberViews: nonSubscriberViewCount,
-        avgViewDuration: '2m 34s', // Mock data - implement tracking if needed
-        engagement: uniqueViewerIds.length > 0
-          ? Math.round((subscriberViewCount / uniqueViewerIds.length) * 100)
-          : 0
-      });
-
-    } catch (error) {
-      console.error('Error loading analytics:', error);
-      toast.error('Failed to load analytics');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const exportCSV = () => {
-    const csvContent = [
-      ['User ID', 'Subscriber Status', 'Plan', 'Viewed At'],
-      ...viewers.map(viewer => [
-        viewer.user_id,
-        viewer.isSubscriber ? 'Subscribed' : 'Non-Subscriber',
-        viewer.plan_id || 'N/A',
-        format(new Date(viewer.viewed_at), 'yyyy-MM-dd HH:mm:ss')
-      ])
-    ].map(row => row.join(',')).join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `post_analytics_${post.id}_${format(new Date(), 'yyyy-MM-dd')}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
-
-    toast.success('Analytics exported successfully');
-  };
-
-  const filteredViewers = viewers.filter(viewer => {
-    const matchesSearch = viewer.user_id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' ||
-      (statusFilter === 'subscribed' && viewer.isSubscriber) ||
-      (statusFilter === 'non_subscribed' && !viewer.isSubscriber);
-    return matchesSearch && matchesStatus;
-  });
-
+  const plansQuery = useMyPlans(open);
+  const subsQuery = useMySubscribers(open);
   if (!post) return null;
 
+  const ready = !plansQuery.isLoading && !subsQuery.isLoading;
+  const failed = plansQuery.isError || subsQuery.isError;
+  const audience = ready && !failed ? describeAudience(post, plansQuery.data || [], subsQuery.data || []) : null;
+  const AudienceIcon = audience?.icon;
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+    <Dialog open={open} onOpenChange={(next) => { if (!next) onClose(); }}>
+      <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-primary" />
-            Post Analytics: {post.title}
-          </DialogTitle>
+          <DialogTitle>Post reach</DialogTitle>
+          <DialogDescription>{post.title}</DialogDescription>
         </DialogHeader>
 
-        {/* Stats Summary */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <Card className="border-protocall-premium-light bg-premium-muted">
-            <CardContent className="p-4 text-center">
-              <div className="text-3xl font-bold text-primary">{stats.totalViews}</div>
-              <div className="text-xs text-subtle mt-1">Total Views</div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-buy/30 bg-buy-muted">
-            <CardContent className="p-4 text-center">
-              <div className="text-3xl font-bold text-buy-muted-foreground">{stats.subscriberViews}</div>
-              <div className="text-xs text-subtle mt-1">Subscriber Views</div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-hold/30 bg-hold-muted">
-            <CardContent className="p-4 text-center">
-              <div className="text-3xl font-bold text-hold-muted-foreground">{stats.nonSubscriberViews}</div>
-              <div className="text-xs text-subtle mt-1">Non-Subscriber</div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-protocall-premium-light bg-premium-muted">
-            <CardContent className="p-4 text-center">
-              <div className="text-3xl font-bold text-protocall-premium-text">{stats.engagement}%</div>
-              <div className="text-xs text-subtle mt-1">Engagement</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-3 mb-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by User ID..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className={post.status === 'published' ? 'bg-buy-muted text-buy-muted-foreground border-0' : 'bg-surface-2 text-subtle border-0'}>
+              {post.status === 'published' ? 'Published' : 'Draft'}
+            </Badge>
+            {post.stock_symbol && <Badge variant="outline">{post.stock_symbol}</Badge>}
+            {post.recommendation_type && <Badge variant="outline" className="uppercase">{post.recommendation_type}</Badge>}
           </div>
 
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="subscribed">Subscribed</SelectItem>
-              <SelectItem value="non_subscribed">Non-Subscriber</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-2 text-sm text-subtle">
+            <CalendarDays className="w-4 h-4" />
+            {post.created_at ? format(new Date(post.created_at), 'MMM d, yyyy h:mm a') : 'Date unknown'}
+          </div>
 
-          <Button onClick={exportCSV} variant="outline" className="gap-2">
-            <Download className="w-4 h-4" />
-            Export CSV
-          </Button>
-        </div>
-
-        {/* Viewers List */}
-        <div className="space-y-3">
-          <h3 className="font-semibold text-subtle">Viewers ({filteredViewers.length})</h3>
-
-          {isLoading ? (
-            <div className="text-center py-8 text-muted-foreground">Loading analytics...</div>
-          ) : filteredViewers.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              {searchTerm || statusFilter !== 'all'
-                ? 'No viewers match your filters'
-                : 'No views yet for this post'}
-            </div>
-          ) : (
-            <div className="space-y-2 max-h-96 overflow-y-auto">
-              {filteredViewers.map((viewer, index) => (
-                <Card key={index} className="p-4 hover:shadow-md transition-shadow">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center text-white font-semibold text-sm">
-                        {viewer.user_id.substring(0, 2).toUpperCase()}
-                      </div>
-                      <div>
-                        <p className="font-medium text-foreground">
-                          User: {viewer.user_id.substring(0, 8)}...
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          <Clock className="w-3 h-3 inline mr-1" />
-                          {format(new Date(viewer.viewed_at), 'MMM dd, yyyy h:mm a')}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {viewer.isSubscriber ? (
-                        <Badge className="bg-buy-muted text-buy-muted-foreground flex items-center gap-1">
-                          <CheckCircle className="w-3 h-3" />
-                          Subscribed
-                        </Badge>
-                      ) : (
-                        <Badge className="bg-surface-2 text-foreground flex items-center gap-1">
-                          <XCircle className="w-3 h-3" />
-                          Non-Subscriber
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                </Card>
-              ))}
+          {!ready && <div className="animate-pulse h-24 bg-border rounded" aria-busy="true" />}
+          {ready && failed && <p className="text-sm text-sell-muted-foreground">We could not load your subscribers, so the audience size is unavailable.</p>}
+          {audience && (
+            <div className="rounded-lg border border-border bg-surface-2 p-4 space-y-2">
+              <p className="flex items-center gap-2 font-semibold text-foreground"><AudienceIcon className="w-4 h-4 text-primary" />{audience.label}</p>
+              <p className="flex items-center gap-2 text-2xl font-bold text-foreground"><Users className="w-5 h-5 text-primary" />{audience.eligible}<span className="text-sm font-normal text-subtle">active subscriber{audience.eligible === 1 ? '' : 's'} can read this</span></p>
+              <p className="text-xs text-muted-foreground">{post.status === 'published' ? audience.note : 'Drafts are visible only to you until you publish them.'}</p>
             </div>
           )}
-        </div>
-
-        {/* Post Details */}
-        <div className="mt-6 pt-6 border-t">
-          <h3 className="font-semibold text-subtle mb-3">Post Details</h3>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <span className="text-muted-foreground">Published:</span>
-              <span className="ml-2 font-medium">{format(new Date(post.created_date), 'MMM dd, yyyy')}</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Stock:</span>
-              <span className="ml-2 font-medium">{post.stock_symbol || 'N/A'}</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Type:</span>
-              <span className="ml-2 font-medium capitalize">{post.recommendation_type || 'N/A'}</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Status:</span>
-              <span className="ml-2 font-medium capitalize">{post.recommendation_status || 'Active'}</span>
-            </div>
-          </div>
         </div>
       </DialogContent>
     </Dialog>

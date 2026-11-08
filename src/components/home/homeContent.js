@@ -5,28 +5,37 @@ import {
   ClipboardCheck,
   Compass,
   Eye,
+  Facebook,
   GraduationCap,
   Handshake,
+  Instagram,
+  Linkedin,
   MessagesSquare,
   ShieldCheck,
   TriangleAlert,
+  Twitter,
   UserPlus,
   Users,
   Vote,
   Wallet,
+  Youtube,
 } from "lucide-react";
+import reviewAvatar1 from "@/assets/home/reviews/review-1.webp";
+import reviewAvatar2 from "@/assets/home/reviews/review-2.webp";
+import reviewAvatar3 from "@/assets/home/reviews/review-3.webp";
+import reviewAvatar4 from "@/assets/home/reviews/review-4.webp";
+import reviewAvatar5 from "@/assets/home/reviews/review-5.webp";
+import reviewAvatar6 from "@/assets/home/reviews/review-6.webp";
 
 // Static copy for the public Home page, mirroring protocall.in/home.
-// Live numbers (rooms, polls, votes, market movers) come from useHomeData.
+// Live numbers (rooms, polls, votes) come from useHomeData.
 
 export const HOME_NAV = [
   { label: "Home", to: "/home" },
-  { label: "Explore Stocks", to: "/Dashboard" },
-  { label: "Chat Rooms", to: "/ChatRooms" },
-  { label: "Community Polls", to: "/Polls" },
+  { label: "Market Updates", to: "/News" },
   { label: "Features", href: "#features" },
-  { label: "Reviews", href: "#reviews" },
   { label: "About Us", href: "#about" },
+  { label: "Blog", to: "/blogs" },
 ];
 
 export const HOME_FEATURES = [
@@ -138,31 +147,37 @@ export const HOME_ABOUT = [
 export const HOME_REVIEWS = [
   {
     name: "Anjali Joshi",
+    avatar: reviewAvatar1,
     rating: 5,
     text: "Great platform for beginners! The community is supportive, advisors are genuine, and the educational content is excellent. 5 stars!",
   },
   {
     name: "Rohit Gupta",
+    avatar: reviewAvatar2,
     rating: 5,
     text: "Protocall's portfolio tracking and alerts have saved me from potential losses multiple times. The platform is intuitive and powerful!",
   },
   {
     name: "Kavita Menon",
+    avatar: reviewAvatar3,
     rating: 5,
     text: "Finally, a platform that understands retail investors! The trust score system and community validation make me feel safe and informed.",
   },
   {
     name: "Vikram Singh",
+    avatar: reviewAvatar4,
     rating: 5,
     text: "The events and webinars are top-notch. Learning from industry experts has significantly improved my trading strategy. Thank you Protocall!",
   },
   {
     name: "Sneha Reddy",
+    avatar: reviewAvatar5,
     rating: 4,
     text: "I've tried many trading platforms, but Protocall stands out with its community-driven approach. The real-time polls help gauge market sentiment perfectly.",
   },
   {
     name: "Amit Patel",
+    avatar: reviewAvatar6,
     rating: 5,
     text: "Best platform for retail investors in India! The SEBI-registered advisors provide genuine insights, and the chat rooms are incredibly helpful.",
   },
@@ -218,3 +233,33 @@ export const HOME_ROOM_TYPE_LABELS = {
   premium: "Premium",
   premium_admin: "Premium",
 };
+
+// "Ask Proto" quick questions in the closing call to action.
+export const HOME_PROTO_GREETING = "Hey, I'm Proto — your guide to Protocall. Tap a question below and I'll explain.";
+export const HOME_PROTO_QA = [
+  {
+    q: "What is Protocall?",
+    a: "Protocall is a community for Indian retail investors. Discuss stocks in live chat rooms, vote on community polls, and follow verified advisors and finfluencers — all in one place.",
+  },
+  {
+    q: "How do the polls work?",
+    a: "Every poll asks the crowd about a stock — Buy, Hold or Sell. Cast one vote, then see how the community leans. It is the fastest way to read market sentiment before you act.",
+  },
+  {
+    q: "Can I follow advisors?",
+    a: "Yes. Browse SEBI-registered analysts and finfluencers, check their track record and reviews, then follow the ones whose style matches your approach.",
+  },
+  {
+    q: "What does it cost?",
+    a: "Joining the community and the chat rooms is free. Premium plans unlock the Pledge Pool, advisor picks and exclusive rooms whenever you want more.",
+  },
+];
+
+// Footer social row. Entries without a URL render as "Coming Soon".
+export const HOME_SOCIAL = [
+  { label: "Facebook", icon: Facebook, href: "https://www.facebook.com/stockprotocall/" },
+  { label: "Twitter", icon: Twitter, href: null },
+  { label: "Instagram", icon: Instagram, href: "https://www.instagram.com/stock.protocall/" },
+  { label: "LinkedIn", icon: Linkedin, href: "https://www.linkedin.com/company/stockprotocall/" },
+  { label: "YouTube", icon: Youtube, href: null },
+];

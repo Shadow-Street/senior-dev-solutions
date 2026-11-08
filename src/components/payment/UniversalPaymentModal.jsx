@@ -1,16 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import apiClient from '@/lib/apiClient';
+import React, { useState, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Lock, CreditCard, CheckCircle, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
+import { subscriptionApi, apiErrorMessage, rupees, loadRazorpay } from '@/lib/subscriptionApi';
 
 /**
- * Universal Payment Modal with Mock Testing Support
- * Handles all types of payments across the platform
+ * Razorpay checkout for a plan (platform or advisor).
+ *
+ * The browser names the plan; the server prices the order, checks the payment
+ * signature and activates the subscription (POST /payments/create-order and
+ * /payments/verify). `amount` is shown for information only and is never sent.
+ *
+ * There is deliberately no "mock payment" mode: a pretend success that the
+ * caller then acted on (creating a subscription) was a free subscription.
+ * Items without a server-side order flow (e.g. event tickets) cannot be paid
+ * here yet and say so instead of faking it.
  */
 export default function UniversalPaymentModal({
   open,
@@ -20,170 +27,105 @@ export default function UniversalPaymentModal({
   description,
   customerInfo,
   metadata = {},
+  planId = null,
+  cycle = 'monthly',
+  couponCode = null,
   onSuccess,
   onFailure,
-  enableMockPayment = true // Enable mock payments for testing
 }) {
   const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentMode, setPaymentMode] = useState(null); // 'mock' or 'razorpay'
+  const [error, setError] = useState(null);
+  const paymentTaken = useRef(false);
 
-  useEffect(() => {
-    if (open) {
-      // Auto-select mock mode if enabled, otherwise check for Razorpay
-      if (enableMockPayment) {
-        setPaymentMode('mock');
-      } else {
-        setPaymentMode('razorpay');
-      }
-    }
-  }, [open, enableMockPayment]);
+  const canPay = Boolean(planId);
+  const symbol = currency === 'INR' ? '₹' : '$';
 
-  const handleMockPayment = async () => {
-    setIsProcessing(true);
-
-    // Simulate payment processing delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    const mockPaymentData = {
-      paymentId: `mock_pay_${Date.now()}`,
-      amount: amount,
-      currency: currency,
-      metadata: metadata,
-      status: 'captured'
-    };
-
-    try {
-      // Call backend to persist mock transaction
-      await apiClient.post('/payments/mock-success', {
-        amount,
-        currency,
-        metadata
-      });
-
-      toast.success('Mock payment successful! 🎉');
-
-      if (onSuccess) {
-        onSuccess(mockPaymentData);
-      }
-
-      setTimeout(() => {
-        onClose();
-      }, 1000);
-    } catch (error) {
-      console.error('Mock payment error:', error);
-      toast.error('Mock payment failed');
-      if (onFailure) {
-        onFailure(error);
-      }
-    } finally {
-      setIsProcessing(false);
-    }
+  const fail = (message, cause) => {
+    setError(message);
+    toast.error(message);
+    setIsProcessing(false);
+    if (onFailure) onFailure(cause || new Error(message));
   };
-
-  // ... (keep imports)
-
-  useEffect(() => {
-    // Load Razorpay script
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
 
   const handleRazorpayPayment = async () => {
     setIsProcessing(true);
+    setError(null);
+    paymentTaken.current = false;
     try {
-      // 1. Create Order on Backend
-      const { data: orderData } = await apiClient.post('/payments/create-order', {
-        amount,
-        currency,
-        metadata
-      });
-
+      // 1. The server prices the order from the plan row (and promo code).
+      const orderData = await subscriptionApi.createOrder({ planId, cycle, couponCode });
       if (!orderData.success) {
-        throw new Error('Failed to create payment order');
+        throw new Error('We could not start the payment. Please try again.');
       }
+      await loadRazorpay();
 
-      // 2. Initialize Razorpay Checkout
-      const options = {
-        key: orderData.key_id, // Key ID from backend
+      // 2. Open Razorpay Checkout.
+      const rzp = new window.Razorpay({
+        key: orderData.key_id,
         amount: orderData.amount,
         currency: orderData.currency,
-        name: "Shadow Street Protocol",
-        description: description,
-        image: "https://your-logo-url.png", // Replace with valid logo
+        name: 'Protocall',
+        description,
         order_id: orderData.order_id,
-        handler: async function (response) {
+        handler: async (response) => {
+          paymentTaken.current = true;
           try {
-            // 3. Verify Payment on Backend
-            const { data: verifyData } = await apiClient.post('/payments/verify', {
+            // 3. The server verifies the signature, then activates the subscription.
+            toast.info('Confirming your payment...');
+            const verifyData = await subscriptionApi.verifyPayment({
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature // Corrected field name
+              razorpay_signature: response.razorpay_signature,
             });
 
             if (verifyData.success) {
-              toast.success('Payment successful!');
               if (onSuccess) onSuccess(verifyData);
               onClose();
             } else {
-              toast.error('Payment verification failed');
-              if (onFailure) onFailure(new Error('Verification failed'));
+              fail(`We could not confirm your payment. If you were charged, contact support with payment id ${response.razorpay_payment_id}.`);
             }
           } catch (err) {
             console.error('Verification Error:', err);
-            toast.error('Payment verification failed');
-            if (onFailure) onFailure(err);
+            fail(
+              `${apiErrorMessage(err, 'We could not confirm your payment.')} If you were charged, contact support with payment id ${response.razorpay_payment_id}.`,
+              err
+            );
+          } finally {
+            setIsProcessing(false);
           }
         },
         prefill: {
-          name: customerInfo?.name || "",
-          email: customerInfo?.email || "",
-          contact: customerInfo?.phone || ""
+          name: customerInfo?.name || '',
+          email: customerInfo?.email || '',
+          contact: customerInfo?.phone || '',
         },
-        theme: {
-          color: "hsl(var(--chart-1))"
-        },
+        theme: { color: '#6D28D9' },
         modal: {
           ondismiss: () => {
             setIsProcessing(false);
-            toast.info('Payment cancelled');
-          }
-        }
-      };
-
-      const rzp1 = new window.Razorpay(options);
-      rzp1.on('payment.failed', function (response) {
-        toast.error(`Payment Failed: ${response.error.description}`);
-        setIsProcessing(false);
-        if (onFailure) onFailure(response.error);
+            if (paymentTaken.current) return;
+            setError('Payment cancelled. You have not been charged.');
+            toast.info('Payment cancelled. You have not been charged.');
+          },
+        },
       });
-
-      rzp1.open();
-
-    } catch (error) {
-      console.error('Payment initialization error:', error);
-      toast.error('Failed to initialize payment. Please try again.');
-      setIsProcessing(false);
-    }
-  };
-
-  const handlePayment = () => {
-    if (paymentMode === 'mock') {
-      handleMockPayment();
-    } else {
-      handleRazorpayPayment();
+      rzp.on('payment.failed', (response) => {
+        fail(response?.error?.description || 'The payment failed. You have not been charged.', response?.error);
+      });
+      rzp.open();
+    } catch (err) {
+      console.error('Payment initialization error:', err);
+      fail(apiErrorMessage(err, err.message || 'Failed to start the payment. Please try again.'), err);
     }
   };
 
   if (!open) return null;
 
+  const discount = Number(metadata.discount_amount) || 0;
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+    <Dialog open={open} onOpenChange={(next) => { if (!next && isProcessing) return; onClose(next); }}>
+      <DialogContent className="max-w-md" onInteractOutside={(e) => { if (isProcessing) e.preventDefault(); }} onEscapeKeyDown={(e) => { if (isProcessing) e.preventDefault(); }}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <CheckCircle className="w-5 h-5 text-buy-muted-foreground" />
@@ -192,110 +134,47 @@ export default function UniversalPaymentModal({
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Payment Summary */}
           <Card className="border-2 border-protocall-premium-light bg-premium-muted">
             <CardContent className="p-4">
               <div className="space-y-2">
                 <h3 className="font-semibold text-foreground">{description}</h3>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl font-bold text-primary">
-                    {currency === 'INR' ? '₹' : '$'}{amount.toLocaleString()}
+                    {currency === 'INR' ? rupees(amount) : `${symbol}${Number(amount) || 0}`}
                   </span>
-                  {metadata.discount_amount > 0 && (
+                  {discount > 0 && (
                     <span className="text-sm line-through text-muted-foreground">
-                      {currency === 'INR' ? '₹' : '$'}{(amount + metadata.discount_amount).toLocaleString()}
+                      {symbol}{((Number(amount) || 0) + discount).toLocaleString()}
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-subtle">One-time payment</p>
-                {metadata.discount_amount > 0 && (
+                <p className="text-sm text-subtle">One-time payment for this billing period</p>
+                {discount > 0 && (
                   <Badge className="bg-buy-muted text-buy-muted-foreground">
-                    Discount: {currency === 'INR' ? '₹' : '$'}{metadata.discount_amount} OFF
+                    Discount: {symbol}{discount} OFF
                   </Badge>
                 )}
               </div>
             </CardContent>
           </Card>
 
-          {/* Payment Method Selection */}
-          {enableMockPayment && (
-            <div className="space-y-3">
-              {/* Mock Payment Option */}
-              <button
-                onClick={() => setPaymentMode('mock')}
-                className={`w-full p-4 rounded-lg border-2 transition-all text-left ${paymentMode === 'mock'
-                  ? 'border-primary bg-premium-muted'
-                  : 'border-border hover:border-border'
-                  }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-buy-muted flex items-center justify-center">
-                    <CheckCircle className="w-5 h-5 text-buy-muted-foreground" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-foreground">Mock Payment (Testing)</p>
-                    <p className="text-xs text-muted-foreground">Instant test payment - no real money</p>
-                  </div>
-                  {paymentMode === 'mock' && (
-                    <CheckCircle className="w-5 h-5 text-primary" />
-                  )}
-                </div>
-              </button>
-
-              {/* Razorpay Option */}
-              <button
-                onClick={() => setPaymentMode('razorpay')}
-                className={`w-full p-4 rounded-lg border-2 transition-all text-left ${paymentMode === 'razorpay'
-                  ? 'border-primary bg-premium-muted'
-                  : 'border-border hover:border-border'
-                  }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-premium-muted flex items-center justify-center">
-                    <span className="font-bold text-primary text-xs">R</span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-foreground">Payment via Razorpay</p>
-                    <p className="text-xs text-muted-foreground">Cards, UPI, Net Banking & More</p>
-                  </div>
-                  {paymentMode === 'razorpay' && (
-                    <CheckCircle className="w-5 h-5 text-primary" />
-                  )}
-                </div>
-              </button>
-            </div>
-          )}
-
-          {/* Razorpay Not Configured Warning */}
-          {paymentMode === 'razorpay' && (
-            <div className="bg-sell-muted border border-sell/30 rounded-lg p-4 flex items-start gap-3">
+          {!canPay && (
+            <div role="alert" className="bg-sell-muted border border-sell/30 rounded-lg p-4 flex items-start gap-3">
               <AlertTriangle className="w-5 h-5 text-sell-muted-foreground flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm text-sell-muted-foreground font-semibold">Payment gateway not configured.</p>
-                <p className="text-xs text-sell-muted-foreground mt-1">
-                  Please contact support or use Mock Payment for testing.
-                </p>
+                <p className="text-sm text-sell-muted-foreground font-semibold">Online payment is not available for this item yet.</p>
+                <p className="text-xs text-sell-muted-foreground mt-1">Please contact support to complete this purchase.</p>
               </div>
             </div>
           )}
 
-          {/* Mock Payment Instructions */}
-          {paymentMode === 'mock' && (
-            <div className="bg-buy-muted border border-buy/30 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-buy-muted-foreground flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm text-buy-muted-foreground font-semibold">Test Mode Active</p>
-                  <p className="text-xs text-buy-muted-foreground mt-1">
-                    This is a mock payment for testing. No real payment will be charged.
-                    Click "Pay" to simulate a successful payment.
-                  </p>
-                </div>
-              </div>
+          {error && (
+            <div role="alert" className="bg-sell-muted border border-sell/30 rounded-lg p-3 flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-sell-muted-foreground flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-sell-muted-foreground">{error}</p>
             </div>
           )}
 
-          {/* Security Badges */}
           <div className="flex items-center justify-center gap-6 py-3 border-t border-b">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Lock className="w-4 h-4 text-buy-muted-foreground" />
@@ -303,24 +182,18 @@ export default function UniversalPaymentModal({
             </div>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <CheckCircle className="w-4 h-4 text-primary" />
-              256-bit SSL
+              Verified by Razorpay
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-3">
-            <Button
-              variant="outline"
-              onClick={onClose}
-              disabled={isProcessing}
-              className="flex-1"
-            >
+            <Button variant="outline" onClick={onClose} disabled={isProcessing} className="flex-1">
               Cancel
             </Button>
             <Button
-              onClick={handlePayment}
-              disabled={isProcessing || !paymentMode}
-              className="flex-1 bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
+              onClick={handleRazorpayPayment}
+              disabled={isProcessing || !canPay}
+              className="flex-1 bg-primary hover:bg-primary/90 text-white"
             >
               {isProcessing ? (
                 <>
@@ -330,13 +203,12 @@ export default function UniversalPaymentModal({
               ) : (
                 <>
                   <CreditCard className="w-4 h-4 mr-2" />
-                  Pay {currency === 'INR' ? '₹' : '$'}{amount.toLocaleString()}
+                  Pay {currency === 'INR' ? rupees(amount) : `${symbol}${Number(amount) || 0}`}
                 </>
               )}
             </Button>
           </div>
 
-          {/* Customer Info */}
           {customerInfo && (
             <div className="text-xs text-muted-foreground text-center">
               Payment for: {customerInfo.name || customerInfo.email}

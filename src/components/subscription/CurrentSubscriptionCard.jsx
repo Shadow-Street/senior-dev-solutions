@@ -5,11 +5,43 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Crown, AlertTriangle, Calendar, Clock, CheckCircle2 } from "lucide-react";
 import { differenceInDays, format } from "date-fns";
+import { isFreeSubscription } from "@/lib/subscriptionApi";
 
 export default function CurrentSubscriptionCard({ subscription, onRenew, onCancel }) {
-    console.log("subscription", subscription);
-    console.log("onRenew", onRenew);
     if (!subscription) return null;
+
+    // Free is a real, active plan that never expires: no renewal date, no
+    // expiry bar, nothing to cancel. Showing the paid-plan layout here would
+    // read as "Expired" because there is no end date.
+    if (isFreeSubscription(subscription)) {
+        return (
+            <Card className="mb-8 border-2 border-protocall-premium-light shadow-sm bg-card overflow-hidden">
+                <CardContent className="p-6 md:p-8">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 rounded-xl bg-premium-muted">
+                                <Crown className="w-8 h-8 text-protocall-premium-text" />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
+                                    Free Plan
+                                    <Badge className="bg-buy-muted text-buy-muted-foreground hover:bg-buy-muted border-0 rounded-md px-2 py-0.5 text-xs font-semibold uppercase tracking-wide">
+                                        Active
+                                    </Badge>
+                                </h2>
+                                <p className="text-sm text-muted-foreground mt-1 font-medium">
+                                    Included with your account. No payment needed and it never expires.
+                                </p>
+                            </div>
+                        </div>
+                        <p className="text-sm text-subtle md:text-right">
+                            Pick a paid plan below to unlock more features.
+                        </p>
+                    </div>
+                </CardContent>
+            </Card>
+        );
+    }
 
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
@@ -52,7 +84,7 @@ export default function CurrentSubscriptionCard({ subscription, onRenew, onCance
     const iconBg = isExpired ? 'bg-sell-muted text-sell-muted-foreground' : 'bg-hold-muted text-hold-muted-foreground';
 
     return (
-        <Card className={`mb-8 border-2 ${cardBorder} shadow-sm bg-white overflow-hidden`}>
+        <Card className={`mb-8 border-2 ${cardBorder} shadow-sm bg-card overflow-hidden`}>
             <CardContent className="p-6 md:p-8">
                 <div className="flex flex-col gap-6">
 

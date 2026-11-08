@@ -446,9 +446,36 @@ module.exports = {
     amount: DataTypes.DECIMAL(15, 2),
     payment_method: DataTypes.STRING,
     payment_details: DataTypes.JSON,
+    // pending | approved | paid | rejected | cancelled (see WithdrawalService)
     status: DataTypes.STRING,
     processed_at: DataTypes.DATE,
-    reference_number: DataTypes.STRING
+    processed_by: DataTypes.UUID,
+    reference_number: DataTypes.STRING, // bank transfer reference, set at mark-paid
+    // Advisor withdrawal workflow (migration 012)
+    bank_account_id: DataTypes.UUID,
+    bank_snapshot: DataTypes.JSON, // bank name / last4 / holder at request time; never the full number
+    admin_notes: DataTypes.TEXT,
+    rejection_reason: DataTypes.TEXT,
+    approved_at: DataTypes.DATE,
+    rejected_at: DataTypes.DATE,
+    paid_at: DataTypes.DATE,
+    cancelled_at: DataTypes.DATE
+  }),
+  // Advisor payout destinations. The full account number is stored only as
+  // AES-256-GCM ciphertext (utils/bankCrypto.js) and is never serialised.
+  AdvisorBankAccount: createModel('advisor_bank_accounts', {
+    user_id: DataTypes.UUID,
+    account_holder_name: DataTypes.STRING,
+    bank_name: DataTypes.STRING,
+    account_number_encrypted: DataTypes.TEXT,
+    account_last4: DataTypes.STRING(4),
+    ifsc: DataTypes.STRING(11),
+    account_type: { type: DataTypes.STRING, defaultValue: 'savings' }, // savings | current
+    is_primary: { type: DataTypes.BOOLEAN, defaultValue: false },
+    status: { type: DataTypes.STRING, defaultValue: 'active' }, // active | disabled | removed
+    verified_at: DataTypes.DATE,
+    // When number / IFSC / holder last changed; withdrawals wait 24h after this.
+    destination_changed_at: DataTypes.DATE
   }),
 
   // Moderation & Compliance
@@ -521,7 +548,10 @@ module.exports = {
     amount: DataTypes.DECIMAL(10, 2),
     status: DataTypes.STRING, // success, failed, pending, refunded, partially_refunded
     payment_method: DataTypes.STRING,
-    transaction_id: DataTypes.STRING, // Razorpay Payment ID
+    // Razorpay payment id (refunds: refund id). Unique so a payment is recorded once,
+    // whatever the race; migration 013 adds this same index (same name, so sync({alter}) will not add a second one) to existing databases
+    // (sync() does not alter an existing table). NULLs may repeat.
+    transaction_id: { type: DataTypes.STRING, unique: 'uq_subscription_txn_payment' },
     razorpay_order_id: DataTypes.STRING,
     coupon_used: DataTypes.STRING, // Code of coupon used
     discount_applied: DataTypes.DECIMAL(10, 2),
@@ -566,7 +596,16 @@ module.exports = {
     is_system_plan: DataTypes.BOOLEAN,  // NEW - prevents deletion of core plans
     trial_days: DataTypes.INTEGER,
     advisor_id: DataTypes.UUID,
-    finfluencer_id: DataTypes.UUID
+    finfluencer_id: DataTypes.UUID,
+    // The advisor UI speaks "monthly"/"yearly"; the column stores month/year.
+    // Derived, not a column, so there is no schema change.
+    billing_interval: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        const i = String(this.getDataValue('interval') || 'month').toLowerCase();
+        return /^year/.test(i) ? 'yearly' : /^quarter/.test(i) ? 'quarterly' : 'monthly';
+      },
+    },
   }),
   Invoice: createModel('invoices', {
     invoice_number: DataTypes.STRING, // INV-YYYYMM-0001
@@ -592,9 +631,23 @@ module.exports = {
   }),
   AdvisorPost: createModel('advisor_posts', {
     advisor_id: DataTypes.UUID,
+    // Columns below the first block arrive with migration 014; before that the
+    // API silently dropped title/symbol/targets and could not gate content.
+    title: DataTypes.STRING(200),
     content: DataTypes.TEXT,
+    stock_symbol: DataTypes.STRING(32),
+    post_type: DataTypes.STRING(32),
+    recommendation_type: DataTypes.STRING(16), // buy | sell | hold
+    target_price: DataTypes.DECIMAL(15, 4),
+    stop_loss: DataTypes.DECIMAL(15, 4),
+    time_horizon: DataTypes.STRING(64),
+    // 'public' = everyone; 'subscribers' = active subscribers of this advisor,
+    // optionally narrowed to required_plan_id and dearer plans.
+    visibility: { type: DataTypes.STRING(16), defaultValue: 'subscribers' },
+    required_plan_id: DataTypes.UUID,
+    notified_at: DataTypes.DATE, // set when subscribers were told about the post (once)
     media_urls: DataTypes.JSON,
-    status: DataTypes.STRING,
+    status: DataTypes.STRING, // draft | published
     likes_count: DataTypes.INTEGER,
     comments_count: DataTypes.INTEGER,
     is_pinned: DataTypes.BOOLEAN
@@ -1053,7 +1106,9 @@ module.exports = {
     payout_method: DataTypes.STRING,
     processed_at: DataTypes.DATE,
     paid_at: DataTypes.DATE,
-    metadata: DataTypes.JSON
+    metadata: DataTypes.JSON,
+    // Payment id for server-created advisor commissions (unique; idempotency key).
+    reference_id: DataTypes.STRING
   }),
 
   // Refund Request

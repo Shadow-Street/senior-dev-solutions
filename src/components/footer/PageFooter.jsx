@@ -26,40 +26,23 @@ import { renderBrandLogo } from "@/components/common/BrandLogo";
 export default function PageFooter() {
   const { settings } = usePlatformSettings();
 
+  // The client's official profiles are the defaults; a URL saved in platform
+  // settings overrides them. Networks without a URL are not shown at all —
+  // a dead icon that goes nowhere looked broken.
   const socialLinks = [
-    {
-      name: 'Facebook',
-      url: settings.facebook_url || '#',
-      icon: Facebook,
-    },
-    {
-      name: 'Twitter',
-      url: settings.twitter_url || '#',
-      icon: Twitter,
-    },
-    {
-      name: 'Instagram',
-      url: settings.instagram_url || '#',
-      icon: Instagram,
-    },
-    {
-      name: 'LinkedIn',
-      url: settings.linkedin_url || '#',
-      icon: Linkedin,
-    },
-    {
-      name: 'YouTube',
-      url: settings.youtube_url || '#',
-      icon: Youtube,
-    }
-  ];
+    { name: 'Facebook', url: settings.facebook_url || 'https://www.facebook.com/stockprotocall/', icon: Facebook },
+    { name: 'Twitter', url: settings.twitter_url, icon: Twitter },
+    { name: 'Instagram', url: settings.instagram_url || 'https://www.instagram.com/stock.protocall/', icon: Instagram },
+    { name: 'LinkedIn', url: settings.linkedin_url || 'https://www.linkedin.com/company/stockprotocall/', icon: Linkedin },
+    { name: 'YouTube', url: settings.youtube_url, icon: Youtube },
+  ].filter((social) => /^https:\/\//i.test(social.url || ''));
 
   const linkClass =
     "group flex items-center gap-2.5 text-sm text-white/80 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 rounded";
   const iconClass = "h-4 w-4 shrink-0 text-white/70 transition-colors group-hover:text-buy";
 
   return (
-    <footer className="bg-[linear-gradient(90deg,#2B3AAE_0%,#3529BF_45%,#5B2A9E_100%)] text-white">
+    <footer className="bg-[linear-gradient(90deg,#4C1D95_0%,#5B21B6_45%,#6D28D9_100%)] text-white">
       <div className="mx-auto max-w-7xl px-6 py-12">
         <div className="mb-10 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1.1fr] lg:gap-8">
 

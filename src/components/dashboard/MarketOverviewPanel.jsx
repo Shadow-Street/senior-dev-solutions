@@ -68,7 +68,13 @@ export default function MarketOverviewPanel({ indices = [], error = null }) {
     setStatus("loading");
     setChartError(null);
     try {
-      const data = await stockAPI.getCandles(chartSymbol, range.resolution);
+      // 1D uses the server's default window (the latest trading session, so a
+      // weekend still shows Friday); longer ranges send an explicit from/to.
+      const data = await stockAPI.getCandles(
+        chartSymbol,
+        range.resolution,
+        range.key === "1D" ? undefined : range.seconds
+      );
       const points = (data || [])
         .filter(p => p.close != null)
         .map(p => ({ t: p.time, value: p.close }));
@@ -80,7 +86,7 @@ export default function MarketOverviewPanel({ indices = [], error = null }) {
       );
       setStatus("error");
     }
-  }, [chartSymbol, range.resolution]);
+  }, [chartSymbol, range.resolution, range.key, range.seconds]);
 
   useEffect(() => { loadCandles(); }, [loadCandles]);
 

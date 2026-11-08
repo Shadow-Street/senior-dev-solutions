@@ -89,11 +89,27 @@ class CronService {
                 // Mark as expired/past_due
                 await sub.update({ status: 'expired' });
 
-                // Downgrade user permissions
-                await db.User.update(
-                    { is_premium: false },
-                    { where: { id: sub.user_id } }
-                );
+                // Downgrade user permissions. Only a lapsed platform plan does
+                // this: an expired advisor subscription says nothing about the
+                // user's Premium/VIP membership, and if they hold another live
+                // platform plan they stay premium.
+                if (!sub.advisor_id && !sub.finfluencer_id) {
+                    const stillPaid = await db.Subscription.findOne({
+                        where: {
+                            user_id: sub.user_id,
+                            advisor_id: null,
+                            finfluencer_id: null,
+                            status: 'active',
+                            end_date: { [Op.gt]: new Date() },
+                        },
+                    });
+                    if (!stillPaid) {
+                        await db.User.update(
+                            { is_premium: false },
+                            { where: { id: sub.user_id } }
+                        );
+                    }
+                }
 
                 // Send notification
                 if (sub.User && sub.User.email) {

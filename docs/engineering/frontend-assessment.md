@@ -30,7 +30,7 @@ Also:
 
 ## 3. Code health
 
-- **ESLint:** 6,237 errors and 92 warnings. Most are `react/prop-types` (4,666) and `no-unused-vars` (1,242). Meaningful ones: 74 `exhaustive-deps`, and `no-undef` for `google`/`FB` in `Login.jsx:122,166` (the Facebook SDK is never loaded, so that button can't work). The ratchet baseline is in `.eslint-baseline.json`.
+- **ESLint:** 6,237 errors and 92 warnings. Most are `react/prop-types` (4,666) and `no-unused-vars` (1,242). Meaningful ones: 74 `exhaustive-deps`, and `no-undef` for `google` in `Login.jsx:122` (the Facebook button that relied on an unloaded SDK was removed in FE-37). The ratchet baseline is in `.eslint-baseline.json`.
 - **Largest files:**
 
   | File | Lines |

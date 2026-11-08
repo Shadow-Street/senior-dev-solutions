@@ -3,10 +3,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { PlatformSetting } from '@/api/entities';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Settings, Save, AlertCircle, Globe, Euro, Languages, FileText, KeyRound, CreditCard, Cog, Share2, Gift, BarChartHorizontal, LifeBuoy, Shield, Bell, Database, DollarSign } from 'lucide-react';
+import { Settings, Save, AlertCircle, Globe, Euro, Languages, FileText, KeyRound, CreditCard, Cog, Share2, Gift, BarChartHorizontal, LifeBuoy, Shield, Bell, Database, DollarSign, Activity } from 'lucide-react';
 import { toast } from "sonner";
 import ManageApiCredentials from './settings/ManageApiCredentials';
 import ManagePaymentGateway from './settings/ManagePaymentGateway';
+import ManageMarketData from './settings/ManageMarketData';
 import ManageLocalization from './settings/ManageLocalization';
 import ManageSite from './settings/ManageSite';
 import ManageMonetization from './settings/ManageMonetization';
@@ -23,6 +24,7 @@ import RefundManagement from '../superadmin/RefundManagement'; // Added this imp
 
 const settingCategories = [
   { name: 'API Credentials', component: ManageApiCredentials, icon: KeyRound },
+  { name: 'Market Data (Dhan)', component: ManageMarketData, icon: Activity },
   { name: 'Payment Gateway', component: ManagePaymentGateway, icon: CreditCard },
   { name: 'Site Setting', component: ManageSite, icon: Cog },
   { name: 'Monetization Settings', component: ManageMonetization, icon: DollarSign },

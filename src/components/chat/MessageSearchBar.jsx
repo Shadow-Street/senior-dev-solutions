@@ -73,7 +73,7 @@ export default function MessageSearchBar({ onSearch, onFilterChange, users = [] 
             placeholder="Search messages..."
             value={searchTerm}
             onChange={(e) => handleSearch(e.target.value)}
-            className="pl-10 pr-10 focus:ring-2 focus:ring-ring focus:border-transparent transition-all duration-200"
+            className="pl-10 pr-10"
           />
           <AnimatePresence>
             {searchTerm && (

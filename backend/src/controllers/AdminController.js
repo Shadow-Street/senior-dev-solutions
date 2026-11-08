@@ -31,26 +31,38 @@ class AdminController {
     // Advanced Subscription Analytics
     static async getSubscriptionAnalytics(req, res) {
         try {
+            // Paying-customer figures only. Every account has a Free row (and
+            // upgrading cancels it), and advisor subscriptions are a separate
+            // product, so neither belongs in subscribers, churn or MRR.
+            const platformRows = await db.Subscription.findAll({
+                where: { advisor_id: null, finfluencer_id: null },
+                attributes: ['id', 'status', 'billing_cycle', 'plan_id', 'plan_type', 'end_date'],
+                include: [{ model: db.SubscriptionPlan, attributes: ['id', 'name', 'price', 'price_monthly', 'price_annually'] }]
+            });
+            const num = (v) => { const n = Number(v); return Number.isFinite(n) ? n : 0; }; // NULL/garbage price counts as 0
+            const monthlyPrice = (plan) => num(plan && plan.price_monthly) || num(plan && plan.price);
+            const isFreeRow = (sub) => {
+                const plan = sub.SubscriptionPlan;
+                if (plan) return monthlyPrice(plan) === 0 && num(plan.price_annually) === 0;
+                return !sub.end_date && /^(free|basic)$/i.test(String(sub.plan_type || '').trim());
+            };
+            const paidRows = platformRows.filter((sub) => !isFreeRow(sub));
+
             // 1. Total & Active Subscribers
-            const totalSubscribers = await db.Subscription.count();
-            const activeSubscribers = await db.Subscription.count({ where: { status: 'active' } });
-            const cancelledSubscribers = await db.Subscription.count({ where: { status: 'cancelled' } });
+            const totalSubscribers = paidRows.length;
+            const activeSubs = paidRows.filter((sub) => sub.status === 'active');
+            const activeSubscribers = activeSubs.length;
+            const cancelledSubscribers = paidRows.filter((sub) => sub.status === 'cancelled').length;
 
             // 2. Revenue Calculations (MRR/ARR)
-            // MRR = Sum of monthly price of all active subscriptions
-            const activeSubs = await db.Subscription.findAll({
-                where: { status: 'active' },
-                include: [{ model: db.SubscriptionPlan }]
-            });
-
+            // MRR = Sum of monthly price of all active paid subscriptions
             let mrr = 0;
             activeSubs.forEach(sub => {
-                if (sub.SubscriptionPlan) {
-                    const price = sub.billing_cycle === 'annually'
-                        ? (parseFloat(sub.SubscriptionPlan.price_annually) / 12)
-                        : parseFloat(sub.SubscriptionPlan.price_monthly);
-                    mrr += price;
-                }
+                const plan = sub.SubscriptionPlan;
+                if (!plan) return;
+                mrr += sub.billing_cycle === 'annually'
+                    ? (num(plan.price_annually) || monthlyPrice(plan) * 12) / 12
+                    : monthlyPrice(plan);
             });
 
             const arr = mrr * 12;
@@ -83,7 +95,12 @@ class AdminController {
                     'plan_type',
                     [db.sequelize.fn('COUNT', db.sequelize.col('id')), 'count']
                 ],
-                where: { status: 'active' },
+                where: {
+                    status: 'active',
+                    advisor_id: null,
+                    finfluencer_id: null,
+                    plan_type: { [Op.notIn]: ['Free', 'Basic'] } // the free tier is everyone; it is not a "top plan"
+                },
                 group: ['plan_type'],
                 order: [[db.sequelize.fn('COUNT', db.sequelize.col('id')), 'DESC']],
                 limit: 5

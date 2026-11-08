@@ -1,6 +1,8 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Star, Facebook, Linkedin, Twitter, Instagram, Youtube } from 'lucide-react';
+import { renderMarqueeRow } from '@/components/common/Marquee';
+import { NEON_STAR, renderRatingStars } from '@/components/common/RatingStars';
 
 const iconMap = {
   facebook: Facebook,
@@ -89,18 +91,8 @@ const ReviewCard = ({ review }) => {
         </span>
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-foreground">{review.username}</p>
-          {/* Green #56E11B fill with a #276B10 outline, so the stars read on
-              white where the fill alone is 1.72:1. */}
-          <div className="mt-1 flex" role="img" aria-label={`${review.rating} out of 5 stars`}>
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                size={13}
-                strokeWidth={1.75}
-                className={i < review.rating ? 'fill-buy text-positive' : 'fill-transparent text-divider'}
-              />
-            ))}
-          </div>
+          {/* Same stars as the Home page reviews (RatingStars). */}
+          <div className="mt-1">{renderRatingStars(review.rating)}</div>
         </div>
 
         {SocialIcon && (
@@ -122,35 +114,6 @@ const ReviewCard = ({ review }) => {
   );
 };
 
-/**
- * One endless row. Items are rendered twice and the track moves by exactly
- * half its width, so the loop has no visible seam. Hovering pauses the row so
- * a review can be read; with reduced motion the row stays still and scrolls
- * by hand instead.
- */
-function MarqueeRow({ reviews, direction, label }) {
-  const track = [...reviews, ...reviews];
-  return (
-    <div
-      className="group relative overflow-hidden motion-reduce:overflow-x-auto
-                 [mask-image:linear-gradient(to_right,transparent,#000_4%,#000_96%,transparent)]"
-      aria-label={label}
-    >
-      <div
-        className={`flex w-max gap-5 py-2 group-hover:[animation-play-state:paused] motion-reduce:animate-none ${
-          direction === 'right' ? 'animate-marquee-right' : 'animate-marquee-left'
-        }`}
-      >
-        {track.map((review, index) => (
-          <div key={`${review.id}-${index}`} aria-hidden={index >= reviews.length || undefined}>
-            <ReviewCard review={review} />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export default function ReviewScroller() {
   const half = Math.ceil(sampleReviews.length / 2);
   const firstRow = sampleReviews.slice(0, half);
@@ -162,13 +125,31 @@ export default function ReviewScroller() {
         id="member-reviews-heading"
         className="mb-5 flex items-center gap-2 text-2xl font-bold text-foreground sm:text-3xl"
       >
-        <Star className="h-7 w-7 fill-buy text-positive" strokeWidth={1.75} />
+        <Star className={`h-7 w-7 ${NEON_STAR}`} strokeWidth={1.75} aria-hidden="true" />
         What Our Members Are Saying
       </h2>
 
       <div className="space-y-3">
-        <MarqueeRow reviews={firstRow} direction="left" label="Member reviews, row one" />
-        <MarqueeRow reviews={secondRow} direction="right" label="Member reviews, row two" />
+        {renderMarqueeRow({
+          items: firstRow,
+          renderItem: (review) => <ReviewCard review={review} />,
+          keyOf: (review) => review.id,
+          direction: 'left',
+          label: 'Member reviews, row one',
+          // Two runs keep the row wider than the widest Dashboard column
+          // (~1630px); 140s keeps the speed of the former single run at 70s.
+          copies: 2,
+          durationSeconds: 140,
+        })}
+        {renderMarqueeRow({
+          items: secondRow,
+          renderItem: (review) => <ReviewCard review={review} />,
+          keyOf: (review) => review.id,
+          direction: 'right',
+          label: 'Member reviews, row two',
+          copies: 2,
+          durationSeconds: 140,
+        })}
       </div>
     </section>
   );

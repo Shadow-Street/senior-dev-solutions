@@ -43,7 +43,7 @@ export default function ReviewForm({ onSubmit, existingReview, advisorName }) {
                                     <Star
                                         className={`w-8 h-8 transition-colors ${
                                             star <= (hoveredRating || rating)
-                                                ? 'text-hold fill-current'
+                                                ? 'text-protocall-neon-edge fill-protocall-neon'
                                                 : 'text-muted-foreground'
                                         }`}
                                     />

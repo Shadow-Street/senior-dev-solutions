@@ -92,21 +92,32 @@ class AuthController {
   }
 
   static async googleLogin(req, res) {
+    // The body carries a Google ID token (GIS `credential`). Any `role` sent
+    // by the client is ignored: like register, new Google accounts are users.
+    const { token } = req.body || {};
+    if (typeof token !== 'string' || !token || token.length > 4096) {
+      return res.status(400).json({ error: 'A Google sign-in token is required.' });
+    }
     try {
-      const { token } = req.body;
-      if (!token) return res.status(400).json({ message: "Token is required" });
-
-      // Same rule as register: new Google accounts are always plain users.
-      const { accessToken, refreshToken, user } = await AuthService.googleLogin(token, 'user');
+      const { accessToken, refreshToken, user } = await AuthService.googleLogin(token, 'user', {
+        userAgent: req.get('user-agent'),
+        ip: req.ip,
+      });
       AuthController.setAuthCookies(res, accessToken, refreshToken);
-
-      // Also set session
       req.session.user = { email: user.email, accessToken };
-
-      return res.status(200).json({ message: "Google login successful", accessToken, refreshToken, user });
+      return res.status(200).json({ message: 'Google login successful', accessToken, refreshToken, user });
     } catch (error) {
-      console.error("Google login error:", error);
-      return res.status(400).json({ error: error.message });
+      const status = {
+        GOOGLE_NOT_CONFIGURED: 503,
+        GOOGLE_TOKEN_INVALID: 401,
+        GOOGLE_EMAIL_UNVERIFIED: 403,
+        GOOGLE_ACCOUNT_MISMATCH: 409,
+        GOOGLE_LINK_NOT_ALLOWED: 409,
+      }[error.code];
+      if (status) return res.status(status).json({ error: error.message, code: error.code });
+      // Library and database messages stay in the log, never in the response.
+      console.error('Google login error:', error);
+      return res.status(500).json({ error: 'Google sign-in failed. Please try again.' });
     }
   }
 

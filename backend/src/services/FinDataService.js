@@ -2,6 +2,9 @@ const { default: YahooFinance } = require('yahoo-finance2');
 const { createClient } = require('redis');
 const db = require('../models');
 const { Op } = require('sequelize');
+const { DhanProvider } = require('./DhanProvider');
+const { dhanCredentials } = require('./DhanCredentialService');
+const { MarketSnapshotService } = require('./MarketSnapshotService');
 
 // --- Provider Interface & Implementations ---
 
@@ -289,6 +292,66 @@ class FinDataService {
     static activeProviderIndex = 0;
     static lastProviderSwitch = 0;
 
+    // DhanHQ is tried FIRST, but only for Indian symbols (TCS.NS, TCS.BO,
+    // ^NSEI ...) and only while it has usable credentials. The credentials live
+    // in the encrypted store (DhanCredentialService), are renewed automatically,
+    // and are absent when the key/token is missing or lapsed - in which case
+    // canServe() is false everywhere and the chain below behaves exactly as it
+    // did before Dhan existed. Dhan is deliberately outside the rotating
+    // `providers` list: a Dhan failure just means "use the chain as usual".
+    static dhan = new DhanProvider({
+        credentials: () => dhanCredentials.getCredentials(),
+        onAuthFailure: () => dhanCredentials.noteAuthFailure(),
+    });
+
+    // One market-wide snapshot of the NSE universe, refreshed in the background
+    // while Dhan is active (see MarketSnapshotService). Requests only read it.
+    static snapshot = new MarketSnapshotService({ getProvider: () => FinDataService.dhan });
+
+    /** True when Dhan can serve right now. */
+    static get dhanActive() {
+        return Boolean(this.dhan && this.dhan.isActive());
+    }
+
+    /**
+     * Quotes Dhan can supply for the Indian subset of `symbols`; never throws.
+     * The shared snapshot is consulted first so most reads cost no Dhan call.
+     */
+    static async tryDhanQuotes(symbols) {
+        const dhan = this.dhan;
+        if (!dhan) return [];
+        const eligible = symbols.filter(s => dhan.canServe(s));
+        if (eligible.length === 0) return [];
+
+        const out = [];
+        const rest = [];
+        for (const s of eligible) {
+            const hit = this.snapshot ? this.snapshot.getQuote(s) : undefined;
+            if (hit) out.push(hit); else rest.push(s);
+        }
+        if (rest.length === 0) return out;
+        try {
+            out.push(...await dhan.getBulkQuotes(rest));
+        } catch (err) {
+            // Auth failures are logged once by the provider itself.
+            if (err.message !== 'Dhan auth failed') {
+                console.warn(`[FinDataService] Dhan unavailable, using fallback providers: ${err.message}`);
+            }
+        }
+        return out;
+    }
+
+    /**
+     * Dashboard payload from the shared Dhan snapshot, or null when Dhan is not
+     * active / no snapshot exists yet (the caller then uses the legacy path).
+     */
+    static getDhanMarketView() {
+        if (!this.dhanActive || !this.snapshot || !this.snapshot.hasData()) return null;
+        const views = this.snapshot.getViews();
+        const info = this.snapshot.getInfo();
+        return { views, info };
+    }
+
     static get activeProvider() {
         return this.providers[this.activeProviderIndex];
     }
@@ -348,17 +411,22 @@ class FinDataService {
 
             // 2. Fetch from Active Provider (if missing or stale)
             let quote;
-            try {
-                quote = await this.activeProvider.getQuote(symbol);
-                if (!quote) throw new Error('Not found');
-            } catch (err) {
-                if (err.message.includes('Too Many Requests') || err.message.includes('429')) {
-                    console.error('[FinDataService] 429 Error - Switching Provider');
-                    await this.switchProvider();
-                    // Retry once with new provider
+            const [dhanQuote] = await this.tryDhanQuotes([symbol]);
+            if (dhanQuote) {
+                quote = dhanQuote;
+            } else {
+                try {
                     quote = await this.activeProvider.getQuote(symbol);
-                } else {
-                    throw err;
+                    if (!quote) throw new Error('Not found');
+                } catch (err) {
+                    if (err.message.includes('Too Many Requests') || err.message.includes('429')) {
+                        console.error('[FinDataService] 429 Error - Switching Provider');
+                        await this.switchProvider();
+                        // Retry once with new provider
+                        quote = await this.activeProvider.getQuote(symbol);
+                    } else {
+                        throw err;
+                    }
                 }
             }
 
@@ -416,7 +484,34 @@ class FinDataService {
     /**
      * Search Stocks (Store First)
      */
+    static searchCache = new Map(); // lower-cased query -> { at, value }
+    static SEARCH_CACHE_TTL_MS = 5 * 60 * 1000;
+    static SEARCH_CACHE_MAX = 200;
+
+    static recallSearch(query) {
+        const hit = this.searchCache.get(String(query).toLowerCase());
+        return hit && Date.now() - hit.at < this.SEARCH_CACHE_TTL_MS ? hit.value : null;
+    }
+
+    static rememberSearch(query, value) {
+        if (!Array.isArray(value) || value.length === 0) return;
+        if (this.searchCache.size >= this.SEARCH_CACHE_MAX) {
+            this.searchCache.delete(this.searchCache.keys().next().value); // oldest-inserted
+        }
+        this.searchCache.set(String(query).toLowerCase(), { at: Date.now(), value });
+    }
+
     static async searchStocks(query) {
+        // With Dhan active, search the whole instrument master (every NSE/BSE
+        // equity and the main indices by symbol and company name).
+        if (this.dhanActive) {
+            try {
+                const found = await this.dhan.search(query);
+                if (found.length > 0) return found;
+            } catch (err) {
+                console.warn(`[FinDataService] Dhan search failed, using fallback: ${err.message}`);
+            }
+        }
         try {
             // 1. Check DB first
             const localResults = await db.Stock.findAll({
@@ -445,7 +540,9 @@ class FinDataService {
                 }));
             }
 
-            // 2. Not found in DB -> Fetch API
+            // 2. Not found in DB -> Fetch API (unless this exact query was answered recently)
+            const cachedSearch = this.recallSearch(query);
+            if (cachedSearch) return cachedSearch;
             let stocks = [];
             try {
                 stocks = await this.activeProvider.search(query);
@@ -457,20 +554,12 @@ class FinDataService {
                 }
             }
 
-            // 3. Save found results to DB for future
-            for (const s of stocks) {
-                // Don't overwrite existing full data just for search results
-                // "findOrCreate"
-                await db.Stock.findOrCreate({
-                    where: { symbol: s.symbol },
-                    defaults: {
-                        name: s.name,
-                        exchange: s.exchange,
-                        current_price: 0 // Placeholder until price fetch
-                    }
-                });
-            }
-
+            // Results are NOT written to the stocks table any more: a public read
+            // path must not create rows (it filled `stocks` with price-0
+            // placeholders that then showed up in /stocks/search and trending).
+            // Nothing reads those rows; repeat queries are served from the small
+            // in-memory cache below instead.
+            this.rememberSearch(query, stocks);
             return stocks;
 
         } catch (error) {
@@ -512,8 +601,24 @@ class FinDataService {
         // 2. Fetch Missing from API
         if (missingOrStale.length > 0) {
             try {
-                let quotes = await this.activeProvider.getBulkQuotes(missingOrStale);
-                const quotesArray = Array.isArray(quotes) ? quotes : [quotes];
+                // Indian symbols go to Dhan (one batched request) when it is
+                // enabled; whatever it doesn't return goes down the usual chain.
+                const dhanQuotes = await this.tryDhanQuotes(missingOrStale);
+                const dhanSymbols = new Set(dhanQuotes.map(q => q.symbol));
+                const remaining = missingOrStale.filter(s => !dhanSymbols.has(s));
+                let restError = null;
+                let rest = [];
+                if (remaining.length > 0) {
+                    try {
+                        const fetched = await this.activeProvider.getBulkQuotes(remaining);
+                        rest = Array.isArray(fetched) ? fetched : [fetched];
+                    } catch (e) {
+                        // Keep the Dhan quotes; surface this to the handler below.
+                        if (dhanQuotes.length === 0) throw e;
+                        restError = e;
+                    }
+                }
+                const quotesArray = [...dhanQuotes, ...rest];
 
                 for (const quote of quotesArray) {
                     if (!quote || quote.__mock) continue; // never cache synthetic prices
@@ -545,6 +650,7 @@ class FinDataService {
 
                     results[quote.symbol] = stockData;
                 }
+                if (restError) throw restError;
             } catch (err) {
                 console.error("Bulk quote error:", err.message);
                 let retrySuccess = false;
@@ -552,7 +658,9 @@ class FinDataService {
                 if (err.message.includes('429') || err.message.includes('Too Many Requests')) {
                     await this.switchProvider();
                     try {
-                        let quotes = await this.activeProvider.getBulkQuotes(missingOrStale);
+                        // Don't re-fetch symbols Dhan already answered above.
+                        const retrySymbols = missingOrStale.filter(s => !results[s]);
+                        let quotes = await this.activeProvider.getBulkQuotes(retrySymbols);
                         const quotesArray = Array.isArray(quotes) ? quotes : [quotes];
 
                         for (const quote of quotesArray) {
@@ -592,6 +700,7 @@ class FinDataService {
                 if (!retrySuccess) {
                     // Fallback: Use whatever DB has even if stale for missing items
                     for (const sym of missingOrStale) {
+                        if (results[sym]) continue;
                         const localStock = await db.Stock.findOne({ where: { symbol: sym } });
                         if (localStock) {
                             results[sym] = {
@@ -660,6 +769,27 @@ class FinDataService {
 
     /** Intraday OHLC for a symbol, used by the Market Overview chart. */
     static async getCandles(symbol, resolution = '5', from, to) {
+        // Indian symbols: Dhan intraday/historical candles when enabled. Any
+        // failure or empty answer falls through to the Finnhub path below.
+        if (this.dhan && this.dhan.canServe(symbol)) {
+            const dhanCacheKey = `candles:dhan:${symbol}:${resolution}:${from || ''}:${to || ''}`;
+            try {
+                const cached = await redisClient.get(dhanCacheKey);
+                if (cached) return JSON.parse(cached);
+            } catch { /* ignore */ }
+            try {
+                const series = await this.dhan.getCandles(symbol, resolution, from, to);
+                if (series.length > 0) {
+                    try { await redisClient.setEx(dhanCacheKey, 60, JSON.stringify(series)); } catch { /* ignore */ }
+                    return series;
+                }
+            } catch (e) {
+                if (e.message !== 'Dhan auth failed') {
+                    console.warn(`[FinDataService] Dhan candles unavailable for ${symbol}: ${e.message}`);
+                }
+            }
+        }
+
         const provider = this.finnhub;
         if (!provider) return [];
 

@@ -8,6 +8,7 @@ import { HandCoins, Eye, Clock, CheckCircle, XCircle, BarChart3 } from 'lucide-r
 import { format } from 'date-fns';
 import PayoutDetailsModal from './PayoutDetailsModal';
 import { toast } from 'sonner';
+import { normalizePayout, payoutAmount } from '@/lib/payoutView';
 
 export default function Payouts({ finfluencers, advisors, payoutData, permissions, enrollments, commissions, payoutRequests, onUpdate }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,7 +24,12 @@ export default function Payouts({ finfluencers, advisors, payoutData, permission
   // Filter for pending/approved requests to be displayed
   const pendingAndApprovedRequests = useMemo(() => {
     if (!payoutRequests) return [];
-    return payoutRequests.filter(p => p.status === 'pending' || p.status === 'approved');
+    // Advisor withdrawals have their own review tab (bank details, state machine);
+    // this legacy review path can no longer change them.
+    return payoutRequests
+      .filter(p => p.entity_type !== 'advisor')
+      .filter(p => p.status === 'pending' || p.status === 'approved')
+      .map(normalizePayout);
   }, [payoutRequests]);
 
   const handleReviewClick = (request) => {
@@ -40,7 +46,7 @@ export default function Payouts({ finfluencers, advisors, payoutData, permission
     pending: { icon: Clock, color: 'bg-hold-muted text-hold-muted-foreground' },
     approved: { icon: CheckCircle, color: 'bg-premium-muted text-primary' },
     rejected: { icon: XCircle, color: 'bg-sell-muted text-sell-muted-foreground' },
-    processed: { icon: CheckCircle, color: 'bg-buy-muted text-buy-muted-foreground' },
+    paid: { icon: CheckCircle, color: 'bg-buy-muted text-buy-muted-foreground' },
   };
 
   return (
@@ -95,13 +101,13 @@ export default function Payouts({ finfluencers, advisors, payoutData, permission
                             <div className="text-xs text-muted-foreground">{creator?.type}</div>
                           </td>
                           <td className="px-6 py-4 font-semibold text-buy-muted-foreground">
-                            ₹{request.requested_amount.toLocaleString('en-IN')}
+                            ₹{payoutAmount(request).toLocaleString('en-IN')}
                           </td>
                           <td className="px-6 py-4 capitalize">
                             {request.payout_method?.replace('_', ' ')}
                           </td>
                           <td className="px-6 py-4">
-                            {format(new Date(request.created_date), 'dd MMM yyyy')}
+                            {request.created_date ? format(new Date(request.created_date), 'dd MMM yyyy') : '—'}
                           </td>
                           <td className="px-6 py-4">
                              <Badge className={`${status.color} border-0`}>

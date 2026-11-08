@@ -1,1555 +1,542 @@
-
-import React, { useState, useEffect, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import apiClient, {
-  authAPI,
-  Advisor,
-  AdvisorPost,
-  AdvisorPlan,
-  CommissionTracking,
-  Review,
-  PayoutRequest
-} from '@/lib/apiClient';
-import { sendAdvisorPostNotifications } from '@/api/functions';
-import { UploadFile } from '@/api/integrations';
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState, useCallback, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { QueryClientProvider, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import {
-  ShieldCheck,
-  Users,
-  DollarSign,
-  Star,
-  PlusCircle,
-  TrendingUp,
-  Eye,
-  Edit,
-  FileText,
-  CreditCard,
-  Wallet,
-  Clock,
-  CheckCircle,
-  Trash2,
-  AlertCircle,
-  BarChart3 // Added BarChart3 icon
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  ShieldCheck, Users, DollarSign, Star, PlusCircle, TrendingUp, Eye, Edit, FileText,
+  CreditCard, Wallet, Landmark, Clock, CheckCircle, Trash2, AlertCircle, BarChart3,
+  Globe, Lock, RefreshCw, Pencil, ExternalLink,
 } from 'lucide-react';
-import { toast } from "sonner";
+import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import CreatePostModal from '../components/advisors/CreatePostModal';
-import PayoutRequestModal from '../components/entity/PayoutRequestModal';
-import FinancialStatement from '../components/entity/FinancialStatement';
+import { useAuth } from '@/components/context/AuthContext';
+import { advisorApi } from '@/lib/advisorApi';
+import { apiErrorMessage } from '@/lib/withdrawalsApi';
+import { createPageUrl } from '@/utils';
 import AdvisorLayout from '../components/layouts/AdvisorLayout';
+import CreatePostModal from '../components/advisors/CreatePostModal';
 import CreatePlanModal from '../components/advisors/CreatePlanModal';
 import PostPreviewModal from '../components/advisors/PostPreviewModal';
+import PostAnalyticsModal from '../components/advisors/PostAnalyticsModal';
 import SubscriberAnalytics from '../components/advisors/SubscriberAnalytics';
 import RefundManagementSection from '../components/advisors/RefundManagementSection';
-import PostLimitTracker from '../components/advisors/PostLimitTracker';
-import PostAnalyticsModal from '../components/advisors/PostAnalyticsModal'; // Added PostAnalyticsModal import
+import AdvisorAnalytics from '../components/advisors/AdvisorAnalytics';
+import AdvisorProfileEditor from '../components/advisors/AdvisorProfileEditor';
+import AdvisorBankAccounts from '../components/advisors/finance/AdvisorBankAccounts';
+import AdvisorWithdrawals from '../components/advisors/finance/AdvisorWithdrawals';
+import AdvisorEarnings from '../components/advisors/finance/AdvisorEarnings';
+import {
+  advisorKeys, advisorQueryClient, useMyAdvisor, useMyPlans, useMyPosts,
+  useMyReviews, useMySubscribers, useWithdrawalSummary,
+} from '../components/advisors/useAdvisorData';
 
 const ADVISOR_TABS = ['overview', 'posts', 'plans', 'subscribers', 'financials', 'analytics'];
+const FIN_TABS = [
+  ['overview', 'Earnings', DollarSign],
+  ['payouts', 'Withdrawals', Wallet],
+  ['bank', 'Bank accounts', Landmark],
+  ['refunds', 'Refund requests', TrendingUp],
+];
+const MAX_PLANS = 3;
+const STAFF_ROLES = ['admin', 'super_admin', 'sub_admin'];
+const INTERVAL_LABEL = { monthly: 'month', quarterly: 'quarter', yearly: 'year' };
+const money = (n) => `₹${Number(n || 0).toLocaleString()}`;
+const fmtDate = (d) => (d ? format(new Date(d), 'MMM d, yyyy') : '-');
 
-export default function AdvisorDashboard() {
-  const [user, setUser] = useState(null);
-  const [advisor, setAdvisor] = useState(null);
-  const [posts, setPosts] = useState([]);
-  const [subscriptions, setSubscriptions] = useState([]);
-  const [plans, setPlans] = useState([]);
-  const [commissions, setCommissions] = useState([]);
-  const [reviews, setReviews] = useState([]);
-  const [payoutRequests, setPayoutRequests] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showCreatePost, setShowCreatePost] = useState(false);
-  const [showPayoutRequest, setShowPayoutRequest] = useState(false);
-  const [editingPost, setEditingPost] = useState(null);
-  // The active tab lives in the URL (?section=…), which is what the advisor
-  // sidebar links set. It used to be local state seeded once from ?tab= on
-  // mount, so ?section=financials (and every sidebar click on this page)
-  // silently showed Overview. ?tab= is still accepted for old links.
+function renderShell(content) {
+  return <AdvisorLayout activePage="advisor-dashboard"><div className="p-8"><div className="max-w-7xl mx-auto">{content}</div></div></AdvisorLayout>;
+}
+
+function renderStat(Icon, label, value, tone) {
+  return (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardContent className="p-6">
+        <div className="flex items-center">
+          <Icon className={`w-8 h-8 shrink-0 ${tone}`} />
+          <div className="ml-4 min-w-0">
+            <p className="text-sm font-medium text-subtle">{label}</p>
+            <p className="text-2xl font-bold text-foreground">{value}</p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function renderQueryError(message, onRetry) {
+  return (
+    <Card>
+      <CardContent className="p-8 text-center">
+        <AlertCircle className="w-12 h-12 text-sell-muted-foreground mx-auto mb-3" />
+        <p className="text-subtle mb-4">{message}</p>
+        <Button variant="outline" onClick={onRetry}><RefreshCw className="w-4 h-4 mr-2" />Try again</Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+function renderSkeletonCards(count, height = 'h-40') {
+  return (
+    <div className="animate-pulse grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" aria-busy="true">
+      {Array.from({ length: count }, (_, i) => <div key={i} className={`${height} bg-border rounded`} />)}
+    </div>
+  );
+}
+
+/** Status cards for a signed-in advisor-role user whose profile is not (yet) approved. */
+function renderNotApproved(advisor) {
+  const views = {
+    pending_approval: { Icon: Clock, tone: 'bg-hold-muted text-hold-muted-foreground', title: 'Application under review', body: 'Your SEBI advisor application is being reviewed by our team. You will be notified as soon as a decision is made.' },
+    rejected: { Icon: AlertCircle, tone: 'bg-sell-muted text-sell-muted-foreground', title: 'Application not approved', body: 'Unfortunately your advisor application was not approved.' },
+    suspended: { Icon: AlertCircle, tone: 'bg-hold-muted text-hold-muted-foreground', title: 'Advisor account suspended', body: 'Your advisor account is suspended. Contact support for more information.' },
+  };
+  const view = views[advisor.status] || views.pending_approval;
+  return renderShell(
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <Card className="max-w-md w-full">
+        <CardContent className="p-8 text-center">
+          <div className={`w-20 h-20 rounded-full ${view.tone} flex items-center justify-center mx-auto mb-4`}><view.Icon className="w-10 h-10" /></div>
+          <h2 className="text-2xl font-bold text-foreground mb-2">{view.title}</h2>
+          <p className="text-subtle mb-4">{view.body}</p>
+          {advisor.rejection_reason && <p className="text-sm text-sell-muted-foreground mb-4"><strong>Reason:</strong> {advisor.rejection_reason}</p>}
+          <div className="flex gap-3 justify-center">
+            <Link to={createPageUrl('AdvisorRegistration')}><Button>{advisor.status === 'rejected' ? 'Update and re-apply' : 'View application'}</Button></Link>
+            <Link to={createPageUrl('Dashboard')}><Button variant="outline">Back to dashboard</Button></Link>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function AdvisorDashboardContent() {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedTab = searchParams.get('section') || searchParams.get('tab');
   const activeTab = ADVISOR_TABS.includes(requestedTab) ? requestedTab : 'overview';
-  const setActiveTab = useCallback((tab) => {
+  const requestedFin = searchParams.get('fin');
+  const finTab = FIN_TABS.some(([key]) => key === requestedFin) ? requestedFin : 'overview';
+
+  // Several keys can change in one navigation (functional search-param updates
+  // are not queued, so two successive calls would drop the first).
+  const setParams = useCallback((changes) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      next.set('section', tab);
-      next.delete('tab');
+      Object.entries(changes).forEach(([key, value]) => next.set(key, value));
+      if (changes.section) {
+        next.delete('tab');
+        if (changes.section !== 'financials' && !changes.fin) next.delete('fin');
+      }
       return next;
     }, { replace: true });
   }, [setSearchParams]);
-  const [showCreatePlan, setShowCreatePlan] = useState(false);
-  const [editingPlan, setEditingPlan] = useState(null);
-  const [viewingPost, setViewingPost] = useState(null);
-  const [showPostPreview, setShowPostPreview] = useState(false);
-  const [showProfileImageModal, setShowProfileImageModal] = useState(false);
-  const [deletingPlan, setDeletingPlan] = useState(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [financialTab, setFinancialTab] = useState('overview');
-  const [viewingPostStats, setViewingPostStats] = useState(null); // New state for post analytics
-  const [showPostAnalytics, setShowPostAnalytics] = useState(false); // New state for post analytics modal
+  const setParam = useCallback((key, value) => setParams({ [key]: value }), [setParams]);
 
-  const [stats, setStats] = useState({
-    totalSubscribers: 0,
-    activeSubscribers: 0,
-    totalEarnings: 0,
-    availableBalance: 0,
-    pendingPayouts: 0,
-    avgRating: 0
+  // The cache is module-level; never let one advisor's data outlive their session.
+  useEffect(() => () => advisorQueryClient.clear(), [user?.id]);
+
+  const [postModal, setPostModal] = useState({ open: false, post: null });
+  const [planModal, setPlanModal] = useState({ open: false, plan: null });
+  const [previewPost, setPreviewPost] = useState(null);
+  const [reachPost, setReachPost] = useState(null);
+  const [deletePost, setDeletePost] = useState(null);
+  const [deletePlan, setDeletePlan] = useState(null);
+
+  const isStaff = STAFF_ROLES.includes(user?.app_role || user?.role);
+  const meQuery = useMyAdvisor();
+  const advisor = meQuery.data;
+  const approved = advisor?.status === 'approved' && !isStaff;
+  const plansQuery = useMyPlans(approved);
+  const postsQuery = useMyPosts(approved);
+  const subsQuery = useMySubscribers(approved);
+  const summaryQuery = useWithdrawalSummary(approved);
+  const reviewsQuery = useMyReviews(advisor?.id, approved);
+
+  const plans = plansQuery.data || [];
+  const posts = postsQuery.data || [];
+  const subscribers = subsQuery.data || [];
+  const activeSubs = subscribers.filter((s) => s.status === 'active');
+  const reviews = reviewsQuery.data || [];
+  const avgRating = reviews.length ? Math.round((reviews.reduce((sum, r) => sum + Number(r.rating || 0), 0) / reviews.length) * 10) / 10 : 0;
+  const available = Number(summaryQuery.data?.available || 0);
+
+  const invalidate = (...keys) => keys.forEach((key) => queryClient.invalidateQueries({ queryKey: key }));
+
+  const savePost = useMutation({
+    mutationFn: ({ id, payload }) => (id ? advisorApi.updatePost(id, payload) : advisorApi.createPost(payload)),
+    onSuccess: (saved, { id, payload }) => {
+      invalidate(advisorKeys.posts);
+      setPostModal({ open: false, post: null });
+      if (payload.status === 'draft') toast.success('Draft saved.');
+      else if (saved?.notified_subscribers > 0) toast.success(`Published. ${saved.notified_subscribers} subscriber${saved.notified_subscribers === 1 ? '' : 's'} notified.`);
+      else toast.success(id ? 'Advisory updated.' : 'Advisory published.');
+    },
+    onError: (error) => toast.error(apiErrorMessage(error, 'Could not save the advisory.')),
   });
 
-  useEffect(() => {
-    let isMounted = true;
+  const removePost = useMutation({
+    mutationFn: (id) => advisorApi.deletePost(id),
+    onSuccess: () => { invalidate(advisorKeys.posts); toast.success('Advisory deleted.'); },
+    onError: (error) => toast.error(apiErrorMessage(error, 'Could not delete the advisory.')),
+    onSettled: () => setDeletePost(null),
+  });
 
-    const loadDashboard = async () => {
-      setIsLoading(true);
+  const savePlan = useMutation({
+    mutationFn: ({ id, payload }) => (id ? advisorApi.updatePlan(id, payload) : advisorApi.createPlan(payload)),
+    onSuccess: (_saved, { id }) => {
+      invalidate(advisorKeys.plans);
+      setPlanModal({ open: false, plan: null });
+      toast.success(id ? 'Plan updated.' : 'Plan created.');
+    },
+    onError: (error) => toast.error(apiErrorMessage(error, 'Could not save the plan.')),
+  });
 
-      try {
-        const currentUser = await authAPI.me().catch(() => null);
-        if (!isMounted || !currentUser) {
-          setIsLoading(false);
-          toast.error('Please log in to access this page');
-          return;
-        }
-        // Normalize user role from backend ('role') to frontend expected ('app_role')
-        const normalizedUser = {
-          ...currentUser,
-          app_role: currentUser.role, // Backend returns 'role'
-          display_name: currentUser.name // Backend returns 'name'
-        };
-        setUser(normalizedUser);
+  const togglePlan = useMutation({
+    mutationFn: (plan) => advisorApi.updatePlan(plan.id, { is_active: !plan.is_active }),
+    onSuccess: (_s, plan) => { invalidate(advisorKeys.plans); toast.success(plan.is_active ? 'Plan deactivated. New subscribers can no longer buy it.' : 'Plan activated.'); },
+    onError: (error) => toast.error(apiErrorMessage(error, 'Could not update the plan.')),
+  });
 
-        let advisorProfile;
-        try {
-          if (normalizedUser.app_role === 'super_admin' || normalizedUser.app_role === 'admin') {
-            const profiles = await Advisor.list('', 1).catch(() => []);
-            advisorProfile = profiles[0];
-            if (advisorProfile) {
-              toast.info("Viewing as Admin: Displaying first available Advisor.", { duration: 3000 });
-            } else {
-              setAdvisor({ id: 'admin-preview', display_name: "Admin Preview", sebi_registration_number: "PREVIEW-000", status: 'approved' }); // Default status for admin preview
-              setIsLoading(false);
-              return;
-            }
-          } else {
-            const advisorProfiles = await Advisor.filter({ user_id: normalizedUser.id }).catch(() => []);
-            advisorProfile = advisorProfiles[0];
-          }
-        } catch (error) {
-          console.error('Error loading advisor profile:', error);
-          setAdvisor(null);
-          setIsLoading(false);
-          return;
-        }
+  const removePlan = useMutation({
+    mutationFn: (id) => advisorApi.deletePlan(id),
+    onSuccess: () => { invalidate(advisorKeys.plans); toast.success('Plan deleted.'); },
+    onError: (error) => toast.error(apiErrorMessage(error, 'Could not delete the plan.')),
+    onSettled: () => setDeletePlan(null),
+  });
 
-        if (!isMounted) return;
+  const submitPost = (payload) => savePost.mutateAsync({ id: postModal.post?.id, payload });
+  const submitPlan = (payload, id) => savePlan.mutateAsync({ id, payload });
+  const openProfileEditor = () => setParam('edit', 'profile');
 
-        if (!advisorProfile) {
-          setAdvisor(null);
-          setIsLoading(false);
-          return;
-        }
+  // ---- gates ---------------------------------------------------------------
+  if (meQuery.isLoading) {
+    return renderShell(
+      <div className="animate-pulse" aria-busy="true">
+        <div className="h-8 bg-border rounded w-1/3 mb-6" />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">{[0, 1, 2, 3].map((i) => <div key={i} className="h-24 bg-border rounded" />)}</div>
+      </div>
+    );
+  }
+  if (meQuery.isError) {
+    return renderShell(renderQueryError('We could not load your advisor profile.', () => meQuery.refetch()));
+  }
+  if (isStaff) {
+    return renderShell(
+      <Card className="max-w-xl mx-auto">
+        <CardContent className="p-8 text-center">
+          <ShieldCheck className="w-14 h-14 text-primary mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-foreground mb-2">Staff view</h2>
+          <p className="text-subtle mb-6">Advisor tools belong to approved advisors. Review applications, plans and payouts from the admin console.</p>
+          <Link to="/admin/dashboard"><Button>Open the admin console</Button></Link>
+        </CardContent>
+      </Card>
+    );
+  }
+  if (!advisor) {
+    return renderShell(
+      <Card className="max-w-md mx-auto">
+        <CardContent className="p-8 text-center">
+          <ShieldCheck className="w-16 h-16 text-primary mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-foreground mb-2">Advisor registration required</h2>
+          <p className="text-subtle mb-6">Apply as a SEBI registered advisor to unlock this dashboard.</p>
+          <Link to={createPageUrl('AdvisorRegistration')}><Button>Apply now</Button></Link>
+        </CardContent>
+      </Card>
+    );
+  }
+  if (advisor.status !== 'approved') return renderNotApproved(advisor);
 
-        setAdvisor(advisorProfile);
+  // ---- section renderers ---------------------------------------------------
+  const statValue = (query, value) => (query.isLoading ? '...' : query.isError ? 'N/A' : value);
+  const anyStatError = [subsQuery, summaryQuery, reviewsQuery].some((q) => q.isError);
 
-        // Only load other data if advisor is approved
-        if (advisorProfile.status === 'approved') {
-          // This advisor's plan ids, used to scope the subscriber list below.
-          let advisorPlanIds = new Set();
-          try {
-            const [postsData, plansData] = await Promise.all([
-              AdvisorPost.filter({ advisor_id: advisorProfile.id }).catch(() => []),
-              AdvisorPlan.filter({ advisor_id: advisorProfile.id }).catch(() => [])
-            ]);
-
-            if (!isMounted) return;
-            setPosts(postsData || []);
-            setPlans(plansData || []);
-            advisorPlanIds = new Set((plansData || []).map((plan) => plan.id));
-          } catch (error) {
-            console.error('Error loading posts/plans:', error);
-            setPosts([]);
-            setPlans([]);
-          }
-
-          setIsLoading(false);
-
-          setTimeout(async () => {
-            if (!isMounted) return;
-
-            try {
-              const [subscriptionsData, commissionsData, reviewsData, payoutRequestsData] = await Promise.all([
-                // Subscribers to this advisor's plans. The generic subscription
-                // CRUD is scoped to the caller's own rows, so filtering it by
-                // advisor_id returned the advisor's *own* subscriptions and left
-                // the Subscribers tab and stats empty.
-                // Narrowed to this advisor's plans on the client too: for
-                // admin/super_admin the endpoint returns every subscription on
-                // the platform, which would show as this advisor's subscribers.
-                apiClient.get('/advisors/subscriptions/my-subscribers')
-                  .then((r) => (Array.isArray(r?.data) ? r.data : []))
-                  .then((rows) => rows.filter((sub) => advisorPlanIds.has(sub.plan_id)))
-                  .catch(() => []),
-                CommissionTracking.filter({ advisor_id: advisorProfile.id }).catch(() => []),
-                Review.filter({ entity_id: advisorProfile.id, entity_type: 'advisor' }).catch(() => []),
-                PayoutRequest.filter({ entity_id: advisorProfile.id, entity_type: 'advisor' }).catch(() => [])
-              ]);
-
-              if (!isMounted) return;
-
-              setSubscriptions(subscriptionsData || []);
-              setCommissions(commissionsData || []);
-              setReviews(reviewsData || []);
-              setPayoutRequests(payoutRequestsData || []);
-
-              const totalEarnings = (commissionsData || []).reduce((sum, c) => sum + (c.advisor_payout || 0), 0);
-              const totalPaidOut = (payoutRequestsData || [])
-                .filter(p => p.status === 'processed')
-                .reduce((sum, p) => sum + (p.requested_amount || 0), 0);
-              const pendingPayouts = (payoutRequestsData || [])
-                .filter(p => p.status === 'pending' || p.status === 'approved')
-                .reduce((sum, p) => sum + (p.requested_amount || 0), 0);
-              const availableBalance = totalEarnings - totalPaidOut - pendingPayouts;
-
-              const activeSubscribers = (subscriptionsData || []).filter(s => s.status === 'active').length;
-              const ratingsSum = (reviewsData || []).reduce((sum, r) => sum + (r.rating || 0), 0);
-              const avgRating = ratingsSum > 0 ? ratingsSum / reviewsData.length : 0;
-
-              if (isMounted) {
-                setStats({
-                  totalSubscribers: (subscriptionsData || []).length,
-                  activeSubscribers,
-                  totalEarnings,
-                  availableBalance: Math.max(0, availableBalance),
-                  pendingPayouts,
-                  avgRating: Math.round(avgRating * 10) / 10
-                });
-              }
-            } catch (error) {
-              console.error('Background data loading error:', error);
-            }
-          }, 100);
-        } else {
-          // If advisor is not 'approved', no need to load posts, plans, etc.
-          setIsLoading(false);
-        }
-
-      } catch (error) {
-        console.error('Error loading advisor dashboard:', error);
-        toast.error('Failed to load dashboard data');
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadDashboard();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const handlePostSubmit = async (postData) => {
-    try {
-      if (!advisor || !advisor.id) {
-        toast.error('Advisor information not available');
-        return;
-      }
-
-      console.log('Creating post with data:', postData);
-
-      const enrichedPostData = {
-        ...postData,
-        advisor_id: advisor.id,
-        status: 'published',
-        entry_price: postData.target_price || 0,
-        recommendation_status: postData.recommendation_type ? 'active' : undefined,
-        view_count: 0,
-        unique_viewers: []
-      };
-
-      const newPost = await AdvisorPost.create(enrichedPostData);
-
-      toast.success('Advisory published successfully!');
-
-      // Send notifications in the background - non-blocking
-      setTimeout(async () => {
-        try {
-          console.log('Sending notifications for post:', newPost.id);
-          const notifResult = await sendAdvisorPostNotifications({
-            postId: newPost.id,
-            advisorId: advisor.id,
-            advisorName: advisor.display_name,
-            postTitle: postData.title,
-            requiredPlanId: postData.required_plan_id
-          });
-
-          console.log('Notifications sent:', notifResult);
-
-          if (notifResult?.data?.notifications_sent > 0 || notifResult?.notifications_sent > 0) {
-            const count = notifResult.data?.notifications_sent || notifResult.notifications_sent || 0;
-            const emails = notifResult.data?.emails_queued || notifResult.emails_queued || 0;
-            const sms = notifResult.data?.sms_queued || notifResult.sms_queued || 0;
-
-            toast.success(`📧 Notified ${count} subscribers!`, {
-              description: `${emails} emails sent, ${sms} SMS queued`
-            });
-          }
-        } catch (notifError) {
-          console.error('Failed to send notifications:', notifError);
-          // Don't show error toast - notifications are optional
-        }
-      }, 1000);
-
-      setShowCreatePost(false);
-      setEditingPost(null);
-
-      const postsData = await AdvisorPost.filter({ advisor_id: advisor.id }).catch(() => []);
-      setPosts(postsData || []);
-    } catch (error) {
-      console.error('Error saving post:', error);
-      toast.error('Failed to save advisory');
-    }
-  };
-
-  const handlePayoutSubmit = async (payoutData) => {
-    try {
-      if (!user || !advisor) {
-        toast.error('User or advisor information not available');
-        return;
-      }
-
-      await PayoutRequest.create({
-        user_id: user.id,
-        entity_type: 'advisor',
-        entity_id: advisor.id,
-        requested_amount: payoutData.requested_amount,
-        available_balance: stats.availableBalance,
-        payout_method: payoutData.payout_method,
-        bank_details: payoutData.bank_details,
-        upi_id: payoutData.upi_id,
-        paypal_email: payoutData.paypal_email,
-        status: 'pending'
-      });
-
-      toast.success('Payout request submitted successfully!');
-      setShowPayoutRequest(false);
-
-      const payoutRequestsData = await PayoutRequest.filter({ entity_id: advisor.id, entity_type: 'advisor' }).catch(() => []);
-      setPayoutRequests(payoutRequestsData || []);
-    } catch (error) {
-      console.error('Error submitting payout request:', error);
-      toast.error('Failed to submit payout request');
-    }
-  };
-
-  const handlePlanSubmit = async (planData, planId = null) => {
-    try {
-      if (!advisor || !advisor.id) {
-        toast.error('Advisor information not available');
-        return;
-      }
-
-      if (planId) {
-        await AdvisorPlan.update(planId, planData);
-        toast.success('Subscription plan updated successfully!');
-      } else {
-        await AdvisorPlan.create({
-          ...planData,
-          advisor_id: advisor.id
-        });
-        toast.success('Subscription plan created successfully!');
-      }
-
-      setShowCreatePlan(false);
-      setEditingPlan(null);
-
-      const plansData = await AdvisorPlan.filter({ advisor_id: advisor.id }).catch(() => []);
-      setPlans(plansData || []);
-    } catch (error) {
-      console.error('Error saving plan:', error);
-      toast.error('Failed to save plan');
-    }
-  };
-
-  const handleEditPlan = (plan) => {
-    setEditingPlan(plan);
-    setShowCreatePlan(true);
-  };
-
-  const handleCreateNewPlan = () => {
-    setEditingPlan(null);
-    setShowCreatePlan(true);
-  };
-
-  const handleTogglePlanStatus = async (plan) => {
-    try {
-      await AdvisorPlan.update(plan.id, {
-        is_active: !plan.is_active
-      });
-
-      toast.success(`Plan ${plan.is_active ? 'deactivated' : 'activated'} successfully!`);
-
-      const plansData = await AdvisorPlan.filter({ advisor_id: advisor.id }).catch(() => []);
-      setPlans(plansData || []);
-    } catch (error) {
-      console.error('Error updating plan:', error);
-      toast.error('Failed to update plan');
-    }
-  };
-
-  const handleDeletePlan = async () => {
-    if (!deletingPlan) return;
-
-    try {
-      const planSubscribers = (subscriptions || []).filter(
-        s => s.plan_id === deletingPlan.id && s.status === 'active'
-      );
-
-      if (planSubscribers.length > 0) {
-        toast.error(`Cannot delete plan with ${planSubscribers.length} active subscriber${planSubscribers.length > 1 ? 's' : ''}. Please deactivate it instead.`);
-        setShowDeleteConfirm(false);
-        setDeletingPlan(null);
-        return;
-      }
-
-      await AdvisorPlan.delete(deletingPlan.id);
-
-      toast.success('Subscription plan deleted successfully!');
-      setShowDeleteConfirm(false);
-      setDeletingPlan(null);
-
-      const plansData = await AdvisorPlan.filter({ advisor_id: advisor.id }).catch(() => []);
-      setPlans(plansData || []);
-    } catch (error) {
-      console.error('Error deleting plan:', error);
-      toast.error('Failed to delete plan');
-    }
-  };
-
-  const confirmDeletePlan = (plan) => {
-    setDeletingPlan(plan);
-    setShowDeleteConfirm(true);
-  };
-
-  const handleProfileImageUpload = async (file) => {
-    try {
-      if (!file) return;
-
-      if (!file.type.startsWith('image/')) {
-        toast.error('Please upload an image file');
-        return;
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('Image size must be less than 5MB');
-        return;
-      }
-
-      toast.info('Uploading image...');
-
-      const { file_url } = await UploadFile({ file });
-
-      await Advisor.update(advisor.id, {
-        profile_image_url: file_url
-      });
-
-      setAdvisor(prev => ({ ...prev, profile_image_url: file_url }));
-      setShowProfileImageModal(false);
-      toast.success('Profile picture updated successfully!');
-    } catch (error) {
-      console.error('Error uploading profile image:', error);
-      toast.error('Failed to upload profile picture');
-    }
-  };
-
-  const handleViewPostStats = (post) => {
-    setViewingPostStats(post);
-    setShowPostAnalytics(true);
-  };
-
-  const getStatusBadge = (status) => {
-    const config = {
-      published: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Published' },
-      draft: { color: 'bg-surface-2 text-foreground', label: 'Draft' },
-      active: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Active' },
-      cancelled: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Cancelled' },
-      pending: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending' },
-      approved: { color: 'bg-premium-muted text-primary', label: 'Approved' },
-      processed: { color: 'bg-buy-muted text-buy-muted-foreground', label: 'Processed' },
-      rejected: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Rejected' },
-      pending_approval: { color: 'bg-hold-muted text-hold-muted-foreground', label: 'Pending Approval' }
-    };
-    const { color, label } = config[status] || { color: 'bg-surface-2 text-foreground', label: 'Unknown' };
-    return <Badge className={`${color} border-0`}>{label}</Badge>;
-  };
-
-  const getPlanNameForPost = (planId) => {
-    if (!planId) return 'All Subscribers';
-    const plan = (plans || []).find(p => p.id === planId);
-    return plan ? `${plan.name} Only` : 'Unknown Plan';
-  };
-
-  const getPlanColor = (planName) => {
-    const name = planName?.toLowerCase();
-    if (name?.includes('vip') || name?.includes('diamond') || name?.includes('gold')) {
-      return 'from-hold to-hold';
-    }
-    if (name?.includes('premium') || name?.includes('pro') || name?.includes('plus')) {
-      return 'from-protocall-deep to-protocall-blue';
-    }
-    if (name?.includes('basic') || name?.includes('starter') || name?.includes('momentum')) {
-      return 'from-protocall-deep to-protocall-blue';
-    }
-    return 'from-protocall-deep to-protocall-blue';
-  };
-
-  const getPlanIcon = (planName) => {
-    const name = planName?.toLowerCase();
-    if (name?.includes('vip') || name?.includes('diamond') || name?.includes('gold')) {
-      return '👑';
-    }
-    if (name?.includes('premium') || name?.includes('pro') || name?.includes('plus')) {
-      return '⭐';
-    }
-    if (name?.includes('basic') || name?.includes('starter') || name?.includes('momentum')) {
-      return '📊';
-    }
-    return '💎';
-  };
-
-  if (isLoading) {
-    return (
-      <AdvisorLayout activePage="advisor-dashboard">
-        <div className="p-6">
-          <div className="max-w-7xl mx-auto">
-            <div className="animate-pulse">
-              <div className="h-8 bg-border rounded w-1/3 mb-6"></div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="h-24 bg-border rounded"></div>
-                ))}
+  const renderOverview = () => (
+    <div className="space-y-8">
+      <div className="flex flex-wrap justify-between items-center gap-4">
+        <div className="flex items-center gap-4">
+          <button type="button" onClick={openProfileEditor} className="relative group rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Change profile photo">
+            {advisor.profile_image_url ? (
+              <img src={advisor.profile_image_url} alt={advisor.display_name} className="w-20 h-20 rounded-full object-cover border-4 border-protocall-premium-light shadow-lg" />
+            ) : (
+              <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-white text-3xl font-bold border-4 border-protocall-premium-light shadow-lg">
+                {advisor.display_name?.charAt(0)?.toUpperCase() || 'A'}
               </div>
+            )}
+            <span className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity flex items-center justify-center text-white text-sm font-semibold">Change</span>
+          </button>
+          <div>
+            <h2 className="text-3xl font-bold text-foreground">Welcome back, {advisor.display_name}!</h2>
+            <div className="flex items-center gap-2 mt-2">
+              <Badge className="bg-buy-muted text-buy-muted-foreground border-0">SEBI registered</Badge>
+              <span className="text-sm text-muted-foreground">#{advisor.sebi_registration_number}</span>
             </div>
           </div>
         </div>
-      </AdvisorLayout>
-    );
-  }
-
-  if (!advisor) {
-    return (
-      <AdvisorLayout activePage="advisor-dashboard">
-        <div className="min-h-screen flex items-center justify-center p-4">
-          <Card className="max-w-md w-full">
-            <CardContent className="p-8 text-center">
-              <ShieldCheck className="w-16 h-16 text-protocall-premium-light mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-foreground mb-2">SEBI Advisor Registration Required</h2>
-              <p className="text-subtle mb-6">
-                Complete your SEBI advisor registration to access this dashboard.
-              </p>
-              <Button onClick={() => window.location.href = '/AdvisorRegistration'}>
-                Register Now
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </AdvisorLayout>
-    );
-  }
-
-  // NEW: Handle Pending/Rejected Status
-  if (advisor.status === 'pending_approval') {
-    return (
-      <AdvisorLayout activePage="advisor-dashboard">
-        <div className="min-h-screen flex items-center justify-center p-4">
-          <Card className="max-w-md w-full border-2 border-hold/30">
-            <CardContent className="p-8 text-center">
-              <div className="w-20 h-20 rounded-full bg-hold-muted flex items-center justify-center mx-auto mb-4">
-                <Clock className="w-10 h-10 text-hold-muted-foreground" />
-              </div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">Application Under Review</h2>
-              <p className="text-subtle mb-4">
-                Your SEBI advisor application is currently being reviewed by our admin team.
-              </p>
-              <div className="bg-hold-muted border border-hold/30 rounded-lg p-4 mb-6">
-                <p className="text-sm text-hold-muted-foreground">
-                  <strong>Status:</strong> {getStatusBadge(advisor.status)}
-                </p>
-                <p className="text-sm text-hold-muted-foreground mt-2">
-                  We'll notify you via email once your application is approved. This usually takes 1-2 business days.
-                </p>
-              </div>
-              <Button onClick={() => window.location.href = '/Dashboard'} variant="outline">
-                Back to Dashboard
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </AdvisorLayout>
-    );
-  }
-
-  if (advisor.status === 'rejected') {
-    return (
-      <AdvisorLayout activePage="advisor-dashboard">
-        <div className="min-h-screen flex items-center justify-center p-4">
-          <Card className="max-w-md w-full border-2 border-sell/30">
-            <CardContent className="p-8 text-center">
-              <div className="w-20 h-20 rounded-full bg-sell-muted flex items-center justify-center mx-auto mb-4">
-                <AlertCircle className="w-10 h-10 text-sell-muted-foreground" />
-              </div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">Application Not Approved</h2>
-              <p className="text-subtle mb-4">
-                Unfortunately, your advisor application was not approved.
-              </p>
-              <div className="bg-sell-muted border border-sell/30 rounded-lg p-4 mb-6">
-                <p className="text-sm text-sell-muted-foreground">
-                  <strong>Status:</strong> {getStatusBadge(advisor.status)}
-                </p>
-                {advisor.rejection_reason && (
-                  <p className="text-sm text-sell-muted-foreground mt-2">
-                    <strong>Reason:</strong> {advisor.rejection_reason}
-                  </p>
-                )}
-              </div>
-              <div className="flex gap-3 justify-center">
-                <Button onClick={() => window.location.href = '/Dashboard'} variant="outline">
-                  Back to Dashboard
-                </Button>
-                <Button onClick={() => window.location.href = '/ContactSupport'}>
-                  Contact Support
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </AdvisorLayout>
-    );
-  }
-
-  return (
-    <AdvisorLayout activePage="advisor-dashboard">
-      <div className="p-8">
-        <div className="max-w-7xl mx-auto space-y-8">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="hidden">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="posts">My Posts</TabsTrigger>
-              <TabsTrigger value="plans">Plans</TabsTrigger>
-              <TabsTrigger value="subscribers">Subscribers</TabsTrigger>
-              <TabsTrigger value="financials">Financials</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="overview" className="space-y-8 mt-0">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-4">
-                  <div className="relative group cursor-pointer" onClick={() => setShowProfileImageModal(true)}>
-                    {advisor.profile_image_url ? (
-                      <img
-                        src={advisor.profile_image_url}
-                        alt={advisor.display_name}
-                        className="w-20 h-20 rounded-full object-cover border-4 border-protocall-premium-light shadow-lg"
-                      />
-                    ) : (
-                      <div className="w-20 h-20 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center text-white text-3xl font-bold border-4 border-protocall-premium-light shadow-lg">
-                        {advisor.display_name?.charAt(0)?.toUpperCase() || 'A'}
-                      </div>
-                    )}
-                    <button
-                      className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-sm font-semibold"
-                    >
-                      Change
-                    </button>
-                  </div>
-
-                  <div>
-                    <h2 className="text-3xl font-bold text-foreground">Welcome back, {advisor.display_name}!</h2>
-                    <p className="text-subtle mt-1">Here's your advisory dashboard overview</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Badge className="bg-buy-muted text-buy-muted-foreground border-0">SEBI Registered</Badge>
-                      <span className="text-sm text-muted-foreground">#{advisor.sebi_registration_number}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <Button onClick={() => setShowCreatePost(true)} className="bg-primary hover:bg-primary">
-                    <PlusCircle className="w-4 h-4 mr-2" />
-                    Create Advisory
-                  </Button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-center">
-                      <Users className="w-8 h-8 text-primary" />
-                      <div className="ml-4">
-                        <p className="text-sm font-medium text-subtle">Active Subscribers</p>
-                        <p className="text-2xl font-bold text-foreground">{stats.activeSubscribers}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-center">
-                      <CreditCard className="w-8 h-8 text-buy-muted-foreground" />
-                      <div className="ml-4">
-                        <p className="text-sm font-medium text-subtle">Total Subscribers</p>
-                        <p className="text-2xl font-bold text-foreground">{stats.totalSubscribers}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-center">
-                      <DollarSign className="w-8 h-8 text-protocall-premium-text" />
-                      <div className="ml-4">
-                        <p className="text-sm font-medium text-subtle">Total Earnings</p>
-                        <p className="text-2xl font-bold text-foreground">₹{stats.totalEarnings.toLocaleString()}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-center">
-                      <Wallet className="w-8 h-8 text-buy-muted-foreground" />
-                      <div className="ml-4">
-                        <p className="text-sm font-medium text-subtle">Available Balance</p>
-                        <p className="text-2xl font-bold text-foreground">₹{stats.availableBalance.toLocaleString()}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-center">
-                      <Star className="w-8 h-8 text-hold-muted-foreground" />
-                      <div className="ml-4">
-                        <p className="text-sm font-medium text-subtle">Avg Rating</p>
-                        <p className="text-2xl font-bold text-foreground">{stats.avgRating}/5</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <PostLimitTracker posts={posts} plans={plans} />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Recent Activity</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <FileText className="w-8 h-8 text-primary" />
-                          <div>
-                            <p className="font-semibold text-foreground">Total Posts</p>
-                            <p className="text-sm text-muted-foreground">Published advisories</p>
-                          </div>
-                        </div>
-                        <p className="text-2xl font-bold text-foreground">{posts.length}</p>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <CreditCard className="w-8 h-8 text-buy-muted-foreground" />
-                          <div>
-                            <p className="font-semibold text-foreground">Active Plans</p>
-                            <p className="text-sm text-muted-foreground">Subscription plans</p>
-                          </div>
-                        </div>
-                        <p className="text-2xl font-bold text-foreground">{plans.length}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Quick Actions</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <Button onClick={() => setShowCreatePost(true)} className="w-full justify-start" variant="outline">
-                      <PlusCircle className="w-4 h-4 mr-2" />
-                      Create New Advisory
-                    </Button>
-                    <Button onClick={() => setShowPayoutRequest(true)} className="w-full justify-start" variant="outline" disabled={stats.availableBalance <= 0}>
-                      <Wallet className="w-4 h-4 mr-2" />
-                      Request Payout
-                    </Button>
-                    <Button onClick={() => setActiveTab('analytics')} className="w-full justify-start" variant="outline">
-                      <TrendingUp className="w-4 h-4 mr-2" />
-                      View Analytics
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="posts" className="space-y-4 mt-0">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-foreground">My Posts</h2>
-                <Button onClick={() => setShowCreatePost(true)} className="bg-primary hover:bg-primary">
-                  <PlusCircle className="w-4 h-4 mr-2" />
-                  Create Advisory
-                </Button>
-              </div>
-
-              <PostLimitTracker posts={posts} plans={plans} />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {posts.length > 0 ? (
-                  posts.map(post => (
-                    <Card key={post.id} className="hover:shadow-xl transition-all duration-300 border-2 hover:border-protocall-premium-light">
-                      <CardContent className="p-6">
-                        <div className="space-y-4">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                {post.recommendation_type && (
-                                  <Badge variant="outline" className={`font-semibold ${post.recommendation_type === 'buy' ? 'text-buy-muted-foreground border-buy bg-buy-muted' :
-                                    post.recommendation_type === 'sell' ? 'text-sell-muted-foreground border-sell bg-sell-muted' :
-                                      'text-hold-muted-foreground border-hold bg-hold-muted'
-                                    }`}>
-                                    {post.recommendation_type?.toUpperCase()}
-                                  </Badge>
-                                )}
-                                {getStatusBadge(post.status)}
-                              </div>
-                              <h3 className="font-bold text-lg text-foreground line-clamp-2 mb-2">
-                                {post.title}
-                              </h3>
-                            </div>
-                          </div>
-
-                          {post.stock_symbol && (
-                            <div className="bg-surface-2 rounded-lg p-3 border border-protocall-premium-light">
-                              <p className="text-xs text-subtle mb-1">Stock Symbol</p>
-                              <p className="text-xl font-bold text-primary">{post.stock_symbol}</p>
-                            </div>
-                          )}
-
-                          {(post.target_price || post.stop_loss) && (
-                            <div className="grid grid-cols-2 gap-3">
-                              {post.target_price && (
-                                <div className="bg-buy-muted rounded-lg p-3 border border-buy/30">
-                                  <p className="text-xs text-subtle mb-1">Target Price</p>
-                                  <p className="text-lg font-bold text-buy-muted-foreground">₹{post.target_price}</p>
-                                </div>
-                              )}
-                              {post.stop_loss && (
-                                <div className="bg-sell-muted rounded-lg p-3 border border-sell/30">
-                                  <p className="text-xs text-subtle mb-1">Stop Loss</p>
-                                  <p className="text-lg font-bold text-sell-muted-foreground">₹{post.stop_loss}</p>
-                                </div>
-                              )}
-                            </div>
-                          )}
-
-                          <p className="text-sm text-subtle line-clamp-3">
-                            {post.content}
-                          </p>
-
-                          <div className="flex items-center justify-between pt-3 border-t">
-                            <Badge className={post.required_plan_id ? 'bg-premium-muted text-protocall-premium-text' : 'bg-premium-muted text-primary'}>
-                              {getPlanNameForPost(post.required_plan_id)}
-                            </Badge>
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <Eye className="w-3 h-3" />
-                              {post.view_count || 0}
-                            </div>
-                          </div>
-
-                          {/* ACTION BUTTONS */}
-                          <div className="grid grid-cols-2 gap-2 pt-3 border-t">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                setViewingPost(post);
-                                setShowPostPreview(true);
-                              }}
-                              className="h-8"
-                            >
-                              <Eye className="w-3 h-3 mr-1" />
-                              Preview
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleViewPostStats(post)}
-                              className="h-8 border-protocall-premium-light text-primary hover:bg-premium-muted"
-                            >
-                              <BarChart3 className="w-3 h-3 mr-1" />
-                              Stats
-                            </Button>
-                          </div>
-
-                          <div className="text-xs text-muted-foreground pt-3 border-t">
-                            <span>{format(new Date(post.created_date), 'MMM d, yyyy')}</span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))
-                ) : (
-                  <div className="col-span-full">
-                    <Card>
-                      <CardContent className="p-8 text-center">
-                        <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                        <p className="text-subtle">No advisories published yet.</p>
-                        <Button onClick={() => setShowCreatePost(true)} className="mt-4">
-                          Create Your First Advisory
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="plans" className="space-y-4 mt-0">
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold text-foreground">Subscription Plans</h2>
-                  <p className="text-sm text-subtle mt-1">
-                    You have {plans.length} of 3 plans created
-                  </p>
-                </div>
-                {plans.length < 3 ? (
-                  <Button onClick={handleCreateNewPlan} className="bg-buy text-buy-foreground hover:bg-buy-soft">
-                    <PlusCircle className="w-4 h-4 mr-2" />
-                    Create New Plan
-                  </Button>
-                ) : (
-                  <div className="text-right">
-                    <Badge className="bg-hold-muted text-hold-muted-foreground border-0 mb-2">
-                      Maximum Plans Reached
-                    </Badge>
-                    <p className="text-xs text-subtle">You can only create up to 3 plans</p>
-                  </div>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {plans.length > 0 ? (
-                  plans.map(plan => {
-                    const activeSubs = (subscriptions || []).filter(
-                      s => s.plan_id === plan.id && s.status === 'active'
-                    ).length;
-
-                    return (
-                      <Card key={plan.id} className={`relative overflow-hidden hover:shadow-2xl transition-all duration-300 ${plan.is_active ? 'border-2 border-protocall-premium-light' : 'border-2 border-border opacity-75'
-                        }`}>
-                        <div className={`p-6 text-center bg-gradient-to-br ${getPlanColor(plan.name)}`}>
-                          <div className="flex justify-between items-start mb-3">
-                            <Badge className={plan.is_active ? 'bg-white/90 text-buy-muted-foreground border-0' : 'bg-white/90 text-subtle border-0'}>
-                              {plan.is_active ? 'Active' : 'Inactive'}
-                            </Badge>
-                            {activeSubs > 0 && (
-                              <Badge className="bg-white/90 text-primary border-0">
-                                {activeSubs} Subscriber{activeSubs > 1 ? 's' : ''}
-                              </Badge>
-                            )}
-                          </div>
-
-                          <div className="text-4xl mb-2">
-                            {getPlanIcon(plan.name)}
-                          </div>
-
-                          <h3 className="text-2xl font-bold text-white mb-3 tracking-wide">
-                            {plan.name}
-                          </h3>
-
-                          <div className="flex items-baseline justify-center gap-1">
-                            <span className="text-4xl font-bold text-white">₹{plan.price?.toLocaleString() || 0}</span>
-                            <span className="text-white/90 text-sm font-medium">/ {plan.billing_interval}</span>
-                          </div>
-                        </div>
-
-                        <CardContent className="p-6">
-                          {plan.description && (
-                            <p className="text-sm text-subtle mb-4 text-center leading-relaxed">
-                              {plan.description}
-                            </p>
-                          )}
-
-                          {plan.monthly_post_limit && (
-                            <div className="bg-premium-muted rounded-lg p-3 mb-4 border border-protocall-premium-light">
-                              <p className="text-xs text-subtle mb-1 text-center">Monthly Post Limit</p>
-                              <p className="text-lg font-bold text-primary text-center">
-                                {plan.monthly_post_limit} Posts/Month
-                              </p>
-                            </div>
-                          )}
-
-                          {plan.features && plan.features.length > 0 && (
-                            <div className="space-y-3 mb-6">
-                              <p className="text-xs font-semibold text-subtle text-center uppercase tracking-wide">What's Included</p>
-                              <ul className="space-y-2">
-                                {plan.features.map((feature, idx) => (
-                                  <li key={idx} className="flex items-start gap-2 text-sm text-subtle">
-                                    <CheckCircle className="w-4 h-4 text-buy-muted-foreground flex-shrink-0 mt-0.5" />
-                                    <span>{feature}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-
-                          <div className="space-y-2 pt-4 border-t">
-                            <div className="grid grid-cols-2 gap-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleTogglePlanStatus(plan)}
-                                className="w-full"
-                              >
-                                {plan.is_active ? 'Deactivate' : 'Activate'}
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleEditPlan(plan)}
-                                className="w-full"
-                              >
-                                <Edit className="w-3 h-3 mr-1" />
-                                Edit
-                              </Button>
-                            </div>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => confirmDeletePlan(plan)}
-                              className="w-full text-sell-muted-foreground hover:text-sell-muted-foreground hover:border-sell"
-                            >
-                              <Trash2 className="w-3 h-3 mr-1" />
-                              Delete Plan
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })
-                ) : (
-                  <div className="col-span-full">
-                    <Card>
-                      <CardContent className="p-8 text-center">
-                        <CreditCard className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                        <p className="text-subtle">No subscription plans created yet.</p>
-                        <Button onClick={handleCreateNewPlan} className="mt-4 bg-buy text-buy-foreground hover:bg-buy-soft">
-                          Create Your First Plan
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="subscribers" className="space-y-4 mt-0">
-              <h2 className="text-2xl font-bold text-foreground mb-6">Subscribers</h2>
-              <SubscriberAnalytics subscriptions={subscriptions || []} plans={plans || []} />
-            </TabsContent>
-
-            <TabsContent value="financials" className="space-y-6 mt-0">
-              {/* Sub-Navigation with Full Rounded Buttons */}
-              <div className="flex gap-3 w-full">
-                <Button
-                  onClick={() => setFinancialTab('overview')}
-                  className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'overview'
-                    ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg hover:shadow-xl hover:scale-105'
-                    : 'bg-surface-2 text-subtle hover:from-surface-2 hover:to-surface-2 hover:shadow-md border border-protocall-premium-light'
-                    }`}
-                >
-                  <DollarSign className="w-5 h-5 mr-2 inline-block" />
-                  Financials
-                </Button>
-                <Button
-                  onClick={() => setFinancialTab('payouts')}
-                  className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'payouts'
-                    ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg hover:shadow-xl hover:scale-105'
-                    : 'bg-surface-2 text-subtle hover:from-surface-2 hover:to-surface-2 hover:shadow-md border border-protocall-premium-light'
-                    }`}
-                >
-                  <Wallet className="w-5 h-5 mr-2 inline-block" />
-                  Payout Requests
-                </Button>
-                <Button
-                  onClick={() => setFinancialTab('refunds')}
-                  className={`flex-1 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300 ${financialTab === 'refunds'
-                    ? 'bg-gradient-to-r from-protocall-deep to-protocall-blue text-white shadow-lg hover:shadow-xl hover:scale-105'
-                    : 'bg-surface-2 text-subtle hover:from-surface-2 hover:to-surface-2 hover:shadow-md border border-protocall-premium-light'
-                    }`}
-                >
-                  <TrendingUp className="w-5 h-5 mr-2 inline-block" />
-                  Refund Management
-                </Button>
-              </div>
-
-              {financialTab === 'overview' && (
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-bold text-foreground">Financial Overview</h2>
-                    <Button
-                      onClick={() => setShowPayoutRequest(true)}
-                      disabled={stats.availableBalance <= 0}
-                      className="bg-buy text-buy-foreground hover:bg-buy-soft"
-                    >
-                      <Wallet className="w-4 h-4 mr-2" />
-                      Request Payout
-                    </Button>
-                  </div>
-
-                  <FinancialStatement
-                    entityType="advisor"
-                    entityId={advisor?.id}
-                    entityName={advisor?.display_name || 'Advisor'}
-                  />
-                </div>
-              )}
-
-              {financialTab === 'payouts' && (
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-bold text-foreground">Payout Requests</h2>
-                    <Button
-                      onClick={() => setShowPayoutRequest(true)}
-                      disabled={stats.availableBalance <= 0}
-                      className="bg-buy text-buy-foreground hover:bg-buy-soft"
-                    >
-                      <Wallet className="w-4 h-4 mr-2" />
-                      Request Payout
-                    </Button>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card>
-                      <CardContent className="p-6">
-                        <div className="flex items-center">
-                          <Wallet className="w-8 h-8 text-buy-muted-foreground" />
-                          <div className="ml-4">
-                            <p className="text-sm font-medium text-subtle">Available Balance</p>
-                            <p className="text-2xl font-bold text-foreground">₹{stats.availableBalance.toLocaleString()}</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card>
-                      <CardContent className="p-6">
-                        <div className="flex items-center">
-                          <Clock className="w-8 h-8 text-hold-muted-foreground" />
-                          <div className="ml-4">
-                            <p className="text-sm font-medium text-subtle">Pending Payouts</p>
-                            <p className="text-2xl font-bold text-foreground">₹{stats.pendingPayouts.toLocaleString()}</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card>
-                      <CardContent className="p-6">
-                        <div className="flex items-center">
-                          <TrendingUp className="w-8 h-8 text-primary" />
-                          <div className="ml-4">
-                            <p className="text-sm font-medium text-subtle">Total Earned</p>
-                            <p className="text-2xl font-bold text-foreground">₹{stats.totalEarnings.toLocaleString()}</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  <div className="space-y-4">
-                    {payoutRequests.length > 0 ? (
-                      payoutRequests.map(payout => (
-                        <Card key={payout.id}>
-                          <CardContent className="p-6">
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <p className="font-semibold">₹{payout.requested_amount.toLocaleString()}</p>
-                                <p className="text-sm text-subtle">{format(new Date(payout.created_date), 'MMM d, yyyy')}</p>
-                                <p className="text-xs text-muted-foreground">{payout.payout_method}</p>
-                              </div>
-                              {getStatusBadge(payout.status)}
-                            </div>
-                            {payout.admin_notes && (
-                              <p className="text-sm text-subtle mt-2">Admin Notes: {payout.admin_notes}</p>
-                            )}
-                          </CardContent>
-                        </Card>
-                      ))
-                    ) : (
-                      <Card>
-                        <CardContent className="p-8 text-center">
-                          <Wallet className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                          <p className="text-subtle">No payout requests yet.</p>
-                          {stats.availableBalance > 0 && (
-                            <Button onClick={() => setShowPayoutRequest(true)} className="mt-4 bg-buy text-buy-foreground hover:bg-buy-soft">
-                              Request Your First Payout
-                            </Button>
-                          )}
-                        </CardContent>
-                      </Card>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {financialTab === 'refunds' && (
-                <div className="space-y-6">
-                  <h2 className="text-2xl font-bold text-foreground">Refund Management</h2>
-                  <RefundManagementSection advisorId={advisor?.id} />
-                </div>
-              )}
-            </TabsContent>
-
-            <TabsContent value="analytics" className="mt-0">
-              <h2 className="text-2xl font-bold text-foreground mb-6">Advanced Analytics</h2>
-
-              {/* Enhanced Analytics Section */}
-              <div className="space-y-6">
-                {/* Performance Overview */}
-                <Card className="shadow-lg border-0">
-                  <CardHeader className="border-b bg-surface-2">
-                    <CardTitle>Performance Overview</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                      <div className="text-center p-4 bg-premium-muted rounded-xl">
-                        <div className="text-3xl font-bold text-primary">{posts.length}</div>
-                        <div className="text-sm text-subtle mt-1">Total Posts</div>
-                      </div>
-                      <div className="text-center p-4 bg-buy-muted rounded-xl">
-                        <div className="text-3xl font-bold text-buy-muted-foreground">
-                          {posts.reduce((sum, p) => sum + (p.view_count || 0), 0)}
-                        </div>
-                        <div className="text-sm text-subtle mt-1">Total Views</div>
-                      </div>
-                      <div className="text-center p-4 bg-premium-muted rounded-xl">
-                        <div className="text-3xl font-bold text-protocall-premium-text">{stats.activeSubscribers}</div>
-                        <div className="text-sm text-subtle mt-1">Active Subscribers</div>
-                      </div>
-                      <div className="text-center p-4 bg-hold-muted rounded-xl">
-                        <div className="text-3xl font-bold text-hold-muted-foreground">
-                          {posts.length > 0 ? Math.round(posts.reduce((sum, p) => sum + (p.view_count || 0), 0) / posts.length) : 0}
-                        </div>
-                        <div className="text-sm text-subtle mt-1">Avg Views/Post</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Revenue Trends */}
-                <Card className="shadow-lg border-0">
-                  <CardHeader className="border-b bg-surface-2">
-                    <CardTitle>Revenue Trends</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    {commissions.length > 0 ? (
-                      <ResponsiveContainer width="100%" height={300}>
-                        <LineChart data={commissions.slice(-6)}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="transaction_date" tickFormatter={(date) => format(new Date(date), 'MMM')} />
-                          <YAxis />
-                          <Tooltip formatter={(value) => [`₹${value}`, 'Earnings']} />
-                          <Line type="monotone" dataKey="advisor_payout" stroke="#8884d8" strokeWidth={2} />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    ) : (
-                      <div className="text-center p-8">
-                        <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                        <p className="text-subtle">No revenue data available yet.</p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Top Performing Posts */}
-                <Card className="shadow-lg border-0">
-                  <CardHeader className="border-b bg-surface-2">
-                    <CardTitle>Top Performing Posts</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    {posts.length > 0 ? (
-                      <div className="space-y-3">
-                        {posts
-                          .sort((a, b) => (b.view_count || 0) - (a.view_count || 0))
-                          .slice(0, 5)
-                          .map((post, index) => (
-                            <div key={post.id} className="flex items-center justify-between p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
-                              <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue text-white flex items-center justify-center font-bold text-sm">
-                                  {index + 1}
-                                </div>
-                                <div>
-                                  <p className="font-semibold text-foreground">{post.title}</p>
-                                  <p className="text-xs text-muted-foreground">{format(new Date(post.created_date), 'MMM dd, yyyy')}</p>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-4">
-                                <div className="text-right">
-                                  <p className="font-bold text-primary">{post.view_count || 0}</p>
-                                  <p className="text-xs text-muted-foreground">views</p>
-                                </div>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => handleViewPostStats(post)}
-                                  className="border-protocall-premium-light text-primary hover:bg-premium-muted"
-                                >
-                                  <BarChart3 className="w-3 h-3 mr-1" />
-                                  Details
-                                </Button>
-                              </div>
-                            </div>
-                          ))}
-                      </div>
-                    ) : (
-                      <div className="text-center p-8 text-muted-foreground">
-                        No posts available yet
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Subscriber Engagement */}
-                <Card className="shadow-lg border-0">
-                  <CardHeader className="border-b bg-surface-2">
-                    <CardTitle>Subscriber Engagement</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <div className="space-y-4">
-                      {plans.map(plan => {
-                        const planSubs = subscriptions.filter(s => s.plan_id === plan.id && s.status === 'active');
-                        const planPosts = posts.filter(p => p.required_plan_id === plan.id);
-                        const totalPlanViews = planPosts.reduce((sum, p) => sum + (p.view_count || 0), 0);
-                        const avgEngagement = planSubs.length > 0 ? Math.round(totalPlanViews / planSubs.length) : 0;
-
-                        return (
-                          <div key={plan.id} className="p-4 bg-surface-2 rounded-lg">
-                            <div className="flex items-center justify-between mb-2">
-                              <h4 className="font-semibold text-foreground">{plan.name}</h4>
-                              <Badge className="bg-premium-muted text-primary">
-                                {planSubs.length} subscribers
-                              </Badge>
-                            </div>
-                            <div className="grid grid-cols-3 gap-4 text-sm">
-                              <div>
-                                <p className="text-muted-foreground">Exclusive Posts</p>
-                                <p className="font-bold text-foreground">{planPosts.length}</p>
-                              </div>
-                              <div>
-                                <p className="text-muted-foreground">Total Views</p>
-                                <p className="font-bold text-foreground">{totalPlanViews}</p>
-                              </div>
-                              <div>
-                                <p className="text-muted-foreground">Avg Views/Sub</p>
-                                <p className="font-bold text-foreground">{avgEngagement}</p>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-          </Tabs>
-
-          {showCreatePost && (
-            <CreatePostModal
-              open={showCreatePost}
-              onClose={() => {
-                setShowCreatePost(false);
-                setEditingPost(null);
-              }}
-              onCreatePost={handlePostSubmit}
-              advisorId={advisor.id}
-            />
-          )}
-
-          {showPayoutRequest && (
-            <PayoutRequestModal
-              open={showPayoutRequest}
-              onClose={() => setShowPayoutRequest(false)}
-              onSubmit={handlePayoutSubmit}
-              availableBalance={stats.availableBalance}
-              entityType="advisor"
-            />
-          )}
-
-          {showCreatePlan && (
-            <CreatePlanModal
-              open={showCreatePlan}
-              onClose={() => {
-                setShowCreatePlan(false);
-                setEditingPlan(null);
-              }}
-              onSubmit={handlePlanSubmit}
-              editingPlan={editingPlan}
-            />
-          )}
-
-          {showPostPreview && viewingPost && (
-            <PostPreviewModal
-              open={showPostPreview}
-              onClose={() => {
-                setShowPostPreview(false);
-                setViewingPost(null);
-              }}
-              post={viewingPost}
-              advisor={advisor}
-            />
-          )}
-
-          {showProfileImageModal && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-              <div className="bg-white rounded-lg p-6 max-w-md w-full mx-auto shadow-xl">
-                <h3 className="text-xl font-bold text-foreground mb-4">Update Profile Picture</h3>
-
-                <div className="space-y-4">
-                  <div className="flex justify-center">
-                    {advisor.profile_image_url ? (
-                      <img
-                        src={advisor.profile_image_url}
-                        alt="Current"
-                        className="w-32 h-32 rounded-full object-cover border-4 border-protocall-premium-light"
-                      />
-                    ) : (
-                      <div className="w-32 h-32 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center text-white text-5xl font-bold">
-                        {advisor.display_name?.charAt(0)?.toUpperCase() || 'A'}
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="profile-image">Choose New Image</Label>
-                    <Input
-                      id="profile-image"
-                      type="file"
-                      accept="image/jpeg,image/png,image/gif,image/webp"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) handleProfileImageUpload(file);
-                      }}
-                      className="mt-2"
-                    />
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Recommended: Square image, at least 400x400px, max 5MB
-                    </p>
-                  </div>
-
-                  <div className="flex gap-3 justify-end mt-6">
-                    <Button
-                      variant="outline"
-                      onClick={() => setShowProfileImageModal(false)}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {showDeleteConfirm && deletingPlan && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-sell-muted flex items-center justify-center">
-                    <Trash2 className="w-6 h-6 text-sell-muted-foreground" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground">Delete Subscription Plan?</h3>
-                    <p className="text-sm text-subtle">This action cannot be undone</p>
-                  </div>
-                </div>
-
-                <div className="bg-sell-muted border border-sell/30 rounded-lg p-4 mb-4">
-                  <p className="text-sm text-sell-muted-foreground font-semibold mb-2">
-                    You are about to delete: <span className="font-bold">{deletingPlan.name}</span>
-                  </p>
-                  <ul className="text-xs text-sell-muted-foreground space-y-1 ml-4 list-disc">
-                    <li>Price: ₹{deletingPlan.price?.toLocaleString()} / {deletingPlan.billing_interval}</li>
-                    <li>This plan will be permanently removed</li>
-                    <li>Historical data will be preserved</li>
-                  </ul>
-                </div>
-
-                {(() => {
-                  const activeSubs = (subscriptions || []).filter(
-                    s => s.plan_id === deletingPlan.id && s.status === 'active'
-                  ).length;
-
-                  if (activeSubs > 0) {
-                    return (
-                      <div className="bg-hold-muted border border-hold/30 rounded-lg p-4 mb-4">
-                        <p className="text-sm text-hold-muted-foreground font-semibold flex items-center gap-2">
-                          <AlertCircle className="w-4 h-4" />
-                          Warning: {activeSubs} Active Subscriber{activeSubs > 1 ? 's' : ''}
-                        </p>
-                        <p className="text-xs text-hold-muted-foreground mt-1">
-                          You cannot delete a plan with active subscribers. Please deactivate the plan instead, or wait for subscriptions to expire.
-                        </p>
-                      </div>
-                    );
-                  }
-                  return null;
-                })()}
-
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setShowDeleteConfirm(false);
-                      setDeletingPlan(null);
-                    }}
-                    className="flex-1"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={handleDeletePlan}
-                    className="flex-1 bg-sell hover:bg-sell"
-                  >
-                    Delete Plan
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {showPostAnalytics && viewingPostStats && (
-            <PostAnalyticsModal
-              open={showPostAnalytics}
-              onClose={() => {
-                setShowPostAnalytics(false);
-                setViewingPostStats(null);
-              }}
-              post={viewingPostStats}
-            />
-          )}
+        <div className="flex flex-wrap gap-3">
+          <Link to={createPageUrl(`AdvisorProfile?id=${advisor.id}`)}>
+            <Button variant="outline"><ExternalLink className="w-4 h-4 mr-2" />View public profile</Button>
+          </Link>
+          <Button variant="outline" onClick={openProfileEditor}><Pencil className="w-4 h-4 mr-2" />Edit profile</Button>
+          <Button onClick={() => setPostModal({ open: true, post: null })}><PlusCircle className="w-4 h-4 mr-2" />Create advisory</Button>
         </div>
       </div>
-    </AdvisorLayout>
+
+      {anyStatError && (
+        <div role="alert" className="flex items-center justify-between gap-3 rounded-lg border border-hold/30 bg-hold-muted p-3 text-sm text-hold-muted-foreground">
+          <span className="flex items-center gap-2"><AlertCircle className="w-4 h-4" />Some figures could not be loaded.</span>
+          <Button size="sm" variant="outline" onClick={() => [subsQuery, summaryQuery, reviewsQuery].forEach((q) => q.isError && q.refetch())}>Retry</Button>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6">
+        {renderStat(Users, 'Active subscribers', statValue(subsQuery, activeSubs.length), 'text-primary')}
+        {renderStat(CreditCard, 'Total subscribers', statValue(subsQuery, subscribers.length), 'text-buy-muted-foreground')}
+        {renderStat(DollarSign, 'Approved earnings', statValue(summaryQuery, money(summaryQuery.data?.earned)), 'text-protocall-premium-text')}
+        {renderStat(Wallet, 'Available balance', statValue(summaryQuery, money(available)), 'text-buy-muted-foreground')}
+        {renderStat(Star, 'Avg rating', statValue(reviewsQuery, reviews.length ? `${avgRating}/5` : 'No reviews'), 'text-hold-muted-foreground')}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader><CardTitle>At a glance</CardTitle></CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3"><FileText className="w-8 h-8 text-primary" /><div><p className="font-semibold text-foreground">Published advisories</p><p className="text-sm text-muted-foreground">{posts.filter((p) => p.status !== 'published').length} draft{posts.filter((p) => p.status !== 'published').length === 1 ? '' : 's'}</p></div></div>
+              <p className="text-2xl font-bold text-foreground">{statValue(postsQuery, posts.filter((p) => p.status === 'published').length)}</p>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3"><CreditCard className="w-8 h-8 text-buy-muted-foreground" /><div><p className="font-semibold text-foreground">Active plans</p><p className="text-sm text-muted-foreground">of {MAX_PLANS} allowed</p></div></div>
+              <p className="text-2xl font-bold text-foreground">{statValue(plansQuery, plans.filter((p) => p.is_active).length)}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader><CardTitle>Quick actions</CardTitle></CardHeader>
+          <CardContent className="space-y-3">
+            <Button onClick={() => setPostModal({ open: true, post: null })} className="w-full justify-start" variant="outline"><PlusCircle className="w-4 h-4 mr-2" />Create new advisory</Button>
+            <Button onClick={() => setPlanModal({ open: true, plan: null })} className="w-full justify-start" variant="outline" disabled={plans.length >= MAX_PLANS}><CreditCard className="w-4 h-4 mr-2" />{plans.length >= MAX_PLANS ? 'Plan limit reached' : 'Create a plan'}</Button>
+            <Button onClick={() => setParams({ section: 'financials', fin: 'payouts' })} className="w-full justify-start" variant="outline" disabled={available <= 0}><Wallet className="w-4 h-4 mr-2" />Request payout</Button>
+            <Button onClick={() => setParam('section', 'analytics')} className="w-full justify-start" variant="outline"><TrendingUp className="w-4 h-4 mr-2" />View analytics</Button>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+
+  const renderPostCard = (post) => (
+    <Card key={post.id} className="hover:shadow-xl transition-all duration-300">
+      <CardContent className="p-6 space-y-4">
+        <div className="flex flex-wrap items-center gap-2">
+          {post.recommendation_type && (
+            <Badge variant="outline" className={`font-semibold uppercase ${post.recommendation_type === 'buy' ? 'text-buy-muted-foreground border-buy bg-buy-muted' : post.recommendation_type === 'sell' ? 'text-sell-muted-foreground border-sell bg-sell-muted' : 'text-hold-muted-foreground border-hold bg-hold-muted'}`}>
+              {post.recommendation_type}
+            </Badge>
+          )}
+          <Badge className={post.status === 'published' ? 'bg-buy-muted text-buy-muted-foreground border-0' : 'bg-surface-2 text-subtle border-0'}>{post.status === 'published' ? 'Published' : 'Draft'}</Badge>
+          <Badge variant="outline" className="flex items-center gap-1">
+            {post.visibility === 'public' ? <><Globe className="w-3 h-3" />Public</> : <><Lock className="w-3 h-3" />{plans.find((p) => p.id === post.required_plan_id)?.name ? `${plans.find((p) => p.id === post.required_plan_id).name}+` : 'Subscribers'}</>}
+          </Badge>
+        </div>
+        <h3 className="font-bold text-lg text-foreground line-clamp-2">{post.title || 'Untitled advisory'}</h3>
+        {post.stock_symbol && <p className="text-xl font-bold text-primary">{post.stock_symbol}</p>}
+        {(post.target_price || post.stop_loss) && (
+          <div className="grid grid-cols-2 gap-3">
+            {post.target_price && <div className="bg-buy-muted rounded-lg p-3"><p className="text-xs text-subtle">Target</p><p className="text-lg font-bold text-buy-muted-foreground">₹{Number(post.target_price)}</p></div>}
+            {post.stop_loss && <div className="bg-sell-muted rounded-lg p-3"><p className="text-xs text-subtle">Stop loss</p><p className="text-lg font-bold text-sell-muted-foreground">₹{Number(post.stop_loss)}</p></div>}
+          </div>
+        )}
+        <p className="text-sm text-subtle line-clamp-3">{post.content}</p>
+        <div className="grid grid-cols-2 gap-2 pt-3 border-t">
+          <Button size="sm" variant="outline" onClick={() => setPreviewPost(post)}><Eye className="w-3 h-3 mr-1" />Preview</Button>
+          <Button size="sm" variant="outline" onClick={() => setReachPost(post)}><BarChart3 className="w-3 h-3 mr-1" />Reach</Button>
+          <Button size="sm" variant="outline" onClick={() => setPostModal({ open: true, post })}><Edit className="w-3 h-3 mr-1" />Edit</Button>
+          <Button size="sm" variant="outline" className="text-sell-muted-foreground hover:text-sell-muted-foreground" onClick={() => setDeletePost(post)}><Trash2 className="w-3 h-3 mr-1" />Delete</Button>
+        </div>
+        <p className="text-xs text-muted-foreground">{fmtDate(post.created_at)}</p>
+      </CardContent>
+    </Card>
+  );
+
+  const renderPosts = () => (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-2xl font-bold text-foreground">My posts</h2>
+        <Button onClick={() => setPostModal({ open: true, post: null })}><PlusCircle className="w-4 h-4 mr-2" />Create advisory</Button>
+      </div>
+      {postsQuery.isLoading ? renderSkeletonCards(3)
+        : postsQuery.isError ? renderQueryError('We could not load your posts.', () => postsQuery.refetch())
+          : posts.length === 0 ? (
+            <Card><CardContent className="p-8 text-center">
+              <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-subtle">No advisories yet.</p>
+              <Button onClick={() => setPostModal({ open: true, post: null })} className="mt-4">Create your first advisory</Button>
+            </CardContent></Card>
+          ) : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{posts.map(renderPostCard)}</div>}
+    </div>
+  );
+
+  const renderPlanCard = (plan) => {
+    const planSubs = activeSubs.filter((s) => s.plan_id === plan.id).length;
+    return (
+      <Card key={plan.id} className={`relative overflow-hidden hover:shadow-2xl transition-all duration-300 ${plan.is_active ? 'border-2 border-protocall-premium-light' : 'border-2 border-border opacity-75'}`}>
+        <div className="p-6 text-center bg-primary text-primary-foreground">
+          <div className="flex justify-between items-start mb-3">
+            <Badge className="bg-white/90 text-subtle border-0">{plan.is_active ? 'Active' : 'Inactive'}</Badge>
+            {planSubs > 0 && <Badge className="bg-white/90 text-primary border-0">{planSubs} subscriber{planSubs > 1 ? 's' : ''}</Badge>}
+          </div>
+          <h3 className="text-2xl font-bold mb-3 tracking-wide">{plan.name}</h3>
+          <div className="flex items-baseline justify-center gap-1">
+            <span className="text-4xl font-bold">{money(plan.price)}</span>
+            <span className="text-sm font-medium opacity-90">/ {INTERVAL_LABEL[plan.billing_interval] || 'month'}</span>
+          </div>
+        </div>
+        <CardContent className="p-6">
+          {plan.description && <p className="text-sm text-subtle mb-4 text-center leading-relaxed">{plan.description}</p>}
+          {Array.isArray(plan.features) && plan.features.length > 0 && (
+            <ul className="space-y-2 mb-6">
+              {plan.features.map((feature) => (
+                <li key={feature} className="flex items-start gap-2 text-sm text-subtle"><CheckCircle className="w-4 h-4 text-buy-muted-foreground shrink-0 mt-0.5" /><span>{feature}</span></li>
+              ))}
+            </ul>
+          )}
+          <div className="space-y-2 pt-4 border-t">
+            <div className="grid grid-cols-2 gap-2">
+              <Button size="sm" variant="outline" onClick={() => togglePlan.mutate(plan)} disabled={togglePlan.isPending}>{plan.is_active ? 'Deactivate' : 'Activate'}</Button>
+              <Button size="sm" variant="outline" onClick={() => setPlanModal({ open: true, plan })}><Edit className="w-3 h-3 mr-1" />Edit</Button>
+            </div>
+            <Button size="sm" variant="outline" className="w-full text-sell-muted-foreground hover:text-sell-muted-foreground" onClick={() => setDeletePlan(plan)} disabled={planSubs > 0} title={planSubs > 0 ? 'Deactivate instead: this plan has active subscribers' : undefined}>
+              <Trash2 className="w-3 h-3 mr-1" />Delete plan
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  const renderPlans = () => (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center mb-2">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground">Subscription plans</h2>
+          <p className="text-sm text-subtle mt-1">{plans.length} of {MAX_PLANS} plans created</p>
+        </div>
+        {plans.length < MAX_PLANS ? (
+          <Button onClick={() => setPlanModal({ open: true, plan: null })}><PlusCircle className="w-4 h-4 mr-2" />Create plan</Button>
+        ) : (
+          <Badge className="bg-hold-muted text-hold-muted-foreground border-0">Maximum plans reached</Badge>
+        )}
+      </div>
+      {plansQuery.isLoading ? renderSkeletonCards(3, 'h-72')
+        : plansQuery.isError ? renderQueryError('We could not load your plans.', () => plansQuery.refetch())
+          : plans.length === 0 ? (
+            <Card><CardContent className="p-8 text-center">
+              <CreditCard className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-subtle">You have no plans yet. Investors cannot subscribe until you create one.</p>
+              <Button onClick={() => setPlanModal({ open: true, plan: null })} className="mt-4">Create your first plan</Button>
+            </CardContent></Card>
+          ) : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{plans.map(renderPlanCard)}</div>}
+    </div>
+  );
+
+  const renderFinancials = () => (
+    <div className="space-y-6">
+      <div className="flex flex-wrap gap-3 w-full" role="tablist" aria-label="Financial sections">
+        {FIN_TABS.map(([key, label, Icon]) => (
+          <Button
+            key={key}
+            role="tab"
+            aria-selected={finTab === key}
+            variant={finTab === key ? 'default' : 'outline'}
+            onClick={() => setParam('fin', key)}
+            className="flex-1 min-w-[10rem] rounded-full"
+          >
+            <Icon className="w-4 h-4 mr-2" />{label}
+          </Button>
+        ))}
+      </div>
+      {finTab === 'overview' && <AdvisorEarnings />}
+      {finTab === 'payouts' && <AdvisorWithdrawals />}
+      {finTab === 'bank' && <AdvisorBankAccounts />}
+      {finTab === 'refunds' && (<div className="space-y-4"><h2 className="text-2xl font-bold text-foreground">Refund requests</h2><RefundManagementSection /></div>)}
+    </div>
+  );
+
+  const deletingPlanSubs = deletePlan ? activeSubs.filter((s) => s.plan_id === deletePlan.id).length : 0;
+
+  return renderShell(
+    <div className="space-y-8">
+      <Tabs value={activeTab} onValueChange={(tab) => setParam('section', tab)} className="w-full">
+        <TabsContent value="overview" className="mt-0">{renderOverview()}</TabsContent>
+        <TabsContent value="posts" className="mt-0">{renderPosts()}</TabsContent>
+        <TabsContent value="plans" className="mt-0">{renderPlans()}</TabsContent>
+        <TabsContent value="subscribers" className="space-y-4 mt-0">
+          <h2 className="text-2xl font-bold text-foreground mb-2">Subscribers</h2>
+          <SubscriberAnalytics />
+        </TabsContent>
+        <TabsContent value="financials" className="mt-0">{renderFinancials()}</TabsContent>
+        <TabsContent value="analytics" className="mt-0">
+          <h2 className="text-2xl font-bold text-foreground mb-6">Analytics</h2>
+          <AdvisorAnalytics />
+        </TabsContent>
+      </Tabs>
+
+      <CreatePostModal open={postModal.open} onClose={() => setPostModal({ open: false, post: null })} onSubmit={submitPost} editingPost={postModal.post} />
+      <CreatePlanModal open={planModal.open} onClose={() => setPlanModal({ open: false, plan: null })} onSubmit={submitPlan} editingPlan={planModal.plan} />
+      {previewPost && <PostPreviewModal open onClose={() => setPreviewPost(null)} post={previewPost} advisor={advisor} />}
+      {reachPost && <PostAnalyticsModal open onClose={() => setReachPost(null)} post={reachPost} />}
+      <AdvisorProfileEditor />
+
+      <AlertDialog open={Boolean(deletePost)} onOpenChange={(open) => { if (!open) setDeletePost(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this advisory?</AlertDialogTitle>
+            <AlertDialogDescription>"{deletePost?.title}" will be removed for you and your subscribers. This cannot be undone.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={removePost.isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogAction className="bg-sell hover:bg-sell" disabled={removePost.isPending} onClick={(e) => { e.preventDefault(); removePost.mutate(deletePost.id); }}>
+              {removePost.isPending ? 'Deleting...' : 'Delete advisory'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={Boolean(deletePlan)} onOpenChange={(open) => { if (!open) setDeletePlan(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete subscription plan?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deletingPlanSubs > 0
+                ? `"${deletePlan?.name}" has ${deletingPlanSubs} active subscriber${deletingPlanSubs > 1 ? 's' : ''}. Deactivate it instead.`
+                : `"${deletePlan?.name}" (${money(deletePlan?.price)}) will be permanently removed. Past payments and earnings are kept.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={removePlan.isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogAction className="bg-sell hover:bg-sell" disabled={removePlan.isPending || deletingPlanSubs > 0} onClick={(e) => { e.preventDefault(); removePlan.mutate(deletePlan.id); }}>
+              {removePlan.isPending ? 'Deleting...' : 'Delete plan'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
+
+/** The portal brings its own QueryClient: the app has no global provider. */
+export default function AdvisorDashboard() {
+  return (
+    <QueryClientProvider client={advisorQueryClient}>
+      <AdvisorDashboardContent />
+    </QueryClientProvider>
   );
 }

@@ -67,6 +67,13 @@ Each migration includes:
 | 008 | stocks, alert_configurations, alert_settings, watchlists, portfolios, portfolio_holdings, analytics_events, reports, audit_logs, module_approval_requests, reviews |
 | 009 | vendors, ad_campaigns, ad_transactions, campaign_billing, chat_bots, bot_conversations, files, moderation_logs, contact_inquiries, feedback |
 
+## Later migrations
+
+| Migration | Purpose |
+|-----------|---------|
+| 012 | `advisor_bank_accounts` (account number AES-256-GCM encrypted, needs `BANK_DATA_KEY`) and withdrawal-workflow columns on `payout_requests`; widens `payout_requests.status` from ENUM to VARCHAR and remaps legacy values. Rollback SQL is at the bottom of the file. **Re-runnable**: every ADD COLUMN/INDEX/CONSTRAINT is guarded by an `information_schema` check, and it repairs an `advisor_bank_accounts` table that `sequelize.sync()` created first (binary collation, no FKs). Prefer running it before the new API version starts. Also adds `commission_tracking.reference_id` (unique payment id). |
+| 014 | `advisor_posts` content columns (title, stock_symbol, post_type, recommendation_type, target_price, stop_loss, time_horizon, visibility, required_plan_id) that the dashboard always sent and `sequelize.sync()` never created; UNIQUE(`advisors.user_id`). Also adds `advisor_posts.notified_at` (subscribers are told about a post once). **Release order: (1) fix/confirm no duplicates (`SELECT user_id, COUNT(*) FROM advisors GROUP BY user_id HAVING COUNT(*) > 1`), (2) apply 014, (3) restart the API.** If the API starts first it does not 500: `utils/schemaGuard.js` detects the missing columns once, serves posts read-only and refuses post writes with 503 until the API is restarted after the migration. Re-runnable; rollback SQL commented at the bottom. |
+
 ## Notes
 
 - All tables use InnoDB engine with utf8mb4 character set

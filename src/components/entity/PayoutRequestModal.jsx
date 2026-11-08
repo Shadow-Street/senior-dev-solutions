@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Wallet, CreditCard, Smartphone } from 'lucide-react';
 import { toast } from "sonner";
+import { formatINR } from '@/lib/format';
 
 export default function PayoutRequestModal({ open, onClose, onSubmit, availableBalance, entityType }) {
   const [formData, setFormData] = useState({
@@ -104,7 +105,7 @@ export default function PayoutRequestModal({ open, onClose, onSubmit, availableB
           <div>
             <Label>Available Balance</Label>
             <div className="p-3 bg-buy-muted rounded-lg text-buy-muted-foreground font-semibold">
-              ₹{availableBalance.toLocaleString()}
+              {formatINR(availableBalance, { placeholder: '₹0' })}
             </div>
           </div>
 

@@ -30,6 +30,7 @@ import { toast } from "sonner";
 import { format } from 'date-fns';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import PayoutRequestModal from '../components/entity/PayoutRequestModal';
+import { normalizePayout, payoutAmount } from '@/lib/payoutView';
 import FinancialStatement from '../components/entity/FinancialStatement';
 import FinfluencerLayout from '../components/layouts/FinfluencerLayout';
 import CreateCourseModal from '../components/finfluencers/CreateCourseModal';
@@ -154,7 +155,7 @@ export default function FinfluencerDashboard() {
               const [enrollmentsData, revenueData, payoutRequestsData] = await Promise.all([
                 CourseEnrollment.list().catch(() => []),
                 RevenueTransaction.filter({ influencer_id: finfluencerProfile.id }).catch(() => []),
-                PayoutRequest.filter({ entity_id: finfluencerProfile.id, entity_type: 'finfluencer' }).catch(() => [])
+                PayoutRequest.filter({ entity_id: finfluencerProfile.id, entity_type: 'finfluencer' }).then((rows) => rows.map(normalizePayout)).catch(() => [])
               ]);
 
               if (!isMounted) return;
@@ -169,11 +170,11 @@ export default function FinfluencerDashboard() {
 
               const totalEarnings = (revenueData || []).reduce((sum, t) => sum + (t.influencer_payout || 0), 0);
               const totalPaidOut = (payoutRequestsData || [])
-                .filter(p => p.status === 'processed')
-                .reduce((sum, p) => sum + (p.requested_amount || 0), 0);
+                .filter(p => p.status === 'paid')
+                .reduce((sum, p) => sum + payoutAmount(p), 0);
               const pendingPayouts = (payoutRequestsData || [])
                 .filter(p => p.status === 'pending' || p.status === 'approved')
-                .reduce((sum, p) => sum + (p.requested_amount || 0), 0);
+                .reduce((sum, p) => sum + payoutAmount(p), 0);
               const availableBalance = totalEarnings - totalPaidOut - pendingPayouts;
 
               const activeEnrollments = (filteredEnrollments || []).filter(e => e.enrollment_status === 'active').length;
@@ -224,27 +225,27 @@ export default function FinfluencerDashboard() {
         return;
       }
 
+      // The server decides the owner, the entity row and the balance ceiling;
+      // this only proposes an amount and where to send it.
       await PayoutRequest.create({
-        user_id: user.id,
         entity_type: 'finfluencer',
-        entity_id: finfluencer.id,
-        requested_amount: payoutData.requested_amount,
-        available_balance: stats.availableBalance,
-        payout_method: payoutData.payout_method,
-        bank_details: payoutData.bank_details,
-        upi_id: payoutData.upi_id,
-        paypal_email: payoutData.paypal_email,
-        status: 'pending'
+        amount: String(payoutData.requested_amount),
+        payment_method: payoutData.payout_method,
+        payment_details: {
+          bank_details: payoutData.bank_details,
+          upi_id: payoutData.upi_id,
+          paypal_email: payoutData.paypal_email
+        }
       });
 
       toast.success('Payout request submitted successfully!');
       setShowPayoutRequest(false);
 
-      const payoutRequestsData = await PayoutRequest.filter({ entity_id: finfluencer.id, entity_type: 'finfluencer' }).catch(() => []);
+      const payoutRequestsData = await PayoutRequest.filter({ entity_id: finfluencer.id, entity_type: 'finfluencer' }).then((rows) => rows.map(normalizePayout)).catch(() => []);
       setPayoutRequests(payoutRequestsData || []);
     } catch (error) {
       console.error('Error submitting payout request:', error);
-      toast.error('Failed to submit payout request');
+      toast.error(error?.response?.data?.error || 'Failed to submit payout request');
     }
   };
 
@@ -1024,7 +1025,7 @@ export default function FinfluencerDashboard() {
                           <CardContent className="p-6">
                             <div className="flex justify-between items-start">
                               <div>
-                                <p className="font-semibold">₹{payout.requested_amount.toLocaleString()}</p>
+                                <p className="font-semibold">₹{payoutAmount(payout).toLocaleString()}</p>
                                 <p className="text-sm text-subtle">{format(new Date(payout.created_date), 'MMM d, yyyy')}</p>
                                 <p className="text-xs text-muted-foreground">{payout.payout_method}</p>
                               </div>

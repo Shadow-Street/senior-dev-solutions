@@ -28,6 +28,7 @@ import {
 } from '@/api/entities';
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 import { toast } from 'sonner';
+import { normalizePayout, payoutAmount, commissionParts } from '@/lib/payoutView';
 
 export default function FinancialStatement({ entityType, entityId, entityName }) {
   const [selectedPeriod, setSelectedPeriod] = useState('current_month');
@@ -130,7 +131,7 @@ export default function FinancialStatement({ entityType, entityId, entityName })
         const allPayouts = await PayoutRequest.filter({ 
           entity_id: entityId,
           entity_type: 'event_organizer' 
-        }).catch(() => []);
+        }).then((rows) => rows.map(normalizePayout)).catch(() => []);
 
         const filteredPayouts = allPayouts.filter(p => {
           const date = new Date(p.created_date);
@@ -139,7 +140,7 @@ export default function FinancialStatement({ entityType, entityId, entityName })
 
         payouts = filteredPayouts.map(p => ({
           date: p.created_date,
-          amount: p.requested_amount,
+          amount: payoutAmount(p),
           status: p.status,
           processedDate: p.processed_date,
           method: p.payout_method,
@@ -147,12 +148,12 @@ export default function FinancialStatement({ entityType, entityId, entityName })
         }));
 
         const totalPayouts = filteredPayouts
-          .filter(p => p.status === 'processed')
-          .reduce((sum, p) => sum + (p.requested_amount || 0), 0);
+          .filter(p => p.status === 'paid')
+          .reduce((sum, p) => sum + payoutAmount(p), 0);
 
         const pendingPayouts = filteredPayouts
           .filter(p => ['pending', 'approved'].includes(p.status))
-          .reduce((sum, p) => sum + (p.requested_amount || 0), 0);
+          .reduce((sum, p) => sum + payoutAmount(p), 0);
 
         setStatementData({
           period: periodOptions.find(p => p.value === selectedPeriod)?.label,
@@ -238,22 +239,26 @@ export default function FinancialStatement({ entityType, entityId, entityName })
         }).catch(() => []);
 
         const filteredCommissions = commissionTransactions.filter(c => {
-          const date = new Date(c.transaction_date);
+          if (c.status === 'cancelled') return false;
+          const date = new Date(c.created_date || c.transaction_date);
           return date >= startDate && date <= endDate;
         });
 
-        earnings = filteredCommissions.map(c => ({
-          date: c.transaction_date,
-          description: `Subscription Income`,
-          grossAmount: c.gross_amount || 0,
-          commission: c.platform_fee || 0,
-          netAmount: c.advisor_payout || 0,
-          type: 'Subscription'
-        }));
+        earnings = filteredCommissions.map(c => {
+          const { gross, fee, net } = commissionParts(c);
+          return {
+            date: c.created_date || c.transaction_date,
+            description: `Subscription Income`,
+            grossAmount: gross,
+            commission: fee,
+            netAmount: net,
+            type: 'Subscription'
+          };
+        });
 
-        grossRevenue = filteredCommissions.reduce((sum, c) => sum + (c.gross_amount || 0), 0);
-        platformCommission = filteredCommissions.reduce((sum, c) => sum + (c.platform_fee || 0), 0);
-        netEarnings = filteredCommissions.reduce((sum, c) => sum + (c.advisor_payout || 0), 0);
+        grossRevenue = earnings.reduce((sum, e) => sum + e.grossAmount, 0);
+        platformCommission = earnings.reduce((sum, e) => sum + e.commission, 0);
+        netEarnings = earnings.reduce((sum, e) => sum + e.netAmount, 0);
 
       } else if (entityType === 'vendor') {
         // Fetch vendor ad transactions
@@ -285,7 +290,7 @@ export default function FinancialStatement({ entityType, entityId, entityName })
       const allPayouts = await PayoutRequest.filter({ 
         entity_id: entityId,
         entity_type: entityType 
-      }).catch(() => []);
+      }).then((rows) => rows.map(normalizePayout)).catch(() => []);
 
       const filteredPayouts = allPayouts.filter(p => {
         const date = new Date(p.created_date);
@@ -294,7 +299,7 @@ export default function FinancialStatement({ entityType, entityId, entityName })
 
       payouts = filteredPayouts.map(p => ({
         date: p.created_date,
-        amount: p.requested_amount,
+        amount: payoutAmount(p),
         status: p.status,
         processedDate: p.processed_date,
         method: p.payout_method,
@@ -302,12 +307,12 @@ export default function FinancialStatement({ entityType, entityId, entityName })
       }));
 
       const totalPayouts = filteredPayouts
-        .filter(p => p.status === 'processed')
-        .reduce((sum, p) => sum + (p.requested_amount || 0), 0);
+        .filter(p => p.status === 'paid')
+        .reduce((sum, p) => sum + payoutAmount(p), 0);
 
       const pendingPayouts = filteredPayouts
         .filter(p => ['pending', 'approved'].includes(p.status))
-        .reduce((sum, p) => sum + (p.requested_amount || 0), 0);
+        .reduce((sum, p) => sum + payoutAmount(p), 0);
 
       setStatementData({
         period: periodOptions.find(p => p.value === selectedPeriod)?.label,
@@ -776,7 +781,7 @@ export default function FinancialStatement({ entityType, entityId, entityName })
                       </td>
                       <td className="p-3">
                         <span className={`px-2 py-1 text-xs rounded-full font-semibold ${
-                          payout.status === 'processed' ? 'bg-buy-muted text-buy-muted-foreground' :
+                          payout.status === 'paid' ? 'bg-buy-muted text-buy-muted-foreground' :
                           payout.status === 'pending' ? 'bg-hold-muted text-hold-muted-foreground' :
                           payout.status === 'approved' ? 'bg-premium-muted text-primary' :
                           'bg-sell-muted text-sell-muted-foreground'
