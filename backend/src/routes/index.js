@@ -34,6 +34,10 @@ const emailRoutes = require("./email.routes");
 
 const router = express.Router();
 
+// Maintenance mode (platform setting, super_admin): non-staff get 503 while it
+// is on; staff, sign-in, the public config and payment webhooks stay open.
+router.use(require("../middleware/maintenance").maintenanceGate);
+
 // Auth & Users
 router.use("/auth", authRoutes);
 router.use("/users", userRoutes);
@@ -63,6 +67,8 @@ router.use("/typing-indicators", require("./typing.routes"));
 router.use("/chat-management", require("./chat_management.routes"));
 
 // Subscriptions & Payments
+// Admin list first: subscription.routes has catch-all /:id CRUD routes.
+router.use("/subscriptions/admin", require("./subscriptionAdmin.routes"));
 router.use("/subscriptions", subscriptionRoutes);
 
 // Notifications

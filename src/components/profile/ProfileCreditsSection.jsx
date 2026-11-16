@@ -41,7 +41,7 @@ export default function ProfileCreditsSection({ user, referrals }) {
         <CardContent>
           <div className="text-center">
             <div className="text-5xl font-bold mb-2">{totalCredits.toLocaleString()}</div>
-            <div className="text-lg opacity-90">Protocol Credits</div>
+            <div className="text-lg opacity-90">Protocall Credits</div>
           </div>
         </CardContent>
       </Card>

@@ -137,8 +137,8 @@ export default function WithdrawalManagement({ onUpdate }) {
       try {
         await SendEmail({
           to: investor?.email,
-          subject: 'Withdrawal Request Approved - Protocol',
-          body: `Dear ${investor?.full_name},\n\nYour withdrawal request of ₹${selectedRequest.withdrawal_amount?.toLocaleString('en-IN')} has been approved by the Fund Manager.\n\nExpected Processing Date: ${new Date(selectedRequest.expected_processing_date).toLocaleDateString('en-IN')}\n\nAdmin Notes: ${adminNotes || 'N/A'}\n\nBest Regards,\nProtocol Team`
+          subject: 'Withdrawal Request Approved - Protocall',
+          body: `Dear ${investor?.full_name},\n\nYour withdrawal request of ₹${selectedRequest.withdrawal_amount?.toLocaleString('en-IN')} has been approved by the Fund Manager.\n\nExpected Processing Date: ${new Date(selectedRequest.expected_processing_date).toLocaleDateString('en-IN')}\n\nAdmin Notes: ${adminNotes || 'N/A'}\n\nBest Regards,\nProtocall Team`
         });
       } catch (emailError) {
         console.warn('Email sending failed:', emailError);
@@ -191,8 +191,8 @@ export default function WithdrawalManagement({ onUpdate }) {
       try {
         await SendEmail({
           to: investor?.email,
-          subject: 'Withdrawal Request Rejected - Protocol',
-          body: `Dear ${investor?.full_name},\n\nYour withdrawal request of ₹${selectedRequest.withdrawal_amount?.toLocaleString('en-IN')} has been rejected.\n\nReason: ${rejectionReason}\n\nIf you have any questions, please contact our support team.\n\nBest Regards,\nProtocol Team`
+          subject: 'Withdrawal Request Rejected - Protocall',
+          body: `Dear ${investor?.full_name},\n\nYour withdrawal request of ₹${selectedRequest.withdrawal_amount?.toLocaleString('en-IN')} has been rejected.\n\nReason: ${rejectionReason}\n\nIf you have any questions, please contact our support team.\n\nBest Regards,\nProtocall Team`
         });
       } catch (emailError) {
         console.warn('Email sending failed:', emailError);
@@ -301,7 +301,7 @@ export default function WithdrawalManagement({ onUpdate }) {
         await SendEmail({
           to: investor.email,
           subject: 'Withdrawal Processed - Funds Credited to Wallet',
-          body: `Dear ${investor.full_name},\n\nYour withdrawal request of ₹${withdrawalAmount.toLocaleString('en-IN')} has been processed successfully.\n\nThe funds have been credited to your wallet and are now available for use.\n\nUpdated Wallet Balance: ₹${((wallet.available_balance || 0) + withdrawalAmount).toLocaleString('en-IN')}\n\nBest Regards,\nProtocol Team`
+          body: `Dear ${investor.full_name},\n\nYour withdrawal request of ₹${withdrawalAmount.toLocaleString('en-IN')} has been processed successfully.\n\nThe funds have been credited to your wallet and are now available for use.\n\nUpdated Wallet Balance: ₹${((wallet.available_balance || 0) + withdrawalAmount).toLocaleString('en-IN')}\n\nBest Regards,\nProtocall Team`
         });
       } catch (emailError) {
         console.warn('Email sending failed:', emailError);

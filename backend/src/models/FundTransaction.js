@@ -18,7 +18,8 @@ module.exports = (sequelize) => {
           'purchase',
           'redemption',
           'transfer',
-          'payment'
+          'payment',
+          'refund' // SubscriptionService.recordRefundLedger; migration 021 adds it to existing tables
         ),
         allowNull: false,
       },

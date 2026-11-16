@@ -64,8 +64,11 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         defaultValue: 'user'
       },
+      // active | inactive (deactivated by an admin) | suspended (until a date,
+      // see user_sanctions) | banned (blocked) | pending (legacy). Only
+      // `active` may sign in or use a session (utils/accountStatus.js).
       status: {
-        type: DataTypes.ENUM('active', 'inactive', 'banned'),
+        type: DataTypes.ENUM('active', 'inactive', 'suspended', 'banned', 'pending'),
         defaultValue: 'active'
       }
     },

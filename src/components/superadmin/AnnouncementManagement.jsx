@@ -264,7 +264,7 @@ export default function AnnouncementManagement() {
                   <Input
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="e.g., Welcome to Protocol!"
+                    placeholder="e.g., Welcome to Protocall!"
                   />
                 </div>
 

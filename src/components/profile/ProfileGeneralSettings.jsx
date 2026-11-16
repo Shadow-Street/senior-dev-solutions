@@ -143,7 +143,7 @@ export default function ProfileGeneralSettings({ user, onUserUpdate }) {
       
       await SendEmail({
         to: user.email,
-        subject: 'Mobile Number Verification - Protocol',
+        subject: 'Mobile Number Verification - Protocall',
         body: `Your OTP for mobile number verification is: ${generatedOtp}. This OTP is valid for 5 minutes.`
       });
 

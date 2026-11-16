@@ -442,7 +442,7 @@ export default function BecomeOrganizerPage() {
                   <strong>By submitting this application, you agree to:</strong>
                 </p>
                 <ul className="text-sm text-subtle space-y-1 ml-4 list-disc">
-                  <li>Follow Protocol's community guidelines</li>
+                  <li>Follow Protocall's community guidelines</li>
                   <li>20% platform commission on ticket sales</li>
                   <li>Maintain professional conduct at all events</li>
                   <li>Provide accurate event information</li>

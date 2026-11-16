@@ -1,473 +1,208 @@
-import React, { useState, useEffect } from 'react';
-import { ChatRoom, RoomSubscription, User } from '@/api/entities';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  Crown,
-  Lock,
-  DollarSign,
-  Users,
-  Star,
-  Settings,
-  Plus,
-  Edit,
-  Eye,
-  TrendingUp,
-  Shield
-} from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Crown, Star, Users, Loader2, AlertTriangle, Gift } from 'lucide-react';
 import { toast } from 'sonner';
+import chatAdminApi from './chatAdminApi';
+import { PLANS, apiError, formatDateTime, normalizePlan, planLabel } from './chatRoomUtils';
+import ConfirmActionDialog from './ConfirmActionDialog';
+import UserPicker from './UserPicker';
+import PropTypes from 'prop-types';
 
-export default function PremiumRoomPanel({ adminUser }) {
-  const [rooms, setRooms] = useState([]);
-  const [subscriptions, setSubscriptions] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editingRoom, setEditingRoom] = useState(null);
-  const [formData, setFormData] = useState({
-    is_premium: false,
-    premium_tier: 'premium',
-    is_private: false,
-    is_paid: false,
-    room_price: 99,
-    vip_features_enabled: false,
-    exclusive_content_enabled: false,
-    room_color: 'hsl(var(--chart-1))',
-    room_icon: '👑'
-  });
+/**
+ * Premium & VIP rooms: the plan each paid room requires (enforced on join,
+ * read and post), its room subscriptions, and admin-granted access.
+ * Replaces the old Premium and VIP tabs, which edited fields nothing read.
+ */
+export default function PremiumRoomPanel({ rooms, onChanged }) {
+  const paidRooms = useMemo(() => rooms.filter((r) => normalizePlan(r.required_plan) !== 'free' || r.is_premium), [rooms]);
+  const [subs, setSubs] = useState(null);
+  const [error, setError] = useState(null);
+  const [selectedId, setSelectedId] = useState('');
+  const [days, setDays] = useState('30');
+  const [busy, setBusy] = useState(null);
+  const [revoking, setRevoking] = useState(null);
 
-  useEffect(() => {
-    loadData();
+  const loadSubs = useCallback(async () => {
+    try {
+      setError(null);
+      setSubs(await chatAdminApi.roomSubscriptions());
+    } catch (e) {
+      setError(apiError(e, 'Could not load room subscriptions'));
+    }
   }, []);
+  useEffect(() => { loadSubs(); }, [loadSubs]);
+  useEffect(() => {
+    if (!selectedId && paidRooms[0]) setSelectedId(paidRooms[0].id);
+  }, [paidRooms, selectedId]);
 
-  const loadData = async () => {
-    setIsLoading(true);
+  const liveByRoom = useMemo(() => {
+    const map = new Map();
+    for (const s of subs || []) if (s.is_live) map.set(s.room_id, (map.get(s.room_id) || 0) + 1);
+    return map;
+  }, [subs]);
+
+  const setPlan = async (room, plan) => {
+    setBusy(room.id);
     try {
-      const [roomsData, subsData] = await Promise.all([
-        ChatRoom.filter({ 
-          '$or': [
-            { is_premium: true },
-            { is_private: true },
-            { is_paid: true }
-          ]
-        }).catch(() => []),
-        RoomSubscription.list().catch(() => [])
-      ]);
-
-      setRooms(roomsData);
-      setSubscriptions(subsData);
-    } catch (error) {
-      console.error('Error loading premium rooms:', error);
-      toast.error('Failed to load premium rooms');
+      await chatAdminApi.updateRoom(room.id, { required_plan: plan });
+      toast.success(`"${room.name}" now requires ${planLabel(plan)}`);
+      await onChanged();
+    } catch (e) {
+      toast.error(apiError(e, 'Failed to change the plan'));
     } finally {
-      setIsLoading(false);
+      setBusy(null);
     }
   };
 
-  const handleEdit = (room) => {
-    setEditingRoom(room);
-    setFormData({
-      is_premium: room.is_premium || false,
-      premium_tier: room.premium_tier || 'premium',
-      is_private: room.is_private || false,
-      is_paid: room.is_paid || false,
-      room_price: room.room_price || 99,
-      vip_features_enabled: room.vip_features_enabled || false,
-      exclusive_content_enabled: room.exclusive_content_enabled || false,
-      room_color: room.room_color || '#6366f1',
-      room_icon: room.room_icon || '👑'
-    });
-    setShowEditModal(true);
-  };
-
-  const handleSave = async () => {
-    if (!editingRoom) return;
-
+  const grant = async (user) => {
+    const n = Number.parseInt(days, 10);
+    if (!selectedId) { toast.error('Choose a room first'); return; }
+    if (!Number.isFinite(n) || n < 1 || n > 365) { toast.error('Access length must be 1–365 days'); return; }
+    setBusy('grant');
     try {
-      await ChatRoom.update(editingRoom.id, formData);
-      toast.success('Premium settings updated successfully');
-      setShowEditModal(false);
-      setEditingRoom(null);
-      loadData();
-    } catch (error) {
-      console.error('Error updating room:', error);
-      toast.error('Failed to update premium settings');
+      await chatAdminApi.grantAccess(selectedId, user.id, n);
+      toast.success(`${user.name} has ${n} day(s) of access`);
+      await loadSubs();
+    } catch (e) {
+      toast.error(apiError(e, 'Failed to grant access'));
+    } finally {
+      setBusy(null);
     }
   };
 
-  const premiumRooms = rooms.filter(r => r.is_premium);
-  const privateRooms = rooms.filter(r => r.is_private);
-  const paidRooms = rooms.filter(r => r.is_paid);
-  const totalRevenue = paidRooms.reduce((sum, r) => sum + (r.revenue_generated || 0), 0);
-  const totalSubscribers = subscriptions.filter(s => s.status === 'active').length;
+  const revoke = async () => {
+    try {
+      await chatAdminApi.revokeSubscription(revoking.id);
+      toast.success('Room access revoked');
+      setRevoking(null);
+      await loadSubs();
+    } catch (e) {
+      toast.error(apiError(e, 'Failed to revoke access'));
+    }
+  };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-16">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-lg text-subtle font-medium">Loading Premium Rooms...</p>
-        </div>
-      </div>
-    );
-  }
+  const roomName = (id) => rooms.find((r) => r.id === id)?.name || 'Deleted room';
+  const selectedSubs = (subs || []).filter((s) => s.room_id === selectedId);
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Crown className="w-5 h-5 text-protocall-premium-text" />
-                Premium Room Features
-              </h3>
-              <p className="text-sm text-subtle">Manage tiered access, paid rooms, and VIP features</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Premium Rooms</p>
-                <p className="text-3xl font-bold">{premiumRooms.length}</p>
-              </div>
-              <Crown className="w-10 h-10 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Private Rooms</p>
-                <p className="text-3xl font-bold">{privateRooms.length}</p>
-              </div>
-              <Lock className="w-10 h-10 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-buy-soft text-buy-foreground">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Paid Rooms</p>
-                <p className="text-3xl font-bold">{paidRooms.length}</p>
-              </div>
-              <DollarSign className="w-10 h-10 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-hold text-hold-foreground">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Subscribers</p>
-                <p className="text-3xl font-bold">{totalSubscribers}</p>
-              </div>
-              <Users className="w-10 h-10 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-r from-protocall-deep to-sell text-white">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Revenue</p>
-                <p className="text-3xl font-bold">₹{(totalRevenue / 1000).toFixed(1)}K</p>
-              </div>
-              <TrendingUp className="w-10 h-10 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[
+          ['Premium rooms', paidRooms.filter((r) => normalizePlan(r.required_plan) === 'premium').length, Crown],
+          ['VIP rooms', paidRooms.filter((r) => normalizePlan(r.required_plan) === 'vip').length, Star],
+          ['Active room subscriptions', subs ? subs.filter((s) => s.is_live).length : '—', Users],
+        ].map(([label, value, Icon]) => (
+          <Card key={label}><CardContent className="p-4 flex items-center gap-3">
+            <Icon className="w-7 h-7 text-primary" aria-hidden="true" />
+            <div><p className="text-2xl font-bold">{value}</p><p className="text-sm text-subtle">{label}</p></div>
+          </CardContent></Card>
+        ))}
       </div>
 
-      {/* Premium Rooms List */}
       <Card>
-        <CardHeader>
-          <CardTitle>Premium Rooms Management</CardTitle>
-        </CardHeader>
+        <CardHeader><CardTitle className="text-base">Plan gating</CardTitle></CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {rooms.length === 0 ? (
-              <div className="text-center py-12">
-                <Crown className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                <p className="text-subtle font-medium">No premium rooms yet</p>
-                <p className="text-muted-foreground text-sm mt-1">Convert existing rooms to premium</p>
-              </div>
-            ) : (
-              rooms.map(room => {
-                const roomSubs = subscriptions.filter(s => s.room_id === room.id && s.status === 'active');
-                const monthlyRevenue = roomSubs.length * (room.room_price || 0);
-
-                return (
-                  <div key={room.id} className="flex items-center gap-4 p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style={{ backgroundColor: room.room_color || '#6366f1' }}>
-                      {room.room_icon || '💬'}
-                    </div>
-
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className="font-medium text-foreground">{room.name}</p>
-                        
-                        {room.is_premium && (
-                          <Badge className="bg-premium-muted text-protocall-premium-text">
-                            <Crown className="w-3 h-3 mr-1" />
-                            {room.premium_tier}
-                          </Badge>
-                        )}
-                        
-                        {room.is_private && (
-                          <Badge className="bg-premium-muted text-primary">
-                            <Lock className="w-3 h-3 mr-1" />
-                            Private
-                          </Badge>
-                        )}
-                        
-                        {room.is_paid && (
-                          <Badge className="bg-buy-muted text-buy-muted-foreground">
-                            <DollarSign className="w-3 h-3 mr-1" />
-                            ₹{room.room_price}/mo
-                          </Badge>
-                        )}
-                        
-                        {room.vip_features_enabled && (
-                          <Badge className="bg-hold-muted text-hold-muted-foreground">
-                            <Star className="w-3 h-3 mr-1" />
-                            VIP Features
-                          </Badge>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-4 text-sm text-subtle">
-                        <span className="flex items-center gap-1">
-                          <Users className="w-4 h-4" />
-                          {room.participant_count || 0} members
-                        </span>
-                        
-                        {room.is_paid && (
-                          <>
-                            <span className="flex items-center gap-1">
-                              <Shield className="w-4 h-4" />
-                              {roomSubs.length} subscribers
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <TrendingUp className="w-4 h-4" />
-                              ₹{monthlyRevenue}/mo revenue
-                            </span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEdit(room)}
-                    >
-                      <Settings className="w-4 h-4" />
-                    </Button>
-                  </div>
-                );
-              })
-            )}
-          </div>
+          <p className="text-xs text-muted-foreground mb-3">
+            Premium: Premium or VIP plan, or a room subscription. VIP: VIP plan or a room subscription. Members who lose access are disconnected; room moderators keep theirs.
+          </p>
+          {paidRooms.length === 0 ? (
+            <p className="text-sm text-subtle py-6 text-center">No paid rooms yet. Set a room&apos;s plan to Premium or VIP from its edit dialog or the Access tab.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-surface-2 text-xs uppercase text-subtle">
+                  <tr><th scope="col" className="px-4 py-2 text-left">Room</th><th scope="col" className="px-4 py-2 text-left">Participants</th><th scope="col" className="px-4 py-2 text-left">Active room subs</th><th scope="col" className="px-4 py-2 text-left">Required plan</th></tr>
+                </thead>
+                <tbody>
+                  {paidRooms.map((r) => (
+                    <tr key={r.id} className="border-b">
+                      <td className="px-4 py-2 font-medium">{r.name}{r.status === 'archived' && <Badge variant="outline" className="ml-2 text-xs">Archived</Badge>}</td>
+                      <td className="px-4 py-2">{r.participant_count}</td>
+                      <td className="px-4 py-2">{subs ? liveByRoom.get(r.id) || 0 : '—'}</td>
+                      <td className="px-4 py-2">
+                        <Select value={normalizePlan(r.required_plan)} disabled={busy === r.id} onValueChange={(v) => setPlan(r, v)}>
+                          <SelectTrigger className="w-32 h-8" aria-label={`Plan for ${r.name}`}><SelectValue /></SelectTrigger>
+                          <SelectContent>{PLANS.map((p) => <SelectItem key={p.value} value={p.value} disabled={['premium', 'premium_admin'].includes(r.room_type) && p.value === 'free'}>{p.label}</SelectItem>)}</SelectContent>
+                        </Select>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      {/* Edit Modal */}
-      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Premium Room Settings</DialogTitle>
-            <DialogDescription>
-              Configure premium features, access control, and monetization
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-6">
-            {/* Access Control */}
-            <div className="space-y-4">
-              <h4 className="font-semibold text-foreground flex items-center gap-2">
-                <Shield className="w-4 h-4" />
-                Access Control
-              </h4>
-
-              <div className="flex items-center justify-between p-3 bg-premium-muted rounded-lg">
-                <div>
-                  <Label className="font-medium">Premium Room</Label>
-                  <p className="text-sm text-subtle">Require active subscription to access</p>
-                </div>
-                <Switch
-                  checked={formData.is_premium}
-                  onCheckedChange={(checked) => setFormData({...formData, is_premium: checked})}
-                />
+      {paidRooms.length > 0 && (
+        <Card>
+          <CardHeader><CardTitle className="text-base flex items-center gap-2"><Gift className="w-4 h-4" aria-hidden="true" />Room subscriptions</CardTitle></CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <Label htmlFor="sub-room">Room</Label>
+                <Select value={selectedId} onValueChange={setSelectedId}>
+                  <SelectTrigger id="sub-room" className="mt-1"><SelectValue placeholder="Choose a room" /></SelectTrigger>
+                  <SelectContent>{paidRooms.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}</SelectContent>
+                </Select>
               </div>
-
-              {formData.is_premium && (
-                <div>
-                  <Label>Premium Tier</Label>
-                  <Select value={formData.premium_tier} onValueChange={(value) => setFormData({...formData, premium_tier: value})}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="basic">Basic</SelectItem>
-                      <SelectItem value="premium">Premium</SelectItem>
-                      <SelectItem value="vip">VIP</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-
-              <div className="flex items-center justify-between p-3 bg-premium-muted rounded-lg">
-                <div>
-                  <Label className="font-medium">Private Room</Label>
-                  <p className="text-sm text-subtle">Invite-only access</p>
-                </div>
-                <Switch
-                  checked={formData.is_private}
-                  onCheckedChange={(checked) => setFormData({...formData, is_private: checked})}
-                />
+              <div>
+                <Label htmlFor="sub-days">Complimentary access (days)</Label>
+                <Input id="sub-days" type="number" min={1} max={365} value={days} onChange={(e) => setDays(e.target.value)} className="mt-1" />
               </div>
             </div>
-
-            {/* Monetization */}
-            <div className="space-y-4">
-              <h4 className="font-semibold text-foreground flex items-center gap-2">
-                <DollarSign className="w-4 h-4" />
-                Monetization
-              </h4>
-
-              <div className="flex items-center justify-between p-3 bg-buy-muted rounded-lg">
-                <div>
-                  <Label className="font-medium">Paid Room</Label>
-                  <p className="text-sm text-subtle">Require payment to access</p>
-                </div>
-                <Switch
-                  checked={formData.is_paid}
-                  onCheckedChange={(checked) => setFormData({...formData, is_paid: checked})}
-                />
-              </div>
-
-              {formData.is_paid && (
-                <div>
-                  <Label>Monthly Price (₹)</Label>
-                  <Input
-                    type="number"
-                    value={formData.room_price}
-                    onChange={(e) => setFormData({...formData, room_price: Number(e.target.value)})}
-                  />
-                </div>
-              )}
+            <div>
+              <p className="text-xs font-medium mb-1">Grant access to</p>
+              <UserPicker id="grant-access" actionLabel="Grant access" onSelect={grant} disabled={busy === 'grant' || !selectedId} />
             </div>
 
-            {/* VIP Features */}
-            <div className="space-y-4">
-              <h4 className="font-semibold text-foreground flex items-center gap-2">
-                <Star className="w-4 h-4" />
-                VIP Features
-              </h4>
-
-              <div className="flex items-center justify-between p-3 bg-hold-muted rounded-lg">
-                <div>
-                  <Label className="font-medium">Enable VIP Features</Label>
-                  <p className="text-sm text-subtle">Custom emojis, badges, and colors</p>
+            {error && <p className="text-sm text-sell-muted-foreground flex items-center gap-2" role="alert"><AlertTriangle className="w-4 h-4" aria-hidden="true" />{error} <Button size="sm" variant="outline" onClick={loadSubs}>Retry</Button></p>}
+            {!subs && !error && <p className="text-sm text-subtle" role="status"><Loader2 className="w-4 h-4 inline animate-spin mr-1" aria-hidden="true" />Loading…</p>}
+            {subs && (
+              selectedSubs.length === 0 ? <p className="text-sm text-subtle text-center py-4">No subscriptions for {roomName(selectedId)}.</p> : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="bg-surface-2 text-xs uppercase text-subtle">
+                      <tr><th scope="col" className="px-4 py-2 text-left">Subscriber</th><th scope="col" className="px-4 py-2 text-left">Status</th><th scope="col" className="px-4 py-2 text-left">Source</th><th scope="col" className="px-4 py-2 text-left">Expires</th><th scope="col" className="px-4 py-2 text-right">Action</th></tr>
+                    </thead>
+                    <tbody>
+                      {selectedSubs.map((s) => (
+                        <tr key={s.id} className="border-b">
+                          <td className="px-4 py-2"><p className="font-medium">{s.user?.name}</p><p className="text-xs text-muted-foreground">{s.user?.email}</p></td>
+                          <td className="px-4 py-2"><Badge className={s.is_live ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-surface-2 text-subtle'}>{s.is_live ? 'Active' : s.status === 'active' ? 'Expired' : s.status}</Badge></td>
+                          <td className="px-4 py-2 text-xs">{String(s.payment_reference || '').startsWith('admin_grant') ? 'Granted by admin' : Number(s.amount_paid) > 0 ? `Paid ₹${Number(s.amount_paid).toLocaleString()}` : '—'}</td>
+                          <td className="px-4 py-2 text-xs">{formatDateTime(s.expires_at)}</td>
+                          <td className="px-4 py-2 text-right">{s.status !== 'cancelled' && <Button size="sm" variant="outline" onClick={() => setRevoking(s)}>Revoke</Button>}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-                <Switch
-                  checked={formData.vip_features_enabled}
-                  onCheckedChange={(checked) => setFormData({...formData, vip_features_enabled: checked})}
-                />
-              </div>
+              )
+            )}
+          </CardContent>
+        </Card>
+      )}
 
-              <div className="flex items-center justify-between p-3 bg-premium-muted rounded-lg">
-                <div>
-                  <Label className="font-medium">Exclusive Content</Label>
-                  <p className="text-sm text-subtle">Premium-only announcements</p>
-                </div>
-                <Switch
-                  checked={formData.exclusive_content_enabled}
-                  onCheckedChange={(checked) => setFormData({...formData, exclusive_content_enabled: checked})}
-                />
-              </div>
-            </div>
-
-            {/* Customization */}
-            <div className="space-y-4">
-              <h4 className="font-semibold text-foreground flex items-center gap-2">
-                <Settings className="w-4 h-4" />
-                Customization
-              </h4>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Room Color</Label>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="color"
-                      value={formData.room_color}
-                      onChange={(e) => setFormData({...formData, room_color: e.target.value})}
-                      className="w-16 h-10"
-                    />
-                    <Input
-                      value={formData.room_color}
-                      onChange={(e) => setFormData({...formData, room_color: e.target.value})}
-                      placeholder="#6366f1"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label>Room Icon (Emoji)</Label>
-                  <Input
-                    value={formData.room_icon}
-                    onChange={(e) => setFormData({...formData, room_icon: e.target.value})}
-                    placeholder="👑"
-                    maxLength={2}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-3 pt-4 border-t">
-              <Button variant="outline" onClick={() => setShowEditModal(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleSave} className="bg-primary hover:bg-primary">
-                Save Premium Settings
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ConfirmActionDialog
+        open={Boolean(revoking)}
+        onClose={() => setRevoking(null)}
+        onConfirm={revoke}
+        destructive
+        title="Revoke room access?"
+        description={revoking ? `${revoking.user?.name} loses access to ${roomName(revoking.room_id)} now (unless their plan covers it). Payments are not refunded from here.` : ''}
+        confirmLabel="Revoke"
+      />
     </div>
   );
 }
+
+PremiumRoomPanel.propTypes = {
+  rooms: PropTypes.array.isRequired,
+  onChanged: PropTypes.func.isRequired,
+};

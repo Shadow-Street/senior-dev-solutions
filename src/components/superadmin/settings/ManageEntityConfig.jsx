@@ -1,390 +1,158 @@
-
-import React, { useState, useEffect, useCallback } from 'react';
-import { EntityConfig } from '@/api/entities';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useEffect, useMemo, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { PlusCircle, Edit, Trash2, Database, AlertTriangle } from 'lucide-react';
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
+import { Switch } from '@/components/ui/switch';
+import { ArrowDown, ArrowUp, RotateCcw, Save, Undo2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { platformSettingsApi, refreshPublicConfig, settingsErrorMessage, settingsFieldErrors } from '@/lib/platformSettingsApi';
+import { ADMIN_NAV_DEFAULTS, ADMIN_NAV_LOCKED, USER_NAV_DEFAULTS, editorRows, rowsToConfig } from '@/lib/navigationConfig';
+import { SectionNote } from './SettingsForm';
 
-const AVAILABLE_ICONS = [
-  'BookUser', 'Star', 'GraduationCap', 'Award', 'Shield', 'Users', 'Briefcase', 'ShieldCheck'
-];
+/**
+ * Sidebar & Navigation (formerly "Entity Configuration").
+ *
+ * The old screen created rows in entity_configs with fields that table does
+ * not have, so every save failed and nothing read the rows anyway — the list
+ * was always "No Entity Configurations". What admins actually need from it is
+ * control over the sidebars, so that is what this does: rename, hide and
+ * reorder the member sidebar and the Super Admin sidebar. Nothing configured
+ * = today's sidebars.
+ */
+const LISTS = {
+  user: { settingKey: 'nav_config_user', defaults: USER_NAV_DEFAULTS, locked: [], title: 'Member sidebar', hint: 'The left menu members see in the app.' },
+  admin: { settingKey: 'nav_config_admin', defaults: ADMIN_NAV_DEFAULTS, locked: ADMIN_NAV_LOCKED, title: 'Super Admin sidebar', hint: 'Dashboard and Platform Settings cannot be hidden.' },
+};
 
-const AVAILABLE_COLORS = [
-  'text-primary', 'text-buy-muted-foreground', 'text-protocall-premium-text', 'text-sell-muted-foreground', 
-  'text-hold-muted-foreground', 'text-primary', 'text-protocall-premium-text', 'text-primary'
-];
+const sameRows = (a, b) => JSON.stringify(rowsToConfig(a)) === JSON.stringify(rowsToConfig(b));
 
-export default function ManageEntityConfig({ settings, onChange, refreshEntityConfigs }) {
-  const defaultEntityConfigs = [
-    {
-      entity_name: 'Advisor',
-      display_name: 'Advisors',
-      description: 'SEBI registered investment advisors',
-      icon_name: 'ShieldCheck',
-      color: 'text-protocall-premium-text',
-      enabled: true,
-      user_visible: true,
-      admin_visible: true,
-      management_enabled: true,
-      action_button_label: 'View Profile',
-      status_field: 'status',
-      sort_order: 7,
-    },
-    {
-      entity_name: 'FinInfluencer',
-      display_name: 'Finfluencers',
-      description: 'Financial content creators and influencers',
-      icon_name: 'Star',
-      color: 'text-hold-muted-foreground',
-      enabled: true,
-      user_visible: true,
-      admin_visible: true,
-      management_enabled: true,
-      action_button_label: 'View Content',
-      status_field: 'status',
-      sort_order: 8,
-    },
-    {
-      entity_name: 'Educator',
-      display_name: 'Educators',
-      description: 'Financial education specialists',
-      icon_name: 'GraduationCap',
-      color: 'text-primary',
-      enabled: true,
-      user_visible: true,
-      admin_visible: true,
-      management_enabled: true,
-      action_button_label: 'View Courses',
-      status_field: 'status',
-      sort_order: 9,
-    },
-  ];
+function NavList({ list, managed, onSaved, onDirty }) {
+  // Keyed on this list's own stored value (as JSON), not the whole `managed`
+  // object: saving the other list must not reset this one's pending edits.
+  const storedJson = JSON.stringify(managed?.values?.[list.settingKey] ?? null);
+  const saved = useMemo(() => editorRows(list.defaults, JSON.parse(storedJson)), [list, storedJson]);
+  const [rows, setRows] = useState(saved);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+  useEffect(() => { setRows(saved); setError(null); }, [saved]);
 
-  const [entities, setEntities] = useState([]);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [editingEntity, setEditingEntity] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [formData, setFormData] = useState({
-    entity_name: '',
-    display_name: '',
-    description: '',
-    icon_name: 'Shield',
-    color: 'text-primary',
-    enabled: true,
-    user_visible: false,
-    admin_visible: true,
-    management_enabled: true,
-    status_field: 'status',
-    sort_order: 0
+  const dirty = !sameRows(rows, saved);
+  useEffect(() => { onDirty(dirty); }, [dirty, onDirty]);
+
+  const move = (i, delta) => setRows((r) => {
+    const j = i + delta;
+    if (j < 0 || j >= r.length) return r;
+    const next = [...r];
+    [next[i], next[j]] = [next[j], next[i]];
+    return next;
   });
+  const patch = (i, values) => setRows((r) => r.map((row, k) => (k === i ? { ...row, ...values } : row)));
 
-  const loadEntities = useCallback(async () => {
-    setIsLoading(true);
+  const persist = async (config, message) => {
+    setSaving(true);
+    setError(null);
     try {
-      const entityConfigs = await EntityConfig.list();
-      setEntities(entityConfigs.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)));
-    } catch (error) {
-      console.error('Error loading entity configs:', error);
-      toast.error('Failed to load entity configurations');
+      const result = await platformSettingsApi.save({ [list.settingKey]: config });
+      onSaved(result.values);
+      refreshPublicConfig();
+      toast.success(message);
+    } catch (err) {
+      const fields = settingsFieldErrors(err);
+      setError(fields[list.settingKey] || settingsErrorMessage(err, 'Could not save the sidebar.'));
+      toast.error(settingsErrorMessage(err, 'Could not save the sidebar.'));
     } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadEntities();
-  }, [loadEntities]);
-
-  const resetForm = () => {
-    setFormData({
-      entity_name: '',
-      display_name: '',
-      description: '',
-      icon_name: 'Shield',
-      color: 'text-primary',
-      enabled: true,
-      user_visible: false,
-      admin_visible: true,
-      management_enabled: true,
-      status_field: 'status',
-      sort_order: 0
-    });
-  };
-
-  const handleOpenModal = (entity = null) => {
-    if (entity) {
-      setEditingEntity(entity);
-      // Ensure formData is populated with existing entity data, including any unknown fields
-      setFormData({ ...entity });
-    } else {
-      setEditingEntity(null);
-      resetForm();
-    }
-    setShowAddModal(true);
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
-  };
-
-  const handleSelectChange = (name, value) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSwitchChange = (name, checked) => {
-    setFormData(prev => ({ ...prev, [name]: checked }));
-  };
-
-  const handleSave = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      if (editingEntity) {
-        await EntityConfig.update(editingEntity.id, formData);
-        toast.success('Entity configuration updated successfully');
-      } else {
-        await EntityConfig.create(formData);
-        toast.success('Entity configuration created successfully');
-      }
-      
-      setShowAddModal(false);
-      setEditingEntity(null);
-      
-      // Refresh local and parent component data AFTER mutation
-      await loadEntities();
-      if (refreshEntityConfigs) {
-        refreshEntityConfigs();
-      }
-
-    } catch (error) {
-      console.error('Error saving entity config:', error);
-      toast.error(`Failed to save configuration: ${error.message}`);
-    } finally {
-      setIsLoading(false);
+      setSaving(false);
     }
   };
 
-  const handleDelete = async (entityId) => {
-    try {
-      await EntityConfig.delete(entityId);
-      toast.success('Entity configuration deleted successfully');
-      
-      // Refresh local and parent component data AFTER mutation
-      await loadEntities();
-      if (refreshEntityConfigs) {
-        refreshEntityConfigs();
-      }
-    } catch (error) {
-      console.error('Error deleting entity config:', error);
-      toast.error('Failed to delete configuration');
-    }
-  };
+  const tooLong = rows.find((r) => (r.label || '').trim().length > 40);
+
+  return (
+    <section aria-labelledby={`nav-${list.settingKey}`} className="space-y-3 rounded-lg border border-border bg-card p-4">
+      <div>
+        <h3 id={`nav-${list.settingKey}`} className="text-lg font-semibold text-foreground">{list.title}</h3>
+        <p className="text-sm text-muted-foreground">{list.hint}</p>
+      </div>
+      <ol className="space-y-2">
+        {rows.map((row, i) => {
+          const locked = list.locked.includes(row.key);
+          const inputId = `${list.settingKey}-${row.key}-label`;
+          return (
+            <li key={row.key} className={`flex flex-wrap items-center gap-3 rounded-md border border-border p-2 ${row.visible ? '' : 'bg-surface-2 opacity-75'}`}>
+              <span className="w-6 text-center text-xs text-muted-foreground" aria-hidden="true">{i + 1}</span>
+              <label htmlFor={inputId} className="sr-only">Label for {row.defaultLabel}</label>
+              <Input id={inputId} value={row.label} placeholder={row.defaultLabel} maxLength={40} disabled={saving}
+                className="h-9 min-w-[10rem] flex-1" onChange={(e) => patch(i, { label: e.target.value })} />
+              <div className="flex items-center gap-2">
+                <Switch checked={row.visible} disabled={saving || locked} aria-label={`Show ${row.defaultLabel}`}
+                  onCheckedChange={(checked) => patch(i, { visible: checked })} />
+                <span className="w-12 text-xs text-muted-foreground">{locked ? 'Always' : row.visible ? 'Shown' : 'Hidden'}</span>
+              </div>
+              <div className="flex gap-1">
+                <Button type="button" size="icon" variant="ghost" className="h-8 w-8" disabled={saving || i === 0}
+                  aria-label={`Move ${row.defaultLabel} up`} onClick={() => move(i, -1)}><ArrowUp className="h-4 w-4" /></Button>
+                <Button type="button" size="icon" variant="ghost" className="h-8 w-8" disabled={saving || i === rows.length - 1}
+                  aria-label={`Move ${row.defaultLabel} down`} onClick={() => move(i, 1)}><ArrowDown className="h-4 w-4" /></Button>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+      {(error || tooLong) && <p role="alert" className="text-sm text-sell">{error || 'Labels must be 40 characters or fewer.'}</p>}
+      <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border pt-3">
+        {dirty && <span className="mr-auto text-sm text-hold-muted-foreground" role="status">Unsaved changes</span>}
+        <Button type="button" variant="ghost" disabled={saving} onClick={() => {
+          if (window.confirm(`Restore the ${list.title.toLowerCase()} to its default labels, order and visibility?`)) persist({ items: [] }, 'Sidebar restored to default.');
+        }}>
+          <Undo2 className="mr-2 h-4 w-4" aria-hidden="true" />Restore default
+        </Button>
+        <Button type="button" variant="outline" disabled={!dirty || saving} onClick={() => setRows(saved)}>
+          <RotateCcw className="mr-2 h-4 w-4" aria-hidden="true" />Discard
+        </Button>
+        <Button type="button" disabled={!dirty || saving || Boolean(tooLong)} onClick={() => persist(rowsToConfig(rows), 'Sidebar saved.')}>
+          <Save className="mr-2 h-4 w-4" aria-hidden="true" />{saving ? 'Saving...' : 'Save sidebar'}
+        </Button>
+      </div>
+    </section>
+  );
+}
+
+export default function ManageEntityConfig({ managed, onSaved, onDirtyChange }) {
+  const [dirty, setDirty] = useState({ user: false, admin: false });
+  const setUserDirty = React.useCallback((d) => setDirty((s) => (s.user === d ? s : { ...s, user: d })), []);
+  const setAdminDirty = React.useCallback((d) => setDirty((s) => (s.admin === d ? s : { ...s, admin: d })), []);
+  useEffect(() => { if (onDirtyChange) onDirtyChange(dirty.user || dirty.admin); }, [dirty, onDirtyChange]);
 
   return (
     <div className="space-y-6">
-      <Card className="shadow-lg border-0 bg-white">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <Database className="w-5 h-5 text-protocall-premium-text" />
-                Dynamic Entity Configuration
-              </CardTitle>
-              <p className="text-sm text-subtle mt-2">
-                Configure which entities appear in user and admin sidebars. Control visibility, management access, and display settings.
-              </p>
-            </div>
-            <Button onClick={() => handleOpenModal()} className="bg-primary hover:bg-primary">
-              <PlusCircle className="w-4 h-4 mr-2" />
-              Add Entity
-            </Button>
-          </div>
-        </CardHeader>
-
-        <CardContent>
-          {isLoading ? (
-            <div className="text-center py-8">Loading configurations...</div>
-          ) : (
-            <div className="space-y-4">
-              {entities.map(entity => (
-                <div key={entity.id} className="bg-surface-2 p-4 rounded-lg border">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-foreground">{entity.display_name}</h3>
-                        <div className="flex gap-2">
-                          <Badge className={entity.enabled ? 'bg-buy-muted text-buy-muted-foreground border-buy/30' : 'bg-sell-muted text-sell-muted-foreground border-sell/30'}>
-                            {entity.enabled ? 'Enabled' : 'Disabled'}
-                          </Badge>
-                          {entity.user_visible && (
-                            <Badge className="bg-premium-muted text-primary border-protocall-premium-light">
-                              User Visible
-                            </Badge>
-                          )}
-                          {entity.admin_visible && (
-                            <Badge className="bg-premium-muted text-protocall-premium-text border-protocall-premium-light">
-                              Admin Visible
-                            </Badge>
-                          )}
-                          {entity.management_enabled && (
-                            <Badge className="bg-hold-muted text-hold-muted-foreground border-hold/30">
-                              Management Enabled
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                        <div>
-                          <span className="text-subtle">Entity:</span>
-                          <span className="ml-2 font-medium text-foreground">{entity.entity_name}</span>
-                        </div>
-                        <div>
-                          <span className="text-subtle">Icon:</span>
-                          <span className="ml-2 font-medium text-foreground">{entity.icon_name}</span>
-                        </div>
-                        <div>
-                          <span className="text-subtle">Sort Order:</span>
-                          <span className="ml-2 font-medium text-foreground">{entity.sort_order || 0}</span>
-                        </div>
-                      </div>
-                      
-                      <p className="text-sm text-subtle mt-2">{entity.description}</p>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleOpenModal(entity)}
-                        className="text-primary hover:text-primary hover:bg-premium-muted"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDelete(entity.id)}
-                        className="text-sell-muted-foreground hover:text-sell-muted-foreground hover:bg-sell-muted"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              
-              {entities.length === 0 && (
-                <div className="text-center py-12">
-                  <Database className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium text-foreground mb-2">No Entity Configurations</h3>
-                  <p className="text-muted-foreground mb-4">Create your first entity configuration to get started.</p>
-                  <Button onClick={() => handleOpenModal()} className="bg-primary hover:bg-primary">
-                    <PlusCircle className="w-4 h-4 mr-2" />
-                    Add First Entity
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Add/Edit Modal */}
-      <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>
-              {editingEntity ? 'Edit Entity Configuration' : 'Add New Entity Configuration'}
-            </DialogTitle>
-            <DialogDescription>
-              Configure how this entity appears and behaves in the application sidebars.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleSave} className="space-y-4 max-h-[70vh] overflow-y-auto p-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium">Entity Name</label>
-                <Input name="entity_name" value={formData.entity_name} onChange={handleInputChange} placeholder="e.g., Educator" required />
-                <p className="text-xs text-muted-foreground mt-1">Must match the entity schema name exactly.</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium">Display Name</label>
-                <Input name="display_name" value={formData.display_name} onChange={handleInputChange} placeholder="e.g., Educators" required />
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Description</label>
-              <Textarea name="description" value={formData.description} onChange={handleInputChange} placeholder="Short description for sidebar..." />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium">Icon Name</label>
-                <Select name="icon_name" value={formData.icon_name} onValueChange={(v) => handleSelectChange('icon_name', v)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {AVAILABLE_ICONS.map(icon => <SelectItem key={icon} value={icon}>{icon}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="text-sm font-medium">Icon Color</label>
-                <Select name="color" value={formData.color} onValueChange={(v) => handleSelectChange('color', v)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {AVAILABLE_COLORS.map(color => <SelectItem key={color} value={color}>{color}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-center bg-surface-2 p-3 rounded-lg">
-                <div className="flex items-center gap-2">
-                    <Switch id="enabled" name="enabled" checked={formData.enabled} onCheckedChange={(c) => handleSwitchChange('enabled', c)} />
-                    <label htmlFor="enabled" className="text-sm font-medium">Enabled</label>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Switch id="user_visible" name="user_visible" checked={formData.user_visible} onCheckedChange={(c) => handleSwitchChange('user_visible', c)} />
-                    <label htmlFor="user_visible" className="text-sm font-medium">User Visible</label>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Switch id="admin_visible" name="admin_visible" checked={formData.admin_visible} onCheckedChange={(c) => handleSwitchChange('admin_visible', c)} />
-                    <label htmlFor="admin_visible" className="text-sm font-medium">Admin Visible</label>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Switch id="management_enabled" name="management_enabled" checked={formData.management_enabled} onCheckedChange={(c) => handleSwitchChange('management_enabled', c)} />
-                    <label htmlFor="management_enabled" className="text-sm font-medium">Has Mgmt UI</label>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                  <label className="text-sm font-medium">Status Field Name</label>
-                  <Input name="status_field" value={formData.status_field} onChange={handleInputChange} placeholder="e.g., status" />
-              </div>
-              <div>
-                  <label className="text-sm font-medium">Sort Order</label>
-                  <Input type="number" name="sort_order" value={formData.sort_order} onChange={handleInputChange} />
-              </div>
-            </div>
-            
-            <div className="flex justify-end gap-3 pt-4 border-t">
-              <Button type="button" variant="outline" onClick={() => setShowAddModal(false)}>Cancel</Button>
-              <Button type="submit">Save Configuration</Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <SectionNote>
+        Rename, hide or reorder sidebar entries. Changes apply to everyone on their next page load. Hiding an entry only
+        removes it from the menu — to switch a feature off, use Product Lifecycle Manager. This replaces the former
+        “Entity Configuration”, which was never connected to the sidebars.
+      </SectionNote>
+      <NavList list={LISTS.user} managed={managed} onSaved={onSaved} onDirty={setUserDirty} />
+      <NavList list={LISTS.admin} managed={managed} onSaved={onSaved} onDirty={setAdminDirty} />
     </div>
   );
 }
+
+const managedShape = PropTypes.shape({
+  definitions: PropTypes.arrayOf(PropTypes.object),
+  values: PropTypes.object,
+  can_edit_security: PropTypes.bool,
+});
+
+NavList.propTypes = {
+  list: PropTypes.shape({
+    settingKey: PropTypes.string.isRequired,
+    defaults: PropTypes.arrayOf(PropTypes.shape({ key: PropTypes.string, label: PropTypes.string })).isRequired,
+    locked: PropTypes.arrayOf(PropTypes.string).isRequired,
+    title: PropTypes.string.isRequired,
+    hint: PropTypes.string,
+  }).isRequired,
+  managed: managedShape,
+  onSaved: PropTypes.func.isRequired,
+  onDirty: PropTypes.func.isRequired,
+};
+
+ManageEntityConfig.propTypes = { managed: managedShape, onSaved: PropTypes.func, onDirtyChange: PropTypes.func };

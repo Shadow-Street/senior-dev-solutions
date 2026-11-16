@@ -516,7 +516,7 @@ export default function FinancialStatement({ entityType, entityId, entityName })
 
         <div class="footer">
           <p>This is a computer-generated statement and does not require a signature.</p>
-          <p>&copy; ${new Date().getFullYear()} Protocol. All rights reserved.</p>
+          <p>&copy; ${new Date().getFullYear()} Protocall. All rights reserved.</p>
         </div>
 
         <div class="no-print" style="margin-top: 30px; text-align: center;">

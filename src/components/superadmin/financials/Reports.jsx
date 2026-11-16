@@ -1,523 +1,146 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  Download, 
-  FileText, 
-  TrendingUp, 
-  Calendar,
-  DollarSign,
-  Users,
-  BarChart3,
-  PieChart as PieChartIcon,
-  Loader2
-} from 'lucide-react';
-import { 
-  SubscriptionTransaction, 
-  Expense, 
-  RevenueTransaction, 
-  CommissionTracking,
-  EventCommissionTracking,
-  AdTransaction,
-  User
-} from '@/lib/apiClient';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
-import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
+import { ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
+import { Download, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { financialsApi, apiErrorMessage, monthLabel, STATUS_LABELS } from '@/lib/financialsApi';
+import { formatDate, formatNumber } from '@/lib/format';
+import { DataView, useFinanceData, inr, DataTable, StatCard, EmptyRows } from './shared';
+import { sourceRows } from './Overview';
 
-const COLORS = ['#3b82f6', '#8b5cf6', '#56E11B', '#f59e0b', '#ef4444', '#06b6d4', '#8b5cf6'];
+/** Analytics & Reports: monthly performance, transaction summary, breakdowns, downloadable report. */
+export default function Reports({ range }) {
+  const query = useFinanceData(() => financialsApi.analytics(range), [range.from, range.to]);
+  const [downloading, setDownloading] = useState(false);
 
-export default function Reports() {
-  const [reportType, setReportType] = useState('monthly_summary');
-  const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM'));
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [reportData, setReportData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Generate month options for the last 12 months
-  const monthOptions = Array.from({ length: 12 }, (_, i) => {
-    const date = subMonths(new Date(), i);
-    return {
-      value: format(date, 'yyyy-MM'),
-      label: format(date, 'MMMM yyyy')
-    };
-  });
-
-  useEffect(() => {
-    loadReportData();
-  }, [selectedMonth]);
-
-  const loadReportData = async () => {
-    setIsLoading(true);
+  const download = async () => {
+    setDownloading(true);
     try {
-      // Parse selected month
-      const [year, month] = selectedMonth.split('-');
-      const monthStart = startOfMonth(new Date(parseInt(year), parseInt(month) - 1));
-      const monthEnd = endOfMonth(monthStart);
-
-      // Fetch all financial data
-      const [
-        subscriptionTransactions,
-        expenses,
-        revenueTransactions,
-        advisorCommissions,
-        eventCommissions,
-        adTransactions,
-        users
-      ] = await Promise.all([
-        SubscriptionTransaction.list().catch(() => []),
-        Expense.list().catch(() => []),
-        RevenueTransaction.list().catch(() => []),
-        CommissionTracking.list().catch(() => []),
-        EventCommissionTracking.list().catch(() => []),
-        AdTransaction.list().catch(() => []),
-        User.list().catch(() => [])
-      ]);
-
-      // Filter data for selected month
-      const filterByMonth = (items, dateField = 'created_date') => {
-        return items.filter(item => {
-          const itemDate = new Date(item[dateField]);
-          return itemDate >= monthStart && itemDate <= monthEnd;
-        });
-      };
-
-      const monthlySubscriptions = filterByMonth(subscriptionTransactions);
-      const monthlyExpenses = filterByMonth(expenses, 'expense_date');
-      const monthlyRevenue = filterByMonth(revenueTransactions);
-      const monthlyAdvisorCommissions = filterByMonth(advisorCommissions);
-      const monthlyEventCommissions = filterByMonth(eventCommissions);
-      const monthlyAdTransactions = filterByMonth(adTransactions);
-
-      // Calculate metrics
-      const subscriptionRevenue = monthlySubscriptions.reduce((sum, t) => sum + (t.net_amount || 0), 0);
-      const courseRevenue = monthlyRevenue.reduce((sum, t) => sum + (t.gross_amount || 0), 0);
-      const adRevenue = monthlyAdTransactions
-        .filter(t => t.transaction_type !== 'cpc_spend')
-        .reduce((sum, t) => sum + (t.amount || 0), 0);
-      const totalExpenses = monthlyExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
-      
-      const totalGrossRevenue = subscriptionRevenue + courseRevenue + adRevenue;
-      const totalNetRevenue = subscriptionRevenue + 
-        monthlyRevenue.reduce((sum, t) => sum + (t.influencer_payout || 0), 0) +
-        adRevenue;
-      const netProfit = totalNetRevenue - totalExpenses;
-
-      // Revenue breakdown
-      const revenueBreakdown = [
-        { name: 'Subscriptions', value: subscriptionRevenue },
-        { name: 'Courses', value: courseRevenue },
-        { name: 'Ad Revenue', value: adRevenue }
-      ].filter(item => item.value > 0);
-
-      // Expense breakdown
-      const expenseBreakdown = monthlyExpenses.reduce((acc, expense) => {
-        const category = expense.category || 'Miscellaneous';
-        acc[category] = (acc[category] || 0) + expense.amount;
-        return acc;
-      }, {});
-
-      const expenseChartData = Object.entries(expenseBreakdown).map(([name, value]) => ({
-        name,
-        value
-      }));
-
-      // User growth
-      const newUsers = users.filter(u => {
-        const createdDate = new Date(u.created_date);
-        return createdDate >= monthStart && createdDate <= monthEnd;
-      }).length;
-
-      // Commission data
-      const advisorCommissionTotal = monthlyAdvisorCommissions.reduce((sum, c) => sum + (c.platform_fee || 0), 0);
-      const eventCommissionTotal = monthlyEventCommissions.reduce((sum, c) => sum + (c.platform_commission || 0), 0);
-
-      setReportData({
-        month: format(monthStart, 'MMMM yyyy'),
-        summary: {
-          totalGrossRevenue,
-          totalNetRevenue,
-          totalExpenses,
-          netProfit,
-          profitMargin: totalNetRevenue > 0 ? ((netProfit / totalNetRevenue) * 100).toFixed(2) : 0
-        },
-        revenue: {
-          subscriptions: subscriptionRevenue,
-          courses: courseRevenue,
-          ads: adRevenue,
-          breakdown: revenueBreakdown
-        },
-        expenses: {
-          total: totalExpenses,
-          breakdown: expenseChartData
-        },
-        users: {
-          newUsers,
-          totalUsers: users.length
-        },
-        commissions: {
-          advisor: advisorCommissionTotal,
-          event: eventCommissionTotal,
-          total: advisorCommissionTotal + eventCommissionTotal
-        },
-        transactions: {
-          subscriptionCount: monthlySubscriptions.length,
-          courseCount: monthlyRevenue.length,
-          adCount: monthlyAdTransactions.length
-        }
-      });
-
+      await financialsApi.exportMonthlyReport(range);
+      toast.success('Report downloaded');
     } catch (error) {
-      console.error('Error loading report data:', error);
+      toast.error(apiErrorMessage(error, 'Could not download the report'));
     } finally {
-      setIsLoading(false);
+      setDownloading(false);
     }
   };
 
-  const handleGenerateReport = () => {
-    setIsGenerating(true);
-    
-    // Simulate report generation
-    setTimeout(() => {
-      const reportContent = generateReportContent();
-      downloadReport(reportContent);
-      setIsGenerating(false);
-    }, 1500);
-  };
-
-  const generateReportContent = () => {
-    if (!reportData) return '';
-
-    return `
-FINANCIAL REPORT - ${reportData.month}
-${'='.repeat(50)}
-
-SUMMARY
--------
-Total Gross Revenue: ₹${reportData.summary.totalGrossRevenue.toLocaleString()}
-Total Net Revenue: ₹${reportData.summary.totalNetRevenue.toLocaleString()}
-Total Expenses: ₹${reportData.summary.totalExpenses.toLocaleString()}
-Net Profit: ₹${reportData.summary.netProfit.toLocaleString()}
-Profit Margin: ${reportData.summary.profitMargin}%
-
-REVENUE BREAKDOWN
------------------
-Subscriptions: ₹${reportData.revenue.subscriptions.toLocaleString()}
-Courses: ₹${reportData.revenue.courses.toLocaleString()}
-Ad Revenue: ₹${reportData.revenue.ads.toLocaleString()}
-
-EXPENSES
---------
-Total Expenses: ₹${reportData.expenses.total.toLocaleString()}
-
-${reportData.expenses.breakdown.map(item => 
-  `${item.name}: ₹${item.value.toLocaleString()}`
-).join('\n')}
-
-USER METRICS
-------------
-New Users: ${reportData.users.newUsers}
-Total Users: ${reportData.users.totalUsers}
-
-COMMISSIONS
------------
-Advisor Commissions: ₹${reportData.commissions.advisor.toLocaleString()}
-Event Commissions: ₹${reportData.commissions.event.toLocaleString()}
-Total Commission Earned: ₹${reportData.commissions.total.toLocaleString()}
-
-TRANSACTIONS
-------------
-Subscription Transactions: ${reportData.transactions.subscriptionCount}
-Course Enrollments: ${reportData.transactions.courseCount}
-Ad Transactions: ${reportData.transactions.adCount}
-
-Generated on: ${format(new Date(), 'PPpp')}
-    `.trim();
-  };
-
-  const downloadReport = (content) => {
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `financial-report-${selectedMonth}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
-          <p className="text-subtle">Loading financial data...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!reportData) {
-    return (
-      <div className="text-center py-12">
-        <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-        <p className="text-subtle">No financial data available</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-6">
-      {/* Report Controls */}
-      <Card className="border-0 shadow-lg">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-primary" />
-            Financial Reports
-          </CardTitle>
-          <CardDescription>
-            Generate and download detailed financial reports
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <label className="text-sm font-medium mb-2 block">Report Type</label>
-              <Select value={reportType} onValueChange={setReportType}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="monthly_summary">Monthly Summary</SelectItem>
-                  <SelectItem value="revenue_analysis">Revenue Analysis</SelectItem>
-                  <SelectItem value="expense_analysis">Expense Analysis</SelectItem>
-                  <SelectItem value="commission_report">Commission Report</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex-1">
-              <label className="text-sm font-medium mb-2 block">Select Month</label>
-              <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {monthOptions.map(option => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-end">
-              <Button 
-                onClick={handleGenerateReport}
-                disabled={isGenerating}
-                className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white"
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Download className="w-4 h-4 mr-2" />
-                    Download Report
-                  </>
-                )}
+    <DataView query={query} loadingLabel="Building the report…">
+      {(data) => {
+        const months = data.monthly.map((m) => ({ ...m, label: monthLabel(m.month) }));
+        const hasData = months.some((m) => m.gross || m.refunds || m.failed || m.pending);
+        const best = months.reduce((b, m) => (!b || m.net > b.net ? m : b), null);
+        const avg = months.length ? months.reduce((acc, m) => acc + Math.round(m.net * 100), 0) / months.length / 100 : 0;
+        return (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <p className="text-sm text-subtle">Period shown: {formatDate(data.range?.from)} – {formatDate(data.range?.to)}{!range.from ? ' (12 months ending with the end date)' : ''}</p>
+              <Button onClick={download} disabled={downloading}>
+                {downloading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" /> : <Download className="w-4 h-4 mr-2" aria-hidden="true" />}
+                Download report (CSV)
               </Button>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="border-0 shadow-lg bg-surface-2">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-primary">Gross Revenue</p>
-                <p className="text-2xl font-bold text-primary mt-1">
-                  ₹{(reportData.summary.totalGrossRevenue / 1000).toFixed(1)}k
-                </p>
-              </div>
-              <div className="p-3 bg-primary rounded-lg">
-                <DollarSign className="w-6 h-6 text-white" />
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+              <StatCard label="Net revenue in period" value={inr(data.totals.net_revenue)} tone="primary" />
+              <StatCard label="Average per month" value={inr(avg)} hint={`${formatNumber(months.length)} months`} />
+              <StatCard label="Best month" value={best ? monthLabel(best.month) : '—'} hint={best ? inr(best.net) : ''} tone="positive" />
+              <StatCard label="Platform earnings" value={inr(data.totals.platform_earnings)} />
             </div>
-          </CardContent>
-        </Card>
 
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-surface-2 to-buy-muted">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-buy-muted-foreground">Net Profit</p>
-                <p className="text-2xl font-bold text-buy-muted-foreground mt-1">
-                  ₹{(reportData.summary.netProfit / 1000).toFixed(1)}k
-                </p>
-              </div>
-              <div className="p-3 bg-buy rounded-lg">
-                <TrendingUp className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 shadow-lg bg-surface-2">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-protocall-premium-text">Profit Margin</p>
-                <p className="text-2xl font-bold text-protocall-premium-text mt-1">
-                  {reportData.summary.profitMargin}%
-                </p>
-              </div>
-              <div className="p-3 bg-primary rounded-lg">
-                <BarChart3 className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-surface-2 to-hold-muted">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-hold-muted-foreground">New Users</p>
-                <p className="text-2xl font-bold text-hold-muted-foreground mt-1">
-                  {reportData.users.newUsers}
-                </p>
-              </div>
-              <div className="p-3 bg-hold rounded-lg">
-                <Users className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Revenue Breakdown */}
-        <Card className="border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle>Revenue Breakdown</CardTitle>
-            <CardDescription>Sources of income for {reportData.month}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={reportData.revenue.breakdown}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {reportData.revenue.breakdown.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            <Card className="shadow-sm border bg-white">
+              <CardHeader>
+                <CardTitle className="text-lg">Monthly performance</CardTitle>
+                <CardDescription>Gross collected and refunds per month (India time), with net revenue.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {!hasData ? (
+                  <EmptyRows title="No payments in this period" />
+                ) : (
+                  <div role="img" aria-label={`Monthly net revenue: ${months.map((m) => `${m.label} ${inr(m.net)}`).join(', ')}`} className="h-72">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <ComposedChart data={months} margin={{ left: 16, right: 16 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
+                        <XAxis dataKey="label" />
+                        <YAxis tickFormatter={(v) => inr(v)} width={90} />
+                        <Tooltip formatter={(v) => inr(v)} />
+                        <Legend />
+                        <Bar dataKey="gross" name="Gross collected" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="refunds" name="Refunds" fill="hsl(var(--chart-3))" radius={[4, 4, 0, 0]} />
+                        <Line type="monotone" dataKey="net" name="Net revenue" stroke="hsl(var(--chart-4))" strokeWidth={2} dot />
+                      </ComposedChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+                <DataTable caption="Monthly performance" head={['Month', 'Payments', 'New', 'Renewals', 'Gross', 'Refunds', 'Net', 'Platform plans', 'Advisor plans', 'Failed', 'Pending', 'Abandoned']}>
+                  {months.map((m) => (
+                    <tr key={m.month}>
+                      <th scope="row" className="px-4 py-3 font-medium whitespace-nowrap">{m.label}</th>
+                      <td className="px-4 py-3">{formatNumber(m.transactions)}</td>
+                      <td className="px-4 py-3">{formatNumber(m.new_count)}</td>
+                      <td className="px-4 py-3">{formatNumber(m.renewal_count)}</td>
+                      <td className="px-4 py-3">{inr(m.gross)}</td>
+                      <td className="px-4 py-3 text-sell">{inr(m.refunds)}</td>
+                      <td className="px-4 py-3 font-semibold">{inr(m.net)}</td>
+                      <td className="px-4 py-3">{inr(m.platform_net)}</td>
+                      <td className="px-4 py-3">{inr(m.advisor_net)}</td>
+                      <td className="px-4 py-3">{formatNumber(m.failed)}</td>
+                      <td className="px-4 py-3">{formatNumber(m.pending)}</td>
+                      <td className="px-4 py-3">{formatNumber(m.abandoned)}</td>
+                    </tr>
                   ))}
-                </Pie>
-                <Tooltip formatter={(value) => `₹${value.toLocaleString()}`} />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+                </DataTable>
+              </CardContent>
+            </Card>
 
-        {/* Expense Breakdown */}
-        <Card className="border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle>Expense Breakdown</CardTitle>
-            <CardDescription>Spending categories for {reportData.month}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={reportData.expenses.breakdown}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 12 }} tickFormatter={(value) => `₹${value / 1000}k`} />
-                <Tooltip formatter={(value) => `₹${value.toLocaleString()}`} />
-                <Bar dataKey="value" fill="hsl(var(--chart-3))" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Detailed Metrics */}
-      <Card className="border-0 shadow-lg">
-        <CardHeader>
-          <CardTitle>Detailed Metrics - {reportData.month}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <h4 className="font-semibold text-subtle mb-3">Revenue Sources</h4>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-subtle">Subscriptions:</span>
-                  <span className="font-medium">₹{reportData.revenue.subscriptions.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-subtle">Course Revenue:</span>
-                  <span className="font-medium">₹{reportData.revenue.courses.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-subtle">Ad Revenue:</span>
-                  <span className="font-medium">₹{reportData.revenue.ads.toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-subtle mb-3">Commission Earned</h4>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-subtle">Advisor Commissions:</span>
-                  <span className="font-medium">₹{reportData.commissions.advisor.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-subtle">Event Commissions:</span>
-                  <span className="font-medium">₹{reportData.commissions.event.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-sm font-semibold">
-                  <span className="text-subtle">Total:</span>
-                  <span>₹{reportData.commissions.total.toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-subtle mb-3">Transaction Volume</h4>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-subtle">Subscriptions:</span>
-                  <span className="font-medium">{reportData.transactions.subscriptionCount}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-subtle">Course Enrollments:</span>
-                  <span className="font-medium">{reportData.transactions.courseCount}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-subtle">Ad Transactions:</span>
-                  <span className="font-medium">{reportData.transactions.adCount}</span>
-                </div>
-              </div>
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              <Card className="shadow-sm border bg-white">
+                <CardHeader><CardTitle className="text-lg">Transaction summary</CardTitle></CardHeader>
+                <CardContent className="p-0">
+                  {Object.keys(data.status_summary).length === 0 ? <EmptyRows title="No transactions in this period" /> : (
+                    <DataTable caption="Transactions by status" head={['Status', 'Count', 'Amount']}>
+                      {Object.entries(data.status_summary).map(([k, s]) => (
+                        <tr key={k}>
+                          <th scope="row" className="px-4 py-3 font-medium">{k === 'refund' ? 'Refunds issued' : k === 'refund_failed' ? 'Refunds failed at Razorpay' : (STATUS_LABELS[k] || k)}</th>
+                          <td className="px-4 py-3">{formatNumber(s.count)}</td>
+                          <td className="px-4 py-3">{inr(s.amount)}</td>
+                        </tr>
+                      ))}
+                    </DataTable>
+                  )}
+                </CardContent>
+              </Card>
+              <Card className="shadow-sm border bg-white">
+                <CardHeader><CardTitle className="text-lg">Revenue breakdown</CardTitle></CardHeader>
+                <CardContent className="p-0">
+                  <DataTable caption="Revenue breakdown by source" head={['Source', 'Gross', 'Refunds', 'Net']}>
+                    {sourceRows(data.breakdown).map((r) => (
+                      <tr key={r.key}>
+                        <th scope="row" className="px-4 py-3 font-medium">{r.label}</th>
+                        <td className="px-4 py-3">{inr(r.gross ?? 0)}</td>
+                        <td className="px-4 py-3 text-sell">{inr(r.refunds ?? 0)}</td>
+                        <td className="px-4 py-3 font-semibold">{inr(r.net ?? 0)}</td>
+                      </tr>
+                    ))}
+                    <tr>
+                      <th scope="row" className="px-4 py-3 font-medium">Other recorded income</th>
+                      <td className="px-4 py-3">{inr(data.totals.other_income)}</td>
+                      <td className="px-4 py-3">—</td>
+                      <td className="px-4 py-3 font-semibold">{inr(data.totals.other_income)}</td>
+                    </tr>
+                  </DataTable>
+                </CardContent>
+              </Card>
             </div>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        );
+      }}
+    </DataView>
   );
 }
+
+Reports.propTypes = {
+  range: PropTypes.shape({ from: PropTypes.string, to: PropTypes.string }).isRequired,
+};

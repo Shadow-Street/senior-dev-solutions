@@ -1,117 +1,84 @@
-
-import React, { useState, useEffect, useCallback } from 'react';
-import { User, Role } from '@/api/entities';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Shield } from 'lucide-react';
-import { toast } from "sonner";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Users, Shield, RefreshCw } from 'lucide-react';
 import UserTable from './users/UserTable';
 import RolesAndPermissions from './users/RolesAndPermissions';
+import useAdminAccess, { AdminAccessContext } from './users/useAdminAccess';
+import { adminErrorMessage } from './users/adminUsersApi';
 
+const tabClass = 'h-10 w-full rounded-xl text-sm font-semibold flex items-center justify-center gap-2 bg-surface-2 text-primary data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md';
+
+/**
+ * Super Admin › User Management: the user list with its row actions, and
+ * Roles & Permissions. What is shown follows GET /api/admin/access/me; the
+ * API enforces the same permissions on every call.
+ */
 export default function UserManagement() {
-  const [users, setUsers] = useState([]);
-  const [roles, setRoles] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentAdmin, setCurrentAdmin] = useState(null);
+  const { access, loading, error, reload, can } = useAdminAccess();
+  const [tab, setTab] = useState('users');
 
-  const loadAllData = useCallback(async () => {
-    try {
-      const [allUsers, allRoles, admin] = await Promise.all([
-      User.list('-created_date').catch((error) => {
-        console.error('Error loading users:', error);
-        toast.error('Failed to load users');
-        return [];
-      }),
-      Role.list().catch((error) => {
-        console.error('Error loading roles:', error);
-        // Only show toast if the request wasn't aborted
-        if (error.message !== 'Request aborted') {
-          toast.error('Failed to load roles');
-        }
-        return [];
-      }),
-      // If the session cannot be read, fall back to no admin rather than to a
-      // fabricated super-admin: the old fallback made the panel render its
-      // privileged controls precisely when the server could not confirm who
-      // the caller was.
-      User.me().catch(() => null)]
-      );
-      // Return the fetched data instead of setting state directly
-      return { allUsers, allRoles, admin };
-    } catch (error) {
-      console.error('Error loading initial data:', error);
-      toast.error('Failed to load required data.');
-      return null; // Return null if there's a catastrophic failure
-    }
-  }, []);
-
-  useEffect(() => {
-    let isMounted = true; // Flag to track if the component is mounted
-    setIsLoading(true); // Start loading state
-
-    const fetchData = async () => {
-      const data = await loadAllData(); // Call the async data loading function
-
-      if (isMounted) { // Only update state if the component is still mounted
-        if (data) { // If data was successfully retrieved
-            setUsers(data.allUsers);
-            setRoles(data.allRoles);
-            setCurrentAdmin(data.admin);
-        }
-        // Always set loading to false once the async operation has completed,
-        // regardless of whether data was successfully retrieved or not.
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-
-    // Cleanup function to set isMounted to false when the component unmounts
-    return () => {
-      isMounted = false;
-    };
-  }, [loadAllData]); // Depend on loadAllData
-
-  if (isLoading || !currentAdmin) {
+  if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <p>Loading User Management...</p>
-      </div>);
+      <Card className="shadow-sm"><CardContent className="p-6 space-y-3" aria-busy="true">
+        <Skeleton className="h-8 w-64" /><Skeleton className="h-64 w-full" />
+      </CardContent></Card>
+    );
+  }
 
+  if (error || !access) {
+    return (
+      <Card className="shadow-sm"><CardContent className="p-10 text-center">
+        <p role="alert" className="text-sell-muted-foreground mb-3">{adminErrorMessage(error, 'Could not confirm your access.')}</p>
+        <Button variant="outline" onClick={reload}><RefreshCw className="w-4 h-4 mr-2" />Try again</Button>
+      </CardContent></Card>
+    );
+  }
+
+  const showUsers = can('users.view');
+  const showRoles = access.is_super_admin || access.role === 'admin';
+  const current = !showUsers && showRoles ? 'roles' : tab;
+
+  if (!showUsers && !showRoles) {
+    return (
+      <Card className="shadow-sm"><CardContent className="p-12 text-center">
+        <Shield className="w-12 h-12 text-muted-foreground mx-auto mb-3" aria-hidden="true" />
+        <h3 className="text-lg font-semibold text-foreground mb-1">No access</h3>
+        <p className="text-muted-foreground">Your role does not include User Management.</p>
+      </CardContent></Card>
+    );
   }
 
   return (
-    <Card className="shadow-lg border-0 bg-white">
+    <Card className="shadow-sm border-0">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Users className="w-5 h-5 text-primary" />
-          User and Role Management
+          <Users className="w-5 h-5 text-primary" aria-hidden="true" />
+          Users and roles
         </CardTitle>
-        <p className="text-sm text-muted-foreground">Manage platform users, assign roles, and configure permissions.</p>
+        <p className="text-sm text-muted-foreground">Find users, manage their accounts and decide what each staff role can do.</p>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="users">
-          <TabsList className="grid w-full grid-cols-2 bg-transparent p-1 rounded-xl gap-2">
-            <TabsTrigger value="users" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md">
-              <Users className="w-4 h-4 mr-2" />
-              Users
-            </TabsTrigger>
-            <TabsTrigger value="roles" className="whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary hover:bg-primary/90 h-10 px-4 w-full text-sm rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 py-2.5 transition-all duration-300 bg-surface-2 text-primary hover:bg-gradient-to-r hover:from-protocall-deep hover:to-protocall-blue hover:text-white hover:shadow-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white data-[state=active]:shadow-md">
-              <Shield className="w-4 h-4 mr-2" />
-              Roles & Permissions
-            </TabsTrigger>
+        <AdminAccessContext.Provider value={access}>
+        <Tabs value={current} onValueChange={setTab}>
+          <TabsList className={`grid w-full ${showUsers && showRoles ? 'grid-cols-2' : 'grid-cols-1'} bg-transparent p-1 gap-2 h-auto`}>
+            {showUsers && <TabsTrigger value="users" className={tabClass}><Users className="w-4 h-4" />Users</TabsTrigger>}
+            {showRoles && <TabsTrigger value="roles" className={tabClass}><Shield className="w-4 h-4" />Roles &amp; Permissions</TabsTrigger>}
           </TabsList>
-          <TabsContent value="users" className="mt-4">
-            <UserTable
-              users={users}
-              roles={roles}
-              currentAdmin={currentAdmin}
-              onUsersUpdate={loadAllData} />
-          </TabsContent>
-          <TabsContent value="roles" className="mt-4">
-            <RolesAndPermissions currentAdmin={currentAdmin} />
-          </TabsContent>
+          {showUsers && (
+            <TabsContent value="users" className="mt-4">
+              <UserTable />
+            </TabsContent>
+          )}
+          {showRoles && (
+            <TabsContent value="roles" className="mt-4">
+              <RolesAndPermissions />
+            </TabsContent>
+          )}
         </Tabs>
+        </AdminAccessContext.Provider>
       </CardContent>
     </Card>
   );

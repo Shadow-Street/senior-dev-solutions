@@ -1,3 +1,4 @@
+const PlatformSettings = require("./PlatformSettingsService");
 const bcrypt = require("bcryptjs");
 
 // A valid bcrypt hash (cost 10) of a random string nobody knows; used only to
@@ -8,6 +9,7 @@ const crypto = require("crypto");
 const { Op } = require("sequelize");
 const { User, OauthToken, VerificationCode } = require("../models");
 const { effectiveRole } = require("../utils/roles");
+const { accountBlock, accountBlockError } = require("../utils/accountStatus");
 const SubscriptionService = require("./SubscriptionService");
 
 /**
@@ -43,6 +45,7 @@ const GOOGLE_ERRORS = {
   GOOGLE_EMAIL_UNVERIFIED: 'Your Google account email is not verified. Verify it with Google, or sign in with email.',
   GOOGLE_ACCOUNT_MISMATCH: 'This email is linked to a different Google account. Sign in with email instead.',
   GOOGLE_LINK_NOT_ALLOWED: 'An account with this email already exists. Sign in with your email and password instead.',
+  REGISTRATION_CLOSED: 'New sign-ups are currently closed. Please check back later.',
 };
 const googleError = (code) => Object.assign(new Error(GOOGLE_ERRORS[code]), { code });
 
@@ -86,6 +89,11 @@ class AuthService {
    * both values are client-controlled.
    */
   static async issueTokens(user, context = {}) {
+    // Every way in (password, Google, OTP verification, refresh) comes through
+    // here, so a deactivated, suspended or blocked account gets no session.
+    const block = await accountBlock(user);
+    if (block) throw accountBlockError(block);
+
     const accessToken = jwt.sign(
       { id: user.id, role: user.role, email: user.email },
       process.env.JWT_SECRET,
@@ -340,6 +348,11 @@ class AuthService {
     let user = (await User.findOne({ where: { google_id: googleId } })) || (await User.findOne({ where: { email } }));
 
     if (!user) {
+      // Access & Security setting: a closed platform creates no new accounts,
+      // whichever sign-up path is used. Existing accounts still sign in.
+      if ((await PlatformSettings.getValue('registration_enabled')) === false) {
+        throw googleError('REGISTRATION_CLOSED');
+      }
       user = await User.create({
         email,
         name,
@@ -358,9 +371,14 @@ class AuthService {
     } else if (user.google_id) {
       if (user.google_id !== googleId) throw googleError('GOOGLE_ACCOUNT_MISMATCH');
     } else {
+      // Eligibility first (a generic refusal), then the account state, both
+      // before any write: a restricted account is never linked or changed,
+      // and an ineligible caller learns nothing about the account's state.
       if (NO_GOOGLE_AUTOLINK_ROLES.has(effectiveRole(user)) || !googleOwnsAddress(email, payload.hd)) {
         throw googleError('GOOGLE_LINK_NOT_ALLOWED');
       }
+      const block = await accountBlock(user);
+      if (block) throw accountBlockError(block);
       user.google_id = googleId;
       if (!user.profile_image_url && picture) user.profile_image_url = picture;
       const preRegistered = user.email_verified === false;

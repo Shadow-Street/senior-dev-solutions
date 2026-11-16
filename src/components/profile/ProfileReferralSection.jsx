@@ -8,13 +8,18 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Users, Share2, Copy, Award, Crown, Shield, Star, Mail, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
+import { usePublicConfig } from '@/lib/platformSettingsApi';
+import ReferralProgramNotice from '@/components/referral/ReferralProgramNotice';
 
 export default function ProfileReferralSection({ user, referrals, badges }) {
   const [referralCode, setReferralCode] = useState("");
   const [referralLink, setReferralLink] = useState("");
+  // Platform Settings > Referral Settings: paused programme = no new codes.
+  const platformConfig = usePublicConfig();
+  const referralsPaused = platformConfig.referral_system_enabled === false;
 
   const generateReferralData = useCallback(async () => {
-    if (!user) return;
+    if (!user || referralsPaused) return;
     
     // Check if user already has a referral code
     const existingReferrals = referrals.filter(r => r.referral_code);
@@ -38,7 +43,7 @@ export default function ProfileReferralSection({ user, referrals, badges }) {
 
     setReferralCode(code);
     setReferralLink(`${window.location.origin}/invite/${code}`);
-  }, [user, referrals]);
+  }, [user, referrals, referralsPaused]);
 
   useEffect(() => {
     generateReferralData();
@@ -54,13 +59,13 @@ export default function ProfileReferralSection({ user, referrals, badges }) {
   };
 
   const shareViaWhatsApp = () => {
-    const message = `Join me on Protocol, India's largest retail investor community! Use my referral link: ${referralLink}`;
+    const message = `Join me on Protocall, India's largest retail investor community! Use my referral link: ${referralLink}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   const shareViaEmail = () => {
-    const subject = "Join Protocol Trading Community";
-    const body = `Join me on Protocol, India's largest retail investor community! Use my referral link: ${referralLink}`;
+    const subject = "Join Protocall Trading Community";
+    const body = `Join me on Protocall, India's largest retail investor community! Use my referral link: ${referralLink}`;
     window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
   };
 
@@ -79,6 +84,8 @@ export default function ProfileReferralSection({ user, referrals, badges }) {
 
   return (
     <div className="space-y-6">
+      <ReferralProgramNotice config={platformConfig} />
+
       {/* Referral Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white border-0">
@@ -142,8 +149,8 @@ export default function ProfileReferralSection({ user, referrals, badges }) {
         </CardContent>
       </Card>
 
-      {/* Referral Link */}
-      <Card>
+      {/* Referral Link (not offered while the programme is paused) */}
+      {!referralsPaused && <Card>
         <CardHeader className="bg-card border-b border-divider">
           <CardTitle className="flex items-center gap-2 text-buy-muted-foreground">
             <Share2 className="w-5 h-5" />
@@ -185,7 +192,7 @@ export default function ProfileReferralSection({ user, referrals, badges }) {
             </Button>
           </div>
         </CardContent>
-      </Card>
+      </Card>}
     </div>
   );
 }

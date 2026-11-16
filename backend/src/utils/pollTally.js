@@ -54,6 +54,30 @@ async function loadTallies(pollIds, options = {}) {
   return tallies;
 }
 
+/**
+ * Same shape as loadTallies, built from PollVote rows already in memory
+ * ({ poll_id, user_id, option_index }). Used where the rows are needed anyway
+ * (for example time-bucketed analytics) so the counts come from the same rule:
+ * one row is one vote, distinct user_id is one voter.
+ */
+function tallyFromRows(rows) {
+  const work = new Map();
+  for (const row of rows || []) {
+    if (!row || !row.poll_id) continue;
+    let t = work.get(row.poll_id);
+    if (!t) {
+      t = { byOption: {}, users: new Set() };
+      work.set(row.poll_id, t);
+    }
+    const idx = asInt(row.option_index);
+    t.byOption[idx] = (t.byOption[idx] || 0) + 1;
+    if (row.user_id) t.users.add(String(row.user_id));
+  }
+  const tallies = new Map();
+  for (const [id, t] of work) tallies.set(id, { byOption: t.byOption, voters: t.users.size });
+  return tallies;
+}
+
 /** Returns a plain copy of `poll` with the reconciled tally fields applied. */
 function applyTally(poll, tally) {
   const plain = typeof poll?.toJSON === 'function' ? poll.toJSON() : { ...poll };
@@ -102,4 +126,4 @@ function reconcileTalliesOnGet(req, res, next) {
   return next();
 }
 
-module.exports = { loadTallies, applyTally, withTallies, reconcileTalliesOnGet };
+module.exports = { loadTallies, tallyFromRows, applyTally, withTallies, reconcileTalliesOnGet };

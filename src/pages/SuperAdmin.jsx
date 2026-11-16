@@ -51,6 +51,10 @@ import RefundManagement from '../components/superadmin/RefundManagement';
 import FeatureHubContent from '../components/superadmin/FeatureHubContent';
 import EnsureSuperAdminRoles from '../components/superadmin/users/EnsureSuperAdminRoles';
 import PMSManagement from '../components/superadmin/PMSManagement';
+import useAdminAccess from '../components/superadmin/users/useAdminAccess';
+import { visibleSections } from '../components/superadmin/users/userAdminHelpers';
+import { usePublicConfig } from '@/lib/platformSettingsApi';
+import { applyNavConfig, ADMIN_NAV_LOCKED } from '@/lib/navigationConfig';
 
 export default function SuperAdmin() {
   const { user: currentUser, loading: isAuthLoading } = useAuth();
@@ -62,13 +66,16 @@ export default function SuperAdmin() {
     if (!user) return false;
     return user.app_role === 'super_admin' || user.role === 'super_admin';
   };
+  // Staff may open the panel; which sections they see follows their
+  // permissions (Roles & Permissions). The API enforces the same rules.
+  const isStaff = (user) => ['super_admin', 'admin', 'sub_admin'].includes(user?.app_role || user?.role);
 
   // Redirect if not logged in or not super admin
   useEffect(() => {
     if (!isAuthLoading) {
       if (!currentUser) {
         navigate('/admin/login');
-      } else if (!isSuperAdmin(currentUser)) {
+      } else if (!isStaff(currentUser)) {
         navigate('/'); // Redirect unauthorized users to home
       }
     }
@@ -87,7 +94,7 @@ export default function SuperAdmin() {
     { value: 'FinInfluencer', label: 'Finfluencers', icon: Star, description: 'Manage Content Creators', component: FinfluencerManagement, color: 'text-hold' },
     { value: 'chatrooms', label: 'Chat Room Management', icon: MessageSquare, description: 'Manage Chat Rooms & Messages', component: ChatRoomManagement, color: 'text-primary' },
     { value: 'content', label: 'Content Moderation', icon: MessageSquare, description: 'Review Flagged Content', component: ContentModeration, color: 'text-sell-muted-foreground' },
-    { value: 'polls', label: 'Polls & Pledges', icon: BarChart3, description: 'Manage Community Polls & Pledges', component: PollManagement, color: 'text-primary' },
+    { value: 'polls', label: 'Poll Management', icon: BarChart3, description: 'Manage, monitor and moderate community polls', component: PollManagement, color: 'text-primary' },
     { value: 'pledge-management', label: 'Pledge Management', icon: Target, description: 'Manage Pledge Sessions & Executions', component: PledgeManagement, color: 'text-protocall-premium-text' },
     { value: 'ad-management', label: 'Ad Management', icon: Megaphone, description: 'Manage Vendor Ad Campaigns', component: AdManagement, color: 'text-positive' },
     { value: 'events', label: 'Events Management', icon: CalendarDays, description: 'Organize and manage community events', component: EventsManagement, color: 'text-protocall-premium-light' },
@@ -103,6 +110,24 @@ export default function SuperAdmin() {
     { value: 'settings', label: 'Platform Settings', icon: Settings, description: 'Platform Configuration', component: PlatformSettings, color: 'text-subtle' },
   ], []);
 
+  // Platform Settings > Sidebar & Navigation (admin list): labels, order,
+  // visibility. Navigation only — hidden tabs are not an access control.
+  const { nav_config_admin: adminNavConfig } = usePublicConfig();
+  const navTabs = useMemo(
+    () => applyNavConfig(tabs, adminNavConfig, { keyOf: (t) => t.value, locked: ADMIN_NAV_LOCKED }),
+    [tabs, adminNavConfig]
+  );
+  const tabFor = (value) => navTabs.find((t) => t.value === value) || tabs.find((t) => t.value === value);
+
+  const { access, loading: isAccessLoading } = useAdminAccess(Boolean(currentUser) && isStaff(currentUser));
+  const allowedSections = useMemo(() => {
+    const all = tabs.map((t) => t.value);
+    // A super admin keeps the full panel even if the access lookup failed.
+    return new Set(!access && isSuperAdmin(currentUser) ? all : visibleSections(access, all));
+  }, [access, tabs, currentUser]);
+  const shownTabs = navTabs.filter((t) => allowedSections.has(t.value));
+  const currentTabValue = allowedSections.has(activeTab) ? activeTab : shownTabs[0]?.value;
+
   if (isAuthLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-surface-2">
@@ -115,7 +140,7 @@ export default function SuperAdmin() {
   }
 
   // ✅ Check both role and app_role
-  if (!currentUser || !isSuperAdmin(currentUser)) {
+  if (!currentUser || !isStaff(currentUser)) {
     return null; // Will trigger redirect in useEffect
   }
 
@@ -129,7 +154,7 @@ export default function SuperAdmin() {
         <div className="h-20 flex items-center px-6 bg-gradient-to-r from-protocall-deep to-protocall-blue shadow-lg">
           <div className="flex items-center gap-3">
             <Shield className="w-8 h-8 text-white" />
-            <span className="text-xl font-bold tracking-wide">Super Admin</span>
+            <span className="text-xl font-bold tracking-wide">{isSuperAdmin(currentUser) ? 'Super Admin' : 'Admin Console'}</span>
           </div>
         </div>
 
@@ -139,10 +164,10 @@ export default function SuperAdmin() {
             Administration
           </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} orientation="vertical" className="w-full">
+          <Tabs value={currentTabValue} onValueChange={setActiveTab} orientation="vertical" className="w-full">
             <TabsList className="flex flex-col h-auto bg-transparent p-0 w-full space-y-1">
-              {tabs.map(tab => {
-                const isActive = activeTab === tab.value;
+              {shownTabs.map(tab => {
+                const isActive = currentTabValue === tab.value;
                 const Icon = tab.icon;
                 return (
                   <TabsTrigger
@@ -196,14 +221,14 @@ export default function SuperAdmin() {
           <div className="flex items-center gap-4">
             <div className="p-2 bg-premium-muted rounded-lg">
               {(() => {
-                const currentTab = tabs.find(t => t.value === activeTab);
+                const currentTab = tabFor(currentTabValue);
                 const Icon = currentTab?.icon || LayoutDashboard;
                 return <Icon className="w-6 h-6 text-primary" />;
               })()}
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">{tabs.find(t => t.value === activeTab)?.label}</h1>
-              <p className="text-sm text-muted-foreground">{tabs.find(t => t.value === activeTab)?.description}</p>
+              <h1 className="text-xl font-bold text-foreground">{tabFor(currentTabValue)?.label}</h1>
+              <p className="text-sm text-muted-foreground">{tabFor(currentTabValue)?.description}</p>
             </div>
           </div>
 
@@ -222,8 +247,15 @@ export default function SuperAdmin() {
         <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
           <div className="max-w-7xl mx-auto pb-10">
             {(() => {
-              const CurrentComponent = tabs.find(tab => tab.value === activeTab)?.component;
-              return CurrentComponent ? <CurrentComponent user={currentUser} setActiveTab={setActiveTab} /> : null;
+              const CurrentComponent = tabFor(currentTabValue)?.component;
+              if (CurrentComponent) return <CurrentComponent user={currentUser} setActiveTab={setActiveTab} />;
+              return isAccessLoading ? null : (
+                <div className="text-center py-16 text-muted-foreground">
+                  <Shield className="w-12 h-12 mx-auto mb-3" aria-hidden="true" />
+                  <p className="font-medium text-foreground">No admin sections assigned</p>
+                  <p className="text-sm">Ask a super admin to grant your role access in User Management › Roles &amp; Permissions.</p>
+                </div>
+              );
             })()}
           </div>
         </div>

@@ -16,7 +16,8 @@ const { Op, fn, col } = require('sequelize');
 const db = require('../models');
 const { ownHosts, certificateKey } = require('../utils/storageKeys');
 
-const STAFF = ['admin', 'super_admin', 'sub_admin'];
+// sub_admin is not implicit staff: it gets only what Roles & Permissions grants (middleware/permissions.js).
+const STAFF = ['admin', 'super_admin'];
 const isStaff = (user) => STAFF.includes(user?.app_role || user?.role);
 
 const PUBLIC_FIELDS = [

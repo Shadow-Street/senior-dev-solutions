@@ -11,6 +11,11 @@ export function useChatRoom(roomId, user) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [readReceipts, setReadReceipts] = useState([]);
+  // Live state from Chat Room Management actions: 'removed' after a kick or
+  // ban, the caller's own mute, and their role in this room.
+  const [roomNotice, setRoomNotice] = useState(null);
+  const [mutedHere, setMutedHere] = useState(false);
+  const [myRole, setMyRole] = useState(null);
 
   // WebSocket connection
   const ws = useWebSocket(roomId, user, {
@@ -50,6 +55,22 @@ export function useChatRoom(roomId, user) {
     onError: (error) => {
       toast.error(error.message || 'Connection error');
     },
+    onRemovedFromRoom: () => {
+      setRoomNotice('removed');
+      toast.error('You were removed from this room by a moderator.');
+    },
+    onRoomUpdated: (update) => {
+      setRoom((prev) => (prev ? { ...prev, ...update } : prev));
+    },
+    onMuteChanged: (muted) => {
+      setMutedHere(muted);
+      if (muted) toast.warning('A moderator muted you in this room.');
+      else toast.success('You can post in this room again.');
+    },
+    onAccountRestricted: () => {
+      setRoomNotice('restricted');
+      toast.error('Your account is restricted, so chat is unavailable.');
+    },
     onReadReceipt: (receipt) => {
       setReadReceipts(prev => {
         // Avoid duplicates
@@ -68,11 +89,12 @@ export function useChatRoom(roomId, user) {
     setError(null);
 
     try {
-      const [roomData, messagesData, usersData, receiptsData] = await Promise.all([
+      const [roomData, messagesData, usersData, receiptsData, membership] = await Promise.all([
         ChatRoom.get(roomId).catch(() => null),
         Message.filter({ chat_room_id: roomId }, 'created_date', 100).catch(() => []),
         User.list().catch(() => []),
-        // MessageReadReceipt.filter({ chat_room_id: roomId }).catch(() => []) // Disabled: Schema mismatch (no chat_room_id)
+        undefined, // MessageReadReceipt.filter({ chat_room_id: roomId }) disabled: schema mismatch (no chat_room_id)
+        user?.id ? ChatRoomParticipant.filter({ chat_room_id: roomId, user_id: user.id }).catch(() => []) : [],
       ]);
 
       if (!roomData) {
@@ -81,6 +103,10 @@ export function useChatRoom(roomId, user) {
       }
 
       setRoom(roomData);
+      const mine = Array.isArray(membership) ? membership[0] : null;
+      setMutedHere(Boolean(mine?.muted));
+      setMyRole(mine?.role || null);
+      setRoomNotice(null);
       setAllMessages(messagesData);
       setReadReceipts(receiptsData || []);
 
@@ -98,7 +124,7 @@ export function useChatRoom(roomId, user) {
     } finally {
       setIsLoading(false);
     }
-  }, [roomId]);
+  }, [roomId, user?.id]);
 
   // Merge WebSocket messages with loaded messages
   const messages = useMemo(() => {
@@ -373,6 +399,13 @@ export function useChatRoom(roomId, user) {
     isLoading,
     error,
     readReceipts,
+    roomNotice,
+    mutedHere,
+    myRole,
+    isStaffViewer: ['admin', 'super_admin'].includes(user?.app_role),
+    canModerate: ['admin', 'super_admin'].includes(user?.app_role)
+      || Boolean(room?.owner_id && user?.id && String(room.owner_id) === String(user.id))
+      || ['owner', 'admin', 'moderator'].includes(myRole),
 
     // WebSocket state
     isConnected: ws.isConnected,

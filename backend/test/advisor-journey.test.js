@@ -61,6 +61,8 @@ function setup() {
     reviews: fakeTable().install(mock, db.Review),
     refunds: fakeTable().install(mock, db.RefundRequest),
     pledgeCommissions: fakeTable().install(mock, db.AdvisorPledgeCommission),
+    planLimits: fakeTable().install(mock, db.AdvisorPlanLimit),
+    usage: fakeTable().install(mock, db.AdvisorPostUsage),
   };
   [PLAN_A_BASIC, PLAN_A_PRO, PLAN_B, SYSTEM_PLAN].forEach((pid, i) => { T.plans.rows[i].id = pid; });
   Object.values(ADV).forEach((a, i) => { T.advisors.rows[i].id = a.id; });
@@ -74,7 +76,7 @@ function setup() {
   mock.method(EmailService, 'sendEmail', async (to, subject, html) => { emails.push({ to, subject, html }); return true; });
 }
 
-beforeEach(() => { schemaGuard._reset(); process.env.PUBLIC_API_BASE_URL = API; setup(); });
+beforeEach(() => { schemaGuard._reset(); require('../src/services/AdvisorPostLimitService')._reset(); process.env.PUBLIC_API_BASE_URL = API; setup(); });
 afterEach(() => { mock.restoreAll(); delete process.env.PUBLIC_API_BASE_URL; });
 
 const as = (u) => ({ Authorization: bearer(u) });
@@ -241,6 +243,18 @@ describe('admin review', () => {
     assert.equal(audits[0].action, 'advisor_approve');
     assert.equal(audits[0].user_id, U.admin.id);
     assert.equal(emails[0].to, U.pending.email);
+    // The approval email carries the advisor dashboard link (PUBLIC_APP_URL from helpers).
+    assert.match(emails[0].html, /href="https:\/\/app\.example\.test\/AdvisorDashboard"/);
+    assert.match(emails[0].html, /Open your advisor dashboard/);
+  });
+
+  test('the rejection email escapes the reason and links back to the application', async () => {
+    const res = await review(U.admin, ADV.P, { action: 'reject', reason: '<b>Certificate</b> unreadable' });
+    assert.equal(res.status, 200);
+    const mail = emails[emails.length - 1];
+    assert.ok(!mail.html.includes('<b>Certificate</b>'));
+    assert.match(mail.html, /&lt;b&gt;Certificate&lt;\/b&gt; unreadable/);
+    assert.match(mail.html, /href="https:\/\/app\.example\.test\/AdvisorRegistration"/);
   });
 
   test('reject needs a reason, stores it, keeps the user a plain user and tells them why', async () => {
@@ -620,7 +634,8 @@ describe('posts and subscriber-only content', () => {
       T.posts.add({ advisor_id: ADV.B.id, title: 'Other advisor', content: 'B BODY', status: 'published', visibility: 'public' });
     });
     const feed = (user, advisor = ADV.A) => request(app).get(`/api/advisors/posts/by-advisor/${advisor.id}`).set(user ? as(user) : {});
-    const byTitle = (res, t) => res.body.find((p) => p.title === t);
+    // Locked previews carry no title (it would give the call away), so find posts by id.
+    const byTitle = (res, t) => { const row = T.posts.rows.find((r) => r.title === t); return res.body.find((p) => row && p.id === row.id); };
     const active = (user, planId, extra = {}) => T.subs.add({ user_id: user.id, advisor_id: ADV.A.id, plan_id: planId, status: 'active', end_date: new Date(Date.now() + 86400000), ...extra });
 
     test('anonymous and non-subscribers see public posts in full and everything else locked', async () => {
@@ -633,11 +648,13 @@ describe('posts and subscriber-only content', () => {
           const p = byTitle(res, t);
           assert.equal(p.locked, true, t);
           assert.equal(p.content, undefined, `${t} content must be withheld server-side`);
+          assert.equal(p.title, null, `${t} title must be withheld server-side`);
           assert.equal(p.stock_symbol, undefined);
           assert.equal(p.target_price, undefined);
           assert.equal(p.recommendation_type, undefined);
         }
         const text = JSON.stringify(res.body);
+        assert.ok(!text.includes('Members call') && !text.includes('Pro call'), 'locked titles never reach the client');
         assert.ok(!text.includes('SECRET BODY') && !text.includes('PRO BODY') && !text.includes('DRAFT BODY') && !text.includes('B BODY'));
         assert.equal(byTitle(res, 'Draft'), undefined);
       }

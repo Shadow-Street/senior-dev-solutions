@@ -4,6 +4,7 @@ import { useAuth } from '@/components/context/AuthContext';
 import { usePlatformSettings } from '@/components/hooks/usePlatformSettings';
 import { useHomeData } from '@/components/home/useHomeData';
 import HomeExperts from '@/components/home/HomeExperts';
+import HeroStory from '@/components/home/HeroStory';
 import {
   renderHomeAbout,
   renderHomeCommunity,
@@ -11,7 +12,6 @@ import {
   renderHomeFeatures,
   renderHomeFooter,
   renderHomeHeader,
-  renderHomeHero,
   renderHomeMembership,
   renderHomeReviews,
   renderHomeStats,
@@ -63,7 +63,7 @@ export default function Landing() {
         onDashboard: goDashboard,
       })}
       <main>
-        {renderHomeHero(data, goGetStarted)}
+        <HeroStory data={data} onGetStarted={goGetStarted} />
         {renderHomeStats(data)}
         {renderHomeFeatures()}
         {renderHomeCommunity(data)}

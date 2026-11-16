@@ -1,17 +1,13 @@
-const express = require("express");
-const db = require("../models");
-const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { financeEntryRouter } = require("../utils/financeEntryRoutes");
 
-const router = express.Router();
-
-createCrudRoutes(router, createCrudController(db.Income, {
-  defaultOrderBy: 'created_at',
-  defaultOrder: 'DESC',
-  beforeCreate: async (data, req) => {
-    if (req?.user?.id) data.recorded_by = req.user.id;
-    return data;
-  }
-}), [authMiddleware]);
-
-module.exports = router;
+// Manually recorded income ("other" revenue in Financials > Overview). Admin /
+// super_admin only, field whitelist, server-side audit trail: see
+// utils/financeEntryRoutes.js. Status 'void' excludes an entry from the totals.
+module.exports = financeEntryRouter({
+  model: 'Income',
+  entityType: 'income',
+  textFields: { source: 100, description: 2000 },
+  requiredText: ['source'],
+  dateField: 'income_date',
+  enums: { status: ['recorded', 'void'] },
+});

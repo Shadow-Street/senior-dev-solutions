@@ -1,263 +1,94 @@
-
-import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { DollarSign, TrendingUp, TrendingDown, Megaphone, Receipt, BarChart3, Gift, Crown, Activity, RotateCcw } from 'lucide-react'; // Added RotateCcw icon
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
+import PropTypes from 'prop-types';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { IndianRupee, RotateCcw, TrendingUp, Wallet, Users, Percent } from 'lucide-react';
+import { financialsApi, TIER_LABELS } from '@/lib/financialsApi';
+import { formatNumber } from '@/lib/format';
+import { DataView, StatCard, useFinanceData, inr, DataTable } from './shared';
 
-export default function Overview({ data, subscriptionTransactions, refunds }) { // ADDED: refunds prop
-  const { stats, revenueTrend, expenseBreakdown } = data;
+/** Rows of the "revenue by source" table/chart, from the server breakdown. */
+export function sourceRows(breakdown) {
+  const tiers = breakdown?.platform_subscriptions?.tiers || {};
+  return [
+    ...['basic', 'premium', 'vip', 'other'].map((t) => ({ key: t, label: `Platform: ${TIER_LABELS[t]}`, ...(tiers[t] || {}) })),
+    { key: 'advisor', label: 'Advisor subscriptions', ...(breakdown?.advisor_subscriptions || {}) },
+    { key: 'other_src', label: 'Other gateway payments', ...(breakdown?.other || {}) },
+  ];
+}
 
-  // Extract subscriptionRevenue calculation for direct use and memoization
-  const subscriptionRevenue = useMemo(() =>
-    subscriptionTransactions.reduce((acc, tx) => acc + tx.net_amount, 0),
-    [subscriptionTransactions]
-  );
-
-  const refundStats = useMemo(() => {
-    if (!refunds) return { total: 0, processed: 0, amount: 0 };
-    return {
-      total: refunds.length,
-      processed: refunds.filter(r => r.status === 'processed').length,
-      amount: refunds.filter(r => r.status === 'processed').reduce((sum, r) => sum + (r.refund_amount || 0), 0)
-    };
-  }, [refunds]);
-
-  const revenueBySource = useMemo(() => {
-    // Use the pre-calculated adRevenue from the stats object
-    const adRevenue = stats.adRevenue || 0;
-    
-    // Calculate other revenue by subtracting known sources from total net revenue
-    const otherRevenue = stats.netRevenue - subscriptionRevenue - adRevenue;
-
-    return [
-      { name: 'Subscriptions', value: Math.round(subscriptionRevenue) },
-      { name: 'Ad Revenue', value: Math.round(adRevenue) },
-      { name: 'Other', value: Math.round(otherRevenue > 0 ? otherRevenue : 0) }
-    ];
-  }, [subscriptionRevenue, stats.netRevenue, stats.adRevenue]);
-
-  const COLORS = ['#3b82f6', '#8b5cf6', '#56E11B', '#f59e0b', '#ef4444'];
-
-  // Helper component for KPI cards - moved and refactored
-  const StatCard = ({ title, value, icon: Icon, subtitle, change, badge, gradient }) => (
-    <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 bg-white">
-      <CardContent className="p-0">
-        {/* Enhanced gradient header with glass effect */}
-        <div className={`bg-gradient-to-br ${gradient} p-6 relative overflow-hidden`}>
-          {/* Decorative background pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -mr-16 -mt-16"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white rounded-full -ml-12 -mb-12"></div>
-          </div>
-          
-          <div className="relative z-10 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              {/* Enhanced icon with glow effect */}
-              <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 border border-white/30">
-                <Icon className="w-7 h-7 text-white drop-shadow-lg" />
-              </div>
-              <div>
-                <p className="text-white/90 text-sm font-medium tracking-wide">{title}</p>
-                <p className="text-white text-3xl font-bold mt-1 drop-shadow-lg">{value}</p>
-                {subtitle && (
-                  <p className="text-white/80 text-xs mt-1 font-medium">{subtitle}</p>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Enhanced footer with better styling */}
-        <div className="p-5 bg-gradient-to-br from-surface-2 to-white">
-          {change && (
-            <div className="flex items-center gap-2 text-sm">
-              {/* Assuming 'change' always implies an upward trend for display, or a generic icon */}
-              <div className="p-1.5 bg-buy-muted rounded-lg">
-                <TrendingUp className="w-4 h-4 text-buy-muted-foreground" /> 
-              </div>
-              <span className="text-subtle font-medium">{change}</span>
-            </div>
-          )}
-          {badge && (
-            <div className="mt-3">
-              <span className={`px-4 py-1.5 text-xs rounded-full font-semibold shadow-sm ${
-                badge.status === 'Excellent' ? 'bg-gradient-to-r from-surface-2 to-buy-muted text-buy-muted-foreground border border-buy/30' :
-                badge.status === 'Good' ? 'bg-gradient-to-r from-surface-2 to-hold-muted text-hold-muted-foreground border border-hold/30' :
-                'bg-gradient-to-r from-surface-2 to-sell-muted text-sell-muted-foreground border border-sell/30'
-              }`}>
-                {badge.status}
-              </span>
-            </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
-
+export default function Overview({ range }) {
+  const query = useFinanceData(() => financialsApi.overview(range), [range.from, range.to]);
   return (
-    <div className="space-y-6"> {/* Changed space-y-8 to space-y-6 */}
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="shadow-lg border-0 bg-surface-2">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-primary font-medium">Gross Revenue</p>
-                <p className="text-3xl font-bold text-primary">₹{(data.stats.grossRevenue / 1000).toFixed(1)}k</p>
-              </div>
-              <TrendingUp className="w-10 h-10 text-primary opacity-50" />
+    <DataView query={query}>
+      {(data) => {
+        const t = data.totals;
+        const rows = sourceRows(data.breakdown);
+        const chartData = rows.filter((r) => (r.gross || 0) > 0 || (r.refunds || 0) > 0).map((r) => ({ name: r.label, net: r.net || 0 }));
+        return (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+              <StatCard label="Total platform revenue" value={inr(t.total_revenue)} hint="Net gateway revenue + other recorded income" tone="primary" icon={IndianRupee} />
+              <StatCard label="Gross collected" value={inr(t.gross_collected)} hint={`${formatNumber(data.counts.success)} captured payments`} icon={TrendingUp} />
+              <StatCard label="Refunds" value={inr(t.refunds)} hint={`${formatNumber(data.counts.refunds)} refunds`} tone="negative" icon={RotateCcw} />
+              <StatCard label="Net revenue" value={inr(t.net_revenue)} hint="Gross collected − refunds" tone="positive" icon={Wallet} />
+              <StatCard label="Platform earnings" value={inr(t.platform_earnings)} hint="Platform plans net + commission on advisor plans" icon={Percent} />
+              <StatCard label="Advisor earnings" value={inr(t.advisor_earnings)} hint="Advisors' share of their subscriptions" icon={Users} />
+              <StatCard label="Other recorded income" value={inr(t.other_income)} hint="Entered by finance staff, not gateway-verified" />
+              <StatCard label="Promo discounts given" value={inr(t.discounts_given)} hint={`${formatNumber(t.free_activations)} free (100%) activations`} tone="caution" />
             </div>
-          </CardContent>
-        </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-surface-2 to-buy-muted">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-buy-muted-foreground font-medium">Net Revenue</p>
-                <p className="text-3xl font-bold text-buy-muted-foreground">₹{(data.stats.netRevenue / 1000).toFixed(1)}k</p>
-                <p className="text-xs text-buy-muted-foreground mt-1">After discounts & refunds</p>
-              </div>
-              <DollarSign className="w-10 h-10 text-buy-muted-foreground opacity-50" />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <StatCard label="Pending payments" value={formatNumber(data.counts.pending)} hint={data.attempts_recorded ? 'Checkout opened in the last 24 hours, not paid yet' : 'Attempt tracking starts after migration 021'} tone="caution" />
+              <StatCard label="Abandoned checkouts" value={formatNumber(data.counts.abandoned)} hint="Unpaid for more than 24 hours" />
+              <StatCard label="Failed payments" value={formatNumber(data.counts.failed)} hint="Reported failed by Razorpay" tone="negative" />
             </div>
-          </CardContent>
-        </Card>
 
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-surface-2 to-hold-muted">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-hold-muted-foreground font-medium">Total Refunded</p>
-                <p className="text-3xl font-bold text-hold-muted-foreground">₹{(refundStats.amount / 1000).toFixed(1)}k</p>
-                <p className="text-xs text-hold-muted-foreground mt-1">{refundStats.processed} processed</p>
-              </div>
-              <RotateCcw className="w-10 h-10 text-hold-muted-foreground opacity-50" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-lg border-0 bg-surface-2">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-protocall-premium-text font-medium">Net Profit</p>
-                <p className="text-3xl font-bold text-protocall-premium-text">₹{(data.stats.netProfit / 1000).toFixed(1)}k</p>
-                <p className="text-xs text-protocall-premium-text mt-1">After all deductions</p>
-              </div>
-              <BarChart3 className="w-10 h-10 text-protocall-premium-text opacity-50" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Enhanced Secondary KPI Cards - Additional Metrics */}
-      <div>
-        <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
-          <BarChart3 className="w-6 h-6 text-primary" />
-          Additional Metrics
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard 
-            title="Total Discounts" 
-            value={`₹${(stats.totalDiscounts / 1000).toFixed(1)}k`} 
-            subtitle="Promotional value"
-            icon={Gift} 
-            change="Customer savings"
-            gradient="from-protocall-deep via-sell to-protocall-blue"
-          />
-          <StatCard 
-            title="Ad Revenue" 
-            value={`₹${(stats.adRevenue / 1000).toFixed(1)}k`} 
-            subtitle="From campaigns"
-            icon={Megaphone} // Changed from TrendingUp to Megaphone as per original intent for ad revenue
-            change="Advertising income"
-            gradient="from-positive via-protocall-grape to-tile-green"
-          />
-          <StatCard 
-            title="Subscription Revenue" 
-            value={`₹${(subscriptionRevenue / 1000).toFixed(1)}k`} 
-            subtitle="Platform plans"
-            icon={Crown} 
-            change={`${subscriptionTransactions.length} transactions`}
-            gradient="from-protocall-deep via-protocall-grape to-protocall-blue"
-          />
-          <StatCard 
-            title="Platform Health" 
-            value={
-              stats.totalExpenses > 0
-                ? `${((stats.netProfit / stats.totalExpenses) * 100).toFixed(0)}%`
-                : 'N/A'
-            } 
-            subtitle="Profit vs Expenses"
-            icon={Activity} 
-            badge={{ 
-              status: stats.netProfit > stats.totalExpenses 
-                ? 'Excellent' 
-                : stats.netProfit > (stats.totalExpenses * 0.5) 
-                  ? 'Good' 
-                  : 'Needs Attention' 
-            }}
-            gradient="from-protocall-deep via-protocall-grape to-protocall-blue"
-          />
-        </div>
-      </div>
-
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <Card className="lg:col-span-3 shadow-lg border-0 bg-white">
-          <CardHeader>
-            <CardTitle>Monthly Performance (Net Revenue vs. Expenses)</CardTitle>
-            <CardDescription>Track your monthly profit over the last year.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={revenueTrend}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-                <YAxis tickFormatter={(value) => `₹${value / 1000}k`} tick={{ fontSize: 12 }} />
-                <Tooltip
-                  formatter={(value) => `₹${value.toLocaleString()}`}
-                  labelStyle={{ fontWeight: 'bold' }}
-                  itemStyle={{ textTransform: 'capitalize' }}
-                />
-                <Legend />
-                <Bar dataKey="netRevenue" name="Net Revenue" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="expenses" name="Expenses" fill="#f43f5e" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="profit" name="Profit" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        <Card className="lg:col-span-2 shadow-lg border-0 bg-white">
-          <CardHeader>
-            <CardTitle>Revenue Sources</CardTitle>
-            <CardDescription>Breakdown of platform income streams.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={revenueBySource}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {revenueBySource.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            <Card className="shadow-sm border bg-white">
+              <CardHeader>
+                <CardTitle className="text-lg">Revenue by source</CardTitle>
+                <CardDescription>Net = gross collected − refunds, for the selected period.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {chartData.length > 0 && (
+                  <div role="img" aria-label={`Net revenue by source: ${chartData.map((c) => `${c.name} ${inr(c.net)}`).join(', ')}`} className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={chartData} layout="vertical" margin={{ left: 24, right: 24 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
+                        <XAxis type="number" tickFormatter={(v) => inr(v)} />
+                        <YAxis type="category" dataKey="name" width={170} />
+                        <Tooltip formatter={(v) => inr(v)} />
+                        <Bar dataKey="net" name="Net revenue" fill="hsl(var(--chart-1))" radius={[0, 4, 4, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+                <DataTable caption="Revenue by source" head={['Source', 'Payments', 'Gross', 'Refunds', 'Net']}>
+                  {rows.map((r) => (
+                    <tr key={r.key}>
+                      <th scope="row" className="px-4 py-3 font-medium text-foreground">{r.label}</th>
+                      <td className="px-4 py-3">{formatNumber(r.transactions ?? 0)}</td>
+                      <td className="px-4 py-3">{inr(r.gross ?? 0)}</td>
+                      <td className="px-4 py-3 text-sell">{inr(r.refunds ?? 0)}</td>
+                      <td className="px-4 py-3 font-semibold">{inr(r.net ?? 0)}</td>
+                    </tr>
                   ))}
-                </Pie>
-                <Tooltip formatter={(value) => `₹${value.toLocaleString()}`} />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+                  <tr className="bg-surface-2">
+                    <th scope="row" className="px-4 py-3 font-semibold">All gateway payments</th>
+                    <td className="px-4 py-3">{formatNumber(data.counts.success)}</td>
+                    <td className="px-4 py-3">{inr(t.gross_collected)}</td>
+                    <td className="px-4 py-3 text-sell">{inr(t.refunds)}</td>
+                    <td className="px-4 py-3 font-semibold">{inr(t.net_revenue)}</td>
+                  </tr>
+                </DataTable>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      }}
+    </DataView>
   );
 }
+
+Overview.propTypes = {
+  range: PropTypes.shape({ from: PropTypes.string, to: PropTypes.string }).isRequired,
+};

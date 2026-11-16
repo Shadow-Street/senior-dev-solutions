@@ -2,21 +2,31 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, adminMiddleware } = require("../middleware/auth");
 const { effectiveRole, ADMIN_ROLES } = require("../utils/roles");
 const { parseAmountToPaise } = require("../utils/bankValidation");
 const W = require("../services/WithdrawalService");
 
 // Revenue Transactions
+//
+// revenue_transactions with status 'completed' are what a non-advisor's payout
+// balance is computed from (createPayout below), so the money fields are
+// server/staff-controlled: a signed-in user could otherwise POST
+// { amount: 100000, status: 'completed' } against their own id and then
+// request a payout of it. Owners may still create a row (the course checkout
+// screen does) but amount/status/source/reference are stripped from it, and
+// only staff may edit or delete rows. The platform-wide summary is admin-only.
 const transactionRouter = express.Router();
 const transactionController = createCrudController(db.RevenueTransaction, {
-  ownership: 'user_id',
+  // sub_admin is not staff here: staff bypass protectedFields and owner stamping.
+  ownership: { field: 'user_id', adminRoles: ['admin', 'super_admin'] },
   defaultOrderBy: 'created_at',
-  defaultOrder: 'DESC'
+  defaultOrder: 'DESC',
+  protectedFields: ['amount', 'status', 'source', 'reference_id', 'type']
 });
 
-// Get revenue summary
-transactionRouter.get('/summary', authMiddleware, async (req, res) => {
+// Get revenue summary (platform-wide figures: admin only)
+transactionRouter.get('/summary', authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const { start_date, end_date } = req.query;
     const where = {};
@@ -47,7 +57,11 @@ transactionRouter.get('/summary', authMiddleware, async (req, res) => {
   }
 });
 
-createCrudRoutes(transactionRouter, transactionController, [authMiddleware]);
+createCrudRoutes(transactionRouter, transactionController, {
+  read: [authMiddleware],
+  create: [authMiddleware],
+  write: [authMiddleware, adminMiddleware],
+});
 router.use('/transactions', transactionRouter);
 
 // Payout Requests

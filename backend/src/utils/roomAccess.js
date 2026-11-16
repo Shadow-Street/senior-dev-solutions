@@ -12,14 +12,23 @@
  *                 `true` would make every room members-only)
  *   private room  is_public === false: invite only, by the owner/a manager/staff
  *   premium room  is_premium === true: joinable with a premium account or an
- *                 active subscription to that room
+ *                 active subscription to that room; required_plan 'vip' needs
+ *                 a live VIP platform plan (or that room subscription)
+ *
+ * Room-level moderation set from Super Admin > Chat Room Management lives in
+ * chat_rooms.status and chat_rooms.settings (no extra tables, no extra query):
+ *   status 'archived'/'suspended'  read-only; nobody but staff joins or posts
+ *   settings.locked                only the room's managers and staff post
+ *   settings.bans[]                banned users cannot join, read or post
  */
 const { Op } = require('sequelize');
 const db = require('../models');
 const { effectiveRole, ADMIN_ROLES } = require('./roles');
 
-// Same staff set as the CRUD factory's per-record checks (sub_admin: see BE-7).
-const STAFF_ROLES = [...ADMIN_ROLES, 'sub_admin'];
+// Room staff are admins and super admins. sub_admin used to count, which let a
+// sub-admin read every private/premium room and skip bans and locks although
+// they have no access to Chat Room Management.
+const STAFF_ROLES = [...ADMIN_ROLES];
 const isStaff = (user) => STAFF_ROLES.includes(effectiveRole(user));
 
 /** chat_room_participants.role values that may moderate a room. */
@@ -33,6 +42,47 @@ const ASSIGNABLE_BY_MODERATOR = ['member'];
 const ASSIGNABLE_BY_ADMIN = ['member', 'moderator'];
 
 const isOpenRoom = (room) => room.is_public !== false && room.is_premium !== true;
+
+/** chat_rooms.settings as an object (mysql2 parses JSON; other drivers return text). */
+function roomSettings(room) {
+  const raw = room?.settings;
+  if (!raw) return {};
+  if (typeof raw === 'object') return raw;
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+/** True when an admin has banned `user` from `room`. */
+const isBannedFrom = (user, room) => {
+  const bans = roomSettings(room).bans;
+  return Boolean(user?.id && Array.isArray(bans) && bans.some((b) => String(b?.user_id) === String(user.id)));
+};
+
+/** Archived and suspended rooms are read-only. NULL (older rows) means active. */
+const isRoomClosed = (room) => Boolean(room?.status && room.status !== 'active');
+const isRoomLocked = (room) => roomSettings(room).locked === true;
+
+/**
+ * A room as members and the public see it: chat_rooms.settings holds the ban
+ * list (user ids, reasons) and who locked the room, so it is replaced by the
+ * derived flags the chat UI needs.
+ */
+function memberRoomView(room) {
+  if (!room) return room;
+  const plain = typeof room.toJSON === 'function' ? room.toJSON() : { ...room };
+  const settings = roomSettings(plain);
+  const { settings: _settings, ...rest } = plain;
+  return {
+    ...rest,
+    locked: settings.locked === true,
+    lock_reason: settings.locked === true ? settings.lock_reason || null : null,
+    archived: isRoomClosed(plain),
+  };
+}
 const isOwner = (user, room) => Boolean(room?.owner_id && user?.id && String(room.owner_id) === String(user.id));
 
 const findRoom = (roomId) =>
@@ -49,13 +99,37 @@ async function hasRoomSubscription(user, roomId) {
   return Boolean(sub && (!sub.expires_at || new Date(sub.expires_at) > new Date()));
 }
 
-/** Premium rooms need a premium account or an active subscription, every time. */
-const hasPremiumAccess = (user, room) => user.is_premium === true || hasRoomSubscription(user, room.id);
+/** True when the user's live platform plan (not an advisor plan) is a VIP plan. */
+async function hasVipPlan(user) {
+  const rows = await db.Subscription.findAll({
+    where: { user_id: user.id, advisor_id: null, finfluencer_id: null, status: 'active' },
+    include: [{ model: db.SubscriptionPlan, required: false }],
+  });
+  const now = new Date();
+  return rows.some((s) => {
+    if (s.end_date && new Date(s.end_date) <= now) return false;
+    const name = String((s.SubscriptionPlan && s.SubscriptionPlan.name) || s.plan_type || '').toLowerCase();
+    return name.includes('vip');
+  });
+}
+
+/**
+ * Premium rooms need a premium account or an active subscription, every time.
+ * A room gated to the VIP tier needs a VIP plan: a Premium plan is not enough.
+ */
+async function hasPremiumAccess(user, room) {
+  const vipOnly = String(room.required_plan || '').toLowerCase() === 'vip';
+  if (!vipOnly && user.is_premium === true) return true;
+  if (await hasRoomSubscription(user, room.id)) return true;
+  return vipOnly ? hasVipPlan(user) : false;
+}
 
 /** May `user` add themselves to `room`? */
 async function canJoinRoom(user, room) {
   if (!room || !user?.id) return false;
-  if (isStaff(user) || isOwner(user, room)) return true;
+  if (isStaff(user)) return true;
+  if (isBannedFrom(user, room) || isRoomClosed(room)) return false;
+  if (isOwner(user, room)) return true;
   if (room.is_public === false) return false;
   if (room.is_premium === true) return hasPremiumAccess(user, room);
   return true;
@@ -67,6 +141,7 @@ async function canReadRoom(user, roomId) {
   if (isStaff(user)) return true;
   const room = await findRoom(roomId);
   if (!room) return false;
+  if (isBannedFrom(user, room)) return false;
   if (isOpenRoom(room) || isOwner(user, room)) return true;
   const membership = await findMembership(user, room.id);
   if (!membership) return false;
@@ -95,6 +170,44 @@ async function canManageRoom(user, room) {
 }
 
 /**
+ * Adds `userId` to a room once. chat_room_participants is meant to be unique
+ * on (chat_room_id, user_id) (migration 002, re-asserted by 023); a duplicate
+ * row could dodge a mute, so a concurrent insert that hits the unique key is
+ * resolved to the existing row instead of failing. Moves the counter only
+ * for a real insert.
+ */
+async function ensureParticipant(roomId, userId, role = 'member') {
+  const where = { chat_room_id: roomId, user_id: userId };
+  const existing = await db.ChatRoomParticipant.findOne({ where });
+  if (existing) return { participant: existing, created: false };
+  try {
+    const participant = await db.ChatRoomParticipant.create({ ...where, role, joined_at: new Date(), muted: false });
+    await db.ChatRoom.increment('participant_count', { where: { id: roomId } });
+    return { participant, created: true };
+  } catch (e) {
+    if (e?.name !== 'SequelizeUniqueConstraintError') throw e;
+    return { participant: await db.ChatRoomParticipant.findOne({ where }), created: false };
+  }
+}
+
+/**
+ * Why `user` may not post in `room` right now, or null when they may.
+ * Covers the room-wide rules (closed, banned, locked, admin-only posting);
+ * membership and mutes are checked by the callers, which already hold the
+ * participant row. Messages keep their existing wording.
+ */
+async function postingBlockReason(user, room) {
+  if (!room) return 'Room not found';
+  if (isStaff(user)) return null;
+  if (isBannedFrom(user, room)) return 'You cannot post in this room';
+  if (isRoomClosed(room)) return 'This room is archived and read-only';
+  if ((isRoomLocked(room) || room.admin_only_post) && !(await canManageRoom(user, room))) {
+    return isRoomLocked(room) ? 'This room is locked by an administrator' : 'Only moderators can post in this room';
+  }
+  return null;
+}
+
+/**
  * Room ids `user` may read: open rooms, rooms they own, rooms they are in.
  * Cached on the request, since list scopes and per-record checks both need it.
  */
@@ -108,9 +221,9 @@ async function readableRoomIds(req) {
         { [Op.or]: [{ is_premium: { [Op.ne]: true } }, { is_premium: null }] },
       ],
     },
-    attributes: ['id'],
+    attributes: ['id', 'settings'],
   });
-  const ids = new Set(openRooms.map((r) => r.id));
+  const ids = new Set(openRooms.filter((r) => !isBannedFrom(req.user, r)).map((r) => r.id));
 
   if (req.user?.id) {
     const owned = await db.ChatRoom.findAll({ where: { owner_id: req.user.id }, attributes: ['id'] });
@@ -154,6 +267,15 @@ module.exports = {
   canJoinRoom,
   canReadRoom,
   canManageRoom,
+  postingBlockReason,
+  roomSettings,
+  isBannedFrom,
+  isRoomClosed,
+  isRoomLocked,
+  memberRoomView,
+  ensureParticipant,
+  hasVipPlan,
+  hasPremiumAccess,
   roomRole,
   readableRoomIds,
   roomScope,

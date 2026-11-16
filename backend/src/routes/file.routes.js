@@ -132,16 +132,20 @@ router.get("/view/*", optionalAuthenticate, async (req, res) => {
       return res.status(404).json({ error: "File not found" });
     }
 
-    if (storage.s3Enabled) {
+    // Private documents (SEBI certificates, KYC) are fetched by the SPA with
+    // the bearer token, so they must stay same-origin: a redirect to S3 was
+    // blocked by the browser (CORS) and the reviewer saw nothing.
+    if (storage.s3Enabled && !key.startsWith("private/")) {
       const signed = await storage.signedUrlForKey(key);
       return res.redirect(302, signed);
     }
 
-    // Local fallback: stream it, so private files are not exposed by the
-    // static middleware.
+    // Streamed, so private files are never exposed by the static middleware.
+    if (key.startsWith("private/")) return await storage.streamObject(key, res);
     return res.sendFile(storage.localPathForKey(key));
   } catch (error) {
     console.error(`[files] view failed for ${key}:`, error.message);
+    if (res.headersSent) return res.destroy();
     return res.status(500).json({ error: "Could not retrieve file" });
   }
 });
@@ -204,7 +208,7 @@ router.delete("/object/*", authMiddleware, async (req, res) => {
   }
   // Only the owner or staff may remove a private document; a public asset needs
   // staff, since its key alone does not establish who uploaded it.
-  const isStaff = ["admin", "super_admin", "sub_admin"].includes(
+  const isStaff = ["admin", "super_admin"].includes(
     req.user.app_role || req.user.role
   );
   if (key.startsWith("public/") && !isStaff) {
@@ -227,7 +231,7 @@ router.delete("/object/*", authMiddleware, async (req, res) => {
 // Diagnostics (staff only) — confirms which backend is live without leaking keys
 // ---------------------------------------------------------------------------
 router.get("/storage-status", authMiddleware, (req, res) => {
-  const isStaff = ["admin", "super_admin", "sub_admin"].includes(
+  const isStaff = ["admin", "super_admin"].includes(
     req.user.app_role || req.user.role
   );
   if (!isStaff) return res.status(403).json({ error: "Admin access required" });

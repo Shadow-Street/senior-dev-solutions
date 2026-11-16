@@ -18,7 +18,7 @@ vi.mock('@/lib/withdrawalsApi', async (importOriginal) => {
 vi.mock('@/lib/apiClient', () => ({ Review: { filter: vi.fn() }, default: { get: vi.fn() } }))
 vi.mock('@/lib/advisorApi', () => ({
   advisorApi: {
-    me: vi.fn(), plans: vi.fn(), posts: vi.fn(), subscribers: vi.fn(), earnings: vi.fn(), refunds: vi.fn(),
+    me: vi.fn(), plans: vi.fn(), posts: vi.fn(), subscribers: vi.fn(), earnings: vi.fn(), refunds: vi.fn(), usage: vi.fn(),
     createPost: vi.fn(), updatePost: vi.fn(), deletePost: vi.fn(),
     createPlan: vi.fn(), updatePlan: vi.fn(), deletePlan: vi.fn(), updateMe: vi.fn(),
   },
@@ -40,6 +40,9 @@ const POST = { id: 'x1', title: 'Buy ABC', content: 'Because', status: 'publishe
 const SUB = { id: 's1', plan_id: 'p1', plan_name: 'Basic', plan_price: 500, status: 'active', subscriber_name: 'Sub One', start_date: '2026-11-01', end_date: '2026-12-01' }
 const EARNINGS = { summary: { approved: 400, pending: 1200, pending_count: 1, available: 300, pending_withdrawals: 0, total_withdrawn: 100 }, items: [{ id: 'c1', amount: 1200, status: 'pending', plan_name: 'Basic', gross_amount: 1500, platform_fee: 300, created_at: '2026-11-02T10:00:00Z' }], total: 1 }
 
+const COUNTER = (used, cap) => ({ used, cap, remaining: cap === null ? null : Math.max(cap - used, 0), starts_at: '2026-11-08T18:30:00.000Z', resets_at: '2026-11-15T18:30:00.000Z' })
+const USAGE_PLAN = { plan_id: 'p1', plan_name: 'Basic', price: 500, is_active: true, limit_count: 2, limit_period: 'week', effective_from: '2026-11-01T00:00:00.000Z', week: COUNTER(1, 2), month: COUNTER(5, 8) }
+
 function mount(url = '/AdvisorDashboard') {
   return render(<MemoryRouter initialEntries={[url]}><AdvisorDashboard /></MemoryRouter>)
 }
@@ -55,6 +58,7 @@ describe('AdvisorDashboard', () => {
     advisorApi.subscribers.mockResolvedValue([SUB])
     advisorApi.earnings.mockResolvedValue(EARNINGS)
     advisorApi.refunds.mockResolvedValue([])
+    advisorApi.usage.mockResolvedValue({ plans: [USAGE_PLAN], counted_plan_ids: [] })
     withdrawalsApi.summary.mockResolvedValue({ earned: 400, available: 300 })
     Review.filter.mockResolvedValue([{ rating: 5 }, { rating: 4 }])
   })
@@ -68,6 +72,27 @@ describe('AdvisorDashboard', () => {
     expect(screen.getByText('INA000012346', { exact: false })).toBeInTheDocument()
   })
 
+  it('overview shows the recommendation usage tracker and refetches nothing for a pending advisor', async () => {
+    mount()
+    expect(await screen.findByText('Recommendation usage', { selector: 'h2' })).toBeInTheDocument()
+    expect(await screen.findByText('1/2 used')).toBeInTheDocument()
+    expect(screen.getByText('5/8 used')).toBeInTheDocument()
+    expect(screen.getByText('3')).toBeInTheDocument()
+  })
+
+  it('overview tracker shows its own error state without hiding the rest of the dashboard', async () => {
+    advisorApi.usage.mockRejectedValue({ response: { status: 503 } })
+    mount()
+    expect(await screen.findByText(/Welcome back, Asha Rao/)).toBeInTheDocument()
+    expect(await screen.findByText(/usage tracker is not available yet/i, {}, SLOW)).toBeInTheDocument()
+  })
+
+  it('plan cards show the recommendation limit', async () => {
+    advisorApi.plans.mockResolvedValue([{ ...PLAN, limit_count: 2, limit_period: 'week' }])
+    mount('/AdvisorDashboard?section=plans')
+    expect(await screen.findByTestId('plan-limit')).toHaveTextContent('2 recommendations / week')
+  })
+
   it('a pending or rejected advisor never sees the tools', async () => {
     advisorApi.me.mockResolvedValue({ advisor: { ...ADVISOR, status: 'rejected', rejection_reason: 'Blurry certificate' } })
     mount()
@@ -76,6 +101,7 @@ describe('AdvisorDashboard', () => {
     expect(screen.queryByText(/Welcome back/)).not.toBeInTheDocument()
     expect(advisorApi.plans).not.toHaveBeenCalled()
     expect(advisorApi.posts).not.toHaveBeenCalled()
+    expect(advisorApi.usage).not.toHaveBeenCalled()
   })
 
   it('shows a retryable error when the profile cannot be loaded', async () => {

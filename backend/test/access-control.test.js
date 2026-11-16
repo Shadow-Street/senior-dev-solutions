@@ -58,7 +58,10 @@ test('a super admin can change another user\'s role', async () => {
     .set('Authorization', bearer(USERS.superAdmin))
     .send({ app_role: 'admin' });
   assert.equal(res.status, 200);
-  assert.deepEqual(update.mock.calls[0].arguments[0], { app_role: 'admin' });
+  // Goes through User Management's setRole: both role columns, so
+  // app_role || role can never disagree with what was chosen.
+  assert.deepEqual(update.mock.calls[0].arguments[0], { app_role: 'admin', role: 'admin' });
+  assert.deepEqual(update.mock.calls[0].arguments[1], { where: { id: USERS.user.id } });
 });
 
 // --- C-2: entity export ------------------------------------------------------
@@ -231,19 +234,36 @@ test('a legacy super admin (role only) is protected from admins', async () => {
 
 test('only a super admin can change another user\'s email', async () => {
   mock.restoreAll();
-  stubUserLookup({ [OTHER_ADMIN.id]: OTHER_ADMIN });
+  const MEMBER = { id: '77777777-7777-4777-8777-777777777777', email: 'member@example.test', app_role: 'user', role: 'user', status: 'active' };
+  stubUserLookup({ [OTHER_ADMIN.id]: OTHER_ADMIN, [MEMBER.id]: MEMBER });
   const update = mock.method(db.User, 'update', async () => [1]);
-  await request(app)
+  const clash = mock.method(db.User, 'findOne', async () => null);
+  mock.method(db.AuditLog, 'create', async () => ({}));
+
+  // An admin may not manage a peer admin at all, email or not.
+  let res = await request(app)
     .put(`/api/users/${OTHER_ADMIN.id}`)
     .set('Authorization', bearer(USERS.admin))
     .send({ email: 'attacker@example.test', display_name: 'x' });
-  assert.deepEqual(update.mock.calls[0].arguments[0], { display_name: 'x' });
+  assert.equal(res.status, 403);
+  assert.equal(update.mock.callCount(), 0);
 
-  await request(app)
+  // On an account they do manage, the email change is refused outright
+  // rather than silently dropped, and nothing is written.
+  res = await request(app)
+    .put(`/api/users/${MEMBER.id}`)
+    .set('Authorization', bearer(USERS.admin))
+    .send({ email: 'attacker@example.test', display_name: 'x' });
+  assert.equal(res.status, 403);
+  assert.equal(update.mock.callCount(), 0);
+
+  res = await request(app)
     .put(`/api/users/${OTHER_ADMIN.id}`)
     .set('Authorization', bearer(USERS.superAdmin))
     .send({ email: 'new@example.test' });
-  assert.deepEqual(update.mock.calls[1].arguments[0], { email: 'new@example.test' });
+  assert.equal(res.status, 200);
+  assert.equal(clash.mock.callCount(), 1, 'the new address is checked for another account first');
+  assert.deepEqual(update.mock.calls[0].arguments[0], { email: 'new@example.test' });
 });
 
 test('PUT /<resource>/bulk reaches the bulk handler and refuses non-admins', async () => {

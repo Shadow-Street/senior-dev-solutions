@@ -6,12 +6,15 @@ const SubscriptionService = require('../services/SubscriptionService');
 const CommissionService = require('../services/CommissionService');
 const InvoiceService = require('../services/InvoiceService');
 const EmailService = require('../services/EmailService');
+const PaymentAttempts = require('../services/PaymentAttemptService');
 
 // Initialize Razorpay
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
     key_secret: process.env.RAZORPAY_KEY_SECRET
 });
+// The SDK's HTTP client has no timeout; a hung call must not outlive the refund lease.
+if (razorpay.api && razorpay.api.rq && razorpay.api.rq.defaults) razorpay.api.rq.defaults.timeout = 30000;
 
 /** Constant-time check of Razorpay's hex HMAC-SHA256 signature. */
 function signatureMatches(orderId, paymentId, signature) {
@@ -86,6 +89,8 @@ class PaymentController {
             };
 
             const order = await PaymentController.razorpay.orders.create(options);
+            // Admin Financials: the order is a pending attempt until it is paid or fails (best effort).
+            await PaymentAttempts.recordOrderSafely({ orderId: order.id, userId, quote });
 
             res.json({
                 success: true,
@@ -176,7 +181,7 @@ class PaymentController {
                 const user = await db.User.findByPk(userId);
                 if (user && user.email) {
                     if (result.free) {
-                        await EmailService.sendEmail(user.email, `Your ${result.plan.name} plan is active`, EmailService.getWelcomeEmailTemplate(user.name));
+                        await EmailService.sendEmail(user.email, `Your ${result.plan.name} plan is active`, EmailService.getPlanActivatedTemplate(user.name, result.plan.name, { free: true }));
                     } else {
                         await EmailService.sendEmail(
                             user.email,
@@ -232,6 +237,8 @@ class PaymentController {
                     paymentId: razorpay_payment_id, userId, order: checked.order,
                 });
             }
+
+            await PaymentAttempts.markSucceededSafely({ orderId: razorpay_order_id, paymentId: razorpay_payment_id });
 
             res.json({
                 success: true,
@@ -304,6 +311,7 @@ class PaymentController {
                                 result: await Checkout.fulfilPayment({ order: checked.order, paymentId: entity.id, userId: notes.userId }),
                                 paymentId: entity.id, userId: notes.userId, order: checked.order,
                             });
+                            await PaymentAttempts.markSucceededSafely({ orderId: entity.order_id, paymentId: entity.id });
                         }
                     } catch (e) {
                         // A permanent refusal (e.g. the plan was deleted) must not make Razorpay
@@ -398,6 +406,16 @@ class PaymentController {
                     // ...
                 }
             } else if (event === 'payment.failed') {
+                const failedEntity = (payload && payload.payment && payload.payment.entity) || {};
+                // Admin Financials: the order's attempt becomes 'failed' (best effort, never throws).
+                await PaymentAttempts.markFailedSafely({
+                    orderId: failedEntity.order_id,
+                    paymentId: failedEntity.id,
+                    amountPaise: failedEntity.amount,
+                    userId: failedEntity.notes && failedEntity.notes.userId,
+                    code: failedEntity.error_code,
+                    description: failedEntity.error_description,
+                });
                 const paymentId = payload.payment.entity.id;
                 // Log failed transaction
                 // Can try to link to user via notes if available
@@ -417,6 +435,10 @@ class PaymentController {
             } else if (event === 'refund.processed') {
                 // Settles the pending/approved RefundRequest and books the ledger if the API path never did.
                 await SubscriptionService.applyRefundProcessed(payload.refund.entity);
+            } else if (event === 'refund.failed') {
+                // A refund Razorpay accepted but could not pay out: the admin refund record and
+                // the ledger row are marked failed so the money is not reported as returned.
+                await require('../services/RefundAdminService').applyRefundFailed(payload && payload.refund && payload.refund.entity);
             }
 
             res.json({ status: 'ok' });

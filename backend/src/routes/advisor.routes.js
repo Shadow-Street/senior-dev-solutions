@@ -28,6 +28,9 @@ const advisorOwned = { field: 'advisor_id', resolveOwnerId: resolveAdvisorId };
 const { requireApprovedAdvisor } = require('../middleware/advisor');
 const V = require('../utils/advisorValidation');
 const { isStaff } = require('../controllers/AdvisorDirectoryController');
+const { viewerAccess, canRead, isModerationLocked } = require('../utils/advisorPostAccess');
+const limits = require('../services/AdvisorPostLimitService');
+const crypto = require('crypto');
 
 const { Op } = db.Sequelize;
 const UUID_RE = V.UUID_RE;
@@ -55,6 +58,11 @@ const advisorOrStaff = (req, res, next) => {
   return requireApprovedAdvisor(req, res, next);
 };
 const advisorOnly = requireApprovedAdvisor;
+
+const LIMITS_UNAVAILABLE = {
+  error: 'Recommendation limits are temporarily unavailable while a database update is pending. Please try again later.',
+  code: 'MIGRATION_PENDING',
+};
 
 /** Row the caller may modify: their own (advisor) or any (staff). */
 const findWritable = (Model, req, extraWhere = {}) => {
@@ -216,13 +224,33 @@ const planController = createCrudController(db.SubscriptionPlan, {
 planRouter.get('/mine', authMiddleware, advisorOnly, async (req, res) => {
   try {
     const plans = await db.SubscriptionPlan.findAll({ where: { advisor_id: req.advisor.id }, order: [['price', 'ASC']], limit: 20 });
-    res.json(plans.map(withDates));
+    res.json(await limits.attachLimits(plans.map(withDates)));
   } catch (error) {
     serverError(res, 'my plans', error);
   }
 });
-planRouter.get('/', optionalAuthenticate, planController.list);
-planRouter.get('/:id', optionalAuthenticate, planController.get);
+
+// The generic list/get answer through res.json; add the recommendation limit in
+// force to each plan on the way out (no limit -> nulls; never fails the list).
+const withPlanLimits = (req, res, next) => {
+  const send = res.json.bind(res);
+  res.json = (body) => {
+    if (res.statusCode >= 400 || !body || typeof body !== 'object') return send(body);
+    const plain = (r) => (r && typeof r.toJSON === 'function' ? r.toJSON() : r);
+    const rows = Array.isArray(body) ? body.map(plain) : [plain(body)];
+    limits.attachLimits(rows.filter((r) => r && r.id))
+      .then((enriched) => {
+        const byId = new Map(enriched.map((r) => [r.id, r]));
+        const merge = (r) => (r && byId.has(r.id) ? byId.get(r.id) : r);
+        send(Array.isArray(body) ? rows.map(merge) : merge(rows[0]));
+      })
+      .catch(() => send(body));
+    return res;
+  };
+  next();
+};
+planRouter.get('/', optionalAuthenticate, withPlanLimits, planController.list);
+planRouter.get('/:id', optionalAuthenticate, withPlanLimits, planController.get);
 
 planRouter.post('/', authMiddleware, advisorOnly, async (req, res) => {
   try {
@@ -232,14 +260,28 @@ planRouter.post('/', authMiddleware, advisorOnly, async (req, res) => {
     if (existing >= V.MAX_PLANS_PER_ADVISOR) {
       return res.status(409).json({ error: `You can have at most ${V.MAX_PLANS_PER_ADVISOR} plans` });
     }
-    const created = await db.SubscriptionPlan.create({
+    // Unlimited (null) needs no history row, so it must not depend on the tables.
+    const wantsLimit = Boolean(parsed.limit) && parsed.limit.limit_count !== null;
+    if (wantsLimit && !(await limits.tablesAvailable())) return res.status(503).json(LIMITS_UNAVAILABLE);
+    const planValues = {
       ...parsed.value,
       is_active: parsed.value.is_active !== false,
       advisor_id: req.advisor.id,
       finfluencer_id: null,
       is_system_plan: false,
-    });
-    res.status(201).json(withDates(created));
+    };
+    let created;
+    if (wantsLimit) {
+      created = await db.sequelize.transaction(async (t) => {
+        const plan = await db.SubscriptionPlan.create(planValues, { transaction: t });
+        await limits.setLimit({ plan, userId: req.user.id, limit: parsed.limit, transaction: t });
+        return plan;
+      });
+    } else {
+      created = await db.SubscriptionPlan.create(planValues);
+    }
+    const [view] = await limits.attachLimits([withDates(created)]);
+    res.status(201).json(view);
   } catch (error) {
     serverError(res, 'create plan', error);
   }
@@ -252,8 +294,25 @@ planRouter.put('/:id', authMiddleware, advisorOrStaff, async (req, res) => {
     if (!plan || !plan.advisor_id || plan.is_system_plan) return res.status(404).json({ error: 'Record not found' });
     const parsed = V.validatePlan(req.body, { partial: true });
     if (parsed.error) return res.status(400).json({ error: parsed.error });
-    await plan.update({ ...parsed.value, updated_at: new Date() });
-    res.json(withDates(plan));
+    if (parsed.limit) {
+      // Limits belong to the plan's own advisor; staff moderate plans but do not set them.
+      if (req.staff) return res.status(403).json({ error: 'Only the advisor who owns this plan can change its recommendation limit' });
+      const available = await limits.tablesAvailable();
+      // Setting a limit needs the tables; "unlimited" while they are missing is a no-op, not an error.
+      if (!available && parsed.limit.limit_count !== null) return res.status(503).json(LIMITS_UNAVAILABLE);
+      if (available) {
+        await db.sequelize.transaction(async (t) => {
+          await plan.update({ ...parsed.value, updated_at: new Date() }, { transaction: t });
+          await limits.setLimit({ plan, userId: req.user.id, limit: parsed.limit, transaction: t });
+        });
+      } else {
+        await plan.update({ ...parsed.value, updated_at: new Date() });
+      }
+    } else {
+      await plan.update({ ...parsed.value, updated_at: new Date() });
+    }
+    const [view] = await limits.attachLimits([withDates(plan)]);
+    res.json(view);
   } catch (error) {
     serverError(res, 'update plan', error);
   }
@@ -287,38 +346,7 @@ const ownPlanIds = async (advisorId) => {
   return plans.map((p) => p.id);
 };
 
-/**
- * What a viewer may read of an advisor's posts.
- * Returns { owner, planPrice } where planPrice is the highest price among the
- * viewer's current subscriptions to this advisor (null = not subscribed).
- */
-async function viewerAccess(user, advisor, plans) {
-  if (!user?.id) return { owner: false, planPrice: null };
-  if (isStaff(user) || String(advisor.user_id) === String(user.id)) return { owner: true, planPrice: null };
-  const subs = await db.Subscription.findAll({
-    where: { user_id: user.id, advisor_id: advisor.id, status: 'active' },
-    limit: 20,
-  });
-  const now = Date.now();
-  let best = null;
-  for (const sub of subs) {
-    if (sub.end_date && new Date(sub.end_date).getTime() <= now) continue;
-    const plan = plans.find((p) => p.id === sub.plan_id);
-    const price = plan ? Number(plan.price) : 0;
-    if (best === null || price > best) best = price;
-  }
-  return { owner: false, planPrice: best };
-}
-
-const canRead = (post, access, plans) => {
-  if (access.owner) return true;
-  if (post.visibility === 'public') return true;
-  if (access.planPrice === null) return false;
-  if (!post.required_plan_id) return true;
-  const required = plans.find((p) => p.id === post.required_plan_id);
-  // A tier that no longer exists must not lock subscribers out.
-  return !required || access.planPrice >= Number(required.price);
-};
+// viewerAccess / canRead: utils/advisorPostAccess.js (shared with Content Moderation).
 
 
 /**
@@ -380,14 +408,15 @@ const serializePost = (row, locked, plans) => {
   const r = withDates(row);
   const plan = plans.find((p) => p.id === r.required_plan_id);
   const base = {
-    id: r.id, advisor_id: r.advisor_id, title: r.title, post_type: r.post_type,
+    id: r.id, advisor_id: r.advisor_id, post_type: r.post_type,
     visibility: r.visibility, required_plan_id: r.required_plan_id || null,
     required_plan_name: plan ? plan.name : null,
     created_at: r.created_at, created_date: r.created_date,
   };
-  if (locked) return { ...base, locked: true };
+  // The title is withheld too: "Buy Apple" gives the call away.
+  if (locked) return { ...base, title: null, locked: true };
   return {
-    ...base, locked: false,
+    ...base, title: r.title, locked: false,
     content: r.content, stock_symbol: r.stock_symbol, recommendation_type: r.recommendation_type,
     target_price: r.target_price, stop_loss: r.stop_loss, time_horizon: r.time_horizon,
   };
@@ -407,7 +436,11 @@ postRouter.get('/by-advisor/:advisorId', optionalAuthenticate, async (req, res) 
       db.SubscriptionPlan.findAll({ where: { advisor_id: advisor.id }, attributes: ['id', 'name', 'price'] }),
       db.AdvisorPost.findAll({ where: { advisor_id: advisor.id, status: 'published' }, order: POST_SORT, limit, offset }),
     ]);
-    const access = await viewerAccess(req.user, advisor, plans);
+    // ?preview=member lets the advisor / staff see the feed as a signed-out,
+    // non-subscribed member would. It can only reduce access, never add any.
+    const access = req.query.preview === 'member'
+      ? { owner: false, planPrice: null }
+      : await viewerAccess(req.user, advisor, plans);
     res.json(rows.map((row) => serializePost(row, !canRead(row, access, plans), plans)));
   } catch (error) {
     serverError(res, 'advisor feed', error);
@@ -432,6 +465,17 @@ postRouter.get('/', authMiddleware, advisorOrStaff, async (req, res) => {
   }
 });
 
+// Recommendation usage tracker: the advisor's own plans only.
+postRouter.get('/usage', authMiddleware, advisorOnly, async (req, res) => {
+  try {
+    if (!(await limits.tablesAvailable())) return res.status(503).json(LIMITS_UNAVAILABLE);
+    const postId = typeof req.query.post_id === 'string' && UUID_RE.test(req.query.post_id) ? req.query.post_id : null;
+    res.json(await limits.usageForAdvisor(req.advisor.id, { postId }));
+  } catch (error) {
+    serverError(res, 'post usage', error);
+  }
+});
+
 postRouter.get('/:id', authMiddleware, advisorOrStaff, async (req, res) => {
   try {
     const row = await findWritable(db.AdvisorPost, req);
@@ -446,17 +490,30 @@ postRouter.post('/', authMiddleware, advisorOnly, blockPostWritesWhenDegraded, a
   try {
     const parsed = V.validatePost(req.body, await ownPlanIds(req.advisor.id));
     if (parsed.error) return res.status(400).json({ error: parsed.error });
-    const created = await db.AdvisorPost.create({
+    const values = {
       ...parsed.value,
+      id: crypto.randomUUID(),
       post_type: parsed.value.post_type || (parsed.value.recommendation_type ? 'recommendation' : 'analysis'),
       advisor_id: req.advisor.id,
       likes_count: 0,
       comments_count: 0,
       is_pinned: false,
-    });
+    };
+    // A published subscriber-only recommendation spends plan allowance: check
+    // and record it in one transaction, before the post exists, so a refusal
+    // leaves nothing behind.
+    const created = limits.countsAgainstLimit(values) && (await limits.tablesAvailable())
+      ? await db.sequelize.transaction(async (t) => {
+        // reserve() starts with SELECT ... FOR UPDATE on the plan rows; keep it
+        // the first statement (REPEATABLE READ snapshots at the first plain read).
+        await limits.reserve(req.advisor.id, values, { transaction: t });
+        return db.AdvisorPost.create(values, { transaction: t });
+      })
+      : await db.AdvisorPost.create(values);
     const notified = await notifyOnFirstPublish(req.advisor, created);
     res.status(201).json({ ...withDates(created), notified_subscribers: notified });
   } catch (error) {
+    if (error instanceof limits.PostLimitError) return res.status(409).json({ error: error.message, ...error.details });
     serverError(res, 'create post', error);
   }
 });
@@ -465,16 +522,38 @@ postRouter.put('/:id', authMiddleware, advisorOrStaff, blockPostWritesWhenDegrad
   try {
     const row = await findWritable(db.AdvisorPost, req);
     if (!row) return res.status(404).json({ error: 'Record not found' });
+    // Removed by a moderator: the advisor may neither edit nor republish it.
+    // Staff may (setting it back to draft/published lifts the lock).
+    if (!req.staff && isModerationLocked(row)) {
+      return res.status(403).json({ error: 'This post was removed by the moderation team and cannot be edited or republished.', code: 'MODERATION_LOCKED' });
+    }
     const parsed = V.validatePost(req.body, await ownPlanIds(row.advisor_id), { partial: true });
     if (parsed.error) return res.status(400).json({ error: parsed.error });
     const wasPublished = row.status === 'published';
-    await row.update({ ...parsed.value, updated_at: new Date() });
+    const patch = { ...parsed.value, updated_at: new Date() };
+    // The post as it will be stored: a draft being published, or a live
+    // recommendation whose audience widens, may reach plans it has not used yet.
+    const previous = typeof row.toJSON === 'function' ? row.toJSON() : { ...row };
+    const finalPost = { ...(typeof row.toJSON === 'function' ? row.toJSON() : row), ...parsed.value };
+    if (limits.countsAgainstLimit(finalPost) && (await limits.tablesAvailable())) {
+      await db.sequelize.transaction(async (t) => {
+        // reserve() starts with SELECT ... FOR UPDATE on the plan rows; keep it
+        // the first statement (REPEATABLE READ snapshots at the first plain read).
+        // Plans the post reached before this edit are not charged again.
+        // Staff moderation is never blocked by an advisor's allowance.
+        await limits.reserve(row.advisor_id, { ...finalPost, id: row.id }, { transaction: t, enforce: !req.staff, previous });
+        await row.update(patch, { transaction: t });
+      });
+    } else {
+      await row.update(patch);
+    }
     // Subscribers hear about a post once: when it first goes live (notified_at is
     // the record). Editing a live post never notifies, and neither does
     // unpublishing and republishing.
     const notified = !wasPublished && req.advisor ? await notifyOnFirstPublish(req.advisor, row) : 0;
     res.json({ ...withDates(row), notified_subscribers: notified });
   } catch (error) {
+    if (error instanceof limits.PostLimitError) return res.status(409).json({ error: error.message, ...error.details });
     serverError(res, 'update post', error);
   }
 });

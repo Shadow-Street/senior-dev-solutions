@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Subscription, User, SubscriptionPlan } from '@/api/entities';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Subscription } from '@/api/entities';
+import apiClient from '@/lib/apiClient';
+import { formatDate, formatINR } from '@/lib/format';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,10 +13,12 @@ import {
   XCircle,
   Clock,
   AlertTriangle,
-  Users as UsersIcon
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
+  Users as UsersIcon,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { format } from 'date-fns';
 import {
   Select,
   SelectContent,
@@ -23,168 +27,130 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-export default function SubscriptionUserManagement({ permissions }) {
-  const [subscriptions, setSubscriptions] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [plans, setPlans] = useState([]);
+const PAGE_SIZE = 25;
+const EMPTY_COUNTS = { active: 0, cancelling: 0, cancelled: 0, expired: 0 };
+
+/**
+ * Price as the subscriber pays it: "Free", "₹199/mo", "₹1,999/yr".
+ * The card used to print `₹{subscription.price}/mo` from a field that does
+ * not exist, so every row read "₹/mo".
+ */
+export function priceLabel(item) {
+  if (item.price === null || item.price === undefined) return '—';
+  if (Number(item.price) === 0) return 'Free';
+  return `${formatINR(item.price)}/${item.billing_cycle === 'annually' ? 'yr' : 'mo'}`;
+}
+
+/** Free plans (and lifetime grants) have no end date: never "Jan 1, 1970". */
+export function endDateLabel(item) {
+  if (!item.end_date) return item.price !== null && item.price !== undefined && Number(item.price) === 0 ? 'Never (free plan)' : 'No end date';
+  return formatDate(item.end_date);
+}
+
+function renderStatusBadge(status) {
+  const styles = {
+    active: ['bg-buy-muted text-buy-muted-foreground border-buy/30', CheckCircle, 'ACTIVE'],
+    cancelling: ['bg-hold-muted text-hold-muted-foreground border-hold/30', Clock, 'CANCELLING'],
+    cancelled: ['bg-sell-muted text-sell-muted-foreground border-sell/30', XCircle, 'CANCELLED'],
+    expired: ['bg-surface-2 text-foreground border-border', XCircle, 'EXPIRED'],
+  };
+  const [cls, Icon, label] = styles[status] || ['bg-hold-muted text-hold-muted-foreground border-hold/30', AlertTriangle, String(status || 'unknown').toUpperCase()];
+  return (
+    <Badge className={cls}>
+      <Icon className="mr-1 h-3 w-3" aria-hidden="true" />
+      {label}
+    </Badge>
+  );
+}
+
+export default function SubscriptionUserManagement({ permissions = {} }) {
+  const [items, setItems] = useState([]);
+  const [counts, setCounts] = useState(EMPTY_COUNTS);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [error, setError] = useState(null);
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [reinstating, setReinstating] = useState(null);
 
+  // Search runs on the server; wait for typing to pause.
   useEffect(() => {
-    loadData();
-  }, []);
+    const t = setTimeout(() => { setSearch(searchInput.trim()); setPage(1); }, 300);
+    return () => clearTimeout(t);
+  }, [searchInput]);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setIsLoading(true);
+    setError(null);
     try {
-      const [subsData, usersData, plansData] = await Promise.all([
-        Subscription.list('-created_date'),
-        User.list(),
-        SubscriptionPlan.list()
-      ]);
-
-      // Map plan details to subscriptions
-      const enrichedSubs = subsData.map(sub => {
-        const plan = plansData.find(p => p.id === sub.plan_id ||
-          p.name.toLowerCase() === sub.plan_type?.toLowerCase());
-        return {
-          ...sub,
-          planDetails: plan,
-          displayPlanName: plan?.name || sub.plan_type || 'Unknown Plan',
-          displayPrice: plan?.price_monthly || plan?.price || sub.price || 0
-        };
+      const { data } = await apiClient.get('/subscriptions/admin/users', {
+        params: { status: statusFilter, q: search || undefined, page, limit: PAGE_SIZE },
       });
-
-      setSubscriptions(enrichedSubs);
-      setUsers(usersData);
-      setPlans(plansData);
-    } catch (error) {
-      console.error('Error loading subscription data:', error);
-      toast.error('Failed to load subscription data');
+      setItems(Array.isArray(data?.items) ? data.items : []);
+      setCounts({ ...EMPTY_COUNTS, ...(data?.counts || {}) });
+      setTotal(Number(data?.total) || 0);
+    } catch (err) {
+      console.error('Error loading subscription data:', err);
+      setError(err?.response?.data?.error || 'Could not load subscriptions.');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [statusFilter, search, page]);
 
-  const handleReinstate = async (subscription) => {
+  useEffect(() => { loadData(); }, [loadData]);
+
+  const handleReinstate = async (item) => {
     if (!permissions.canEdit) {
       toast.error('You do not have permission to modify subscriptions');
       return;
     }
-
-    const confirmed = window.confirm(
-      `Are you sure you want to reinstate this subscription for the user?\n\nThis will re-enable auto-renewal.`
-    );
-
-    if (!confirmed) return;
-
+    if (!window.confirm(`Reinstate ${item.plan_name} for ${item.user.email || 'this user'}? Auto-renewal will be switched back on.`)) return;
+    setReinstating(item.id);
     try {
-      await Subscription.update(subscription.id, {
-        cancelAtPeriodEnd: false,
-        auto_renew: true
-      });
-      toast.success('Subscription reinstated successfully');
+      await Subscription.update(item.id, { cancelAtPeriodEnd: false, auto_renew: true });
+      toast.success('Subscription reinstated');
       loadData();
-    } catch (error) {
-      console.error('Error reinstating subscription:', error);
-      toast.error('Failed to reinstate subscription');
+    } catch (err) {
+      console.error('Error reinstating subscription:', err);
+      toast.error(err?.response?.data?.error || 'Failed to reinstate subscription');
+    } finally {
+      setReinstating(null);
     }
   };
 
-  const getUserForSubscription = (subscription) => {
-    return users.find(u => u.id === subscription.user_id);
-  };
-
-  const getStatusBadge = (subscription) => {
-    if (subscription.cancelAtPeriodEnd && subscription.status === 'active') {
-      return (
-        <Badge className="bg-hold-muted text-hold-muted-foreground border-hold/30">
-          <Clock className="w-3 h-3 mr-1" />
-          CANCELLING
-        </Badge>
-      );
-    }
-
-    switch (subscription.status) {
-      case 'active':
-        return (
-          <Badge className="bg-buy-muted text-buy-muted-foreground border-buy/30">
-            <CheckCircle className="w-3 h-3 mr-1" />
-            ACTIVE
-          </Badge>
-        );
-      case 'cancelled':
-        return (
-          <Badge className="bg-sell-muted text-sell-muted-foreground border-sell/30">
-            <XCircle className="w-3 h-3 mr-1" />
-            CANCELLED
-          </Badge>
-        );
-      case 'expired':
-        return (
-          <Badge className="bg-surface-2 text-foreground border-border">
-            <XCircle className="w-3 h-3 mr-1" />
-            EXPIRED
-          </Badge>
-        );
-      default:
-        return (
-          <Badge className="bg-hold-muted text-hold-muted-foreground border-hold/30">
-            <AlertTriangle className="w-3 h-3 mr-1" />
-            {(subscription.status || 'unknown').toUpperCase()}
-          </Badge>
-        );
-    }
-  };
-
-  // Filter subscriptions
-  const filteredSubscriptions = subscriptions.filter(sub => {
-    const user = getUserForSubscription(sub);
-    const matchesSearch = !searchTerm ||
-      (user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user?.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        sub.plan_type?.toLowerCase().includes(searchTerm.toLowerCase()));
-
-    const matchesStatus = statusFilter === 'all' ||
-      (statusFilter === 'active' && sub.status === 'active' && !sub.cancelAtPeriodEnd) ||
-      (statusFilter === 'cancelling' && sub.cancelAtPeriodEnd && sub.status === 'active') ||
-      (statusFilter === 'cancelled' && sub.status === 'cancelled') ||
-      (statusFilter === 'expired' && sub.status === 'expired');
-
-    return matchesSearch && matchesStatus;
-  });
-
-  if (isLoading) {
-    return <div className="p-6">Loading subscriptions...</div>;
-  }
+  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const summary = [
+    ['active', 'Active', 'bg-buy-muted', 'text-buy-muted-foreground'],
+    ['cancelling', 'Cancelling', 'bg-hold-muted', 'text-hold-muted-foreground'],
+    ['cancelled', 'Cancelled', 'bg-sell-muted', 'text-sell-muted-foreground'],
+    ['expired', 'Expired', 'bg-surface-2', 'text-foreground'],
+  ];
 
   return (
     <div className="space-y-6">
-      {/* Header with Filters */}
       <Card className="border-0 shadow-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <UsersIcon className="w-5 h-5 text-protocall-premium-text" />
-            User Subscriptions ({filteredSubscriptions.length})
+            <UsersIcon className="h-5 w-5 text-protocall-premium-text" aria-hidden="true" />
+            User Subscriptions ({total})
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Search */}
-            <div className="flex-1 relative">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+          <div className="flex flex-col gap-4 md:flex-row">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
               <Input
                 placeholder="Search by email, name, or plan..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                aria-label="Search subscriptions"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 className="pl-10"
               />
             </div>
-
-            {/* Status Filter */}
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[200px]">
+            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+              <SelectTrigger className="w-full md:w-[200px]" aria-label="Filter by status">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -195,114 +161,107 @@ export default function SubscriptionUserManagement({ permissions }) {
                 <SelectItem value="expired">Expired</SelectItem>
               </SelectContent>
             </Select>
-
-            {/* Refresh Button */}
-            <Button variant="outline" onClick={loadData}>
-              <RefreshCw className="w-4 h-4 mr-2" />
+            <Button variant="outline" onClick={loadData} disabled={isLoading}>
+              <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin motion-reduce:animate-none' : ''}`} aria-hidden="true" />
               Refresh
             </Button>
           </div>
 
-          {/* Summary Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="p-3 bg-buy-muted rounded-lg">
-              <p className="text-xs text-buy-muted-foreground mb-1">Active</p>
-              <p className="text-xl font-bold text-buy-muted-foreground">
-                {subscriptions.filter(s => s.status === 'active' && !s.cancelAtPeriodEnd).length}
-              </p>
-            </div>
-            <div className="p-3 bg-hold-muted rounded-lg">
-              <p className="text-xs text-hold-muted-foreground mb-1">Cancelling</p>
-              <p className="text-xl font-bold text-hold-muted-foreground">
-                {subscriptions.filter(s => s.cancelAtPeriodEnd && s.status === 'active').length}
-              </p>
-            </div>
-            <div className="p-3 bg-sell-muted rounded-lg">
-              <p className="text-xs text-sell-muted-foreground mb-1">Cancelled</p>
-              <p className="text-xl font-bold text-sell-muted-foreground">
-                {subscriptions.filter(s => s.status === 'cancelled').length}
-              </p>
-            </div>
-            <div className="p-3 bg-surface-2 rounded-lg">
-              <p className="text-xs text-subtle mb-1">Expired</p>
-              <p className="text-xl font-bold text-foreground">
-                {subscriptions.filter(s => s.status === 'expired').length}
-              </p>
-            </div>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {summary.map(([key, label, bg, fg]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => { setStatusFilter(key); setPage(1); }}
+                aria-pressed={statusFilter === key}
+                className={`rounded-lg p-3 text-left transition-shadow hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${bg} ${statusFilter === key ? 'ring-2 ring-primary/40' : ''}`}
+              >
+                <p className={`mb-1 text-xs ${fg}`}>{label}</p>
+                <p className={`text-xl font-bold ${fg}`}>{counts[key]}</p>
+              </button>
+            ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* Subscriptions List */}
-      {filteredSubscriptions.length === 0 ? (
+      {error ? (
+        <Card className="border-0 shadow-md">
+          <CardContent className="p-10 text-center" role="alert">
+            <AlertTriangle className="mx-auto mb-3 h-10 w-10 text-sell-muted-foreground" aria-hidden="true" />
+            <p className="font-semibold text-foreground">{error}</p>
+            <Button variant="outline" className="mt-4" onClick={loadData}>Try again</Button>
+          </CardContent>
+        </Card>
+      ) : isLoading && items.length === 0 ? (
+        <div className="flex items-center justify-center gap-2 p-10 text-subtle">
+          <Loader2 className="h-5 w-5 animate-spin motion-reduce:animate-none" aria-hidden="true" /> Loading subscriptions…
+        </div>
+      ) : items.length === 0 ? (
         <Card className="border-0 shadow-md">
           <CardContent className="p-12 text-center">
-            <UsersIcon className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-foreground mb-2">No Subscriptions Found</h3>
+            <UsersIcon className="mx-auto mb-4 h-16 w-16 text-muted-foreground" aria-hidden="true" />
+            <h3 className="mb-2 text-xl font-semibold text-foreground">No Subscriptions Found</h3>
             <p className="text-subtle">Try adjusting your search or filter criteria</p>
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-4">
-          {filteredSubscriptions.map((subscription) => {
-            const user = getUserForSubscription(subscription);
+        <div className="space-y-4" aria-busy={isLoading}>
+          {items.map((item) => {
+            const name = item.user.name || item.user.email || 'Deleted user';
             return (
-              <Card key={subscription.id} className="border-0 shadow-md hover:shadow-lg transition-shadow">
+              <Card key={item.id} className="border-0 shadow-md transition-shadow hover:shadow-lg">
                 <CardContent className="p-6">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    {/* User Info */}
+                  <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                     <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue flex items-center justify-center text-white font-semibold">
-                          {user?.display_name?.charAt(0)?.toUpperCase() || 'U'}
+                      <div className="mb-2 flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-protocall-deep to-protocall-blue font-semibold text-white" aria-hidden="true">
+                          {name.charAt(0).toUpperCase()}
                         </div>
-                        <div>
-                          <p className="font-semibold text-foreground">{user?.display_name || 'Unknown User'}</p>
-                          <p className="text-sm text-muted-foreground">{user?.email || 'No email'}</p>
+                        <div className="min-w-0">
+                          <p className="truncate font-semibold text-foreground">{name}</p>
+                          <p className="truncate text-sm text-muted-foreground">{item.user.email || 'No email'}</p>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                      <dl className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
                         <div>
-                          <p className="text-xs text-muted-foreground">Plan</p>
-                          <p className="font-semibold capitalize">{subscription.plan_type}</p>
+                          <dt className="text-xs text-muted-foreground">Plan</dt>
+                          <dd className="font-semibold">
+                            {item.plan_name}
+                            {item.is_advisor_plan && <span className="ml-1 text-xs font-normal text-subtle">(advisor)</span>}
+                          </dd>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground">Price</p>
-                          <p className="font-semibold">₹{subscription.price}/mo</p>
+                          <dt className="text-xs text-muted-foreground">Price</dt>
+                          <dd className="font-semibold">{priceLabel(item)}</dd>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground">Start Date</p>
-                          <p className="font-semibold">{format(new Date(subscription.start_date), 'MMM d, yyyy')}</p>
+                          <dt className="text-xs text-muted-foreground">Start Date</dt>
+                          <dd className="font-semibold">{formatDate(item.start_date)}</dd>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground">End Date</p>
-                          <p className="font-semibold">{format(new Date(subscription.end_date), 'MMM d, yyyy')}</p>
+                          <dt className="text-xs text-muted-foreground">End Date</dt>
+                          <dd className="font-semibold">{endDateLabel(item)}</dd>
                         </div>
-                      </div>
+                      </dl>
                     </div>
 
-                    {/* Status & Actions */}
                     <div className="flex flex-col items-end gap-3">
-                      {getStatusBadge(subscription)}
-
-                      {/* Reinstate Button - Only show for subscriptions marked for cancellation */}
-                      {subscription.cancelAtPeriodEnd && subscription.status === 'active' && permissions.canEdit && (
+                      {renderStatusBadge(item.status)}
+                      {item.status === 'cancelling' && permissions.canEdit && (
                         <Button
                           size="sm"
                           variant="outline"
                           className="border-buy/30 text-buy-muted-foreground hover:bg-buy-muted"
-                          onClick={() => handleReinstate(subscription)}
+                          onClick={() => handleReinstate(item)}
+                          disabled={reinstating === item.id}
                         >
-                          <CheckCircle className="w-4 h-4 mr-2" />
+                          <CheckCircle className="mr-2 h-4 w-4" aria-hidden="true" />
                           Reinstate Subscription
                         </Button>
                       )}
-
-                      {subscription.cancelAtPeriodEnd && (
-                        <p className="text-xs text-hold-muted-foreground text-right">
-                          Cancels on: {format(new Date(subscription.end_date), 'MMM d, yyyy')}
-                        </p>
+                      {item.status === 'cancelling' && item.end_date && (
+                        <p className="text-right text-xs text-hold-muted-foreground">Cancels on: {formatDate(item.end_date)}</p>
                       )}
                     </div>
                   </div>
@@ -310,6 +269,18 @@ export default function SubscriptionUserManagement({ permissions }) {
               </Card>
             );
           })}
+
+          {pages > 1 && (
+            <nav className="flex items-center justify-center gap-3" aria-label="Subscription pages">
+              <Button variant="outline" size="sm" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1 || isLoading}>
+                <ChevronLeft className="h-4 w-4" aria-hidden="true" /> Previous
+              </Button>
+              <span className="text-sm text-subtle">Page {page} of {pages}</span>
+              <Button variant="outline" size="sm" onClick={() => setPage((p) => Math.min(pages, p + 1))} disabled={page >= pages || isLoading}>
+                Next <ChevronRight className="h-4 w-4" aria-hidden="true" />
+              </Button>
+            </nav>
+          )}
         </div>
       )}
     </div>

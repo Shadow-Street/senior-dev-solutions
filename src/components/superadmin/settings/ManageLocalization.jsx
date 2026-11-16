@@ -1,66 +1,34 @@
-import React from 'react';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Globe } from 'lucide-react';
+import { SectionNote } from './SettingsForm';
 
-export default function ManageLocalization({ settings, onChange }) {
-  const handleSelectChange = (key, value) => {
-    onChange({ [key]: value });
-  };
-
+/**
+ * The old options (default country, currency, language) were saved and read by
+ * nothing. They are not offered because they cannot be made true today:
+ *  - the interface is written in English only (no translation framework);
+ *  - every price and payment is in INR: Razorpay settles in INR, and showing
+ *    another currency symbol without conversion would misstate amounts;
+ *  - the market data, trading hours and regulatory content are for India.
+ */
+export default function ManageLocalization() {
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <Label htmlFor="default_country" className="font-semibold">Default Country</Label>
-        <Select
-          value={settings['default_country'] || 'IN'}
-          onValueChange={(value) => handleSelectChange('default_country', value)}
-        >
-          <SelectTrigger id="default_country">
-            <SelectValue placeholder="Select country" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="IN">India</SelectItem>
-            <SelectItem value="US">United States</SelectItem>
-            <SelectItem value="GB">United Kingdom</SelectItem>
-            <SelectItem value="SG">Singapore</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="default_currency" className="font-semibold">Default Currency</Label>
-        <Select
-          value={settings['default_currency'] || 'INR'}
-          onValueChange={(value) => handleSelectChange('default_currency', value)}
-        >
-          <SelectTrigger id="default_currency">
-            <SelectValue placeholder="Select currency" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="INR">Indian Rupee (₹)</SelectItem>
-            <SelectItem value="USD">US Dollar ($)</SelectItem>
-            <SelectItem value="GBP">British Pound (£)</SelectItem>
-            <SelectItem value="SGD">Singapore Dollar (S$)</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="default_language" className="font-semibold">Default Language</Label>
-        <Select
-          value={settings['default_language'] || 'en'}
-          onValueChange={(value) => handleSelectChange('default_language', value)}
-        >
-          <SelectTrigger id="default_language">
-            <SelectValue placeholder="Select language" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="en">English</SelectItem>
-            <SelectItem value="hi">Hindi</SelectItem>
-            <SelectItem value="es">Spanish</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+    <div className="space-y-4">
+      <SectionNote>
+        <div className="flex items-start gap-3">
+          <Globe className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+          <div className="space-y-2">
+            <p className="font-semibold">Fixed for this release: English, India, Indian Rupee (INR), Asia/Kolkata.</p>
+            <p>
+              The previous country, currency and language options were saved but nothing in the platform used them, so they
+              have been removed rather than left pretending to work.
+            </p>
+            <ul className="list-disc space-y-1 pl-5">
+              <li>The interface is available in English only; adding Hindi or other languages needs translated text first.</li>
+              <li>All prices and payments are in INR because Razorpay settles in INR; showing another currency would misstate amounts.</li>
+              <li>Market data, trading hours and regulatory content (SEBI) are for Indian markets.</li>
+            </ul>
+          </div>
+        </div>
+      </SectionNote>
     </div>
   );
 }

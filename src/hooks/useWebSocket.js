@@ -58,6 +58,14 @@ export function useWebSocket(roomId, user, options = {}) {
         console.log('WebSocket closed:', event.code, event.reason);
         setIsConnected(false);
 
+        // 4003: the account is restricted (suspended, blocked, deactivated);
+        // reconnecting would only be refused again.
+        if (event.code === 4003) {
+          setConnectionError(event.reason || 'Account restricted');
+          options.onAccountRestricted?.(event);
+          return;
+        }
+
         // Attempt reconnection if not intentionally closed
         if (event.code !== 1000 && reconnectAttemptsRef.current < maxReconnectAttempts) {
           reconnectAttemptsRef.current++;
@@ -222,6 +230,24 @@ export function useWebSocket(roomId, user, options = {}) {
       case 'read_receipt': // Frontend expected this
         // Backend: { type: 'messages_read', roomId, userId, timestamp }
         options.onReadReceipt?.({ userId: data.userId, readAt: data.timestamp });
+        break;
+
+      // Admin actions from Chat Room Management (server/ChatRoomAdminService).
+      case 'removed_from_room':
+        if (!data.roomId || data.roomId === roomId) options.onRemovedFromRoom?.(data);
+        break;
+
+      case 'room_updated':
+        if (data.room && (!data.room.id || data.room.id === roomId)) options.onRoomUpdated?.(data.room);
+        break;
+
+      case 'muted_in_room':
+      case 'unmuted_in_room':
+        if (!data.roomId || data.roomId === roomId) options.onMuteChanged?.(type === 'muted_in_room');
+        break;
+
+      case 'added_to_room':
+        options.onAddedToRoom?.(data);
         break;
 
       case 'error':

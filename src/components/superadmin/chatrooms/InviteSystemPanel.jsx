@@ -1,503 +1,220 @@
-
-import React, { useState, useEffect } from 'react';
-import { ChatRoomInvite, ChatRoom } from '@/api/entities';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  Link2,
-  Copy,
-  Plus,
-  Trash2,
-  Eye,
-  Users,
-  Calendar,
-  CheckCircle,
-  XCircle,
-  Download
-} from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Link2, Copy, Ban, Trash2, Loader2, AlertTriangle, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import chatAdminApi from './chatAdminApi';
+import { apiError, formatDateTime, inviteLink } from './chatRoomUtils';
+import ConfirmActionDialog from './ConfirmActionDialog';
+import PropTypes from 'prop-types';
 
-export default function InviteSystemPanel({ adminUser }) {
-  const [invites, setInvites] = useState([]);
-  const [chatRooms, setChatRooms] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [formData, setFormData] = useState({
-    chat_room_id: '',
-    invite_type: 'multi_use',
-    max_uses: 100,
-    expires_at: '',
-    assigned_role: 'member',
-    notes: ''
-  });
+const STATUS_BADGE = {
+  active: 'bg-buy-muted text-buy-muted-foreground',
+  revoked: 'bg-sell-muted text-sell-muted-foreground',
+  expired: 'bg-surface-2 text-subtle',
+  exhausted: 'bg-hold-muted text-hold-muted-foreground',
+};
 
-  useEffect(() => {
-    loadData();
+/**
+ * Invite links: /ChatRooms?invite=CODE. Following one (signed in) adds the
+ * person to the room with the invite's role. Revoking stops it at once.
+ * Invites do not bypass room bans, archived rooms or paid plans.
+ */
+export default function InviteSystemPanel({ rooms }) {
+  const [invites, setInvites] = useState(null);
+  const [error, setError] = useState(null);
+  const [form, setForm] = useState({ chat_room_id: '', max_uses: '25', expires_in_hours: '72', role_to_assign: 'member' });
+  const [creating, setCreating] = useState(false);
+  const [confirm, setConfirm] = useState(null); // { kind, invite }
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  const load = useCallback(async () => {
+    try {
+      setError(null);
+      setInvites(await chatAdminApi.invites());
+    } catch (e) {
+      setError(apiError(e, 'Could not load invites'));
+    }
   }, []);
+  useEffect(() => { load(); }, [load]);
 
-  const loadData = async () => {
-    setIsLoading(true);
+  const activeRooms = rooms.filter((r) => r.status !== 'archived');
+  const shown = useMemo(() => (invites || []).filter((i) => statusFilter === 'all' || i.status === statusFilter), [invites, statusFilter]);
+
+  const copy = async (code) => {
     try {
-      const [invitesData, roomsData] = await Promise.all([
-        ChatRoomInvite.list('-created_date'),
-        ChatRoom.list()
-      ]);
-
-      setInvites(invitesData);
-      setChatRooms(roomsData);
-    } catch (error) {
-      console.error('Error loading invites:', error);
-      toast.error('Failed to load invites');
-    } finally {
-      setIsLoading(false);
+      await navigator.clipboard.writeText(inviteLink(code));
+      toast.success('Invite link copied');
+    } catch {
+      toast.error('Could not copy. Select the link and copy it manually.');
     }
   };
 
-  const generateInviteCode = () => {
-    return Math.random().toString(36).substring(2, 10).toUpperCase();
-  };
-
-  const handleCreateInvite = async () => {
-    if (!formData.chat_room_id) {
-      toast.error('Please select a chat room');
-      return;
-    }
-
+  const create = async (e) => {
+    e.preventDefault();
+    if (!form.chat_room_id) { toast.error('Choose a room'); return; }
+    setCreating(true);
     try {
-      const inviteCode = generateInviteCode();
-      const inviteUrl = `${window.location.origin}/join/${inviteCode}`;
-
-      const inviteData = {
-        ...formData,
-        invite_code: inviteCode,
-        invite_url: inviteUrl,
-        created_by: adminUser?.id,
-        created_by_name: adminUser?.display_name,
-        current_uses: 0,
-        is_active: true,
-        max_uses: formData.invite_type === 'unlimited' ? null : Number(formData.max_uses)
-      };
-
-      await ChatRoomInvite.create(inviteData);
-      toast.success('Invite created successfully');
-
-      loadData();
-      setShowCreateModal(false);
-      resetForm();
-    } catch (error) {
-      console.error('Error creating invite:', error);
-      toast.error('Failed to create invite');
-    }
-  };
-
-  const handleCopyInvite = (invite) => {
-    navigator.clipboard.writeText(invite.invite_url);
-    toast.success('Invite link copied to clipboard');
-  };
-
-  const handleDelete = async (inviteId) => {
-    if (!window.confirm('Are you sure you want to delete this invite?')) {
-      return;
-    }
-
-    try {
-      await ChatRoomInvite.delete(inviteId);
-      toast.success('Invite deleted successfully');
-      loadData();
-    } catch (error) {
-      console.error('Error deleting invite:', error);
-      toast.error('Failed to delete invite');
-    }
-  };
-
-  const handleToggleActive = async (invite) => {
-    try {
-      await ChatRoomInvite.update(invite.id, {
-        is_active: !invite.is_active
+      const invite = await chatAdminApi.createInvite({
+        chat_room_id: form.chat_room_id,
+        max_uses: Number(form.max_uses),
+        expires_in_hours: Number(form.expires_in_hours),
+        role_to_assign: form.role_to_assign,
       });
-      toast.success(`Invite ${!invite.is_active ? 'activated' : 'deactivated'}`);
-      loadData();
-    } catch (error) {
-      console.error('Error toggling invite:', error);
-      toast.error('Failed to toggle invite');
+      toast.success('Invite link created');
+      await load();
+      copy(invite.code);
+    } catch (err) {
+      toast.error(apiError(err, 'Failed to create the invite'));
+    } finally {
+      setCreating(false);
     }
   };
 
-  const exportInvites = () => {
-    const csvData = invites.map(invite => {
-      const room = chatRooms.find(r => r.id === invite.chat_room_id);
-      return {
-        'Room': room?.name || 'Unknown',
-        'Invite Code': invite.invite_code,
-        'Invite URL': invite.invite_url,
-        'Type': invite.invite_type,
-        'Max Uses': invite.max_uses || 'Unlimited',
-        'Current Uses': invite.current_uses,
-        'Status': invite.is_active ? 'Active' : 'Inactive',
-        'Expires': invite.expires_at ? new Date(invite.expires_at).toLocaleDateString() : 'Never',
-        'Created By': invite.created_by_name
-      };
-    });
-
-    const headers = Object.keys(csvData[0] || {});
-    const csvString = [
-      headers.join(','),
-      ...csvData.map(row => headers.map(header => `"${row[header]}"`).join(','))
-    ].join('\n');
-
-    const blob = new Blob([csvString], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `room-invites-${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
-    toast.success('Invites exported successfully');
+  const onConfirm = async () => {
+    const { kind, invite } = confirm;
+    try {
+      if (kind === 'revoke') await chatAdminApi.revokeInvite(invite.id);
+      else await chatAdminApi.deleteInvite(invite.id);
+      toast.success(kind === 'revoke' ? 'Invite revoked' : 'Invite deleted');
+      setConfirm(null);
+      await load();
+    } catch (e) {
+      toast.error(apiError(e, 'Action failed'));
+    }
   };
 
-  const resetForm = () => {
-    setFormData({
-      chat_room_id: '',
-      invite_type: 'multi_use',
-      max_uses: 100,
-      expires_at: '',
-      assigned_role: 'member',
-      notes: ''
-    });
-  };
-
-  const activeInvites = invites.filter(i => i.is_active);
-  const expiredInvites = invites.filter(i => i.expires_at && new Date(i.expires_at) < new Date());
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-16">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-lg text-subtle font-medium">Loading Invite System...</p>
-        </div>
-      </div>
-    );
-  }
+  const count = (s) => (invites ? invites.filter((i) => i.status === s).length : '—');
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold">Invite System</h3>
-              <p className="text-sm text-subtle">Manage invite links for your chat rooms</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button variant="outline" size="sm" onClick={exportInvites}>
-                <Download className="w-4 h-4 mr-2" />
-                Export
-              </Button>
-              <Button onClick={() => setShowCreateModal(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Create Invite
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Total Invites</p>
-                <p className="text-3xl font-bold">{invites.length}</p>
-              </div>
-              <Link2 className="w-10 h-10 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-buy-soft text-buy-foreground">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Active Invites</p>
-                <p className="text-3xl font-bold">{activeInvites.length}</p>
-              </div>
-              <CheckCircle className="w-10 h-10 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Total Uses</p>
-                <p className="text-3xl font-bold">{invites.reduce((sum, i) => sum + (i.current_uses || 0), 0)}</p>
-              </div>
-              <Users className="w-10 h-10 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-hold text-hold-foreground">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Expired</p>
-                <p className="text-3xl font-bold">{expiredInvites.length}</p>
-              </div>
-              <XCircle className="w-10 h-10 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[['Active', count('active')], ['Used up', count('exhausted')], ['Expired', count('expired')], ['Revoked', count('revoked')]].map(([label, value]) => (
+          <Card key={label}><CardContent className="p-4"><p className="text-2xl font-bold">{value}</p><p className="text-sm text-subtle">{label}</p></CardContent></Card>
+        ))}
       </div>
 
-      {/* Invites List */}
       <Card>
-        <CardHeader>
-          <CardTitle>All Invites</CardTitle>
-        </CardHeader>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Plus className="w-4 h-4" aria-hidden="true" />Create an invite link</CardTitle></CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {invites.length === 0 ? (
-              <div className="text-center py-12">
-                <Link2 className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                <p className="text-subtle font-medium">No invites created yet</p>
-                <p className="text-muted-foreground text-sm mt-1">Create your first invite link</p>
-              </div>
-            ) : (
-              invites.map(invite => {
-                const room = chatRooms.find(r => r.id === invite.chat_room_id);
-                const isExpired = invite.expires_at && new Date(invite.expires_at) < new Date();
-                const usagePercent = invite.max_uses ? (invite.current_uses / invite.max_uses) * 100 : 0;
-
-                return (
-                  <div key={invite.id} className="flex items-center gap-4 p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <p className="font-medium text-foreground">{room?.name || 'Unknown Room'}</p>
-                        <Badge variant="outline" className="text-xs">
-                          {invite.invite_code}
-                        </Badge>
-                        <Badge className={`text-xs ${
-                          invite.invite_type === 'single_use' ? 'bg-premium-muted text-primary' :
-                          invite.invite_type === 'multi_use' ? 'bg-premium-muted text-protocall-premium-text' :
-                          'bg-buy-muted text-buy-muted-foreground'
-                        }`}>
-                          {invite.invite_type.replace('_', ' ')}
-                        </Badge>
-                        {invite.is_active && !isExpired ? (
-                          <Badge className="bg-buy-muted text-buy-muted-foreground text-xs">Active</Badge>
-                        ) : (
-                          <Badge className="bg-surface-2 text-foreground text-xs">
-                            {isExpired ? 'Expired' : 'Inactive'}
-                          </Badge>
-                        )}
-                        {invite.assigned_role === 'moderator' && (
-                          <Badge className="bg-premium-muted text-primary text-xs">Moderator</Badge>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-4 text-sm text-subtle">
-                        <span className="flex items-center gap-1">
-                          <Users className="w-4 h-4" />
-                          {invite.current_uses} / {invite.max_uses || '∞'} uses
-                        </span>
-                        {invite.expires_at && (
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            Expires: {new Date(invite.expires_at).toLocaleDateString()}
-                          </span>
-                        )}
-                      </div>
-
-                      {invite.max_uses && (
-                        <div className="mt-2">
-                          <div className="w-full bg-border rounded-full h-2 overflow-hidden">
-                            <div
-                              className={`h-full ${usagePercent >= 100 ? 'bg-sell' : usagePercent >= 80 ? 'bg-hold' : 'bg-buy'}`}
-                              style={{ width: `${Math.min(usagePercent, 100)}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="mt-2 flex items-center gap-2">
-                        <Input
-                          value={invite.invite_url}
-                          readOnly
-                          className="text-xs bg-white"
-                        />
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleCopyInvite(invite)}
-                        >
-                          <Copy className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleToggleActive(invite)}
-                      >
-                        {invite.is_active ? (
-                          <XCircle className="w-4 h-4 text-hold-muted-foreground" />
-                        ) : (
-                          <CheckCircle className="w-4 h-4 text-buy-muted-foreground" />
-                        )}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDelete(invite.id)}
-                        className="text-sell-muted-foreground hover:text-sell-muted-foreground"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Create Invite Modal */}
-      <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Create Invite Link</DialogTitle>
-            <DialogDescription>
-              Generate a new invite link for a chat room
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4">
+          <form onSubmit={create} className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
+            <div className="md:col-span-2">
+              <Label htmlFor="inv-room">Room</Label>
+              <Select value={form.chat_room_id} onValueChange={(v) => setForm({ ...form, chat_room_id: v })}>
+                <SelectTrigger id="inv-room" className="mt-1"><SelectValue placeholder="Choose a room" /></SelectTrigger>
+                <SelectContent>{activeRooms.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}{r.is_public === false ? ' (invite only)' : ''}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
             <div>
-              <Label>Chat Room</Label>
-              <Select value={formData.chat_room_id} onValueChange={(value) => setFormData({...formData, chat_room_id: value})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a room" />
-                </SelectTrigger>
+              <Label htmlFor="inv-uses">Max uses</Label>
+              <Input id="inv-uses" type="number" min={1} max={10000} className="mt-1" value={form.max_uses} onChange={(e) => setForm({ ...form, max_uses: e.target.value })} />
+            </div>
+            <div>
+              <Label htmlFor="inv-expiry">Expires after</Label>
+              <Select value={form.expires_in_hours} onValueChange={(v) => setForm({ ...form, expires_in_hours: v })}>
+                <SelectTrigger id="inv-expiry" className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {chatRooms.map(room => (
-                    <SelectItem key={room.id} value={room.id}>
-                      {room.name}
-                    </SelectItem>
-                  ))}
+                  {[['1', '1 hour'], ['24', '1 day'], ['72', '3 days'], ['168', '7 days'], ['720', '30 days']].map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Invite Type</Label>
-                <Select value={formData.invite_type} onValueChange={(value) => setFormData({...formData, invite_type: value})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="single_use">Single Use</SelectItem>
-                    <SelectItem value="multi_use">Multi Use</SelectItem>
-                    <SelectItem value="unlimited">Unlimited</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {formData.invite_type === 'multi_use' && (
-                <div>
-                  <Label>Max Uses</Label>
-                  <Input
-                    type="number"
-                    value={formData.max_uses}
-                    onChange={(e) => setFormData({...formData, max_uses: e.target.value})}
-                  />
-                </div>
-              )}
-
-              {formData.invite_type === 'single_use' && (
-                <div>
-                  <Label>Max Uses</Label>
-                  <Input
-                    type="number"
-                    value="1"
-                    disabled
-                  />
-                </div>
-              )}
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Expires At (Optional)</Label>
-                <Input
-                  type="datetime-local"
-                  value={formData.expires_at}
-                  onChange={(e) => setFormData({...formData, expires_at: e.target.value})}
-                />
-              </div>
-
-              <div>
-                <Label>Assigned Role</Label>
-                <Select value={formData.assigned_role} onValueChange={(value) => setFormData({...formData, assigned_role: value})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="member">Member</SelectItem>
-                    <SelectItem value="moderator">Moderator</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
             <div>
-              <Label>Notes (Optional)</Label>
-              <Textarea
-                placeholder="Internal notes about this invite..."
-                value={formData.notes}
-                onChange={(e) => setFormData({...formData, notes: e.target.value})}
-                rows={3}
-              />
+              <Label htmlFor="inv-role">Joins as</Label>
+              <Select value={form.role_to_assign} onValueChange={(v) => setForm({ ...form, role_to_assign: v })}>
+                <SelectTrigger id="inv-role" className="mt-1"><SelectValue /></SelectTrigger>
+                <SelectContent><SelectItem value="member">Member</SelectItem><SelectItem value="moderator">Moderator</SelectItem></SelectContent>
+              </Select>
             </div>
+            <div className="md:col-span-5">
+              <Button type="submit" disabled={creating || !activeRooms.length}>
+                {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" /> : <Link2 className="w-4 h-4 mr-2" aria-hidden="true" />}Create and copy link
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
 
-            <div className="flex justify-end gap-3 pt-4">
-              <Button variant="outline" onClick={() => setShowCreateModal(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleCreateInvite}>
-                Create Invite
-              </Button>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between gap-3">
+          <CardTitle className="text-base">Invite links</CardTitle>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-36" aria-label="Filter invites by status"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="exhausted">Used up</SelectItem>
+              <SelectItem value="expired">Expired</SelectItem>
+              <SelectItem value="revoked">Revoked</SelectItem>
+            </SelectContent>
+          </Select>
+        </CardHeader>
+        <CardContent>
+          {error && <p className="text-sm text-sell-muted-foreground flex items-center gap-2" role="alert"><AlertTriangle className="w-4 h-4" aria-hidden="true" />{error}<Button size="sm" variant="outline" onClick={load}>Retry</Button></p>}
+          {!invites && !error && <p className="text-sm text-subtle" role="status"><Loader2 className="w-4 h-4 inline animate-spin mr-1" aria-hidden="true" />Loading…</p>}
+          {invites && shown.length === 0 && <p className="text-sm text-subtle text-center py-8">{invites.length ? 'No invites with this status.' : 'No invite links yet.'}</p>}
+          {shown.length > 0 && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-surface-2 text-xs uppercase text-subtle">
+                  <tr>
+                    <th scope="col" className="px-4 py-2 text-left">Link</th>
+                    <th scope="col" className="px-4 py-2 text-left">Room</th>
+                    <th scope="col" className="px-4 py-2 text-left">Uses</th>
+                    <th scope="col" className="px-4 py-2 text-left">Expires</th>
+                    <th scope="col" className="px-4 py-2 text-left">Status</th>
+                    <th scope="col" className="px-4 py-2 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {shown.map((i) => (
+                    <tr key={i.id} className="border-b">
+                      <td className="px-4 py-2">
+                        <code className="text-xs break-all">{inviteLink(i.code)}</code>
+                        {i.role_to_assign === 'moderator' && <Badge variant="outline" className="ml-2 text-xs">Moderator</Badge>}
+                      </td>
+                      <td className="px-4 py-2">{i.room?.name}</td>
+                      <td className="px-4 py-2">{i.uses_count || 0} / {i.max_uses}</td>
+                      <td className="px-4 py-2 text-xs">{formatDateTime(i.expires_at)}</td>
+                      <td className="px-4 py-2"><Badge className={STATUS_BADGE[i.status]}>{i.status === 'exhausted' ? 'used up' : i.status}</Badge></td>
+                      <td className="px-4 py-2">
+                        <div className="flex justify-end gap-1">
+                          {i.status === 'active' && (
+                            <>
+                              <Button variant="ghost" size="sm" onClick={() => copy(i.code)} aria-label="Copy invite link"><Copy className="w-4 h-4" /></Button>
+                              <Button variant="ghost" size="sm" onClick={() => setConfirm({ kind: 'revoke', invite: i })} aria-label="Revoke invite"><Ban className="w-4 h-4" /></Button>
+                            </>
+                          )}
+                          <Button variant="ghost" size="sm" className="text-sell-muted-foreground" onClick={() => setConfirm({ kind: 'delete', invite: i })} aria-label="Delete invite"><Trash2 className="w-4 h-4" /></Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          )}
+        </CardContent>
+      </Card>
+
+      <ConfirmActionDialog
+        open={Boolean(confirm)}
+        onClose={() => setConfirm(null)}
+        onConfirm={onConfirm}
+        destructive
+        title={confirm?.kind === 'revoke' ? 'Revoke this invite link?' : 'Delete this invite link?'}
+        description={confirm?.kind === 'revoke'
+          ? 'The link stops working immediately. People who already joined stay in the room.'
+          : 'The link and its usage record are removed. People who already joined stay in the room.'}
+        confirmLabel={confirm?.kind === 'revoke' ? 'Revoke' : 'Delete'}
+      />
     </div>
   );
 }
+
+InviteSystemPanel.propTypes = {
+  rooms: PropTypes.array.isRequired,
+};

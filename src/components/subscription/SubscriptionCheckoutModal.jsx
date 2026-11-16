@@ -17,6 +17,9 @@ export default function SubscriptionCheckoutModal({ open, onClose, plan, cycle, 
     const [appliedCoupon, setAppliedCoupon] = useState(null);
     const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
+    // Hidden while Razorpay's checkout is open: this modal dialog traps focus,
+    // which kept Razorpay's mobile-number field from taking input.
+    const [gatewayOpen, setGatewayOpen] = useState(false);
     const [error, setError] = useState(null);
     const [notice, setNotice] = useState(null);
     const autoApplied = useRef(null);
@@ -127,6 +130,7 @@ export default function SubscriptionCheckoutModal({ open, onClose, plan, cycle, 
                 order_id: orderData.order_id,
                 handler: async function (response) {
                     paymentTaken.current = true;
+                    setGatewayOpen(false);
                     try {
                         // 3. The server checks the signature and activates the plan.
                         toast.info('Confirming your payment...');
@@ -166,6 +170,7 @@ export default function SubscriptionCheckoutModal({ open, onClose, plan, cycle, 
                     // shows even if this dialog has meanwhile been dismissed; the inline note covers the
                     // case where it is still open.
                     ondismiss: () => {
+                        setGatewayOpen(false);
                         setIsProcessing(false);
                         if (paymentTaken.current) return;
                         setNotice(CANCELLED_MESSAGE);
@@ -180,9 +185,11 @@ export default function SubscriptionCheckoutModal({ open, onClose, plan, cycle, 
                 toast.error(response?.error?.description || 'The payment failed. You have not been charged.');
                 setIsProcessing(false);
             });
+            setGatewayOpen(true);
             rzp.open();
 
         } catch (err) {
+            setGatewayOpen(false);
             console.error('Payment Error:', err);
             const message = apiErrorMessage(err, err.message || 'Payment failed. Please try again.');
             setError(message);
@@ -192,10 +199,10 @@ export default function SubscriptionCheckoutModal({ open, onClose, plan, cycle, 
     };
 
     return (
-        <Dialog open={open} onOpenChange={(next) => { if (!next && isProcessing) return; onClose(next); }}>
+        <Dialog open={open && !gatewayOpen} onOpenChange={(next) => { if (!next && isProcessing) return; onClose(next); }}>
             {/* Razorpay's popup is outside this dialog: clicking in it must not count as an outside click
                 and close the dialog (and with it the context the customer returns to). */}
-            <DialogContent className="max-w-md" onInteractOutside={(e) => { if (isProcessing) e.preventDefault(); }} onEscapeKeyDown={(e) => { if (isProcessing) e.preventDefault(); }}>
+            <DialogContent className="max-w-md" onCloseAutoFocus={(e) => { if (gatewayOpen) e.preventDefault(); }} onInteractOutside={(e) => { if (isProcessing) e.preventDefault(); }} onEscapeKeyDown={(e) => { if (isProcessing) e.preventDefault(); }}>
                 <DialogHeader>
                     <DialogTitle>Complete Subscription</DialogTitle>
                 </DialogHeader>

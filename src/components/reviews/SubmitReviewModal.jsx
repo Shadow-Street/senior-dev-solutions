@@ -129,7 +129,7 @@ export default function SubmitReviewModal({ open, onClose }) {
         <DialogHeader>
           <DialogTitle>Share Your Experience</DialogTitle>
           <DialogDescription>
-            Help others discover Protocol by sharing your honest feedback
+            Help others discover Protocall by sharing your honest feedback
           </DialogDescription>
         </DialogHeader>
 
@@ -175,7 +175,7 @@ export default function SubmitReviewModal({ open, onClose }) {
             <Textarea
               value={reviewText}
               onChange={(e) => setReviewText(e.target.value)}
-              placeholder="Share your experience with Protocol. What did you like? How has it helped you? (Minimum 20 characters)"
+              placeholder="Share your experience with Protocall. What did you like? How has it helped you? (Minimum 20 characters)"
               rows={5}
               maxLength={500}
             />

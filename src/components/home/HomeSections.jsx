@@ -1,6 +1,6 @@
+import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import {
-  Activity,
   ArrowRight,
   Flame,
   Mail,
@@ -15,7 +15,6 @@ import {
   Vote,
   X,
 } from "lucide-react";
-import heroBull from "@/assets/home/hero-green-bull.webp";
 import emblemDark from "@/assets/home/emblem-dark.webp";
 import emblemLight from "@/assets/home/emblem-light.webp";
 import footerBackdrop from "@/assets/home/footer-bg.webp";
@@ -150,133 +149,7 @@ export function renderHomeHeader({ menuOpen, onToggleMenu, onCloseMenu, onLogin,
 
 /* -------------------------------------------------------------------- hero */
 
-// The reference's illustrative candles: alternating up/down, drifting upward.
-const CANDLES = [
-  [58, 89.2, 65.2, 19.2], [60.4, 78.4, 65.2, 8.4], [52, 76, 56.8, 16.8], [49.6, 67.6, 56.8, 6],
-  [40, 65.2, 44.8, 18], [37.6, 58, 44.8, 8.4], [30.4, 55.6, 35.2, 18], [28, 47.2, 35.2, 7.2],
-  [20.8, 44.8, 25.6, 16.8], [18.4, 38.8, 25.6, 8.4], [17.2, 36.4, 22, 12], [14.8, 34, 22, 7.2],
-];
-
-function renderCandles() {
-  return (
-    <svg viewBox="0 0 320 140" className="h-28 w-full" role="img" aria-label="Illustrative candlestick chart">
-      {CANDLES.map(([y1, y2, y, h], i) => {
-        const up = i % 2 === 0;
-        const x = 22 + i * 25;
-        return (
-          <g key={x}>
-            <line x1={x} x2={x} y1={y1} y2={y2} className={up ? "stroke-home-neon" : "stroke-home-bear"} strokeWidth="1.5" />
-            <rect x={x - 6} y={y} width="12" height={h} rx="1.5" className={up ? "fill-home-neon" : "fill-home-bear"} />
-          </g>
-        );
-      })}
-    </svg>
-  );
-}
-
-export function renderHomeHero(data, onGetStarted) {
-  return (
-    <section className="relative w-full overflow-hidden bg-home-night text-white">
-      <img
-        src={heroBull}
-        alt="Stylised green bull charging through rising candlestick charts on a deep purple gradient"
-        className="absolute inset-0 h-full w-full object-cover object-center opacity-60 sm:opacity-80 lg:object-right lg:opacity-100"
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-home-night/95 via-home-night/90 to-home-night/85 lg:bg-gradient-to-r lg:from-home-night lg:via-home-night/85 lg:to-home-night/15" />
-      <div className="absolute inset-0 bg-gradient-to-t from-home-night/80 via-transparent to-transparent lg:from-home-night/60" />
-      <div className="pointer-events-none absolute -left-24 -top-40 h-96 w-96 rounded-full bg-home-brand opacity-40 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 right-0 h-80 w-80 rounded-full bg-home-royal opacity-30 blur-3xl" />
-
-      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-5 pb-16 pt-9 sm:gap-12 sm:px-8 sm:pt-14 lg:grid-cols-2 lg:gap-10 lg:pb-24 lg:pt-24">
-        <div>
-          <span className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[11px] font-semibold tracking-wide text-white sm:mt-6 sm:px-3.5 sm:text-xs">
-            <Sparkles className="h-3.5 w-3.5 shrink-0 text-home-neon" aria-hidden="true" />
-            A community for Indian retail investors
-          </span>
-          <h1 className="mt-5 font-display text-[1.75rem] font-extrabold leading-[1.15] tracking-tight sm:mt-6 sm:text-5xl sm:leading-[1.05] lg:text-6xl">
-            Invest Smarter.
-            <br />
-            Discuss Better.
-            <br />
-            <span className="text-home-neon">Grow Together.</span>
-          </h1>
-          <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/75 sm:mt-6 sm:text-base lg:text-lg">
-            Join a community of retail investors to discuss stocks, share market perspectives, participate in community
-            sentiment polls, and discover new opportunities.
-          </p>
-          <div className="mt-7 flex flex-col gap-3 sm:mt-9 sm:flex-row">
-            <button
-              type="button"
-              onClick={onGetStarted}
-              className={`inline-flex w-full items-center justify-center gap-2 rounded-xl bg-home-brand px-6 py-3 text-sm font-bold text-white shadow-lg transition-colors hover:bg-home-brand/90 ${FOCUS_ON_NIGHT} sm:w-auto sm:px-7 sm:py-3.5`}
-            >
-              Join the Community
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </button>
-            <a
-              href="#features"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/20 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-home-night sm:w-auto sm:px-7 sm:py-3.5"
-            >
-              Explore Features
-            </a>
-          </div>
-          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-white/70 sm:mt-10 sm:gap-x-8 sm:gap-y-3 sm:text-sm">
-            <div className="flex items-baseline gap-1.5">
-              <span className="font-display text-lg font-extrabold text-white">{fmtCount(data.roomCount, data.loading)}</span>
-              <span>chat rooms</span>
-            </div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="font-display text-lg font-extrabold text-white">{fmtCount(data.pollCount, data.loading)}</span>
-              <span>active polls</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="mx-auto w-full max-w-sm sm:max-w-lg lg:justify-self-end">
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-2xl backdrop-blur-sm sm:p-5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-home-neon" />
-                <span className="text-xs font-semibold uppercase tracking-wider text-white">Market overview</span>
-              </div>
-              <Activity className="h-4 w-4 text-home-neon" aria-hidden="true" />
-            </div>
-            <div className="mt-4 rounded-2xl bg-home-night p-4">
-              {renderCandles()}
-              <div className="mt-2 flex items-center justify-between text-[11px] font-semibold text-white/50">
-                <span>Illustrative chart</span>
-                <span>Community sentiment preview</span>
-              </div>
-            </div>
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              {[
-                ["BUY", "border-home-neon/50 bg-home-neon/15 text-home-neon"],
-                ["HOLD", "border-home-hold/50 bg-home-hold/15 text-home-hold"],
-                ["SELL", "border-home-bear/50 bg-home-bear/15 text-home-bear"],
-              ].map(([label, tone]) => (
-                <div key={label} className={`rounded-xl border py-2 text-center text-[11px] font-bold uppercase tracking-wide ${tone}`}>
-                  {label}
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              {[
-                [MessagesSquare, data.roomCount, "Chat rooms"],
-                [Vote, data.pollCount, "Open polls"],
-              ].map(([Icon, value, label]) => (
-                <div key={label} className="rounded-xl border border-white/10 px-2 py-2.5 text-center">
-                  <Icon className="mx-auto h-4 w-4 text-white/60" aria-hidden="true" />
-                  <div className="mt-1 font-display text-base font-extrabold text-white">{fmtCount(value, data.loading)}</div>
-                  <div className="text-[11px] text-white/50">{label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+// The hero is the scroll story in HeroStory.jsx (animated chart, three steps).
 
 /* ------------------------------------------------------------------- stats */
 
@@ -494,8 +367,9 @@ export function renderHomeReviews(data) {
             review carousel). One row holds three cards, so the run is laid out
             twice to stay wider than the container and loop without a gap. */}
         <div className="mt-12 space-y-3">
-          {[HOME_REVIEWS.slice(0, 3), HOME_REVIEWS.slice(3)].map((row, i) =>
-            renderMarqueeRow({
+          {[HOME_REVIEWS.slice(0, 3), HOME_REVIEWS.slice(3)].map((row, i) => (
+            <Fragment key={i === 0 ? "row-one" : "row-two"}>
+            {renderMarqueeRow({
               items: row,
               renderItem: renderReviewCard,
               keyOf: (r) => r.name,
@@ -503,8 +377,9 @@ export function renderHomeReviews(data) {
               label: `Member reviews, row ${i === 0 ? "one" : "two"}`,
               copies: 2,
               durationSeconds: 110,
-            })
-          )}
+            })}
+            </Fragment>
+          ))}
         </div>
       </div>
     </section>

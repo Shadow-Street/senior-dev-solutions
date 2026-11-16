@@ -41,7 +41,37 @@ router.use('/commissions', commissionRouter);
 
 // Refund Requests
 const refundRouter = express.Router();
-const refundController = createCrudController(db.RefundRequest, { ownership: 'user_id' });
+// Customers may file and read their own requests, but the outcome is the
+// admin's (SEC-9): status, amounts, gateway ids and processing fields are
+// staff-only, so a customer cannot mark their own request approved/completed
+// or inflate its amount (the Financials refund screens and stats read them).
+// Sub-admins are not refund staff. Refunds themselves are processed through
+// /api/financials (RefundAdminService), never through this CRUD.
+const REFUND_STAFF_FIELDS = [
+  'status', 'refund_amount', 'amount', 'razorpay_refund_id', 'admin_notes',
+  'processed_at', 'processed_by', 'payment_id',
+];
+const refundController = createCrudController(db.RefundRequest, {
+  ownership: { field: 'user_id', adminRoles: ['admin', 'super_admin'] },
+  protectedFields: REFUND_STAFF_FIELDS,
+});
+const isRefundStaff = (req) => ['admin', 'super_admin'].includes(req.user?.app_role || req.user?.role);
+// A customer may change or withdraw a request only while it is still pending.
+const onlyWhilePending = async (req, res, next) => {
+  if (isRefundStaff(req) || req.params.id === 'bulk') return next();
+  try {
+    const row = await db.RefundRequest.findOne({ where: { id: req.params.id, user_id: req.user.id } });
+    if (row && row.status && row.status !== 'pending') {
+      return res.status(409).json({ error: 'This refund request is already being handled and can no longer be changed.' });
+    }
+    return next();
+  } catch (error) {
+    console.error('[event.routes.js] refund guard failed:', error.message);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+refundRouter.put('/:id', authMiddleware, onlyWhilePending);
+refundRouter.delete('/:id', authMiddleware, onlyWhilePending);
 // Ownership-scoped: the controller confines rows to the caller, which requires
 // req.user to be populated — without authMiddleware the token is never decoded
 // and every request fails closed with 401, even for a super admin.

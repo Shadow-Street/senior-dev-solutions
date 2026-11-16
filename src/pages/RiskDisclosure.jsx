@@ -5,8 +5,9 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { AlertTriangle, Shield, FileText, Home, TrendingDown, AlertCircle } from 'lucide-react';
 import PageFooter from '../components/footer/PageFooter';
+import ManagedStaticPage from '@/components/common/ManagedStaticPage';
 
-export default function RiskDisclosure() {
+function BuiltInRiskDisclosure() {
   return (
     <div className="min-h-screen bg-surface-2">
       {/* Header */}
@@ -944,4 +945,10 @@ export default function RiskDisclosure() {
       <PageFooter />
     </div>
   );
+}
+
+// Admin-published text (Platform Settings > Static Pages) replaces the
+// built-in page above; without it the built-in page is shown.
+export default function RiskDisclosure() {
+  return <ManagedStaticPage slug="risk-disclosure" fallback={BuiltInRiskDisclosure} />;
 }

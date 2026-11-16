@@ -12,7 +12,6 @@ import {
   ChatRoom,
   Event,
   Referral,
-  ModerationLog,
   CommissionTracking
 } from '@/api/entities';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,6 +33,7 @@ import {
   Shield
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line, Area, AreaChart } from 'recharts';
+import { moderationApi } from '@/lib/moderationApi';
 
 // Global cache for dashboard data
 const dashboardCache = {
@@ -169,8 +169,11 @@ export default function DashboardHome({ setActiveTab }) {
 
       await delay(800);
 
-      // Batch 7: Moderation logs
-      const moderationLogs = await ModerationLog.filter({ admin_reviewed: false }).catch(() => []);
+      // Batch 7: open content reports (Content Moderation queue). The old
+      // moderation_logs table is no longer where reports land.
+      const openReports = await moderationApi.list({ limit: 1 })
+        .then((d) => Number(d?.counts?.pending || 0) + Number(d?.counts?.escalated || 0))
+        .catch(() => 0);
       if (!isMounted.current) return;
 
       await delay(800);
@@ -314,14 +317,14 @@ export default function DashboardHome({ setActiveTab }) {
         // Updated events count to include 'approved' status as per outline
         events: eventsData.filter(e => e.status === 'scheduled' || e.status === 'approved').length,
         referrals: referrals.filter(r => r.signup_completed).length,
-        moderationFlags: moderationLogs.length,
+        moderationFlags: openReports,
         totalPledgeValue: 0, // Would be calculated from Pledge entity
         activePledgesCount: 0, // Would be calculated from Pledge entity
         avgTrustScore: Math.round(avgTrustScore),
         suspendedUsers,
         topAdvisors,
         topFinfluencers,
-        platformHealth: moderationLogs.length > 10 ? 'Needs Attention' : moderationLogs.length > 5 ? 'Good' : 'Excellent'
+        platformHealth: openReports > 10 ? 'Needs Attention' : openReports > 5 ? 'Good' : 'Excellent'
       };
 
       // Enhanced Chart Data

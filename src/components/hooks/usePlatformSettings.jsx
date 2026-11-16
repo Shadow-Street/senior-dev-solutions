@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { PlatformSetting, User } from '@/lib/apiClient';
+import { PlatformSetting } from '@/lib/apiClient';
+import { loadPublicConfig } from '@/lib/platformSettingsApi';
 
 const defaultSettings = {
   commissionRate: 25,
@@ -31,6 +32,16 @@ const defaultSettings = {
 let settingsCache = null;
 let cacheTimestamp = null;
 const CACHE_DURATION = 300000; // 5 minutes
+
+/**
+ * Drops the cache so the next mount reads fresh values. Called by Platform
+ * Settings after a save, so the footer and contact pages show the change in
+ * this tab without waiting five minutes.
+ */
+export const invalidatePlatformSettingsCache = () => {
+  settingsCache = null;
+  cacheTimestamp = null;
+};
 
 export const usePlatformSettings = () => {
   const [settings, setSettings] = useState(defaultSettings);
@@ -88,14 +99,20 @@ export const usePlatformSettings = () => {
           fetchedSettings = [];
         }
         
+        // Managed settings (site identity, support contact, ...) come typed and
+        // validated from the public config, which is authoritative for those
+        // keys and is not capped by the list's page size.
+        const publicConfig = await loadPublicConfig().catch(() => ({}));
+
         if (!isMounted || abortController.signal.aborted) return;
         
         if (fetchedSettings.length === 0) {
           if (isMounted && !abortController.signal.aborted) {
+            const merged = { ...defaultSettings, ...publicConfig };
             setUsingDefaults(true);
-            setSettings(defaultSettings);
+            setSettings(merged);
             // Cache defaults too
-            settingsCache = defaultSettings;
+            settingsCache = merged;
             cacheTimestamp = Date.now();
           }
         } else {
@@ -112,7 +129,7 @@ export const usePlatformSettings = () => {
             return acc;
           }, {});
 
-          const mergedSettings = { ...defaultSettings, ...settingsMap };
+          const mergedSettings = { ...defaultSettings, ...settingsMap, ...publicConfig };
           
           if (isMounted && !abortController.signal.aborted) {
             setSettings(mergedSettings);

@@ -92,6 +92,38 @@
 
 **Verified good:** OTP and reset tokens use CSPRNG, SHA-256 at rest, TTL, attempt limits and constant-time compare. Refresh tokens are hashed and rotated with reuse detection. No raw SQL, `literal()` or SSRF sinks were found. The upload allow-list and private-file ownership checks hold. Helmet and auth rate limiting are present.
 
+## Admin panel review (2026-11-09, PPT "Protocall Errors and priorities")
+
+Two security-auditor passes plus two code-review passes over the slide 1, 7-12 work. Fixed, each with regression tests:
+
+| Finding | Area | Fix |
+|---|---|---|
+| H: `PUT /api/users/:id` let an admin write `status`, `google_id`, `email_verified`, `is_premium` on another account (Google `sub` swap = account takeover) | users | Non-self admin edits go through AdminUserService (editDetails/setRole, mayManage, audit); privileged fields refused |
+| H: `sub_admin` implicit full staff (CRUD ownership/protected fields, private KYC files, invoices, rooms, polls, settings) | access | Removed from implicit staff sets; permission catalogue trimmed to enforced `users.*` keys |
+| H: ReDoS in chat link filter (O(n²) on 10k-char messages, blocks event loop) | chat | Token-wise anchored bounded pattern; < 50 ms test |
+| M: author could restore a moderator-removed message / edit while banned, muted, locked | chat | Edit refused when removed; posting checks + rules on edit |
+| M: advisor could republish a moderator-removed post | moderation | 'archived' acts as a moderation lock; owner edits 403 |
+| M: generic poll PUT/DELETE bypassed Poll Management (re-label options after votes, self-boost to 2099, reopen) | polls | Owner allow-list, options frozen once voted, admin edits audited, transactional delete |
+| M: room `settings` (ban lists, reasons, admin ids) served to anonymous callers | chat | memberRoomView strips settings for non-staff (REST + WS) |
+| M: HTML injection in emails (OTP, reset, invoice, autopay, cancellation) | email | Every interpolation escaped |
+| M: legacy admin status route could ban beyond `users.status` and revive deleted accounts | users | Ban admin-only; tombstones refused (410) |
+| M: deleted users kept PII (extra columns, codes, token IPs, public expert profiles) | users | Transactional anonymisation incl. expert profiles; ids not emails in audit text |
+| M: audit logs readable/writable by any user, editable by admins | audit | Staff-only, append-only, server-attributed (SEC-28) |
+| M: customers could set status/amount on their own refund requests | refunds | Outcome fields staff-only; edits only while pending (SEC-9) |
+| L: suspension lift race; sockets outliving sanctions; Google linking a blocked account; trust-score logs writable; invite races; moderator invites; automation double-run; IPv6 limiter keying | various | Fixed (see TRACKER SEC-21, SEC-47, BE-22..27) |
+
+Secrets: `backend/.env.example` (tracked) held real-looking values for `MARKETAUX_API_KEY`, `MARKET_DATA_KEY`, `BANK_DATA_KEY` (the last two equal). Blanked 2026-11-09; the Marketaux key must be rotated, and the two encryption keys must be distinct (changing `BANK_DATA_KEY` needs a re-encryption step).
+
+## Second deck review (2026-11-11, PPT "Protocall Errors and priorities (1)", slides 13–19)
+
+security-auditor verdict: approve with follow-ups. No Critical/High.
+
+- **M-1 (fixed)** — private files are now streamed through `GET /files/view` instead of a 302 to S3 (the redirect broke the admin's SEBI viewer via CORS). The first version used `Body.pipe(res)`, which does not destroy the S3 body when the client aborts, so repeated aborted downloads of one's own 10 MB private upload could exhaust the S3 client's socket pool for the whole API. Fixed with `stream/promises.pipeline` (`StorageService.sendBody`) plus S3 `connectionTimeout` 5 s / `requestTimeout` 30 s; regression test in `backend/test/private-file-view.test.js`.
+- **L-1 (fixed)** — document headers were set before the read, so a failed read returned JSON labelled `application/pdf`. Headers are now set only after the object is in hand.
+- **L-2 (partly fixed)** — advisor recommendation limits: (b) a stock call filed as analysis/update (symbol + target or stop loss) now counts; (a) re-pricing plans after publishing changes which plans an existing post reaches without charging them — accepted (the advisor sets their own limits); (c) limits fail open for up to 30 s if the new tables are unavailable — by design.
+- Reviewed OK: `canReadKey`, inline types limited to PDF/raster images with `nosniff` and `attachment` otherwise, byte-sniffed blob types in the viewer, key-only requests from the browser; email links from configuration only and escaped; payment trust model unchanged; `/platform/community-stats` aggregate-only; locked advisor posts no longer send titles and `?preview=member` only lowers access.
+- Product note from the auditor: the dashboard "Traders Joined" figure is a floor (default 670) rather than the real count while members are fewer; on an investment platform that could be read as misleading.
+
 ## Route authorization table (non-compliant routes at audit time)
 
 | File | Method + path | Auth? | Role? | Concern | Status |

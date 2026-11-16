@@ -35,6 +35,11 @@ export default function UniversalPaymentModal({
 }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
+  // While Razorpay's checkout is on screen our dialog must be gone: a modal
+  // Radix dialog traps focus and blocks pointer events outside itself, and
+  // Razorpay's iframe is outside it, so its mobile-number field could not be
+  // typed into (only the prefilled email worked).
+  const [gatewayOpen, setGatewayOpen] = useState(false);
   const paymentTaken = useRef(false);
 
   const canPay = Boolean(planId);
@@ -69,6 +74,7 @@ export default function UniversalPaymentModal({
         order_id: orderData.order_id,
         handler: async (response) => {
           paymentTaken.current = true;
+          setGatewayOpen(false);
           try {
             // 3. The server verifies the signature, then activates the subscription.
             toast.info('Confirming your payment...');
@@ -102,6 +108,7 @@ export default function UniversalPaymentModal({
         theme: { color: '#6D28D9' },
         modal: {
           ondismiss: () => {
+            setGatewayOpen(false);
             setIsProcessing(false);
             if (paymentTaken.current) return;
             setError('Payment cancelled. You have not been charged.');
@@ -112,8 +119,10 @@ export default function UniversalPaymentModal({
       rzp.on('payment.failed', (response) => {
         fail(response?.error?.description || 'The payment failed. You have not been charged.', response?.error);
       });
+      setGatewayOpen(true);
       rzp.open();
     } catch (err) {
+      setGatewayOpen(false);
       console.error('Payment initialization error:', err);
       fail(apiErrorMessage(err, err.message || 'Failed to start the payment. Please try again.'), err);
     }
@@ -124,8 +133,8 @@ export default function UniversalPaymentModal({
   const discount = Number(metadata.discount_amount) || 0;
 
   return (
-    <Dialog open={open} onOpenChange={(next) => { if (!next && isProcessing) return; onClose(next); }}>
-      <DialogContent className="max-w-md" onInteractOutside={(e) => { if (isProcessing) e.preventDefault(); }} onEscapeKeyDown={(e) => { if (isProcessing) e.preventDefault(); }}>
+    <Dialog open={open && !gatewayOpen} onOpenChange={(next) => { if (!next && isProcessing) return; onClose(next); }}>
+      <DialogContent className="max-w-md" onCloseAutoFocus={(e) => { if (gatewayOpen) e.preventDefault(); }} onInteractOutside={(e) => { if (isProcessing) e.preventDefault(); }} onEscapeKeyDown={(e) => { if (isProcessing) e.preventDefault(); }}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <CheckCircle className="w-5 h-5 text-buy-muted-foreground" />

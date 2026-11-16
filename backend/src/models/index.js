@@ -39,6 +39,12 @@ db.PledgeAccessRequest = require("./PledgeAccessRequest")(sequelize);
 db.FundTransaction = require("./FundTransaction")(sequelize);
 db.FeatureConfig = require("./FeatureConfig")(sequelize);
 db.ProviderCredential = require("./ProviderCredential")(sequelize);
+db.UserSanction = require("./UserSanction")(sequelize);
+db.ContentReport = require("./ContentReport")(sequelize); // migration 019
+db.ModerationAction = require("./ModerationAction")(sequelize); // migration 019
+db.PaymentAttempt = require("./PaymentAttempt")(sequelize); // migration 021
+db.AdvisorPlanLimit = require("./AdvisorPlanLimit")(sequelize); // migration 025
+db.AdvisorPostUsage = require("./AdvisorPostUsage")(sequelize); // migration 025
 
 // ============ ASSOCIATIONS ============
 

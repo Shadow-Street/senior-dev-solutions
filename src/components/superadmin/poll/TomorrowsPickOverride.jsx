@@ -1,194 +1,120 @@
-import React, { useState, useEffect } from 'react';
-import { PlatformSetting, AdvisorRecommendation } from '@/api/entities';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Sparkles, Target, RotateCcw, Save, TrendingUp } from 'lucide-react';
 import { toast } from 'sonner';
+import { pollAdminApi, errorMessage } from './pollAdminApi';
+import { usePollAdminResource } from './usePollAdminResource';
 
-export default function TomorrowsPickOverride({ user }) {
-  const [isOverrideActive, setIsOverrideActive] = useState(false);
-  const [overrideData, setOverrideData] = useState({
-    title: '',
-    stock_symbol: '',
-    reasoning: '',
-    target_price: '',
-    recommendation_type: 'buy',
-    confidence: 'High'
-  });
-  const [isLoading, setIsLoading] = useState(true);
+const EMPTY = { title: '', stock_symbol: '', reasoning: '', target_price: '', recommendation_type: 'buy', confidence: 'High' };
+
+/**
+ * Tomorrow's Pick override, read by the chat sidebar (components/chat/TomorrowsPick.jsx)
+ * from the `tomorrows_pick_override` platform setting. Saved through the
+ * validated, audit-logged admin endpoint.
+ */
+export default function TomorrowsPickOverride({ canManage }) {
+  const res = usePollAdminResource(() => pollAdminApi.getTomorrowsPick(), 'tomorrows-pick');
+  const [active, setActive] = useState(false);
+  const [form, setForm] = useState(EMPTY);
+  const [saved, setSaved] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState('');
 
+  // Fill the form once from the server; later refetches never overwrite edits.
   useEffect(() => {
-    loadOverrideSettings();
-  }, []);
-
-  const loadOverrideSettings = async () => {
-    try {
-      const settings = await PlatformSetting.filter({
-        key: 'tomorrows_pick_override'
-      });
-
-      if (settings.length > 0) {
-        const data = JSON.parse(settings[0].value);
-        setIsOverrideActive(data.active || false);
-        if (data.active) {
-          setOverrideData({
-            title: data.title || '',
-            stock_symbol: data.stock_symbol || '',
-            reasoning: data.reasoning || '',
-            target_price: data.target_price || '',
-            recommendation_type: data.recommendation_type || 'buy',
-            confidence: data.confidence || 'High'
-          });
-        }
+    if (res.data && saved === null) {
+      setSaved(res.data);
+      setActive(Boolean(res.data.active));
+      if (res.data.active) {
+        setForm({
+          ...EMPTY,
+          ...Object.fromEntries(Object.keys(EMPTY).map((k) => [k, res.data[k] ?? EMPTY[k]])),
+          target_price: res.data.target_price === undefined || res.data.target_price === null ? '' : String(res.data.target_price),
+        });
       }
-    } catch (error) {
-      console.error("Error loading override settings:", error);
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [res.data, saved]);
 
-  const handleSave = async () => {
-    if (isOverrideActive && (!overrideData.stock_symbol || !overrideData.reasoning)) {
-      toast.error("Stock symbol and reasoning are required for override.");
+  const save = async (nextActive) => {
+    setError('');
+    if (nextActive && (!form.stock_symbol.trim() || form.reasoning.trim().length < 10)) {
+      setError('A stock symbol and at least 10 characters of reasoning are required.');
       return;
     }
-
     setIsSaving(true);
     try {
-      const settingValue = {
-        active: isOverrideActive,
-        ...overrideData,
-        updated_by: user.display_name,
-        updated_at: new Date().toISOString()
-      };
-
-      // Check if setting exists
-      const existingSettings = await PlatformSetting.filter({
-        key: 'tomorrows_pick_override'
-      });
-
-      if (existingSettings.length > 0) {
-        await PlatformSetting.update(existingSettings[0].id, {
-          value: JSON.stringify(settingValue)
-        });
-      } else {
-        await PlatformSetting.create({
-          key: 'tomorrows_pick_override',
-          value: JSON.stringify(settingValue),
-          description: "Override setting for Tomorrow's Pick feature"
-        });
-      }
-
-      toast.success(isOverrideActive ?
-        "Tomorrow's Pick override activated!" :
-        "Override disabled, auto-selection restored."
-      );
-    } catch (error) {
-      console.error("Error saving override:", error);
-      toast.error("Failed to save override settings.");
+      const body = nextActive ? { active: true, ...form, stock_symbol: form.stock_symbol.trim().toUpperCase() } : { active: false };
+      const stored = await pollAdminApi.saveTomorrowsPick(body);
+      setSaved(stored);
+      setActive(Boolean(stored.active));
+      if (!stored.active) setForm(EMPTY);
+      toast.success(stored.active ? "Tomorrow's Pick override is live" : 'Automatic selection restored');
+    } catch (err) {
+      setError(errorMessage(err, 'Could not save the override.'));
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleResetToAuto = async () => {
-    setIsOverrideActive(false);
-    setOverrideData({
-      title: '',
-      stock_symbol: '',
-      reasoning: '',
-      target_price: '',
-      recommendation_type: 'buy',
-      confidence: 'High'
-    });
-    await handleSave();
-  };
-
-  if (isLoading) {
+  if (res.isLoading) {
+    return <div className="h-64 rounded-xl bg-surface-2 animate-pulse" aria-busy="true" aria-label="Loading Tomorrow's Pick" />;
+  }
+  if (res.error && !res.data) {
     return (
-      <Card className="animate-pulse">
-        <CardHeader>
-          <div className="h-6 bg-border rounded w-3/4"></div>
-        </CardHeader>
-        <CardContent>
-          <div className="h-32 bg-border rounded"></div>
-        </CardContent>
-      </Card>
+      <div role="alert" className="rounded-xl border border-sell/30 bg-sell-muted p-6 text-center space-y-3">
+        <p className="text-sm text-sell-muted-foreground">{errorMessage(res.error, "Could not load Tomorrow's Pick.")}</p>
+        <Button variant="outline" size="sm" onClick={res.reload}>Try again</Button>
+      </div>
     );
   }
 
+  const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e?.target ? e.target.value : e }));
+
   return (
-    <Card className="shadow-lg border-0 bg-white">
-      <CardHeader className="border-b bg-gradient-to-r from-surface-2 to-hold-muted">
-        <CardTitle className="flex items-center gap-2 text-foreground">
-          <Target className="w-5 h-5 text-hold-muted-foreground" />
-          Tomorrow's Pick Override
-          {isOverrideActive && <Badge className="bg-primary text-white">ACTIVE</Badge>}
+    <Card className="shadow-sm">
+      <CardHeader className="border-b border-border">
+        <CardTitle className="flex items-center gap-2 text-base">
+          <Target className="w-5 h-5 text-primary" aria-hidden="true" />
+          Tomorrow&apos;s Pick Override
+          {saved?.active && <Badge className="bg-primary text-primary-foreground">LIVE: {saved.stock_symbol}</Badge>}
         </CardTitle>
-        <p className="text-sm text-subtle">Manually control what appears as "Tomorrow's Pick" in chat sidebars</p>
+        <p className="text-sm text-subtle">Choose what members see as &ldquo;Tomorrow&apos;s Pick&rdquo; in chat rooms. Off means it is picked automatically.</p>
       </CardHeader>
 
       <CardContent className="p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h4 className="font-semibold text-foreground">Override Mode</h4>
-            <p className="text-sm text-subtle">Enable to manually select tomorrow's pick</p>
+            <Label htmlFor="pick-override" className="font-semibold text-foreground">Manual override</Label>
+            <p className="text-sm text-subtle">Turn on to set the pick yourself, then save.</p>
           </div>
-          <Switch
-            checked={isOverrideActive}
-            onCheckedChange={setIsOverrideActive}
-          />
+          <Switch id="pick-override" checked={active} onCheckedChange={setActive} disabled={!canManage} />
         </div>
 
-        {isOverrideActive && (
-          <div className="space-y-4 p-4 bg-hold-muted rounded-lg border-2 border-hold/30">
-            <div className="flex items-center gap-2 text-hold-muted-foreground mb-4">
-              <Sparkles className="w-4 h-4" />
-              <span className="font-semibold text-sm">Override Configuration</span>
+        {active && (
+          <div className="space-y-4 p-4 rounded-lg border border-primary/30 bg-primary/5">
+            <div className="flex items-center gap-2 text-primary text-sm font-semibold">
+              <Sparkles className="w-4 h-4" aria-hidden="true" />Override details
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-subtle mb-2">
-                  Stock Symbol *
-                </label>
-                <Input
-                  placeholder="e.g., RELIANCE"
-                  value={overrideData.stock_symbol}
-                  onChange={(e) => setOverrideData({ ...overrideData, stock_symbol: e.target.value.toUpperCase() })}
-                />
+              <div className="space-y-2">
+                <Label htmlFor="pick-symbol">Stock symbol *</Label>
+                <Input id="pick-symbol" className="uppercase" placeholder="e.g. RELIANCE" value={form.stock_symbol} onChange={set('stock_symbol')} />
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-subtle mb-2">
-                  Target Price
-                </label>
-                <Input
-                  type="number"
-                  placeholder="e.g., 2500"
-                  value={overrideData.target_price}
-                  onChange={(e) => setOverrideData({ ...overrideData, target_price: e.target.value })}
-                />
+              <div className="space-y-2">
+                <Label htmlFor="pick-target">Target price (₹)</Label>
+                <Input id="pick-target" type="number" min="0" placeholder="e.g. 2500" value={form.target_price} onChange={set('target_price')} />
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-subtle mb-2">
-                  Recommendation Type
-                </label>
-                <Select
-                  value={overrideData.recommendation_type}
-                  onValueChange={(value) => setOverrideData({ ...overrideData, recommendation_type: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
+              <div className="space-y-2">
+                <Label htmlFor="pick-type">Recommendation</Label>
+                <Select value={form.recommendation_type} onValueChange={set('recommendation_type')}>
+                  <SelectTrigger id="pick-type"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="buy">Buy</SelectItem>
                     <SelectItem value="sell">Sell</SelectItem>
@@ -197,80 +123,52 @@ export default function TomorrowsPickOverride({ user }) {
                   </SelectContent>
                 </Select>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-subtle mb-2">
-                  Confidence Level
-                </label>
-                <Select
-                  value={overrideData.confidence}
-                  onValueChange={(value) => setOverrideData({ ...overrideData, confidence: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
+              <div className="space-y-2">
+                <Label htmlFor="pick-confidence">Confidence</Label>
+                <Select value={form.confidence} onValueChange={set('confidence')}>
+                  <SelectTrigger id="pick-confidence"><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="High">High Confidence</SelectItem>
-                    <SelectItem value="Medium">Medium Confidence</SelectItem>
-                    <SelectItem value="Low">Low Confidence</SelectItem>
+                    <SelectItem value="High">High</SelectItem>
+                    <SelectItem value="Medium">Medium</SelectItem>
+                    <SelectItem value="Low">Low</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-subtle mb-2">
-                Analysis & Reasoning *
-              </label>
-              <Textarea
-                placeholder="Explain why this stock is tomorrow's pick..."
-                value={overrideData.reasoning}
-                onChange={(e) => setOverrideData({ ...overrideData, reasoning: e.target.value })}
-                rows={4}
-              />
+            <div className="space-y-2">
+              <Label htmlFor="pick-title">Headline</Label>
+              <Input id="pick-title" placeholder="Defaults to Tomorrow's Pick: SYMBOL" value={form.title} onChange={set('title')} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="pick-reasoning">Analysis & reasoning *</Label>
+              <Textarea id="pick-reasoning" rows={4} maxLength={1000} placeholder="Why is this tomorrow's pick?" value={form.reasoning} onChange={set('reasoning')} />
             </div>
           </div>
         )}
 
-        <div className="flex justify-between">
-          <Button
-            variant="outline"
-            onClick={handleResetToAuto}
-            className="flex items-center gap-2"
-          >
-            <RotateCcw className="w-4 h-4" />
-            Reset to Auto
-          </Button>
+        {error && <p role="alert" className="text-sm text-sell-muted-foreground">{error}</p>}
 
-          <Button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="bg-hold hover:from-hold hover:to-hold flex items-center gap-2"
-          >
-            {isSaving ? (
-              <>
-                <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4" />
-                Save Override
-              </>
-            )}
-          </Button>
-        </div>
-
-        {!isOverrideActive && (
-          <div className="p-4 bg-premium-muted rounded-lg border border-protocall-premium-light">
-            <div className="flex items-center gap-2 text-primary mb-2">
-              <TrendingUp className="w-4 h-4" />
-              <span className="font-semibold text-sm">Auto Mode Active</span>
-            </div>
-            <p className="text-xs text-primary">
-              System automatically selects the most recommended stock by advisors or highest voted by community.
-            </p>
+        {canManage && (
+          <div className="flex flex-wrap justify-between gap-3">
+            <Button variant="outline" onClick={() => save(false)} disabled={isSaving || (!saved?.active && !active)}>
+              <RotateCcw className="w-4 h-4 mr-2" aria-hidden="true" />Reset to automatic
+            </Button>
+            <Button onClick={() => save(active)} disabled={isSaving}>
+              <Save className="w-4 h-4 mr-2" aria-hidden="true" />{isSaving ? 'Saving...' : 'Save'}
+            </Button>
           </div>
+        )}
+
+        {!active && (
+          <div className="p-4 rounded-lg bg-surface-2 border border-border">
+            <div className="flex items-center gap-2 text-primary mb-1 text-sm font-semibold">
+              <TrendingUp className="w-4 h-4" aria-hidden="true" />Automatic mode
+            </div>
+            <p className="text-xs text-subtle">The chat sidebar shows the latest advisor recommendation.</p>
+          </div>
+        )}
+        {saved?.updated_at && (
+          <p className="text-xs text-muted-foreground">Last changed {new Date(saved.updated_at).toLocaleString()} by {saved.updated_by || 'an admin'}.</p>
         )}
       </CardContent>
     </Card>

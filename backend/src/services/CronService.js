@@ -2,6 +2,7 @@ const cron = require('node-cron');
 const db = require('../models');
 const { Op } = require('sequelize');
 const EmailService = require('./EmailService');
+const PlatformSettings = require('./PlatformSettingsService');
 
 class CronService {
     constructor() {
@@ -18,6 +19,36 @@ class CronService {
         console.log('🔄 Running Daily Subscription Tasks...');
         await this.checkExpiringSubscriptions();
         await this.checkExpiredSubscriptions();
+        await this.pruneResolvedAlerts();
+    }
+
+    /**
+     * Platform Settings > Alert Settings > retention. Deletes alerts that were
+     * resolved or dismissed more than the configured number of days ago
+     * (resolved_at; updated_at for rows that never recorded it).
+     * 0 (the default) keeps everything; open and acknowledged alerts are
+     * never deleted, whatever their age.
+     */
+    async pruneResolvedAlerts(now = new Date()) {
+        try {
+            const days = await PlatformSettings.getValue('alert_retention_days');
+            if (!Number.isInteger(days) || days <= 0) return 0;
+            const cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+            const removed = await db.AlertLog.destroy({
+                where: {
+                    status: { [Op.in]: ['resolved', 'dismissed'] },
+                    [Op.or]: [
+                        { resolved_at: { [Op.lt]: cutoff } },
+                        { resolved_at: null, updated_at: { [Op.lt]: cutoff } },
+                    ],
+                }
+            });
+            if (removed) console.log(`Pruned ${removed} resolved alert(s) older than ${days} days.`);
+            return removed;
+        } catch (error) {
+            console.error('Error in pruneResolvedAlerts:', error.message);
+            return 0;
+        }
     }
 
     /**
@@ -42,6 +73,12 @@ class CronService {
             });
 
             console.log(`Found ${expiringSubs.length} subscriptions expiring in 3 days.`);
+
+            // Platform Settings > Notifications: renewal reminder emails can be
+            // switched off platform-wide (receipts and security emails cannot).
+            let remindersOn = true;
+            try { remindersOn = (await PlatformSettings.getValue('notification_reminder_emails_enabled')) !== false; } catch { remindersOn = true; }
+            if (!remindersOn) return;
 
             for (const sub of expiringSubs) {
                 if (sub.User && sub.User.email) {

@@ -71,3 +71,12 @@ test('/payments/verify has a per-account budget (every call counts, it can cost 
   assert.deepEqual(Object.keys(blocked.body), ['error']);
   assert.equal((await request(app).post('/api/payments/verify').set('Authorization', bearer(USERS.admin)).send({})).status, 400, 'other accounts are unaffected');
 });
+
+test('limiter keys: account when signed in, IPv6 collapsed to its /56 when not', () => {
+  const { accountKey } = require('../src/utils/failureLimiters');
+  assert.equal(accountKey({ user: { id: 'u1' }, ip: '1.2.3.4' }), 'user:u1');
+  assert.equal(accountKey({ ip: '1.2.3.4' }), 'ip:1.2.3.4');
+  const a = accountKey({ ip: '2001:db8:abcd:12ff::1' });
+  const b = accountKey({ ip: '2001:db8:abcd:1200::9999' });
+  assert.equal(a, b, 'addresses in one /56 share a budget');
+});

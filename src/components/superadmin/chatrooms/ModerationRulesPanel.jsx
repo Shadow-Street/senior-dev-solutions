@@ -1,677 +1,271 @@
-
-import React, { useState, useEffect } from 'react';
-import { ModerationRule, ChatRoom } from '@/api/entities';
+import { useCallback, useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  Shield,
-  AlertTriangle,
-  Ban,
-  Clock,
-  Link as LinkIcon,
-  MessageSquare,
-  FileText,
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
-  Play,
-  Pause
-} from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Shield, Plus, Edit, Trash2, Loader2, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
+import chatAdminApi from './chatAdminApi';
+import { apiError } from './chatRoomUtils';
+import ConfirmActionDialog from './ConfirmActionDialog';
+import PropTypes from 'prop-types';
 
-export default function ModerationRulesPanel() {
-  const [rules, setRules] = useState([]);
-  const [chatRooms, setChatRooms] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [editingRule, setEditingRule] = useState(null);
-  const [formData, setFormData] = useState({
-    chat_room_id: '',
-    rule_name: '',
-    rule_type: 'word_filter',
-    severity: 'medium',
-    action: 'warn',
-    banned_words: '',
-    allowed_domains: '',
-    max_caps_percentage: 70,
-    rate_limit_messages: 5,
-    rate_limit_window_seconds: 60,
-    max_mentions: 3,
-    mute_duration_minutes: 60,
-    auto_escalate: false,
-    escalation_threshold: 3
-  });
+const RULE_TYPES = {
+  word_filter: { label: 'Blocked words', help: 'Messages containing any of these words or phrases (whole words, any case).' },
+  link_filter: { label: 'Link filter', help: 'Messages with links to any site not on the allowed list.' },
+  caps_lock: { label: 'All caps', help: 'Messages of 10+ letters where the share of capitals is above the limit.' },
+  mention_limit: { label: 'Mention limit', help: 'Messages that @mention more people than allowed.' },
+  rate_limit: { label: 'Rate limit (slow mode)', help: 'Members posting more than N messages within the window.' },
+};
+const ACTIONS = { block: 'Block the message', mute: 'Block and mute the sender in that room' };
 
-  useEffect(() => {
-    loadData();
-  }, []);
+const blank = {
+  name: '', rule_type: 'word_filter', action: 'block', chat_room_id: 'global',
+  words: '', allowed_domains: '', max_caps_percentage: 70, max_mentions: 5, max_messages: 5, window_seconds: 60,
+};
 
-  const loadData = async () => {
-    setIsLoading(true);
-    try {
-      const [rulesData, roomsData] = await Promise.all([
-        ModerationRule.list('-created_date'),
-        ChatRoom.list()
-      ]);
-
-      setRules(rulesData);
-      setChatRooms(roomsData);
-    } catch (error) {
-      console.error('Error loading moderation rules:', error);
-      toast.error('Failed to load moderation rules');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleCreateRule = async () => {
-    if (!formData.rule_name) {
-      toast.error('Please enter a rule name');
-      return;
-    }
-
-    try {
-      const ruleData = {
-        ...formData,
-        chat_room_id: formData.chat_room_id || null,
-        banned_words: formData.banned_words ? formData.banned_words.split(',').map(w => w.trim()) : [],
-        allowed_domains: formData.allowed_domains ? formData.allowed_domains.split(',').map(d => d.trim()) : [],
-        is_active: true
-      };
-
-      if (editingRule) {
-        await ModerationRule.update(editingRule.id, ruleData);
-        toast.success('Rule updated successfully');
-      } else {
-        await ModerationRule.create(ruleData);
-        toast.success('Rule created successfully');
-      }
-
-      loadData();
-      setShowCreateModal(false);
-      setEditingRule(null);
-      resetForm();
-    } catch (error) {
-      console.error('Error creating rule:', error);
-      toast.error('Failed to create rule');
-    }
-  };
-
-  const handleEdit = (rule) => {
-    setEditingRule(rule);
-    setFormData({
-      chat_room_id: rule.chat_room_id || '',
-      rule_name: rule.rule_name,
-      rule_type: rule.rule_type,
-      severity: rule.severity,
-      action: rule.action,
-      banned_words: rule.banned_words?.join(', ') || '',
-      allowed_domains: rule.allowed_domains?.join(', ') || '',
-      max_caps_percentage: rule.max_caps_percentage || 70,
-      rate_limit_messages: rule.rate_limit_messages || 5,
-      rate_limit_window_seconds: rule.rate_limit_window_seconds || 60,
-      max_mentions: rule.max_mentions || 3,
-      mute_duration_minutes: rule.mute_duration_minutes || 60,
-      auto_escalate: rule.auto_escalate || false,
-      escalation_threshold: rule.escalation_threshold || 3
-    });
-    setShowCreateModal(true);
-  };
-
-  const handleDelete = async (ruleId) => {
-    if (!window.confirm('Are you sure you want to delete this rule?')) {
-      return;
-    }
-
-    try {
-      await ModerationRule.delete(ruleId);
-      toast.success('Rule deleted successfully');
-      loadData();
-    } catch (error) {
-      console.error('Error deleting rule:', error);
-      toast.error('Failed to delete rule');
-    }
-  };
-
-  const handleToggleActive = async (rule) => {
-    try {
-      await ModerationRule.update(rule.id, {
-        is_active: !rule.is_active
-      });
-      toast.success(`Rule ${!rule.is_active ? 'activated' : 'deactivated'}`);
-      loadData();
-    } catch (error) {
-      console.error('Error toggling rule:', error);
-      toast.error('Failed to toggle rule');
-    }
-  };
-
-  const resetForm = () => {
-    setFormData({
-      chat_room_id: '',
-      rule_name: '',
-      rule_type: 'word_filter',
-      severity: 'medium',
-      action: 'warn',
-      banned_words: '',
-      allowed_domains: '',
-      max_caps_percentage: 70,
-      rate_limit_messages: 5,
-      rate_limit_window_seconds: 60,
-      max_mentions: 3,
-      mute_duration_minutes: 60,
-      auto_escalate: false,
-      escalation_threshold: 3
-    });
-  };
-
-  const ruleTypeConfig = {
-    word_filter: { icon: MessageSquare, color: 'text-sell-muted-foreground', label: 'Word Filter' },
-    spam_detection: { icon: AlertTriangle, color: 'text-hold-muted-foreground', label: 'Spam Detection' },
-    link_filter: { icon: LinkIcon, color: 'text-primary', label: 'Link Filter' },
-    caps_lock: { icon: MessageSquare, color: 'text-hold-muted-foreground', label: 'Caps Lock' },
-    rate_limit: { icon: Clock, color: 'text-protocall-premium-text', label: 'Rate Limit' },
-    mention_limit: { icon: MessageSquare, color: 'text-primary', label: 'Mention Limit' },
-    file_restriction: { icon: FileText, color: 'text-buy-muted-foreground', label: 'File Restriction' }
-  };
-
-  const severityColors = {
-    low: 'bg-premium-muted text-primary',
-    medium: 'bg-hold-muted text-hold-muted-foreground',
-    high: 'bg-hold-muted text-hold-muted-foreground',
-    critical: 'bg-sell-muted text-sell-muted-foreground'
-  };
-
-  // Group rules by type
-  const globalRules = rules.filter(r => !r.chat_room_id);
-  const roomSpecificRules = rules.filter(r => r.chat_room_id);
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-16">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-lg text-subtle font-medium">Loading Moderation Rules...</p>
-        </div>
-      </div>
-    );
+/** Builds the API payload's `conditions` for the chosen rule type. */
+function ruleConditions(form) {
+  switch (form.rule_type) {
+    case 'word_filter': return { words: form.words };
+    case 'link_filter': return { allowed_domains: form.allowed_domains };
+    case 'caps_lock': return { max_caps_percentage: Number(form.max_caps_percentage) };
+    case 'mention_limit': return { max_mentions: Number(form.max_mentions) };
+    case 'rate_limit': return { max_messages: Number(form.max_messages), window_seconds: Number(form.window_seconds) };
+    default: return {};
   }
+}
+
+const describe = (rule) => {
+  const c = rule.conditions || {};
+  switch (rule.rule_type) {
+    case 'word_filter': return `${(c.words || []).length} word(s): ${(c.words || []).slice(0, 6).join(', ')}${(c.words || []).length > 6 ? '…' : ''}`;
+    case 'link_filter': return c.allowed_domains?.length ? `Allowed: ${c.allowed_domains.join(', ')}` : 'No links allowed';
+    case 'caps_lock': return `Over ${c.max_caps_percentage}% capitals`;
+    case 'mention_limit': return `More than ${c.max_mentions} mentions`;
+    case 'rate_limit': return `More than ${c.max_messages} messages in ${c.window_seconds}s`;
+    default: return '';
+  }
+};
+
+/**
+ * Moderation rules checked on every chat post (REST and live). Staff and room
+ * moderators are exempt. Rules can be global or for one room.
+ */
+export default function ModerationRulesPanel({ rooms }) {
+  const [rules, setRules] = useState(null);
+  const [error, setError] = useState(null);
+  const [editing, setEditing] = useState(null);
+  const [form, setForm] = useState(blank);
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(null);
+
+  const load = useCallback(async () => {
+    try {
+      setError(null);
+      setRules(await chatAdminApi.rules());
+    } catch (e) {
+      setError(apiError(e, 'Could not load moderation rules'));
+    }
+  }, []);
+  useEffect(() => { load(); }, [load]);
+
+  const openNew = () => { setForm(blank); setEditing('new'); };
+  const openEdit = (r) => {
+    const c = r.conditions || {};
+    setForm({
+      ...blank,
+      name: r.name || '', rule_type: r.rule_type, action: r.action || 'block', chat_room_id: r.chat_room_id || 'global',
+      words: (c.words || []).join(', '), allowed_domains: (c.allowed_domains || []).join(', '),
+      max_caps_percentage: c.max_caps_percentage ?? 70, max_mentions: c.max_mentions ?? 5,
+      max_messages: c.max_messages ?? 5, window_seconds: c.window_seconds ?? 60,
+    });
+    setEditing(r);
+  };
+
+  const save = async (e) => {
+    e.preventDefault();
+    if (!form.name.trim()) { toast.error('Give the rule a name'); return; }
+    if (form.rule_type === 'word_filter' && !form.words.trim()) { toast.error('Add at least one word'); return; }
+    const payload = {
+      name: form.name.trim(), rule_type: form.rule_type, action: form.action,
+      chat_room_id: form.chat_room_id === 'global' ? null : form.chat_room_id, conditions: ruleConditions(form),
+    };
+    setSaving(true);
+    try {
+      if (editing === 'new') await chatAdminApi.createRule(payload);
+      else await chatAdminApi.updateRule(editing.id, payload);
+      toast.success(editing === 'new' ? 'Rule created and active' : 'Rule updated');
+      setEditing(null);
+      await load();
+    } catch (err) {
+      toast.error(apiError(err, 'Failed to save the rule'));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const toggle = async (rule) => {
+    try {
+      await chatAdminApi.updateRule(rule.id, { is_active: !rule.is_active });
+      toast.success(rule.is_active ? 'Rule turned off' : 'Rule turned on');
+      await load();
+    } catch (e) {
+      toast.error(apiError(e, 'Failed to update the rule'));
+    }
+  };
+
+  const remove = async () => {
+    try {
+      await chatAdminApi.deleteRule(deleting.id);
+      toast.success('Rule deleted');
+      setDeleting(null);
+      await load();
+    } catch (e) {
+      toast.error(apiError(e, 'Failed to delete the rule'));
+    }
+  };
+
+  const roomName = (id) => (id ? rooms.find((r) => r.id === id)?.name || 'Deleted room' : 'All rooms');
+  const num = (key, label, min, max) => (
+    <div>
+      <Label htmlFor={`rule-${key}`}>{label}</Label>
+      <Input id={`rule-${key}`} type="number" min={min} max={max} className="mt-1" value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />
+    </div>
+  );
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="grid grid-cols-3 gap-4 flex-1 min-w-[18rem]">
+          {[
+            ['Active rules', rules ? rules.filter((r) => r.is_active).length : '—'],
+            ['Global', rules ? rules.filter((r) => !r.chat_room_id).length : '—'],
+            ['Room-specific', rules ? rules.filter((r) => r.chat_room_id).length : '—'],
+          ].map(([label, value]) => (
+            <Card key={label}><CardContent className="p-4"><p className="text-2xl font-bold">{value}</p><p className="text-sm text-subtle">{label}</p></CardContent></Card>
+          ))}
+        </div>
+        <Button onClick={openNew}><Plus className="w-4 h-4 mr-2" aria-hidden="true" />New rule</Button>
+      </div>
+
       <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold">Enhanced Moderation Rules</h3>
-              <p className="text-sm text-subtle">Create automated moderation rules for your chat rooms</p>
-            </div>
-            <Button onClick={() => { resetForm(); setShowCreateModal(true); }}>
-              <Plus className="w-4 h-4 mr-2" />
-              Create Rule
-            </Button>
-          </div>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Shield className="w-4 h-4" aria-hidden="true" />Moderation rules</CardTitle></CardHeader>
+        <CardContent>
+          <p className="text-xs text-muted-foreground mb-3">Checked on every message before it is posted. Staff and the room&apos;s own moderators are exempt.</p>
+          {error && <p className="text-sm text-sell-muted-foreground flex items-center gap-2" role="alert"><AlertTriangle className="w-4 h-4" aria-hidden="true" />{error}<Button size="sm" variant="outline" onClick={load}>Retry</Button></p>}
+          {!rules && !error && <p className="text-sm text-subtle" role="status"><Loader2 className="w-4 h-4 inline animate-spin mr-1" aria-hidden="true" />Loading…</p>}
+          {rules && rules.length === 0 && <p className="text-sm text-subtle text-center py-8">No rules yet.</p>}
+          {rules && rules.length > 0 && (
+            <ul className="divide-y">
+              {rules.map((r) => (
+                <li key={r.id} className="py-3 flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-medium">{r.name}</span>
+                      <Badge variant="outline">{RULE_TYPES[r.rule_type]?.label || r.rule_type}</Badge>
+                      <Badge variant="outline">{roomName(r.chat_room_id)}</Badge>
+                      <Badge className={r.action === 'mute' ? 'bg-sell-muted text-sell-muted-foreground' : 'bg-hold-muted text-hold-muted-foreground'}>{r.action === 'mute' ? 'Block + mute' : 'Block'}</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1 break-words">{describe(r)}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch aria-label={r.is_active ? `Turn off ${r.name}` : `Turn on ${r.name}`} checked={Boolean(r.is_active)} onCheckedChange={() => toggle(r)} />
+                    <Button variant="ghost" size="sm" onClick={() => openEdit(r)} aria-label={`Edit ${r.name}`}><Edit className="w-4 h-4" /></Button>
+                    <Button variant="ghost" size="sm" onClick={() => setDeleting(r)} className="text-sell-muted-foreground" aria-label={`Delete ${r.name}`}><Trash2 className="w-4 h-4" /></Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </CardContent>
       </Card>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Total Rules</p>
-                <p className="text-3xl font-bold">{rules.length}</p>
-              </div>
-              <Shield className="w-10 h-10 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-buy-soft text-buy-foreground">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Active Rules</p>
-                <p className="text-3xl font-bold">{rules.filter(r => r.is_active).length}</p>
-              </div>
-              <Play className="w-10 h-10 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Global Rules</p>
-                <p className="text-3xl font-bold">{globalRules.length}</p>
-              </div>
-              <Shield className="w-10 h-10 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-hold text-hold-foreground">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Total Violations</p>
-                <p className="text-3xl font-bold">{rules.reduce((sum, r) => sum + (r.violation_count || 0), 0)}</p>
-              </div>
-              <AlertTriangle className="w-10 h-10 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Rules Tabs */}
-      <Tabs defaultValue="global" className="space-y-6">
-        <TabsList className="grid grid-cols-2 bg-transparent rounded-lg p-1 gap-2">
-          <TabsTrigger value="global" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white">
-            Global Rules ({globalRules.length})
-          </TabsTrigger>
-          <TabsTrigger value="room" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-protocall-deep data-[state=active]:to-protocall-blue data-[state=active]:text-white">
-            Room-Specific ({roomSpecificRules.length})
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="global">
-          <Card>
-            <CardHeader>
-              <CardTitle>Global Moderation Rules</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {globalRules.length === 0 ? (
-                  <div className="text-center py-12">
-                    <Shield className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-subtle font-medium">No global rules yet</p>
-                    <p className="text-muted-foreground text-sm mt-1">Create rules that apply to all rooms</p>
-                  </div>
-                ) : (
-                  globalRules.map(rule => {
-                    const config = ruleTypeConfig[rule.rule_type] || ruleTypeConfig.word_filter;
-                    const Icon = config.icon;
-
-                    return (
-                      <div key={rule.id} className="flex items-center gap-4 p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
-                        <div className={`w-12 h-12 rounded-full bg-white flex items-center justify-center ${config.color}`}>
-                          <Icon className="w-6 h-6" />
-                        </div>
-
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <p className="font-medium text-foreground">{rule.rule_name}</p>
-                            <Badge variant="outline" className={config.color}>
-                              {config.label}
-                            </Badge>
-                            <Badge className={severityColors[rule.severity]}>
-                              {rule.severity}
-                            </Badge>
-                            {rule.is_active ? (
-                              <Badge className="bg-buy-muted text-buy-muted-foreground">Active</Badge>
-                            ) : (
-                              <Badge className="bg-surface-2 text-foreground">Inactive</Badge>
-                            )}
-                          </div>
-                          <p className="text-sm text-subtle">
-                            Action: {rule.action.replace(/_/g, ' ')} • 
-                            Violations: {rule.violation_count || 0}
-                          </p>
-                          {rule.auto_escalate && (
-                            <p className="text-xs text-protocall-premium-text mt-1">
-                              Auto-escalate after {rule.escalation_threshold} violations
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleToggleActive(rule)}
-                          >
-                            {rule.is_active ? (
-                              <Pause className="w-4 h-4" />
-                            ) : (
-                              <Play className="w-4 h-4" />
-                            )}
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEdit(rule)}
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDelete(rule.id)}
-                            className="text-sell-muted-foreground hover:text-sell-muted-foreground"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="room">
-          <Card>
-            <CardHeader>
-              <CardTitle>Room-Specific Rules</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {roomSpecificRules.length === 0 ? (
-                  <div className="text-center py-12">
-                    <Shield className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-subtle font-medium">No room-specific rules yet</p>
-                    <p className="text-muted-foreground text-sm mt-1">Create rules for individual rooms</p>
-                  </div>
-                ) : (
-                  roomSpecificRules.map(rule => {
-                    const room = chatRooms.find(r => r.id === rule.chat_room_id);
-                    const config = ruleTypeConfig[rule.rule_type] || ruleTypeConfig.word_filter;
-                    const Icon = config.icon;
-
-                    return (
-                      <div key={rule.id} className="flex items-center gap-4 p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
-                        <div className={`w-12 h-12 rounded-full bg-white flex items-center justify-center ${config.color}`}>
-                          <Icon className="w-6 h-6" />
-                        </div>
-
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <p className="font-medium text-foreground">{rule.rule_name}</p>
-                            <Badge variant="outline">{room?.name || 'Unknown Room'}</Badge>
-                            <Badge variant="outline" className={config.color}>
-                              {config.label}
-                            </Badge>
-                            <Badge className={severityColors[rule.severity]}>
-                              {rule.severity}
-                            </Badge>
-                            {rule.is_active ? (
-                              <Badge className="bg-buy-muted text-buy-muted-foreground">Active</Badge>
-                            ) : (
-                              <Badge className="bg-surface-2 text-foreground">Inactive</Badge>
-                            )}
-                          </div>
-                          <p className="text-sm text-subtle">
-                            Action: {rule.action.replace(/_/g, ' ')} • 
-                            Violations: {rule.violation_count || 0}
-                          </p>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleToggleActive(rule)}
-                          >
-                            {rule.is_active ? (
-                              <Pause className="w-4 h-4" />
-                            ) : (
-                              <Play className="w-4 h-4" />
-                            )}
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEdit(rule)}
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDelete(rule.id)}
-                            className="text-sell-muted-foreground hover:text-sell-muted-foreground"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      {/* Create/Edit Modal */}
-      <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{editingRule ? 'Edit Rule' : 'Create Moderation Rule'}</DialogTitle>
-            <DialogDescription>
-              Configure automated moderation for your chat rooms
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4">
+      <Dialog open={Boolean(editing)} onOpenChange={(o) => { if (!o && !saving) setEditing(null); }}>
+        <DialogContent className="sm:max-w-lg">
+          <form onSubmit={save} className="space-y-4">
+            <DialogHeader>
+              <DialogTitle>{editing === 'new' ? 'New moderation rule' : 'Edit moderation rule'}</DialogTitle>
+              <DialogDescription>{RULE_TYPES[form.rule_type]?.help}</DialogDescription>
+            </DialogHeader>
             <div>
-              <Label>Rule Name</Label>
-              <Input
-                placeholder="e.g., No Spam Links"
-                value={formData.rule_name}
-                onChange={(e) => setFormData({...formData, rule_name: e.target.value})}
-              />
+              <Label htmlFor="rule-name">Name</Label>
+              <Input id="rule-name" className="mt-1" maxLength={100} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label>Chat Room (Optional)</Label>
-                <Select value={formData.chat_room_id} onValueChange={(value) => setFormData({...formData, chat_room_id: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Global (all rooms)" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={null}>Global (all rooms)</SelectItem>
-                    {chatRooms.map(room => (
-                      <SelectItem key={room.id} value={room.id}>
-                        {room.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
+                <Label htmlFor="rule-type">Rule type</Label>
+                <Select value={form.rule_type} onValueChange={(v) => setForm({ ...form, rule_type: v })}>
+                  <SelectTrigger id="rule-type" className="mt-1"><SelectValue /></SelectTrigger>
+                  <SelectContent>{Object.entries(RULE_TYPES).map(([k, v]) => <SelectItem key={k} value={k}>{v.label}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
-
               <div>
-                <Label>Rule Type</Label>
-                <Select value={formData.rule_type} onValueChange={(value) => setFormData({...formData, rule_type: value})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
+                <Label htmlFor="rule-room">Applies to</Label>
+                <Select value={form.chat_room_id} onValueChange={(v) => setForm({ ...form, chat_room_id: v })}>
+                  <SelectTrigger id="rule-room" className="mt-1"><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="word_filter">Word Filter</SelectItem>
-                    <SelectItem value="spam_detection">Spam Detection</SelectItem>
-                    <SelectItem value="link_filter">Link Filter</SelectItem>
-                    <SelectItem value="caps_lock">Caps Lock</SelectItem>
-                    <SelectItem value="rate_limit">Rate Limit</SelectItem>
-                    <SelectItem value="mention_limit">Mention Limit</SelectItem>
-                    <SelectItem value="file_restriction">File Restriction</SelectItem>
+                    <SelectItem value="global">All rooms</SelectItem>
+                    {rooms.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            {form.rule_type === 'word_filter' && (
               <div>
-                <Label>Severity</Label>
-                <Select value={formData.severity} onValueChange={(value) => setFormData({...formData, severity: value})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="low">Low</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="critical">Critical</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="rule-words">Words or phrases (comma or new line separated)</Label>
+                <Textarea id="rule-words" className="mt-1 h-24" value={form.words} onChange={(e) => setForm({ ...form, words: e.target.value })} />
               </div>
+            )}
+            {form.rule_type === 'link_filter' && (
+              <div>
+                <Label htmlFor="rule-domains">Allowed sites (leave empty to block all links)</Label>
+                <Input id="rule-domains" className="mt-1" placeholder="nseindia.com, bseindia.com" value={form.allowed_domains} onChange={(e) => setForm({ ...form, allowed_domains: e.target.value })} />
+              </div>
+            )}
+            {form.rule_type === 'caps_lock' && num('max_caps_percentage', 'Maximum capitals (%)', 50, 100)}
+            {form.rule_type === 'mention_limit' && num('max_mentions', 'Maximum mentions per message', 1, 50)}
+            {form.rule_type === 'rate_limit' && (
+              <div className="grid grid-cols-2 gap-3">
+                {num('max_messages', 'Messages allowed', 1, 100)}
+                {num('window_seconds', 'Per (seconds)', 5, 3600)}
+              </div>
+            )}
 
-              <div>
-                <Label>Action</Label>
-                <Select value={formData.action} onValueChange={(value) => setFormData({...formData, action: value})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="warn">Warn User</SelectItem>
-                    <SelectItem value="delete_message">Delete Message</SelectItem>
-                    <SelectItem value="mute_user">Mute User</SelectItem>
-                    <SelectItem value="ban_user">Ban User</SelectItem>
-                    <SelectItem value="flag_for_review">Flag for Review</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div>
+              <Label htmlFor="rule-action">When it matches</Label>
+              <Select value={form.action} onValueChange={(v) => setForm({ ...form, action: v })}>
+                <SelectTrigger id="rule-action" className="mt-1"><SelectValue /></SelectTrigger>
+                <SelectContent>{Object.entries(ACTIONS).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}</SelectContent>
+              </Select>
             </div>
-
-            {/* Rule-specific fields */}
-            {formData.rule_type === 'word_filter' && (
-              <div>
-                <Label>Banned Words (comma-separated)</Label>
-                <Input
-                  placeholder="scam, spam, fraud"
-                  value={formData.banned_words}
-                  onChange={(e) => setFormData({...formData, banned_words: e.target.value})}
-                />
-              </div>
-            )}
-
-            {formData.rule_type === 'link_filter' && (
-              <div>
-                <Label>Allowed Domains (comma-separated, leave blank to block all)</Label>
-                <Input
-                  placeholder="google.com, youtube.com"
-                  value={formData.allowed_domains}
-                  onChange={(e) => setFormData({...formData, allowed_domains: e.target.value})}
-                />
-              </div>
-            )}
-
-            {formData.rule_type === 'caps_lock' && (
-              <div>
-                <Label>Max Caps Percentage (%)</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={formData.max_caps_percentage}
-                  onChange={(e) => setFormData({...formData, max_caps_percentage: Number(e.target.value)})}
-                />
-              </div>
-            )}
-
-            {formData.rule_type === 'rate_limit' && (
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Max Messages</Label>
-                  <Input
-                    type="number"
-                    value={formData.rate_limit_messages}
-                    onChange={(e) => setFormData({...formData, rate_limit_messages: Number(e.target.value)})}
-                  />
-                </div>
-                <div>
-                  <Label>Time Window (seconds)</Label>
-                  <Input
-                    type="number"
-                    value={formData.rate_limit_window_seconds}
-                    onChange={(e) => setFormData({...formData, rate_limit_window_seconds: Number(e.target.value)})}
-                  />
-                </div>
-              </div>
-            )}
-
-            {formData.rule_type === 'mention_limit' && (
-              <div>
-                <Label>Max Mentions per Message</Label>
-                <Input
-                  type="number"
-                  value={formData.max_mentions}
-                  onChange={(e) => setFormData({...formData, max_mentions: Number(e.target.value)})}
-                />
-              </div>
-            )}
-
-            {formData.action === 'mute_user' && (
-              <div>
-                <Label>Mute Duration (minutes)</Label>
-                <Input
-                  type="number"
-                  value={formData.mute_duration_minutes}
-                  onChange={(e) => setFormData({...formData, mute_duration_minutes: Number(e.target.value)})}
-                />
-              </div>
-            )}
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="auto_escalate"
-                  checked={formData.auto_escalate}
-                  onChange={(e) => setFormData({...formData, auto_escalate: e.target.checked})}
-                  className="w-4 h-4"
-                />
-                <Label htmlFor="auto_escalate">Auto-escalate on repeat violations</Label>
-              </div>
-
-              {formData.auto_escalate && (
-                <div>
-                  <Label>Escalation Threshold</Label>
-                  <Input
-                    type="number"
-                    value={formData.escalation_threshold}
-                    onChange={(e) => setFormData({...formData, escalation_threshold: Number(e.target.value)})}
-                  />
-                </div>
-              )}
-            </div>
-
-            <div className="flex justify-end gap-3 pt-4">
-              <Button variant="outline" onClick={() => setShowCreateModal(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleCreateRule}>
-                {editingRule ? 'Update Rule' : 'Create Rule'}
-              </Button>
-            </div>
-          </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setEditing(null)} disabled={saving}>Cancel</Button>
+              <Button type="submit" disabled={saving}>{saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" />}Save rule</Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
+
+      <ConfirmActionDialog
+        open={Boolean(deleting)}
+        onClose={() => setDeleting(null)}
+        onConfirm={remove}
+        destructive
+        title={`Delete "${deleting?.name}"?`}
+        description="Messages will no longer be checked against it. Mutes it already applied stay until lifted."
+        confirmLabel="Delete rule"
+      />
     </div>
   );
 }
+
+ModerationRulesPanel.propTypes = {
+  rooms: PropTypes.array.isRequired,
+};

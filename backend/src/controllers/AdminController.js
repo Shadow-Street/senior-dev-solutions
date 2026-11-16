@@ -1,6 +1,8 @@
 const db = require("../models");
-const { isSuperAdmin, checkRoleChange } = require("../utils/roles");
 const { Op } = require("sequelize");
+const AdminUserService = require("../services/AdminUserService");
+const Access = require("../services/AccessControlService");
+const Sanctions = require("../services/UserSanctionService");
 
 class AdminController {
     // Dashboard Stats
@@ -158,79 +160,154 @@ class AdminController {
         }
     }
 
-    // User Management
+    // ------------------------------------------------------------------
+    // User Management (Super Admin › User Management). The rules live in
+    // services/AdminUserService.js; these handlers only translate HTTP.
+    // ------------------------------------------------------------------
+
     static async listUsers(req, res) {
-        try {
-            const { page = 1, limit = 10, search, role } = req.query;
-            const offset = (page - 1) * limit;
-
-            const where = {};
-            if (search) {
-                where[Op.or] = [
-                    { name: { [Op.like]: `%${search}%` } },
-                    { email: { [Op.like]: `%${search}%` } }
-                ];
-            }
-            if (role) where.role = role;
-
-            const users = await db.User.findAndCountAll({
-                where,
-                limit: parseInt(limit),
-                offset: parseInt(offset),
-                order: [['created_at', 'DESC']],
-                attributes: { exclude: ['password'] }
-            });
-
-            res.json({
-                total: users.count,
-                pages: Math.ceil(users.count / limit),
-                data: users.rows
-            });
-        } catch (error) {
-            console.error('[AdminController.js] request failed:', error);
-            res.status(500).json({ error: 'Internal server error' });
-        }
+        return respond(res, () => AdminUserService.list(req.user, req.query));
     }
 
+    static async editUser(req, res) {
+        return respond(res, () => AdminUserService.editDetails(req.user, req.params.id, req.body, AdminUserService.contextOf(req)));
+    }
+
+    static async setUserRole(req, res) {
+        return respond(res, () => AdminUserService.setRole(req.user, req.params.id, req.body, AdminUserService.contextOf(req)));
+    }
+
+    static async adjustTrustScore(req, res) {
+        return respond(res, () => AdminUserService.adjustTrust(req.user, req.params.id, req.body, AdminUserService.contextOf(req)));
+    }
+
+    static async setUserStatus(req, res) {
+        return respond(res, () => AdminUserService.changeStatus(req.user, req.params.id, req.body, {
+            context: AdminUserService.contextOf(req),
+            wsService: req.app.get('wsService'),
+        }));
+    }
+
+    static async deleteUser(req, res) {
+        return respond(res, () => AdminUserService.deleteUser(req.user, req.params.id, req.body, {
+            context: AdminUserService.contextOf(req),
+            wsService: req.app.get('wsService'),
+        }));
+    }
+
+    /**
+     * Legacy PUT /admin/users/:id { status?, role?, ban_reason? } used by the
+     * old admin dashboard. It used to write `status` straight to the row, so a
+     * "ban" left every session alive and no history behind. It now goes
+     * through the same rules as the dedicated endpoints.
+     */
     static async updateUserStatus(req, res) {
-        try {
-            const { id } = req.params;
-            const { status, role, ban_reason } = req.body;
-
-            const user = await db.User.findByPk(id);
-            if (!user) return res.status(404).json({ error: "User not found" });
-
-            // Same super-admin rules as PUT /users/:id: an admin may not ban
-            // or re-role a super admin, nor make anyone one.
-            if (isSuperAdmin(user) && !isSuperAdmin(req.user)) {
-                return res.status(403).json({ error: 'Access denied' });
-            }
+        return respond(res, async () => {
+            const { status, role, ban_reason } = req.body || {};
+            const context = AdminUserService.contextOf(req);
+            const wsService = req.app.get('wsService');
+            if (role === undefined && status === undefined) throw new Access.AccessError(400, 'Nothing to update');
+            const permissions = await Access.permissionsFor(req.user);
+            const result = {};
             if (role !== undefined) {
-                const refused = checkRoleChange(req.user, user, { role });
-                if (refused) return res.status(refused.status).json({ error: refused.error });
+                if (!permissions.has('users.roles')) throw new Access.AccessError(403, 'You do not have permission to perform this action');
+                result.role = await AdminUserService.setRole(req.user, req.params.id, { role }, context);
             }
-
-            if (status) user.status = status;
-            if (role) user.role = role;
-
-            await user.save();
-
-            // Log action if banned
-            if (status === 'banned') {
-                await db.ModerationLog.create({
-                    moderator_id: req.user.id,
-                    action: 'BAN_USER',
-                    target_id: id,
-                    target_type: 'USER',
-                    reason: ban_reason || 'Admin action'
+            if (status !== undefined) {
+                const action = { active: 'reactivate', inactive: 'deactivate', banned: 'ban' }[status];
+                if (!action) throw new Access.AccessError(400, 'Status must be active, inactive or banned');
+                if (!permissions.has('users.status')) throw new Access.AccessError(403, 'You do not have permission to perform this action');
+                // users.status covers deactivate/reactivate. A permanent block is
+                // a moderation decision (Content Moderation is admin-only).
+                if (action === 'ban' && !['admin', 'super_admin'].includes(req.user.app_role || req.user.role)) {
+                    throw new Access.AccessError(403, 'Only an admin can block an account.');
+                }
+                if (action === 'reactivate') {
+                    const target = await db.User.findByPk(req.params.id, { attributes: ['id', 'status'] });
+                    if (target) AdminUserService.assertMayReactivate(req.user, target);
+                }
+                result.status = await Sanctions.apply(req.params.id, action, req.user, {
+                    reason: action === 'ban' ? (ban_reason || 'Blocked by an administrator') : ban_reason,
+                    source: 'user_management',
+                    context,
+                    wsService,
                 });
             }
+            return { message: 'User updated successfully', ...result };
+        });
+    }
 
-            res.json({ message: "User updated successfully", user });
-        } catch (error) {
-            console.error('[AdminController.js] request failed:', error);
-            res.status(500).json({ error: 'Internal server error' });
+    // ------------------------------------------------------------------
+    // Roles & Permissions
+    // ------------------------------------------------------------------
+
+    static async myAccess(req, res) {
+        return respond(res, () => Access.describeAccess(req.user));
+    }
+
+    static async assignableRoles(req, res) {
+        return respond(res, () => Access.assignableRoles(req.user));
+    }
+
+    static async permissionMatrix(req, res) {
+        return respond(res, () => Access.matrix(req.user));
+    }
+
+    static async setRolePermission(req, res) {
+        return respond(res, () => {
+            if (typeof req.body?.granted !== 'boolean') throw new Access.AccessError(400, 'granted must be true or false');
+            return Access.setPermission(req.user, req.params.roleId, req.params.key, req.body.granted, AdminUserService.contextOf(req));
+        });
+    }
+
+    static async createRole(req, res) {
+        return respond(res, () => Access.createRole(req.user, req.body || {}, AdminUserService.contextOf(req)), 201);
+    }
+
+    static async updateRole(req, res) {
+        return respond(res, () => Access.updateRole(req.user, req.params.roleId, req.body || {}, AdminUserService.contextOf(req)));
+    }
+
+    static async deleteRole(req, res) {
+        return respond(res, () => Access.deleteRole(req.user, req.params.roleId, AdminUserService.contextOf(req)));
+    }
+
+    static async listRoleTemplates(req, res) {
+        return respond(res, () => Access.listTemplates());
+    }
+
+    static async createRoleTemplate(req, res) {
+        return respond(res, () => Access.saveTemplate(req.user, null, req.body || {}, AdminUserService.contextOf(req)), 201);
+    }
+
+    static async updateRoleTemplate(req, res) {
+        return respond(res, () => Access.saveTemplate(req.user, req.params.templateId, req.body || {}, AdminUserService.contextOf(req)));
+    }
+
+    static async deleteRoleTemplate(req, res) {
+        return respond(res, () => Access.deleteTemplate(req.user, req.params.templateId, AdminUserService.contextOf(req)));
+    }
+
+    static async accessAuditLog(req, res) {
+        return respond(res, () => Access.auditTrail({ page: req.query.page, limit: req.query.limit, entityType: req.query.entity_type }));
+    }
+}
+
+/**
+ * Runs `work` and sends its result. Errors that carry an HTTP status
+ * (AccessError, SanctionError, MigrationPendingError) are sent as
+ * { error, code }; anything else is logged and answered with a generic 500.
+ */
+async function respond(res, work, okStatus = 200) {
+    try {
+        const body = await work();
+        return res.status(okStatus).json(body);
+    } catch (error) {
+        if (error && Number.isInteger(error.status) && error.status >= 400 && error.status < 600) {
+            return res.status(error.status).json({ error: error.message, ...(error.code ? { code: error.code } : {}) });
         }
+        console.error('[AdminController.js] request failed:', error);
+        return res.status(500).json({ error: 'Internal server error' });
     }
 }
 

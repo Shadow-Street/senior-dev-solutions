@@ -5,9 +5,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Globe, Lock } from 'lucide-react';
+import { Loader2, Globe, Lock, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import { useMyPlans } from './useAdvisorData';
+import { apiErrorMessage } from '@/lib/withdrawalsApi';
+import { useMyPlans, useMyUsage } from './useAdvisorData';
+import { allowanceFor, exhaustedMessage, countsAgainstLimit, reachedPlanIds } from './usageHelpers';
 
 const BLANK = {
   title: '',
@@ -67,10 +69,35 @@ export default function CreatePostModal({ open, onClose, onSubmit, editingPost }
   const [saving, setSaving] = useState(null); // 'published' | 'draft' | null
   const plansQuery = useMyPlans(open);
   const plans = (plansQuery.data || []).filter((p) => p.is_active);
+  const [submitError, setSubmitError] = useState('');
+  // Allowance for the chosen audience. If the tracker is unavailable (503/error) nothing is restricted here.
+  const usageQuery = useMyUsage(open, editingPost?.id || null);
 
   useEffect(() => {
-    if (open) setForm(toForm(editingPost));
+    if (open) { setForm(toForm(editingPost)); setSubmitError(''); }
   }, [open, editingPost]);
+
+  // Only published, subscriber-only recommendations spend allowance (same rule as the server).
+  const spends = countsAgainstLimit({
+    status: 'published',
+    visibility: form.visibility,
+    post_type: form.post_type,
+    recommendation_type: form.recommendation_type,
+    stock_symbol: form.stock_symbol,
+    target_price: form.target_price,
+    stop_loss: form.stop_loss,
+  });
+  // Plans a live post already reached are not charged again by an edit (the server does the same).
+  const alreadyReached = editingPost && countsAgainstLimit(editingPost) && usageQuery.data
+    ? reachedPlanIds(usageQuery.data, editingPost.required_plan_id || null)
+    : [];
+  const allowance = spends && usageQuery.data
+    ? allowanceFor(usageQuery.data, {
+      requiredPlanId: form.required_plan_id === 'all' ? null : form.required_plan_id,
+      countedPlanIds: [...(usageQuery.data.counted_plan_ids || []), ...alreadyReached],
+    })
+    : null;
+  const exhausted = Boolean(allowance?.blocked);
 
   const set = (patch) => setForm((prev) => ({ ...prev, ...patch }));
 
@@ -80,11 +107,15 @@ export default function CreatePostModal({ open, onClose, onSubmit, editingPost }
     for (const [key, label] of [['target_price', 'Target price'], ['stop_loss', 'Stop loss']]) {
       if (form[key] !== '' && !(Number(form[key]) > 0)) { toast.error(`${label} must be a positive number.`); return; }
     }
+    if (status === 'published' && exhausted) { setSubmitError(exhaustedMessage(allowance.blockedBy)); return; }
+    setSubmitError('');
     setSaving(status);
     try {
       await onSubmit(toPayload(form, status));
-    } catch {
+    } catch (error) {
       // The caller reports the failure; keep the dialog open so nothing is lost.
+      // A refused publish (409) is also shown here, next to the buttons.
+      if (error?.response?.status === 409) setSubmitError(apiErrorMessage(error, 'This plan has reached its recommendation limit.'));
     } finally {
       setSaving(null);
     }
@@ -217,12 +248,30 @@ export default function CreatePostModal({ open, onClose, onSubmit, editingPost }
             </div>
           </div>
 
+          {allowance?.limited && (
+            <div
+              role={exhausted ? 'alert' : 'status'}
+              data-testid="post-allowance"
+              className={`flex items-start gap-2 rounded-lg border p-3 text-sm ${exhausted ? 'border-sell/30 bg-sell-muted text-sell-muted-foreground' : 'border-border bg-surface-2 text-subtle'}`}
+            >
+              <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
+              <span>
+                {exhausted
+                  ? `${exhaustedMessage(allowance.blockedBy)} You can still save a draft.`
+                  : `${allowance.tightest.remaining} recommendation${allowance.tightest.remaining === 1 ? '' : 's'} left for this audience (${allowance.tightest.plan.plan_name}).`}
+              </span>
+            </div>
+          )}
+          {submitError && !exhausted && (
+            <p role="alert" className="text-sm text-sell-muted-foreground">{submitError}</p>
+          )}
+
           <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onClose} disabled={Boolean(saving)} className="flex-1">Cancel</Button>
             <Button type="button" variant="outline" onClick={() => save('draft')} disabled={Boolean(saving)} className="flex-1">
               {saving === 'draft' ? (<><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving...</>) : 'Save as draft'}
             </Button>
-            <Button type="submit" disabled={Boolean(saving)} className="flex-1">
+            <Button type="submit" disabled={Boolean(saving) || exhausted} className="flex-1">
               {saving === 'published' ? (<><Loader2 className="w-4 h-4 mr-2 animate-spin" />Publishing...</>) : isEdit ? 'Save & publish' : 'Publish'}
             </Button>
           </div>

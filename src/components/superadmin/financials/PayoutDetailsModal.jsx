@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { PayoutRequest, Notification, PlatformSetting } from '@/lib/apiClient';
+import { PayoutRequest, Notification } from '@/lib/apiClient';
 import { CheckCircle, XCircle, DollarSign, Calendar, CreditCard, Building, AlertTriangle, Info, Zap, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { normalizePayout } from '@/lib/payoutView';
@@ -25,8 +25,6 @@ export default function PayoutDetailsModal({ request: rawRequest, isOpen, onClos
   const [showProcessConfirm, setShowProcessConfirm] = useState(false);
   const [adminNotes, setAdminNotes] = useState('');
   const [utrNumber, setUtrNumber] = useState('');
-  const [processingMethod, setProcessingMethod] = useState('automated'); // 'automated' or 'manual'
-  const [paymentGateway, setPaymentGateway] = useState('razorpay'); // 'razorpay', 'stripe', 'cashfree'
 
   if (!request || !isOpen) return null;
 
@@ -94,161 +92,10 @@ export default function PayoutDetailsModal({ request: rawRequest, isOpen, onClos
     }
   };
 
-  const processAutomatedPayout = async () => {
-    setIsProcessing(true);
-    try {
-      toast.info('Processing payout through payment gateway...');
-
-      // Get payment gateway credentials from platform settings
-      const settings = await PlatformSetting.list();
-      const settingsMap = settings.reduce((acc, s) => {
-        acc[s.key] = s.value;
-        return acc;
-      }, {});
-
-      let paymentGatewayResponse;
-      let transactionReference;
-
-      if (paymentGateway === 'razorpay') {
-        // Razorpay Payout API Integration
-        const razorpayKey = settingsMap['razorpay_key_id'];
-        const razorpaySecret = settingsMap['razorpay_key_secret'];
-
-        if (!razorpayKey || !razorpaySecret) {
-          toast.error('Razorpay credentials not configured. Please configure in Platform Settings.');
-          setIsProcessing(false);
-          return;
-        }
-
-        // Call Razorpay Payout API
-        const payoutPayload = {
-          account_number: request.bank_details?.account_number,
-          fund_account: {
-            account_type: request.payout_method === 'upi' ? 'vpa' : 'bank_account',
-            bank_account: request.payout_method === 'bank_transfer' ? {
-              name: request.bank_details?.account_holder_name,
-              ifsc: request.bank_details?.ifsc_code,
-              account_number: request.bank_details?.account_number
-            } : undefined,
-            vpa: request.payout_method === 'upi' ? {
-              address: request.upi_id
-            } : undefined
-          },
-          amount: request.requested_amount * 100, // Amount in paise
-          currency: 'INR',
-          mode: request.payout_method === 'upi' ? 'UPI' : 'IMPS',
-          purpose: 'payout',
-          queue_if_low_balance: true,
-          reference_id: `PAYOUT_${request.id}`,
-          narration: `Payout for ${request.entity_type}`,
-          notes: {
-            entity_type: request.entity_type,
-            entity_id: request.entity_id,
-            request_id: request.id
-          }
-        };
-
-        // Simulate Razorpay API call (replace with actual API integration)
-        const response = await fetch('https://api.razorpay.com/v1/payouts', {
-          method: 'POST',
-          headers: {
-            'Authorization': 'Basic ' + btoa(razorpayKey + ':' + razorpaySecret),
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payoutPayload)
-        });
-
-        paymentGatewayResponse = await response.json();
-        
-        if (response.ok && paymentGatewayResponse.id) {
-          transactionReference = paymentGatewayResponse.id; // Razorpay payout ID
-          toast.success('Payout initiated through Razorpay!');
-        } else {
-          throw new Error(paymentGatewayResponse.error?.description || 'Razorpay payout failed');
-        }
-
-      } else if (paymentGateway === 'stripe') {
-        // Stripe Transfers API Integration
-        const stripeKey = settingsMap['stripe_secret_key'];
-
-        if (!stripeKey) {
-          toast.error('Stripe credentials not configured. Please configure in Platform Settings.');
-          setIsProcessing(false);
-          return;
-        }
-
-        // Call Stripe Transfers API (example)
-        const transferPayload = {
-          amount: request.requested_amount * 100, // Amount in paise
-          currency: 'inr',
-          destination: request.entity_id, // Stripe connected account ID
-          transfer_group: `PAYOUT_${request.id}`
-        };
-
-        const response = await fetch('https://api.stripe.com/v1/transfers', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${stripeKey}`,
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: new URLSearchParams(transferPayload)
-        });
-
-        paymentGatewayResponse = await response.json();
-        
-        if (response.ok && paymentGatewayResponse.id) {
-          transactionReference = paymentGatewayResponse.id;
-          toast.success('Payout initiated through Stripe!');
-        } else {
-          throw new Error(paymentGatewayResponse.error?.message || 'Stripe transfer failed');
-        }
-
-      } else if (paymentGateway === 'cashfree') {
-        // Cashfree Payouts API Integration
-        const cashfreeClientId = settingsMap['cashfree_client_id'];
-        const cashfreeClientSecret = settingsMap['cashfree_client_secret'];
-
-        if (!cashfreeClientId || !cashfreeClientSecret) {
-          toast.error('Cashfree credentials not configured. Please configure in Platform Settings.');
-          setIsProcessing(false);
-          return;
-        }
-
-        // Cashfree payout logic here
-        transactionReference = `CF_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        toast.success('Payout initiated through Cashfree!');
-      }
-
-      // Update payout request with transaction reference
-      await PayoutRequest.update(request.id, {
-        status: 'paid',
-        reference_number: transactionReference,
-        admin_notes: `${adminNotes || 'Processed via ' + paymentGateway}. Gateway Response: ${JSON.stringify(paymentGatewayResponse)}`
-      });
-
-      // Send notification to creator
-      await Notification.create({
-        user_id: request.user_id,
-        title: 'Payout Processed',
-        message: `Your payout of ₹${request.requested_amount.toLocaleString('en-IN')} has been processed via ${paymentGateway}. Reference: ${transactionReference}. Funds will be credited within 1-2 business days.`,
-        type: 'info',
-        page: 'general'
-      });
-
-      toast.success(`✅ Payout processed successfully! Reference: ${transactionReference}`);
-      setShowProcessConfirm(false);
-      setAdminNotes('');
-      onClose();
-      if (onUpdate) onUpdate();
-
-    } catch (error) {
-      console.error('Error processing automated payout:', error);
-      toast.error(error.message || 'Failed to process payout through payment gateway');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
+  // Payouts are sent by bank transfer and recorded with the bank's UTR. The old
+  // "automated" option called Razorpay/Stripe from the browser with gateway secrets
+  // read from platform settings, and its Cashfree branch marked the payout paid
+  // with an invented reference; it has been removed.
   const processManualPayout = async () => {
     if (!utrNumber.trim()) {
       toast.error('Please enter UTR number from bank transfer');
@@ -285,13 +132,7 @@ export default function PayoutDetailsModal({ request: rawRequest, isOpen, onClos
     }
   };
 
-  const handleProcess = () => {
-    if (processingMethod === 'automated') {
-      processAutomatedPayout();
-    } else {
-      processManualPayout();
-    }
-  };
+  const handleProcess = () => processManualPayout();
 
   const statusColors = {
     pending: 'bg-hold-muted text-hold-muted-foreground',
@@ -543,94 +384,15 @@ export default function PayoutDetailsModal({ request: rawRequest, isOpen, onClos
         </DialogContent>
       </Dialog>
 
-      {/* Process Payment Dialog - AUTOMATED + MANUAL OPTIONS */}
+      {/* Process Payment Dialog: record the bank transfer (UTR) */}
       <Dialog open={showProcessConfirm} onOpenChange={setShowProcessConfirm}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Process Payout</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            {/* Processing Method Selection */}
-            <div>
-              <Label className="text-base font-semibold mb-3 block">Select Processing Method</Label>
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  onClick={() => setProcessingMethod('automated')}
-                  className={`p-4 rounded-lg border-2 transition-all ${
-                    processingMethod === 'automated'
-                      ? 'border-primary bg-premium-muted'
-                      : 'border-border hover:border-protocall-premium-light'
-                  }`}
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <Zap className={`w-6 h-6 ${processingMethod === 'automated' ? 'text-protocall-premium-text' : 'text-muted-foreground'}`} />
-                    <span className="font-semibold">Automated</span>
-                  </div>
-                  <p className="text-xs text-subtle">Process via payment gateway API</p>
-                </button>
-
-                <button
-                  onClick={() => setProcessingMethod('manual')}
-                  className={`p-4 rounded-lg border-2 transition-all ${
-                    processingMethod === 'manual'
-                      ? 'border-primary bg-premium-muted'
-                      : 'border-border hover:border-protocall-premium-light'
-                  }`}
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <CreditCard className={`w-6 h-6 ${processingMethod === 'manual' ? 'text-primary' : 'text-muted-foreground'}`} />
-                    <span className="font-semibold">Manual</span>
-                  </div>
-                  <p className="text-xs text-subtle">Enter bank transfer UTR</p>
-                </button>
-              </div>
-            </div>
-
-            {/* Automated Processing Options */}
-            {processingMethod === 'automated' && (
-              <>
-                <div className="bg-premium-muted border border-protocall-premium-light rounded-lg p-4">
-                  <div className="flex items-start gap-2">
-                    <Zap className="w-5 h-5 text-protocall-premium-text flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-protocall-premium-text">
-                      <p className="font-semibold mb-1">Automated Payout Processing</p>
-                      <p className="text-xs">
-                        The system will automatically process the payout through your configured payment gateway.
-                        Transaction reference will be captured automatically.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="gateway">Select Payment Gateway</Label>
-                  <select
-                    id="gateway"
-                    value={paymentGateway}
-                    onChange={(e) => setPaymentGateway(e.target.value)}
-                    className="w-full mt-1 px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-protocall-premium-light focus:border-transparent"
-                  >
-                    <option value="razorpay">Razorpay Payouts</option>
-                    <option value="stripe">Stripe Transfers</option>
-                    <option value="cashfree">Cashfree Payouts</option>
-                  </select>
-                </div>
-
-                <div>
-                  <Label htmlFor="auto_notes">Additional Notes (Optional)</Label>
-                  <Textarea
-                    id="auto_notes"
-                    value={adminNotes}
-                    onChange={(e) => setAdminNotes(e.target.value)}
-                    placeholder="Any additional notes..."
-                    rows={2}
-                  />
-                </div>
-              </>
-            )}
-
             {/* Manual Processing Options */}
-            {processingMethod === 'manual' && (
+            {(
               <>
                 <div className="bg-hold-muted border border-hold/30 rounded-lg p-4">
                   <div className="flex items-start gap-2">
@@ -685,17 +447,7 @@ export default function PayoutDetailsModal({ request: rawRequest, isOpen, onClos
             <Button variant="outline" onClick={() => setShowProcessConfirm(false)} disabled={isProcessing}>
               Cancel
             </Button>
-            <Button
-              onClick={handleProcess}
-              disabled={
-                isProcessing || 
-                (processingMethod === 'manual' && !utrNumber.trim())
-              }
-              className={processingMethod === 'automated' 
-                ? "bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
-                : "bg-primary hover:bg-primary"
-              }
-            >
+            <Button onClick={handleProcess} disabled={isProcessing || !utrNumber.trim()} className="bg-primary hover:bg-primary/90">
               {isProcessing ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -703,17 +455,8 @@ export default function PayoutDetailsModal({ request: rawRequest, isOpen, onClos
                 </>
               ) : (
                 <>
-                  {processingMethod === 'automated' ? (
-                    <>
-                      <Zap className="w-4 h-4 mr-2" />
-                      Process via {paymentGateway}
-                    </>
-                  ) : (
-                    <>
-                      <CreditCard className="w-4 h-4 mr-2" />
-                      Confirm Manual Processing
-                    </>
-                  )}
+                  <CreditCard className="w-4 h-4 mr-2" />
+                  Record bank transfer
                 </>
               )}
             </Button>

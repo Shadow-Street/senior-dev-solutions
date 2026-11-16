@@ -17,6 +17,7 @@ export const advisorKeys = {
   refunds: ['advisor', 'refunds'],
   summary: ['advisor', 'withdrawal-summary'],
   reviews: ['advisor', 'reviews'],
+  usage: ['advisor', 'usage'],
 };
 
 /**
@@ -33,6 +34,16 @@ export const useMyAdvisor = () =>
 
 export const useMyPlans = (enabled = true) =>
   useQuery({ queryKey: advisorKeys.plans, queryFn: advisorApi.plans, enabled, ...QUERY_DEFAULTS });
+
+/** Recommendation usage per plan. `postId` also returns the plans that already counted that post. */
+export const useMyUsage = (enabled = true, postId = null) =>
+  useQuery({
+    queryKey: [...advisorKeys.usage, postId || 'all'],
+    queryFn: () => advisorApi.usage(postId ? { post_id: postId } : {}),
+    enabled,
+    ...QUERY_DEFAULTS,
+    retry: 0,
+  });
 
 export const useMyPosts = (enabled = true) =>
   useQuery({ queryKey: advisorKeys.posts, queryFn: () => advisorApi.posts({ limit: 200 }), enabled, ...QUERY_DEFAULTS });

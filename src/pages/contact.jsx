@@ -13,7 +13,7 @@ export default function ContactPage() {
   // const [settings, setSettings] = useState({
   //   support_email: 'support@protocol.in', // Default value
   //   support_phone: '+91-80-4567-8900', // Default value
-  //   site_name: 'Protocol' // Default value
+  //   site_name: 'Protocall' // Default value
   // });
 
   // useEffect(() => {

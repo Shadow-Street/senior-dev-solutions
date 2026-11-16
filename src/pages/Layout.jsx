@@ -31,6 +31,8 @@ import { useSubscription } from "@/components/hooks/useSubscription";
 import DashboardSearch from "@/components/dashboard/DashboardSearch";
 import MarketStatusBadge from "@/components/stocks/MarketStatusBadge";
 import { renderBrandLogo } from "@/components/common/BrandLogo";
+import { usePublicConfig } from "@/lib/platformSettingsApi";
+import { applyNavConfig } from "@/lib/navigationConfig";
 
 // Single source of truth for the primary navigation.
 // `comingSoon` items render a badge and do not navigate.
@@ -73,12 +75,18 @@ function InnerLayout({ children, currentPageName }) {
   const isAdvisor = user?.app_role === "advisor" || user?.roles?.includes("advisor");
   const navigate = useNavigate();
   const { subscription } = useSubscription();
+  // Platform Settings > Sidebar & Navigation: labels, order, visibility.
+  // No saved configuration = NAV_ITEMS exactly as coded.
+  const { nav_config_user: navConfig } = usePublicConfig();
+  const navItems = applyNavConfig(NAV_ITEMS, navConfig, { withLabel: (entry, title) => ({ ...entry, title }) });
 
-  // Shown under the name in the sidebar footer, e.g. "Premium Member".
+  // Shown under the name in the sidebar footer, e.g. "Premium Member". Staff
+  // accounts have full access whatever their plan, so they show their role
+  // (a super admin used to read "Free Member").
   const planName = subscription?.plan_type || subscription?.plan || "";
-  const planLabel = planName
-    ? `${planName.charAt(0).toUpperCase()}${planName.slice(1)} Member`
-    : "Free Member";
+  const staffRole = { super_admin: "Super Admin", admin: "Administrator", sub_admin: "Sub-Admin" }[user?.app_role || user?.role];
+  const planLabel = staffRole
+    || (planName ? `${planName.charAt(0).toUpperCase()}${planName.slice(1)} Member` : "Free Member");
 
   const displayUser = user || {
     id: "guest",
@@ -157,7 +165,7 @@ function InnerLayout({ children, currentPageName }) {
                   Trading Hub
                 </SidebarGroupLabel>
                 <SidebarMenu>
-                  {NAV_ITEMS.map((navItem) => {
+                  {navItems.map((navItem) => {
                     if (navItem.comingSoon) return renderComingSoonItem(navItem);
                     // Approved advisors go straight to their own dashboard;
                     // everyone else browses the Advisors directory.

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const SubscriptionService = require('../services/SubscriptionService');
+const PlatformSettings = require('../services/PlatformSettingsService');
 const SubscriptionCheckoutService = require('../services/SubscriptionCheckoutService');
 const PromoCodeController = require('../controllers/PromoCodeController');
 const { effectiveRole } = require('../utils/roles');
@@ -117,6 +118,16 @@ router.post('/cancel', authMiddleware, async (req, res) => {
       return res.status(404).json({ error: 'No active subscription found' });
     }
 
+    // Platform Settings > Monetization > "Refund on subscription cancellation".
+    // When it is off, cancelling stops renewal without a refund (the same path
+    // initiateRefund takes when nothing is refundable).
+    let refundsEnabled = true;
+    try { refundsEnabled = (await PlatformSettings.getValue('subscription_refund_enabled')) !== false; } catch { refundsEnabled = true; }
+    if (!refundsEnabled) {
+      const cancelled = await SubscriptionService.disableAutopay(req.user.id, reason || 'User requested cancellation');
+      return res.json({ success: true, refunded: false, refunds_enabled: false, subscription: cancelled });
+    }
+
     // Use detailed refund/cancellation logic
     // If immediate=true or default behavior is to try refund
     const result = await SubscriptionService.initiateRefund(subscription.id, reason || 'User requested cancellation');
@@ -229,12 +240,23 @@ router.use('/promo-codes', promoRouter);
 const transactionRouter = express.Router();
 const transactionController = createCrudController(db.SubscriptionTransaction, { ownership: 'user_id' });
 // A customer can read their own history; rows are written by verified payments only.
+// The payments ledger is written only by the server's payment flows
+// (verify, webhook, refunds). Generic writes let an admin create, edit or
+// delete money records with no audit trail, so they are refused for everyone.
+const ledgerReadOnly = (_req, res) => res.status(405).json({ error: 'Payment records are written by the payment system only.' });
+// Non-staff are refused as before (403); staff learn writes are not allowed (405).
+for (const path of ['/bulk', '/', '/:id']) {
+  transactionRouter.post(path, authMiddleware, adminMiddleware, ledgerReadOnly);
+  transactionRouter.put(path, authMiddleware, adminMiddleware, ledgerReadOnly);
+  transactionRouter.delete(path, authMiddleware, adminMiddleware, ledgerReadOnly);
+}
 createCrudRoutes(transactionRouter, transactionController, { read: [authMiddleware], write: [authMiddleware, adminMiddleware] });
 router.use('/transactions', transactionRouter);
 
 // Plans sub-routes
 const planRouter = express.Router();
-const STAFF_ROLES = ['admin', 'super_admin', 'sub_admin'];
+// sub_admin is not implicit staff: it gets only what Roles & Permissions grants (middleware/permissions.js).
+const STAFF_ROLES = ['admin', 'super_admin'];
 const planController = createCrudController(db.SubscriptionPlan, {
   // The public catalogue is the active platform plans only. Advisor plans have
   // their own listing (/advisors/plans) and inactive plans cannot be bought;

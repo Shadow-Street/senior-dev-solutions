@@ -207,3 +207,15 @@ describe('POST /api/auth/google: accounts', () => {
     assert.doesNotMatch(JSON.stringify(res.body), /ER_ACCESS|root|10\.0\.0/);
   });
 });
+
+describe('POST /api/auth/google: restricted accounts', () => {
+  test('a blocked account is refused before it is linked', async () => {
+    verifyWith(PAYLOAD);
+    withUsers({ email: 'pat.person@gmail.com', google_id: null, email_verified: false, status: 'banned' });
+    const res = await post({ token: 'id-token' });
+    assert.equal(res.status, 403);
+    assert.equal(res.body.code, 'ACCOUNT_BLOCKED');
+    assert.equal(saved.length, 0);
+    assert.deepEqual(revoked, []);
+  });
+});

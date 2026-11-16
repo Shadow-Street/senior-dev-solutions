@@ -1,471 +1,236 @@
-
-import React, { useState, useEffect } from 'react';
-import { ChatRoomSchedule, ChatRoom } from '@/api/entities';
+import { useCallback, useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  Clock,
-  Calendar,
-  MessageSquare,
-  Video,
-  Trash2,
-  Plus,
-  Play,
-  Pause,
-  RefreshCw,
-  Edit
-} from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Clock, Plus, Edit, Trash2, Loader2, AlertTriangle, Megaphone, Lock, Unlock, Archive } from 'lucide-react';
 import { toast } from 'sonner';
+import chatAdminApi from './chatAdminApi';
+import { apiError, formatDateTime } from './chatRoomUtils';
+import ConfirmActionDialog from './ConfirmActionDialog';
+import PropTypes from 'prop-types';
 
-export default function RoomAutomationPanel({ adminUser }) {
-  const [schedules, setSchedules] = useState([]);
-  const [chatRooms, setChatRooms] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [editingSchedule, setEditingSchedule] = useState(null);
-  const [formData, setFormData] = useState({
-    chat_room_id: '',
-    schedule_type: 'announcement',
-    action: 'send_message',
-    scheduled_time: '',
-    recurrence: 'once',
-    message_content: '',
-    meeting_url: ''
-  });
+const ACTIONS = {
+  send_message: { label: 'Post an announcement', icon: Megaphone },
+  lock_room: { label: 'Lock the room', icon: Lock },
+  unlock_room: { label: 'Unlock the room', icon: Unlock },
+  archive_room: { label: 'Archive the room', icon: Archive },
+};
+const RECURRENCE = { once: 'Once', daily: 'Every day', weekly: 'Every week' };
 
-  useEffect(() => {
-    loadData();
+/** <input type="datetime-local"> value for a Date, in local time. */
+const toLocalInput = (d) => {
+  const x = new Date(d);
+  if (Number.isNaN(x.getTime())) return '';
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${x.getFullYear()}-${pad(x.getMonth() + 1)}-${pad(x.getDate())}T${pad(x.getHours())}:${pad(x.getMinutes())}`;
+};
+
+const blank = () => ({ chat_room_id: '', action_type: 'send_message', run_at: toLocalInput(Date.now() + 3600e3), recurrence: 'once', message: '' });
+
+/**
+ * Scheduled room actions. The server runs due schedules every minute
+ * (services/RoomAutomationService) and records each run in the audit log.
+ */
+export default function RoomAutomationPanel({ rooms }) {
+  const [items, setItems] = useState(null);
+  const [error, setError] = useState(null);
+  const [editing, setEditing] = useState(null); // null | 'new' | automation
+  const [form, setForm] = useState(blank());
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(null);
+
+  const load = useCallback(async () => {
+    try {
+      setError(null);
+      setItems(await chatAdminApi.automations());
+    } catch (e) {
+      setError(apiError(e, 'Could not load schedules'));
+    }
   }, []);
+  useEffect(() => { load(); }, [load]);
 
-  const loadData = async () => {
-    setIsLoading(true);
+  const openNew = () => { setForm(blank()); setEditing('new'); };
+  const openEdit = (a) => {
+    // A schedule whose time has passed needs a new time; never re-run it as-is.
+    const when = a.config?.next_run_at || a.config?.run_at;
+    const future = when && new Date(when).getTime() > Date.now() ? when : Date.now() + 3600e3;
+    setForm({
+      chat_room_id: a.chat_room_id, action_type: a.action_type, run_at: toLocalInput(future),
+      recurrence: a.config?.recurrence || 'once', message: a.config?.message || '',
+    });
+    setEditing(a);
+  };
+
+  const save = async (e) => {
+    e.preventDefault();
+    if (!form.chat_room_id) { toast.error('Choose a room'); return; }
+    if (!form.run_at) { toast.error('Choose when it should run'); return; }
+    if (form.action_type === 'send_message' && !form.message.trim()) { toast.error('Enter the announcement text'); return; }
+    const payload = {
+      chat_room_id: form.chat_room_id,
+      action_type: form.action_type,
+      config: { run_at: new Date(form.run_at).toISOString(), recurrence: form.recurrence, message: form.message.trim() },
+    };
+    setSaving(true);
     try {
-      const [schedulesData, roomsData] = await Promise.all([
-        ChatRoomSchedule.list('-created_date'),
-        ChatRoom.list()
-      ]);
-
-      setSchedules(schedulesData);
-      setChatRooms(roomsData);
-    } catch (error) {
-      console.error('Error loading schedules:', error);
-      toast.error('Failed to load schedules');
+      if (editing === 'new') await chatAdminApi.createAutomation(payload);
+      else await chatAdminApi.updateAutomation(editing.id, { ...payload, is_active: true });
+      toast.success(editing === 'new' ? 'Schedule created' : 'Schedule updated');
+      setEditing(null);
+      await load();
+    } catch (err) {
+      toast.error(apiError(err, 'Failed to save the schedule'));
     } finally {
-      setIsLoading(false);
+      setSaving(false);
     }
   };
 
-  const handleCreateSchedule = async () => {
-    if (!formData.chat_room_id || !formData.scheduled_time) {
-      toast.error('Please fill in all required fields');
-      return;
-    }
-
+  const toggle = async (a) => {
     try {
-      const scheduleData = {
-        ...formData,
-        created_by: adminUser?.id,
-        created_by_name: adminUser?.display_name,
-        next_execution: formData.scheduled_time,
-        is_active: true
-      };
-
-      if (editingSchedule) {
-        await ChatRoomSchedule.update(editingSchedule.id, scheduleData);
-        toast.success('Schedule updated successfully');
-      } else {
-        await ChatRoomSchedule.create(scheduleData);
-        toast.success('Schedule created successfully');
-      }
-
-      loadData();
-      setShowCreateModal(false);
-      setEditingSchedule(null);
-      resetForm();
-    } catch (error) {
-      console.error('Error creating schedule:', error);
-      toast.error('Failed to create schedule');
+      await chatAdminApi.updateAutomation(a.id, { is_active: !a.is_active });
+      toast.success(a.is_active ? 'Schedule paused' : 'Schedule resumed');
+      await load();
+    } catch (e) {
+      toast.error(apiError(e, 'Failed to update the schedule'));
     }
   };
 
-  const handleEdit = (schedule) => {
-    setEditingSchedule(schedule);
-    const scheduledTime = schedule.scheduled_time || schedule.next_execution;
-    setFormData({
-      chat_room_id: schedule.chat_room_id,
-      schedule_type: schedule.schedule_type,
-      action: schedule.action,
-      scheduled_time: scheduledTime ? new Date(scheduledTime).toISOString().slice(0, 16) : '',
-      recurrence: schedule.recurrence || 'once',
-      message_content: schedule.message_content || '',
-      meeting_url: schedule.meeting_url || ''
-    });
-    setShowCreateModal(true);
-  };
-
-  const handleDelete = async (scheduleId) => {
-    if (!window.confirm('Are you sure you want to delete this schedule?')) {
-      return;
-    }
-
+  const remove = async () => {
     try {
-      await ChatRoomSchedule.delete(scheduleId);
-      toast.success('Schedule deleted successfully');
-      loadData();
-    } catch (error) {
-      console.error('Error deleting schedule:', error);
-      toast.error('Failed to delete schedule');
+      await chatAdminApi.deleteAutomation(deleting.id);
+      toast.success('Schedule deleted');
+      setDeleting(null);
+      await load();
+    } catch (e) {
+      toast.error(apiError(e, 'Failed to delete the schedule'));
     }
   };
 
-  const handleToggleActive = async (schedule) => {
-    try {
-      await ChatRoomSchedule.update(schedule.id, {
-        is_active: !schedule.is_active
-      });
-      toast.success(`Schedule ${!schedule.is_active ? 'activated' : 'deactivated'}`);
-      loadData();
-    } catch (error) {
-      console.error('Error toggling schedule:', error);
-      toast.error('Failed to toggle schedule');
-    }
-  };
-
-  const resetForm = () => {
-    setFormData({
-      chat_room_id: '',
-      schedule_type: 'announcement',
-      action: 'send_message',
-      scheduled_time: '',
-      recurrence: 'once',
-      message_content: '',
-      meeting_url: ''
-    });
-  };
-
-  const scheduleTypeConfig = {
-    announcement: { icon: MessageSquare, color: 'text-primary', label: 'Announcement' },
-    meeting: { icon: Video, color: 'text-protocall-premium-text', label: 'Meeting' },
-    open_close: { icon: Clock, color: 'text-buy-muted-foreground', label: 'Open/Close' },
-    read_only_toggle: { icon: Edit, color: 'text-hold-muted-foreground', label: 'Read-Only Toggle' },
-    cleanup: { icon: Trash2, color: 'text-sell-muted-foreground', label: 'Cleanup' }
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-16">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-lg text-subtle font-medium">Loading Automation...</p>
-        </div>
-      </div>
-    );
-  }
+  const roomName = (id) => rooms.find((r) => r.id === id)?.name || 'Deleted room';
+  const activeRooms = rooms.filter((r) => r.status !== 'archived');
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold">Room Automation & Scheduling</h3>
-              <p className="text-sm text-subtle">Automate room actions and schedule recurring tasks</p>
-            </div>
-            <Button onClick={() => { resetForm(); setShowCreateModal(true); }}>
-              <Plus className="w-4 h-4 mr-2" />
-              Create Schedule
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Total Schedules</p>
-                <p className="text-3xl font-bold">{schedules.length}</p>
-              </div>
-              <Calendar className="w-10 h-10 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-buy-soft text-buy-foreground">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Active</p>
-                <p className="text-3xl font-bold">{schedules.filter(s => s.is_active).length}</p>
-              </div>
-              <Play className="w-10 h-10 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Recurring</p>
-                <p className="text-3xl font-bold">{schedules.filter(s => s.recurrence !== 'once').length}</p>
-              </div>
-              <RefreshCw className="w-10 h-10 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-hold text-hold-foreground">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Announcements</p>
-                <p className="text-3xl font-bold">{schedules.filter(s => s.schedule_type === 'announcement').length}</p>
-              </div>
-              <MessageSquare className="w-10 h-10 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="grid grid-cols-3 gap-4 flex-1 min-w-[18rem]">
+          {[
+            ['Active', items ? items.filter((a) => a.is_active).length : '—'],
+            ['Recurring', items ? items.filter((a) => a.config?.recurrence && a.config.recurrence !== 'once').length : '—'],
+            ['Announcements', items ? items.filter((a) => a.action_type === 'send_message').length : '—'],
+          ].map(([label, value]) => (
+            <Card key={label}><CardContent className="p-4"><p className="text-2xl font-bold">{value}</p><p className="text-sm text-subtle">{label}</p></CardContent></Card>
+          ))}
+        </div>
+        <Button onClick={openNew} disabled={!activeRooms.length}><Plus className="w-4 h-4 mr-2" aria-hidden="true" />New schedule</Button>
       </div>
 
-      {/* Schedules List */}
       <Card>
-        <CardHeader>
-          <CardTitle>All Schedules</CardTitle>
-        </CardHeader>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Clock className="w-4 h-4" aria-hidden="true" />Scheduled actions</CardTitle></CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {schedules.length === 0 ? (
-              <div className="text-center py-12">
-                <Clock className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                <p className="text-subtle font-medium">No schedules created yet</p>
-                <p className="text-muted-foreground text-sm mt-1">Create your first automated schedule</p>
-              </div>
-            ) : (
-              schedules.map(schedule => {
-                const room = chatRooms.find(r => r.id === schedule.chat_room_id);
-                const config = scheduleTypeConfig[schedule.schedule_type] || scheduleTypeConfig.announcement;
-                const Icon = config.icon;
-
+          {error && <p className="text-sm text-sell-muted-foreground flex items-center gap-2" role="alert"><AlertTriangle className="w-4 h-4" aria-hidden="true" />{error}<Button size="sm" variant="outline" onClick={load}>Retry</Button></p>}
+          {!items && !error && <p className="text-sm text-subtle" role="status"><Loader2 className="w-4 h-4 inline animate-spin mr-1" aria-hidden="true" />Loading…</p>}
+          {items && items.length === 0 && <p className="text-sm text-subtle text-center py-8">No schedules yet. Schedule an announcement, or lock a room outside market hours.</p>}
+          {items && items.length > 0 && (
+            <ul className="divide-y">
+              {items.map((a) => {
+                const A = ACTIONS[a.action_type] || ACTIONS.send_message;
                 return (
-                  <div key={schedule.id} className="flex items-center gap-4 p-4 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
-                    <div className={`w-12 h-12 rounded-full bg-white flex items-center justify-center ${config.color}`}>
-                      <Icon className="w-6 h-6" />
-                    </div>
-
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className="font-medium text-foreground">{room?.name || 'Unknown Room'}</p>
-                        <Badge variant="outline" className={config.color}>
-                          {config.label}
-                        </Badge>
-                        {schedule.recurrence !== 'once' && (
-                          <Badge variant="outline" className="text-protocall-premium-text">
-                            {schedule.recurrence}
-                          </Badge>
-                        )}
-                        {schedule.is_active ? (
-                          <Badge className="bg-buy-muted text-buy-muted-foreground">Active</Badge>
-                        ) : (
-                          <Badge className="bg-surface-2 text-foreground">Inactive</Badge>
-                        )}
+                  <li key={a.id} className="py-3 flex flex-wrap items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <A.icon className="w-4 h-4 text-primary" aria-hidden="true" />
+                        <span className="font-medium">{A.label}</span>
+                        <Badge variant="outline">{roomName(a.chat_room_id)}</Badge>
+                        <Badge variant="outline">{RECURRENCE[a.config?.recurrence] || 'Once'}</Badge>
+                        {!a.is_active && <Badge className="bg-surface-2 text-subtle">{a.config?.next_run_at ? 'Paused' : 'Done'}</Badge>}
+                        {a.config?.last_outcome === 'failed' && <Badge className="bg-sell-muted text-sell-muted-foreground">Last run failed</Badge>}
                       </div>
-                      <p className="text-sm text-subtle">
-                        {schedule.action.replace(/_/g, ' ')} • 
-                        Next: {new Date(schedule.next_execution || schedule.scheduled_time).toLocaleString()}
+                      {a.config?.message && <p className="text-sm text-subtle mt-1 break-words">“{a.config.message}”</p>}
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Next: {a.is_active && a.config?.next_run_at ? formatDateTime(a.config.next_run_at) : '—'} · Last run: {formatDateTime(a.last_triggered_at)}
                       </p>
-                      {schedule.message_content && (
-                        <p className="text-xs text-muted-foreground mt-1 truncate">
-                          Message: "{schedule.message_content}"
-                        </p>
-                      )}
-                      {schedule.execution_count > 0 && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Executed {schedule.execution_count} time(s)
-                        </p>
-                      )}
                     </div>
-
                     <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleToggleActive(schedule)}
-                      >
-                        {schedule.is_active ? (
-                          <Pause className="w-4 h-4" />
-                        ) : (
-                          <Play className="w-4 h-4" />
-                        )}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEdit(schedule)}
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDelete(schedule.id)}
-                        className="text-sell-muted-foreground hover:text-sell-muted-foreground"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <Switch aria-label={a.is_active ? 'Pause schedule' : 'Resume schedule'} checked={Boolean(a.is_active)} disabled={!a.config?.next_run_at} onCheckedChange={() => toggle(a)} />
+                      <Button variant="ghost" size="sm" onClick={() => openEdit(a)} aria-label="Edit schedule"><Edit className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="sm" onClick={() => setDeleting(a)} className="text-sell-muted-foreground" aria-label="Delete schedule"><Trash2 className="w-4 h-4" /></Button>
                     </div>
-                  </div>
+                  </li>
                 );
-              })
-            )}
-          </div>
+              })}
+            </ul>
+          )}
         </CardContent>
       </Card>
 
-      {/* Create/Edit Modal */}
-      <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{editingSchedule ? 'Edit Schedule' : 'Create Schedule'}</DialogTitle>
-            <DialogDescription>
-              Set up automated actions for your chat rooms
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4">
+      <Dialog open={Boolean(editing)} onOpenChange={(o) => { if (!o && !saving) setEditing(null); }}>
+        <DialogContent className="sm:max-w-lg">
+          <form onSubmit={save} className="space-y-4">
+            <DialogHeader>
+              <DialogTitle>{editing === 'new' ? 'New schedule' : 'Edit schedule'}</DialogTitle>
+              <DialogDescription>Runs within a minute of the chosen time (server time zone shown in your local time).</DialogDescription>
+            </DialogHeader>
             <div>
-              <Label>Chat Room</Label>
-              <Select value={formData.chat_room_id} onValueChange={(value) => setFormData({...formData, chat_room_id: value})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a room" />
-                </SelectTrigger>
-                <SelectContent>
-                  {chatRooms.map(room => (
-                    <SelectItem key={room.id} value={room.id}>
-                      {room.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+              <Label htmlFor="auto-room">Room</Label>
+              <Select value={form.chat_room_id} onValueChange={(v) => setForm({ ...form, chat_room_id: v })}>
+                <SelectTrigger id="auto-room" className="mt-1"><SelectValue placeholder="Choose a room" /></SelectTrigger>
+                <SelectContent>{activeRooms.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="auto-action">Action</Label>
+              <Select value={form.action_type} onValueChange={(v) => setForm({ ...form, action_type: v })}>
+                <SelectTrigger id="auto-action" className="mt-1"><SelectValue /></SelectTrigger>
+                <SelectContent>{Object.entries(ACTIONS).map(([k, v]) => <SelectItem key={k} value={k}>{v.label}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label>Schedule Type</Label>
-                <Select value={formData.schedule_type} onValueChange={(value) => setFormData({...formData, schedule_type: value})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="announcement">Announcement</SelectItem>
-                    <SelectItem value="meeting">Meeting</SelectItem>
-                    <SelectItem value="open_close">Open/Close Room</SelectItem>
-                    <SelectItem value="read_only_toggle">Read-Only Toggle</SelectItem>
-                    <SelectItem value="cleanup">Cleanup Messages</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="auto-time">When</Label>
+                <Input id="auto-time" type="datetime-local" className="mt-1" value={form.run_at} onChange={(e) => setForm({ ...form, run_at: e.target.value })} />
               </div>
-
               <div>
-                <Label>Action</Label>
-                <Select value={formData.action} onValueChange={(value) => setFormData({...formData, action: value})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="send_message">Send Message</SelectItem>
-                    <SelectItem value="start_meeting">Start Meeting</SelectItem>
-                    <SelectItem value="open">Open Room</SelectItem>
-                    <SelectItem value="close">Close Room</SelectItem>
-                    <SelectItem value="enable_read_only">Enable Read-Only</SelectItem>
-                    <SelectItem value="disable_read_only">Disable Read-Only</SelectItem>
-                    <SelectItem value="delete_old_messages">Delete Old Messages</SelectItem>
-                  </SelectContent>
+                <Label htmlFor="auto-repeat">Repeat</Label>
+                <Select value={form.recurrence} onValueChange={(v) => setForm({ ...form, recurrence: v })}>
+                  <SelectTrigger id="auto-repeat" className="mt-1"><SelectValue /></SelectTrigger>
+                  <SelectContent>{Object.entries(RECURRENCE).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
+            {form.action_type === 'send_message' && (
               <div>
-                <Label>Scheduled Time</Label>
-                <Input
-                  type="datetime-local"
-                  value={formData.scheduled_time}
-                  onChange={(e) => setFormData({...formData, scheduled_time: e.target.value})}
-                />
-              </div>
-
-              <div>
-                <Label>Recurrence</Label>
-                <Select value={formData.recurrence} onValueChange={(value) => setFormData({...formData, recurrence: value})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="once">Once</SelectItem>
-                    <SelectItem value="daily">Daily</SelectItem>
-                    <SelectItem value="weekly">Weekly</SelectItem>
-                    <SelectItem value="monthly">Monthly</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {(formData.schedule_type === 'announcement' || formData.action === 'send_message') && (
-              <div>
-                <Label>Message Content</Label>
-                <Textarea
-                  placeholder="Enter message to post..."
-                  value={formData.message_content}
-                  onChange={(e) => setFormData({...formData, message_content: e.target.value})}
-                  rows={3}
-                />
+                <Label htmlFor="auto-message">Announcement</Label>
+                <Textarea id="auto-message" className="mt-1 h-24" maxLength={2000} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
+                <p className="text-xs text-muted-foreground mt-1">Posted as a system message from you.</p>
               </div>
             )}
-
-            {(formData.schedule_type === 'meeting' || formData.action === 'start_meeting') && (
-              <div>
-                <Label>Meeting URL</Label>
-                <Input
-                  placeholder="https://meet.google.com/..."
-                  value={formData.meeting_url}
-                  onChange={(e) => setFormData({...formData, meeting_url: e.target.value})}
-                />
-              </div>
-            )}
-
-            <div className="flex justify-end gap-3 pt-4">
-              <Button variant="outline" onClick={() => setShowCreateModal(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleCreateSchedule}>
-                {editingSchedule ? 'Update Schedule' : 'Create Schedule'}
-              </Button>
-            </div>
-          </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setEditing(null)} disabled={saving}>Cancel</Button>
+              <Button type="submit" disabled={saving}>{saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" />}Save</Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
+
+      <ConfirmActionDialog
+        open={Boolean(deleting)}
+        onClose={() => setDeleting(null)}
+        onConfirm={remove}
+        destructive
+        title="Delete this schedule?"
+        description="It will not run again. Past runs stay in the audit log."
+        confirmLabel="Delete"
+      />
     </div>
   );
 }
+
+RoomAutomationPanel.propTypes = {
+  rooms: PropTypes.array.isRequired,
+};

@@ -3,6 +3,45 @@ const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
 const { authMiddleware } = require("../middleware/auth");
+const Moderation = require("../services/ModerationService");
+const { userLimiter } = require("../utils/failureLimiters");
+
+// ---------------------------------------------------------------------------
+// Content reports (Content Moderation, PPT slide 9). A member reports a chat
+// message, an advisor post or a user; admins review them under
+// /api/moderation/reports. Declared before the generic CRUD below, whose
+// /:id routes would otherwise capture these paths.
+// ---------------------------------------------------------------------------
+const reportLimiter = userLimiter({ windowMs: 60 * 60 * 1000, max: 20, message: 'You have sent a lot of reports. Please try again later.' });
+
+function sendModerationError(res, error) {
+  if (error instanceof Moderation.ModerationError && error.status) {
+    const body = { error: error.message };
+    if (error.code) body.code = error.code;
+    return res.status(error.status).json(body);
+  }
+  console.error('[report.routes.js] content report failed:', error);
+  return res.status(500).json({ error: 'Internal server error' });
+}
+
+router.post('/content', authMiddleware, reportLimiter, Moderation.requireSchema, async (req, res) => {
+  try {
+    // Whitelist: reporter, author, severity and status are decided server-side.
+    const { target_type: targetType, target_id: targetId, reason, note } = req.body || {};
+    const result = await Moderation.createReport(req.user, { target_type: targetType, target_id: targetId, reason, note });
+    res.status(result.duplicate ? 200 : 201).json(result);
+  } catch (error) {
+    sendModerationError(res, error);
+  }
+});
+
+router.get('/content/mine', authMiddleware, Moderation.requireSchema, async (req, res) => {
+  try {
+    res.json(await Moderation.listMine(req.user));
+  } catch (error) {
+    sendModerationError(res, error);
+  }
+});
 
 // Reports CRUD
 const reportController = createCrudController(db.Report, {

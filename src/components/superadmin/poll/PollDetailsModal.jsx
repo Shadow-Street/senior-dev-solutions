@@ -1,359 +1,189 @@
-import React, { useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  Users,
-  Calendar,
-  Target,
-  Crown,
-  Clock,
-  CheckCircle,
-  Ban,
-  Play,
-  Trash2,
-  Star,
-  Eye
-} from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Users, Star, Pencil, Lock, Unlock, EyeOff, Eye, Sparkles, Trash2, History, Crown } from 'lucide-react';
 import { format } from 'date-fns';
-import { useState } from 'react';
+import { getPollTally } from '@/lib/pollVotes';
+import { pollAdminApi, errorMessage } from './pollAdminApi';
+import { usePollAdminResource } from './usePollAdminResource';
+import { STATUS_META, pollTitle, typeLabel } from './pollAdminModel';
 
-export default function PollDetailsModal({ open, poll, users, votes, onClose, onDelete, onSuspend }) {
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+const TONE_BAR = { positive: 'bg-buy', negative: 'bg-sell', neutral: 'bg-hold', other: 'bg-primary' };
+const fmt = (value, pattern = 'd MMM yyyy, HH:mm') => {
+  const d = value ? new Date(value) : null;
+  return d && !Number.isNaN(d.getTime()) ? format(d, pattern) : '-';
+};
 
-  const pollData = useMemo(() => {
-    if (!poll) return null;
-
-    const creator = users.find(u => u.email === poll.created_by);
-    const totalVotes = poll.total_votes || 0;
-    const buyVotes = poll.buy_votes || 0;
-    const sellVotes = poll.sell_votes || 0;
-    const holdVotes = poll.hold_votes || 0;
-
-    const voteDistribution = [
-      { name: 'Buy', value: buyVotes, color: 'hsl(var(--chart-2))', percentage: totalVotes > 0 ? (buyVotes / totalVotes) * 100 : 0 },
-      { name: 'Sell', value: sellVotes, color: 'hsl(var(--chart-3))', percentage: totalVotes > 0 ? (sellVotes / totalVotes) * 100 : 0 },
-      { name: 'Hold', value: holdVotes, color: 'hsl(var(--chart-4))', percentage: totalVotes > 0 ? (holdVotes / totalVotes) * 100 : 0 }
-    ];
-
-    const isActive = poll.is_active;
-    const isExpired = poll.expires_at && new Date(poll.expires_at) < new Date();
-
-    return {
-      ...poll,
-      creator,
-      totalVotes,
-      voteDistribution,
-      isActive,
-      isExpired,
-      status: !isActive ? 'Suspended' : isExpired ? 'Expired' : 'Active'
-    };
-  }, [poll, users]);
-
-  const voterDetails = useMemo(() => {
-    if (!poll || !votes.length) return [];
-    
-    return votes.map(vote => {
-      const voter = users.find(u => u.id === vote.user_id);
-      return {
-        ...vote,
-        user: voter
-      };
-    });
-  }, [poll, votes, users]);
-
-  if (!pollData) return null;
-
-  const handleDeleteClick = () => {
-    setShowDeleteDialog(true);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (onDelete) {
-      await onDelete(poll.id);
-      setShowDeleteDialog(false);
-      onClose();
-    }
-  };
-
-  const handleSuspendClick = async () => {
-    if (onSuspend) {
-      await onSuspend(poll.id, pollData.isActive);
-    }
-  };
+function renderBody(data, canManage, onEdit, onAction) {
+  const { poll, creator, voters, voters_truncated: votersTruncated, history } = data;
+  const tally = getPollTally(poll);
+  const status = STATUS_META[poll.admin_status] || STATUS_META.active;
+  const days = Math.max(1, Math.ceil((Date.now() - new Date(poll.created_at).getTime()) / 86400000));
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onClose}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <DialogTitle className="text-xl mb-2">{pollData.title}</DialogTitle>
-                <DialogDescription className="flex items-center gap-2">
-                  <Badge variant="outline">{pollData.stock_symbol}</Badge>
-                  <Badge className={pollData.is_premium ? 'bg-premium-muted text-protocall-premium-text' : 'bg-premium-muted text-primary'}>
-                    {pollData.is_premium ? 'Premium' : 'General'}
-                  </Badge>
-                  <Badge className={
-                    pollData.status === 'Active' ? 'bg-buy-muted text-buy-muted-foreground' :
-                    pollData.status === 'Suspended' ? 'bg-sell-muted text-sell-muted-foreground' :
-                    'bg-surface-2 text-foreground'
-                  }>
-                    {pollData.status}
-                  </Badge>
-                </DialogDescription>
-              </div>
-              <div className="flex gap-2">
-                {onSuspend && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleSuspendClick}
-                    className={pollData.isActive ? 'text-hold-muted-foreground hover:text-hold-muted-foreground' : 'text-buy-muted-foreground hover:text-buy-muted-foreground'}
-                  >
-                    {pollData.isActive ? <Ban className="w-4 h-4 mr-2" /> : <Play className="w-4 h-4 mr-2" />}
-                    {pollData.isActive ? 'Suspend' : 'Reactivate'}
-                  </Button>
-                )}
-                {onDelete && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleDeleteClick}
-                    className="text-sell-muted-foreground hover:text-sell-muted-foreground"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete
-                  </Button>
-                )}
-              </div>
-            </div>
-          </DialogHeader>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-            {/* Poll Information */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Basic Info */}
-              <div className="bg-surface-2 p-4 rounded-lg">
-                <h3 className="font-semibold mb-3">Poll Information</h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <p className="text-subtle">Created by</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <img 
-                        src={pollData.creator?.profile_image_url || `https://avatar.vercel.sh/${pollData.creator?.email}.png`} 
-                        alt={pollData.creator?.display_name} 
-                        className="w-6 h-6 rounded-full"
-                      />
-                      <span className="font-medium">{pollData.creator?.display_name || 'Unknown'}</span>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-subtle">Created on</p>
-                    <p className="font-medium">{format(new Date(pollData.created_date), 'PPP')}</p>
-                  </div>
-                  <div>
-                    <p className="text-subtle">Poll Type</p>
-                    <p className="font-medium">{pollData.poll_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
-                  </div>
-                  <div>
-                    <p className="text-subtle">Expires</p>
-                    <p className="font-medium">
-                      {pollData.expires_at ? format(new Date(pollData.expires_at), 'PPP') : 'Never'}
-                    </p>
-                  </div>
-                  {pollData.target_price && (
-                    <div>
-                      <p className="text-subtle">Target Price</p>
-                      <p className="font-medium">₹{pollData.target_price.toLocaleString()}</p>
-                    </div>
-                  )}
-                  {pollData.confidence_score && (
-                    <div>
-                      <p className="text-subtle">Confidence Level</p>
-                      <div className="flex items-center gap-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={`w-3 h-3 ${i < pollData.confidence_score ? 'fill-hold text-hold' : 'text-muted-foreground'}`} />
-                        ))}
-                        <span className="ml-1 text-xs">({pollData.confidence_score}/5)</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                {pollData.description && (
-                  <div className="mt-4">
-                    <p className="text-subtle text-sm">Description</p>
-                    <p className="text-sm mt-1">{pollData.description}</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Vote Breakdown */}
-              <div className="bg-white border rounded-lg p-4">
-                <h3 className="font-semibold mb-4 flex items-center gap-2">
-                  <Users className="w-4 h-4" />
-                  Vote Breakdown ({pollData.totalVotes} total votes)
-                </h3>
-                
-                <div className="space-y-3">
-                  {pollData.voteDistribution.map((item, index) => {
-                    const Icon = item.name === 'Buy' ? TrendingUp : item.name === 'Sell' ? TrendingDown : Minus;
-                    return (
-                      <div key={index} className="flex items-center gap-3">
-                        <Icon className={`w-4 h-4 ${item.name === 'Buy' ? 'text-positive' : item.name === 'Sell' ? 'text-sell' : 'text-muted-foreground'}`} />
-                        <span className="w-12 text-sm font-medium">{item.name}</span>
-                        <Progress 
-                          value={item.percentage} 
-                          className="flex-1 h-2"
-                          indicatorClassName={item.name === 'Buy' ? 'bg-buy' : item.name === 'Sell' ? 'bg-sell' : 'bg-muted-foreground'}
-                        />
-                        <span className="w-16 text-right text-sm">
-                          {item.value} ({Math.round(item.percentage)}%)
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Voter List */}
-              {voterDetails.length > 0 && (
-                <div className="bg-white border rounded-lg p-4">
-                  <h3 className="font-semibold mb-4 flex items-center gap-2">
-                    <Eye className="w-4 h-4" />
-                    Recent Voters ({voterDetails.length})
-                  </h3>
-                  <div className="max-h-48 overflow-y-auto space-y-2">
-                    {voterDetails.slice(0, 20).map((vote, index) => (
-                      <div key={index} className="flex items-center justify-between text-sm py-2 px-3 bg-surface-2 rounded">
-                        <div className="flex items-center gap-2">
-                          <img 
-                            src={vote.user?.profile_image_url || `https://avatar.vercel.sh/${vote.user?.email}.png`} 
-                            alt={vote.user?.display_name} 
-                            className="w-6 h-6 rounded-full"
-                          />
-                          <span>{vote.user?.display_name || 'Anonymous'}</span>
-                        </div>
-                        <Badge 
-                          variant="outline"
-                          className={
-                            vote.vote === 'buy' ? 'bg-buy-muted text-buy-muted-foreground border-buy/30' :
-                            vote.vote === 'sell' ? 'bg-sell-muted text-sell-muted-foreground border-sell/30' :
-                            'bg-surface-2 text-subtle border-border'
-                          }
-                        >
-                          {vote.vote.toUpperCase()}
-                        </Badge>
-                      </div>
-                    ))}
-                    {voterDetails.length > 20 && (
-                      <p className="text-center text-sm text-muted-foreground py-2">
-                        +{voterDetails.length - 20} more voters
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Vote Distribution Chart */}
-            <div className="space-y-6">
-              <div className="bg-white border rounded-lg p-4">
-                <h3 className="font-semibold mb-4">Vote Distribution</h3>
-                <ResponsiveContainer width="100%" height={200}>
-                  <PieChart>
-                    <Pie
-                      data={pollData.voteDistribution.filter(item => item.value > 0)}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={40}
-                      outerRadius={80}
-                      paddingAngle={5}
-                      dataKey="value"
-                    >
-                      {pollData.voteDistribution.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip formatter={(value, name) => [`${value} votes`, name]} />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Quick Stats */}
-              <div className="bg-white border rounded-lg p-4">
-                <h3 className="font-semibold mb-4">Quick Stats</h3>
-                <div className="space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-subtle">Total Participants</span>
-                    <span className="font-medium">{pollData.totalVotes}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-subtle">Winning Decision</span>
-                    <span className="font-medium">
-                      {pollData.voteDistribution.reduce((max, item) => max.value > item.value ? max : item, pollData.voteDistribution[0])?.name || 'Tie'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-subtle">Consensus Strength</span>
-                    <span className="font-medium">
-                      {Math.round(pollData.voteDistribution.reduce((max, item) => max.value > item.value ? max : item, pollData.voteDistribution[0])?.percentage || 0)}%
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-subtle">Days Active</span>
-                    <span className="font-medium">
-                      {Math.max(1, Math.ceil((new Date() - new Date(pollData.created_date)) / (1000 * 60 * 60 * 24)))}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <DialogHeader>
+        <DialogTitle className="text-xl pr-6">{pollTitle(poll)}</DialogTitle>
+        <DialogDescription asChild>
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            {poll.stock_symbol && <Badge variant="outline">{poll.stock_symbol}</Badge>}
+            <Badge variant="outline" className={status.className}>{status.label}</Badge>
+            {poll.is_premium ? <Badge className="bg-premium-muted text-primary border-0"><Crown className="w-3 h-3 mr-1" aria-hidden="true" />Premium</Badge> : <Badge variant="secondary">General</Badge>}
+            {poll.is_featured && <Badge className="bg-primary/10 text-primary border-0">Featured until {fmt(poll.boost_expires_at, 'd MMM')}</Badge>}
+            {poll.is_admin_poll && <Badge variant="secondary">Admin created</Badge>}
           </div>
-        </DialogContent>
-      </Dialog>
+        </DialogDescription>
+      </DialogHeader>
 
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Poll Permanently?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the poll 
-              "<span className="font-semibold">{poll?.title}</span>" and all {pollData.totalVotes} associated votes.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmDelete} className="bg-sell hover:bg-sell">
-              Delete Poll & Votes
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {canManage && (
+        <div className="flex flex-wrap gap-2 pt-2">
+          <Button size="sm" variant="outline" onClick={() => onEdit(poll)}><Pencil className="w-4 h-4 mr-1.5" aria-hidden="true" />Edit</Button>
+          {poll.admin_status === 'active' && <Button size="sm" variant="outline" onClick={() => onAction('close', poll)}><Lock className="w-4 h-4 mr-1.5" aria-hidden="true" />Close voting</Button>}
+          {poll.admin_status === 'closed' && <Button size="sm" variant="outline" onClick={() => onAction('reopen', poll)}><Unlock className="w-4 h-4 mr-1.5" aria-hidden="true" />Reopen</Button>}
+          {poll.is_featured
+            ? <Button size="sm" variant="outline" onClick={() => onAction('unfeature', poll)}><Sparkles className="w-4 h-4 mr-1.5" aria-hidden="true" />Unfeature</Button>
+            : poll.admin_status === 'active' && <Button size="sm" variant="outline" onClick={() => onAction('feature', poll)}><Sparkles className="w-4 h-4 mr-1.5" aria-hidden="true" />Feature</Button>}
+          {poll.admin_status === 'hidden'
+            ? <Button size="sm" variant="outline" onClick={() => onAction('unhide', poll)}><Eye className="w-4 h-4 mr-1.5" aria-hidden="true" />Restore</Button>
+            : <Button size="sm" variant="outline" onClick={() => onAction('hide', poll)}><EyeOff className="w-4 h-4 mr-1.5" aria-hidden="true" />Hide</Button>}
+          <Button size="sm" variant="outline" className="text-sell-muted-foreground" onClick={() => onAction('delete', poll)}><Trash2 className="w-4 h-4 mr-1.5" aria-hidden="true" />Delete</Button>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
+        <div className="lg:col-span-2 space-y-6">
+          <section className="rounded-lg border border-border p-4" aria-labelledby="poll-results">
+            <h3 id="poll-results" className="font-semibold mb-4 flex items-center gap-2">
+              <Users className="w-4 h-4" aria-hidden="true" />
+              Results: {tally.total} vote{tally.total === 1 ? '' : 's'} from {tally.uniqueVoters} voter{tally.uniqueVoters === 1 ? '' : 's'}
+            </h3>
+            <ul className="space-y-3">
+              {tally.options.map((o) => (
+                <li key={o.index} className="flex items-center gap-3">
+                  <span className="w-28 truncate text-sm font-medium" title={o.label}>{o.label}</span>
+                  <div className="flex-1 h-2 rounded-full bg-border overflow-hidden" role="presentation">
+                    <div className={`${TONE_BAR[o.tone]} h-2`} style={{ width: `${o.percentage}%` }} />
+                  </div>
+                  <span className="w-20 text-right text-sm tabular-nums">{o.count} ({o.rounded}%)</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="rounded-lg border border-border p-4" aria-labelledby="poll-voters">
+            <h3 id="poll-voters" className="font-semibold mb-3">Voters ({voters.length}{votersTruncated ? '+' : ''})</h3>
+            {voters.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No votes yet.</p>
+            ) : (
+              <ul className="max-h-56 overflow-y-auto divide-y divide-border">
+                {voters.map((v) => (
+                  <li key={v.id} className="flex items-center justify-between py-2 text-sm">
+                    <span className="flex items-center gap-2 min-w-0">
+                      {v.user.image
+                        ? <img src={v.user.image} alt="" className="w-6 h-6 rounded-full object-cover" />
+                        : <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center" aria-hidden="true">{v.user.name.charAt(0)}</span>}
+                      <span className="truncate">{v.user.name}</span>
+                    </span>
+                    <span className="flex items-center gap-3 shrink-0">
+                      <Badge variant="outline">{v.option_label}</Badge>
+                      <span className="text-xs text-muted-foreground w-28 text-right">{fmt(v.voted_at, 'd MMM, HH:mm')}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {poll.is_anonymous && <p className="mt-2 text-xs text-muted-foreground">This is an anonymous poll, so voter identities are not shown.</p>}
+          </section>
+
+          <section className="rounded-lg border border-border p-4" aria-labelledby="poll-history">
+            <h3 id="poll-history" className="font-semibold mb-3 flex items-center gap-2"><History className="w-4 h-4" aria-hidden="true" />Moderation history</h3>
+            {history.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No admin changes recorded for this poll.</p>
+            ) : (
+              <ul className="space-y-2 text-sm">
+                {history.map((h) => (
+                  <li key={h.id} className="flex justify-between gap-4">
+                    <span>{h.description}</span>
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">{fmt(h.created_at, 'd MMM, HH:mm')}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </div>
+
+        <aside className="space-y-4">
+          <section className="rounded-lg bg-surface-2 p-4 text-sm space-y-2.5" aria-label="Poll information">
+            {renderRow('Created by', creator?.name || 'Unknown')}
+            {renderRow('Created', fmt(poll.created_at))}
+            {renderRow('Ends', poll.expires_at ? fmt(poll.expires_at) : 'No end time')}
+            {renderRow('Type', typeLabel(poll.poll_type))}
+            {renderRow('Source', poll.creation_source === 'admin_panel' ? 'Admin panel' : poll.creation_source === 'chatroom' ? 'Chat room' : 'Community')}
+            {poll.target_price != null && renderRow('Target price', `₹${Number(poll.target_price).toLocaleString('en-IN')}`)}
+            {poll.confidence_score != null && (
+              <div className="flex justify-between">
+                <span className="text-subtle">Confidence</span>
+                <span className="flex items-center gap-0.5" aria-label={`${poll.confidence_score} out of 5`}>
+                  {[0, 1, 2, 3, 4].map((i) => <Star key={i} className={`w-3 h-3 ${i < poll.confidence_score ? 'fill-hold text-hold' : 'text-muted-foreground'}`} aria-hidden="true" />)}
+                </span>
+              </div>
+            )}
+          </section>
+          <section className="rounded-lg bg-surface-2 p-4 text-sm space-y-2.5" aria-label="Quick stats">
+            {renderRow('Leading option', tally.leader ? (tally.leader.tie ? `Tie (${tally.leader.label})` : tally.leader.label) : 'No votes')}
+            {renderRow('Consensus', tally.leader ? `${tally.leader.rounded}%` : '-')}
+            {renderRow('Days live', days)}
+            {renderRow('Votes per day', (tally.total / days).toFixed(1))}
+          </section>
+          {poll.description && (
+            <section className="rounded-lg border border-border p-4 text-sm">
+              <h3 className="text-subtle mb-1">Description</h3>
+              <p className="whitespace-pre-line">{poll.description}</p>
+            </section>
+          )}
+        </aside>
+      </div>
     </>
   );
+}
+
+const renderRow = (label, value) => (
+  <div key={label} className="flex justify-between gap-3">
+    <span className="text-subtle">{label}</span>
+    <span className="font-medium text-right">{value}</span>
+  </div>
+);
+
+/** Poll details, loaded fresh from the server each time it opens (and after any change). */
+export default function PollDetailsModal({ pollId, version = 0, canManage, onClose, onEdit, onAction }) {
+  return (
+    <Dialog open={Boolean(pollId)} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
+        {pollId && <DetailsLoader pollId={pollId} version={version} canManage={canManage} onEdit={onEdit} onAction={onAction} />}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function DetailsLoader({ pollId, version, canManage, onEdit, onAction }) {
+  const res = usePollAdminResource(() => pollAdminApi.details(pollId), `${pollId}:${version}`);
+  if (res.isLoading) {
+    return (
+      <div className="space-y-4" aria-busy="true">
+        <DialogTitle className="sr-only">Loading poll</DialogTitle>
+        <div className="h-7 w-2/3 rounded bg-surface-2 animate-pulse" />
+        <div className="h-40 rounded bg-surface-2 animate-pulse" />
+      </div>
+    );
+  }
+  if (res.error && !res.data) {
+    return (
+      <div role="alert" className="py-8 text-center space-y-3">
+        <DialogTitle>Could not load this poll</DialogTitle>
+        <p className="text-sm text-sell-muted-foreground">{errorMessage(res.error, 'Please try again.')}</p>
+        <Button variant="outline" size="sm" onClick={res.reload}>Try again</Button>
+      </div>
+    );
+  }
+  return renderBody(res.data, canManage, onEdit, onAction);
 }

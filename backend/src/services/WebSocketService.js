@@ -1,7 +1,8 @@
 const WebSocket = require('ws');
 const jwt = require('jsonwebtoken');
 const db = require('../models');
-const { canJoinRoom, canReadRoom, canManageRoom } = require('../utils/roomAccess');
+const { canJoinRoom, canReadRoom, postingBlockReason, memberRoomView, ensureParticipant } = require('../utils/roomAccess');
+const { accountBlock } = require('../utils/accountStatus');
 
 // ws defaults to 100 MiB per frame, so one client could make the server
 // buffer and JSON.parse 100 MiB. Chat frames are small; media goes by URL.
@@ -9,6 +10,8 @@ const MAX_PAYLOAD = 64 * 1024;
 const MAX_CONTENT_LENGTH = 10000;
 // Never `email`: these profiles are broadcast to everyone in the room.
 const PUBLIC_USER_ATTRIBUTES = ['id', 'name', 'profile_image_url'];
+// How long a socket's "account is active" answer is trusted.
+const ACCOUNT_RECHECK_MS = 30 * 1000;
 
 /** An error whose message is safe to show the client; anything else is generic. */
 const clientError = (message) => Object.assign(new Error(message), { clientMessage: message });
@@ -46,6 +49,13 @@ class WebSocketService {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const userId = decoded.id;
 
+      // Restricted accounts (deactivated, suspended, blocked) cannot chat.
+      const account = await db.User.findByPk(userId, { attributes: ['id', 'status'] });
+      if (!account || (await accountBlock(account))) {
+        ws.close(4003, 'Account restricted');
+        return;
+      }
+
       // Store connection
       if (!this.clients.has(userId)) {
         this.clients.set(userId, new Set());
@@ -72,6 +82,12 @@ class WebSocketService {
         this.handleDisconnect(ws);
       });
 
+      // A sanction applied while the status lookup above was in flight called
+      // disconnectUser before this socket was registered, so it missed it.
+      // Check again now that it is registered (a close runs handleDisconnect).
+      ws.accountCheckedAt = 0;
+      if (!(await this.accountStillActive(ws))) return;
+
       // Send connected confirmation
       this.sendToUser(userId, {
         type: 'connected',
@@ -89,6 +105,12 @@ class WebSocketService {
     try {
       const message = JSON.parse(data.toString());
       const userId = ws.userId;
+
+      // Joining and posting re-check the account (cached per socket), so a
+      // sanction applied on another API instance still stops this socket.
+      if ((message.type === 'join_room' || message.type === 'chat_message') && !(await this.accountStillActive(ws))) {
+        throw clientError('Account restricted');
+      }
 
       switch (message.type) {
         case 'join_room':
@@ -137,6 +159,22 @@ class WebSocketService {
     }
   }
 
+  /**
+   * False (and the socket closed with 4003) when the user's account is no
+   * longer active. The answer is cached on the socket for ACCOUNT_RECHECK_MS
+   * so a busy chat does not cost a database read per frame.
+   */
+  async accountStillActive(ws) {
+    if (ws.accountCheckedAt && Date.now() - ws.accountCheckedAt < ACCOUNT_RECHECK_MS) return true;
+    const account = await db.User.findByPk(ws.userId, { attributes: ['id', 'status'] });
+    if (account && !(await accountBlock(account))) {
+      ws.accountCheckedAt = Date.now();
+      return true;
+    }
+    if (typeof ws.close === 'function') ws.close(4003, 'Account restricted');
+    return false;
+  }
+
   /** Stops live delivery of a room to a user removed from it (kick or ban). */
   evictFromRoom(userId, roomId) {
     const key = String(userId);
@@ -171,15 +209,7 @@ class WebSocketService {
 
     if (!existing) {
       if (!(await canJoinRoom(joiner, room))) throw clientError('You cannot join this room');
-
-      await db.ChatRoomParticipant.create({
-        chat_room_id: roomId,
-        user_id: userId,
-        role: 'member',
-        joined_at: new Date()
-      });
-
-      await db.ChatRoom.increment('participant_count', { where: { id: roomId } });
+      await ensureParticipant(roomId, userId, 'member');
     }
 
     // Add user to room tracking
@@ -209,7 +239,8 @@ class WebSocketService {
 
     this.sendToUser(userId, {
       type: 'room_joined',
-      room: typeof room.toJSON === 'function' ? room.toJSON() : room,
+      // Never the raw settings (ban list, who locked the room).
+      room: memberRoomView(room),
       participants: participants.map(p => p.toJSON()),
       onlineUsers: Array.from(this.rooms.get(roomId) || [])
     });
@@ -258,9 +289,11 @@ class WebSocketService {
     if (!(await canReadRoom(sender, roomId))) throw clientError('Not a member of this room');
 
     const room = await db.ChatRoom.findByPk(roomId);
-    if (room?.admin_only_post && !(await canManageRoom(sender, room))) {
-      throw clientError('Only moderators can post in this room');
-    }
+    // Same room rules and moderation rules as POST /api/messages.
+    const blocked = await postingBlockReason(sender, room);
+    if (blocked) throw clientError(blocked);
+    const ruleHit = await require('./ChatModerationService').checkMessage(sender, room, content, participant);
+    if (ruleHit) throw clientError(ruleHit.message);
 
     // Create message in database
     // A reply may only point at a message in the same room.
@@ -464,6 +497,17 @@ class WebSocketService {
     }
 
     console.log(`User ${userId} disconnected from WebSocket`);
+  }
+
+  /** Closes every socket of a user (account suspended, blocked or deactivated). */
+  disconnectUser(userId, code = 4003, reason = 'Account restricted') {
+    const sockets = this.clients.get(userId) || this.clients.get(String(userId));
+    if (!sockets) return 0;
+    let closed = 0;
+    for (const ws of [...sockets]) {
+      try { ws.close(code, reason); closed += 1; } catch { /* already closing */ }
+    }
+    return closed;
   }
 
   // Send to specific user (all their connections)

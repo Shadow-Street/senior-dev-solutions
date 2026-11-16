@@ -1,11 +1,13 @@
 const express = require("express");
 const AuthController = require("../controllers/AuthController");
 const { authenticate } = require("../middleware/auth");
+// Access & Security platform settings: sign-ups open/closed, per-account lockout.
+const { registrationGate, loginLockout } = require("../middleware/accessPolicy");
 
 const router = express.Router();
 
-router.post("/login", AuthController.login);
-router.post("/register", AuthController.register);
+router.post("/login", loginLockout, AuthController.login);
+router.post("/register", registrationGate, AuthController.register);
 router.post("/google", AuthController.googleLogin);
 router.get("/me", authenticate, AuthController.me);
 

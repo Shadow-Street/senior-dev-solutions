@@ -3,6 +3,7 @@ import Pages from "@/pages/index.jsx"
 import { Toaster } from "sonner"
 import { SubscriptionProvider } from "@/components/context/SubscriptionProvider"
 import { AuthProvider } from "@/components/context/AuthContext"
+import PlatformRuntime from "@/components/common/PlatformRuntime"
 import { BrowserRouter as Router } from 'react-router-dom'
 import { Provider as ReduxProvider } from 'react-redux'
 import { store } from '@/store'
@@ -15,7 +16,10 @@ function App() {
       <Router>
         <AuthProvider>
         <SubscriptionProvider>
-          <Pages />
+          {/* Platform-wide settings: page head, maintenance screen, idle sign-out. */}
+          <PlatformRuntime>
+            <Pages />
+          </PlatformRuntime>
           {/* Sonner's Toaster, mounted at the root.
 
               Every `toast(...)` call in this app comes from sonner, but the

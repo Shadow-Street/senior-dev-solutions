@@ -1,72 +1,57 @@
-import React, { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
-import { TrendingUp, Eye, MessageCircle, Star, BarChart3, Users, Crown, Vote, PackageOpen } from 'lucide-react';
+import { Star, Eye, Users, Vote, PackageOpen, Crown, Sparkles } from 'lucide-react';
+import { rankPolls, pollTitle, STATUS_META } from './pollAdminModel';
 
-const ProgressBar = ({ value, color }) => (
-  <div className="w-full bg-border rounded-full h-1.5">
-    <div className={`${color} h-1.5 rounded-full`} style={{ width: `${value}%` }}></div>
-  </div>
-);
+const TONE_BAR = { positive: 'bg-buy', negative: 'bg-sell', neutral: 'bg-hold', other: 'bg-primary' };
 
-export default function TopPollsWidget({ polls, onViewDetails }) {
-  const [rankingMetric, setRankingMetric] = useState('votes');
-  const [timeRange, setTimeRange] = useState('all');
+function renderOptionBar(option) {
+  return (
+    <div key={option.index}>
+      <div className="flex justify-between text-xs mb-1">
+        <span className="font-medium text-foreground truncate pr-2">{option.label}</span>
+        <span className="text-muted-foreground tabular-nums">{option.count} ({option.rounded}%)</span>
+      </div>
+      <div className="w-full bg-border rounded-full h-1.5" role="presentation">
+        <div className={`${TONE_BAR[option.tone]} h-1.5 rounded-full`} style={{ width: `${option.percentage}%` }} />
+      </div>
+    </div>
+  );
+}
 
-  const topPolls = useMemo(() => {
-    if (!polls || polls.length === 0) return [];
-
-    const now = new Date();
-
-    const filtered = polls.filter(poll => {
-      if (timeRange === 'all') return true;
-      const pollDate = new Date(poll.created_date);
-      if (timeRange === 'today') return pollDate.toDateString() === now.toDateString();
-      if (timeRange === '7d') return pollDate >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      if (timeRange === '30d') return pollDate >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      return true;
-    });
-
-    const sorted = [...filtered].sort((a, b) => {
-      switch (rankingMetric) {
-        case 'pledges':
-          return (b.total_pledge_amount || 0) - (a.total_pledge_amount || 0);
-        case 'engagement':
-          return ((b.total_votes || 0) + (b.total_pledges || 0)) - ((a.total_votes || 0) + (a.total_pledges || 0));
-        case 'votes':
-        default:
-          return (b.total_votes || 0) - (a.total_votes || 0);
-      }
-    });
-
-    return sorted.slice(0, 3);
-  }, [polls, rankingMetric, timeRange]);
+/**
+ * Top Performing Polls. Cards are built from the analytics response, whose
+ * counts are limited to the selected time range and reconciled from PollVote
+ * rows; percentages come from getPollTally, as on member poll cards.
+ */
+export default function TopPollsWidget({ polls = [], isLoading, error, onRetry, range, onRangeChange, onViewDetails }) {
+  const [metric, setMetric] = useState('votes');
+  const top = useMemo(() => rankPolls(polls, metric, 3), [polls, metric]);
 
   return (
-    <Card className="shadow-lg border-0 bg-white">
-      <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <CardTitle className="flex items-center gap-2">
-          <Star className="w-5 h-5 text-protocall-premium-text" />
+    <Card className="shadow-sm">
+      <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 space-y-0">
+        <CardTitle className="flex items-center gap-2 text-base">
+          <Star className="w-5 h-5 text-primary" aria-hidden="true" />
           Top Performing Polls
         </CardTitle>
-        <div className="flex items-center gap-3">
-          <Select value={rankingMetric} onValueChange={setRankingMetric}>
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Rank by..." />
+        <div className="flex items-center gap-2">
+          <Select value={metric} onValueChange={setMetric}>
+            <SelectTrigger className="w-[150px]" aria-label="Rank polls by">
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="votes">By Votes</SelectItem>
-              <SelectItem value="pledges">By Pledges</SelectItem>
-              <SelectItem value="engagement">By Engagement</SelectItem>
+              <SelectItem value="voters">By Unique Voters</SelectItem>
+              <SelectItem value="consensus">By Consensus</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Time range" />
+          <Select value={range} onValueChange={onRangeChange}>
+            <SelectTrigger className="w-[120px]" aria-label="Time range">
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Time</SelectItem>
@@ -78,72 +63,55 @@ export default function TopPollsWidget({ polls, onViewDetails }) {
         </div>
       </CardHeader>
       <CardContent>
-        {topPolls.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {topPolls.map((poll) => (
-              <div key={poll.id} className="bg-surface-2 border border-border rounded-xl p-4 transition-all duration-300 hover:shadow-md hover:border-protocall-premium-light">
-                <div className="flex items-start justify-between mb-3">
-                  <p className="font-semibold text-foreground flex-1">{poll.title}</p>
-                  <Badge variant={poll.is_currently_active ? 'default' : 'secondary'} className={poll.is_currently_active ? 'bg-buy-muted text-buy-muted-foreground' : 'bg-surface-2 text-subtle'}>
-                    {poll.is_currently_active ? 'Active' : 'Expired'}
-                  </Badge>
-                </div>
-                <div className="text-xs text-muted-foreground mb-4 space-y-1">
-                  <div className="flex items-center gap-1.5"><TrendingUp className="w-3 h-3" /><span>Stock: {poll.stock_symbol}</span></div>
-                  {poll.chatroom && <div className="flex items-center gap-1.5"><MessageCircle className="w-3 h-3" /><span>Room: {poll.chatroom.name}</span></div>}
-                </div>
-                
-                <div className="space-y-3 mb-4">
-                  <div>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="font-medium text-buy-muted-foreground">Buy ({poll.buy_percentage}%)</span>
-                      <span className="font-medium text-muted-foreground">{poll.buy_votes || 0} votes</span>
-                    </div>
-                    <ProgressBar value={poll.buy_percentage} color="bg-buy" />
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="font-medium text-sell-muted-foreground">Sell ({poll.sell_percentage}%)</span>
-                      <span className="font-medium text-muted-foreground">{poll.sell_votes || 0} votes</span>
-                    </div>
-                    <ProgressBar value={poll.sell_percentage} color="bg-sell" />
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="font-medium text-hold-muted-foreground">Hold ({poll.hold_percentage}%)</span>
-                      <span className="font-medium text-muted-foreground">{poll.hold_votes || 0} votes</span>
-                    </div>
-                    <ProgressBar value={poll.hold_percentage} color="bg-hold" />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-3 border-t border-border">
-                   <div className="flex items-center gap-4 text-sm">
-                      <div className="flex items-center gap-1.5 text-subtle"><Vote className="w-4 h-4"/><span>{poll.total_votes || 0}</span></div>
-                      <div className="flex items-center gap-1.5 text-subtle"><Users className="w-4 h-4"/><span>{poll.total_pledges || 0}</span></div>
-                   </div>
-                   <div className="flex items-center gap-2">
-                     {poll.chatroom_id && (
-                       <Button variant="outline" size="sm" asChild>
-                         <Link to={createPageUrl(`ChatRooms?roomId=${poll.chatroom_id}`)} title="Go to Room">
-                           <MessageCircle className="w-4 h-4" />
-                         </Link>
-                       </Button>
-                     )}
-                     <Button variant="default" size="sm" onClick={() => onViewDetails(poll)} title="View Details">
-                       <Eye className="w-4 h-4" />
-                     </Button>
-                   </div>
-                </div>
-              </div>
-            ))}
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4" aria-busy="true" aria-label="Loading top polls">
+            {[0, 1, 2].map((i) => <div key={i} className="h-56 rounded-xl bg-surface-2 animate-pulse" />)}
+          </div>
+        ) : error ? (
+          <div role="alert" className="py-10 text-center text-sm text-sell-muted-foreground space-y-3">
+            <p>{error}</p>
+            <Button size="sm" variant="outline" onClick={onRetry}>Try again</Button>
+          </div>
+        ) : top.length === 0 ? (
+          <div className="text-center py-12">
+            <PackageOpen className="mx-auto h-12 w-12 text-muted-foreground" aria-hidden="true" />
+            <h3 className="mt-2 text-sm font-medium text-foreground">No poll activity in this period</h3>
+            <p className="mt-1 text-sm text-muted-foreground">Try a longer time range.</p>
           </div>
         ) : (
-          <div className="text-center py-12">
-            <PackageOpen className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h3 className="mt-2 text-sm font-medium text-foreground">No top polls found</h3>
-            <p className="mt-1 text-sm text-muted-foreground">Try adjusting your filters or encourage more community participation!</p>
-          </div>
+          <ol className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {top.map(({ poll, tally }, rank) => (
+              <li key={poll.id} className="bg-surface-2 border border-border rounded-xl p-4 flex flex-col">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <p className="font-semibold text-foreground">
+                    <span className="text-primary mr-1">#{rank + 1}</span>
+                    {pollTitle(poll)}
+                  </p>
+                  <Badge variant="outline" className={STATUS_META[poll.admin_status]?.className}>
+                    {STATUS_META[poll.admin_status]?.label || 'Active'}
+                  </Badge>
+                </div>
+                <div className="flex flex-wrap gap-1.5 mb-3 text-xs">
+                  {poll.stock_symbol && <Badge variant="secondary">{poll.stock_symbol}</Badge>}
+                  {poll.is_premium && <Badge className="bg-premium-muted text-primary border-0"><Crown className="w-3 h-3 mr-1" aria-hidden="true" />Premium</Badge>}
+                  {poll.is_featured && <Badge className="bg-primary/10 text-primary border-0"><Sparkles className="w-3 h-3 mr-1" aria-hidden="true" />Featured</Badge>}
+                </div>
+                <div className="space-y-2.5 mb-4 flex-1">
+                  {tally.options.map(renderOptionBar)}
+                </div>
+                <div className="flex items-center justify-between pt-3 border-t border-border text-sm">
+                  <div className="flex items-center gap-4 text-subtle">
+                    <span className="flex items-center gap-1.5" title="Votes"><Vote className="w-4 h-4" aria-hidden="true" />{tally.total}<span className="sr-only"> votes</span></span>
+                    <span className="flex items-center gap-1.5" title="Unique voters"><Users className="w-4 h-4" aria-hidden="true" />{tally.uniqueVoters}<span className="sr-only"> unique voters</span></span>
+                    {tally.leader && <span className="text-xs">{tally.leader.tie ? 'Tied' : `${tally.leader.label} ${tally.leader.rounded}%`}</span>}
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => onViewDetails(poll)} aria-label={`View details for ${pollTitle(poll)}`}>
+                    <Eye className="w-4 h-4" aria-hidden="true" />
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ol>
         )}
       </CardContent>
     </Card>

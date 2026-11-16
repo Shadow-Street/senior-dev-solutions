@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
+import { ACCOUNT_NOTICE_KEY } from '@/lib/apiClient';
 import { useAuth } from '@/components/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -58,7 +59,17 @@ export default function Login() {
    * password produced complete silence. An inline message cannot be missed,
    * does not time out, and stays readable for screen readers.
    */
-  const [formError, setFormError] = useState('');
+  const [formError, setFormError] = useState(() => {
+    // Set by the API client when a session ended because the account was
+    // deactivated, suspended or blocked; shown once.
+    try {
+      const notice = sessionStorage.getItem(ACCOUNT_NOTICE_KEY) || '';
+      if (notice) sessionStorage.removeItem(ACCOUNT_NOTICE_KEY);
+      return notice;
+    } catch {
+      return '';
+    }
+  });
 
   /**
    * Someone who already has a session should not be shown a sign-in form.
@@ -122,7 +133,10 @@ export default function Login() {
       goHome(data?.user);
     } catch (error) {
       const status = error?.response?.status;
-      const serverMessage = error?.response?.data?.error || error?.response?.data?.message;
+      const body = error?.response?.data || {};
+      // A suspended account learns when access returns (code ACCOUNT_SUSPENDED).
+      const until = body.until ? ` Access returns on ${new Date(body.until).toLocaleString('en-IN')}.` : '';
+      const serverMessage = (body.error || body.message) ? `${body.error || body.message}${until}` : '';
       const message =
         status === 429
           ? 'Too many attempts. Please wait a minute and try again.'

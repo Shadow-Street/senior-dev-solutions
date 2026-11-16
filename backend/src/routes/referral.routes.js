@@ -2,11 +2,28 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { authMiddleware, adminMiddleware } = require("../middleware/auth");
+const PlatformSettings = require("../services/PlatformSettingsService");
+
+/**
+ * Referral programme switch (Platform Settings > Referral Settings).
+ * While paused no new codes are issued and no new referrals are recorded;
+ * existing referrals and stats stay readable.
+ */
+const requireReferralsEnabled = async (_req, res, next) => {
+  let enabled = true;
+  try { enabled = (await PlatformSettings.getValue('referral_system_enabled')) !== false; } catch { enabled = true; }
+  if (enabled) return next();
+  return res.status(403).json({ error: 'The referral programme is currently paused.', code: 'REFERRALS_DISABLED' });
+};
 
 // Referrals CRUD
+// Reward and outcome fields are server-controlled: a member could otherwise
+// create or edit their own referral as completed with any reward amount, and
+// /my-stats would report it as earnings.
 const referralController = createCrudController(db.Referral, {
   ownership: 'referrer_id',
+  protectedFields: ['status', 'reward_amount', 'reward_paid', 'converted_at'],
   defaultOrderBy: 'created_at',
   defaultOrder: 'DESC'
 });
@@ -57,7 +74,7 @@ router.get('/my-stats', authMiddleware, async (req, res) => {
 });
 
 // Generate referral code
-router.post('/generate-code', authMiddleware, async (req, res) => {
+router.post('/generate-code', authMiddleware, requireReferralsEnabled, async (req, res) => {
   try {
     const code = `REF${req.user.id.substring(0, 6).toUpperCase()}${Date.now().toString(36).toUpperCase()}`;
     
@@ -74,10 +91,13 @@ router.post('/generate-code', authMiddleware, async (req, res) => {
 });
 
 // Apply referral code
-router.post('/apply', authMiddleware, async (req, res) => {
+router.post('/apply', authMiddleware, requireReferralsEnabled, async (req, res) => {
   try {
-    const { code } = req.body;
-    
+    const { code } = req.body || {};
+    if (typeof code !== 'string' || !code.trim() || code.length > 64) {
+      return res.status(400).json({ error: 'A referral code is required' });
+    }
+
     const referrer = await db.User.findOne({
       where: { referral_code: code }
     });
@@ -99,11 +119,17 @@ router.post('/apply', authMiddleware, async (req, res) => {
       return res.status(400).json({ error: 'Already used a referral code' });
     }
     
+    // The inviter reward is the configured amount at the time the code is
+    // used, so a later change to the setting does not rewrite past referrals.
+    let rewardAmount = null;
+    try { rewardAmount = await PlatformSettings.getValue('referral_inviter_bonus'); } catch { rewardAmount = null; }
+
     const referral = await db.Referral.create({
       referrer_id: referrer.id,
       referred_id: req.user.id,
       code,
       status: 'pending',
+      reward_amount: rewardAmount,
       created_at: new Date()
     });
     
@@ -118,13 +144,18 @@ router.post('/apply', authMiddleware, async (req, res) => {
 // Referral Badges sub-routes
 const badgeRouter = express.Router();
 const badgeController = createCrudController(db.ReferralBadge);
-createCrudRoutes(badgeRouter, badgeController, [authMiddleware]);
+// Badges are a platform catalogue: members may read them, only
+// admins may define them (any member could previously create or delete one).
+createCrudRoutes(badgeRouter, badgeController, { read: [authMiddleware], write: [authMiddleware, adminMiddleware] });
 router.use('/badges', badgeRouter);
 
 
 // CRUD LAST — the generated '/:id' route must not shadow the sub-routers
 // mounted above. Registered earlier, '/clients', '/participants' and the
 // like were matched as an id and answered 404 'Record not found'.
+// A paused programme records no new referrals through the generic create
+// either; when the gate passes, next() falls through to the CRUD create.
+router.post('/', authMiddleware, requireReferralsEnabled, (_req, _res, next) => next());
 createCrudRoutes(router, referralController, [authMiddleware]);
 
 module.exports = router;

@@ -35,7 +35,28 @@ import {
   Calendar as CalendarIcon
 } from 'lucide-react';
 import { toast } from "sonner";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
+import { formatINR } from '@/lib/format';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
+
+// Expense dates are calendar days in India time; the server stores IST midnight.
+// Reading or showing them in the browser's own zone would move them a day.
+const istDay = (value) => {
+  const d = value ? new Date(value) : null;
+  if (!d || Number.isNaN(d.getTime())) return null;
+  return new Date(d.getTime() + 330 * 60 * 1000).toISOString().slice(0, 10);
+};
+const istDayLabel = (value) => {
+  const day = istDay(value);
+  if (!day) return '—';
+  const [y, m, dd] = day.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, dd)).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+};
+/** A local Date on the same calendar day (for the date picker). */
+const dayToLocalDate = (day) => {
+  const [y, m, d] = day.split('-').map(Number);
+  return new Date(y, m - 1, d);
+};
 
 const expenseCategories = ["Salary", "Marketing", "Operations", "Infrastructure", "Miscellaneous"];
 
@@ -63,13 +84,15 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
   const [editingExpense, setEditingExpense] = useState(false); // New state to differentiate add/edit
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [saving, setSaving] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState(null);
 
   const filteredExpenses = useMemo(() => {
     return expenses
       .filter(exp =>
         (categoryFilter === 'all' || exp.category === categoryFilter) &&
-        (exp.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-         exp.category.toLowerCase().includes(searchTerm.toLowerCase())) // Search by category name too
+        (String(exp.description || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+         String(exp.category || '').toLowerCase().includes(searchTerm.toLowerCase())) // Search by category name too
       )
       .sort((a, b) => new Date(b.expense_date) - new Date(a.expense_date));
   }, [expenses, searchTerm, categoryFilter]);
@@ -86,7 +109,8 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
   };
 
   const handleEdit = (expense) => {
-    setCurrentExpense({ ...expense, expense_date: parseISO(expense.expense_date) });
+    const day = istDay(expense.expense_date);
+    setCurrentExpense({ ...expense, expense_date: day ? dayToLocalDate(day) : new Date() });
     setEditingExpense(true);
     setShowModal(true);
   };
@@ -105,19 +129,32 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
       return;
     }
 
+    if (saving) return; // no double submit
     const expenseData = {
       ...currentExpense,
-      amount: parseFloat(currentExpense.amount),
+      amount: String(currentExpense.amount).trim(),
+      // The picker holds a local date for the chosen calendar day.
       expense_date: format(currentExpense.expense_date, 'yyyy-MM-dd'),
     };
 
-    await onSave(expenseData, currentUser);
-    closeModal(); // Use the new closeModal to reset state
+    setSaving(true);
+    try {
+      await onSave(expenseData, currentUser);
+      closeModal();
+    } catch {
+      // onSave showed the error; keep the form so nothing typed is lost
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDelete = async (expenseId) => {
-    await onDelete(expenseId, currentUser);
-    toast.success("Expense deleted successfully!");
+    try {
+      await onDelete(expenseId, currentUser);
+      toast.success("Expense deleted successfully!");
+    } catch {
+      // onDelete has already shown the error
+    }
   };
 
   const handleFieldChange = (field, value) => {
@@ -159,6 +196,7 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
+                aria-label="Search expenses"
                 placeholder="Search expenses by description or category..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -166,7 +204,7 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
               />
             </div>
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-[180px] border-border focus:border-hold focus:ring-hold/30">
+              <SelectTrigger aria-label="Filter by category" className="w-[180px] border-border focus:border-hold focus:ring-hold/30">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
@@ -191,7 +229,7 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
                   <th className="p-4 text-left font-semibold text-subtle">Category</th>
                   <th className="p-4 text-right font-semibold text-subtle">Amount</th>
                   <th className="p-4 text-left font-semibold text-subtle">Date</th>
-                  <th className="p-4 text-left font-semibold text-subtle">Added By</th>
+                  <th className="p-4 text-left font-semibold text-subtle">Vendor</th>
                   {canEdit && <th className="p-4 text-right font-semibold text-subtle">Actions</th>}
                 </tr>
               </thead>
@@ -204,11 +242,11 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
                         {expense.category}
                       </Badge>
                     </td>
-                    <td className="p-4 text-right font-bold text-foreground">₹{expense.amount.toLocaleString('en-IN')}</td>
+                    <td className="p-4 text-right font-bold text-foreground">{formatINR(expense.amount)}</td>
                     <td className="p-4 text-subtle">
-                      {new Date(expense.expense_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      {istDayLabel(expense.expense_date)}
                     </td>
-                    <td className="p-4 text-subtle text-sm">{expense.added_by_admin_name}</td>
+                    <td className="p-4 text-subtle text-sm">{expense.vendor || '—'}</td>
                     {canEdit && (
                       <td className="p-4 text-right">
                         <div className="flex justify-end gap-2">
@@ -217,14 +255,16 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
                             size="sm"
                             onClick={() => handleEdit(expense)} // Call handleEdit for existing expense
                             className="text-primary hover:text-primary hover:bg-premium-muted"
+                            aria-label={`Edit expense ${expense.description}`}
                           >
                             <Edit className="w-4 h-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleDelete(expense.id)}
+                            onClick={() => setPendingDelete(expense)}
                             className="text-sell-muted-foreground hover:text-sell-muted-foreground hover:bg-sell-muted"
+                            aria-label={`Delete expense ${expense.description}`}
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -275,6 +315,8 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
                 <Input
                   id="amount"
                   type="number"
+                  step="0.01"
+                  min="0.01"
                   value={currentExpense?.amount || ''}
                   onChange={(e) => handleFieldChange('amount', e.target.value)}
                 />
@@ -282,7 +324,7 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
               <div className="space-y-2">
                 <Label htmlFor="category">Category *</Label>
                 <Select value={currentExpense?.category} onValueChange={(val) => handleFieldChange('category', val)}>
-                  <SelectTrigger>
+                  <SelectTrigger id="category">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -293,10 +335,10 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Expense Date *</Label>
+                <Label htmlFor="expense-date">Expense Date *</Label>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-start text-left font-normal">
+                    <Button id="expense-date" type="button" variant="outline" className="w-full justify-start text-left font-normal">
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {currentExpense?.expense_date ? format(currentExpense.expense_date, 'PPP') : <span>Pick a date</span>}
                     </Button>
@@ -323,14 +365,25 @@ export default function ExpenseManager({ expenses, onSave, onDelete, currentUser
               </Button>
               <Button
                 type="submit"
+                disabled={saving}
                 className="bg-hold hover:from-hold hover:to-hold text-hold-foreground shadow-md"
               >
-                {editingExpense ? 'Update' : 'Add'} Expense
+                {saving ? 'Saving…' : `${editingExpense ? 'Update' : 'Add'} Expense`}
               </Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
+
+      <ConfirmDialog
+        isOpen={Boolean(pendingDelete)}
+        onClose={() => setPendingDelete(null)}
+        onConfirm={() => { const e = pendingDelete; setPendingDelete(null); if (e) handleDelete(e.id); }}
+        title="Delete this expense?"
+        message={pendingDelete ? `"${pendingDelete.description}" (${formatINR(pendingDelete.amount)}) will be removed. The deletion is recorded in the audit log.` : ''}
+        confirmText="Delete"
+        variant="destructive"
+      />
     </div>
   );
 }

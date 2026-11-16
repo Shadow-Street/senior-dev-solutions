@@ -113,7 +113,8 @@ const createCrudController = (Model, options = {}) => {
     ? { exclude: hiddenAttributes }
     : undefined;
 
-  const DEFAULT_ADMIN_ROLES = ['admin', 'super_admin', 'sub_admin'];
+  // sub_admin is not implicit staff: it gets only what Roles & Permissions grants (middleware/permissions.js).
+  const DEFAULT_ADMIN_ROLES = ['admin', 'super_admin'];
   const ownershipConfig = ownership
     ? (typeof ownership === 'string'
         ? { field: ownership, adminRoles: DEFAULT_ADMIN_ROLES, resolveOwnerId: null, publicRead: false }

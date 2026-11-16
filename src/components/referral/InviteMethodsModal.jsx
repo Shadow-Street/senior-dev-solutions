@@ -10,13 +10,13 @@ import { toast } from "sonner";
 export default function InviteMethodsModal({ open, onClose, referralLink, referralCode }) {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState(
-    `Hi! Join me on Protocol, India's largest retail investor community where we make informed trading decisions together. Use my referral link: ${referralLink}`
+    `Hi! Join me on Protocall, India's largest retail investor community where we make informed trading decisions together. Use my referral link: ${referralLink}`
   );
 
   const handleWhatsAppShare = () => {
     const text = encodeURIComponent(
-      `🚀 Join Protocol - India's Largest Retail Investor Community!\n\n` +
-      `Hey! I've been using Protocol to connect with fellow traders and make informed investment decisions. ` +
+      `🚀 Join Protocall - India's Largest Retail Investor Community!\n\n` +
+      `Hey! I've been using Protocall to connect with fellow traders and make informed investment decisions. ` +
       `The community insights and admin recommendations have been incredibly valuable.\n\n` +
       `Join using my referral link: ${referralLink}\n\n` +
       `Let's grow our trading knowledge together! 📈`
@@ -26,13 +26,13 @@ export default function InviteMethodsModal({ open, onClose, referralLink, referr
 
   const handleTelegramShare = () => {
     const text = encodeURIComponent(
-      `Join Protocol - India's Largest Retail Investor Community! ${referralLink}`
+      `Join Protocall - India's Largest Retail Investor Community! ${referralLink}`
     );
     window.open(`https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${text}`, '_blank');
   };
 
   const handleEmailShare = () => {
-    const subject = "Join Protocol Trading Community";
+    const subject = "Join Protocall Trading Community";
     const body = encodeURIComponent(message);
     window.open(`mailto:${email}?subject=${subject}&body=${body}`);
   };

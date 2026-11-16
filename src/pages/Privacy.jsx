@@ -5,8 +5,9 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Shield, Lock, Eye, FileText, Home, Database, Globe, UserCheck } from 'lucide-react';
 import PageFooter from '../components/footer/PageFooter';
+import ManagedStaticPage from '@/components/common/ManagedStaticPage';
 
-export default function Privacy() {
+function BuiltInPrivacy() {
   return (
     <div className="min-h-screen bg-surface-2">
       {/* Header */}
@@ -755,4 +756,10 @@ export default function Privacy() {
       <PageFooter />
     </div>
   );
+}
+
+// Admin-published text (Platform Settings > Static Pages) replaces the
+// built-in page above; without it the built-in page is shown.
+export default function Privacy() {
+  return <ManagedStaticPage slug="privacy" fallback={BuiltInPrivacy} />;
 }

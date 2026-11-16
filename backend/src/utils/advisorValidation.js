@@ -168,7 +168,41 @@ function money(raw, label, { min, max }) {
   return { value: n };
 }
 
-/** Plan create / update. `partial` skips required checks for PUT. */
+const LIMIT_PERIODS = ['week', 'month'];
+const MAX_LIMIT_COUNT = 1000;
+
+/**
+ * Optional recommendation limit on a plan: { limit_count, limit_period }.
+ * Returns { skip } when neither is sent, { error }, or { value: { limit_count,
+ * limit_period } } where limit_count null/'' means unlimited.
+ */
+function planLimit(b) {
+  const hasCount = b.limit_count !== undefined;
+  const hasPeriod = b.limit_period !== undefined;
+  if (!hasCount && !hasPeriod) return { skip: true };
+  if (!hasCount) return { error: 'Send limit_count together with limit_period' };
+  if (b.limit_count === null || b.limit_count === '') {
+    if (hasPeriod && b.limit_period !== null && b.limit_period !== '' && !LIMIT_PERIODS.includes(b.limit_period)) {
+      return { error: 'Limit period must be week or month' };
+    }
+    return { value: { limit_count: null, limit_period: LIMIT_PERIODS.includes(b.limit_period) ? b.limit_period : undefined } };
+  }
+  if (typeof b.limit_count === 'boolean' || (typeof b.limit_count !== 'number' && typeof b.limit_count !== 'string')) {
+    return { error: 'Recommendations allowed must be a whole number' };
+  }
+  const raw = typeof b.limit_count === 'string' ? b.limit_count.trim() : b.limit_count;
+  const n = typeof raw === 'string' ? (/^\d+$/.test(raw) ? Number(raw) : NaN) : raw;
+  if (!Number.isInteger(n)) return { error: 'Recommendations allowed must be a whole number' };
+  if (n < 1 || n > MAX_LIMIT_COUNT) return { error: `Recommendations allowed must be between 1 and ${MAX_LIMIT_COUNT}` };
+  if (!LIMIT_PERIODS.includes(b.limit_period)) return { error: 'Limit period must be week or month' };
+  return { value: { limit_count: n, limit_period: b.limit_period } };
+}
+
+/**
+ * Plan create / update. `partial` skips required checks for PUT. A recommendation
+ * limit, if sent, is returned as `limit` (it lives in advisor_plan_limits, not
+ * in `value`, so it can never be written to subscription_plans).
+ */
 function validatePlan(body, { partial = false } = {}) {
   const b = body && typeof body === 'object' ? body : {};
   const out = {};
@@ -215,8 +249,10 @@ function validatePlan(body, { partial = false } = {}) {
     if (typeof b.is_active !== 'boolean') return { error: 'is_active must be true or false' };
     out.is_active = b.is_active;
   }
-  if (partial && Object.keys(out).length === 0) return { error: 'Nothing to update' };
-  return { value: out };
+  const lim = planLimit(b);
+  if (lim.error) return { error: lim.error };
+  if (partial && Object.keys(out).length === 0 && lim.skip) return { error: 'Nothing to update' };
+  return lim.skip ? { value: out } : { value: out, limit: lim.value };
 }
 
 /** Optional price level: number > 0 or empty. */
@@ -344,6 +380,9 @@ module.exports = {
   validateApplication,
   validateProfileUpdate,
   validatePlan,
+  planLimit,
+  LIMIT_PERIODS,
+  MAX_LIMIT_COUNT,
   validatePost,
   validateRecommendation,
 };

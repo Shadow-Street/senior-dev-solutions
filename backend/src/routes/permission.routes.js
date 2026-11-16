@@ -2,6 +2,7 @@ const express = require("express");
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
 const { authMiddleware, adminMiddleware } = require("../middleware/auth");
+const { requireSuperAdmin } = require("../middleware/permissions");
 
 const router = express.Router();
 
@@ -17,8 +18,10 @@ const router = express.Router();
  * join table; this is the catalogue those rows point at. Pointing the frontend
  * at the join table instead would have conflated the two.
  *
- * Staff only, both directions. The catalogue defines what every role in the
- * product is allowed to do, so it is an administrative concern end to end.
+ * Staff may read it; only a super admin may change it. The catalogue itself
+ * is defined in code (utils/permissions.js) and kept in step by
+ * services/AccessControlService.ensureCatalogue; the Roles & Permissions
+ * screen uses /api/admin/access/*.
  */
 createCrudRoutes(
   router,
@@ -27,7 +30,7 @@ createCrudRoutes(
     defaultOrder: "ASC",
     searchFields: ["name", "module", "action"],
   }),
-  { read: [authMiddleware, adminMiddleware], write: [authMiddleware, adminMiddleware] }
+  { read: [authMiddleware, adminMiddleware], write: [authMiddleware, requireSuperAdmin] }
 );
 
 module.exports = router;

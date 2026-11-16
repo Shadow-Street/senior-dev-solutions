@@ -5,8 +5,9 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Shield, Scale, AlertTriangle, FileText, Home } from 'lucide-react';
 import PageFooter from '../components/footer/PageFooter';
+import ManagedStaticPage from '@/components/common/ManagedStaticPage';
 
-export default function Terms() {
+function BuiltInTerms() {
   return (
     <div className="min-h-screen bg-surface-2">
       {/* Header */}
@@ -809,4 +810,10 @@ export default function Terms() {
       <PageFooter />
     </div>
   );
+}
+
+// Admin-published text (Platform Settings > Static Pages) replaces the
+// built-in page above; without it the built-in page is shown.
+export default function Terms() {
+  return <ManagedStaticPage slug="terms" fallback={BuiltInTerms} />;
 }

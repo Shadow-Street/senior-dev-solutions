@@ -3,6 +3,18 @@ const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
 const { authMiddleware, adminMiddleware } = require("../middleware/auth");
+const { requireSuperAdmin } = require("../middleware/permissions");
+
+/**
+ * Generic table access for roles, role templates and their permission links.
+ * The Super Admin screens use /api/admin/access/* (validated, audited); these
+ * raw CRUD routes remain for compatibility. Reads are staff-only, and writes
+ * are super-admin only — an admin could otherwise grant a custom role (and
+ * so a sub-admin) any permission, bypassing the rules in
+ * services/AccessControlService.js.
+ */
+const read = [authMiddleware, adminMiddleware];
+const write = [authMiddleware, requireSuperAdmin];
 
 // Roles CRUD
 const roleController = createCrudController(db.Role, {
@@ -11,7 +23,7 @@ const roleController = createCrudController(db.Role, {
 });
 
 // Get all roles
-router.get('/all', async (req, res) => {
+router.get('/all', ...read, async (req, res) => {
   try {
     const roles = await db.Role.findAll({
       order: [['name', 'ASC']]
@@ -27,20 +39,20 @@ router.get('/all', async (req, res) => {
 const templateRouter = express.Router();
 createCrudRoutes(templateRouter, createCrudController(db.RoleTemplate, {
   defaultOrderBy: 'created_at', defaultOrder: 'DESC'
-}), [authMiddleware, adminMiddleware]);
+}), { read, write });
 router.use('/templates', templateRouter);
 
 // Template -> permission mappings
 const templatePermRouter = express.Router();
-createCrudRoutes(templatePermRouter, createCrudController(db.RoleTemplatePermission), [authMiddleware, adminMiddleware]);
+createCrudRoutes(templatePermRouter, createCrudController(db.RoleTemplatePermission), { read, write });
 router.use('/template-permissions', templatePermRouter);
 
 // Role -> permission mappings
 const rolePermRouter = express.Router();
-createCrudRoutes(rolePermRouter, createCrudController(db.RolePermission), [authMiddleware, adminMiddleware]);
+createCrudRoutes(rolePermRouter, createCrudController(db.RolePermission), { read, write });
 router.use('/permissions', rolePermRouter);
 
 // CRUD LAST — '/:id' must not shadow the sub-routers above.
-createCrudRoutes(router, roleController, { read: [authMiddleware, adminMiddleware], write: [authMiddleware, adminMiddleware] });
+createCrudRoutes(router, roleController, { read, write });
 
 module.exports = router;

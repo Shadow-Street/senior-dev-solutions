@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Briefcase, Users, TrendingUp, Settings, CheckCircle, XCircle, Clock, Eye } from 'lucide-react';
 import { toast } from 'sonner';
+import PrivateDocumentViewer from '@/components/common/PrivateDocumentViewer';
+import { privateKeyFrom } from '@/lib/privateFiles';
 import {
   Dialog,
   DialogContent,
@@ -19,6 +21,9 @@ export default function PMSManagement({ user }) {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('pending');
+  // Private certificate shown in the page; the stored value is a
+  // /files/view/<key> URL that needs the reviewer's session to read.
+  const [certificateKey, setCertificateKey] = useState(null);
 
   useEffect(() => {
     loadPortfolioManagers();
@@ -267,7 +272,11 @@ export default function PMSManagement({ user }) {
               {selectedPM.sebi_document_url && (
                 <Button
                   variant="outline"
-                  onClick={() => window.open(selectedPM.sebi_document_url, '_blank')}
+                  onClick={() => {
+                    const key = privateKeyFrom(selectedPM.sebi_document_url);
+                    if (key) setCertificateKey(key);
+                    else toast.error('This application has no readable certificate on file. Ask the portfolio manager to upload it again.');
+                  }}
                   className="w-full"
                 >
                   View SEBI Certificate
@@ -277,6 +286,12 @@ export default function PMSManagement({ user }) {
           </DialogContent>
         </Dialog>
       )}
+
+      <PrivateDocumentViewer
+        fileKey={certificateKey}
+        title={selectedPM ? `SEBI certificate: ${selectedPM.display_name || 'portfolio manager'}` : 'SEBI certificate'}
+        onClose={() => setCertificateKey(null)}
+      />
     </div>
   );
 }

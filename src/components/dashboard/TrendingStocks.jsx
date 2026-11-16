@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, MessageSquare, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
+import { Watchlist } from "@/lib/apiClient";
 import MarketStatusBadge from "@/components/stocks/MarketStatusBadge";
 
 // Price follows the quote's own currency, like the ticker and movers tables;
@@ -39,13 +40,48 @@ function Header() {
 export default function TrendingStocks({ stocks = [] }) {
   const navigate = useNavigate();
 
-  const handleWatch = () => {
-    toast.info("Watchlist feature coming soon!");
+  // Symbols already on the signed-in user's watchlist, so Watch can show state.
+  const [watched, setWatched] = useState(() => new Set());
+  const [pending, setPending] = useState(null);
+  const signedIn = Boolean(localStorage.getItem("accessToken"));
+
+  useEffect(() => {
+    if (!signedIn) return undefined;
+    let alive = true;
+    Watchlist.filter({ fields: "symbols" })
+      .then((lists) => {
+        const symbols = (Array.isArray(lists) && lists[0]?.stocks) || [];
+        if (alive) setWatched(new Set(symbols.map((s) => (typeof s === "string" ? s : s?.symbol)).filter(Boolean)));
+      })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [signedIn]);
+
+  const handleWatch = async (stock) => {
+    if (!signedIn) {
+      toast.info("Sign in to build your watchlist.");
+      navigate("/login");
+      return;
+    }
+    if (watched.has(stock.symbol)) {
+      toast.info(`${stock.symbol} is already on your watchlist.`);
+      return;
+    }
+    setPending(stock.symbol);
+    try {
+      await Watchlist.create({ stock_symbol: stock.symbol });
+      setWatched((prev) => new Set(prev).add(stock.symbol));
+      toast.success(`${stock.symbol} added to your watchlist.`);
+    } catch (error) {
+      toast.error(error?.response?.data?.error || `Could not add ${stock.symbol} to your watchlist.`);
+    } finally {
+      setPending(null);
+    }
   };
 
+  // Opens this stock's room (ChatRooms resolves ?stock_symbol=).
   const handleDiscuss = (stock) => {
-    navigate(createPageUrl(`ChatRooms`));
-    toast.success(`Opening chat rooms for ${stock.symbol} discussions...`);
+    navigate(`${createPageUrl("ChatRooms")}?stock_symbol=${encodeURIComponent(stock.symbol)}`);
   };
 
   if (!stocks || stocks.length === 0) {
@@ -100,22 +136,24 @@ export default function TrendingStocks({ stocks = [] }) {
                   </div>
                 </div>
 
-                {/* Actions keep their space so revealing them on hover never
-                    shifts the grid; on touch screens they are always shown. */}
-                <div
-                  className="mt-2.5 flex gap-2 transition-opacity duration-200
-                             md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100"
-                >
+                {/* Always visible on every card (client request): hover-only
+                    actions were undiscoverable and absent on most cards. */}
+                <div className="mt-2.5 flex gap-2">
                   <button
                     type="button"
                     onClick={() => handleWatch(stock)}
-                    className="flex h-7 flex-1 items-center justify-center gap-1 rounded-lg border border-border bg-card text-xs font-semibold text-foreground transition-colors hover:bg-surface-2"
+                    disabled={pending === stock.symbol}
+                    aria-pressed={watched.has(stock.symbol)}
+                    aria-label={watched.has(stock.symbol) ? `${stock.symbol} is on your watchlist` : `Add ${stock.symbol} to watchlist`}
+                    className="flex h-7 flex-1 items-center justify-center gap-1 rounded-lg border border-border bg-card text-xs font-semibold text-foreground transition-colors hover:bg-surface-2 disabled:opacity-60"
                   >
-                    <Star className="h-3 w-3" /> Watch
+                    <Star className={`h-3 w-3 ${watched.has(stock.symbol) ? "fill-protocall-neon text-protocall-neon-edge" : ""}`} />
+                    {watched.has(stock.symbol) ? "Watching" : "Watch"}
                   </button>
                   <button
                     type="button"
                     onClick={() => handleDiscuss(stock)}
+                    aria-label={`Open the ${stock.symbol} chat room`}
                     className="flex h-7 flex-1 items-center justify-center gap-1 rounded-lg border border-border bg-card text-xs font-semibold text-foreground transition-colors hover:border-premium-light hover:bg-premium-muted hover:text-premium-muted-foreground"
                   >
                     <MessageSquare className="h-3 w-3" /> Chat

@@ -30,6 +30,8 @@ async function start() {
       console.log(`WebSocket server ready on ws://localhost:${PORT}`);
       // Dhan credential renewal + NSE snapshot; never blocks or fails boot.
       require('./src/services/MarketDataRuntime').startMarketData();
+      // Scheduled chat room actions (Chat Room Management > Automation).
+      require('./src/services/RoomAutomationService').start(require('./src/app').wsService);
     });
   } catch (err) {
     console.error("Failed to start server:", err);

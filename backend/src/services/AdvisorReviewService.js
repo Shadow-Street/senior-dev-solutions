@@ -144,7 +144,8 @@ async function reviewApplication({ advisorId, action, reason, reviewer, wsServic
   if (result.user.email) {
     try {
       const EmailService = require('./EmailService');
-      await EmailService.sendEmail(result.user.email, result.note.title, `<p>${escapeHtml(result.note.message)}</p>`);
+      const html = EmailService.getAdvisorReviewTemplate(action, result.advisor.display_name || result.user.display_name || result.user.name, cleanReason);
+      await EmailService.sendEmail(result.user.email, result.note.title, html);
     } catch (e) {
       console.error('[AdvisorReview] email failed:', e.message);
     }
@@ -152,6 +153,5 @@ async function reviewApplication({ advisorId, action, reason, reviewer, wsServic
   return { advisor: result.advisor, role_change: result.roleChange };
 }
 
-const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 module.exports = { reviewApplication, ReviewError, ACTIONS, STAFF_ROLES };

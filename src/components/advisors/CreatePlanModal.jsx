@@ -8,13 +8,23 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, DollarSign, Sparkles, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 
+/** Helper line under the limit inputs: what the limit means per week and per month. */
+export function limitHelper(count, period) {
+  const n = Number(String(count).trim());
+  if (String(count).trim() === '' || !Number.isInteger(n) || n < 1) return 'Leave blank for no limit. Weeks run Monday to Sunday and months are calendar months (India time).';
+  if (period === 'month') return `Up to ${n} recommendation${n === 1 ? '' : 's'} per calendar month. There is no weekly cap.`;
+  return `Up to ${n} per week, so the monthly cap is ${n * 4}.`;
+}
+
 export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan = null }) {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     price: '',
     billing_interval: 'monthly',
-    features: ['']
+    features: [''],
+    limit_count: '',
+    limit_period: 'week'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -26,7 +36,9 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
         description: editingPlan.description || '',
         price: editingPlan.price?.toString() || '',
         billing_interval: editingPlan.billing_interval || 'monthly',
-        features: editingPlan.features && editingPlan.features.length > 0 ? editingPlan.features : ['']
+        features: editingPlan.features && editingPlan.features.length > 0 ? editingPlan.features : [''],
+        limit_count: editingPlan.limit_count ? String(editingPlan.limit_count) : '',
+        limit_period: editingPlan.limit_period === 'month' ? 'month' : 'week'
       });
     } else {
       // Reset form for new plan
@@ -35,7 +47,9 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
         description: '',
         price: '',
         billing_interval: 'monthly',
-        features: ['']
+        features: [''],
+        limit_count: '',
+        limit_period: 'week'
       });
     }
   }, [editingPlan, open]);
@@ -102,6 +116,14 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
       return;
     }
 
+    // Optional recommendation limit; blank = unlimited. The server re-validates.
+    const limitText = String(formData.limit_count).trim();
+    const limitCount = limitText === '' ? null : Number(limitText);
+    if (limitCount !== null && (!Number.isInteger(limitCount) || limitCount < 1 || limitCount > 1000)) {
+      toast.error('Stock recommendations allowed must be a whole number from 1 to 1000, or blank for unlimited.');
+      return;
+    }
+
     const filteredFeatures = formData.features.map((f) => f.trim()).filter(Boolean);
     if (filteredFeatures.length === 0) {
       toast.error('Please add at least one feature');
@@ -118,6 +140,8 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
         price,
         billing_interval: formData.billing_interval,
         features: filteredFeatures,
+        limit_count: limitCount,
+        limit_period: formData.limit_period,
         ...(editingPlan ? {} : { is_active: true })
       }, editingPlan?.id);
     } catch (error) {
@@ -237,6 +261,38 @@ export default function CreatePlanModal({ open, onClose, onSubmit, editingPlan =
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          <div className="rounded-lg border border-border p-4 space-y-2">
+            <Label htmlFor="limit_count">Stock recommendations allowed</Label>
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                id="limit_count"
+                type="number"
+                min="1"
+                max="1000"
+                step="1"
+                inputMode="numeric"
+                value={formData.limit_count}
+                onChange={(e) => setFormData(prev => ({...prev, limit_count: e.target.value}))}
+                placeholder="Unlimited"
+              />
+              <Select
+                value={formData.limit_period}
+                onValueChange={(value) => setFormData(prev => ({...prev, limit_period: value}))}
+              >
+                <SelectTrigger aria-label="Limit period">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="week">per week</SelectItem>
+                  <SelectItem value="month">per month</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <p className="text-xs text-subtle" data-testid="limit-helper">
+              {limitHelper(formData.limit_count, formData.limit_period)}
+            </p>
           </div>
 
           <div>

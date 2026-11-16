@@ -10,8 +10,8 @@ const { effectiveRole, ADMIN_ROLES } = require("../utils/roles");
  * now always confined to their own rows, whatever the query says.
  */
 
-// Same staff set as the CRUD factory's per-record checks (sub_admin: see BE-7).
-const STAFF_ROLES = [...ADMIN_ROLES, 'sub_admin'];
+// Same staff set as the CRUD factory's per-record checks (sub_admin is not implicit staff: it gets only what Roles & Permissions grants (middleware/permissions.js)).
+const STAFF_ROLES = [...ADMIN_ROLES];
 const isStaff = (user) => STAFF_ROLES.includes(effectiveRole(user));
 const isAdvisor = (user) => effectiveRole(user) === 'advisor';
 

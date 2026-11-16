@@ -31,10 +31,17 @@ advisorRouter.get("/", optionalAuthenticate, Directory.list);
 advisorRouter.get("/:id", optionalAuthenticate, Directory.get);
 router.use("/advisors", advisorRouter);
 
+// Trust score history, read-only. A member reads their own entries; staff
+// read all. There are no write routes: the log is an audit trail, written only
+// by PUT /api/admin/users/:id/trust-score together with the score and an
+// audit_logs row. (It used to be generic CRUD that any signed-in user — later
+// any admin, unaudited — could create, edit or delete.)
 const trustLogRouter = express.Router();
-createCrudRoutes(trustLogRouter, createCrudController(db.TrustScoreLog, {
-  defaultOrderBy: 'created_at', defaultOrder: 'DESC'
-}), [authenticate]);
+const trustLogs = createCrudController(db.TrustScoreLog, {
+  defaultOrderBy: 'created_at', defaultOrder: 'DESC', ownership: 'user_id'
+});
+trustLogRouter.get("/", authenticate, trustLogs.list);
+trustLogRouter.get("/:id", authenticate, trustLogs.get);
 router.use("/trust-score-logs", trustLogRouter);
 
 const investmentRouter = express.Router();

@@ -18,6 +18,9 @@ const PRIVILEGE_FIELDS = [
   "email_verified",
   "verify_step",
   "google_id",
+  // Reputation and custom-role grants are admin-only (User Management).
+  "trust_score",
+  "custom_role_id",
 ];
 
 class UserController {
@@ -104,6 +107,13 @@ class UserController {
         for (const field of PRIVILEGE_FIELDS) delete updates[field];
       }
 
+      // An admin editing SOMEONE ELSE goes through User Management's rules
+      // (who may manage whom, field allow-list, audit). Before, this route
+      // let an admin write status (ban a peer admin with no sanction record),
+      // google_id (then sign in as the victim with their own Google account),
+      // email_verified or is_premium on any non-super-admin account.
+      if (!isSelf) return UserController.adminEditOther(req, res, id, updates);
+
       // Passwords are never set here; resets have their own flow.
       delete updates.password;
       delete updates.id;
@@ -139,6 +149,46 @@ class UserController {
       return res.status(200).json(user);
     } catch (error) {
       console.error("Update user by ID error:", error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  static async adminEditOther(req, res, id, body) {
+    const AdminUsers = require("../services/AdminUserService");
+    const { AccessError } = require("../services/AccessControlService");
+    const context = AdminUsers.contextOf(req);
+    const REFUSED = ['status', 'google_id', 'email_verified', 'verify_step', 'is_admin', 'is_premium',
+      'custom_role_id', 'trust_score', 'password', 'id'];
+    const refused = REFUSED.filter((f) => body[f] !== undefined);
+    if (refused.length) {
+      return res.status(400).json({
+        error: `These fields are managed elsewhere: ${refused.join(', ')}. Use Super Admin › User Management (status, role, trust score) or the user's subscription.`,
+      });
+    }
+    try {
+      const result = { id };
+      const role = body.app_role !== undefined ? body.app_role : body.role;
+      // Check the role change before writing anything, so a refused role
+      // never leaves a half-applied edit behind.
+      if (role !== undefined) {
+        const { checkRoleAssignment } = require("../utils/roles");
+        const target = await User.findByPk(id);
+        if (!target) return res.status(404).json({ error: "User not found" });
+        const refusedRole = checkRoleAssignment(req.user, target, typeof role === 'string' ? role.trim() : '');
+        if (refusedRole) return res.status(refusedRole.status).json({ error: refusedRole.error });
+      }
+      const profile = {};
+      for (const f of ['name', 'display_name', 'email']) if (body[f] !== undefined) profile[f] = body[f];
+      if (Object.keys(profile).length) Object.assign(result, (await AdminUsers.editDetails(req.user, id, profile, context)).user);
+      if (role !== undefined) Object.assign(result, (await AdminUsers.setRole(req.user, id, { role }, context)).user);
+      const user = await User.findByPk(id, { attributes: { exclude: ['password'] } });
+      return res.status(200).json(user || result);
+    } catch (error) {
+      // AccessError (4xx) and MigrationPendingError (503) carry their own status.
+      if (error instanceof AccessError || (error && Number.isInteger(error.status) && error.code !== undefined) || (error && error.status && error.status < 500)) {
+        return res.status(error.status).json({ error: error.message });
+      }
+      console.error("Admin edit user error:", error);
       return res.status(500).json({ error: 'Internal server error' });
     }
   }

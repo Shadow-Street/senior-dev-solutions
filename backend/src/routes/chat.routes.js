@@ -4,8 +4,10 @@ const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
 const { authMiddleware } = require("../middleware/auth");
 const {
-  isStaff, canJoinRoom, roomRole, findRoom, roomScope, ROOM_MANAGER_ROLES, ASSIGNABLE_BY_MODERATOR, ASSIGNABLE_BY_ADMIN,
+  isStaff, canJoinRoom, roomRole, findRoom, roomScope, isBannedFrom, memberRoomView, ensureParticipant, ROOM_MANAGER_ROLES, ASSIGNABLE_BY_MODERATOR, ASSIGNABLE_BY_ADMIN,
 } = require("../utils/roomAccess");
+const ChatRoomAdminService = require("../services/ChatRoomAdminService");
+const { failureLimiters } = require("../utils/failureLimiters");
 
 // Chat Rooms CRUD. Rooms are browsable by any signed-in user; only the owner
 // or staff may change or delete one, owner_id cannot be reassigned by the
@@ -17,12 +19,20 @@ const chatRoomController = createCrudController(db.ChatRoom, {
   protectedFields: ['participant_count', 'last_message_at'],
   // Access tier is decided at creation (premium needs a premium creator) or
   // by staff; an owner flipping it later would skip that check.
+  // status and settings carry admin moderation (archive, lock, room bans);
+  // an owner must not be able to lift those by editing their room.
   beforeUpdate: async (data, _record, req) => {
     if (isStaff(req.user)) return data;
-    const { is_premium: _p, room_type: _t, required_plan: _r, vip_features_enabled: _v, ...rest } = data;
+    const {
+      is_premium: _p, room_type: _t, required_plan: _r, vip_features_enabled: _v, status: _s, settings: _set, ...rest
+    } = data;
     return rest;
   },
   beforeCreate: async (data, req) => {
+    if (!isStaff(req.user)) {
+      data.settings = {};
+      data.status = 'active';
+    }
     // Set metadata
     data.owner_id = req.user.id;
     data.created_by = req.user.email;
@@ -63,7 +73,7 @@ router.get('/my-rooms', authMiddleware, async (req, res) => {
       where: { user_id: req.user.id },
       include: [{ model: db.ChatRoom }]
     });
-    const rooms = participations.map(p => p.ChatRoom);
+    const rooms = participations.map(p => p.ChatRoom).filter(Boolean).map(memberRoomView);
     res.json(rooms);
   } catch (error) {
     console.error('[chat.routes.js] request failed:', error);
@@ -78,7 +88,7 @@ router.get('/public', async (req, res) => {
       order: [['participant_count', 'DESC']],
       limit: 50
     });
-    res.json(rooms);
+    res.json(rooms.map(memberRoomView));
   } catch (error) {
     console.error('[chat.routes.js] request failed:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -104,17 +114,9 @@ router.post('/:id/join', authMiddleware, async (req, res) => {
       return res.status(403).json({ error: 'You cannot join this room' });
     }
 
-    const participant = await db.ChatRoomParticipant.create({
-      chat_room_id: id,
-      user_id: req.user.id,
-      role: 'member',
-      joined_at: new Date()
-    });
-
-    // Update participant count
-    await db.ChatRoom.increment('participant_count', { where: { id } });
-
-    res.status(201).json(participant);
+    // Race-safe: two parallel joins must not create two rows.
+    const { participant, created } = await ensureParticipant(id, req.user.id, 'member');
+    res.status(created ? 201 : 200).json(participant);
   } catch (error) {
     console.error('[chat.routes.js] request failed:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -181,6 +183,8 @@ async function prepareParticipantCreate(req, res, next) {
     }
     const invalid = roleError(callerRole, role);
     if (invalid) return res.status(403).json({ error: invalid });
+    // A room ban (Chat Room Management) is lifted by an admin, not by a re-add.
+    if (isBannedFrom({ id: userId }, room)) return res.status(403).json({ error: 'This user is banned from the room' });
 
     // Adding someone twice must not create a second row or count them twice.
     const existing = await db.ChatRoomParticipant.findOne({ where: { chat_room_id: roomId, user_id: userId } });
@@ -239,6 +243,16 @@ const participantController = createCrudController(db.ChatRoomParticipant, {
   afterCreate: async (record) => {
     await db.ChatRoom.increment('participant_count', { where: { id: record.chat_room_id } });
   },
+  // A mute applies to the user in the room, not to one row: should a
+  // duplicate row exist (no unique key yet), it must not stay unmuted.
+  afterUpdate: async (record, req) => {
+    if ('muted' in (req.body || {})) {
+      await db.ChatRoomParticipant.update(
+        { muted: Boolean(record.muted) },
+        { where: { chat_room_id: record.chat_room_id, user_id: record.user_id } },
+      );
+    }
+  },
   beforeDelete: async (record, req) => {
     req.__removedParticipant = record;
   },
@@ -246,7 +260,13 @@ const participantController = createCrudController(db.ChatRoomParticipant, {
   // the WebSocket server only re-checks membership on join.
   afterDelete: async (_id, req) => {
     const removed = req.__removedParticipant;
-    await db.ChatRoom.decrement('participant_count', { where: { id: removed.chat_room_id } });
+    // Removal is of the user from the room: any duplicate row (possible until
+    // migration 023 adds the unique key) goes too, or a kicked user would
+    // stay a member through it.
+    const extra = await db.ChatRoomParticipant.destroy({
+      where: { chat_room_id: removed.chat_room_id, user_id: removed.user_id },
+    });
+    await db.ChatRoom.decrement('participant_count', { by: 1 + (Number(extra) || 0), where: { id: removed.chat_room_id } });
     req.app.get('wsService')?.evictFromRoom(removed.user_id, removed.chat_room_id);
   },
 });
@@ -288,9 +308,38 @@ createCrudRoutes(
 router.use('/subscriptions', roomSubRouter);
 
 
+// Invite links made in Chat Room Management open /ChatRooms?invite=CODE, which
+// calls this. Failed attempts are throttled so codes cannot be guessed.
+const inviteLimiter = failureLimiters({ perIp: 60, perUser: 15, message: 'Too many invite attempts. Please try again later.' });
+router.post('/invites/:code/redeem', inviteLimiter.ip, authMiddleware, inviteLimiter.user, async (req, res) => {
+  try {
+    res.json(await ChatRoomAdminService.redeemInvite(req, req.params.code));
+  } catch (error) {
+    if (error instanceof ChatRoomAdminService.ChatAdminError) {
+      return res.status(error.status).json({ error: error.message, code: error.code });
+    }
+    console.error('[chat.routes.js] request failed:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 // CRUD LAST — the generated '/:id' route must not shadow the sub-routers
 // mounted above. Registered earlier, '/clients', '/participants' and the
 // like were matched as an id and answered 404 'Record not found'.
-createCrudRoutes(router, chatRoomController, [authMiddleware]);
+// Non-staff never see chat_rooms.settings (ban list, who locked the room).
+function hideRoomInternals(req, res, next) {
+  if (isStaff(req.user)) return next();
+  const json = res.json.bind(res);
+  res.json = (body) => {
+    if (Array.isArray(body)) return json(body.map(memberRoomView));
+    if (body && typeof body === 'object' && body.id && 'name' in (typeof body.toJSON === 'function' ? body.toJSON() : body)) {
+      return json(memberRoomView(body));
+    }
+    return json(body);
+  };
+  return next();
+}
+createCrudRoutes(router, chatRoomController, [authMiddleware, hideRoomInternals]);
 
 module.exports = router;

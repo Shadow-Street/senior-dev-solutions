@@ -5,6 +5,7 @@ const { User } = require("../models");
 const bcrypt = require("bcryptjs");
 const VerificationService = require("../services/VerificationService");
 const EmailService = require("../services/EmailService");
+const { BLOCK_CODES, blockBody } = require("../utils/accountStatus");
 
 class AuthController {
   static async login(req, res) {
@@ -50,6 +51,10 @@ class AuthController {
           requiresVerification: true,
           email: error.email,
         });
+      }
+      // Right password, but the account is deactivated, suspended or blocked.
+      if (BLOCK_CODES.includes(error.code)) {
+        return res.status(403).json(blockBody(error));
       }
       console.error("Login error:", error);
       return res.status(400).json({ error: error.message });
@@ -113,7 +118,9 @@ class AuthController {
         GOOGLE_EMAIL_UNVERIFIED: 403,
         GOOGLE_ACCOUNT_MISMATCH: 409,
         GOOGLE_LINK_NOT_ALLOWED: 409,
+        REGISTRATION_CLOSED: 403,
       }[error.code];
+      if (BLOCK_CODES.includes(error.code)) return res.status(403).json(blockBody(error));
       if (status) return res.status(status).json({ error: error.message, code: error.code });
       // Library and database messages stay in the log, never in the response.
       console.error('Google login error:', error);
@@ -200,6 +207,7 @@ static async me(req, res) {
       console.warn("Refresh failed:", error.message);
       res.clearCookie("accessToken");
       res.clearCookie("refreshToken");
+      if (BLOCK_CODES.includes(error.code)) return res.status(403).json(blockBody(error));
       return res.status(401).json({ error: error.message });
     }
   }
@@ -308,6 +316,7 @@ static async me(req, res) {
         user: AuthController.publicUser(user),
       });
     } catch (error) {
+      if (BLOCK_CODES.includes(error.code)) return res.status(403).json(blockBody(error));
       console.error("[auth] verifyOtp failed:", error);
       return res.status(500).json({ error: "Could not verify that code" });
     }

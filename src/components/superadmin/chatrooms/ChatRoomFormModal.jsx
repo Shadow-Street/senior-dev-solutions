@@ -1,371 +1,234 @@
-
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter
+  Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Save, X, MessageSquare, Vote } from 'lucide-react';
+import { Save, X, MessageSquare, Vote, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import CreatePollModal from '../../polls/CreatePollModal';
 import { Poll } from '@/api/entities';
+import { PLANS, ROOM_TYPES, apiError, normalizePlan, validateRoomForm } from './chatRoomUtils';
+import PropTypes from 'prop-types';
 
-export default function ChatRoomFormModal({ open, onClose, room, onSave, user }) {
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    room_type: 'general',
-    stock_symbol: '',
-    is_premium: false,
-    required_plan: 'basic',
-    admin_only_post: false
-  });
-  const [isSaving, setIsSaving] = useState(false);
-  const [showCreatePollModal, setShowCreatePollModal] = useState(false);
+const PREMIUM_TYPES = ['premium', 'premium_admin'];
 
-  // Track if name was manually edited by admin
-  const isNameManuallyEdited = useRef(false);
+const blank = {
+  name: '', description: '', room_type: 'general', stock_symbol: '',
+  required_plan: 'free', is_public: true, admin_only_post: false,
+};
+
+const fromRoom = (room) => ({
+  name: room.name || '',
+  description: room.description || '',
+  room_type: room.room_type || 'general',
+  stock_symbol: room.stock_symbol || '',
+  required_plan: normalizePlan(room.required_plan),
+  is_public: room.is_public !== false,
+  admin_only_post: room.admin_only_post === true,
+});
+
+/**
+ * Create / edit a chat room. Validation mirrors the server (which re-checks
+ * everything); `onSave` should throw on failure so the dialog stays open.
+ */
+export default function ChatRoomFormModal({ open, onClose, room = null, onSave, user = null }) {
+  const [form, setForm] = useState(blank);
+  const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [showPoll, setShowPoll] = useState(false);
+  const nameTouched = useRef(false);
 
   useEffect(() => {
-    if (room) {
-      setFormData({
-        name: room.name || '',
-        description: room.description || '',
-        room_type: room.room_type || 'general',
-        stock_symbol: room.stock_symbol || '',
-        is_premium: room.is_premium || false,
-        required_plan: room.required_plan || 'basic',
-        admin_only_post: room.admin_only_post || false
-      });
-      // For existing rooms, consider name as manually set
-      isNameManuallyEdited.current = true;
-    } else {
-      // Reset for new room
-      setFormData({
-        name: '',
-        description: '',
-        room_type: 'general',
-        stock_symbol: '',
-        is_premium: false,
-        required_plan: 'basic',
-        admin_only_post: false
-      });
-      isNameManuallyEdited.current = false;
-    }
+    if (!open) return;
+    setForm(room ? fromRoom(room) : blank);
+    setErrors({});
+    nameTouched.current = Boolean(room);
   }, [room, open]);
 
-  // Reset manual edit flag when room type changes for new rooms
-  useEffect(() => {
-    if (!room) { // Only for new rooms
-      isNameManuallyEdited.current = false;
-    }
-  }, [formData.room_type, room]);
+  const set = (key, value) => setForm((f) => {
+    const next = { ...f, [key]: value };
+    // Stock rooms are named after their symbol unless the admin typed a name.
+    if (!room && key === 'stock_symbol' && next.room_type === 'stock_specific' && !nameTouched.current) next.name = value;
+    if (key === 'room_type' && PREMIUM_TYPES.includes(value) && next.required_plan === 'free') next.required_plan = 'premium';
+    if (key === 'room_type' && ['admin', 'premium_admin'].includes(value) && !room) next.admin_only_post = true;
+    return next;
+  });
 
-  // Auto-fill room name for stock-specific rooms with ONLY stock symbol
-  useEffect(() => {
-    // Only auto-fill for new rooms (not when editing existing rooms) and if name hasn't been manually edited
-    if (!room && formData.room_type === "stock_specific" && formData.stock_symbol.trim() && !isNameManuallyEdited.current) {
-      setFormData(prev => ({
-        ...prev,
-        name: formData.stock_symbol.toUpperCase()
-      }));
-    }
-  }, [formData.room_type, formData.stock_symbol, room]);
-
-  const handleNameChange = (e) => {
-    const newName = e.target.value;
-
-    // Mark as manually edited if admin changes it to something different than auto-filled value
-    if (!room && formData.room_type === "stock_specific" && newName !== formData.stock_symbol.toUpperCase()) {
-      isNameManuallyEdited.current = true;
-    } else if (!room && formData.room_type !== "stock_specific" && newName.trim() !== '') {
-      // If it's a new room and not stock-specific, any typing makes it manual
-      isNameManuallyEdited.current = true;
-    } else if (!room && newName.trim() === '') {
-      // If the user clears the name field for a new room, we can reset the manual edit flag
-      // to potentially allow auto-fill if they then pick a stock_specific type.
-      isNameManuallyEdited.current = false;
-    }
-
-    setFormData({ ...formData, name: newName });
-  };
-
-  const handleSubmit = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-
-    if (!formData.name.trim()) {
-      toast.error('Room name is required');
-      return;
-    }
-
-    // Validation: stock_symbol is required for stock_specific rooms
-    if (formData.room_type === "stock_specific" && !formData.stock_symbol.trim()) {
-      toast.error('Stock symbol is required for stock-specific rooms');
-      return;
-    }
-
-    setIsSaving(true);
+    const found = validateRoomForm(form);
+    setErrors(found);
+    if (Object.keys(found).length) return;
+    setSaving(true);
     try {
-      await onSave(formData);
-    } catch (error) {
-      console.error('Error saving room:', error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleCreatePoll = async (pollData) => {
-    if (!room) {
-      toast.error('Please save the chat room first before creating a poll');
-      return;
-    }
-
-    try {
-      const newPoll = await Poll.create({
-        ...pollData,
-        chatroom_id: room.id,
-        creation_source: 'chatroom',
-        is_active: true,
-        created_by_admin: true,
-        created_by_role: user?.app_role || 'admin'
+      await onSave({
+        ...form,
+        name: form.name.trim(),
+        description: form.description.trim(),
+        stock_symbol: form.stock_symbol.trim().toUpperCase(),
       });
-
-      toast.success(`Poll "${newPoll.title}" created successfully!`);
-      setShowCreatePollModal(false);
-    } catch (error) {
-      console.error('Error creating poll from chat room modal:', error);
-      toast.error('Failed to create poll');
+    } catch {
+      // onSave already reported it; keep the dialog open.
+    } finally {
+      setSaving(false);
     }
   };
+
+  const createPoll = async (pollData) => {
+    try {
+      const poll = await Poll.create({ ...pollData, chat_room_id: room.id, creation_source: 'chatroom', is_active: true, created_by_admin: true, created_by_role: user?.app_role || 'admin' });
+      toast.success(`Poll "${poll.title || pollData.title}" created`);
+      setShowPoll(false);
+    } catch (err) {
+      toast.error(apiError(err, 'Failed to create poll'));
+    }
+  };
+
+  const premiumType = PREMIUM_TYPES.includes(form.room_type);
+  const fieldError = (key) => errors[key] && <p className="text-xs text-sell-muted-foreground mt-1" role="alert">{errors[key]}</p>;
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onClose}>
+      <Dialog open={open} onOpenChange={(o) => { if (!o && !saving) onClose(); }}>
         <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-primary" />
-              {room ? 'Edit Chat Room' : 'Create New Chat Room'}
+              <MessageSquare className="w-5 h-5 text-primary" aria-hidden="true" />
+              {room ? 'Edit chat room' : 'Create chat room'}
             </DialogTitle>
             <DialogDescription>
-              {room
-                ? 'Update the chat room details and settings'
-                : 'Create a new chat room for your community'
-              }
+              {room ? 'Changes apply immediately; people who lose access are removed from the live room.' : 'Create a new room for the community.'}
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Basic Information */}
+          <form onSubmit={submit} className="space-y-6" noValidate>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-subtle">Basic Information</h3>
-                {room && (
-                  <Badge variant="outline" className="text-xs">
-                    Room ID: {room.id?.slice(-8)}
-                  </Badge>
-                )}
+                <h3 className="text-sm font-semibold text-subtle">Basic information</h3>
+                {room && <Badge variant="outline" className="text-xs">ID {String(room.id).slice(-8)}</Badge>}
               </div>
 
               <div>
-                <Label htmlFor="room_type">Room Type</Label>
-                <Select
-                  value={formData.room_type}
-                  onValueChange={(value) => setFormData({ ...formData, room_type: value })}
-                >
-                  <SelectTrigger className="mt-1">
-                    <SelectValue />
-                  </SelectTrigger>
+                <Label htmlFor="room_type">Room type</Label>
+                <Select value={form.room_type} onValueChange={(v) => set('room_type', v)}>
+                  <SelectTrigger id="room_type" className="mt-1"><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="general">General Discussion</SelectItem>
-                    <SelectItem value="stock_specific">Stock Specific</SelectItem>
-                    <SelectItem value="sector">Sector Based</SelectItem>
-                    <SelectItem value="admin">Admin Room</SelectItem>
-                    <SelectItem value="premium_admin">Premium Admin Room</SelectItem>
+                    {ROOM_TYPES.map((t) => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
                 <Label htmlFor="stock_symbol">
-                  Stock Symbol {formData.room_type === 'stock_specific' && <span className="text-sell-muted-foreground">*</span>}
+                  Stock symbol {form.room_type === 'stock_specific' && <span className="text-sell-muted-foreground">*</span>}
                 </Label>
                 <Input
-                  id="stock_symbol"
-                  value={formData.stock_symbol}
-                  onChange={(e) => setFormData({ ...formData, stock_symbol: e.target.value.toUpperCase() })}
-                  placeholder="e.g., RELIANCE, TCS, INFY"
-                  className="mt-1"
-                  required={formData.room_type === 'stock_specific'}
+                  id="stock_symbol" className="mt-1" maxLength={20} placeholder="e.g. RELIANCE, TCS"
+                  value={form.stock_symbol} onChange={(e) => set('stock_symbol', e.target.value.toUpperCase())}
+                  aria-invalid={Boolean(errors.stock_symbol)}
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  {formData.room_type === 'stock_specific'
-                    ? 'Required: Stock symbol for this room'
-                    : 'Optional: Associate this room with a specific stock'
-                  }
-                </p>
+                {fieldError('stock_symbol')}
               </div>
 
               <div>
-                <Label htmlFor="name">Room Name *</Label>
+                <Label htmlFor="name">Room name *</Label>
                 <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={handleNameChange} // Use the new handler
-                  placeholder="Enter room name..."
-                  className="mt-1"
-                  required
+                  id="name" className="mt-1" maxLength={100} placeholder="Room name"
+                  value={form.name} onChange={(e) => { nameTouched.current = true; set('name', e.target.value); }}
+                  aria-invalid={Boolean(errors.name)}
                 />
-                {formData.room_type === 'stock_specific' && !room && (
-                  <p className="text-xs text-primary mt-1">
-                    💡 Tip: Room name will auto-fill with stock symbol unless manually changed.
-                  </p>
-                )}
+                {fieldError('name')}
               </div>
 
               <div>
                 <Label htmlFor="description">Description</Label>
                 <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Brief description of the room purpose..."
-                  className="mt-1 h-20"
+                  id="description" className="mt-1 h-20" maxLength={1000} placeholder="What is this room for?"
+                  value={form.description} onChange={(e) => set('description', e.target.value)}
                 />
+                {fieldError('description')}
               </div>
             </div>
 
-            {/* Room Configuration */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-subtle">Room Configuration</h3>
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold text-subtle">Access</h3>
 
-              <div className="flex items-center justify-between p-3 bg-premium-muted rounded-lg">
-                <div className="flex-1">
-                  <Label htmlFor="is_premium" className="font-medium">Premium Room</Label>
-                  <p className="text-xs text-subtle mt-1">
-                    Requires subscription to access
-                  </p>
-                </div>
-                <Switch
-                  id="is_premium"
-                  checked={formData.is_premium}
-                  onCheckedChange={(checked) => setFormData({ ...formData, is_premium: checked })}
-                />
+              <div>
+                <Label htmlFor="required_plan">Plan required to join</Label>
+                <Select value={form.required_plan} onValueChange={(v) => set('required_plan', v)}>
+                  <SelectTrigger id="required_plan" className="mt-1"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {PLANS.map((p) => (
+                      <SelectItem key={p.value} value={p.value} disabled={premiumType && p.value === 'free'}>{p.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Premium rooms open to Premium and VIP plans (or a room subscription); VIP rooms need a VIP plan.
+                </p>
               </div>
 
-              {formData.is_premium && (
-                <div>
-                  <Label htmlFor="required_plan">Required Plan</Label>
-                  <Select
-                    value={formData.required_plan}
-                    onValueChange={(value) => setFormData({ ...formData, required_plan: value })}
-                  >
-                    <SelectTrigger className="mt-1">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="basic">Basic (Free)</SelectItem>
-                      <SelectItem value="premium">Premium</SelectItem>
-                      <SelectItem value="vip">VIP</SelectItem>
-                    </SelectContent>
-                  </Select>
+              <div className="flex items-center justify-between p-3 bg-surface-2 rounded-lg">
+                <div className="flex-1 pr-4">
+                  <Label htmlFor="is_public" className="font-medium">Public room</Label>
+                  <p className="text-xs text-subtle mt-1">Off: invite only (invite links or an admin adds people).</p>
                 </div>
-              )}
+                <Switch id="is_public" checked={form.is_public} onCheckedChange={(v) => set('is_public', v)} />
+              </div>
 
-              <div className="flex items-center justify-between p-3 bg-hold-muted rounded-lg">
-                <div className="flex-1">
-                  <Label htmlFor="admin_only_post" className="font-medium">Admin Only Posting</Label>
-                  <p className="text-xs text-subtle mt-1">
-                    Only admins and advisors can send messages
-                  </p>
+              <div className="flex items-center justify-between p-3 bg-surface-2 rounded-lg">
+                <div className="flex-1 pr-4">
+                  <Label htmlFor="admin_only_post" className="font-medium">Only moderators can post</Label>
+                  <p className="text-xs text-subtle mt-1">Members can read; room moderators and staff post.</p>
                 </div>
-                <Switch
-                  id="admin_only_post"
-                  checked={formData.admin_only_post}
-                  onCheckedChange={(checked) => setFormData({ ...formData, admin_only_post: checked })}
-                />
+                <Switch id="admin_only_post" checked={form.admin_only_post} onCheckedChange={(v) => set('admin_only_post', v)} />
               </div>
             </div>
 
-            {/* Poll Creation Section - Only show for existing rooms */}
             {room && (
-              <div className="space-y-4 pt-4 border-t">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-sm font-semibold text-subtle flex items-center gap-2">
-                      <Vote className="w-4 h-4 text-primary" />
-                      Poll Management
-                    </h3>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Create polls for this chat room
-                    </p>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowCreatePollModal(true)}
-                    className="bg-surface-2 hover:from-surface-2 hover:to-surface-2 border-protocall-premium-light"
-                  >
-                    <Vote className="w-4 h-4 mr-2" />
-                    Create Poll
-                  </Button>
+              <div className="flex items-center justify-between pt-4 border-t">
+                <div>
+                  <h3 className="text-sm font-semibold text-subtle flex items-center gap-2">
+                    <Vote className="w-4 h-4 text-primary" aria-hidden="true" /> Polls
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1">Create a poll in this room</p>
                 </div>
-
-                {!formData.stock_symbol && (
-                  <div className="bg-hold-muted border border-hold/30 rounded-lg p-3">
-                    <p className="text-xs text-hold-muted-foreground">
-                      💡 Tip: Set a stock symbol for this room to create stock-specific polls more easily
-                    </p>
-                  </div>
-                )}
+                <Button type="button" variant="outline" size="sm" onClick={() => setShowPoll(true)}>
+                  <Vote className="w-4 h-4 mr-2" aria-hidden="true" /> Create poll
+                </Button>
               </div>
             )}
 
             <DialogFooter className="gap-2">
-              <Button type="button" variant="outline" onClick={onClose} disabled={isSaving}>
-                <X className="w-4 h-4 mr-2" />
-                Cancel
+              <Button type="button" variant="outline" onClick={onClose} disabled={saving}>
+                <X className="w-4 h-4 mr-2" aria-hidden="true" /> Cancel
               </Button>
-              <Button
-                type="submit"
-                disabled={isSaving}
-                className="bg-gradient-to-r from-protocall-deep to-protocall-blue hover:from-protocall-deep hover:to-protocall-blue"
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {isSaving ? 'Saving...' : room ? 'Update Room' : 'Create Room'}
+              <Button type="submit" disabled={saving}>
+                {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" /> : <Save className="w-4 h-4 mr-2" aria-hidden="true" />}
+                {saving ? 'Saving...' : room ? 'Update room' : 'Create room'}
               </Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
 
-      {/* Create Poll Modal */}
       {room && (
-        <CreatePollModal
-          open={showCreatePollModal}
-          onClose={() => setShowCreatePollModal(false)}
-          room={room}
-          user={user}
-          onCreatePoll={handleCreatePoll}
-        />
+        <CreatePollModal open={showPoll} onClose={() => setShowPoll(false)} room={room} user={user} onCreatePoll={createPoll} />
       )}
     </>
   );
 }
+
+ChatRoomFormModal.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  room: PropTypes.object,
+  onSave: PropTypes.func.isRequired,
+  user: PropTypes.object,
+};

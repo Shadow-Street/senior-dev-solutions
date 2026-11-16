@@ -792,19 +792,29 @@ class SubscriptionService {
             payment_method: 'razorpay',
             transaction_id: refundId,
             transaction_type: 'refund',
-            date: new Date()
+            date: new Date(),
+            // Which payment this refunds: the Financials reports and reconciliation read it.
+            metadata: { original_transaction_id: paymentId || null }
         }, { transaction });
-        await db.FundTransaction.create({
-            user_id: userId,
-            amount: -amount,
-            transaction_type: 'refund',
-            status: 'completed',
-            transaction_id: refundId,
-            source: 'razorpay_refund',
-            completed_at: new Date(),
-            description: `Refund for subscription ${subscriptionId}`,
-            metadata: { original_transaction_id: paymentId, reason }
-        }, { transaction });
+        // Secondary copy for the global ledger. Before migration 021 the column's ENUM has
+        // no 'refund' and strict mode rejects the row; that must not undo the refund row
+        // above (which every report reads). A failed statement does not abort a MySQL
+        // transaction, so it is logged and skipped.
+        try {
+            await db.FundTransaction.create({
+                user_id: userId,
+                amount: -amount,
+                transaction_type: 'refund',
+                status: 'completed',
+                transaction_id: refundId,
+                source: 'razorpay_refund',
+                completed_at: new Date(),
+                description: `Refund for subscription ${subscriptionId}`,
+                metadata: { original_transaction_id: paymentId, reason }
+            }, { transaction });
+        } catch (e) {
+            console.error('[SubscriptionService] fund_transactions refund row skipped (apply migration 021):', e && e.name);
+        }
         return true;
     }
 
@@ -826,14 +836,18 @@ class SubscriptionService {
             }
         }
         if (!request) return null;
+        // Never settle a request onto a different payment than the one Razorpay refunded
+        // (refund_requests rows are editable by their owner).
+        if (refundEntity.payment_id && request.transaction_id && String(request.transaction_id) !== String(refundEntity.payment_id)) return null;
         await db.sequelize.transaction(async (t) => {
             await request.update({ razorpay_refund_id: refundId, status: 'completed', processed_at: new Date() }, { transaction: t });
             await this.recordRefundLedger({
                 userId: request.user_id,
                 subscriptionId: request.subscription_id,
-                paymentId: request.transaction_id,
+                paymentId: refundEntity.payment_id || request.transaction_id,
                 refundId,
-                amount: Number(request.refund_amount) || (Number(refundEntity.amount) || 0) / 100,
+                // What Razorpay refunded, not what the request row says.
+                amount: (Number(refundEntity.amount) || 0) / 100 || Number(request.refund_amount),
                 reason: request.reason,
                 transaction: t
             });

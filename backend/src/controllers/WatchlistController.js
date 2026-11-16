@@ -1,6 +1,8 @@
 const db = require("../models");
 const { FinDataService } = require("../services/FinDataService");
 
+const MAX_WATCHLIST = 200;
+
 exports.getWatchlist = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -16,6 +18,11 @@ exports.getWatchlist = async (req, res) => {
         }
 
         const symbols = watchlist.stocks || [];
+        // ?fields=symbols: just the list (Dashboard "Watch" state), without
+        // fetching live quotes for every watched stock.
+        if (req.query && req.query.fields === 'symbols') {
+            return res.json([{ ...watchlist.toJSON(), stocks: symbols }]);
+        }
         if (symbols.length === 0) {
             // Array, not a bare object: this is reached through the generic
             // entity client as Watchlist.filter(...), whose callers index into
@@ -55,10 +62,16 @@ exports.addToWatchlist = async (req, res) => {
         // Accept either spelling: the UI sends `stock_symbol`, while this
         // endpoint originally only read `symbol`, so adding a stock always
         // failed with 400.
-        const symbol = req.body?.symbol || req.body?.stock_symbol;
+        const raw = req.body?.symbol || req.body?.stock_symbol;
+        const symbol = typeof raw === 'string' ? raw.trim().toUpperCase() : '';
 
         if (!symbol) {
             return res.status(400).json({ error: "Symbol is required" });
+        }
+        // Exchange symbols only (e.g. RELIANCE, M&M, BAJAJ-AUTO, NSE:TCS): the
+        // value is stored and later sent to the quote provider.
+        if (!/^[A-Z0-9&._:-]{1,32}$/.test(symbol)) {
+            return res.status(400).json({ error: "That is not a valid stock symbol" });
         }
 
         let watchlist = await db.Watchlist.findOne({ where: { user_id: userId, is_default: true } });
@@ -72,6 +85,9 @@ exports.addToWatchlist = async (req, res) => {
         }
 
         let stocks = watchlist.stocks || [];
+        if (!stocks.includes(symbol) && stocks.length >= MAX_WATCHLIST) {
+            return res.status(409).json({ error: `Your watchlist is full (${MAX_WATCHLIST} stocks). Remove one to add another.` });
+        }
         if (!stocks.includes(symbol)) {
             stocks = [...stocks, symbol]; // Create new array to ensure Sequelize detects change
 

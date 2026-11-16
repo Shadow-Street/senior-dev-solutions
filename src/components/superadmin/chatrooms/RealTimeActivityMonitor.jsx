@@ -1,319 +1,117 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Message, ChatRoom, ChatRoomParticipant, TypingIndicator } from '@/api/entities';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  Activity,
-  MessageSquare,
-  Users,
-  TrendingUp,
-  Clock,
-  Eye
-} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Activity, Users, MessageSquare, Radio, Pause, Play, AlertTriangle, Loader2 } from 'lucide-react';
+import chatAdminApi from './chatAdminApi';
+import { apiError, formatDateTime } from './chatRoomUtils';
 
+const POLL_MS = 10000;
+
+/**
+ * Live view from the WebSocket server: who is connected, which rooms they are
+ * in, and the last hour of messages. Refreshes every 10 s while this tab is
+ * open and the page is visible.
+ */
 export default function RealTimeActivityMonitor() {
-  const [liveData, setLiveData] = useState({
-    recentMessages: [],
-    activeRooms: [],
-    onlineUsers: [],
-    typingUsers: [],
-    stats: {
-      messagesPerMinute: 0,
-      activeUsers: 0,
-      activeRooms: 0,
-      peakActivity: 0
-    }
-  });
-  const [isLoading, setIsLoading] = useState(true);
-  const isMounted = useRef(true);
-  const pollingInterval = useRef(null);
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  const [paused, setPaused] = useState(false);
+  const timer = useRef(null);
 
-  const loadLiveData = async () => {
+  const load = useCallback(async () => {
     try {
-      if (!isMounted.current) return;
-
-      const [messages, rooms, participants] = await Promise.all([
-        Message.list('-created_date', 50).catch(() => []),
-        ChatRoom.list().catch(() => []),
-        ChatRoomParticipant.list('-last_seen_at', 100).catch(() => [])
-      ]);
-
-      if (!isMounted.current) return;
-
-      // Calculate recent activity (last minute)
-      const oneMinuteAgo = Date.now() - 60000;
-      const recentMessages = messages.filter(m => 
-        new Date(m.created_date).getTime() > oneMinuteAgo
-      );
-
-      // Find active rooms (with recent messages)
-      const activeRoomIds = new Set(recentMessages.map(m => m.chat_room_id));
-      const activeRooms = rooms.filter(r => activeRoomIds.has(r.id));
-
-      // Find online users (active in last 5 minutes)
-      const fiveMinutesAgo = Date.now() - 300000;
-      const onlineUsers = participants.filter(p => 
-        p.last_seen_at && new Date(p.last_seen_at).getTime() > fiveMinutesAgo
-      );
-
-      // Calculate stats
-      const uniqueActiveUsers = new Set(recentMessages.map(m => m.user_id).filter(Boolean));
-
-      setLiveData({
-        recentMessages: messages.slice(0, 20),
-        activeRooms: activeRooms.slice(0, 10),
-        onlineUsers: onlineUsers.slice(0, 20),
-        typingUsers: [],
-        stats: {
-          messagesPerMinute: recentMessages.length,
-          activeUsers: uniqueActiveUsers.size,
-          activeRooms: activeRooms.length,
-          peakActivity: Math.max(recentMessages.length, liveData.stats.peakActivity || 0)
-        }
-      });
-
-    } catch (error) {
-      console.error('Error loading live data:', error);
-    } finally {
-      if (isMounted.current) {
-        setIsLoading(false);
-      }
+      setData(await chatAdminApi.live());
+      setError(null);
+    } catch (e) {
+      setError(apiError(e, 'Live activity is unavailable'));
     }
-  };
-
-  useEffect(() => {
-    isMounted.current = true;
-    
-    // Initial load
-    loadLiveData();
-
-    // Set up polling every 5 seconds for real-time updates
-    pollingInterval.current = setInterval(() => {
-      if (isMounted.current) {
-        loadLiveData();
-      }
-    }, 5000);
-
-    return () => {
-      isMounted.current = false;
-      if (pollingInterval.current) {
-        clearInterval(pollingInterval.current);
-      }
-    };
   }, []);
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-16">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-lg text-subtle font-medium">Loading Live Activity...</p>
-        </div>
-      </div>
-    );
+  useEffect(() => {
+    load();
+    if (paused) return undefined;
+    timer.current = setInterval(() => {
+      if (typeof document === 'undefined' || document.visibilityState === 'visible') load();
+    }, POLL_MS);
+    return () => clearInterval(timer.current);
+  }, [load, paused]);
+
+  if (!data && !error) {
+    return <div className="py-16 text-center text-subtle" role="status"><Loader2 className="w-6 h-6 mx-auto animate-spin mb-2" aria-hidden="true" />Connecting to live activity…</div>;
   }
 
   return (
     <div className="space-y-6">
-      {/* Live Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Messages/Min</p>
-                <p className="text-3xl font-bold">{liveData.stats.messagesPerMinute}</p>
-              </div>
-              <MessageSquare className="w-10 h-10 opacity-80" />
-            </div>
-            <div className="mt-2 flex items-center gap-2">
-              <Activity className="w-4 h-4 animate-pulse" />
-              <span className="text-xs opacity-90">Live Updates</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-buy-soft text-buy-foreground">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Active Users</p>
-                <p className="text-3xl font-bold">{liveData.stats.activeUsers}</p>
-              </div>
-              <Users className="w-10 h-10 opacity-80" />
-            </div>
-            <div className="mt-2 flex items-center gap-2">
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-              <span className="text-xs opacity-90">Online Now</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-r from-protocall-deep to-protocall-blue text-white">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Active Rooms</p>
-                <p className="text-3xl font-bold">{liveData.stats.activeRooms}</p>
-              </div>
-              <MessageSquare className="w-10 h-10 opacity-80" />
-            </div>
-            <div className="mt-2 flex items-center gap-2">
-              <Eye className="w-4 h-4" />
-              <span className="text-xs opacity-90">With Activity</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-hold text-hold-foreground">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Peak Activity</p>
-                <p className="text-3xl font-bold">{liveData.stats.peakActivity}</p>
-              </div>
-              <TrendingUp className="w-10 h-10 opacity-80" />
-            </div>
-            <div className="mt-2 flex items-center gap-2">
-              <Clock className="w-4 h-4" />
-              <span className="text-xs opacity-90">msgs/min</span>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-sm text-subtle">
+          <span className={`w-2 h-2 rounded-full ${paused ? 'bg-muted-foreground' : 'bg-buy animate-pulse'}`} aria-hidden="true" />
+          {paused ? 'Paused' : `Live · updated ${data ? formatDateTime(data.generated_at) : '—'}`}
+        </div>
+        <Button size="sm" variant="outline" onClick={() => setPaused((p) => !p)}>
+          {paused ? <><Play className="w-4 h-4 mr-1" aria-hidden="true" />Resume</> : <><Pause className="w-4 h-4 mr-1" aria-hidden="true" />Pause</>}
+        </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Messages Stream */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-primary" />
-              Live Message Stream
-              <Badge className="bg-buy-muted text-buy-muted-foreground ml-auto">
-                <div className="w-2 h-2 bg-buy rounded-full animate-pulse mr-2"></div>
-                Live
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3 max-h-96 overflow-y-auto">
-              {liveData.recentMessages.length === 0 ? (
-                <div className="text-center py-8">
-                  <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                  <p className="text-subtle">No recent messages</p>
-                </div>
-              ) : (
-                liveData.recentMessages.map((message, index) => (
-                  <div key={message.id || index} className="flex items-start gap-3 p-3 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
-                    <div className="w-8 h-8 rounded-full bg-premium-muted flex items-center justify-center flex-shrink-0">
-                      <MessageSquare className="w-4 h-4 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className="font-medium text-sm text-foreground truncate">
-                          {message.user_id?.slice(-6) || 'System'}
-                        </p>
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(message.created_date).toLocaleTimeString()}
-                        </span>
-                      </div>
-                      <p className="text-sm text-subtle truncate">{message.content}</p>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
+      {error && <p className="text-sm text-sell-muted-foreground flex items-center gap-2" role="alert"><AlertTriangle className="w-4 h-4" aria-hidden="true" />{error}</p>}
 
-        {/* Active Rooms */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-buy-muted-foreground" />
-              Active Rooms
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3 max-h-96 overflow-y-auto">
-              {liveData.activeRooms.length === 0 ? (
-                <div className="text-center py-8">
-                  <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                  <p className="text-subtle">No active rooms</p>
-                </div>
-              ) : (
-                liveData.activeRooms.map((room, index) => (
-                  <div key={room.id || index} className="flex items-center justify-between p-3 bg-surface-2 rounded-lg hover:bg-surface-2 transition-colors">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-buy-muted flex items-center justify-center">
-                        <MessageSquare className="w-5 h-5 text-buy-muted-foreground" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-foreground">{room.name}</p>
-                        <p className="text-xs text-muted-foreground">{room.room_type}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">
-                        <Users className="w-3 h-3 mr-1" />
-                        {room.participant_count || 0}
-                      </Badge>
-                      <div className="w-2 h-2 bg-buy rounded-full animate-pulse"></div>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Online Users */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-protocall-premium-text" />
-            Online Users ({liveData.onlineUsers.length})
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-            {liveData.onlineUsers.length === 0 ? (
-              <div className="col-span-full text-center py-8">
-                <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                <p className="text-subtle">No users online</p>
-              </div>
-            ) : (
-              liveData.onlineUsers.map((participant, index) => (
-                <div key={participant.id || index} className="flex items-center gap-2 p-3 bg-surface-2 rounded-lg">
-                  <div className="relative">
-                    <div className="w-10 h-10 rounded-full bg-premium-muted flex items-center justify-center">
-                      <Users className="w-5 h-5 text-protocall-premium-text" />
-                    </div>
-                    {participant.is_online && (
-                      <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-buy rounded-full border-2 border-white"></div>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">
-                      {participant.user_name || 'User'}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {participant.role || 'member'}
-                    </p>
-                  </div>
-                </div>
-              ))
-            )}
+      {data && (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              ['Connected users', data.connected_users, Users],
+              ['Rooms with people online', data.active_rooms.length, Radio],
+              ['Messages in the last hour', data.messages_last_hour, MessageSquare],
+            ].map(([label, value, Icon]) => (
+              <Card key={label}><CardContent className="p-4 flex items-center gap-3">
+                <Icon className="w-7 h-7 text-primary" aria-hidden="true" />
+                <div><p className="text-2xl font-bold">{value}</p><p className="text-sm text-subtle">{label}</p></div>
+              </CardContent></Card>
+            ))}
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Auto-refresh indicator */}
-      <div className="flex items-center justify-center gap-2 text-sm text-subtle">
-        <div className="w-2 h-2 bg-buy rounded-full animate-pulse"></div>
-        <span>Auto-refreshing every 5 seconds</span>
-      </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader><CardTitle className="text-base flex items-center gap-2"><Activity className="w-4 h-4" aria-hidden="true" />Rooms online now</CardTitle></CardHeader>
+              <CardContent>
+                {data.active_rooms.length === 0 ? <p className="text-sm text-subtle text-center py-6">Nobody is in a room right now.</p> : (
+                  <ul className="space-y-3">
+                    {data.active_rooms.map((r) => (
+                      <li key={r.id} className="bg-surface-2 rounded-lg p-3">
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium">{r.name}</span>
+                          <Badge className="bg-buy-muted text-buy-muted-foreground">{r.online.length} online</Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1 truncate">{r.online.map((u) => u.name).join(', ')}</p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader><CardTitle className="text-base flex items-center gap-2"><MessageSquare className="w-4 h-4" aria-hidden="true" />Latest messages (last hour)</CardTitle></CardHeader>
+              <CardContent>
+                {data.recent_messages.length === 0 ? <p className="text-sm text-subtle text-center py-6">No messages in the last hour.</p> : (
+                  <ul className="space-y-2 max-h-[28rem] overflow-y-auto pr-1">
+                    {data.recent_messages.map((m) => (
+                      <li key={m.id} className="border-b pb-2">
+                        <div className="flex flex-wrap items-center gap-2 text-xs">
+                          <span className="font-semibold text-foreground">{m.author?.name}</span>
+                          <Badge variant="outline" className="text-xs">{m.room_name}</Badge>
+                          <span className="text-muted-foreground">{formatDateTime(m.created_at)}</span>
+                        </div>
+                        <p className="text-sm text-foreground break-words mt-1">{m.content}</p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      )}
     </div>
   );
 }

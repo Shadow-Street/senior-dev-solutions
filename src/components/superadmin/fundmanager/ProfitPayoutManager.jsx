@@ -477,7 +477,7 @@ export default function ProfitPayoutManager({ onUpdate }) {
               await SendEmail({
                 to: investor.email,
                 subject: `Profit Payout - ${fundPlan.plan_name}`, // Updated subject
-                body: `Dear ${investor.full_name},\n\nWe are pleased to inform you that a profit payout of ₹${payoutAmount.toLocaleString('en-IN')} from your investment in ${fundPlan.plan_name} has been credited to your wallet.\n\n${adminNotes ? `Note: ${adminNotes}\n\n` : ''}Thank you for investing with us.\n\nBest Regards,\nProtocol Fund Management Team` // Updated body
+                body: `Dear ${investor.full_name},\n\nWe are pleased to inform you that a profit payout of ₹${payoutAmount.toLocaleString('en-IN')} from your investment in ${fundPlan.plan_name} has been credited to your wallet.\n\n${adminNotes ? `Note: ${adminNotes}\n\n` : ''}Thank you for investing with us.\n\nBest Regards,\nProtocall Fund Management Team` // Updated body
               }).catch(err => console.warn('Email send failed:', err));
             }
           }

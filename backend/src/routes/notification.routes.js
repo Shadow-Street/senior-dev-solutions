@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
 const { authMiddleware } = require("../middleware/auth");
+const PlatformSettings = require("../services/PlatformSettingsService");
 
 // Notifications CRUD
 const notificationController = createCrudController(db.Notification, {
@@ -73,11 +74,14 @@ settingsRouter.get('/my-settings', authMiddleware, async (req, res) => {
     });
     
     if (!settings) {
+      // First visit: start from the platform's default notification
+      // preferences (Platform Settings > Notifications).
+      const defaults = await PlatformSettings.getAll().catch(() => PlatformSettings.defaults());
       settings = await db.NotificationSetting.create({
         user_id: req.user.id,
-        email_enabled: true,
-        push_enabled: true,
-        sms_enabled: false
+        email_enabled: defaults.notification_default_email !== false,
+        push_enabled: defaults.notification_default_push !== false,
+        sms_enabled: defaults.notification_default_sms === true
       });
     }
     

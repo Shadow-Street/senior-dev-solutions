@@ -4,8 +4,9 @@ const db = require("../models");
 const { createCrudController, createCrudRoutes } = require("../utils/crudController");
 const { authMiddleware, optionalAuthenticate } = require("../middleware/auth");
 const {
-  isStaff, isOwner, canReadRoom, canManageRoom, findRoom, findMembership, readableRoomIds, roomScope,
+  isStaff, isOwner, canReadRoom, canManageRoom, findRoom, findMembership, readableRoomIds, roomScope, postingBlockReason,
 } = require("../utils/roomAccess");
+const ChatModerationService = require("../services/ChatModerationService");
 
 const MAX_CONTENT_LENGTH = 10000;
 const MAX_PAGE = 100;
@@ -52,9 +53,11 @@ async function preparePost(req, res, next) {
       // Without this a muted user could leave the room and post from outside.
       if (!membership && !isOwner(req.user, room)) return res.status(403).json({ error: 'Join the room to post' });
       if (membership?.muted) return res.status(403).json({ error: 'You are muted in this room' });
-      if (room.admin_only_post && !(await canManageRoom(req.user, room))) {
-        return res.status(403).json({ error: 'Only moderators can post in this room' });
-      }
+      // Archived, locked and admin-only rooms, and room bans (Chat Room Management).
+      const blocked = await postingBlockReason(req.user, room);
+      if (blocked) return res.status(403).json({ error: blocked });
+      const ruleHit = await ChatModerationService.checkMessage(req.user, room, data.content, membership);
+      if (ruleHit) return res.status(403).json({ error: ruleHit.message, code: 'MODERATION_RULE' });
     }
     req.body = { ...data, user_id: req.user.id };
     return next();
@@ -62,6 +65,21 @@ async function preparePost(req, res, next) {
     console.error('[message.routes.js] request failed:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
+}
+
+/** Why a non-staff author may not change `message` to `content`, or null. */
+async function editBlockReason(user, message, content) {
+  if (isStaff(user)) return null;
+  const room = await findRoom(message.chat_room_id);
+  if (!room || !(await canReadRoom(user, room.id))) return { status: 404, error: 'Record not found' };
+  const membership = await findMembership(user, room.id);
+  if (!membership && !isOwner(user, room)) return { status: 403, error: 'Join the room to edit your messages' };
+  if (membership?.muted) return { status: 403, error: 'You are muted in this room' };
+  const blocked = await postingBlockReason(user, room);
+  if (blocked) return { status: 403, error: blocked };
+  const ruleHit = await ChatModerationService.checkMessage(user, room, content, membership);
+  if (ruleHit) return { status: 403, error: ruleHit.message, code: 'MODERATION_RULE' };
+  return null;
 }
 
 /**
@@ -84,6 +102,13 @@ async function guardMessageWrite(req, res, next) {
         if (typeof req.body.content !== 'string' || req.body.content.length > MAX_CONTENT_LENGTH) {
           return res.status(400).json({ error: 'Invalid message content' });
         }
+        // A moderator-removed message stays removed.
+        if (message.is_deleted) return res.status(409).json({ error: 'This message was removed' });
+        // An edit is a new post as far as the room rules go: banned, muted
+        // and lapsed members cannot edit, nor can anyone in an archived or
+        // locked room, and the new text must pass the moderation rules.
+        const blocked = await editBlockReason(req.user, message, req.body.content);
+        if (blocked) return res.status(blocked.status).json({ error: blocked.error, code: blocked.code });
         Object.assign(data, { content: req.body.content, is_edited: true, edited_at: new Date() });
       }
       if (mayModerate && 'is_pinned' in (req.body || {})) data.is_pinned = Boolean(req.body.is_pinned);

@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Message, User, TrustScoreLog, ModerationLog, Poll, PollVote, MessageReaction, TypingIndicator as TypingIndicatorEntity } from "@/api/entities";
+import { Message, Poll, PollVote, MessageReaction, TypingIndicator as TypingIndicatorEntity } from "@/api/entities";
+import { moderationApi } from "@/lib/moderationApi";
+import { renderReportDialog } from "@/components/moderation/ReportContentDialog";
 import { UploadFile } from "@/api/integrations";
 import { MessageModerator } from "./MessageModerator";
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
@@ -38,25 +40,14 @@ import PinnedMessagesSection from './PinnedMessagesSection';
 import EditMessageModal from './EditMessageModal';
 import DeleteMessageModal from './DeleteMessageModal';
 
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, Flag } from 'lucide-react';
 
 // Import WebSocket hooks
 import { useChatRoom } from '@/hooks/useChatRoom';
 import ReadReceiptIndicator from './ReadReceiptIndicator';
 
-const updateTrustScore = async (user, amount, reason, relatedEntityId = null) => {
-  if (!user || !user.id) return;
-  const currentScore = user.trust_score !== undefined ? user.trust_score : 50;
-  const newScore = Math.max(0, Math.min(100, currentScore + amount));
-  if (newScore === currentScore) return;
-
-  try {
-    await User.update(user.id, { trust_score: newScore });
-    await TrustScoreLog.create({ user_id: user.id, change_amount: amount, reason, new_score: newScore, related_entity_id: relatedEntityId });
-  } catch (error) {
-    console.error("Failed to update trust score:", error);
-  }
-};
+// Trust score is server-maintained: the client used to write it (and a
+// TrustScoreLog row) on every message, which the API now refuses.
 
 export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscription }) {
   const rootRef = useRef(null);
@@ -124,8 +115,26 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
     stopTyping,
     getUserForMessage,
     markAsRead,
-    refetch
+    refetch,
+    room: liveRoom,
+    roomNotice,
+    mutedHere,
+    isStaffViewer: isStaffUser,
+    canModerate: canModerateHere,
   } = useChatRoom(room?.id, user);
+
+  // Why the composer is read-only right now, or null. Mirrors the server
+  // rules (which stay authoritative) and follows admin actions live.
+  const roomState = { ...(room || {}), ...(liveRoom || {}) };
+  const readOnlyReason =
+    roomNotice === 'removed' ? 'You were removed from this room by a moderator.'
+      : roomNotice === 'restricted' ? 'Your account is restricted, so you cannot chat.'
+        : isStaffUser ? null
+          : (roomState.archived || (roomState.status && roomState.status !== 'active')) ? 'This room is archived and read-only.'
+            : mutedHere ? 'You are muted in this room.'
+              : (roomState.locked && !canModerateHere) ? 'This room is locked by an administrator.'
+                : (roomState.admin_only_post && !canModerateHere) ? 'Only moderators can post in this room.'
+                  : null;
 
 
   // Room preferences (server-persisted, localStorage-cached). Declared before
@@ -179,6 +188,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
 
   const [editingMessage, setEditingMessage] = useState(null);
   const [deletingMessage, setDeletingMessage] = useState(null);
+  const [reportTarget, setReportTarget] = useState(null); // { type, id, label }
 
   const shouldScrollToBottomRef = useRef(true);
 
@@ -372,7 +382,6 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
           ...replyMetadata
         });
 
-        await updateTrustScore(user, 0.2, "Shared a file in chat");
       } catch (error) {
         console.error("File upload failed", error);
         toast.error("Failed to upload file. Please try again.");
@@ -391,17 +400,14 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
       setModerationWarning(violationMessage);
 
       try {
-        await ModerationLog.create({
-          user_id: user.id,
-          chat_room_id: room.id,
-          message_content: content,
-          violation_type: moderationResult.violations[0].type,
+        // Recorded server-side for Content Moderation (always about the sender).
+        await moderationApi.flagBlockedMessage({
+          chatRoomId: room.id,
+          content,
+          violationType: moderationResult.violations[0].type,
           severity: moderationResult.violations[0].severity,
-          action_taken: 'blocked'
-        });
+        }).catch((error) => console.error("Failed to record blocked message:", error?.message));
 
-        const scoreDeduction = moderationResult.violations[0].severity === 'high' ? -10 : -5;
-        await updateTrustScore(user, scoreDeduction, `Message blocked: ${moderationResult.violations[0].reason}`);
       } catch (error) {
         console.error("Failed to log moderation violation:", error);
       }
@@ -474,7 +480,6 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
         ...replyMetadata
       });
 
-      await updateTrustScore(user, 0.1, "Sent a valid message in chat");
     } catch (error) {
       console.error("Failed to send message", error);
     } finally {
@@ -878,6 +883,16 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
               </div>
             )}
 
+            {/* Admin action / room state notice */}
+            {readOnlyReason && (
+              <div role="status" className="flex-shrink-0 mx-4 mt-2 p-3 bg-hold-muted border border-hold/30 rounded-lg text-hold-muted-foreground text-sm flex items-center justify-between gap-2">
+                <span>{readOnlyReason}</span>
+                {roomNotice === 'removed' && onBack && (
+                  <Button size="sm" variant="outline" onClick={onBack}>Back to rooms</Button>
+                )}
+              </div>
+            )}
+
             {/* Connection Error */}
             {connectionError && (
               <div className="flex-shrink-0 mx-4 mt-2 p-3 bg-hold-muted border border-hold/30 rounded-lg text-hold-muted-foreground text-sm flex items-center gap-2">
@@ -1083,6 +1098,27 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                                         {msg.is_pinned ? 'Unpin Message' : 'Pin Message'}
                                       </button>
                                     )}
+
+                                    {!isCurrentUser && (
+                                      <>
+                                        <button
+                                          onClick={() => setReportTarget({ type: 'message', id: msg.id, label: `Message from ${msgUser.display_name || 'a member'}` })}
+                                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-sell-muted transition-colors text-left text-sm text-sell-muted-foreground"
+                                        >
+                                          <Flag className="w-4 h-4" />
+                                          Report Message
+                                        </button>
+                                        {msg.user_id && (
+                                          <button
+                                            onClick={() => setReportTarget({ type: 'user', id: msg.user_id, label: msgUser.display_name || 'This member' })}
+                                            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-sell-muted transition-colors text-left text-sm text-sell-muted-foreground"
+                                          >
+                                            <Flag className="w-4 h-4" />
+                                            Report User
+                                          </button>
+                                        )}
+                                      </>
+                                    )}
                                   </>
                                 )}
                               </PopoverContent>
@@ -1220,7 +1256,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                     variant="outline"
                     onClick={() => fileInputRef.current?.click()}
                     className="flex-shrink-0"
-                    disabled={!user || (user.trust_score !== undefined && user.trust_score < 20) || isUploading || isSending}
+                    disabled={!user || Boolean(readOnlyReason) || (user.trust_score !== undefined && user.trust_score < 20) || isUploading || isSending}
                   >
                     <Paperclip className="h-4 w-4" />
                   </Button>
@@ -1235,6 +1271,7 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                   <Input
                     placeholder={
                       !user ? "Please log in to chat..." :
+                        readOnlyReason ? readOnlyReason :
                         (user.trust_score !== undefined && user.trust_score < 20) ? "Account muted due to low trust score..." :
                           "Type your message or /command..."
                     }
@@ -1252,13 +1289,13 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
                       }
                     }}
                     className="flex-1 bg-surface-2 border-border focus-visible:ring-ring focus-visible:border-primary transition-all duration-300 rounded-xl"
-                    disabled={!user || (user.trust_score !== undefined && user.trust_score < 20) || isUploading || isSending}
+                    disabled={!user || Boolean(readOnlyReason) || (user.trust_score !== undefined && user.trust_score < 20) || isUploading || isSending}
                   />
 
                   <Button
                     type="submit"
                     size="icon"
-                    disabled={(!newMessage.trim() && !file) || !user || (user.trust_score !== undefined && user.trust_score < 20) || isUploading || isSending}
+                    disabled={(!newMessage.trim() && !file) || !user || Boolean(readOnlyReason) || (user.trust_score !== undefined && user.trust_score < 20) || isUploading || isSending}
                     className="flex-shrink-0"
                   >
                     {isUploading || isSending ? <Loader2 className="h-4 h-4 animate-spin" /> : <Send className="h-4 w-4" />}
@@ -1339,6 +1376,8 @@ export default function ChatInterface({ room, user, onBack, onUpdateRoom, subscr
           onSave={(newContent) => handleEditMessage(editingMessage.id, newContent)}
         />
       )}
+
+      {renderReportDialog(reportTarget, () => setReportTarget(null))}
 
       {deletingMessage && (
         <DeleteMessageModal

@@ -56,6 +56,20 @@ beforeEach(() => {
   mock.method(db.ChatRoomParticipant, 'findByPk', async (pid) => participants[pid] || null);
   mock.method(db.Message, 'findByPk', async (mid) => messages[mid] || null);
   mock.method(db.RoomSubscription, 'findOne', async () => null);
+  // Moderation rules are checked on every post; none are configured here.
+  mock.method(db.ModerationRule, 'findAll', async () => []);
+  // A kick removes every row for the user in the room.
+  mock.method(db.ChatRoomParticipant, 'destroy', async ({ where }) => {
+    const hit = Object.values(participants).filter((p) => !p.destroyed && p.chat_room_id === where.chat_room_id && p.user_id === where.user_id);
+    hit.forEach((p) => { p.destroyed = true; });
+    return hit.length;
+  });
+  // Mutes are applied to every row for the user in the room.
+  mock.method(db.ChatRoomParticipant, 'update', async (patch, { where }) => {
+    const hit = Object.values(participants).filter((p) => p.chat_room_id === where.chat_room_id && p.user_id === where.user_id);
+    hit.forEach((p) => Object.assign(p, patch));
+    return [hit.length];
+  });
 });
 afterEach(() => mock.restoreAll());
 
@@ -464,4 +478,12 @@ test('WS: a lapsed premium member cannot post', async () => {
   await svc.handleMessage({ userId: USERS.user.id }, Buffer.from(JSON.stringify({ type: 'chat_message', roomId: 'room-premium', content: 'x' })));
   assert.equal(create.mock.callCount(), 0);
   assert.deepEqual(svc.sent.at(-1).data, { type: 'error', message: 'Not a member of this room' });
+});
+
+test('a kick removes every membership row of that user in the room (review N-4)', async () => {
+  participants['p-user-dup'] = row({ id: 'p-user-dup', chat_room_id: 'room-open', user_id: USERS.user.id, role: 'member' });
+  const res = await request(app).delete('/api/chatrooms/participants/p-user').set('Authorization', bearer(MODERATOR));
+  assert.equal(res.status, 200);
+  assert.equal(participants['p-user-dup'].destroyed, true, 'the duplicate row is removed too');
+  assert.equal(Object.values(participants).filter((p) => !p.destroyed && p.user_id === USERS.user.id && p.chat_room_id === 'room-open').length, 0);
 });

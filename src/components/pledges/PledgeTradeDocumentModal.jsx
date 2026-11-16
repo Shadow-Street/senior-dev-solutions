@@ -46,7 +46,7 @@ const PledgeTradeDocumentModal = ({ isOpen, onClose, type, execution, sellExecut
         <div className="py-4 space-y-6">
           <div className="flex justify-between items-center">
             <div>
-              <h3 className="font-bold text-lg">Protocol Finance</h3>
+              <h3 className="font-bold text-lg">Protocall Finance</h3>
               <p className="text-sm text-muted-foreground">Your Partner in Collective Trading</p>
             </div>
             <Badge variant={isReceipt ? "default" : "secondary"}>{isReceipt ? "PAID" : "EXECUTED"}</Badge>

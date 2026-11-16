@@ -110,7 +110,7 @@ export default function InvoicePage() {
                 <p className="text-subtle">Invoice #{billingRecord.invoice_number || billingRecord.id.substring(0, 8)}</p>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-primary mb-2">Protocol</div>
+                <div className="text-2xl font-bold text-primary mb-2">Protocall</div>
                 <div className="text-subtle">
                   <p>Advertising Platform</p>
                   <p>Digital Marketing Services</p>

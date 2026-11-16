@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/components/context/AuthContext";
 import { usePlatformSettings } from "@/components/hooks/usePlatformSettings";
-import { User, ChatRoom, Poll, marketAPI, AdvisorRecommendation } from "@/lib/apiClient";
+import apiClient, { ChatRoom, Poll, marketAPI } from "@/lib/apiClient";
 import { createPageUrl } from "@/utils";
 import StatTile from "@/components/common/StatTile";
 
@@ -59,6 +59,7 @@ export default function Dashboard() {
 
   const [stats, setStats] = useState({
     totalTraders: 0,
+    tradersJoinedThisWeek: 0,
     activeRooms: 0,
     activePolls: 0,
     trendingStocksCount: 0,
@@ -75,11 +76,14 @@ export default function Dashboard() {
 
   const loadDashboardData = useCallback(async () => {
     try {
-      const [usersData, rooms, polls, recommendations, marketRes] = await Promise.all([
-        User.list(null, 1, 0).catch(() => ({ count: 0 })),
+      const [community, rooms, polls, recommendations, marketRes] = await Promise.all([
+        // Members may only list themselves, so counting /users always gave 1.
+        apiClient.get('/platform/community-stats').then((r) => r.data).catch(() => null),
         ChatRoom.list(null, 10, 0).catch(() => []),
         Poll.list(null, 10, 0).catch(() => []),
-        AdvisorRecommendation.list(null, 5, 0).catch(() => []),
+        // Active calls from approved advisors only (the generic list also
+        // returned pending advisors' and closed calls).
+        apiClient.get('/advisors/recommendations/latest', { params: { limit: 5 } }).then((r) => r.data).catch(() => []),
         marketAPI.getMarketData().then(r => r?.data).catch((e) => {
           setMarketError(e?.response?.data?.error || 'Live market data is unavailable');
           return null;
@@ -90,8 +94,8 @@ export default function Dashboard() {
       const market = marketRes || { stocks: [], gainers: [], losers: [], indices: [] };
 
       setStats({
-        totalTraders:
-          usersData?.count || (Array.isArray(usersData) ? usersData.length : 0),
+        totalTraders: Number(community?.traders) || 0,
+        tradersJoinedThisWeek: Number(community?.joined_this_week) || 0,
         activeRooms: Array.isArray(rooms) ? rooms.length : 0,
         activePolls: Array.isArray(polls) ? polls.length : 0,
         trendingStocksCount: market.stocks?.length || 0,
@@ -202,9 +206,9 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 sm:gap-5">
           <StatTile
             to={createPageUrl("Profile")}
-            title="Active Traders"
+            title="Traders Joined"
             value={isLoading ? null : stats.totalTraders.toLocaleString("en-IN")}
-            sub="+7.4% this week"
+            sub={stats.tradersJoinedThisWeek > 0 ? `+${stats.tradersJoinedThisWeek.toLocaleString("en-IN")} joined this week` : "Traders on Protocall"}
             icon={Users}
             variant="card"
             highlight

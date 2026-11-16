@@ -53,6 +53,22 @@ const endSession = () => {
   }
 };
 
+// The API answers 403 with one of these when the account itself has been
+// deactivated, suspended or blocked (backend utils/accountStatus.js).
+const ACCOUNT_BLOCK_CODES = ['ACCOUNT_DEACTIVATED', 'ACCOUNT_SUSPENDED', 'ACCOUNT_BLOCKED', 'ACCOUNT_INACTIVE'];
+export const ACCOUNT_NOTICE_KEY = 'protocall.accountNotice';
+
+/** Ends the session and leaves the reason for the login page to show. */
+const endRestrictedSession = (body) => {
+  try {
+    const until = body.until ? ` Access returns on ${new Date(body.until).toLocaleString('en-IN')}.` : '';
+    sessionStorage.setItem(ACCOUNT_NOTICE_KEY, `${body.error || 'This account is not active.'}${until}`);
+  } catch {
+    // Storage unavailable: the login page simply shows no notice.
+  }
+  endSession();
+};
+
 const refreshAccessToken = () => {
   if (refreshPromise) return refreshPromise;
 
@@ -87,6 +103,20 @@ apiClient.interceptors.response.use(
     const path = window.location.pathname;
     const onAuthPage = path === '/login' || path === '/register';
     const isRefreshCall = String(original.url || '').includes('/auth/refresh');
+
+    // Maintenance switched on while this tab was open: let the app shell show
+    // its maintenance screen now instead of at its next 2-minute poll.
+    if (status === 503 && body.code === 'MAINTENANCE') {
+      try { window.dispatchEvent(new CustomEvent('protocall:maintenance')); } catch { /* old browsers */ }
+      return Promise.reject(error);
+    }
+
+    if (status === 403 && ACCOUNT_BLOCK_CODES.includes(body.code)) {
+      // A signed-in user whose account was restricted mid-session. On the
+      // login page the form shows the server's message itself.
+      if (!onAuthPage && localStorage.getItem('accessToken')) endRestrictedSession(body);
+      return Promise.reject(error);
+    }
 
     if (status !== 401 || onAuthPage || isRefreshCall) {
       if (status === 401 && !onAuthPage && !isRefreshCall) {
@@ -124,7 +154,12 @@ apiClient.interceptors.response.use(
       if (REUSE_DETECTED.test(refreshMessage)) {
         console.error('Refresh token reuse detected — all sessions revoked.');
       }
-      endSession();
+      const refreshBody = refreshError?.response?.data || {};
+      if (refreshError?.response?.status === 403 && ACCOUNT_BLOCK_CODES.includes(refreshBody.code)) {
+        endRestrictedSession(refreshBody);
+      } else {
+        endSession();
+      }
       return Promise.reject(error);
     }
   }

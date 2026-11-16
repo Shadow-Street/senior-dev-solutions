@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ import ChatRoomCard from "../components/chat/ChatRoomCard";
 import CreateRoomModal from "../components/chat/CreateRoomModal";
 import ShareRoomModal from "../components/chat/ShareRoomModal";
 import ChatInterface from "../components/chat/ChatInterface";
+import useChatInviteLink from "../components/chat/useChatInviteLink";
 import { ChatRoom } from "@/api/entities";
 
 import { authAPI } from "@/lib/apiClient";
@@ -81,6 +83,51 @@ export default function ChatRooms() {
     fetchChatRooms();
   }, [fetchChatRooms]);
 
+  // Invite links (?invite=CODE) join the room, then open it via ?roomId.
+  useChatInviteLink(fetchChatRooms);
+
+  // Deep links: ?roomId=<id> opens that room, ?stock_symbol=<SYM> opens the
+  // stock's room (Dashboard "Chat", portfolio, poll and invite links use these).
+  // The list holds the first 100 rooms only, so a room not in it is fetched
+  // directly before falling back to a filtered list.
+  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    if (isLoading) return;
+    const roomId = searchParams.get("roomId");
+    const symbol = (searchParams.get("stock_symbol") || "").trim().toUpperCase();
+    if (!roomId && !symbol) return;
+    setSearchParams({}, { replace: true });
+
+    const local = roomId
+      ? chatRooms.find((r) => String(r.id) === roomId)
+      : chatRooms.find((r) => String(r.stock_symbol || "").toUpperCase() === symbol);
+    if (local) {
+      setSelectedRoom(local);
+      return;
+    }
+    // Not cancelled on cleanup: clearing the params above re-runs this effect.
+    (async () => {
+      let found = null;
+      try {
+        if (roomId) found = await ChatRoom.get(roomId);
+        else {
+          const rows = await ChatRoom.filter({ stock_symbol: symbol });
+          found = Array.isArray(rows) ? rows.find((r) => String(r.stock_symbol || "").toUpperCase() === symbol) : null;
+        }
+      } catch {
+        found = null;
+      }
+      if (found) {
+        setSelectedRoom(found);
+      } else if (symbol) {
+        setSearchTerm(symbol);
+        toast.info(`There is no ${symbol} room yet. Showing related rooms.`);
+      } else {
+        toast.error("That chat room is not available.");
+      }
+    })();
+  }, [isLoading, chatRooms, searchParams, setSearchParams]);
+
   const handleCreateRoom = async (roomData) => {
     if (!user) {
       toast.error("Please login to create a room");
@@ -119,8 +166,10 @@ export default function ChatRooms() {
   };
 
   const filteredRooms = chatRooms.filter((room) => {
-    const matchesSearch = room.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      room.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    const term = searchTerm.toLowerCase();
+    const matchesSearch = room.name?.toLowerCase().includes(term) ||
+      room.description?.toLowerCase().includes(term) ||
+      String(room.stock_symbol || "").toLowerCase().includes(term);
 
     let matchesFilter = true;
     if (filter === "admin") {

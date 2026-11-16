@@ -1,17 +1,12 @@
-const express = require("express");
-const db = require("../models");
-const { createCrudController, createCrudRoutes } = require("../utils/crudController");
-const { authMiddleware } = require("../middleware/auth");
+const { financeEntryRouter } = require("../utils/financeEntryRoutes");
 
-const router = express.Router();
-
-createCrudRoutes(router, createCrudController(db.Expense, {
-  defaultOrderBy: 'created_at',
-  defaultOrder: 'DESC',
-  beforeCreate: async (data, req) => {
-    if (req?.user?.id) data.recorded_by = req.user.id;
-    return data;
-  }
-}), [authMiddleware]);
-
-module.exports = router;
+// Platform expenses (Financials > Expenses). Admin / super_admin only, field
+// whitelist, server-side audit trail: see utils/financeEntryRoutes.js.
+module.exports = financeEntryRouter({
+  model: 'Expense',
+  entityType: 'expense',
+  textFields: { category: 100, description: 2000, vendor: 200 },
+  requiredText: ['category', 'description'],
+  dateField: 'expense_date',
+  enums: { status: ['recorded', 'pending', 'approved', 'paid', 'rejected'] },
+});

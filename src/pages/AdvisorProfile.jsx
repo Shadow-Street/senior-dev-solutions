@@ -1,12 +1,14 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { authAPI, Advisor, AdvisorPlan, AdvisorSubscription, Review } from '@/lib/apiClient';
 import { advisorApi } from '@/lib/advisorApi';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle, Star, Users, Lock, Shield, BarChart3, ArrowLeft } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { CheckCircle, Star, Users, Lock, Shield, BarChart3, ArrowLeft, Flag, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -16,6 +18,11 @@ import ReviewSection from '../components/advisors/ReviewSection';
 import ReviewForm from '../components/advisors/ReviewForm';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorBoundary from '../components/common/ErrorBoundary';
+import { renderReportDialog } from '../components/moderation/ReportContentDialog';
+
+// Matches the backend isStaff (sub_admin is not staff for advisor content).
+const STAFF_ROLES = ['admin', 'super_admin'];
+const POST_TYPE_LABEL = { recommendation: 'Stock recommendation', analysis: 'Market analysis', educational: 'Educational content', update: 'Market update' };
 
 export default function AdvisorProfile() {
   const [searchParams] = useSearchParams();
@@ -25,6 +32,9 @@ export default function AdvisorProfile() {
   const [plans, setPlans] = useState([]);
   const [posts, setPosts] = useState([]);
   const [postsError, setPostsError] = useState(false);
+  const [postsLoading, setPostsLoading] = useState(true);
+  // Advisor / staff only: ask the server for the feed as a non-subscriber would see it.
+  const [previewMember, setPreviewMember] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [subscription, setSubscription] = useState(null);
@@ -36,6 +46,7 @@ export default function AdvisorProfile() {
 
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [reportPost, setReportPost] = useState(null);
 
   useEffect(() => {
     if (!advisorId) {
@@ -87,17 +98,6 @@ export default function AdvisorProfile() {
         } catch (err) {
           console.warn('⚠️ Plans loading failed:', err.message);
           if (isMounted) setPlans([]);
-        }
-
-        // Posts: the server decides what this viewer may read. Public posts
-        // arrive in full; subscriber-only posts arrive as locked previews
-        // (title only) unless the viewer has an active subscription.
-        try {
-          const feed = await advisorApi.feed(advisorId, { limit: 20 });
-          if (isMounted) { setPosts(Array.isArray(feed) ? feed : []); setPostsError(false); }
-        } catch (err) {
-          console.warn('Posts loading failed:', err.message);
-          if (isMounted) { setPosts([]); setPostsError(true); }
         }
 
         // Load reviews
@@ -185,6 +185,29 @@ export default function AdvisorProfile() {
     };
   }, [advisorId]);
 
+  // Posts: the server decides what this viewer may read. Public posts arrive in
+  // full; subscriber-only posts arrive as locked previews (no title, no content)
+  // unless the viewer has an active subscription, is this advisor, or is staff.
+  // preview=member can only reduce that access.
+  const loadFeed = useCallback(async () => {
+    if (!advisorId) return [];
+    return advisorApi.feed(advisorId, { limit: 20, ...(previewMember ? { preview: 'member' } : {}) });
+  }, [advisorId, previewMember]);
+
+  useEffect(() => {
+    if (!advisorId) return undefined;
+    let isMounted = true;
+    setPostsLoading(true);
+    loadFeed()
+      .then((feed) => { if (isMounted) { setPosts(Array.isArray(feed) ? feed : []); setPostsError(false); } })
+      .catch((err) => {
+        console.warn('Posts loading failed:', err.message);
+        if (isMounted) { setPosts([]); setPostsError(true); }
+      })
+      .finally(() => { if (isMounted) setPostsLoading(false); });
+    return () => { isMounted = false; };
+  }, [advisorId, loadFeed]);
+
   const handlePlanSelect = (plan) => {
     if (!currentUser) {
       toast.info("Please log in to subscribe.");
@@ -220,7 +243,7 @@ export default function AdvisorProfile() {
       setSubscription(newSubscription || verifyData?.subscription || null);
 
       // The server unlocks whatever the new subscription entitles them to.
-      setPosts(await advisorApi.feed(advisorId, { limit: 20 }));
+      setPosts(await loadFeed());
 
       toast.success(`Payment received. You are now subscribed to ${advisor.display_name}.`);
     } catch (error) {
@@ -284,6 +307,11 @@ export default function AdvisorProfile() {
   };
 
   const canLeaveReview = currentUser && subscription;
+
+  // Advisor themself or staff: the server returns every post to them.
+  const seesEverything = Boolean(currentUser && advisor && (
+    String(currentUser.id) === String(advisor.user_id) || STAFF_ROLES.includes(currentUser.app_role || currentUser.role)
+  ));
 
   const getPlanColor = (planName) => {
     const name = planName?.toLowerCase();
@@ -455,6 +483,11 @@ export default function AdvisorProfile() {
                               {plan.description}
                             </p>
                           )}
+                          {plan.limit_count > 0 && (
+                            <p className="text-sm font-semibold text-foreground text-center mb-4" data-testid="plan-limit">
+                              {plan.limit_count} recommendation{plan.limit_count === 1 ? '' : 's'} / {plan.limit_period === 'month' ? 'month' : 'week'}
+                            </p>
+                          )}
 
                           {plan.features && plan.features.length > 0 && (
                             <div className="space-y-3 mb-6">
@@ -500,7 +533,24 @@ export default function AdvisorProfile() {
               <CardTitle>Recent Advisory Posts</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              {postsError ? (
+              {seesEverything && (
+                <div data-testid="staff-notice" className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface-2 p-3 text-sm text-subtle">
+                  <p className="flex items-start gap-2"><Eye className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
+                    {previewMember
+                      ? 'Previewing as a member without a subscription: subscriber-only posts are locked.'
+                      : 'You see every post because you are this advisor / staff. Members without a matching subscription see locked previews.'}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Switch id="preview-member" checked={previewMember} onCheckedChange={setPreviewMember} />
+                    <Label htmlFor="preview-member" className="cursor-pointer">Preview as a non-subscriber</Label>
+                  </div>
+                </div>
+              )}
+              {postsLoading ? (
+                <div className="space-y-3 animate-pulse" aria-busy="true" aria-label="Loading advisory posts">
+                  {[0, 1].map((i) => <div key={i} className="h-20 bg-border rounded-xl" />)}
+                </div>
+              ) : postsError ? (
                 <p className="text-sell-muted-foreground text-center py-8">We could not load advisory posts. Please refresh the page.</p>
               ) : posts.length === 0 ? (
                 <p className="text-muted-foreground text-center py-8">No advisory posts have been published yet.</p>
@@ -510,7 +560,8 @@ export default function AdvisorProfile() {
                     <div key={post.id} className="p-4 border-2 border-dashed border-border rounded-xl bg-surface-2">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <h4 className="font-semibold text-lg flex items-center gap-2"><Lock className="w-4 h-4 text-muted-foreground shrink-0" />{post.title}</h4>
+                          <h4 className="font-semibold text-lg flex items-center gap-2"><Lock className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />Subscriber-only advisory</h4>
+                          <p className="text-xs text-muted-foreground mt-0.5">{POST_TYPE_LABEL[post.post_type] || 'Advisory'}</p>
                           <p className="text-sm text-subtle mt-1">
                             {post.required_plan_name
                               ? `Available to subscribers on the ${post.required_plan_name} plan and above.`
@@ -539,7 +590,15 @@ export default function AdvisorProfile() {
                         {post.target_price && <Badge variant="outline">Target: ₹{Number(post.target_price)}</Badge>}
                         {post.stop_loss && <Badge variant="outline">Stop loss: ₹{Number(post.stop_loss)}</Badge>}
                       </div>
-                      <p className="text-xs text-muted-foreground mt-3">Posted {format(new Date(post.created_date), 'MMM d, yyyy h:mm a')}</p>
+                      <div className="flex items-center justify-between gap-2 mt-3">
+                        <p className="text-xs text-muted-foreground">Posted {format(new Date(post.created_date), 'MMM d, yyyy h:mm a')}</p>
+                        {/* Only posts this viewer can read in full are reportable (the server checks too). */}
+                        {currentUser && !post.locked && String(currentUser.id) !== String(advisor?.user_id) && (
+                          <Button variant="ghost" size="sm" className="text-muted-foreground h-7 px-2" onClick={() => setReportPost(post)} aria-label={`Report post ${post.title || ''}`.trim()}>
+                            <Flag className="w-3 h-3 mr-1" aria-hidden="true" />Report
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   )))}
                   {!subscription && posts.some((p) => p.locked) && (
@@ -612,6 +671,11 @@ export default function AdvisorProfile() {
           plan={selectedPlan}
           onPaymentSuccess={handlePaymentSuccess}
         />
+
+        {renderReportDialog(
+          reportPost ? { type: 'advisor_post', id: reportPost.id, label: reportPost.title ? `Post: ${reportPost.title}` : undefined } : null,
+          () => setReportPost(null)
+        )}
       </div >
     </ErrorBoundary >
   );

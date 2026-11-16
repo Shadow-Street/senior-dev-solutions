@@ -365,7 +365,7 @@ function InvestorLandingPage({ onRegisterClick }) {
               </div>
 
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Protocol Investment Fund</h1>
+                <h1 className="text-2xl font-bold text-foreground">Protocall Investment Fund</h1>
                 <p className="text-sm text-subtle">Secure & Transparent Investment Platform</p>
               </div>
             </div>
@@ -383,7 +383,7 @@ function InvestorLandingPage({ onRegisterClick }) {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-extrabold text-foreground mb-4">
-            Welcome to Protocol Investment Dashboard
+            Welcome to Protocall Investment Dashboard
           </h2>
           <p className="text-xl text-subtle max-w-3xl mx-auto">
             Join our exclusive investment platform and access professionally managed funds with monthly returns
@@ -461,7 +461,7 @@ function InvestorLandingPage({ onRegisterClick }) {
               <p className="text-sm text-hold-muted-foreground">
                 <strong>⚠️ Important:</strong> All investments are subject to market risks. Past performance is not indicative of future results.
                 Please read all fund documents carefully before investing. Returns are not guaranteed and may vary based on market conditions.
-                Protocol Investment Fund is regulated and operates under strict compliance guidelines. Investor protection and transparency are our top priorities.
+                Protocall Investment Fund is regulated and operates under strict compliance guidelines. Investor protection and transparency are our top priorities.
               </p>
             </div>
           </div>
@@ -530,7 +530,7 @@ function InvestorLandingPage({ onRegisterClick }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <h5 className="font-bold text-lg mb-4">Protocol Investment Fund</h5>
+              <h5 className="font-bold text-lg mb-4">Protocall Investment Fund</h5>
               <p className="text-muted-foreground text-sm">
                 A regulated investment platform providing professional fund management services with transparency and security.
               </p>
@@ -554,7 +554,7 @@ function InvestorLandingPage({ onRegisterClick }) {
             </div>
           </div>
           <div className="border-t border-protocall-ink mt-8 pt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} Protocol Investment Fund. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Protocall Investment Fund. All rights reserved.</p>
           </div>
         </div>
       </footer>

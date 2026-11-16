@@ -5,8 +5,9 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Cookie, Shield, Eye, FileText, Home, Settings, Globe } from 'lucide-react';
 import PageFooter from '../components/footer/PageFooter';
+import ManagedStaticPage from '@/components/common/ManagedStaticPage';
 
-export default function Cookies() {
+function BuiltInCookies() {
   return (
     <div className="min-h-screen bg-surface-2">
       {/* Header */}
@@ -873,4 +874,10 @@ export default function Cookies() {
       <PageFooter />
     </div>
   );
+}
+
+// Admin-published text (Platform Settings > Static Pages) replaces the
+// built-in page above; without it the built-in page is shown.
+export default function Cookies() {
+  return <ManagedStaticPage slug="cookies" fallback={BuiltInCookies} />;
 }

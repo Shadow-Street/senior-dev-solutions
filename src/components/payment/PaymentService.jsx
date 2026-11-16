@@ -173,7 +173,7 @@ class PaymentService {
       key: orderDetails.keyId,
       amount: orderDetails.amount,
       currency: orderDetails.currency,
-      name: 'Protocol',
+      name: 'Protocall',
       description: orderDetails.description,
       order_id: orderDetails.orderId,
       prefill: {

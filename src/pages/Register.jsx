@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { AlertCircle, ArrowLeft, Check, Eye, EyeOff, Loader2, MailCheck, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 import AuthShell from '@/components/auth/AuthShell';
+import { usePublicConfig } from '@/lib/platformSettingsApi';
 
 /** Rules shown live, so nothing is rejected only after pressing the button. */
 const PASSWORD_RULES = [
@@ -31,6 +32,7 @@ export default function Register() {
   const [isResending, setIsResending] = useState(false);
   const [formError, setFormError] = useState('');
   const [resendIn, setResendIn] = useState(0);
+  const registrationClosed = usePublicConfig().registration_enabled === false;
   const codeInputRef = useRef(null);
 
   useEffect(() => {
@@ -154,6 +156,23 @@ export default function Register() {
       setIsResending(false);
     }
   };
+
+  // Platform Settings > Access & Security: sign-ups closed. The API refuses
+  // new accounts as well; this just says so up front. A sign-up already in
+  // the verification step may finish.
+  if (registrationClosed && step !== 'verify') {
+    return (
+      <AuthShell title="Sign-ups are closed" subtitle="New accounts cannot be created right now.">
+        <div role="status" className="mb-6 flex items-start gap-2.5 rounded-xl border border-border bg-surface-2 p-4">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+          <p className="text-sm text-foreground">Registration is temporarily closed. Please check back later.</p>
+        </div>
+        <Button asChild className="w-full">
+          <Link to="/login">Already have an account? Sign in</Link>
+        </Button>
+      </AuthShell>
+    );
+  }
 
   // --- Verification step ----------------------------------------------------
   if (step === 'verify') {

@@ -24,8 +24,9 @@ router.get('/type/:type', async (req, res) => {
   }
 });
 
-// Upsert config
-router.put('/type/:type', authMiddleware, async (req, res) => {
+// Upsert config. Admin-only: any signed-in member could previously rewrite
+// platform entity configuration through this route.
+router.put('/type/:type', authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const { type } = req.params;
     const { config } = req.body;

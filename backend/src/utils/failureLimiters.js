@@ -15,6 +15,14 @@
  * Call once per route: each call creates its own counters.
  */
 const rateLimit = require('express-rate-limit');
+const { ipKeyGenerator } = require('express-rate-limit');
+
+/**
+ * Account id when signed in, else the client address. IPv6 addresses go
+ * through ipKeyGenerator (a /56 subnet): keyed raw, one IPv6 user could rotate
+ * through their prefix and get a fresh budget per address.
+ */
+const accountKey = (req) => (req.user && req.user.id ? `user:${req.user.id}` : `ip:${ipKeyGenerator(req.ip || '')}`);
 
 function failureLimiters({ windowMs = 15 * 60 * 1000, perIp = 100, perUser = 20, message = 'Too many attempts. Please try again later.' } = {}) {
   const base = {
@@ -27,7 +35,7 @@ function failureLimiters({ windowMs = 15 * 60 * 1000, perIp = 100, perUser = 20,
   };
   return {
     ip: rateLimit({ ...base, max: perIp }),
-    user: rateLimit({ ...base, max: perUser, keyGenerator: (req) => `user:${req.user && req.user.id ? req.user.id : req.ip}` }),
+    user: rateLimit({ ...base, max: perUser, keyGenerator: accountKey }),
   };
 }
 
@@ -43,8 +51,8 @@ function userLimiter({ windowMs = 15 * 60 * 1000, max = 60, message = 'Too many 
     standardHeaders: true,
     legacyHeaders: false,
     message: { error: message },
-    keyGenerator: (req) => `user:${req.user && req.user.id ? req.user.id : req.ip}`,
+    keyGenerator: accountKey,
   });
 }
 
-module.exports = { failureLimiters, userLimiter };
+module.exports = { failureLimiters, userLimiter, accountKey };

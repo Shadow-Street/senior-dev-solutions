@@ -1,488 +1,265 @@
-import React, { useState, useEffect } from 'react';
-import { ChatRoomParticipant, User } from '@/lib/apiClient';
+import { useCallback, useEffect, useState } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
+  Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
-  Users,
-  Search,
-  Shield,
-  VolumeX,
-  Ban,
-  UserCheck,
-  Clock,
-  MessageSquare,
-  Eye
+  Users, Search, VolumeX, Ban, UserCheck, Clock, MessageSquare, UserMinus, Loader2, AlertTriangle, UserPlus,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { logAuditAction, AuditActions } from '@/components/utils/auditLogger';
+import chatAdminApi from './chatAdminApi';
+import { apiError, formatDateTime } from './chatRoomUtils';
+import ConfirmActionDialog from './ConfirmActionDialog';
+import UserPicker from './UserPicker';
+import PropTypes from 'prop-types';
 
-export default function ParticipantManagementModal({ open, onClose, chatRoom, adminUser }) {
-  const [participants, setParticipants] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+const ROLE_OPTIONS = [
+  { value: 'member', label: 'Member' },
+  { value: 'moderator', label: 'Moderator' },
+  { value: 'admin', label: 'Room admin' },
+];
+
+/** Participants of one room: add, change role, mute, remove, ban / unban. */
+export default function ParticipantManagementModal({ room, onClose, onChanged }) {
+  const open = Boolean(room);
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  const [search, setSearch] = useState('');
+  const [busyId, setBusyId] = useState(null);
+  const [addRole, setAddRole] = useState('member');
+  const [confirm, setConfirm] = useState(null); // { kind: 'remove'|'ban', participant }
+
+  const load = useCallback(async () => {
+    if (!room) return;
+    try {
+      setError(null);
+      setData(await chatAdminApi.participants(room.id));
+    } catch (e) {
+      setError(apiError(e, 'Could not load participants'));
+    }
+  }, [room]);
 
   useEffect(() => {
-    if (open && chatRoom) {
-      loadParticipants();
-    }
-  }, [open, chatRoom]);
+    if (open) { setData(null); setSearch(''); load(); }
+  }, [open, room?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const loadParticipants = async () => {
-    setIsLoading(true);
+  const run = async (key, fn, success) => {
+    setBusyId(key);
     try {
-      const roomParticipants = await ChatRoomParticipant.filter({ 
-        chat_room_id: chatRoom.id 
-      });
-
-      // Get user details for participants
-      const userIds = roomParticipants.map(p => p.user_id);
-      const users = userIds.length > 0 ? await User.filter({ id: { '$in': userIds } }) : [];
-      const usersMap = new Map(users.map(u => [u.id, u]));
-
-      const enrichedParticipants = roomParticipants.map(p => ({
-        ...p,
-        user: usersMap.get(p.user_id)
-      }));
-
-      setParticipants(enrichedParticipants);
-    } catch (error) {
-      console.error('Error loading participants:', error);
-      toast.error('Failed to load participants');
+      await fn();
+      toast.success(success);
+      await load();
+      onChanged?.();
+    } catch (e) {
+      toast.error(apiError(e, 'Action failed'));
     } finally {
-      setIsLoading(false);
+      setBusyId(null);
     }
   };
 
-  const handlePromoteToModerator = async (participantId, userId) => {
-    try {
-      await ChatRoomParticipant.update(participantId, { role: 'moderator' });
-      
-      await logAuditAction(
-        adminUser,
-        'PARTICIPANT_PROMOTED',
-        'ChatRoomParticipant',
-        participantId,
-        `Promoted user to moderator in room "${chatRoom.name}"`
-      );
+  const participants = data?.participants || [];
+  const bans = data?.bans || [];
+  const q = search.trim().toLowerCase();
+  const shown = q
+    ? participants.filter((p) => `${p.user?.name || ''} ${p.user?.email || ''}`.toLowerCase().includes(q))
+    : participants;
 
-      toast.success('User promoted to moderator');
-      loadParticipants();
-    } catch (error) {
-      console.error('Error promoting user:', error);
-      toast.error('Failed to promote user');
+  const addUser = (user) => run(`add-${user.id}`, () => chatAdminApi.addParticipant(room.id, user.id, addRole), `${user.name} added as ${addRole}`);
+
+  const onConfirm = async ({ reason }) => {
+    const { kind, participant } = confirm;
+    const name = participant.user?.name || 'User';
+    if (kind === 'remove') {
+      await run(participant.user_id, () => chatAdminApi.removeParticipant(room.id, participant.user_id), `${name} removed from the room`);
+    } else {
+      await run(participant.user_id, () => chatAdminApi.ban(room.id, participant.user_id, reason), `${name} banned from the room`);
     }
-  };
-
-  const handleDemoteFromModerator = async (participantId) => {
-    try {
-      await ChatRoomParticipant.update(participantId, { role: 'member' });
-      
-      await logAuditAction(
-        adminUser,
-        'PARTICIPANT_DEMOTED',
-        'ChatRoomParticipant',
-        participantId,
-        `Demoted moderator to member in room "${chatRoom.name}"`
-      );
-
-      toast.success('User demoted to member');
-      loadParticipants();
-    } catch (error) {
-      console.error('Error demoting user:', error);
-      toast.error('Failed to demote user');
-    }
-  };
-
-  const handleMuteUser = async (participantId, duration = 24) => {
-    try {
-      const muteUntil = new Date();
-      muteUntil.setHours(muteUntil.getHours() + duration);
-
-      await ChatRoomParticipant.update(participantId, {
-        is_muted: true,
-        muted_until: muteUntil.toISOString(),
-        muted_by: adminUser.id
-      });
-
-      await logAuditAction(
-        adminUser,
-        'PARTICIPANT_MUTED',
-        'ChatRoomParticipant',
-        participantId,
-        `Muted user for ${duration} hours in room "${chatRoom.name}"`
-      );
-
-      toast.success(`User muted for ${duration} hours`);
-      loadParticipants();
-    } catch (error) {
-      console.error('Error muting user:', error);
-      toast.error('Failed to mute user');
-    }
-  };
-
-  const handleUnmuteUser = async (participantId) => {
-    try {
-      await ChatRoomParticipant.update(participantId, {
-        is_muted: false,
-        muted_until: null
-      });
-
-      await logAuditAction(
-        adminUser,
-        'PARTICIPANT_UNMUTED',
-        'ChatRoomParticipant',
-        participantId,
-        `Unmuted user in room "${chatRoom.name}"`
-      );
-
-      toast.success('User unmuted');
-      loadParticipants();
-    } catch (error) {
-      console.error('Error unmuting user:', error);
-      toast.error('Failed to unmute user');
-    }
-  };
-
-  const handleBanUser = async (participantId) => {
-    if (!window.confirm('Are you sure you want to ban this user from this room?')) {
-      return;
-    }
-
-    try {
-      const reason = window.prompt('Reason for ban (optional):');
-      
-      await ChatRoomParticipant.update(participantId, {
-        is_banned: true,
-        banned_by: adminUser.id,
-        ban_reason: reason
-      });
-
-      await logAuditAction(
-        adminUser,
-        'PARTICIPANT_BANNED',
-        'ChatRoomParticipant',
-        participantId,
-        `Banned user from room "${chatRoom.name}". Reason: ${reason || 'None provided'}`
-      );
-
-      toast.success('User banned from room');
-      loadParticipants();
-    } catch (error) {
-      console.error('Error banning user:', error);
-      toast.error('Failed to ban user');
-    }
-  };
-
-  const handleUnbanUser = async (participantId) => {
-    try {
-      await ChatRoomParticipant.update(participantId, {
-        is_banned: false,
-        ban_reason: null
-      });
-
-      await logAuditAction(
-        adminUser,
-        'PARTICIPANT_UNBANNED',
-        'ChatRoomParticipant',
-        participantId,
-        `Unbanned user from room "${chatRoom.name}"`
-      );
-
-      toast.success('User unbanned from room');
-      loadParticipants();
-    } catch (error) {
-      console.error('Error unbanning user:', error);
-      toast.error('Failed to unban user');
-    }
-  };
-
-  const handleRemoveParticipant = async (participantId) => {
-    if (!window.confirm('Are you sure you want to remove this participant from the room?')) {
-      return;
-    }
-
-    try {
-      await ChatRoomParticipant.delete(participantId);
-      
-      await logAuditAction(
-        adminUser,
-        'PARTICIPANT_REMOVED',
-        'ChatRoomParticipant',
-        participantId,
-        `Removed participant from room "${chatRoom.name}"`
-      );
-
-      toast.success('Participant removed');
-      loadParticipants();
-    } catch (error) {
-      console.error('Error removing participant:', error);
-      toast.error('Failed to remove participant');
-    }
-  };
-
-  const filteredParticipants = participants.filter(p => {
-    if (!searchTerm) return true;
-    const user = p.user;
-    return (
-      user?.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.user_name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
-
-  const roleConfig = {
-    admin: { color: 'bg-sell-muted text-sell-muted-foreground', label: 'Admin', icon: Shield },
-    moderator: { color: 'bg-premium-muted text-protocall-premium-text', label: 'Moderator', icon: Shield },
-    member: { color: 'bg-premium-muted text-primary', label: 'Member', icon: Users }
+    setConfirm(null);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-primary" />
-            Participant Management - {chatRoom?.name}
-          </DialogTitle>
-          <DialogDescription>
-            View and manage all participants in this chat room
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-primary" aria-hidden="true" />
+              Participants — {room?.name}
+            </DialogTitle>
+            <DialogDescription>
+              Removing or banning someone disconnects them from the live room at once. Mutes stop them posting until lifted.
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="space-y-4">
-          {/* Stats */}
-          <div className="grid grid-cols-4 gap-3">
-            <div className="bg-premium-muted p-3 rounded-lg">
-              <p className="text-xs text-primary">Total Participants</p>
-              <p className="text-xl font-bold text-primary">{participants.length}</p>
+          {error && (
+            <div className="flex items-center justify-between rounded-lg border border-sell/30 bg-sell-muted px-4 py-3 text-sm text-sell-muted-foreground" role="alert">
+              <span className="flex items-center gap-2"><AlertTriangle className="w-4 h-4" aria-hidden="true" />{error}</span>
+              <Button size="sm" variant="outline" onClick={load}>Retry</Button>
             </div>
-            <div className="bg-premium-muted p-3 rounded-lg">
-              <p className="text-xs text-protocall-premium-text">Moderators</p>
-              <p className="text-xl font-bold text-protocall-premium-text">
-                {participants.filter(p => p.role === 'moderator').length}
-              </p>
-            </div>
-            <div className="bg-buy-muted p-3 rounded-lg">
-              <p className="text-xs text-buy-muted-foreground">Online Now</p>
-              <p className="text-xl font-bold text-buy-muted-foreground">
-                {participants.filter(p => p.is_online).length}
-              </p>
-            </div>
-            <div className="bg-hold-muted p-3 rounded-lg">
-              <p className="text-xs text-hold-muted-foreground">Muted/Banned</p>
-              <p className="text-xl font-bold text-hold-muted-foreground">
-                {participants.filter(p => p.is_muted || p.is_banned).length}
-              </p>
-            </div>
-          </div>
+          )}
 
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-            <Input
-              placeholder="Search participants..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
+          {!data && !error && (
+            <div className="py-12 text-center text-subtle" role="status"><Loader2 className="w-6 h-6 mx-auto animate-spin mb-2" aria-hidden="true" />Loading participants…</div>
+          )}
 
-          {/* Participants Table */}
-          <div className="border rounded-lg overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-surface-2 text-xs text-subtle uppercase">
-                <tr>
-                  <th className="px-4 py-3 text-left">Participant</th>
-                  <th className="px-4 py-3 text-left">Role</th>
-                  <th className="px-4 py-3 text-left">Status</th>
-                  <th className="px-4 py-3 text-left">Activity</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {isLoading ? (
-                  <tr>
-                    <td colSpan="5" className="px-4 py-8 text-center">
-                      Loading participants...
-                    </td>
-                  </tr>
-                ) : filteredParticipants.length === 0 ? (
-                  <tr>
-                    <td colSpan="5" className="px-4 py-8 text-center">
-                      <Users className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-subtle">No participants found</p>
-                    </td>
-                  </tr>
-                ) : (
-                  filteredParticipants.map(participant => {
-                    const config = roleConfig[participant.role] || roleConfig.member;
-                    const RoleIcon = config.icon;
+          {data && (
+            <div className="space-y-5">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                {[
+                  ['Participants', participants.length],
+                  ['Moderators', participants.filter((p) => ['moderator', 'admin', 'owner'].includes(p.role)).length],
+                  ['Online now', participants.filter((p) => p.online).length],
+                  ['Muted', participants.filter((p) => p.muted).length],
+                  ['Banned', bans.length],
+                ].map(([label, value]) => (
+                  <div key={label} className="bg-surface-2 p-3 rounded-lg">
+                    <p className="text-xs text-subtle">{label}</p>
+                    <p className="text-xl font-bold text-foreground">{value}</p>
+                  </div>
+                ))}
+              </div>
 
-                    return (
-                      <tr key={participant.id} className="border-b hover:bg-surface-2">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-3">
-                            <div className="relative">
-                              <img
-                                src={participant.user?.profile_image_url || `https://avatar.vercel.sh/${participant.user?.email}.png`}
-                                alt={participant.user_name}
-                                className="w-10 h-10 rounded-full"
-                              />
-                              {participant.is_online && (
-                                <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-buy rounded-full border-2 border-white"></div>
+              <div className="rounded-lg border p-3 space-y-2">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h4 className="text-sm font-semibold flex items-center gap-2"><UserPlus className="w-4 h-4" aria-hidden="true" /> Add someone</h4>
+                  <Select value={addRole} onValueChange={setAddRole}>
+                    <SelectTrigger className="w-40" aria-label="Role for the added user"><SelectValue /></SelectTrigger>
+                    <SelectContent>{ROLE_OPTIONS.map((r) => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                {room?.status === 'archived'
+                  ? <p className="text-xs text-muted-foreground">Restore this room before adding people.</p>
+                  : <UserPicker id="add-participant" onSelect={addUser} excludeIds={[...participants.map((p) => p.user_id), ...bans.map((b) => b.user_id)]} disabled={Boolean(busyId)} />}
+              </div>
+
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" aria-hidden="true" />
+                <Input aria-label="Filter participants" placeholder="Filter participants…" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10" />
+              </div>
+
+              <div className="border rounded-lg overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-surface-2 text-xs text-subtle uppercase">
+                    <tr>
+                      <th scope="col" className="px-4 py-3 text-left">Participant</th>
+                      <th scope="col" className="px-4 py-3 text-left">Role</th>
+                      <th scope="col" className="px-4 py-3 text-left">Status</th>
+                      <th scope="col" className="px-4 py-3 text-left">Activity</th>
+                      <th scope="col" className="px-4 py-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {shown.length === 0 ? (
+                      <tr><td colSpan={5} className="px-4 py-8 text-center text-subtle">{participants.length ? 'No participants match.' : 'Nobody has joined this room yet.'}</td></tr>
+                    ) : shown.map((p) => {
+                      const busy = busyId === p.user_id;
+                      const isOwner = p.role === 'owner';
+                      return (
+                        <tr key={p.id} className="border-b">
+                          <td className="px-4 py-3">
+                            <p className="font-medium text-foreground">{p.user?.name}</p>
+                            <p className="text-xs text-muted-foreground">{p.user?.email}</p>
+                          </td>
+                          <td className="px-4 py-3">
+                            {isOwner ? <Badge>Owner</Badge> : (
+                              <Select
+                                value={p.role}
+                                disabled={busy}
+                                onValueChange={(role) => run(p.user_id, () => chatAdminApi.updateParticipant(room.id, p.user_id, { role }), `Role changed to ${role}`)}
+                              >
+                                <SelectTrigger className="w-36 h-8" aria-label={`Role of ${p.user?.name}`}><SelectValue /></SelectTrigger>
+                                <SelectContent>{ROLE_OPTIONS.map((r) => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent>
+                              </Select>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 space-x-1">
+                            {p.online && <Badge className="bg-buy-muted text-buy-muted-foreground border-0">Online</Badge>}
+                            {p.muted && <Badge className="bg-hold-muted text-hold-muted-foreground border-0"><VolumeX className="w-3 h-3 mr-1" aria-hidden="true" />Muted</Badge>}
+                            {!p.online && !p.muted && <span className="text-xs text-muted-foreground">Offline</span>}
+                          </td>
+                          <td className="px-4 py-3 text-xs text-subtle space-y-1">
+                            <div className="flex items-center gap-1"><MessageSquare className="w-3 h-3" aria-hidden="true" />{p.message_count} messages</div>
+                            <div className="flex items-center gap-1"><Clock className="w-3 h-3" aria-hidden="true" />Joined {formatDateTime(p.joined_at)}</div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex justify-end gap-1">
+                              {busy && <Loader2 className="w-4 h-4 animate-spin self-center" aria-label="Working" />}
+                              <Button
+                                variant="ghost" size="sm" disabled={busy}
+                                onClick={() => run(p.user_id, () => chatAdminApi.updateParticipant(room.id, p.user_id, { muted: !p.muted }), p.muted ? 'Unmuted' : 'Muted')}
+                              >
+                                {p.muted ? <><UserCheck className="w-4 h-4 mr-1" aria-hidden="true" />Unmute</> : <><VolumeX className="w-4 h-4 mr-1" aria-hidden="true" />Mute</>}
+                              </Button>
+                              <Button variant="ghost" size="sm" disabled={busy} onClick={() => setConfirm({ kind: 'remove', participant: p })}>
+                                <UserMinus className="w-4 h-4 mr-1" aria-hidden="true" />Remove
+                              </Button>
+                              {!isOwner && (
+                                <Button variant="ghost" size="sm" disabled={busy} className="text-sell-muted-foreground" onClick={() => setConfirm({ kind: 'ban', participant: p })}>
+                                  <Ban className="w-4 h-4 mr-1" aria-hidden="true" />Ban
+                                </Button>
                               )}
                             </div>
-                            <div>
-                              <p className="font-medium text-foreground">
-                                {participant.user?.display_name || participant.user_name}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {participant.user?.email || participant.user_email}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
 
-                        <td className="px-4 py-3">
-                          <Badge className={`${config.color} border-0`}>
-                            <RoleIcon className="w-3 h-3 mr-1" />
-                            {config.label}
-                          </Badge>
-                        </td>
+              {bans.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="text-sm font-semibold flex items-center gap-2"><Ban className="w-4 h-4" aria-hidden="true" /> Banned from this room</h4>
+                  <ul className="divide-y border rounded-lg">
+                    {bans.map((b) => (
+                      <li key={b.user_id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2">
+                        <div>
+                          <p className="text-sm font-medium">{b.user?.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {b.reason ? `Reason: ${b.reason} · ` : ''}Banned {formatDateTime(b.banned_at)}
+                          </p>
+                        </div>
+                        <Button
+                          size="sm" variant="outline" disabled={busyId === b.user_id}
+                          onClick={() => run(b.user_id, () => chatAdminApi.unban(room.id, b.user_id), 'Ban lifted')}
+                        >
+                          Unban
+                        </Button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
 
-                        <td className="px-4 py-3">
-                          <div className="space-y-1">
-                            {participant.is_banned && (
-                              <Badge className="bg-sell-muted text-sell-muted-foreground border-0">
-                                <Ban className="w-3 h-3 mr-1" />
-                                Banned
-                              </Badge>
-                            )}
-                            {participant.is_muted && !participant.is_banned && (
-                              <Badge className="bg-hold-muted text-hold-muted-foreground border-0">
-                                <VolumeX className="w-3 h-3 mr-1" />
-                                Muted
-                              </Badge>
-                            )}
-                            {!participant.is_muted && !participant.is_banned && participant.is_online && (
-                              <Badge className="bg-buy-muted text-buy-muted-foreground border-0">
-                                Online
-                              </Badge>
-                            )}
-                          </div>
-                        </td>
-
-                        <td className="px-4 py-3">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-1 text-xs text-subtle">
-                              <MessageSquare className="w-3 h-3" />
-                              {participant.message_count || 0} messages
-                            </div>
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <Clock className="w-3 h-3" />
-                              Joined {new Date(participant.joined_at).toLocaleDateString()}
-                            </div>
-                          </div>
-                        </td>
-
-                        <td className="px-4 py-3">
-                          <div className="flex justify-end gap-2">
-                            {participant.role === 'member' && !participant.is_banned && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handlePromoteToModerator(participant.id, participant.user_id)}
-                                className="text-protocall-premium-text hover:text-protocall-premium-text"
-                              >
-                                <Shield className="w-4 h-4 mr-1" />
-                                Make Mod
-                              </Button>
-                            )}
-
-                            {participant.role === 'moderator' && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleDemoteFromModerator(participant.id)}
-                                className="text-subtle hover:text-foreground"
-                              >
-                                <UserCheck className="w-4 h-4 mr-1" />
-                                Demote
-                              </Button>
-                            )}
-
-                            {!participant.is_muted && !participant.is_banned && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleMuteUser(participant.id, 24)}
-                                className="text-hold-muted-foreground hover:text-hold-muted-foreground"
-                              >
-                                <VolumeX className="w-4 h-4 mr-1" />
-                                Mute
-                              </Button>
-                            )}
-
-                            {participant.is_muted && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleUnmuteUser(participant.id)}
-                                className="text-buy-muted-foreground hover:text-buy-muted-foreground"
-                              >
-                                <UserCheck className="w-4 h-4 mr-1" />
-                                Unmute
-                              </Button>
-                            )}
-
-                            {!participant.is_banned && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleBanUser(participant.id)}
-                                className="text-sell-muted-foreground hover:text-sell-muted-foreground"
-                              >
-                                <Ban className="w-4 h-4 mr-1" />
-                                Ban
-                              </Button>
-                            )}
-
-                            {participant.is_banned && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleUnbanUser(participant.id)}
-                                className="text-buy-muted-foreground hover:text-buy-muted-foreground"
-                              >
-                                <UserCheck className="w-4 h-4 mr-1" />
-                                Unban
-                              </Button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
+          <div className="flex justify-end pt-4 border-t">
+            <Button onClick={onClose}>Close</Button>
           </div>
+        </DialogContent>
+      </Dialog>
 
-          <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button onClick={onClose}>
-              Close
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+      <ConfirmActionDialog
+        open={Boolean(confirm)}
+        onClose={() => setConfirm(null)}
+        onConfirm={onConfirm}
+        destructive
+        title={confirm?.kind === 'ban' ? `Ban ${confirm?.participant.user?.name}?` : `Remove ${confirm?.participant.user?.name}?`}
+        description={confirm?.kind === 'ban'
+          ? 'They are removed now and cannot rejoin, read or post in this room until unbanned. Their account elsewhere is not affected (use User Management for platform-wide action).'
+          : 'They are removed from the room now. If the room is public they can join again.'}
+        reasonLabel={confirm?.kind === 'ban' ? 'Reason (optional, kept in the audit log)' : null}
+        confirmLabel={confirm?.kind === 'ban' ? 'Ban from room' : 'Remove'}
+      />
+    </>
   );
 }
+
+ParticipantManagementModal.propTypes = {
+  room: PropTypes.object,
+  onClose: PropTypes.func.isRequired,
+  onChanged: PropTypes.func,
+};

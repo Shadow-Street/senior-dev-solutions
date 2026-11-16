@@ -89,7 +89,7 @@ export default function FeedbackForm() {
         <Card className="shadow-lg border-0 bg-white text-center p-8">
             <CheckCircle className="w-16 h-16 text-positive mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-foreground mb-2">Thank you for your feedback!</h2>
-            <p className="text-subtle">We appreciate your input and will use it to make Protocol even better.</p>
+            <p className="text-subtle">We appreciate your input and will use it to make Protocall even better.</p>
         </Card>
     );
   }

@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { User, Stock, Poll } from '@/api/entities';
 import { SendEmail } from '@/api/integrations';
+import { csvCell } from './adminUsersApi';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -168,7 +169,7 @@ export default function InactiveUserManagement() {
     try {
       let emailBody = `
         <p>Hi ${user.display_name},</p>
-        <p>We've missed you on Protocol! There's a lot of exciting activity you might be interested in.</p>
+        <p>We've missed you on Protocall! There's a lot of exciting activity you might be interested in.</p>
       `;
 
       if (engagementContent.stock) {
@@ -186,12 +187,12 @@ export default function InactiveUserManagement() {
         <p>Come back and see what's new. Your insights are valuable to the community!</p>
         <br/>
         <p>Best,</p>
-        <p>The Protocol Team</p>
+        <p>The Protocall Team</p>
       `;
 
       await SendEmail({
         to: user.email,
-        subject: "We've missed you on Protocol!",
+        subject: "We've missed you on Protocall!",
         body: emailBody
       });
 
@@ -206,10 +207,11 @@ export default function InactiveUserManagement() {
   }, [engagementContent]);
   
   const handleExport = (data, filename) => {
-    const csvHeader = "UserID,DisplayName,Email,Role,LastActivity\n";
-    const csvRows = data.map(u => 
-      `${u.id},${u.display_name},${u.email},${u.app_role},${u.last_activity_date}`
-    ).join("\n");
+    // Quoted and formula-guarded (a display name like =HYPERLINK(...) must not run in a spreadsheet).
+    const csvHeader = ['UserID', 'DisplayName', 'Email', 'Role', 'LastActivity'].map(csvCell).join(',') + '\r\n';
+    const csvRows = data.map(u =>
+      [u.id, u.display_name, u.email, u.app_role, u.last_activity_date].map(csvCell).join(',')
+    ).join('\r\n');
     const csvContent = csvHeader + csvRows;
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");

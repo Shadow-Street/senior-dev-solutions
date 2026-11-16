@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { vi } from 'vitest'
 
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn(), info: vi.fn() } }))
@@ -143,14 +143,21 @@ describe('SubscriptionCheckoutModal', () => {
     expect(toast.info).not.toHaveBeenCalledWith('Payment cancelled. You have not been charged.')
   })
 
-  it('the dialog cannot be closed from behind the Razorpay popup (outside click / Escape) while a payment is in progress', async () => {
+  it('steps aside while the Razorpay popup is open (so its fields take input), cannot be closed meanwhile, and comes back on dismiss', async () => {
     subscriptionApi.createOrder.mockResolvedValue({ success: true, order_id: 'order_1', amount: 99900, currency: 'INR', key_id: 'k' })
     const { onClose } = open()
     fireEvent.click(screen.getByRole('button', { name: /Pay ₹999/ }))
     await waitFor(() => expect(RazorpayCtor).toHaveBeenCalled())
+    // A modal dialog left open traps focus, and Razorpay's mobile-number field
+    // (outside the dialog) could not be typed into.
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    expect(document.body.style.pointerEvents).not.toBe('none')
     fireEvent.keyDown(document.activeElement || document.body, { key: 'Escape', code: 'Escape' })
     expect(onClose).not.toHaveBeenCalled()
-    expect(screen.getByRole('dialog')).toBeTruthy()
+
+    act(() => RazorpayCtor.mock.calls[0][0].modal.ondismiss())
+    expect(await screen.findByRole('dialog')).toBeTruthy()
+    expect(onClose).not.toHaveBeenCalled()
   })
 
   it('order creation errors are shown, and nothing opens', async () => {

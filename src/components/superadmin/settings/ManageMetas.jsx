@@ -1,45 +1,20 @@
-import React from 'react';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import SettingsForm, { SectionNote } from './SettingsForm';
 
-export default function ManageMetas({ settings, onChange }) {
-  const handleInputChange = (key, value) => {
-    onChange({ [key]: value });
-  };
+const FIELDS = [
+  { key: 'seo_meta_title', kind: 'text', placeholder: 'Protocall - The Ultimate Social Trading Platform', help: 'Browser tab and search-result title for pages without their own (up to 70 characters).' },
+  { key: 'seo_meta_keywords', kind: 'text', placeholder: 'social trading, stocks, investing', help: 'Comma-separated.' },
+  { key: 'seo_meta_description', kind: 'textarea', rows: 3, help: 'Search-result snippet, up to 160 characters.' },
+];
 
+export default function ManageMetas(props) {
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <Label htmlFor="seo_meta_title" className="font-semibold">Default Meta Title</Label>
-        <Input
-          id="seo_meta_title"
-          value={settings['seo_meta_title'] || 'Protocol - The Ultimate Social Trading Platform'}
-          onChange={(e) => handleInputChange('seo_meta_title', e.target.value)}
-          placeholder="Enter the default meta title for your site"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="seo_meta_description" className="font-semibold">Default Meta Description</Label>
-        <Textarea
-          id="seo_meta_description"
-          value={settings['seo_meta_description'] || ''}
-          onChange={(e) => handleInputChange('seo_meta_description', e.target.value)}
-          placeholder="Enter a concise default description for search engines."
-          rows={3}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="seo_meta_keywords" className="font-semibold">Default Meta Keywords</Label>
-        <Input
-          id="seo_meta_keywords"
-          value={settings['seo_meta_keywords'] || 'social trading, stocks, finance, community, investing'}
-          onChange={(e) => handleInputChange('seo_meta_keywords', e.target.value)}
-          placeholder="Enter comma-separated keywords"
-        />
-      </div>
+      <SectionNote>
+        These values are written into the page head (title, description, keywords) as soon as the app loads.
+        Search engines that run JavaScript (Google) read them; link previews in chat apps use the static
+        defaults in index.html.
+      </SectionNote>
+      <SettingsForm fields={FIELDS} {...props} saveLabel="Save SEO settings" />
     </div>
   );
 }

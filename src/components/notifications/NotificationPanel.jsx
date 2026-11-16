@@ -174,7 +174,7 @@ export default function NotificationPanel() {
         toast.success('Notifications enabled successfully!');
         
         // Show a test notification using browser API
-        new window.Notification('Protocol Notifications', {
+        new window.Notification('Protocall Notifications', {
           body: 'You will now receive notifications about your pledges and updates.',
           icon: '/favicon.ico',
           badge: '/favicon.ico'

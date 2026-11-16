@@ -32,6 +32,12 @@ export const advisorApi = {
   createPost: (payload) => apiClient.post('/advisors/posts', payload).then((r) => r.data),
   updatePost: (id, payload) => apiClient.put(`/advisors/posts/${id}`, payload).then((r) => r.data),
   deletePost: (id) => apiClient.delete(`/advisors/posts/${id}`).then((r) => r.data),
+  /**
+   * Recommendation usage per plan (week / month used, cap, remaining, reset).
+   * Pass { post_id } to learn which plans already counted that post.
+   * Answers 503 until the limits tables exist.
+   */
+  usage: (params = {}) => apiClient.get('/advisors/posts/usage', { params }).then((r) => r.data),
   /** Published posts as the current viewer may see them (locked ones have no content). */
   feed: (advisorId, params = {}) => apiClient.get(`/advisors/posts/by-advisor/${advisorId}`, { params }).then((r) => r.data),
 
@@ -42,22 +48,5 @@ export const advisorApi = {
   directory: (params = {}) => apiClient.get('/advisors', { params }).then((r) => r.data),
 };
 
-/** Storage keys look like private/<user id>/sebi-certificates/<file>; nothing else is ever requested. */
-const PRIVATE_KEY = /^private\/[\w-]+\/[\w-]+\/[\w.-]+$/;
-
-/**
- * Opens a private file (a SEBI certificate) in a new tab using the caller's
- * session. It takes a storage KEY, never a URL: the only request made is
- * GET /files/view/<key> on our own API, so the bearer token cannot be sent to
- * another host or path. The file is shown from a blob URL; there is no
- * fallback that opens a raw URL.
- */
-export async function openPrivateFile(key) {
-  if (typeof key !== 'string' || !PRIVATE_KEY.test(key) || key.includes('..')) {
-    throw new Error('Not a private file key');
-  }
-  const res = await apiClient.get(`/files/view/${key}`, { responseType: 'blob' });
-  const blobUrl = URL.createObjectURL(res.data);
-  window.open(blobUrl, '_blank', 'noopener');
-  setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
-}
+// Private documents (SEBI certificates) are read with fetchPrivateFile in
+// '@/lib/privateFiles' and shown by PrivateDocumentViewer.

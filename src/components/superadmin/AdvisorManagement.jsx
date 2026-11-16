@@ -27,7 +27,8 @@ import {
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import AdvisorPricingCommission from './advisors/AdvisorPricingCommission';
-import { advisorApi, openPrivateFile } from '@/lib/advisorApi';
+import { advisorApi } from '@/lib/advisorApi';
+import PrivateDocumentViewer from '@/components/common/PrivateDocumentViewer';
 import { apiErrorMessage } from '@/lib/withdrawalsApi';
 import { normalizePayout, payoutAmount, commissionParts } from '@/lib/payoutView';
 import AdvisorCommissionApprovals from './advisors/AdvisorCommissionApprovals';
@@ -190,12 +191,14 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
     if (ok) setReviewTarget(null);
   };
 
-  const openCertificate = async (advisor) => {
-    try {
-      await openPrivateFile(advisor.sebi_document_key);
-    } catch {
-      toast.error('Could not open the certificate.');
+  // The certificate opens in an in-page viewer (see PrivateDocumentViewer).
+  const [certificateAdvisor, setCertificateAdvisor] = useState(null);
+  const openCertificate = (advisor) => {
+    if (!advisor.sebi_document_key) {
+      toast.error('This application has no readable certificate on file. Ask the advisor to upload it again from their application page.');
+      return;
     }
+    setCertificateAdvisor(advisor);
   };
 
   const handleDelete = async () => {
@@ -522,7 +525,7 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
                           </Button>
                         )}
 
-                        {advisor.sebi_document_key && (
+                        {(advisor.sebi_document_key || advisor.sebi_document_url) && (
                           <Button
                             variant="outline"
                             onClick={() => openCertificate(advisor)}
@@ -652,6 +655,13 @@ export default function AdvisorManagement({ refreshEntityConfigs }) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <PrivateDocumentViewer
+        fileKey={certificateAdvisor?.sebi_document_key || null}
+        title={certificateAdvisor ? `SEBI certificate: ${certificateAdvisor.display_name || 'advisor'}` : 'SEBI certificate'}
+        description={certificateAdvisor?.sebi_registration_number ? `Registration number ${certificateAdvisor.sebi_registration_number}. Check that it matches the certificate before approving.` : undefined}
+        onClose={() => setCertificateAdvisor(null)}
+      />
     </div>
   );
 }

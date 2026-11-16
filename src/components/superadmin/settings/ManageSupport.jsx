@@ -1,35 +1,15 @@
-import React from 'react';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import SettingsForm, { SectionNote } from './SettingsForm';
 
-export default function ManageSupport({ settings, onChange }) {
-  const handleInputChange = (key, value) => {
-    onChange({ [key]: value });
-  };
+const FIELDS = [
+  { key: 'support_email', kind: 'email', placeholder: 'support@protocall.in' },
+  { key: 'support_phone', kind: 'tel', placeholder: '+91 12345 67890' },
+];
 
+export default function ManageSupport(props) {
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <Label htmlFor="support_email" className="font-semibold">Support Email Address</Label>
-        <Input
-          id="support_email"
-          type="email"
-          value={settings['support_email'] || ''}
-          onChange={(e) => handleInputChange('support_email', e.target.value)}
-          placeholder="e.g., support@protocol.app"
-        />
-        <p className="text-xs text-muted-foreground">This email will be displayed on the contact and support pages.</p>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="support_phone" className="font-semibold">Support Phone Number (Optional)</Label>
-        <Input
-          id="support_phone"
-          value={settings['support_phone'] || ''}
-          onChange={(e) => handleInputChange('support_phone', e.target.value)}
-          placeholder="e.g., +91 12345 67890"
-        />
-      </div>
+      <SectionNote>Shown to members on the Contact and Contact Support pages.</SectionNote>
+      <SettingsForm fields={FIELDS} {...props} saveLabel="Save support details" />
     </div>
   );
 }

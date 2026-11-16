@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { User } = require("../models");
+const { accountBlock, blockBody } = require("../utils/accountStatus");
 
 async function authenticate(req, res, next) {
   try {
@@ -26,6 +27,11 @@ async function authenticate(req, res, next) {
       console.log("Auth Fail: User not found for ID:", decoded.id);
       return res.status(401).json({ error: "User not found" });
     }
+
+    // A deactivated, suspended or blocked account loses access at once, even
+    // with an access token that has not expired yet (SEC-21).
+    const block = await accountBlock(user);
+    if (block) return res.status(403).json(blockBody(block));
 
     // Attach user to request
     req.user = user;
@@ -79,7 +85,8 @@ async function optionalAuthenticate(req, _res, next) {
     const user = await User.findByPk(decoded.id, {
       attributes: { exclude: ['password'] }
     });
-    if (user) req.user = user;
+    // A restricted account is treated as signed out on public pages.
+    if (user && !(await accountBlock(user))) req.user = user;
   } catch {
     // Anonymous is a valid outcome here.
   }

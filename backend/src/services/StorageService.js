@@ -1,6 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
+const { pipeline } = require("stream/promises");
 
 const { S3Client, DeleteObjectCommand, GetObjectCommand, HeadObjectCommand } =
   require("@aws-sdk/client-s3");
@@ -23,8 +24,9 @@ const multerS3 = require("multer-s3");
  *   public/<folder>/<uuid>-<name>             readable by anyone holding the link
  *
  * Nothing is ever served straight from the bucket. Reads go through
- * /api/files/view/<key>, which checks the prefix rule and then redirects to a
- * short-lived presigned URL. That keeps the bucket private, keeps <img src>
+ * /api/files/view/<key>, which checks the prefix rule; public keys then
+ * redirect to a short-lived presigned URL and private keys are streamed
+ * through the API (see streamObject). That keeps the bucket private, keeps <img src>
  * working without putting a bearer token in a URL, and means revoking access is
  * a matter of refusing to sign rather than racing to delete an object.
  *
@@ -46,6 +48,8 @@ let s3Client = null;
 if (s3Enabled) {
   s3Client = new S3Client({
     region: REGION,
+    // A stalled S3 read must not hold a pooled socket indefinitely.
+    requestHandler: { connectionTimeout: 5000, requestTimeout: 30000 },
     credentials: {
       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -140,7 +144,8 @@ const folderFor = (req) => safeFolder(flagFrom(req, "folder"));
  * embedded in the key, or by staff. Any other shape is refused outright rather
  * than interpreted, so a malformed or crafted key cannot fall through to "allow".
  */
-const STAFF_ROLES = new Set(["admin", "super_admin", "sub_admin"]);
+// sub_admin is not implicit staff: it gets only what Roles & Permissions grants (middleware/permissions.js); private KYC / SEBI documents are admin-only.
+const STAFF_ROLES = new Set(["admin", "super_admin"]);
 
 const canReadKey = (key, user) => {
   const value = String(key || "");
@@ -247,6 +252,71 @@ const objectExists = async (key) => {
   }
 };
 
+/**
+ * Content types a private document may be served as. Anything else goes out
+ * as application/octet-stream with `attachment`, so an uploaded HTML or SVG
+ * file can never render (and run script) on the API's origin.
+ */
+const INLINE_TYPES = new Map([
+  [".pdf", "application/pdf"],
+  [".png", "image/png"],
+  [".jpg", "image/jpeg"],
+  [".jpeg", "image/jpeg"],
+  [".webp", "image/webp"],
+  [".gif", "image/gif"],
+]);
+
+const inlineTypeForKey = (key) => INLINE_TYPES.get(path.extname(String(key || "")).toLowerCase()) || null;
+
+/**
+ * Streams an object through the API instead of redirecting to S3.
+ *
+ * Private documents are read by the SPA with XMLHttpRequest (it has to send
+ * the bearer token). A 302 to a presigned S3 URL makes that request
+ * cross-origin, and the bucket does not (and should not need to) allow the
+ * app's origin, so the browser blocked the response: the admin's "SEBI Doc"
+ * button opened nothing. Streaming keeps the read same-origin.
+ */
+const streamObject = async (key, res) => {
+  const inline = inlineTypeForKey(key);
+  // Headers are set only once the object is in hand, so an error before that
+  // still goes out as JSON, not as a "PDF".
+  const setHeaders = () => {
+    res.set("X-Content-Type-Options", "nosniff");
+    res.set("Cache-Control", "private, no-store");
+    res.set("Content-Type", inline || "application/octet-stream");
+    res.set("Content-Disposition", `${inline ? "inline" : "attachment"}; filename="${path.basename(key).replace(/[^\w.-]/g, "_")}"`);
+  };
+
+  if (!s3Enabled) {
+    const file = localPathForKey(key);
+    await fs.promises.access(file, fs.constants.R_OK);
+    setHeaders();
+    return new Promise((resolve, reject) => {
+      res.sendFile(file, { headers: { "Content-Type": inline || "application/octet-stream" } }, (err) => (err ? reject(err) : resolve()));
+    });
+  }
+
+  const out = await s3Client.send(new GetObjectCommand({ Bucket: BUCKET, Key: key }));
+  setHeaders();
+  if (out.ContentLength !== undefined) res.set("Content-Length", String(out.ContentLength));
+  return sendBody(out.Body, res);
+};
+
+/**
+ * pipeline() destroys the source when the client goes away. Plain pipe()
+ * only unpipes, leaving the S3 socket held open: enough aborted downloads
+ * would exhaust the client's connection pool for every S3 call.
+ */
+const sendBody = async (body, res) => {
+  try {
+    await pipeline(body, res);
+  } catch (error) {
+    if (error && error.code === "ERR_STREAM_PREMATURE_CLOSE") return; // client went away
+    throw error;
+  }
+};
+
 const deleteObject = async (key) => {
   if (!canReadKey(key, { app_role: "super_admin", id: "system" })) {
     throw new Error("Refusing to delete a key outside the managed layout");
@@ -277,5 +347,8 @@ module.exports = {
   signedUrlForKey,
   localPathForKey,
   objectExists,
+  streamObject,
+  sendBody,
+  inlineTypeForKey,
   deleteObject,
 };

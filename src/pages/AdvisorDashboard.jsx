@@ -29,11 +29,13 @@ import SubscriberAnalytics from '../components/advisors/SubscriberAnalytics';
 import RefundManagementSection from '../components/advisors/RefundManagementSection';
 import AdvisorAnalytics from '../components/advisors/AdvisorAnalytics';
 import AdvisorProfileEditor from '../components/advisors/AdvisorProfileEditor';
+import RecommendationUsageSection from '../components/advisors/RecommendationUsage';
+import { limitLabel } from '../components/advisors/usageHelpers';
 import AdvisorBankAccounts from '../components/advisors/finance/AdvisorBankAccounts';
 import AdvisorWithdrawals from '../components/advisors/finance/AdvisorWithdrawals';
 import AdvisorEarnings from '../components/advisors/finance/AdvisorEarnings';
 import {
-  advisorKeys, advisorQueryClient, useMyAdvisor, useMyPlans, useMyPosts,
+  advisorKeys, advisorQueryClient, useMyAdvisor, useMyPlans, useMyPosts, useMyUsage,
   useMyReviews, useMySubscribers, useWithdrawalSummary,
 } from '../components/advisors/useAdvisorData';
 
@@ -156,6 +158,7 @@ function AdvisorDashboardContent() {
   const approved = advisor?.status === 'approved' && !isStaff;
   const plansQuery = useMyPlans(approved);
   const postsQuery = useMyPosts(approved);
+  const usageQuery = useMyUsage(approved);
   const subsQuery = useMySubscribers(approved);
   const summaryQuery = useWithdrawalSummary(approved);
   const reviewsQuery = useMyReviews(advisor?.id, approved);
@@ -173,7 +176,7 @@ function AdvisorDashboardContent() {
   const savePost = useMutation({
     mutationFn: ({ id, payload }) => (id ? advisorApi.updatePost(id, payload) : advisorApi.createPost(payload)),
     onSuccess: (saved, { id, payload }) => {
-      invalidate(advisorKeys.posts);
+      invalidate(advisorKeys.posts, advisorKeys.usage);
       setPostModal({ open: false, post: null });
       if (payload.status === 'draft') toast.success('Draft saved.');
       else if (saved?.notified_subscribers > 0) toast.success(`Published. ${saved.notified_subscribers} subscriber${saved.notified_subscribers === 1 ? '' : 's'} notified.`);
@@ -192,7 +195,7 @@ function AdvisorDashboardContent() {
   const savePlan = useMutation({
     mutationFn: ({ id, payload }) => (id ? advisorApi.updatePlan(id, payload) : advisorApi.createPlan(payload)),
     onSuccess: (_saved, { id }) => {
-      invalidate(advisorKeys.plans);
+      invalidate(advisorKeys.plans, advisorKeys.usage);
       setPlanModal({ open: false, plan: null });
       toast.success(id ? 'Plan updated.' : 'Plan created.');
     },
@@ -201,13 +204,13 @@ function AdvisorDashboardContent() {
 
   const togglePlan = useMutation({
     mutationFn: (plan) => advisorApi.updatePlan(plan.id, { is_active: !plan.is_active }),
-    onSuccess: (_s, plan) => { invalidate(advisorKeys.plans); toast.success(plan.is_active ? 'Plan deactivated. New subscribers can no longer buy it.' : 'Plan activated.'); },
+    onSuccess: (_s, plan) => { invalidate(advisorKeys.plans, advisorKeys.usage); toast.success(plan.is_active ? 'Plan deactivated. New subscribers can no longer buy it.' : 'Plan activated.'); },
     onError: (error) => toast.error(apiErrorMessage(error, 'Could not update the plan.')),
   });
 
   const removePlan = useMutation({
     mutationFn: (id) => advisorApi.deletePlan(id),
-    onSuccess: () => { invalidate(advisorKeys.plans); toast.success('Plan deleted.'); },
+    onSuccess: () => { invalidate(advisorKeys.plans, advisorKeys.usage); toast.success('Plan deleted.'); },
     onError: (error) => toast.error(apiErrorMessage(error, 'Could not delete the plan.')),
     onSettled: () => setDeletePlan(null),
   });
@@ -329,6 +332,8 @@ function AdvisorDashboardContent() {
           </CardContent>
         </Card>
       </div>
+
+      <RecommendationUsageSection query={usageQuery} onCreatePlan={() => setPlanModal({ open: true, plan: null })} />
     </div>
   );
 
@@ -401,6 +406,7 @@ function AdvisorDashboardContent() {
         </div>
         <CardContent className="p-6">
           {plan.description && <p className="text-sm text-subtle mb-4 text-center leading-relaxed">{plan.description}</p>}
+          <p className="text-sm font-medium text-foreground text-center mb-4" data-testid="plan-limit">{limitLabel({ limit_count: plan.limit_count, limit_period: plan.limit_period })}</p>
           {Array.isArray(plan.features) && plan.features.length > 0 && (
             <ul className="space-y-2 mb-6">
               {plan.features.map((feature) => (

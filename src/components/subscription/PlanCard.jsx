@@ -5,29 +5,7 @@ import { Check, Sparkles, Crown, UserCircle, Tag, Loader2, X, ChevronDown, Layer
 import { toast } from "sonner";
 import { subscriptionApi, apiErrorMessage, priceView, normaliseCycle, rupees } from "@/lib/subscriptionApi";
 import { cn } from "@/lib/utils";
-
-// Feature key -> label. Unknown keys fall back to Title Case.
-const featureNameMap = {
-  'premium_chat_rooms': 'Premium Chat Rooms',
-  'premium_polls': 'Premium Polls',
-  'premium_events': 'Premium Events',
-  'advisor_subscriptions': 'Advisor Subscriptions',
-  'exclusive_finfluencer_content': 'Exclusive Finfluencer Content',
-  'admin_recommendations': 'Admin Recommendations',
-  'chat_rooms': 'Chat Rooms',
-  'community_polls': 'Community Polls',
-  'pledge_pool': 'Pledge Pool Access',
-  'advisor_picks': 'Advisor Picks',
-  'priority_support': 'Priority Support',
-  'exclusive_events': 'Exclusive Events',
-};
-
-const getFeatureName = (feature) => {
-  if (typeof feature !== 'string') return 'Feature';
-  if (featureNameMap[feature]) return featureNameMap[feature];
-  if (feature.includes(' ')) return feature;
-  return feature.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-};
+import { featureLabel, useFeatureNames } from "@/lib/featureNames";
 
 const parseFeatures = (features) => {
   if (Array.isArray(features)) return features;
@@ -67,6 +45,7 @@ function PlanIcon({ name }) {
 
 export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelect, user, cycle = 'monthly', recommended = false }) {
   const { name, description, features } = plan;
+  const featureNames = useFeatureNames();
   const selectedCycle = normaliseCycle(cycle);
   const isAnnual = selectedCycle === 'annually';
 
@@ -317,7 +296,7 @@ export default function PlanCard({ plan, isCurrentPlan, currentPlanTier, onSelec
               <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <Check className="h-3 w-3" strokeWidth={3} />
               </span>
-              {getFeatureName(feature)}
+              {featureLabel(feature, featureNames)}
             </li>
           ))}
           {featureList.length === 0 && parentName && (

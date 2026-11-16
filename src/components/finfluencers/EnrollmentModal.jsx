@@ -28,6 +28,9 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [enrollmentSuccess, setEnrollmentSuccess] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('razorpay');
+  // Hidden while Razorpay's checkout is open (this modal dialog traps focus,
+  // so Razorpay's own fields could not be typed into).
+  const [gatewayOpen, setGatewayOpen] = useState(false);
 
   const handleEnrollment = async () => {
     setIsProcessing(true);
@@ -68,10 +71,11 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
         key: 'rzp_test_1234567890', // This should come from PlatformSettings - TEST KEY
         amount: orderData.amount,
         currency: orderData.currency,
-        name: 'Protocol - Course Enrollment',
+        name: 'Protocall - Course Enrollment',
         description: course.title,
         image: influencer.profile_image_url,
         handler: async function (response) {
+          setGatewayOpen(false);
           try {
             // Payment successful
             const enrollmentData = {
@@ -126,6 +130,7 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
         },
         modal: {
           ondismiss: function () {
+            setGatewayOpen(false);
             setIsProcessing(false);
             toast.info('Payment cancelled');
           }
@@ -133,9 +138,11 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
       };
 
       const paymentObject = new window.Razorpay(options);
+      setGatewayOpen(true);
       paymentObject.open();
 
     } catch (error) {
+      setGatewayOpen(false);
       console.error('Error initiating payment:', error);
       toast.error('Failed to initiate payment. Please try again.');
       setIsProcessing(false);
@@ -170,8 +177,8 @@ export default function EnrollmentModal({ open, onClose, course, influencer }) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+    <Dialog open={open && !gatewayOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto" onCloseAutoFocus={(e) => { if (gatewayOpen) e.preventDefault(); }}>
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-foreground">
             Enroll in Course

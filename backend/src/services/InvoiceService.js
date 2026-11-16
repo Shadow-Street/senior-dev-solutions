@@ -294,7 +294,8 @@ class InvoiceService {
             throw new Error('Invoice not found');
         }
 
-        const STAFF = ['admin', 'super_admin', 'sub_admin'];
+        // sub_admin is not implicit staff: it gets only what Roles & Permissions grants (middleware/permissions.js).
+        const STAFF = ['admin', 'super_admin'];
         const isStaff = STAFF.includes(requestingUser?.app_role || requestingUser?.role);
         const isOwner = String(invoice.user_id) === String(requestingUser?.id);
 
